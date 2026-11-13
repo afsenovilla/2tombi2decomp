@@ -39,9 +39,10 @@ Same 43 files on every disc, at the root (the USA demo had them under `TOMBA2/`)
 | `CD/BGM.XA`, `DEMO.XA`, `VOICE.XA` | XA audio (BGM identical on all discs; VOICE differs per language) | 151 MB, 61 MB, 60 MB |
 | `MOVIE/LOGO.STR`, `OP.STR`, `END.STR` | FMV (identical EU/ES; USA `END.STR` differs) | 2.7, 21, 25 MB |
 
-The containers are only partly understood (above); decoding them is a later task (needed for the port, not for the
-matching code). Whether data is compressed is not yet known (DAT entries have entropy ~5.8 bits/byte: tables or
-lightly packed data, not LZ output).
+The container formats are described by Tomba2Edit (docs/TOMBA2EDIT.md "Containers"): IDX = 48 chunks of 0x800
+(IMG/DAT ranges + pointer list + a trail table), DAT = untagged files (models, geometry, collision, text, animation),
+IMG = per-area VRAM shards with a small LZ77. (The rows above describing IDX as flat (start, end) pairs were a first
+guess; the trail tables are what looked like that.)
 
 ## Executables and overlays (EU)
 

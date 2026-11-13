@@ -1,0 +1,2 @@
+f_DispatchGoldenTowerTombaContacts = 0x8010A49C; // type:func t2e
+f_UpdateGoldenTowerPigElderActor = 0x8010CC28; // type:func t2e

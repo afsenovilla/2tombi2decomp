@@ -1,0 +1,8 @@
+f_TestTombaOverlapsEvilPig = 0x8010EA08; // type:func t2e
+f_UpdateGhostEvilPigRandomRicochetVolley = 0x801116A8; // type:func t2e
+f_UpdateGhostEvilPigGraspAttack = 0x80111910; // type:func t2e
+f_UpdateGhostEvilPigTripleRicochetVolley = 0x80111B64; // type:func t2e
+f_UpdateGhostEvilPigRicochetProjectile = 0x80118BC0; // type:func t2e
+f_SpawnGhostEvilPigRicochetProjectile = 0x80119030; // type:func t2e
+f_UpdateGhostEvilPigGraspActor = 0x80119224; // type:func t2e
+f_SpawnGhostEvilPigGraspActor = 0x8011980C; // type:func t2e

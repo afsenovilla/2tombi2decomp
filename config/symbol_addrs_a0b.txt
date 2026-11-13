@@ -1,0 +1,3 @@
+f_UpdateLastEvilPigProjectileAttack = 0x801107C0; // type:func t2e
+f_UpdateEvilPigBattleProjectile = 0x80117CE8; // type:func t2e
+f_SpawnLastEvilPigBattleProjectile = 0x80118D9C; // type:func t2e

@@ -1,0 +1,17 @@
+func_0x8010a32c = 0x8010B0F4; // type:func t2e
+f_SpawnKujaraSummitSceneActorsFromPlacementTable = 0x80112910; // type:func t2e
+f_UpdateKujaraSummitQuestPickupActor = 0x801136B8; // type:func t2e
+f_UpdateKujaraHotSpringActor = 0x8011511C; // type:func t2e
+f_UpdateWhosTheLiarSisterActorA = 0x8011933C; // type:func t2e
+f_UpdateWhosTheLiarSisterActorB = 0x80119B84; // type:func t2e
+f_UpdateWhosTheLiarSisterActorC = 0x8011A258; // type:func t2e
+f_UpdateStaticExplosionQuestActor = 0x8011B028; // type:func t2e
+f_UpdateReturnedKujaraActor = 0x8012056C; // type:func t2e
+f_UpdateIceBlockAndSculptureQuestActor = 0x801212B0; // type:func t2e
+f_UpdateKujaraWashingExpertActor = 0x80122DBC; // type:func t2e
+f_UpdateKujaraWashingShedEntrance = 0x8012945C; // type:func t2e
+Door = 0x8012983C; // type:func t2e
+f_UpdateKujaraInteriorEntranceActor = 0x80129D24; // type:func t2e
+f_UpdateIceBlockAndSculptureActor = 0x8012BFD8; // type:func t2e
+f_UpdateKujaraSummitMechanismActor = 0x80130EBC; // type:func t2e
+f_UpdateThreeSistersCutsceneActorC = 0x8013BBF8; // type:func t2e

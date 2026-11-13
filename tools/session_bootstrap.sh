@@ -33,6 +33,8 @@ echo "6bcee82bde552b9c044330bcc8e1889e2b80b107  game/eu/MAIN.EXE" | sha1sum -c -
 
 log "4/5 Psy-Q signatures"
 [ -d /opt/psyq_sigs/440 ] || git clone -q --depth 1 https://github.com/lab313ru/psx_psyq_signatures /opt/psyq_sigs
+# Tomba2Edit (no license: read only, never copied here): USA names and USA->EU maps for tools/import_names.py
+[ -d /opt/tomba2edit/decomp ] || git clone -q --depth 1 https://github.com/SiergiejW/Tomba2Edit /opt/tomba2edit
 
 [ "$BUILD" = 1 ] || { log "done (--no-build)"; exit 0; }
 log "5/5 matching build"

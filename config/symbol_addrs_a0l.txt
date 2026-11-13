@@ -1,0 +1,10 @@
+f_UpdateEndingIllustrationTransition = 0x8010A364; // type:func t2e
+f_UpdateEndingArea2CameraSequence = 0x8010AAA8; // type:func t2e
+f_UpdateEndingArea4CameraSequence = 0x8010ADFC; // type:func t2e
+f_UpdateEndingArea5MysteryCameraSequence = 0x8010B044; // type:func t2e
+f_UpdateEndingIllustrationPanels = 0x8010DB34; // type:func t2e
+f_UpdateEndingContinuePrompt = 0x8010DF64; // type:func t2e
+f_UpdateEndingScriptController = 0x8010E0E0; // type:func t2e
+f_UpdateEndingCompletionBranchScript = 0x8010F5C0; // type:func t2e
+f_AdvanceEndingScriptedPresentation = 0x80113030; // type:func t2e
+f_DispatchEndingAreaCameraSequence = 0x80113E9C; // type:func t2e
