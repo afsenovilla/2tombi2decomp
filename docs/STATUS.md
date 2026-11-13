@@ -2,6 +2,22 @@
 
 Update this file whenever something lands or a task is decided. Newest first.
 
+## 2026-11-13 (2): Tomba2Edit names, compiler found
+
+- Tomba2Edit reviewed (docs/TOMBA2EDIT.md): **899 EU functions named** from its USA symbols and USA->EU maps
+  (`tools/import_names.py`, `// t2e` lines); overlay load addresses confirmed; container formats documented.
+- **Compiler: Psy-Q 4.4 = gcc 2.8.1 + ASPSX 2.79** (docs/COMPILER.md). First two functions matched in C
+  (`src/main/ccprobe.c`, checked with `tools/ccheck.py`: compile + word compare, relocated fields masked; it does
+  not yet check that the retail function has the same length).
+
+Next:
+1. C in the linked build: switch `config/main.yaml` to a `c` subsegment layout (per-file `INCLUDE_ASM`, splat
+   `asm/nonmatchings`), compile with the 2.8.1 pipeline in `tools/build.py`, keep 29/29 OK.
+2. Headers: game-state struct at `D_800BFFC0`, actor struct (from Tomba2Edit's names: `f_SetActorAnimation` writes
+   +0x46, +0x79, reads +0x7C), Psy-Q 4.4 headers.
+3. Permuter (`tools/permute.py` from T1) for the two near-misses in docs/COMPILER.md.
+4. Name the Psy-Q functions (signature hits) where Tomba2Edit has no name.
+
 ## 2026-11-13: repo bootstrap, disc survey, all-asm matching build
 
 Done:
@@ -22,7 +38,7 @@ Decisions (confirmed by the user 2026-11-13):
   `asm/`, `build/` generated. Per-version configs will go to `config/<version>/` as in T1.
 
 Next:
-1. C build path in `tools/build.py`, compiler identification on small MAIN functions.
+1. (done, see above) compiler identification.
 2. Name the Psy-Q functions in `config/symbol_addrs_main.txt` / `_boot.txt` from the signature hits.
 3. Find the overlay loader in MAIN.EXE (confirm 0x80109D84 / 0x80106D80 / 0x80188000).
 4. Container formats (TOMBA2.IDX/DAT/IMG/SND) for the port; tools/psxemu profile for T2.
