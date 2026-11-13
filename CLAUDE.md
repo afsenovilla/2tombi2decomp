@@ -48,6 +48,8 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md.
   `game`, `opn`, `sop` (BIN/*.BIN).
 - `python3 -I tools/funcstats.py --csv build/funcs.csv`: function census (Psy-Q 4.4 library by signature, code shared
   between programs, game code left).
+- `python3 -I tools/progress.py`: functions / bytes in C per program.
+- C lives in `src/<prog>/*.c` (`INCLUDE_ASM` for what is not decompiled yet, `include/common.h`); see docs/STATUS.md.
 - `python3 -I tools/ccheck.py src/main/<file>.c`: compile with the game's compiler (gcc 2.8.1 + ASPSX 2.79,
   docs/COMPILER.md) and compare every function in the file with the retail bytes.
 - `python3 -I tools/import_names.py /opt/tomba2edit --write [--eu]`: names from Tomba2Edit (docs/TOMBA2EDIT.md).

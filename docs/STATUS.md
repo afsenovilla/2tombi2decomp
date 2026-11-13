@@ -2,6 +2,22 @@
 
 Update this file whenever something lands or a task is decided. Newest first.
 
+## 2026-11-13 (4): C in the linked build
+
+- `config/main.yaml`: the text is a `c` subsegment, `src/main/main.c` (generated once by splat, now hand-edited:
+  one `INCLUDE_ASM("asm/main/nonmatchings/main", NAME)` per function not yet in C). `include/common.h` holds
+  INCLUDE_ASM (maspsx-keep) and the basic types.
+- `tools/build.py` compiles `.c` with the game's pipeline (gcc 2.8.1 cc1 `-O2 -G0 -funsigned-char`, maspsx 2.79,
+  as -O1); still **29 / 29 OK** with `f_StopVoicePlayback` and `f_SetIdentityMatrix` compiled from C.
+- `tools/progress.py`: functions / bytes now in C per program (2 / 1739 in MAIN).
+
+How to decompile a function: replace its INCLUDE_ASM line in `src/main/main.c` by C (declarations at the top of the
+file for now), check quickly with `tools/ccheck.py src/main/main.c` (or a scratch file with just the function), then
+`python3 tools/build.py main --no-split` must print OK.
+
+Next: headers (`include/` game structs from Tomba2Edit names), split main.c into files when areas of the code are
+understood, permuter, the boot exe and small overlays to `c` the same way.
+
 ## 2026-11-13 (3): reference switched to USA SCUS-94454
 
 User's decision, because Tomba2Edit / Tomba Club work on USA addresses. `config/*.yaml` = USA (29 / 29 OK),

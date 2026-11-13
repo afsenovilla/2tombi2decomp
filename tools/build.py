@@ -43,6 +43,25 @@ def fix_gte(path):
         open(path, "w").write("\n".join(txt))
 
 
+CC = "/opt/oldgcc/gcc-2.8.1-psx"   # Psy-Q 4.4 CC1PSX = gcc 2.8.1 (docs/COMPILER.md)
+CFLAGS = ["-O2", "-G0", "-funsigned-char", "-quiet", "-w"]
+ASPSX = "2.79"
+
+
+def compile_c(src, obj):
+    """cpp + cc1 (gcc 2.8.1) + maspsx (ASPSX 2.79) + GNU as: the game's compiler pipeline."""
+    i, s = obj[:-2] + ".i", obj[:-2] + ".cc.s"
+    run([CC + "/cpp", "-undef", "-D__GNUC__=2", "-DMIPSEL", "-D_LANGUAGE_C", "-Iinclude", "-Iinclude/psyq", src, i])
+    run([CC + "/cc1"] + CFLAGS + [i, "-o", s])
+    r = subprocess.run([sys.executable, "/opt/maspsx/maspsx.py", "--aspsx-version=" + ASPSX, "--expand-div"],
+                       cwd=ROOT, input=open(os.path.join(ROOT, s)).read(), capture_output=True, text=True)
+    if r.returncode:
+        sys.exit("FAILED: maspsx %s\n%s" % (src, r.stderr))
+    m = s[:-5] + ".mas.s"
+    open(os.path.join(ROOT, m), "w").write(r.stdout)
+    run(AS + ["-O1", "-o", obj, m])
+
+
 def objects(ld):
     return sorted(set(re.findall(r"(build/\S+?\.o)\(", open(os.path.join(ROOT, ld)).read())))
 
@@ -63,11 +82,16 @@ def build(prog, split, jobs, cfg="config"):
         if src.endswith(".s"):
             fix_gte(os.path.join(ROOT, src))
             run(AS + ["-o", o, src])
+        elif src.endswith(".c"):
+            compile_c(src, o)
         elif src.endswith(".bin"):
             run(["mipsel-linux-gnu-ld", "-r", "-b", "binary", "-o", o, src])
         else:
             sys.exit("no rule for %s" % src)
 
+    if split:   # splat writes nonmatchings/*.s with the same GTE macros: emit those as .word too
+        for f in glob.glob(os.path.join(ROOT, "asm", "**", "nonmatchings", "**", "*.s"), recursive=True):
+            fix_gte(f)
     with cf.ThreadPoolExecutor(jobs) as ex:
         list(ex.map(assemble, objs))
     elf = "%s/%s.elf" % (bdir, prog)

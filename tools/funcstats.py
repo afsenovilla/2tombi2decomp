@@ -46,12 +46,29 @@ def programs():
         path = re.search(r"target_path:\s*(\S+)", t).group(1)
         vram = int(re.search(r"vram:\s*(0x\w+)", t).group(1), 16)
         start = int(re.search(r"type: code\n\s+start: (0x\w+)", t).group(1), 16)
-        m = re.search(r"\[(0x\w+), asm, \w+\]\n(?:\s+- \[(0x\w+), )?", t)
+        m = re.search(r"\[(0x\w+), (?:asm|c), \w+\]\n(?:\s+- \[(0x\w+), )?", t)
         b = open(os.path.join(ROOT, path), "rb").read()
         tstart = int(m.group(1), 16)
         tend = int(m.group(2), 16) if m.group(2) else len(b)
         asm = os.path.join(ROOT, "asm", prog, prog + ".s")
-        addrs = glabels(asm)
+        if os.path.exists(asm):
+            addrs = glabels(asm)
+        else:   # a c segment: one .s per function under nonmatchings, plus the functions already in C
+            addrs = set()
+            for f in glob.glob(os.path.join(ROOT, "asm", prog, "nonmatchings", "**", "*.s"), recursive=True):
+                addrs |= glabels(f)
+            syms = {}
+            sp = os.path.join(ROOT, "config", "symbol_addrs_%s.txt" % prog)
+            for l in open(sp) if os.path.exists(sp) else []:
+                mm = re.match(r"\s*(\w+)\s*=\s*0x([0-9A-Fa-f]+)", l)
+                if mm:
+                    syms[mm.group(1)] = int(mm.group(2), 16)
+            for f in glob.glob(os.path.join(ROOT, "src", prog, "**", "*.c"), recursive=True):
+                for n in re.findall(r"^\w[\w \*]*?\b(\w+)\s*\([^;]*\)\s*\n\{", open(f).read(), re.M):
+                    a = syms.get(n) or (int(n[5:], 16) if re.fullmatch(r"func_[0-9A-F]{8}", n) else None)
+                    if a:
+                        addrs.add(a)
+        addrs = sorted(addrs)
         yield prog, b, vram - start, tstart, tend, sorted(addrs)
 
 
