@@ -11,7 +11,7 @@ Probed on EU first, then rechecked on USA after the switch of reference: both fu
 - Library: the Psy-Q 4.4 object signatures cover the most library code (docs/DISCS.md).
 - The Psy-Q 4.4 package (mkst/esa `psyq4.4`) holds exactly that pair: `CC1PSX.EXE` = "2.8.1 SN32 BUILD 4.0.0010",
   `ASPSX.EXE` = "SDevTC ASPSX version 2.79" (4.3: gcc 2.8.0 / ASPSX 2.77; 4.5: ASPSX 2.81).
-- Probe functions (`src/main/ccprobe.c`), compiled with both old-gcc builds:
+- Probe functions (first in a probe file, now in `src/main/main.c`), compiled with both old-gcc builds:
   - `f_StopVoicePlayback` (USA MAIN 0x8001CF2C, EU 0x8001CFA8): **matches only with gcc 2.8.1**. gcc 2.7.2 leaves the store to a global
     as a macro that the assembler expands through `$at`; the retail code (and 2.8.1) loads `%hi` into `$v0`. The
     source needs an unused 8-byte local (frame 0x20) and a `volatile` flag byte (the store is not moved into the

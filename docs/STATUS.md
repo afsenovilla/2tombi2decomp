@@ -32,7 +32,7 @@ Open: the 118 Tomba2Edit `FUN_*` starts that are not starts in our split (docs/T
 - Tomba2Edit reviewed (docs/TOMBA2EDIT.md): **899 EU functions named** (later corrected: see above) from its USA symbols and USA->EU maps
   (`tools/import_names.py`, `// t2e` lines); overlay load addresses confirmed; container formats documented.
 - **Compiler: Psy-Q 4.4 = gcc 2.8.1 + ASPSX 2.79** (docs/COMPILER.md). First two functions matched in C
-  (`src/main/ccprobe.c`, checked with `tools/ccheck.py`: compile + word compare, relocated fields masked; it does
+  (first in `src/main/ccprobe.c`, now in `src/main/main.c`; checked with `tools/ccheck.py`: compile + word compare, relocated fields masked; it does
   not yet check that the retail function has the same length).
 
 Next:
