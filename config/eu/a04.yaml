@@ -1,0 +1,40 @@
+name: A04.BIN
+sha1: 07d3d19adcb6af5bad47d983a71297460d99de02
+options:
+  basename: a04
+  target_path: game/eu/BIN/A04.BIN
+  base_path: ../..
+  platform: psx
+  compiler: PSYQ
+  asm_path: asm/eu/a04
+  src_path: src/a04
+  build_path: build/eu
+  ld_script_path: build/eu/a04.ld
+  symbol_addrs_path:
+    - config/eu/symbol_addrs_a04.txt
+  undefined_funcs_auto_path: build/eu/undefined_funcs_auto.a04.txt
+  undefined_syms_auto_path: build/eu/undefined_syms_auto.a04.txt
+  find_file_boundaries: False
+  disassemble_all: True
+  asm_function_macro: glabel
+  asm_jtbl_label_macro: jlabel
+  asm_data_macro: dlabel
+  generate_asm_macros_files: True
+  asm_inc_header: ".include \"macro.inc\"\n\n.set noat\n.set noreorder\n\n"
+  section_order: [".rodata", ".text", ".data", ".bss"]
+  subalign: 4
+  string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+  - name: a04
+    type: code
+    start: 0x0
+    vram: 0x80109D84
+    align: 4
+    subalign: 4
+    subsegments:
+      - [0x0, rodata, a04_rodata]
+      - [0x1568, asm, a04]
+      - [0x36A6C, data, a04_data]
+  - [0x3D1B0]

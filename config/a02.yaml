@@ -1,8 +1,8 @@
 name: A02.BIN
-sha1: f32c517d02aa72976a0fd3ca28cbc7f2314cb62c
+sha1: c0232987d14263d5e61b763dd1322e27b87429cf
 options:
   basename: a02
-  target_path: game/eu/BIN/A02.BIN
+  target_path: game/usa/BIN/A02.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,11 +30,11 @@ segments:
   - name: a02
     type: code
     start: 0x0
-    vram: 0x80109D84
+    vram: 0x80108F9C
     align: 4
     subalign: 4
     subsegments:
       - [0x0, rodata, a02_rodata]
-      - [0x1558, asm, a02]
-      - [0x1F2B8, data, a02_data]
-  - [0x30BAC]
+      - [0x158C, asm, a02]
+      - [0x1F428, data, a02_data]
+  - [0x3112C]

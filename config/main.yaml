@@ -1,8 +1,8 @@
 name: MAIN.EXE
-sha1: 6bcee82bde552b9c044330bcc8e1889e2b80b107
+sha1: f41c4065788e8c838cbd8b22f0fff6d4bc7de49a
 options:
   basename: main
-  target_path: game/eu/MAIN.EXE
+  target_path: game/usa/MAIN.EXE
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -38,6 +38,6 @@ segments:
     subalign: 4
     subsegments:
       - [0x800, rodata, main_rodata]
-      - [0xD33C, asm, main]
-      - [0x8DFCC, data, main_data]
-  - [0xAF800]
+      - [0xD2C0, asm, main]
+      - [0x8D890, data, main_data]
+  - [0xAF000]

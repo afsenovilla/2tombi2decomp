@@ -1,8 +1,8 @@
 name: A0B.BIN
-sha1: 4c301feb3e37e1c5bdb756bb14ecedb3635947a2
+sha1: 75269941dacd0b68102076181d0463f274e1ded6
 options:
   basename: a0b
-  target_path: game/eu/BIN/A0B.BIN
+  target_path: game/usa/BIN/A0B.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,11 +30,11 @@ segments:
   - name: a0b
     type: code
     start: 0x0
-    vram: 0x80109D84
+    vram: 0x80108F9C
     align: 4
     subalign: 4
     subsegments:
       - [0x0, rodata, a0b_rodata]
       - [0x320, asm, a0b]
-      - [0xF2B4, data, a0b_data]
-  - [0x1C30C]
+      - [0xF2D8, data, a0b_data]
+  - [0x1C368]

@@ -1,8 +1,8 @@
 name: A0K.BIN
-sha1: 786f0734de0264d8e81108c7c0d0eff5f10e2221
+sha1: 9dfaa004c493bd474842379b8129a18baab1b702
 options:
   basename: a0k
-  target_path: game/eu/BIN/A0K.BIN
+  target_path: game/usa/BIN/A0K.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,11 +30,11 @@ segments:
   - name: a0k
     type: code
     start: 0x0
-    vram: 0x80109D84
+    vram: 0x80108F9C
     align: 4
     subalign: 4
     subsegments:
       - [0x0, rodata, a0k_rodata]
-      - [0x618, asm, a0k]
-      - [0xF698, data, a0k_data]
-  - [0x16B40]
+      - [0x62C, asm, a0k]
+      - [0xF724, data, a0k_data]
+  - [0x16CC4]

@@ -1,0 +1,40 @@
+name: OPN.BIN
+sha1: 0d6c0a34e6bd5533e2c1be8155460f5ff6ce16fd
+options:
+  basename: opn
+  target_path: game/eu/BIN/OPN.BIN
+  base_path: ../..
+  platform: psx
+  compiler: PSYQ
+  asm_path: asm/eu/opn
+  src_path: src/opn
+  build_path: build/eu
+  ld_script_path: build/eu/opn.ld
+  symbol_addrs_path:
+    - config/eu/symbol_addrs_opn.txt
+  undefined_funcs_auto_path: build/eu/undefined_funcs_auto.opn.txt
+  undefined_syms_auto_path: build/eu/undefined_syms_auto.opn.txt
+  find_file_boundaries: False
+  disassemble_all: True
+  asm_function_macro: glabel
+  asm_jtbl_label_macro: jlabel
+  asm_data_macro: dlabel
+  generate_asm_macros_files: True
+  asm_inc_header: ".include \"macro.inc\"\n\n.set noat\n.set noreorder\n\n"
+  section_order: [".rodata", ".text", ".data", ".bss"]
+  subalign: 4
+  string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+  - name: opn
+    type: code
+    start: 0x0
+    vram: 0x80188000
+    align: 4
+    subalign: 4
+    subsegments:
+      - [0x0, rodata, opn_rodata]
+      - [0x13C, asm, opn]
+      - [0x3378, data, opn_data]
+  - [0x351C]

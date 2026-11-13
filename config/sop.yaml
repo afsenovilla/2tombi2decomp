@@ -1,8 +1,8 @@
 name: SOP.BIN
-sha1: 001d13974a2cdbf68d0c1273c0d40364219ed447
+sha1: 31a0fbd54612836912ff7e991334f063fe0df7f2
 options:
   basename: sop
-  target_path: game/eu/BIN/SOP.BIN
+  target_path: game/usa/BIN/SOP.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,11 +30,11 @@ segments:
   - name: sop
     type: code
     start: 0x0
-    vram: 0x80109D84
+    vram: 0x80108F9C
     align: 4
     subalign: 4
     subsegments:
       - [0x0, rodata, sop_rodata]
       - [0x1C8, asm, sop]
-      - [0x39CC, data, sop_data]
-  - [0x4508]
+      - [0x39C0, data, sop_data]
+  - [0x44FC]

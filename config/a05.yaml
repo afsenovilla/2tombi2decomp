@@ -1,8 +1,8 @@
 name: A05.BIN
-sha1: f3791a699366aeaad288ed7f873b468b4ce4bd05
+sha1: 05ea0e4071a358cff97a5c146b46489e1d61c970
 options:
   basename: a05
-  target_path: game/eu/BIN/A05.BIN
+  target_path: game/usa/BIN/A05.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,11 +30,11 @@ segments:
   - name: a05
     type: code
     start: 0x0
-    vram: 0x80109D84
+    vram: 0x80108F9C
     align: 4
     subalign: 4
     subsegments:
       - [0x0, rodata, a05_rodata]
-      - [0x1370, asm, a05]
-      - [0x321B4, data, a05_data]
-  - [0x38D78]
+      - [0x1390, asm, a05]
+      - [0x322B0, data, a05_data]
+  - [0x392B4]

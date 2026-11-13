@@ -1,8 +1,8 @@
 name: A01.BIN
-sha1: 8e2f91fcf394b6ff2117498ae8f26ebd71bb84f7
+sha1: 5bdd26f4e39009786d682221afb80f87e2bb1a47
 options:
   basename: a01
-  target_path: game/eu/BIN/A01.BIN
+  target_path: game/usa/BIN/A01.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,11 +30,11 @@ segments:
   - name: a01
     type: code
     start: 0x0
-    vram: 0x80109D84
+    vram: 0x80108F9C
     align: 4
     subalign: 4
     subsegments:
       - [0x0, rodata, a01_rodata]
       - [0xFE0, asm, a01]
-      - [0x2B698, data, a01_data]
-  - [0x3152C]
+      - [0x2B724, data, a01_data]
+  - [0x316DC]

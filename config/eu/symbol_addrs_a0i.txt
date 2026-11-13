@@ -1,0 +1,4 @@
+f_DispatchWisdomTowerTombaContacts = 0x8010A4A8; // type:func t2e
+f_UpdateTombaWisdomTowerRockAction = 0x8010AD64; // type:func t2e
+f_UpdateWisdomTowerExitDoorSequence = 0x8010B628; // type:func t2e
+f_UpdateWisdomTowerInteriorEntranceActor = 0x8010D794; // type:func t2e

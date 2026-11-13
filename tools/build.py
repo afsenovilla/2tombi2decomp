@@ -5,7 +5,7 @@ For each config/<prog>.yaml: splat split (asm/<prog>, build/<prog>.ld), assemble
 objcopy to a flat binary and compare its sha1 with the yaml's sha1 (the retail file). A PS-X EXE gets its 0x800-byte
 header from the header segment, so the whole file is compared.
 
-  python3 tools/build.py [prog ...] [--no-split] [-j N]
+  python3 tools/build.py [prog ...] [--no-split] [-j N] [--version eu]
 
 Output under build/ (git-ignored). Exit status 1 if any program does not match.
 """
@@ -47,17 +47,18 @@ def objects(ld):
     return sorted(set(re.findall(r"(build/\S+?\.o)\(", open(os.path.join(ROOT, ld)).read())))
 
 
-def build(prog, split, jobs):
-    y = open(os.path.join(ROOT, "config", prog + ".yaml")).read()
+def build(prog, split, jobs, cfg="config"):
+    y = open(os.path.join(ROOT, cfg, prog + ".yaml")).read()
     sha = re.search(r"^sha1:\s*(\w+)", y, re.M).group(1)
     ld = re.search(r"ld_script_path:\s*(\S+)", y).group(1)
     target = re.search(r"target_path:\s*(\S+)", y).group(1)
     if split:
-        run([sys.executable, "-m", "splat", "split", "config/%s.yaml" % prog])
+        run([sys.executable, "-m", "splat", "split", "%s/%s.yaml" % (cfg, prog)])
+    bdir = re.search(r"build_path:\s*(\S+)", y).group(1)
     objs = objects(ld)
 
     def assemble(o):
-        src = o[len("build/"):-2]
+        src = o[len(bdir) + 1:-2]
         os.makedirs(os.path.dirname(os.path.join(ROOT, o)), exist_ok=True)
         if src.endswith(".s"):
             fix_gte(os.path.join(ROOT, src))
@@ -69,15 +70,15 @@ def build(prog, split, jobs):
 
     with cf.ThreadPoolExecutor(jobs) as ex:
         list(ex.map(assemble, objs))
-    elf = "build/%s.elf" % prog
+    elf = "%s/%s.elf" % (bdir, prog)
     extra = []
     for k in ("undefined_syms_auto_path", "undefined_funcs_auto_path"):
         m = re.search(k + r":\s*(\S+)", y)
         if m and os.path.exists(os.path.join(ROOT, m.group(1))):
             extra += ["-T", m.group(1)]
     run([LD, "-EL", "-o", elf, "-T", ld, "-T", "config/undefined_syms.ld"] + extra + [ "--no-check-sections", "-nostdlib",
-         "-Map", "build/%s.map" % prog])
-    out = "build/%s.bin" % prog
+         "-Map", "%s/%s.map" % (bdir, prog)])
+    out = "%s/%s.bin" % (bdir, prog)
     run([OBJCOPY, "-O", "binary", elf, out])
     data = open(os.path.join(ROOT, out), "rb").read()
     end = int(re.findall(r"^  - \[(0x[0-9A-Fa-f]+)\]\s*$", y, re.M)[-1], 16)
@@ -95,9 +96,11 @@ def main():
     ap.add_argument("progs", nargs="*")
     ap.add_argument("--no-split", action="store_true")
     ap.add_argument("-j", type=int, default=os.cpu_count())
+    ap.add_argument("--version", default="", help="eu: the configs of config/eu (USA, the reference, by default)")
     a = ap.parse_args()
-    progs = a.progs or sorted(os.path.basename(p)[:-5] for p in glob.glob(os.path.join(ROOT, "config", "*.yaml")))
-    bad = [p for p in progs if not build(p, not a.no_split, a.j)]
+    cfg = os.path.join("config", a.version) if a.version else "config"
+    progs = a.progs or sorted(os.path.basename(p)[:-5] for p in glob.glob(os.path.join(ROOT, cfg, "*.yaml")))
+    bad = [p for p in progs if not build(p, not a.no_split, a.j, cfg)]
     sys.exit(1 if bad else 0)
 
 

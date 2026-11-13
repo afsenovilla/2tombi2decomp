@@ -1,0 +1,40 @@
+name: CRD.BIN
+sha1: 0c271bf212ce6d86c707030be1d76dfc0fb9c245
+options:
+  basename: crd
+  target_path: game/eu/BIN/CRD.BIN
+  base_path: ../..
+  platform: psx
+  compiler: PSYQ
+  asm_path: asm/eu/crd
+  src_path: src/crd
+  build_path: build/eu
+  ld_script_path: build/eu/crd.ld
+  symbol_addrs_path:
+    - config/eu/symbol_addrs_crd.txt
+  undefined_funcs_auto_path: build/eu/undefined_funcs_auto.crd.txt
+  undefined_syms_auto_path: build/eu/undefined_syms_auto.crd.txt
+  find_file_boundaries: False
+  disassemble_all: True
+  asm_function_macro: glabel
+  asm_jtbl_label_macro: jlabel
+  asm_data_macro: dlabel
+  generate_asm_macros_files: True
+  asm_inc_header: ".include \"macro.inc\"\n\n.set noat\n.set noreorder\n\n"
+  section_order: [".rodata", ".text", ".data", ".bss"]
+  subalign: 4
+  string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+  - name: crd
+    type: code
+    start: 0x0
+    vram: 0x80188000
+    align: 4
+    subalign: 4
+    subsegments:
+      - [0x0, rodata, crd_rodata]
+      - [0x1E8, asm, crd]
+      - [0x5EE4, data, crd_data]
+  - [0x6204]

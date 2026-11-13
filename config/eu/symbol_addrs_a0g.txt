@@ -1,0 +1,5 @@
+f_DispatchCourageTowerTombaContacts = 0x8010A688; // type:func t2e
+f_UpdateCourageTowerExitDoorSequence = 0x8010B464; // type:func t2e
+f_UpdateCourageTowerLaughingCryingDoorSequence = 0x8010B5D0; // type:func t2e
+f_UpdateCourageTowerInteriorEntranceActor = 0x8010C034; // type:func t2e
+f_PlayCourageTowerStreamedAudioSegment = 0x8010E030; // type:func t2e

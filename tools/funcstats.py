@@ -25,6 +25,20 @@ def mask(w):
     return w
 
 
+def glabels(asm):
+    """Start addresses of every function (glabel, named or not) of a splat .s file."""
+    lines = open(asm).read().split("\n")
+    out = set()
+    for i, l in enumerate(lines):
+        if l.startswith("glabel "):
+            for m in lines[i + 1:i + 6]:
+                mm = re.search(r"/\* \w+ ([0-9A-F]{8}) [0-9A-F]{8} \*/", m)
+                if mm:
+                    out.add(int(mm.group(1), 16))
+                    break
+    return out
+
+
 def programs():
     for y in sorted(glob.glob(os.path.join(ROOT, "config", "*.yaml"))):
         t = open(y).read()
@@ -37,9 +51,7 @@ def programs():
         tstart = int(m.group(1), 16)
         tend = int(m.group(2), 16) if m.group(2) else len(b)
         asm = os.path.join(ROOT, "asm", prog, prog + ".s")
-        addrs = [int(a, 16) for a in re.findall(r"^glabel func_([0-9A-F]{8})", open(asm).read(), re.M)]
-        if not addrs:
-            addrs = [int(a, 16) for a in re.findall(r"^glabel \w+\s*\n\s*/\* \w+ ([0-9A-F]{8})", open(asm).read(), re.M)]
+        addrs = glabels(asm)
         yield prog, b, vram - start, tstart, tend, sorted(addrs)
 
 

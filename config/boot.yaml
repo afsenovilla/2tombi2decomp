@@ -1,8 +1,8 @@
-name: SCES_021.47
-sha1: 8832858904bbccb88ff777e359448eee0f09f485
+name: SCUS_944.54
+sha1: 9f68ffd6e4dfa9f9ff6ba6818760ee4c625be421
 options:
   basename: boot
-  target_path: game/eu/SCES_021.47
+  target_path: game/usa/SCUS_944.54
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -38,6 +38,6 @@ segments:
     subalign: 4
     subsegments:
       - [0x800, rodata, boot_rodata]
-      - [0x1464, asm, boot]
-      - [0xF370, data, boot_data]
-  - [0x28800]
+      - [0x1554, asm, boot]
+      - [0x1035C, data, boot_data]
+  - [0x29000]

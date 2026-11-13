@@ -1,8 +1,8 @@
 name: A0I.BIN
-sha1: c325571609990436f1f436370d480287b7cce24b
+sha1: 501db41b522102fbdb698161997a390a87d0a79d
 options:
   basename: a0i
-  target_path: game/eu/BIN/A0I.BIN
+  target_path: game/usa/BIN/A0I.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,7 +30,7 @@ segments:
   - name: a0i
     type: code
     start: 0x0
-    vram: 0x80109D84
+    vram: 0x80108F9C
     align: 4
     subalign: 4
     subsegments:

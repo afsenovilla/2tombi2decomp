@@ -1,4 +1,4 @@
-f_InitializeLastEvilPigCopiedWeaponProjectile = 0x8010E17C; // type:func t2e
-f_SpawnLastEvilPigCopiedWeaponProjectile = 0x8010EB18; // type:func t2e
-f_UpdateLastEvilPigCopiedWeaponAttack = 0x80112198; // type:func t2e
-f_UpdateLastEvilPigRepeatedChargeAttack = 0x8011291C; // type:func t2e
+f_InitializeLastEvilPigCopiedWeaponProjectile = 0x8010D394; // type:func t2e
+f_SpawnLastEvilPigCopiedWeaponProjectile = 0x8010DD30; // type:func t2e
+f_UpdateLastEvilPigCopiedWeaponAttack = 0x801113B0; // type:func t2e
+f_UpdateLastEvilPigRepeatedChargeAttack = 0x80111B34; // type:func t2e

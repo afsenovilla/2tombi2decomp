@@ -1,8 +1,8 @@
 name: A07.BIN
-sha1: eb313e44663af58704743a567349b17948b425fc
+sha1: 4c5163c1a5c51955b6bf3e17fe9db7a468baa89d
 options:
   basename: a07
-  target_path: game/eu/BIN/A07.BIN
+  target_path: game/usa/BIN/A07.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,11 +30,11 @@ segments:
   - name: a07
     type: code
     start: 0x0
-    vram: 0x80109D84
+    vram: 0x80108F9C
     align: 4
     subalign: 4
     subsegments:
       - [0x0, rodata, a07_rodata]
-      - [0x1694, asm, a07]
-      - [0x284C0, data, a07_data]
-  - [0x37BC0]
+      - [0x16C4, asm, a07]
+      - [0x28604, data, a07_data]
+  - [0x38158]

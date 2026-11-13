@@ -1,8 +1,8 @@
 name: DEMO.BIN
-sha1: dd3528e26446aad3d84d3d8c60b09f0838c36219
+sha1: e3988a70ed218b392a245301e4b20f34343cb7d1
 options:
   basename: demo
-  target_path: game/eu/BIN/DEMO.BIN
+  target_path: game/usa/BIN/DEMO.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,11 +30,11 @@ segments:
   - name: demo
     type: code
     start: 0x0
-    vram: 0x80106D80
+    vram: 0x80106220
     align: 4
     subalign: 4
     subsegments:
       - [0x0, rodata, demo_rodata]
-      - [0x1D4, asm, demo]
-      - [0x2FDC, data, demo_data]
-  - [0x2FFC]
+      - [0xBC, asm, demo]
+      - [0x14DC, data, demo_data]
+  - [0x14FC]

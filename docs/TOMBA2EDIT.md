@@ -19,9 +19,15 @@ addresses, format descriptions) with credit, and copy none of its code or data f
 
 ## Name import (tools/import_names.py)
 
-A USA name is translated with the EU run table and kept only when it lands exactly on a function start of our splat
-split. Result on EU: **899 functions named** (MAIN 451, A00 212, the rest 2..29 per overlay); 6 landed mid-function
-and 2 were outside the runs (dropped). Lines carry `// t2e` in `config/symbol_addrs_*.txt`; hand-made names never
+USA (the reference) takes Tomba2Edit's addresses as they are; `--eu` translates them with the EU run table. A name is
+kept only when it lands exactly on a function start of our splat split. **Tomba2Edit parks names it could not place on
+one shared address** (40 A00 names on 0x801467BC, 13 A04 names on 0x8013F6E4, ...): 133 names sit on addresses shared
+by several names and are all dropped. Result: **USA 886 functions named, EU 885** (MAIN 451, A00 ~210, the rest a few
+per overlay); 3 land mid-function in USA.
+
+Function starts: of Tomba2Edit's 3935 unnamed `FUN_*` addresses, 3817 are function starts of our USA split; 118 are
+not (MAIN 18, A05 18, A08 18, A04 11, ...): either Ghidra splits where splat does not, or Ghidra is wrong. Splat finds
+more functions overall (7037 against ~4800 known to Tomba2Edit). Checking those 118 is open. Lines carry `// t2e` in `config/symbol_addrs_*.txt`; hand-made names never
 do and are never overwritten. The 29 programs still rebuild byte-identical with the names.
 Names in Tomba2Edit's style (`f_UpdateCircusSeesawLaunchedActor`) are kept as given; Psy-Q functions have their SDK names.
 

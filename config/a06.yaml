@@ -1,8 +1,8 @@
 name: A06.BIN
-sha1: 86e406a761f88a3170c6f5f8e9f58cf6fa715708
+sha1: 27332ed9f09df70cfcbed5bd3046b44035bb328b
 options:
   basename: a06
-  target_path: game/eu/BIN/A06.BIN
+  target_path: game/usa/BIN/A06.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,11 +30,11 @@ segments:
   - name: a06
     type: code
     start: 0x0
-    vram: 0x80109D84
+    vram: 0x80108F9C
     align: 4
     subalign: 4
     subsegments:
       - [0x0, rodata, a06_rodata]
-      - [0x1574, asm, a06]
-      - [0x38C84, data, a06_data]
-  - [0x452A0]
+      - [0x157C, asm, a06]
+      - [0x38DFC, data, a06_data]
+  - [0x456BC]

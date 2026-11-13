@@ -1,8 +1,8 @@
 name: OPN.BIN
-sha1: 0d6c0a34e6bd5533e2c1be8155460f5ff6ce16fd
+sha1: 0462c26910a5285eb231cf0d95499f034ae136f4
 options:
   basename: opn
-  target_path: game/eu/BIN/OPN.BIN
+  target_path: game/usa/BIN/OPN.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,7 +30,7 @@ segments:
   - name: opn
     type: code
     start: 0x0
-    vram: 0x80188000
+    vram: 0x8018A000
     align: 4
     subalign: 4
     subsegments:

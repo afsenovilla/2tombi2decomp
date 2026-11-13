@@ -1,8 +1,8 @@
 name: CRD.BIN
-sha1: 0c271bf212ce6d86c707030be1d76dfc0fb9c245
+sha1: 1cfb06cdda46ea7d48fc81790dc437543e62b032
 options:
   basename: crd
-  target_path: game/eu/BIN/CRD.BIN
+  target_path: game/usa/BIN/CRD.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,11 +30,11 @@ segments:
   - name: crd
     type: code
     start: 0x0
-    vram: 0x80188000
+    vram: 0x8018A000
     align: 4
     subalign: 4
     subsegments:
       - [0x0, rodata, crd_rodata]
       - [0x1E8, asm, crd]
-      - [0x5EE4, data, crd_data]
-  - [0x6204]
+      - [0x5EC4, data, crd_data]
+  - [0x61E4]

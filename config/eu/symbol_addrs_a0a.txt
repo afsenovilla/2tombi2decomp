@@ -1,0 +1,15 @@
+f_SelectNextEvilPigAttack = 0x8010CE7C; // type:func t2e
+f_SelectEvilPigArenaTarget = 0x8010CF8C; // type:func t2e
+f_UpdateEvilPigRelocationAttack = 0x8010D638; // type:func t2e
+f_UpdateEvilPigRushAttack = 0x8010DCCC; // type:func t2e
+f_UpdateEvilPigHitAndCaptureState = 0x8010E674; // type:func t2e
+f_UpdateEvilPigCenterEffectAttack = 0x8010F884; // type:func t2e
+f_UpdateEvilPigBattleActor = 0x80110020; // type:func t2e
+f_UpdateEvilPigBattleIntroduction = 0x801104FC; // type:func t2e
+f_CopyEvilPigCaptureDeformationVertices = 0x80117070; // type:func t2e
+f_UpdateEvilPigCaptureDeformation = 0x80117154; // type:func t2e
+f_UpdateEvilPigRobeRewardActor = 0x80117780; // type:func t2e
+f_MoveEvilPigCaptureActorTowardBoss = 0x80117B40; // type:func t2e
+f_UpdateEvilPigCaptureApproachSequence = 0x80117DB0; // type:func t2e
+f_UpdateEvilPigDefeatAndRewardSequence = 0x80118174; // type:func t2e
+f_UpdateEvilPigBagOfferingSequence = 0x80119BF0; // type:func t2e

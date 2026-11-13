@@ -1,8 +1,8 @@
 name: A09.BIN
-sha1: 5830c98b0a1598e3f12b670a02c790c086c448b0
+sha1: 1ba8966b0b36c38b386ad3050f3b672ba43408a7
 options:
   basename: a09
-  target_path: game/eu/BIN/A09.BIN
+  target_path: game/usa/BIN/A09.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,7 +30,7 @@ segments:
   - name: a09
     type: code
     start: 0x0
-    vram: 0x80109D84
+    vram: 0x80108F9C
     align: 4
     subalign: 4
     subsegments:

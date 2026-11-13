@@ -1,8 +1,8 @@
 name: A0J.BIN
-sha1: 5460ac1266e713e553e1b8a543374ad4107aa364
+sha1: 9a7152203c47f1120007784f9277f7bbad8a90e6
 options:
   basename: a0j
-  target_path: game/eu/BIN/A0J.BIN
+  target_path: game/usa/BIN/A0J.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,11 +30,11 @@ segments:
   - name: a0j
     type: code
     start: 0x0
-    vram: 0x80109D84
+    vram: 0x80108F9C
     align: 4
     subalign: 4
     subsegments:
       - [0x0, rodata, a0j_rodata]
       - [0x128, asm, a0j]
-      - [0x42B4, data, a0j_data]
-  - [0x49F4]
+      - [0x42EC, data, a0j_data]
+  - [0x4A7C]

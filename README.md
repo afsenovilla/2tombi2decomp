@@ -8,9 +8,9 @@ This repository contains **no game data**. You need your own copy of the game; t
 
 | Release | Serial | Status |
 |---|---|---|
-| Europe (reference) | SCES-02147 | all 29 programs rebuild byte-identical from disassembly; C decompilation not started |
-| Spain, *Contra los cerdiablos* | SCES-02687 | separate build, ~98 % of the EU functions found (masked) |
-| USA, *The Evil Swine Return* | SCUS-94454 | separate build, ~96 % of the EU functions found (masked) |
+| USA, *The Evil Swine Return* (reference) | SCUS-94454 | all 29 programs rebuild byte-identical from disassembly; first C functions matched |
+| Europe | SCES-02147 | all 29 programs rebuild byte-identical (`--version eu`); ~96 % of the USA functions found (masked) |
+| Spain, *Contra los cerdiablos* | SCES-02687 | separate build, ~96 % of the USA functions found (masked) |
 
 ## Building
 
@@ -19,8 +19,8 @@ bash tools/session_bootstrap.sh
 ```
 
 or by hand: install `binutils-mipsel-linux-gnu`, `pip install -r tools/requirements.txt` and
-`pip install --no-deps splat64==0.35.2`, put the disc's files in `game/eu/` (`bash tools/disc_fetch.sh EU` with
-`GAME_FILES_URL_T2_EU` set to a link to your copy), then
+`pip install --no-deps splat64==0.35.2`, put the disc's files in `game/usa/` (`bash tools/disc_fetch.sh USA` with
+`GAME_FILES_URL_T2_USA` set to a link to your copy), then
 
 ```bash
 python3 tools/build.py

@@ -1,0 +1,40 @@
+name: A02.BIN
+sha1: f32c517d02aa72976a0fd3ca28cbc7f2314cb62c
+options:
+  basename: a02
+  target_path: game/eu/BIN/A02.BIN
+  base_path: ../..
+  platform: psx
+  compiler: PSYQ
+  asm_path: asm/eu/a02
+  src_path: src/a02
+  build_path: build/eu
+  ld_script_path: build/eu/a02.ld
+  symbol_addrs_path:
+    - config/eu/symbol_addrs_a02.txt
+  undefined_funcs_auto_path: build/eu/undefined_funcs_auto.a02.txt
+  undefined_syms_auto_path: build/eu/undefined_syms_auto.a02.txt
+  find_file_boundaries: False
+  disassemble_all: True
+  asm_function_macro: glabel
+  asm_jtbl_label_macro: jlabel
+  asm_data_macro: dlabel
+  generate_asm_macros_files: True
+  asm_inc_header: ".include \"macro.inc\"\n\n.set noat\n.set noreorder\n\n"
+  section_order: [".rodata", ".text", ".data", ".bss"]
+  subalign: 4
+  string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+  - name: a02
+    type: code
+    start: 0x0
+    vram: 0x80109D84
+    align: 4
+    subalign: 4
+    subsegments:
+      - [0x0, rodata, a02_rodata]
+      - [0x1558, asm, a02]
+      - [0x1F2B8, data, a02_data]
+  - [0x30BAC]

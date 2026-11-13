@@ -1,4 +1,4 @@
-f_UpdateWaterEvilPigProjectileAttack = 0x8010FD88; // type:func t2e
-f_UpdateWaterEvilPigSpinningLeapAttack = 0x8010FFD4; // type:func t2e
-f_UpdateWaterProjectileTerrainContact = 0x801182A8; // type:func t2e
-f_SpawnWaterEvilPigSprayActor = 0x80118CF4; // type:func t2e
+f_UpdateWaterEvilPigProjectileAttack = 0x8010EFA0; // type:func t2e
+f_UpdateWaterEvilPigSpinningLeapAttack = 0x8010F1EC; // type:func t2e
+f_UpdateWaterProjectileTerrainContact = 0x801174E0; // type:func t2e
+f_SpawnWaterEvilPigSprayActor = 0x80117F2C; // type:func t2e

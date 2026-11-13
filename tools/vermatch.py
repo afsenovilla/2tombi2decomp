@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""How much of the EU (reference) code is in the ES and USA builds: every EU function (asm/<prog>, config/*.yaml) as a
-masked word sequence (tools/funcstats.mask) searched in the same program of game/es and game/usa. Prints counts.
+"""How much of the USA (reference) code is in the EU and ES builds: every USA function (asm/<prog>, config/*.yaml) as a
+masked word sequence (tools/funcstats.mask) searched in the same program of game/eu and game/es. Prints counts.
 
   python3 -I tools/vermatch.py
 """
@@ -10,7 +10,7 @@ from funcstats import mask, programs
 eu={p:(b,d,ts,te,ad) for p,b,d,ts,te,ad in programs()}
 def W(b): n=len(b)//4; return struct.unpack('<%dI'%n,b[:n*4])
 names={'main':'MAIN.EXE','boot':None}
-for ver in ('es','usa'):
+for ver in ('eu','es'):
     fs=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'game',ver)
     tot=collections.Counter()
     out=[]
@@ -31,5 +31,5 @@ for ver in ('es','usa'):
             c['n']+=1; c['B']+=e-s
             if hit is not None: c['m']+=1; c['mB']+=e-s; c['id']+=ident
         out.append('%s %d/%d (%d identical)'%(p,c['m'],c['n'],c['id'])); tot.update(c)
-    print(ver,'matched EU functions %d/%d, bytes %d/%d, byte-identical %d'%(tot['m'],tot['n'],tot['mB'],tot['B'],tot['id']))
+    print(ver,'matched USA functions %d/%d, bytes %d/%d, byte-identical %d'%(tot['m'],tot['n'],tot['mB'],tot['B'],tot['id']))
     print('  ',', '.join(o for o in out))

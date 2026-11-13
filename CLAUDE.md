@@ -13,7 +13,8 @@ start a new session.
 
 A matching decompilation of Tombi! 2 / Tomba! 2: The Evil Swine Return (PS1, 1999), and later a native port, built the
 same way as the first game's project, `afsenovilla/Tombi-Decomp` (the reference: clone it read-only next to this repo
-when its tools or notes are needed; copy and adapt, do not reinvent). Reference version: **EU SCES-02147**.
+when its tools or notes are needed; copy and adapt, do not reinvent). Reference version: **USA SCUS-94454** (since 2026-11-13: Tomba2Edit and the Tomba Club research are on USA
+addresses; EU SCES-02147 is kept as a second version in `config/eu/`).
 Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md.
 
 ## How to talk to the user
@@ -38,17 +39,17 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md.
 - The user does not review PRs: verified work (the matching build still OK) goes straight to master. Open a PR only
   when asked.
 - Disk in the cloud container is small: delete builds/dumps when done (`rm -rf build asm` is always safe: the build
-  regenerates them); agents in worktrees must clean up. Only the EU disc image is kept (`game/eu.img`).
+  regenerates them); agents in worktrees must clean up. Only the USA disc image is kept (`game/usa.img`).
 
 ## Build cheatsheet
 
 - `python3 tools/build.py [prog ...] [--no-split]`: splat + assemble + link of each `config/<prog>.yaml`, sha1 compared
-  with the retail file. Programs: `boot` (SCES_021.47), `main` (MAIN.EXE), the overlays `a00`..`a0l`, `crd`, `demo`,
+  with the retail file (USA; `--version eu` for config/eu). Programs: `boot` (SCUS_944.54), `main` (MAIN.EXE), the overlays `a00`..`a0l`, `crd`, `demo`,
   `game`, `opn`, `sop` (BIN/*.BIN).
 - `python3 -I tools/funcstats.py --csv build/funcs.csv`: function census (Psy-Q 4.4 library by signature, code shared
   between programs, game code left).
 - `python3 -I tools/ccheck.py src/main/<file>.c`: compile with the game's compiler (gcc 2.8.1 + ASPSX 2.79,
   docs/COMPILER.md) and compare every function in the file with the retail bytes.
-- `python3 -I tools/import_names.py /opt/tomba2edit --write`: names from Tomba2Edit (docs/TOMBA2EDIT.md).
-- `python3 -I tools/vermatch.py`: how much EU code is found in the ES / USA builds.
-- `python3 -I tools/gen_configs.py game/eu [--force]`: regenerates the first configs (keeps hand-made ones without --force).
+- `python3 -I tools/import_names.py /opt/tomba2edit --write [--eu]`: names from Tomba2Edit (docs/TOMBA2EDIT.md).
+- `python3 -I tools/vermatch.py`: how much USA code is found in the EU / ES builds.
+- `python3 -I tools/gen_configs.py game/usa [--force] [--out config/eu]`: regenerates the first configs (keeps hand-made ones without --force).

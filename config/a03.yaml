@@ -1,8 +1,8 @@
 name: A03.BIN
-sha1: a99be2c3b4c9d25bab1eef7b1fc3f41c1530f7c8
+sha1: 8bd4bcc23f1c41b778e1c5733269d9e45701c86a
 options:
   basename: a03
-  target_path: game/eu/BIN/A03.BIN
+  target_path: game/usa/BIN/A03.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,11 +30,11 @@ segments:
   - name: a03
     type: code
     start: 0x0
-    vram: 0x80109D84
+    vram: 0x80108F9C
     align: 4
     subalign: 4
     subsegments:
       - [0x0, rodata, a03_rodata]
       - [0x88, asm, a03]
-      - [0x89BC, data, a03_data]
-  - [0x13268]
+      - [0x89C0, data, a03_data]
+  - [0x1326C]

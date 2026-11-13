@@ -1,3 +1,3 @@
-f_DispatchStrengthTowerTombaContacts = 0x8010A684; // type:func t2e
-f_UpdateStrengthTowerExitDoorSequence = 0x8010B1DC; // type:func t2e
-f_UpdateStrengthTowerInteriorEntranceActor = 0x8010D310; // type:func t2e
+f_DispatchStrengthTowerTombaContacts = 0x8010989C; // type:func t2e
+f_UpdateStrengthTowerExitDoorSequence = 0x8010A3F4; // type:func t2e
+f_UpdateStrengthTowerInteriorEntranceActor = 0x8010C528; // type:func t2e

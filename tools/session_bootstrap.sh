@@ -2,7 +2,7 @@
 # Prepares a fresh cloud session (or any Linux box) for the Tombi! 2 decomp, from a clean clone:
 #   1. system packages and Python modules (splat, spimdisasm, ...)
 #   2. the PS1 toolchain (tools/setup_native.sh: old-gcc 2.7.2, maspsx, Psy-Q headers -> include/psyq, ignored)
-#   3. the discs: EU (reference) always, ES and USA when their variables are set (tools/disc_fetch.sh)
+#   3. the discs: USA (reference) always, EU and ES when their variables are set (tools/disc_fetch.sh)
 #   4. the Psy-Q 4.4 object signatures (lab313ru/psx_psyq_signatures, outside the repo) for tools/funcstats.py
 #   5. the matching build of every program (tools/build.py) as the smoke test
 # Every step is skipped when its result is already there.   tools/session_bootstrap.sh [--no-build]
@@ -27,9 +27,9 @@ log "2/5 PS1 toolchain"
 [ -x /opt/oldgcc/gcc-2.7.2-psx/cc1 ] && [ -d include/psyq ] && [ -d /opt/maspsx ] || bash tools/setup_native.sh
 
 log "3/5 discs"
-bash tools/disc_fetch.sh EU
-for N in ES USA; do V="GAME_FILES_URL_T2_$N"; [ -n "${!V:-}" ] && bash tools/disc_fetch.sh "$N" || echo "$V not set: skipped"; done
-echo "6bcee82bde552b9c044330bcc8e1889e2b80b107  game/eu/MAIN.EXE" | sha1sum -c --quiet - || { echo "game/eu/MAIN.EXE is not the SCES-02147 one"; exit 1; }
+bash tools/disc_fetch.sh USA
+for N in EU ES; do V="GAME_FILES_URL_T2_$N"; [ -n "${!V:-}" ] && bash tools/disc_fetch.sh "$N" || echo "$V not set: skipped"; done
+echo "f41c4065788e8c838cbd8b22f0fff6d4bc7de49a  game/usa/MAIN.EXE" | sha1sum -c --quiet - || { echo "game/usa/MAIN.EXE is not the SCUS-94454 one"; exit 1; }
 
 log "4/5 Psy-Q signatures"
 [ -d /opt/psyq_sigs/440 ] || git clone -q --depth 1 https://github.com/lab313ru/psx_psyq_signatures /opt/psyq_sigs
@@ -39,3 +39,4 @@ log "4/5 Psy-Q signatures"
 [ "$BUILD" = 1 ] || { log "done (--no-build)"; exit 0; }
 log "5/5 matching build"
 python3 tools/build.py
+[ -s game/eu/MAIN.EXE ] && python3 tools/build.py --version eu

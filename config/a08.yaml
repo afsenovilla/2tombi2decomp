@@ -1,8 +1,8 @@
 name: A08.BIN
-sha1: e87100d69d594a0e25f02c3a0db88852ce850a84
+sha1: abddb36655ecc72406a2b497c212596c6db4d67c
 options:
   basename: a08
-  target_path: game/eu/BIN/A08.BIN
+  target_path: game/usa/BIN/A08.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,11 +30,11 @@ segments:
   - name: a08
     type: code
     start: 0x0
-    vram: 0x80109D84
+    vram: 0x80108F9C
     align: 4
     subalign: 4
     subsegments:
       - [0x0, rodata, a08_rodata]
-      - [0x158C, asm, a08]
-      - [0x38460, data, a08_data]
-  - [0x40BF4]
+      - [0x1580, asm, a08]
+      - [0x38498, data, a08_data]
+  - [0x40F8C]

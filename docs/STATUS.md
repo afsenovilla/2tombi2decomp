@@ -2,16 +2,25 @@
 
 Update this file whenever something lands or a task is decided. Newest first.
 
+## 2026-11-13 (3): reference switched to USA SCUS-94454
+
+User's decision, because Tomba2Edit / Tomba Club work on USA addresses. `config/*.yaml` = USA (29 / 29 OK),
+`config/eu/` = EU (29 / 29 OK, `tools/build.py --version eu`, asm in `asm/eu/`). Load addresses are found per version
+by `tools/gen_configs.py`. Names: USA 886, EU 885; fixed a bug of the first import (names parked by Tomba2Edit on one
+shared address had been taken: now dropped). Probe C still matches on USA. USA: 7037 functions, 5161 game functions,
+2.31 MB (docs/PLAN.md). `tools/disc_fetch.sh` now keeps the USA image (`game/usa.img`) on a fresh download; no tool needs it yet.
+Open: the 118 Tomba2Edit `FUN_*` starts that are not starts in our split (docs/TOMBA2EDIT.md).
+
 ## 2026-11-13 (2): Tomba2Edit names, compiler found
 
-- Tomba2Edit reviewed (docs/TOMBA2EDIT.md): **899 EU functions named** from its USA symbols and USA->EU maps
+- Tomba2Edit reviewed (docs/TOMBA2EDIT.md): **899 EU functions named** (later corrected: see above) from its USA symbols and USA->EU maps
   (`tools/import_names.py`, `// t2e` lines); overlay load addresses confirmed; container formats documented.
 - **Compiler: Psy-Q 4.4 = gcc 2.8.1 + ASPSX 2.79** (docs/COMPILER.md). First two functions matched in C
   (`src/main/ccprobe.c`, checked with `tools/ccheck.py`: compile + word compare, relocated fields masked; it does
   not yet check that the retail function has the same length).
 
 Next:
-1. C in the linked build: switch `config/main.yaml` to a `c` subsegment layout (per-file `INCLUDE_ASM`, splat
+1. C in the linked build (now on USA): switch `config/main.yaml` to a `c` subsegment layout (per-file `INCLUDE_ASM`, splat
    `asm/nonmatchings`), compile with the 2.8.1 pipeline in `tools/build.py`, keep 29/29 OK.
 2. Headers: game-state struct at `D_800BFFC0`, actor struct (from Tomba2Edit's names: `f_SetActorAnimation` writes
    +0x46, +0x79, reads +0x7C), Psy-Q 4.4 headers.
@@ -32,7 +41,7 @@ Done:
   2.31 MB**. Plan: docs/PLAN.md.
 
 Decisions (confirmed by the user 2026-11-13):
-- Reference version EU SCES-02147.
+- Reference version EU SCES-02147 (changed to USA, see above).
 - No decomp.dev report / report CI: progress is measured locally (tools/funcstats.py, later a local progress script).
 - Layout (left to Claude): `game/<eu|es|usa>/` = the disc's files (only `game/eu.img` kept), `config/<prog>.yaml` per program,
   `asm/`, `build/` generated. Per-version configs will go to `config/<version>/` as in T1.

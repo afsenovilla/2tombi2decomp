@@ -4,7 +4,7 @@ Survey of the three retail discs (2026-11-13). Measured with `tools/disc_unpack.
 `tools/gen_configs.py` + `tools/build.py` (code boundaries, proven by byte-identical rebuilds), `tools/funcstats.py`
 (library) and `tools/vermatch.py` (version comparison). No game data is in the repo.
 
-| | EU (reference) | Spain | USA |
+| | EU | Spain | USA (reference) |
 |---|---|---|---|
 | Title | Tombi! 2 | Tombi! 2 - Contra los cerdiablos | Tomba! 2 - The Evil Swine Return |
 | Serial / boot file | SCES-02147, `SCES_021.47` | SCES-02687, `SCES_026.87` | **SCUS-94454**, `SCUS_944.54` |
@@ -44,47 +44,51 @@ The container formats are described by Tomba2Edit (docs/TOMBA2EDIT.md "Container
 IMG = per-area VRAM shards with a small LZ77. (The rows above describing IDX as flat (start, end) pairs were a first
 guess; the trail tables are what looked like that.)
 
-## Executables and overlays (EU)
+## Executables and overlays (USA, the reference)
 
-Every program rebuilds byte-identical from the splat disassembly (`python3 tools/build.py`: 29 / 29 OK). Text =
-the `asm` subsegment of `config/<prog>.yaml` (what is before it is a pointer table / rodata, after it data).
+Every program rebuilds byte-identical from the splat disassembly (`python3 tools/build.py`: 29 / 29 OK; EU
+`--version eu`: 29 / 29 OK). Text = the `asm` subsegment of `config/<prog>.yaml` (what is before it is a pointer table /
+rodata, after it data).
+
+Load addresses per version (from the overlays' `jal` targets landing on prologues; EU and USA confirmed by Tomba2Edit's
+build tables): USA areas + SOP 0x80108F9C, GAME/DEMO 0x80106220, OPN/CRD 0x8018A000; EU 0x80109D84, 0x80106D80,
+0x80188000.
 
 | Program | File | Load | Size | Text | Text size |
 |---|---|---|---|---|---|
-| `a00` | `BIN/A00.BIN` | 0x80109D84 | 0x45860 | 0x8010B114..0x80147754 | 0x3C640 |
-| `a01` | `BIN/A01.BIN` | 0x80109D84 | 0x3152C | 0x8010AD64..0x8013541C | 0x2A6B8 |
-| `a02` | `BIN/A02.BIN` | 0x80109D84 | 0x30BAC | 0x8010B2DC..0x8012903C | 0x1DD60 |
-| `a03` | `BIN/A03.BIN` | 0x80109D84 | 0x13268 | 0x80109E0C..0x80112740 | 0x8934 |
-| `a04` | `BIN/A04.BIN` | 0x80109D84 | 0x3D1B0 | 0x8010B2EC..0x801407F0 | 0x35504 |
-| `a05` | `BIN/A05.BIN` | 0x80109D84 | 0x38D78 | 0x8010B0F4..0x8013BF38 | 0x30E44 |
-| `a06` | `BIN/A06.BIN` | 0x80109D84 | 0x452A0 | 0x8010B2F8..0x80142A08 | 0x37710 |
-| `a07` | `BIN/A07.BIN` | 0x80109D84 | 0x37BC0 | 0x8010B418..0x80132244 | 0x26E2C |
-| `a08` | `BIN/A08.BIN` | 0x80109D84 | 0x40BF4 | 0x8010B310..0x801421E4 | 0x36ED4 |
-| `a09` | `BIN/A09.BIN` | 0x80109D84 | 0x566D | 0x80109E60..0x8010EDEC | 0x4F8C |
-| `a0a` | `BIN/A0A.BIN` | 0x80109D84 | 0x1EDE0 | 0x8010A0FC..0x80119C24 | 0xFB28 |
-| `a0b` | `BIN/A0B.BIN` | 0x80109D84 | 0x1C30C | 0x8010A0A4..0x80119038 | 0xEF94 |
-| `a0c` | `BIN/A0C.BIN` | 0x80109D84 | 0x1E168 | 0x8010A0BC..0x801199F4 | 0xF938 |
-| `a0d` | `BIN/A0D.BIN` | 0x80109D84 | 0x1D2CC | 0x8010A0EC..0x8011829C | 0xE1B0 |
-| `a0e` | `BIN/A0E.BIN` | 0x80109D84 | 0x1E698 | 0x8010A0F0..0x80118DFC | 0xED0C |
-| `a0f` | `BIN/A0F.BIN` | 0x80109D84 | 0x210E4 | 0x8010A108..0x8011B784 | 0x1167C |
-| `a0g` | `BIN/A0G.BIN` | 0x80109D84 | 0x463C | 0x80109F68..0x8010E094 | 0x412C |
-| `a0h` | `BIN/A0H.BIN` | 0x80109D84 | 0x36C0 | 0x80109EC4..0x8010D374 | 0x34B0 |
-| `a0i` | `BIN/A0I.BIN` | 0x80109D84 | 0x3B30 | 0x80109ED8..0x8010D7F8 | 0x3920 |
-| `a0j` | `BIN/A0J.BIN` | 0x80109D84 | 0x49F4 | 0x80109EAC..0x8010E038 | 0x418C |
-| `a0k` | `BIN/A0K.BIN` | 0x80109D84 | 0x16B40 | 0x8010A39C..0x8011941C | 0xF080 |
-| `a0l` | `BIN/A0L.BIN` | 0x80109D84 | 0x12548 | 0x80109FF0..0x8011409C | 0xA0AC |
-| `boot` | `SCES_021.47` | 0x80010000 | 0x28800 | 0x80010C64..0x8001EB70 | 0xDF0C |
-| `crd` | `BIN/CRD.BIN` | 0x80188000 | 0x6204 | 0x801881E8..0x8018DEE4 | 0x5CFC |
-| `demo` | `BIN/DEMO.BIN` | 0x80106D80 | 0x2FFC | 0x80106F54..0x80109D5C | 0x2E08 |
-| `game` | `BIN/GAME.BIN` | 0x80106D80 | 0x2E88 | 0x80106EDC..0x80109BCC | 0x2CF0 |
-| `main` | `MAIN.EXE` | 0x80010000 | 0xAF800 | 0x8001CB3C..0x8009D7CC | 0x80C90 |
-| `opn` | `BIN/OPN.BIN` | 0x80188000 | 0x351C | 0x8018813C..0x8018B378 | 0x323C |
-| `sop` | `BIN/SOP.BIN` | 0x80109D84 | 0x4508 | 0x80109F4C..0x8010D750 | 0x3804 |
+| `a00` | `BIN/A00.BIN` | 0x80108F9C | 0x459A8 | 0x8010A33C..0x801469BC | 0x3C680 |
+| `a01` | `BIN/A01.BIN` | 0x80108F9C | 0x316DC | 0x80109F7C..0x801346C0 | 0x2A744 |
+| `a02` | `BIN/A02.BIN` | 0x80108F9C | 0x3112C | 0x8010A528..0x801283C4 | 0x1DE9C |
+| `a03` | `BIN/A03.BIN` | 0x80108F9C | 0x1326C | 0x80109024..0x8011195C | 0x8938 |
+| `a04` | `BIN/A04.BIN` | 0x80108F9C | 0x3D3A4 | 0x8010A514..0x8013FA74 | 0x35560 |
+| `a05` | `BIN/A05.BIN` | 0x80108F9C | 0x392B4 | 0x8010A32C..0x8013B24C | 0x30F20 |
+| `a06` | `BIN/A06.BIN` | 0x80108F9C | 0x456BC | 0x8010A518..0x80141D98 | 0x37880 |
+| `a07` | `BIN/A07.BIN` | 0x80108F9C | 0x38158 | 0x8010A660..0x801315A0 | 0x26F40 |
+| `a08` | `BIN/A08.BIN` | 0x80108F9C | 0x40F8C | 0x8010A51C..0x80141434 | 0x36F18 |
+| `a09` | `BIN/A09.BIN` | 0x80108F9C | 0x566D | 0x80109078..0x8010E004 | 0x4F8C |
+| `a0a` | `BIN/A0A.BIN` | 0x80108F9C | 0x1EE38 | 0x80109314..0x80118E5C | 0xFB48 |
+| `a0b` | `BIN/A0B.BIN` | 0x80108F9C | 0x1C368 | 0x801092BC..0x80118274 | 0xEFB8 |
+| `a0c` | `BIN/A0C.BIN` | 0x80108F9C | 0x1E1C0 | 0x801092D4..0x80118C2C | 0xF958 |
+| `a0d` | `BIN/A0D.BIN` | 0x80108F9C | 0x1D328 | 0x80109304..0x801174D8 | 0xE1D4 |
+| `a0e` | `BIN/A0E.BIN` | 0x80108F9C | 0x1E6F0 | 0x80109308..0x80118034 | 0xED2C |
+| `a0f` | `BIN/A0F.BIN` | 0x80108F9C | 0x2114C | 0x80109320..0x8011A9CC | 0x116AC |
+| `a0g` | `BIN/A0G.BIN` | 0x80108F9C | 0x463C | 0x80109180..0x8010D2AC | 0x412C |
+| `a0h` | `BIN/A0H.BIN` | 0x80108F9C | 0x36C0 | 0x801090DC..0x8010C58C | 0x34B0 |
+| `a0i` | `BIN/A0I.BIN` | 0x80108F9C | 0x3B30 | 0x801090F0..0x8010CA10 | 0x3920 |
+| `a0j` | `BIN/A0J.BIN` | 0x80108F9C | 0x4A7C | 0x801090C4..0x8010D288 | 0x41C4 |
+| `a0k` | `BIN/A0K.BIN` | 0x80108F9C | 0x16CC4 | 0x801095C8..0x801186C0 | 0xF0F8 |
+| `a0l` | `BIN/A0L.BIN` | 0x80108F9C | 0x12450 | 0x80109208..0x801131BC | 0x9FB4 |
+| `boot` | `SCUS_944.54` | 0x80010000 | 0x29000 | 0x80010D54..0x8001FB5C | 0xEE08 |
+| `crd` | `BIN/CRD.BIN` | 0x8018A000 | 0x61E4 | 0x8018A1E8..0x8018FEC4 | 0x5CDC |
+| `demo` | `BIN/DEMO.BIN` | 0x80106220 | 0x14FC | 0x801062DC..0x801076FC | 0x1420 |
+| `game` | `BIN/GAME.BIN` | 0x80106220 | 0x2D74 | 0x80106374..0x80108F58 | 0x2BE4 |
+| `main` | `MAIN.EXE` | 0x80010000 | 0xAF000 | 0x8001CAC0..0x8009D090 | 0x805D0 |
+| `opn` | `BIN/OPN.BIN` | 0x8018A000 | 0x351C | 0x8018A13C..0x8018D378 | 0x323C |
+| `sop` | `BIN/SOP.BIN` | 0x80108F9C | 0x44FC | 0x80109164..0x8010C95C | 0x37F8 |
 
-Overlay format: word 0 is an ID (A00 = 0x0A, ..., A0L = 0x1F, START 6, DEMO 7, GAME 8, SOP 0x20, OPN 0x22, CRD 0x23),
-followed by a table of pointers into the overlay (handlers, jump tables). Area overlays all load at 0x80109D84
-(found from `jal` targets landing on function prologues: 521 hits for A00 at that base, the next best 228; not yet
-confirmed from the loader code in MAIN.EXE).
+Overlay format (both versions): word 0 is an ID (A00 = 0x0A, ..., A0L = 0x1F, START 6, DEMO 7, GAME 8, SOP 0x20, OPN 0x22, CRD 0x23),
+followed by a table of pointers into the overlay (handlers, jump tables). All area overlays of a version load at the same
+address (above).
 
 A04 and A05 each contain one GTE `avsz4` encoded with different flag bits (`0x4B58002E`, standard `0x4B68002E`); `tools/build.py` emits
 GTE ops as `.word` so the assembler macro cannot change the flag bits.
@@ -115,15 +119,16 @@ whole objects, wildcarded relocations) matched against MAIN.EXE:
 The compiler version (gcc 2.7.2 vs 2.8.1 based CC1PSX, ASPSX version) is not determined yet: the first C files will
 tell.
 
-## EU vs ES vs USA
+## USA vs EU vs ES
 
-ES and USA are **separate builds** (relinked, different addresses everywhere), not data patches:
+EU and ES are **separate builds** (relinked, different addresses everywhere), not data patches. USA functions found
+in the same program of the other disc (`tools/vermatch.py`, masked: call targets, `lui`, non-`$sp` offsets ignored):
 
-| | EU functions found (masked: call targets, `lui`, non-`$sp` offsets ignored) | of those byte-identical |
-|---|---|---|
-| ES | 6933 / 7051 (2.816 / 2.831 MB) | 335 |
-| USA | 6764 / 7051 (2.694 / 2.831 MB) | 289 |
+| | USA functions found | bytes | byte-identical |
+|---|---|---|---|
+| EU | 6766 / 7037 | 2.694 / 2.828 MB | 289 |
+| ES | 6750 / 7037 | 2.684 / 2.828 MB | 289 |
 
-So the C written for EU should carry over to ES almost entirely and to USA mostly (as in T1, where JP/USA reached 100 %
-from the PAL C). `DEMO.BIN` and `GAME.BIN` differ most (25 / 47 and 33 / 57 found in ES; USA `DEMO.BIN` is less than
-half the size).
+(Earlier, with EU as the base: ES had 6933 / 7051 of the EU functions, i.e. EU and ES are closer to each other than to
+USA.) The C written for USA should carry over to EU / ES mostly, as in T1 where JP/USA reached 100 % from the PAL C.
+`DEMO.BIN` differs most (the USA one is less than half the size).

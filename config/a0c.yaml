@@ -1,8 +1,8 @@
 name: A0C.BIN
-sha1: b0f1d01dcfca74b8e9c9ac9b72dcfb0a109f8319
+sha1: c00f2b9fe2cf34a75086a65e1e29f7597900b0c6
 options:
   basename: a0c
-  target_path: game/eu/BIN/A0C.BIN
+  target_path: game/usa/BIN/A0C.BIN
   base_path: ..
   platform: psx
   compiler: PSYQ
@@ -30,11 +30,11 @@ segments:
   - name: a0c
     type: code
     start: 0x0
-    vram: 0x80109D84
+    vram: 0x80108F9C
     align: 4
     subalign: 4
     subsegments:
       - [0x0, rodata, a0c_rodata]
       - [0x338, asm, a0c]
-      - [0xFC70, data, a0c_data]
-  - [0x1E168]
+      - [0xFC90, data, a0c_data]
+  - [0x1E1C0]

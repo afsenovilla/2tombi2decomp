@@ -1,0 +1,40 @@
+name: A08.BIN
+sha1: e87100d69d594a0e25f02c3a0db88852ce850a84
+options:
+  basename: a08
+  target_path: game/eu/BIN/A08.BIN
+  base_path: ../..
+  platform: psx
+  compiler: PSYQ
+  asm_path: asm/eu/a08
+  src_path: src/a08
+  build_path: build/eu
+  ld_script_path: build/eu/a08.ld
+  symbol_addrs_path:
+    - config/eu/symbol_addrs_a08.txt
+  undefined_funcs_auto_path: build/eu/undefined_funcs_auto.a08.txt
+  undefined_syms_auto_path: build/eu/undefined_syms_auto.a08.txt
+  find_file_boundaries: False
+  disassemble_all: True
+  asm_function_macro: glabel
+  asm_jtbl_label_macro: jlabel
+  asm_data_macro: dlabel
+  generate_asm_macros_files: True
+  asm_inc_header: ".include \"macro.inc\"\n\n.set noat\n.set noreorder\n\n"
+  section_order: [".rodata", ".text", ".data", ".bss"]
+  subalign: 4
+  string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+  - name: a08
+    type: code
+    start: 0x0
+    vram: 0x80109D84
+    align: 4
+    subalign: 4
+    subsegments:
+      - [0x0, rodata, a08_rodata]
+      - [0x158C, asm, a08]
+      - [0x38460, data, a08_data]
+  - [0x40BF4]

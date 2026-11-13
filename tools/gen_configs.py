@@ -3,16 +3,40 @@
 overlays, as rodata / asm / data with the text boundaries found by a heuristic (first function prologue or call target,
 last `jr ra` before a long run without one). The matching all-asm build (tools/build.py) proves the boundaries.
 
-  python3 -I tools/gen_configs.py game/eu [--force]
+  python3 -I tools/gen_configs.py game/usa [--force] [--out config]
 
-Load addresses (docs/DISCS.md): area overlays A00..A0L 0x80109D84; GAME/DEMO 0x80106D80; OPN/CRD 0x80188000;
-START.BIN is data (file names). Existing yamls are kept unless --force (they may carry hand-made splits).
+Load addresses are found per version from the overlays' jal targets landing on prologues (docs/DISCS.md; USA: areas
+0x80108F9C, GAME/DEMO 0x80106220, OPN/CRD 0x8018A000; EU: 0x80109D84, 0x80106D80, 0x80188000). START.BIN is data. Existing yamls are kept unless --force (they may carry hand-made splits).
 """
 import hashlib, os, struct, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 JR = 0x03E00008
+import json as _json
 LOADS = {"GAME": 0x80106D80, "DEMO": 0x80106D80, "OPN": 0x80188000, "CRD": 0x80188000}
+OVL = 0x80109D84
+
+
+def load_addrs(fs):
+    """Per-version load addresses: from the overlays' own jal targets (see docs/DISCS.md)."""
+    import collections
+    out = {}
+    for f in sorted(os.listdir(os.path.join(fs, "BIN"))):
+        b = open(os.path.join(fs, "BIN", f), "rb").read()
+        n = len(b) // 4
+        w = struct.unpack("<%dI" % n, b[: n * 4])
+        pro = [i * 4 for i, x in enumerate(w) if (x & 0xFFFF8000) == 0x27BD8000]
+        tg = collections.Counter(((x & 0x3FFFFFF) << 2) | 0x80000000 for x in w if x >> 26 == 3)
+        best = collections.Counter()
+        for t, c in tg.items():
+            for p in pro:
+                if 0x80100000 <= t - p < 0x80200000 and (t - p) % 4 == 0:
+                    best[t - p] += c
+        if best:
+            out[f[:-4].upper()] = best.most_common(1)[0][0]
+    if "GAME" in out:   # DEMO.BIN loads where GAME.BIN does (its own table says so; few jal to vote with)
+        out["DEMO"] = out["GAME"]
+    return out
 
 
 def text_bounds(w, base, lo):
@@ -88,7 +112,10 @@ segments:
 def main():
     fs = sys.argv[1].rstrip("/")
     force = "--force" in sys.argv
+    cfg = sys.argv[sys.argv.index("--out") + 1] if "--out" in sys.argv else "config"
     progs = []
+    global LA
+    LA = load_addrs(fs)
     for f in sorted(os.listdir(fs)):
         if f.upper() == "MAIN.EXE":
             progs.append(("main", f))
@@ -98,7 +125,7 @@ def main():
         if f.upper() != "START.BIN":
             progs.append((f[:-4].lower(), os.path.join("BIN", f)))
     for prog, rel in progs:
-        out = os.path.join(ROOT, "config", prog + ".yaml")
+        out = os.path.join(ROOT, cfg, prog + ".yaml")
         if os.path.exists(out) and not force:
             continue
         b = open(os.path.join(fs, rel), "rb").read()
@@ -107,7 +134,7 @@ def main():
             base = struct.unpack("<I", b[0x18:0x1C])[0]
             body = b[0x800:]
         else:
-            base = LOADS.get(prog.upper(), 0x80109D84)
+            base = LA.get(prog.upper(), LOADS.get(prog.upper(), OVL))
             body = b
         n = len(body) // 4
         w = struct.unpack("<%dI" % n, body[: n * 4])
@@ -119,7 +146,7 @@ def main():
         data = o0 + 4 * e if e else size
         open(out, "w").write(yaml(prog, os.path.relpath(os.path.join(fs, rel), ROOT), hashlib.sha1(b).hexdigest(),
                                   base, exe, rodata, o0 + 4 * s, min(data, size), size))
-        sym = os.path.join(ROOT, "config", "symbol_addrs_%s.txt" % prog)
+        sym = os.path.join(ROOT, cfg, "symbol_addrs_%s.txt" % prog)
         if not os.path.exists(sym):
             open(sym, "w").close()
         print("%-6s base %08X text %08X..%08X size 0x%X" % (prog, base, base + 4 * s, base + (data - o0), len(b)))
