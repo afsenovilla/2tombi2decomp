@@ -18,8 +18,7 @@ Exact masked duplicates only; near-duplicates (the per-area copies of shared obj
 
 ## Order
 
-1. **Infrastructure** (before C): objdiff units + `tools/build_report.py` adapted from T1 (report.json per program),
-   the decomp.dev project and `.github/workflows/report.yml` with the disc cache; a C build path in `tools/build.py`
+1. **Infrastructure** (before C; no decomp.dev report, by the user's choice): a C build path in `tools/build.py`
    (old-gcc + maspsx, `INCLUDE_ASM` for the rest) and a per-function check (`ncheck`-style) and `permute.py`.
 2. **Compiler identification** on a few small MAIN.EXE leaf functions (gcc 2.7.2 vs 2.8.1 CC1PSX, maspsx options).
 3. **Psy-Q 4.4 library** (573 functions in MAIN, 283 in boot): name them from the signatures
