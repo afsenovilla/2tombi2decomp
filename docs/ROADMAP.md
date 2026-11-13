@@ -16,15 +16,17 @@ nothing from the disc is committed.
 - [x] **0.2 Decompile helper `tools/decomp.py NAME`**: runs m2c (pip `m2c`) on the function's nonmatchings `.s` with a
   context file built from `include/`, writes a draft to stdout. *Done when* it produces compilable C for a 10-function
   sample. (Done: `tools/decomp.py NAME [--check] [--write]`.)
-- [ ] **0.3 Permuter** (`decomp-permuter`, as T1's `tools/permute.py`): sets up a function directory (base.c, target.o,
-  compile.sh with our gcc 2.8.1 + maspsx 2.79 pipeline). *Done when* it runs on `f_TestAppleCollectedBit`.
+- [x] **0.3 Permuter** (`decomp-permuter`, as T1's `tools/permute.py`): sets up a function directory (base.c, target.o,
+  compile.sh with our gcc 2.8.1 + maspsx 2.79 pipeline). *Done when* it runs on `f_TestAppleCollectedBit`. (Done: `tools/permute.py NAME --src FILE`; it matched
+  `f_TestAppleCollectedBit` in 36 iterations.)
 - [x] **0.4 Batch check `tools/sweep.py`**: tries every C draft in a folder against its target and moves the matching
   ones into `src/`. *Done when* it can install a match unattended and the build stays OK. (Done: `tools/sweep.py --install`; first run on
   MAIN functions <= 0x100 bytes: 44 / 1096 drafts matched as they came out, 39 installed; 1 skipped for an extern
   type clash, 4 left out because the linked build differed, probably new rodata.)
-- [ ] **0.5 Version checking for EU/ES**: `tools/build.py --version eu` with the same C (`#ifdef VERSION_*` only
-  where the code differs). Postponed use, but the hook exists from the start. *Done when* EU builds from the USA C for
-  the two matched functions.
+- [ ] **0.5 Version checking for EU/ES** — moved to 5.1: building EU from the USA C needs the EU functions renamed to
+  the USA names (INCLUDE_ASM names must be the same in every version; T1 did it with per-version asm dirs,
+  `INCLUDE_ASM_V`). The name map comes from `tools/vermatch.py` (96 % of functions) + Tomba2Edit's runs. Doing it now
+  would cost a lot for no gain while the C grows; the version-specific parts are kept small by writing plain C.
 
 ## Phase 1 — Psy-Q 4.4 library (859 functions, 170 KB; MAIN + boot)
 

@@ -13,7 +13,10 @@ The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
   as headers grow (2.1).
 - Left from the sweep: `func_8004DBB0` (extern type clash), `func_80083AF8`, `func_80086604`, `func_80092B9C`,
   `func_8009413C` (match alone, change the linked build: check rodata).
-Next: 0.3 permuter, 0.5 EU from the same C, then Phase 1.
+- 0.3 `tools/permute.py NAME --src FILE.c [--seconds N]` (decomp-permuter in /opt/permuter): matched
+  `f_TestAppleCollectedBit` at once. First header: `include/game.h` (GameState at 0x800BF870, apple bits at +0x544).
+- 0.5 deferred to Phase 5 (docs/ROADMAP.md). **42 MAIN functions in C.**
+Next: Phase 1 (Psy-Q library names and C).
 
 ## 2026-11-13 (4): C in the linked build
 

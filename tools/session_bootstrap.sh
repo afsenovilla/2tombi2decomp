@@ -35,6 +35,8 @@ log "4/5 Psy-Q signatures"
 [ -d /opt/psyq_sigs/440 ] || git clone -q --depth 1 https://github.com/lab313ru/psx_psyq_signatures /opt/psyq_sigs
 # Tomba2Edit (no license: read only, never copied here): USA names and USA->EU maps for tools/import_names.py
 [ -f /opt/m2c/m2c.py ] || { git clone -q --depth 1 https://github.com/matt-kempster/m2c /opt/m2c && python3 -m pip install -q pycparser graphviz; }
+[ -f /opt/permuter/permuter.py ] || { git clone -q --depth 1 https://github.com/simonlindholm/decomp-permuter /opt/permuter && python3 -m pip install -q toml Levenshtein; }
+command -v mips-linux-gnu-objdump >/dev/null || ln -sf "$(command -v mipsel-linux-gnu-objdump)" /usr/local/bin/mips-linux-gnu-objdump   # the permuter looks for this name
 [ -d /opt/tomba2edit/decomp ] || git clone -q --depth 1 https://github.com/SiergiejW/Tomba2Edit /opt/tomba2edit
 
 [ "$BUILD" = 1 ] || { log "done (--no-build)"; exit 0; }

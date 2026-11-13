@@ -33,7 +33,7 @@ def attempt(prog, name, ctx):
                        capture_output=True, text=True, cwd=ROOT)
     if r.returncode or not r.stdout.strip():
         return name, None
-    body = re.sub(r"(?m)^\? ", "s32 ", r.stdout)
+    body = re.sub(r"(?m)^(extern )?\? ", r"\1s32 ", r.stdout)
     d = os.path.join(ROOT, "build", "sweep")
     os.makedirs(d, exist_ok=True)
     test = os.path.join(d, name + ".c")

@@ -53,7 +53,7 @@ def main():
     if not (a.check or a.write):
         return
     test = os.path.join(ROOT, "build", "draft_%s.c" % a.name)
-    body = re.sub(r"(?m)^\? ", "s32 ", draft)          # unknown return types of externs
+    body = re.sub(r"(?m)^(extern )?\? ", r"\1s32 ", draft)          # unknown return types of externs
     open(test, "w").write('#include "common.h"\n' + body)
     r = subprocess.run([sys.executable, "-I", os.path.join(ROOT, "tools", "ccheck.py"), test, "--prog", a.prog,
                         "--func", a.name], capture_output=True, text=True, cwd=ROOT)

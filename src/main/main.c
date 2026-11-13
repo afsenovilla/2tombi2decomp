@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game.h"
 
 extern volatile u8 D_800BE0E4;
 void f_CloseCooperativeWorkerThread(s32);
@@ -1246,7 +1247,14 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D79C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_TestWorldOrOtherPickupCollectedBit);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TestAppleCollectedBit);
+s32 f_TestAppleCollectedBit(s32 n)
+{
+    s16 bit;
+    s32 byte = n / 8;
+
+    bit = n - byte * 8;
+    return D_800BF870.appleBits[(s16)byte] & (1 << bit);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D8B0);
 
@@ -1719,10 +1727,9 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80064E48);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006506C);
 
-extern u8 D_800BF870;
 
 void func_80065374(void) {
-    switch (D_800BF870) {                           /* irregular */
+    switch (D_800BF870.unk0) {                           /* irregular */
     case 0:
         func_8010AECC();
         return;
