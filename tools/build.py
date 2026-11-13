@@ -71,8 +71,14 @@ def build(prog, split, jobs, cfg="config"):
     sha = re.search(r"^sha1:\s*(\w+)", y, re.M).group(1)
     ld = re.search(r"ld_script_path:\s*(\S+)", y).group(1)
     target = re.search(r"target_path:\s*(\S+)", y).group(1)
-    if split:
+    if split:   # a clean split: renamed / re-split functions must not leave stale nonmatchings files behind
+        apath = re.search(r"asm_path:\s*(\S+)", y).group(1)
+        subprocess.run(["rm", "-rf", os.path.join(ROOT, apath)])
         run([sys.executable, "-m", "splat", "split", "%s/%s.yaml" % (cfg, prog)])
+        if not cfg.endswith("eu") and os.path.exists(os.path.join(ROOT, "src", prog, prog + ".c")):
+            if run([sys.executable, "-I", "tools/sync_src.py", "--prog", prog]).startswith("changed"):
+                subprocess.run(["rm", "-rf", os.path.join(ROOT, apath)])
+                run([sys.executable, "-m", "splat", "split", "%s/%s.yaml" % (cfg, prog)])
     bdir = re.search(r"build_path:\s*(\S+)", y).group(1)
     objs = objects(ld)
 

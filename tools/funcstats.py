@@ -46,16 +46,17 @@ def programs():
         path = re.search(r"target_path:\s*(\S+)", t).group(1)
         vram = int(re.search(r"vram:\s*(0x\w+)", t).group(1), 16)
         start = int(re.search(r"type: code\n\s+start: (0x\w+)", t).group(1), 16)
-        m = re.search(r"\[(0x\w+), (?:asm|c), \w+\]\n(?:\s+- \[(0x\w+), )?", t)
         b = open(os.path.join(ROOT, path), "rb").read()
-        tstart = int(m.group(1), 16)
-        tend = int(m.group(2), 16) if m.group(2) else len(b)
+        code = re.findall(r"\[(0x\w+), (?:asm|c), [\w/]+\]", t)
+        tstart = int(code[0], 16)
+        m = re.search(r"\[(0x\w+), (?:data|bin), ", t)
+        tend = int(m.group(1), 16) if m else len(b)
         asm = os.path.join(ROOT, "asm", prog, prog + ".s")
         if os.path.exists(asm):
             addrs = glabels(asm)
-        else:   # a c segment: one .s per function under nonmatchings, plus the functions already in C
+        else:   # c segments: one .s per function, nonmatchings/ (INCLUDE_ASM'd) or matchings/ (in C, or new)
             addrs = set()
-            for f in glob.glob(os.path.join(ROOT, "asm", prog, "nonmatchings", "**", "*.s"), recursive=True):
+            for f in glob.glob(os.path.join(ROOT, "asm", prog, "*matchings", "**", "*.s"), recursive=True):
                 addrs |= glabels(f)
             syms = {}
             sp = os.path.join(ROOT, "config", "symbol_addrs_%s.txt" % prog)

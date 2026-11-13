@@ -62,7 +62,7 @@ def retail_sizes(prog):
     """name -> size of every function of a c-segment program (the `nonmatching NAME, 0xSIZE` line splat writes)."""
     import glob
     out = {}
-    for f in glob.glob(os.path.join(ROOT, "asm", prog, "nonmatchings", "**", "*.s"), recursive=True):
+    for f in glob.glob(os.path.join(ROOT, "asm", prog, "*matchings", "**", "*.s"), recursive=True):
         m = re.search(r"^nonmatching (\w+),\s*(0x[0-9A-Fa-f]+)", open(f).read(), re.M)
         if m:
             out[m.group(1)] = int(m.group(2), 16)

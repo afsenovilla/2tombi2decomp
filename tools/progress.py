@@ -24,7 +24,7 @@ def asm_names(prog):
 def addr_of(prog):
     """name -> start address, from the nonmatchings files (asm/<prog>/nonmatchings/**/NAME.s)."""
     out = {}
-    for f in glob.glob(os.path.join(ROOT, "asm", prog, "nonmatchings", "**", "*.s"), recursive=True):
+    for f in glob.glob(os.path.join(ROOT, "asm", prog, "*matchings", "**", "*.s"), recursive=True):
         m = re.search(r"/\* \w+ ([0-9A-F]{8}) [0-9A-F]{8} \*/", open(f).read())
         if m:
             out[os.path.basename(f)[:-2]] = int(m.group(1), 16)
