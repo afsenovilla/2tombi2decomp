@@ -3,6 +3,18 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-13 (5): Phase 0 tooling, first automatic sweep
+
+- 0.1 `tools/ccheck.py`: checks the function length too; `--func NAME`; INCLUDE_ASM functions skipped unless `--all`.
+- 0.2 `tools/decomp.py NAME [--check] [--write]`: m2c draft with `include/*.h` as context (m2c in /opt/m2c).
+- 0.4 `tools/sweep.py [--max-size 0x100] --install`: drafts every pending function, installs the ones that match as
+  drafted (function + its `extern` lines), keeps only what leaves the linked build OK.
+- Result: **41 / 1739 MAIN functions in C** (39 from the sweep). m2c drafts with no types: they will be cleaned up
+  as headers grow (2.1).
+- Left from the sweep: `func_8004DBB0` (extern type clash), `func_80083AF8`, `func_80086604`, `func_80092B9C`,
+  `func_8009413C` (match alone, change the linked build: check rodata).
+Next: 0.3 permuter, 0.5 EU from the same C, then Phase 1.
+
 ## 2026-11-13 (4): C in the linked build
 
 - `config/main.yaml`: the text is a `c` subsegment, `src/main/main.c` (generated once by splat, now hand-edited:

@@ -6,7 +6,8 @@
 Pipeline (as Tombi-Decomp's ncheck): old-gcc 2.8.1 cpp + cc1 (the Psy-Q 4.4 compiler, docs/COMPILER.md; -O2 -G0 -funsigned-char unless overridden), maspsx, GNU as.
 Each defined function is looked up by name in config/symbol_addrs_<prog>.txt or as func_XXXXXXXX, and compared word by
 word with the retail file; relocated fields (jal target, %hi/%lo) are compared only where the object has no relocation.
-Prints OK / DIFF per function (with -v a side-by-side of the differing words).
+The length must also be the retail one (asm/<prog>/nonmatchings `nonmatching NAME, SIZE`).
+Prints OK / DIFF per function (with -v the differing words); --func NAME limits the check.
 """
 import argparse, os, re, struct, subprocess, sys, tempfile
 
@@ -39,7 +40,7 @@ def compile_c(src, a, d):
                          capture_output=True, text=True).stdout
     open(d + "/b.s", "w").write(mas)
     subprocess.run(["mipsel-linux-gnu-as", "-EL", "-march=r3000", "-mtune=r3000", "-no-pad-sections", "-O1", "-G0",
-                    d + "/b.s", "-o", d + "/a.o"], check=True)
+                    "-I" + inc, d + "/b.s", "-o", d + "/a.o"], check=True, cwd=ROOT)
     subprocess.run(["mipsel-linux-gnu-objcopy", "-O", "binary", "-j", ".text", d + "/a.o", d + "/t.bin"], check=True)
     text = open(d + "/t.bin", "rb").read()
     funcs = []
@@ -57,6 +58,17 @@ def compile_c(src, a, d):
     return text, sorted(funcs, key=lambda f: f[1]), rel
 
 
+def retail_sizes(prog):
+    """name -> size of every function of a c-segment program (the `nonmatching NAME, 0xSIZE` line splat writes)."""
+    import glob
+    out = {}
+    for f in glob.glob(os.path.join(ROOT, "asm", prog, "nonmatchings", "**", "*.s"), recursive=True):
+        m = re.search(r"^nonmatching (\w+),\s*(0x[0-9A-Fa-f]+)", open(f).read(), re.M)
+        if m:
+            out[m.group(1)] = int(m.group(2), 16)
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("src")
@@ -66,13 +78,22 @@ def main():
     ap.add_argument("--opt", dest="O", default="-O2")
     ap.add_argument("-G", default="0")
     ap.add_argument("-v", action="store_true")
+    ap.add_argument("--all", action="store_true", help="also check the INCLUDE_ASM functions (sanity test)")
+    ap.add_argument("--func", action="append", help="check only these functions (repeatable)")
     a, rest = ap.parse_known_args()
     a.cflags = rest
     binary, delta, syms = prog_info(a.prog)
+    sizes = retail_sizes(a.prog)
     d = tempfile.mkdtemp()
+    a.src = os.path.abspath(a.src)
     text, funcs, rel = compile_c(a.src, a, d)
     bad = 0
+    asm_included = {n[:-len(".NON_MATCHING")] for n, _, _ in funcs if n.endswith(".NON_MATCHING")}
+    if not a.all:   # INCLUDE_ASM functions are the retail bytes by construction: only the C ones are checked
+        funcs = [f for f in funcs if f[0] not in asm_included and not f[0].endswith(".NON_MATCHING")]
     for name, off, size in funcs:
+        if a.func and name not in a.func:
+            continue
         addr = syms.get(name) or (int(name[5:], 16) if re.fullmatch(r"func_[0-9A-Fa-f]{8}", name) else None)
         if addr is None:
             print("?    %s (no address)" % name); continue
@@ -89,13 +110,18 @@ def main():
                     g, w = g & 0xFFFF0000, w & 0xFFFF0000
             if g != w:
                 diffs.append((i, g, w))
-        # the next retail word must not still be this function (size check): the compiler gave the same length
+        want_size = sizes.get(name)
+        if want_size is not None and want_size != size:
+            diffs.append((-1, size, want_size))
         ok = not diffs
         bad += not ok
         print("%s %s %08X (%d bytes)%s" % ("OK  " if ok else "DIFF", name, addr, size, "" if ok else ", %d words differ" % len(diffs)))
         if a.v:
             for i, g, w in diffs:
-                print("    +%03X got %08X want %08X" % (i, g, w))
+                if i < 0:
+                    print("    size: got 0x%X bytes, retail 0x%X" % (g, w))
+                else:
+                    print("    +%03X got %08X want %08X" % (i, g, w))
     subprocess.run(["rm", "-rf", d])
     sys.exit(1 if bad else 0)
 

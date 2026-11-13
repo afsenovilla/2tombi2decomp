@@ -34,6 +34,7 @@ echo "f41c4065788e8c838cbd8b22f0fff6d4bc7de49a  game/usa/MAIN.EXE" | sha1sum -c 
 log "4/5 Psy-Q signatures"
 [ -d /opt/psyq_sigs/440 ] || git clone -q --depth 1 https://github.com/lab313ru/psx_psyq_signatures /opt/psyq_sigs
 # Tomba2Edit (no license: read only, never copied here): USA names and USA->EU maps for tools/import_names.py
+[ -f /opt/m2c/m2c.py ] || { git clone -q --depth 1 https://github.com/matt-kempster/m2c /opt/m2c && python3 -m pip install -q pycparser graphviz; }
 [ -d /opt/tomba2edit/decomp ] || git clone -q --depth 1 https://github.com/SiergiejW/Tomba2Edit /opt/tomba2edit
 
 [ "$BUILD" = 1 ] || { log "done (--no-build)"; exit 0; }

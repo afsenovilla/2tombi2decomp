@@ -10,16 +10,18 @@ nothing from the disc is committed.
 
 ## Phase 0 — Tooling (before writing C in volume)
 
-- [ ] **0.1 Function length check in `tools/ccheck.py`**: compare the compiled size with the retail function size
+- [x] **0.1 Function length check in `tools/ccheck.py`**: compare the compiled size with the retail function size
   (from the nonmatchings `.s`), and accept a function name to check just one. *Done when* a too-short/too-long C
   function is reported as DIFF.
-- [ ] **0.2 Decompile helper `tools/decomp.py NAME`**: runs m2c (pip `m2c`) on the function's nonmatchings `.s` with a
+- [x] **0.2 Decompile helper `tools/decomp.py NAME`**: runs m2c (pip `m2c`) on the function's nonmatchings `.s` with a
   context file built from `include/`, writes a draft to stdout. *Done when* it produces compilable C for a 10-function
-  sample.
+  sample. (Done: `tools/decomp.py NAME [--check] [--write]`.)
 - [ ] **0.3 Permuter** (`decomp-permuter`, as T1's `tools/permute.py`): sets up a function directory (base.c, target.o,
   compile.sh with our gcc 2.8.1 + maspsx 2.79 pipeline). *Done when* it runs on `f_TestAppleCollectedBit`.
-- [ ] **0.4 Batch check `tools/sweep.py`**: tries every C draft in a folder against its target and moves the matching
-  ones into `src/`. *Done when* it can install a match unattended and the build stays OK.
+- [x] **0.4 Batch check `tools/sweep.py`**: tries every C draft in a folder against its target and moves the matching
+  ones into `src/`. *Done when* it can install a match unattended and the build stays OK. (Done: `tools/sweep.py --install`; first run on
+  MAIN functions <= 0x100 bytes: 44 / 1096 drafts matched as they came out, 39 installed; 1 skipped for an extern
+  type clash, 4 left out because the linked build differed, probably new rodata.)
 - [ ] **0.5 Version checking for EU/ES**: `tools/build.py --version eu` with the same C (`#ifdef VERSION_*` only
   where the code differs). Postponed use, but the hook exists from the start. *Done when* EU builds from the USA C for
   the two matched functions.
