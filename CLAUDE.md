@@ -15,7 +15,7 @@ A matching decompilation of Tombi! 2 / Tomba! 2: The Evil Swine Return (PS1, 199
 same way as the first game's project, `afsenovilla/Tombi-Decomp` (the reference: clone it read-only next to this repo
 when its tools or notes are needed; copy and adapt, do not reinvent). Reference version: **USA SCUS-94454** (since 2026-11-13: Tomba2Edit and the Tomba Club research are on USA
 addresses; EU SCES-02147 is kept as a second version in `config/eu/`).
-Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md.
+Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: docs/ROADMAP.md.**
 
 ## How to talk to the user
 

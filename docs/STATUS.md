@@ -1,6 +1,7 @@
 # Status and open tasks (hand-off between Claude Code sessions)
 
 Update this file whenever something lands or a task is decided. Newest first.
+The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
 ## 2026-11-13 (4): C in the linked build
 
