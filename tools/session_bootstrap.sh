@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Prepares a fresh cloud session (or any Linux box) for the Tombi! 2 decomp, from a clean clone:
+#   1. system packages and Python modules (splat, spimdisasm, ...)
+#   2. the PS1 toolchain (tools/setup_native.sh: old-gcc 2.7.2, maspsx, Psy-Q headers -> include/psyq, ignored)
+#   3. the discs: EU (reference) always, ES and USA when their variables are set (tools/disc_fetch.sh)
+#   4. the Psy-Q 4.4 object signatures (lab313ru/psx_psyq_signatures, outside the repo) for tools/funcstats.py
+#   5. the matching build of every program (tools/build.py) as the smoke test
+# Every step is skipped when its result is already there.   tools/session_bootstrap.sh [--no-build]
+set -euo pipefail
+cd "$(dirname "$0")/.."
+BUILD=1; [ "${1:-}" = --no-build ] && BUILD=0
+log() { printf '\n== %s\n' "$*"; }
+SUDO=""; [ "$(id -u)" = 0 ] || SUDO="sudo"
+
+log "1/5 packages"
+if ! command -v mipsel-linux-gnu-as >/dev/null || ! command -v 7z >/dev/null; then
+  $SUDO apt-get update -qq
+  $SUDO apt-get install -y -qq binutils-mipsel-linux-gnu ninja-build unzip curl p7zip-full megatools >/dev/null
+fi
+python3 -c "import spimdisasm, rabbitizer, yaml, splat" 2>/dev/null || {
+  python3 -m pip install -q -r tools/requirements.txt
+  python3 -m pip install -q --no-deps splat64==0.35.2
+}
+python3 -c "import pylibyaml" 2>/dev/null || python3 -c "import site,os; open(os.path.join(site.getsitepackages()[0],'pylibyaml.py'),'w').write('# optional accelerator stub\n')"
+
+log "2/5 PS1 toolchain"
+[ -x /opt/oldgcc/gcc-2.7.2-psx/cc1 ] && [ -d include/psyq ] && [ -d /opt/maspsx ] || bash tools/setup_native.sh
+
+log "3/5 discs"
+bash tools/disc_fetch.sh EU
+for N in ES USA; do V="GAME_FILES_URL_T2_$N"; [ -n "${!V:-}" ] && bash tools/disc_fetch.sh "$N" || echo "$V not set: skipped"; done
+echo "6bcee82bde552b9c044330bcc8e1889e2b80b107  game/eu/MAIN.EXE" | sha1sum -c --quiet - || { echo "game/eu/MAIN.EXE is not the SCES-02147 one"; exit 1; }
+
+log "4/5 Psy-Q signatures"
+[ -d /opt/psyq_sigs/440 ] || git clone -q --depth 1 https://github.com/lab313ru/psx_psyq_signatures /opt/psyq_sigs
+
+[ "$BUILD" = 1 ] || { log "done (--no-build)"; exit 0; }
+log "5/5 matching build"
+python3 tools/build.py

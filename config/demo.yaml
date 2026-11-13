@@ -1,0 +1,40 @@
+name: DEMO.BIN
+sha1: dd3528e26446aad3d84d3d8c60b09f0838c36219
+options:
+  basename: demo
+  target_path: game/eu/BIN/DEMO.BIN
+  base_path: ..
+  platform: psx
+  compiler: PSYQ
+  asm_path: asm/demo
+  src_path: src/demo
+  build_path: build
+  ld_script_path: build/demo.ld
+  symbol_addrs_path:
+    - config/symbol_addrs_demo.txt
+  undefined_funcs_auto_path: build/undefined_funcs_auto.demo.txt
+  undefined_syms_auto_path: build/undefined_syms_auto.demo.txt
+  find_file_boundaries: False
+  disassemble_all: True
+  asm_function_macro: glabel
+  asm_jtbl_label_macro: jlabel
+  asm_data_macro: dlabel
+  generate_asm_macros_files: True
+  asm_inc_header: ".include \"macro.inc\"\n\n.set noat\n.set noreorder\n\n"
+  section_order: [".rodata", ".text", ".data", ".bss"]
+  subalign: 4
+  string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+  - name: demo
+    type: code
+    start: 0x0
+    vram: 0x80106D80
+    align: 4
+    subalign: 4
+    subsegments:
+      - [0x0, rodata, demo_rodata]
+      - [0x1D4, asm, demo]
+      - [0x2FDC, data, demo_data]
+  - [0x2FFC]

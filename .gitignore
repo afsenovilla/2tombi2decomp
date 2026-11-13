@@ -1,0 +1,25 @@
+# Game data: never committed ("ship scripts, not pixels")
+/game/
+*.bin
+*.img
+*.iso
+*.cue
+*.BIN
+*.EXE
+*.STR
+*.XA
+*.mcd
+*.srm
+*.png
+*.gif
+# Generated
+/build/
+/asm/
+/include/psyq/
+/include/macro.inc
+/include/labels.inc
+/include/gte_macros.inc
+/include/include_asm.h
+/config/symbol_addrs_*.txt.bak
+__pycache__/
+*.pyc

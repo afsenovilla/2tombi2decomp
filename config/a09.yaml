@@ -1,0 +1,41 @@
+name: A09.BIN
+sha1: 5830c98b0a1598e3f12b670a02c790c086c448b0
+options:
+  basename: a09
+  target_path: game/eu/BIN/A09.BIN
+  base_path: ..
+  platform: psx
+  compiler: PSYQ
+  asm_path: asm/a09
+  src_path: src/a09
+  build_path: build
+  ld_script_path: build/a09.ld
+  symbol_addrs_path:
+    - config/symbol_addrs_a09.txt
+  undefined_funcs_auto_path: build/undefined_funcs_auto.a09.txt
+  undefined_syms_auto_path: build/undefined_syms_auto.a09.txt
+  find_file_boundaries: False
+  disassemble_all: True
+  asm_function_macro: glabel
+  asm_jtbl_label_macro: jlabel
+  asm_data_macro: dlabel
+  generate_asm_macros_files: True
+  asm_inc_header: ".include \"macro.inc\"\n\n.set noat\n.set noreorder\n\n"
+  section_order: [".rodata", ".text", ".data", ".bss"]
+  subalign: 4
+  string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+  - name: a09
+    type: code
+    start: 0x0
+    vram: 0x80109D84
+    align: 4
+    subalign: 4
+    subsegments:
+      - [0x0, rodata, a09_rodata]
+      - [0xDC, asm, a09]
+      - [0x5068, data, a09_data]
+      - [0x566C, bin, a09_tail]
+  - [0x566D]

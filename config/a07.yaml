@@ -1,0 +1,40 @@
+name: A07.BIN
+sha1: eb313e44663af58704743a567349b17948b425fc
+options:
+  basename: a07
+  target_path: game/eu/BIN/A07.BIN
+  base_path: ..
+  platform: psx
+  compiler: PSYQ
+  asm_path: asm/a07
+  src_path: src/a07
+  build_path: build
+  ld_script_path: build/a07.ld
+  symbol_addrs_path:
+    - config/symbol_addrs_a07.txt
+  undefined_funcs_auto_path: build/undefined_funcs_auto.a07.txt
+  undefined_syms_auto_path: build/undefined_syms_auto.a07.txt
+  find_file_boundaries: False
+  disassemble_all: True
+  asm_function_macro: glabel
+  asm_jtbl_label_macro: jlabel
+  asm_data_macro: dlabel
+  generate_asm_macros_files: True
+  asm_inc_header: ".include \"macro.inc\"\n\n.set noat\n.set noreorder\n\n"
+  section_order: [".rodata", ".text", ".data", ".bss"]
+  subalign: 4
+  string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+  - name: a07
+    type: code
+    start: 0x0
+    vram: 0x80109D84
+    align: 4
+    subalign: 4
+    subsegments:
+      - [0x0, rodata, a07_rodata]
+      - [0x1694, asm, a07]
+      - [0x284C0, data, a07_data]
+  - [0x37BC0]

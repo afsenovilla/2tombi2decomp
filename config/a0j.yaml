@@ -1,0 +1,40 @@
+name: A0J.BIN
+sha1: 5460ac1266e713e553e1b8a543374ad4107aa364
+options:
+  basename: a0j
+  target_path: game/eu/BIN/A0J.BIN
+  base_path: ..
+  platform: psx
+  compiler: PSYQ
+  asm_path: asm/a0j
+  src_path: src/a0j
+  build_path: build
+  ld_script_path: build/a0j.ld
+  symbol_addrs_path:
+    - config/symbol_addrs_a0j.txt
+  undefined_funcs_auto_path: build/undefined_funcs_auto.a0j.txt
+  undefined_syms_auto_path: build/undefined_syms_auto.a0j.txt
+  find_file_boundaries: False
+  disassemble_all: True
+  asm_function_macro: glabel
+  asm_jtbl_label_macro: jlabel
+  asm_data_macro: dlabel
+  generate_asm_macros_files: True
+  asm_inc_header: ".include \"macro.inc\"\n\n.set noat\n.set noreorder\n\n"
+  section_order: [".rodata", ".text", ".data", ".bss"]
+  subalign: 4
+  string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+  - name: a0j
+    type: code
+    start: 0x0
+    vram: 0x80109D84
+    align: 4
+    subalign: 4
+    subsegments:
+      - [0x0, rodata, a0j_rodata]
+      - [0x128, asm, a0j]
+      - [0x42B4, data, a0j_data]
+  - [0x49F4]

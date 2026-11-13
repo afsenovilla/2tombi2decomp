@@ -1,0 +1,40 @@
+name: GAME.BIN
+sha1: 88e2921928f2b53d731beead6c8f732ce4601948
+options:
+  basename: game
+  target_path: game/eu/BIN/GAME.BIN
+  base_path: ..
+  platform: psx
+  compiler: PSYQ
+  asm_path: asm/game
+  src_path: src/game
+  build_path: build
+  ld_script_path: build/game.ld
+  symbol_addrs_path:
+    - config/symbol_addrs_game.txt
+  undefined_funcs_auto_path: build/undefined_funcs_auto.game.txt
+  undefined_syms_auto_path: build/undefined_syms_auto.game.txt
+  find_file_boundaries: False
+  disassemble_all: True
+  asm_function_macro: glabel
+  asm_jtbl_label_macro: jlabel
+  asm_data_macro: dlabel
+  generate_asm_macros_files: True
+  asm_inc_header: ".include \"macro.inc\"\n\n.set noat\n.set noreorder\n\n"
+  section_order: [".rodata", ".text", ".data", ".bss"]
+  subalign: 4
+  string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+  - name: game
+    type: code
+    start: 0x0
+    vram: 0x80106D80
+    align: 4
+    subalign: 4
+    subsegments:
+      - [0x0, rodata, game_rodata]
+      - [0x15C, asm, game]
+      - [0x2E4C, data, game_data]
+  - [0x2E88]

@@ -1,0 +1,40 @@
+name: SOP.BIN
+sha1: 001d13974a2cdbf68d0c1273c0d40364219ed447
+options:
+  basename: sop
+  target_path: game/eu/BIN/SOP.BIN
+  base_path: ..
+  platform: psx
+  compiler: PSYQ
+  asm_path: asm/sop
+  src_path: src/sop
+  build_path: build
+  ld_script_path: build/sop.ld
+  symbol_addrs_path:
+    - config/symbol_addrs_sop.txt
+  undefined_funcs_auto_path: build/undefined_funcs_auto.sop.txt
+  undefined_syms_auto_path: build/undefined_syms_auto.sop.txt
+  find_file_boundaries: False
+  disassemble_all: True
+  asm_function_macro: glabel
+  asm_jtbl_label_macro: jlabel
+  asm_data_macro: dlabel
+  generate_asm_macros_files: True
+  asm_inc_header: ".include \"macro.inc\"\n\n.set noat\n.set noreorder\n\n"
+  section_order: [".rodata", ".text", ".data", ".bss"]
+  subalign: 4
+  string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+  - name: sop
+    type: code
+    start: 0x0
+    vram: 0x80109D84
+    align: 4
+    subalign: 4
+    subsegments:
+      - [0x0, rodata, sop_rodata]
+      - [0x1C8, asm, sop]
+      - [0x39CC, data, sop_data]
+  - [0x4508]

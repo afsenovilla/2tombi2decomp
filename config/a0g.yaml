@@ -1,0 +1,40 @@
+name: A0G.BIN
+sha1: 58ef397027292d86dfb6b45173ca7251a517081d
+options:
+  basename: a0g
+  target_path: game/eu/BIN/A0G.BIN
+  base_path: ..
+  platform: psx
+  compiler: PSYQ
+  asm_path: asm/a0g
+  src_path: src/a0g
+  build_path: build
+  ld_script_path: build/a0g.ld
+  symbol_addrs_path:
+    - config/symbol_addrs_a0g.txt
+  undefined_funcs_auto_path: build/undefined_funcs_auto.a0g.txt
+  undefined_syms_auto_path: build/undefined_syms_auto.a0g.txt
+  find_file_boundaries: False
+  disassemble_all: True
+  asm_function_macro: glabel
+  asm_jtbl_label_macro: jlabel
+  asm_data_macro: dlabel
+  generate_asm_macros_files: True
+  asm_inc_header: ".include \"macro.inc\"\n\n.set noat\n.set noreorder\n\n"
+  section_order: [".rodata", ".text", ".data", ".bss"]
+  subalign: 4
+  string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+  - name: a0g
+    type: code
+    start: 0x0
+    vram: 0x80109D84
+    align: 4
+    subalign: 4
+    subsegments:
+      - [0x0, rodata, a0g_rodata]
+      - [0x1E4, asm, a0g]
+      - [0x4310, data, a0g_data]
+  - [0x463C]
