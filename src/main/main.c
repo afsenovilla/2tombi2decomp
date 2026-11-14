@@ -1390,7 +1390,21 @@ void func_80041FA8(void *arg0) {
     func_80041F34(M2C_FIELD(arg0, s32 *, 0x10));
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80041FCC);
+extern u8 D_800A55C8[];
+extern void *D_800A2B64[];
+extern u8 D_800BF81C;
+void f_DrawUiQuadResource(s16, s16, s32, s32);
+
+s32 func_80041FCC(u8 *p)
+{
+    if (p != NULL) {
+        if (p[5] != 3) {
+            return 0;
+        }
+        p[5] = 10;
+    }
+    return 1;
+}
 
 
 void func_80041FF8(void *arg0) {
@@ -1904,7 +1918,14 @@ void f_SetEquippedBackItemActor(s8 item, s32 actor)
     *(s32 *)(D_800E7E80 + 0x74) = actor;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ClearBackItem);
+void f_ClearBackItem(void)
+{
+    D_800BF81C = 0;
+    D_800BF88E = 0;
+    D_800E7E80[0x6E] = 0;
+    (*(u8 **)(D_800E7E80 + 0x74))[4] = 3;
+    *(s32 *)(D_800E7E80 + 0x74) = 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004BEF4);
 
@@ -4242,7 +4263,12 @@ u8 func_80078770(u8 a, u8 b)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_GetWarpSectionDisplayName);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800787F8);
+void *func_800787F8(s32 i)
+{
+    u8 *idx = &D_800A55C8[i];
+
+    return D_800A2B64[*idx];
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80078824);
 
@@ -4485,7 +4511,10 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawUiQuadResource);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawUiSpriteResource);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawMenuSelectionCursor);
+void f_DrawMenuSelectionCursor(s16 x, s16 y, s32 c)
+{
+    f_DrawUiQuadResource(x, y, c, 0x98);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawFullscreenOverlay);
 

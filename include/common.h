@@ -23,6 +23,10 @@
 
 __asm__(".include \"macro.inc\"                         # maspsx-keep\n");
 
+#ifndef NULL
+#define NULL ((void *)0)
+#endif
+
 typedef unsigned char u8;
 typedef signed char s8;
 typedef unsigned short u16;
