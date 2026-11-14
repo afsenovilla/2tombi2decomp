@@ -62,9 +62,14 @@ typedef struct CameraState {
     /* 0x42 */ u16 focusZ;
     /* 0x44 */ u8 pad44[0x20];
     /* 0x64 */ u8 mode;
-    /* 0x65 */ u8 pad65[2];
+    /* 0x65 */ u8 pad65;
+    /* 0x66 */ u8 unk66;
     /* 0x67 */ u8 previousMode;
-    /* 0x68 */ u8 pad68[0x28];
+    /* 0x68 */ u8 pad68[4];
+    /* 0x6C */ u16 unk6C;
+    /* 0x6E */ u16 unk6E;
+    /* 0x70 */ u16 unk70;
+    /* 0x72 */ u8 pad72[0x1E];
 } CameraState;
 extern CameraState g_CameraState;
 

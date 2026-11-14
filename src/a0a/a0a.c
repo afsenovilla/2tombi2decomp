@@ -61,7 +61,18 @@ void func_8010B338(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010B3DC);
+
+s32 func_8010B3DC(s32 arg0, s32 arg1) {
+    s32 var_a3;
+    void *temp_a1;
+
+    temp_a1 = M2C_FIELD(arg0, void **, 0x158);
+    var_a3 = 0;
+    if ((M2C_FIELD(temp_a1, u8 *, 0xC) == 4) && (M2C_FIELD(temp_a1, u8 *, 2) == 0x17)) {
+        var_a3 = func_8010AC84(arg0, (s32) temp_a1, arg1);
+    }
+    return var_a3;
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010B42C);
 

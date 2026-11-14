@@ -14,7 +14,18 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010AA20);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010AC3C);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010ACB8);
+
+s32 func_8010ACB8(s32 arg0, s32 arg1) {
+    s32 var_a3;
+    void *temp_a1;
+
+    temp_a1 = M2C_FIELD(arg0, void **, 0x158);
+    var_a3 = 0;
+    if ((M2C_FIELD(temp_a1, u8 *, 0xC) == 4) && (M2C_FIELD(temp_a1, u8 *, 2) == 0x17)) {
+        var_a3 = func_8010A530(arg0, (s32) temp_a1, arg1);
+    }
+    return var_a3;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010AD08);
 
@@ -847,7 +858,17 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801222FC);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80122A2C);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80122ADC);
+
+void func_80122ADC(s32 arg0) {
+    void *temp_a1;
+
+    temp_a1 = M2C_FIELD(arg0, void **, 0x10);
+    if (temp_a1 != NULL) {
+        M2C_FIELD(temp_a1, u16 *, 0x2C) = (u16) M2C_FIELD(arg0, u16 *, 0x2E);
+        M2C_FIELD(temp_a1, s16 *, 0x2E) = (s16) (M2C_FIELD(arg0, u16 *, 0x32) + M2C_FIELD(arg0, u16 *, 0x72));
+        M2C_FIELD(temp_a1, u16 *, 0x30) = (u16) M2C_FIELD(arg0, u16 *, 0x36);
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80122B20);
 

@@ -540,7 +540,13 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011EDB8);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011EE70);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011EED4);
+
+s32 func_8011EED4(void) {
+    func_801173A8();
+    func_8004D604(0x36, 1);
+    D_800BF870.pad1[0x1C6] += 1;
+    return 1;
+}
 
 
 s32 func_8011EF18(void *arg0) {

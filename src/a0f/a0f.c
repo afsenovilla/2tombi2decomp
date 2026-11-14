@@ -36,7 +36,10 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010AE24);
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010AE6C);
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010AEC0);
+
+s32 func_8010AEC0(s32 arg0, s32 arg1) {
+    return func_80109ED8(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC0));
+}
 
 
 void func_8010AEE4(void *arg0, void *arg1) {
@@ -105,7 +108,18 @@ void func_8010B960(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010BA04);
+
+s32 func_8010BA04(s32 arg0, s32 arg1) {
+    s32 var_a3;
+    void *temp_a1;
+
+    temp_a1 = M2C_FIELD(arg0, void **, 0x158);
+    var_a3 = 0;
+    if ((M2C_FIELD(temp_a1, u8 *, 0xC) == 4) && (M2C_FIELD(temp_a1, u8 *, 2) == 0x17)) {
+        var_a3 = func_8010B4E8(arg0, (s32) temp_a1, arg1);
+    }
+    return var_a3;
+}
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010BA54);
 

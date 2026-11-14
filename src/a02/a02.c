@@ -527,7 +527,24 @@ s32 func_80118860(void) {
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80118880);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80118B50);
+
+s32 func_80118B50(s32 arg0) {
+    if (M2C_FIELD(arg0, s16 *, 0x40) != 0) {
+        if ((func_80119694(arg0, (s32) M2C_FIELD(arg0, s16 *, 0x2E), (s32) M2C_FIELD(arg0, s16 *, 0x36)) << 0x10) != 0) {
+            M2C_FIELD(arg0, s8 *, 5) = 3;
+        }
+    } else if (D_800BF870.pad1[0x18D] & 0x80) {
+        if ((func_80119694(arg0, (s32) (s16) ((u16) M2C_FIELD(arg0, s16 *, 0x2E) - 0x14A), (s32) (s16) ((u16) M2C_FIELD(arg0, s16 *, 0x36) - 0x10E)) << 0x10) != 0) {
+            M2C_FIELD(arg0, s8 *, 5) = 1;
+            M2C_FIELD(arg0, s8 *, 6) = 0;
+            M2C_FIELD(arg0, s8 *, 0x5E) = 4;
+        }
+    } else if ((func_80119694(arg0, (s32) (s16) ((u16) M2C_FIELD(arg0, s16 *, 0x2E) - 0x118), (s32) (s16) ((u16) M2C_FIELD(arg0, s16 *, 0x36) - 0x10E)) << 0x10) != 0) {
+        D_800BF870.pad1[0x18D] = 3;
+        M2C_FIELD(arg0, s8 *, 5) = 0;
+    }
+    return func_801255A4((s32) (M2C_FIELD(arg0, u16 *, 0x44) << 0x10) >> 0x18);
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80118C54);
 
@@ -935,7 +952,36 @@ s32 func_801216C0(void *arg0) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801216E0);
+extern s8 D_1F8000F2[];
+extern void *D_800BF844_5c02;
+
+s32 func_801216E0(s32 arg0) {
+    u8 temp_v1;
+    void *temp_a0;
+    void *temp_v0;
+
+    temp_v1 = M2C_FIELD(arg0, u8 *, 0x78);
+    switch (temp_v1) {                              /* irregular */
+    case 0:
+        temp_v0 = func_8006FB0C(arg0, 0x17);
+        M2C_FIELD(arg0, void **, 0x14) = temp_v0;
+        D_800BF844_5c02 = temp_v0;
+        temp_a0 = M2C_FIELD(arg0, void **, 0x14);
+        if (temp_a0 != NULL) {
+            M2C_FIELD(temp_a0, s16 *, 0x60) = 0x60;
+            M2C_FIELD(temp_a0, s16 *, 0x62) = 0x78;
+            M2C_FIELD(temp_a0, s8 *, 0x5E) = 1;
+            M2C_FIELD(temp_a0, u8 *, 0x5F) = (u8) (M2C_FIELD(temp_a0, u8 *, 0x5F) | 1);
+            M2C_FIELD(arg0, u8 *, 0x78) = (u8) (M2C_FIELD(arg0, u8 *, 0x78) + 1);
+        }
+        return 0;
+    case 1:
+        M2C_FIELD(M2C_FIELD(arg0, void **, 0x14), s16 *, 0x56) = (s16) (-(s32) *((u16 *)D_1F8000F2) & 0xFFF);
+        return 1;
+    default:
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801217A0);
 

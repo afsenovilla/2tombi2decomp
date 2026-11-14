@@ -34,6 +34,24 @@ def main():
             funcs.append((n, s))
         else:
             pre.append(s)
+    # a global the target declares with another type is used here under an alias name (config/aliases_<prog>.ld)
+    import hashlib, libsweep
+    aliases = libsweep.read_aliases(a.prog)
+    decl_re = r"(?m)^(extern [^;(]*?\b(\w+)(?:\[[^\]]*\])?;)"
+    theirs = {m.group(2): m.group(1) for m in re.finditer(decl_re, t)}
+    for i, p in enumerate(pre):
+        m = re.match(decl_re, p)
+        if not m or m.group(2) not in theirs or theirs[m.group(2)] == m.group(1):
+            continue
+        k = m.group(2)
+        am = re.fullmatch(r"(?:D|func)_([0-9A-F]{8})", k)
+        if not am:
+            sys.exit("%s is declared differently in %s; rename it by hand" % (k, path))
+        new = "%s_%s" % (k, hashlib.sha1(p.encode()).hexdigest()[:4])
+        aliases[new] = int(am.group(1), 16)
+        pre[i] = re.sub(r"\b%s\b" % k, new, p)
+        funcs = [(n, re.sub(r"\b%s\b" % k, new, b)) for n, b in funcs]
+    libsweep.write_aliases(a.prog, aliases)
     lines = {}
     for n, body in funcs:
         line = 'INCLUDE_ASM("asm/%s/nonmatchings/%s", %s);' % (a.prog, a.prog, n)

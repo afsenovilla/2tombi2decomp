@@ -39,7 +39,51 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010B29C);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010B42C);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010B600);
+extern u16 D_800ECF54;
+
+s32 func_8010B600(s32 arg0) {
+    u8 temp_v1;
+    void *temp_s1;
+
+    temp_s1 = M2C_FIELD(arg0, void **, 0x158);
+    if (M2C_FIELD(temp_s1, u8 *, 0xC) == 4) {
+        temp_v1 = M2C_FIELD(temp_s1, u8 *, 2);
+        if (temp_v1 == 5) {
+            return func_8010B29C(arg0, (s32) temp_s1);
+        }
+        if (temp_v1 == 8) {
+            M2C_FIELD(temp_s1, s8 *, 0x29) = 1;
+            M2C_FIELD(temp_s1, s16 *, 0x60) = (s16) -(s16) M2C_FIELD(arg0, u16 *, 0x152);
+            func_800635D4(arg0, 1);
+            func_80076D68(arg0);
+            if ((M2C_FIELD(arg0, u8 *, 0x169) == 0) && (D_800ECF54 & (*(u16 *)0x1F800172 | 0x50))) {
+                M2C_FIELD(arg0, s16 *, 0x58) = 0;
+                func_8010B42C(arg0, (s32) temp_s1);
+                return (s32) D_800ECF54;
+            }
+            func_8010B42C(arg0, (s32) temp_s1);
+            if (func_80049280(arg0, 0, M2C_FIELD(arg0, s16 *, 0x62)) != 0) {
+                M2C_FIELD(arg0, s8 *, 0x29) = 1;
+                M2C_FIELD(arg0, u16 *, 0x6A) = (u16) *(u16 *)0x1F8001A6;
+                func_80049674(arg0);
+                M2C_FIELD(arg0, u16 *, 0x142) = (u16) *(u16 *)0x1F8001A2;
+                M2C_FIELD(temp_s1, s8 *, 0x29) = 0;
+                M2C_FIELD(arg0, s8 *, 0x164) = 0;
+                M2C_FIELD(arg0, void **, 0x158) = NULL;
+                func_80054198(arg0);
+                M2C_FIELD(arg0, s8 *, 5) = 0;
+                M2C_FIELD(arg0, s8 *, 6) = 0;
+                M2C_FIELD(arg0, s8 *, 7) = 0;
+                func_80054D14(arg0, 2, 4);
+            }
+            /* Duplicate return node #10. Try simplifying control flow for better match */
+            return 0;
+        }
+        /* Duplicate return node #10. Try simplifying control flow for better match */
+        return 0;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010B754);
 
@@ -248,11 +292,17 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801143A4);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114408);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114528);
+
+s32 func_80114528(s32 arg0, s32 arg1) {
+    return func_8010EC58(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC0));
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaMultipartActorContact);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114640);
+
+s32 func_80114640(s32 arg0, s32 arg1) {
+    return func_8010F034(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC4));
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114664);
 
@@ -310,7 +360,10 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114F94);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80115084);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801150A8);
+
+s32 func_801150A8(s32 arg0, s32 arg1) {
+    return f_ResolveTombaInteractiveCylinderContact(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC0));
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801150CC);
 
@@ -648,7 +701,11 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122FAC);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801230A4);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80123180);
+
+s32 func_80123180(s32 arg0) {
+    M2C_FIELD(arg0, s32 *, 0x14) = f_SpawnGoldFishhookPickup(arg0, 1);
+    return 1;
+}
 
 
 s32 func_801231B0(void) {
@@ -791,9 +848,58 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateBlueBucketPendulumMotion);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleRareFishOrBucketSuspension);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801288D8);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012894C);
+s32 func_801288D8(s32 arg0) {
+    u8 temp_v1;
+    void *temp_v0;
+
+    temp_v1 = M2C_FIELD(arg0, u8 *, 5);
+    switch (temp_v1) {                              /* irregular */
+    case 0:
+        temp_v0 = M2C_FIELD(arg0, void **, 0x10);
+        if ((temp_v0 == NULL) || (M2C_FIELD(temp_v0, u8 *, 0x5E) == 2)) {
+            M2C_FIELD(arg0, s8 *, 0xB) = 0;
+            M2C_FIELD(arg0, void **, 0x10) = NULL;
+            M2C_FIELD(arg0, u8 *, 5) = (u8) (M2C_FIELD(arg0, u8 *, 5) + 1);
+        }
+        /* fallthrough */
+    case 1:
+        return func_801281B8(arg0);
+    default:
+        return 1;
+    }
+}
+
+extern s8 D_1F800207[];
+
+s32 func_8012894C(s32 arg0) {
+    s32 var_v0;
+    u8 temp_v1;
+    void *temp_v0;
+
+    temp_v1 = M2C_FIELD(arg0, u8 *, 5);
+    switch (temp_v1) {                              /* irregular */
+    case 0:
+        temp_v0 = M2C_FIELD(arg0, void **, 0x10);
+        if ((temp_v0 == NULL) || (M2C_FIELD(temp_v0, u8 *, 0x5E) == 2)) {
+            M2C_FIELD(arg0, s8 *, 0xB) = 0;
+            M2C_FIELD(arg0, void **, 0x10) = NULL;
+            M2C_FIELD(arg0, u8 *, 5) = (u8) (M2C_FIELD(arg0, u8 *, 5) + 1);
+        }
+        var_v0 = (u8) *((u8 *)D_1F800207) < 6U;
+        if (var_v0 != 0) {
+            func_801281B8(arg0);
+            return f_UpdateBlueBucketPendulumMotion(arg0);
+        }
+        return var_v0;
+    case 1:
+        var_v0 = func_801281B8(arg0);
+        /* Duplicate return node #9. Try simplifying control flow for better match */
+        return var_v0;
+    default:
+        return 1;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RunA00Event4ItemUseCutscene);
 

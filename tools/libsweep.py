@@ -118,23 +118,30 @@ def matches(obj, name, want, syms=None):
     return True
 
 
-_LIBCTX = None
+_LIBCTX = {}
 
 
-def lib_context():
-    """include/psyq_all.h preprocessed for m2c (build/libctx.c): typed Psy-Q signatures for the drafts."""
-    global _LIBCTX
-    if _LIBCTX is None:
-        out = os.path.join(ROOT, "build", "libctx.c")
+def lib_context(prog="main"):
+    """include/psyq_all.h preprocessed for m2c (build/libctx_<prog>.c): typed Psy-Q signatures for the drafts, plus
+    the guessed parameter counts of the program's functions without a header prototype (tools/arity.py)."""
+    if prog not in _LIBCTX:
+        out = os.path.join(ROOT, "build", "libctx_%s.c" % prog)
         r = subprocess.run([cc.OLDGCC + "/gcc-2.7.2-psx/cpp", "-undef", "-D__GNUC__=2", "-DMIPSEL", "-D_LANGUAGE_C",
                             "-DM2CTX", "-P", "-I" + os.path.join(ROOT, "include"),
                             "-I" + os.path.join(ROOT, "include", "psyq"), os.path.join(ROOT, "include", "psyq_all.h")],
                            capture_output=True, text=True)
         t = re.sub(r"__asm__\s*\(.*?\);", "", r.stdout, flags=re.S)
         t = re.sub(r"(?m)^#define M2C.*$", "", t)
+        subprocess.run([sys.executable, "-I", os.path.join(ROOT, "tools", "arity.py"), prog], cwd=ROOT,
+                       capture_output=True)
+        ar = os.path.join(ROOT, "build", "arity_%s.h" % prog)
+        known = set(re.findall(r"\b(\w+)\s*\(", t))
+        if os.path.exists(ar):
+            t += "\n" + "\n".join(l for l in open(ar) if re.match(r"M2C_UNK (\w+)\(", l)
+                                   and re.match(r"M2C_UNK (\w+)\(", l).group(1) not in known)
         open(out, "w").write(t)
-        _LIBCTX = out
-    return _LIBCTX
+        _LIBCTX[prog] = out
+    return _LIBCTX[prog]
 
 
 def candidates(prog, name, ctx, t1src, sources=("main", "pt", "t1", "m2c")):
@@ -148,7 +155,7 @@ def candidates(prog, name, ctx, t1src, sources=("main", "pt", "t1", "m2c")):
         text, f = ptsrc.cut(name)
         if text:
             out.append(("pt:" + f, text))
-    r = subprocess.run([sys.executable, D.M2C, "--target", "mipsel-gcc-c", "--valid-syntax", "--context", lib_context(),
+    r = subprocess.run([sys.executable, D.M2C, "--target", "mipsel-gcc-c", "--valid-syntax", "--context", lib_context(prog),
                         D.find_asm(prog, name)], capture_output=True, text=True, cwd=ROOT) if "m2c" in sources else None
     if r and r.returncode == 0 and r.stdout.strip() and "Decompilation failure" not in r.stdout:
         out.append(("m2c", '#define %s %s_hdr\n#include "psyq_all.h"\n#undef %s\n' % (name, name, name) + r.stdout))

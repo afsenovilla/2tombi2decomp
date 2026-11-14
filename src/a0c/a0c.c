@@ -40,7 +40,10 @@ INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010BA30);
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010BAA4);
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010BAFC);
+
+s32 func_8010BAFC(s32 arg0, s32 arg1) {
+    return func_80109AA0(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC0));
+}
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010BB20);
 
