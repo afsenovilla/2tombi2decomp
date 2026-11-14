@@ -380,7 +380,22 @@ s32 func_80023548(void *a, void *b)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800235A0);
+extern u8 D_800BE1F8_296f[];
+
+s32 func_800235A0(u8 *t, u8 *other)
+{
+    s32 c = f_ClassifyTombaActorCylinderContact(t, other, 1);
+
+    if (c < 0) {
+        return 0;
+    }
+    if (t[0x164] == 0xC) {
+        f_ResolveTombaActorImpactResponse(t, other, c, 4);
+    } else {
+        f_ResolveTombaActorImpactResponse(t, other, c, 1);
+    }
+    return 1;
+}
 
 extern s8 D_1F800182[];
 void f_ResolveActiveColliderOffsetActorContact(void *arg0, void *arg1) {
@@ -3094,7 +3109,7 @@ void func_80051E00(void)
     for (; i < 3; i++) {
         tcb += 0xC0;
         w->busy = 0;
-        *(u32 *)w->pad8 = stack;
+        w->stack = stack;
         w->active = 0;
         w->unk6F = 0;
         w++;
@@ -3132,7 +3147,18 @@ block_4:
     } while ((u32) temp_v0 <= 0x801FE14FU);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_OpenCooperativeWorkerThread);
+void f_OpenCooperativeWorkerThread(s32 i, void (*entry)())
+{
+    WorkerState *w = &WORKER_SLOTS[i];
+
+    w->entry = (u32)entry;
+    w->gp = GetGp();
+    w->busy = 2;
+    w->unk6F = 0;
+    EnterCriticalSection();
+    w->thread = OpenTh(w->entry, w->stack, w->gp);
+    ExitCriticalSection();
+}
 
 extern s8 D_1F800138[];
 void f_YieldCurrentCooperativeWorker(s16 arg0) {
@@ -3486,7 +3512,16 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80054C08);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SetTombaAnimationIfChanged);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetTombaAnimation);
+void f_SetTombaAnimation(u8 *t, s32 anim, s16 blend)
+{
+    t[0x46] = anim;
+    func_80054790(t);
+    if (blend == 0) {
+        f_StartActorSkeletalAnimation(t, D_80017FE8, anim);
+    } else {
+        f_StartActorSkeletalAnimationBlend(t, D_80017FE8, anim, blend);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SelectTombaContactAnimation6AOr6C);
 
@@ -5222,7 +5257,25 @@ s32 f_ControlStreamedAudioTrack(s32 track)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80075130);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80075240);
+void func_80075240(void)
+{
+    u8 *a;
+
+    func_80075D58();
+    a = D_800BE1F8_296f;
+    *(s16 *)(a + 0x2A) = 0x7FFF;
+    *(s16 *)(a + 0x2C) = 0x7FFF;
+    *(s16 *)(a + 0x2E) = 0x1FFF;
+    *(s16 *)(a + 0x30) = 0x1FFF;
+    *(s32 *)D_800BE1F8_296f = 0x300;
+    *(s32 *)(a + 0x18) = 0;
+    *(s32 *)(a + 0x14) = 0;
+    func_80075824(a);
+    SpuSetCommonAttr(a);
+    *(s32 *)D_800BE1F8_296f = 0;
+    a[0x32] = 0;
+    a[0x33] = 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800752B4);
 

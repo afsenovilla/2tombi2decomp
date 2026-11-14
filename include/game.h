@@ -17,17 +17,22 @@ typedef struct GameState {
 
 extern GameState D_800BF870;
 
-/* The cooperative worker (a second thread for disc reads and streaming), state at 0x801FE070 (USA): reached
- * through a constant pointer, not a symbol (lui/ori). f_OpenCooperativeWorkerThread / f_CloseCooperativeWorkerThread. */
+/* The cooperative workers (threads for disc reads and streaming): three slots of 0x70 bytes at 0x801FE000 (USA),
+ * each with a 0x800-byte stack from 0x801FEA00 (func_80051E00); slot 1 (0x801FE070) is the disc worker. Reached
+ * through constant pointers, not symbols (lui/ori). f_OpenCooperativeWorkerThread / f_CloseCooperativeWorkerThread. */
 typedef struct WorkerState {
     /* 0x00 */ u16 busy;
     /* 0x02 */ u8 pad2[2];
     /* 0x04 */ s32 thread;          /* CloseTh handle (f_TerminateCurrentCooperativeWorker) */
-    /* 0x08 */ u8 pad8[0x64];
+    /* 0x08 */ u32 stack;           /* OpenTh sp */
+    /* 0x0C */ u32 entry;           /* OpenTh func */
+    /* 0x10 */ u32 gp;              /* OpenTh gp (GetGp) */
+    /* 0x14 */ u8 pad14[0x58];
     /* 0x6C */ u8 active;
     /* 0x6D */ u8 pad6D[2];
     /* 0x6F */ u8 unk6F;
 } WorkerState;
+#define WORKER_SLOTS ((WorkerState *)0x801FE000)
 #define WORKER_STATE ((WorkerState *)0x801FE070)
 
 /* A pop-up message request: a count and up to 12 entries (0xFFFF = empty). f_ResetPopupRequest. */
