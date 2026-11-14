@@ -1763,7 +1763,13 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004EB94);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_QueueItemMessage);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_QueueResourceMessage);
+void f_QueuePopupMessage(u8 *text, s32, s32);
+
+// Queues resource message `id` of the message bank as a pop-up.
+void f_QueueResourceMessage(s16 id, u8 arg)
+{
+    f_QueuePopupMessage(D_800BF548.text + D_800BF548.offsets[id], -1, arg);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004EDDC);
 
@@ -1778,7 +1784,14 @@ void f_ResetPopupRequest(PopupRequest *req)
     req->count = 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResetPopupDisplayEntry);
+void *memset(void *, s32, s32);
+
+void f_ResetPopupDisplayEntry(PopupDisplayEntry *e)
+{
+    memset(e, 0, sizeof(PopupDisplayEntry));
+    e->unk3D = 0xFF;
+    e->unk10 = 0xFF;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_RemoveOldestPopupDisplayEntry);
 
@@ -1825,7 +1838,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ForcePromotePopupRequest);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_QueuePopupMessage);
 
-extern M2C_UNK D_800BF548;
 void func_8004FB20(void) {
     memset(&D_800BF548, 0, 0x2BC);
 }

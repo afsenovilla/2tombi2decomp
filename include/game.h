@@ -27,6 +27,23 @@ typedef struct PopupRequest {
     /* 0x04 */ u16 entries[12];
 } PopupRequest;
 
+/* One displayed pop-up (0x8C bytes, f_ResetPopupDisplayEntry). */
+typedef struct PopupDisplayEntry {
+    /* 0x00 */ u8 pad0[0x10];
+    /* 0x10 */ u8 unk10;
+    /* 0x11 */ u8 pad11[0x2C];
+    /* 0x3D */ u8 unk3D;
+    /* 0x3E */ u8 pad3E[0x4E];
+} PopupDisplayEntry;
+
+/* The resource message bank (0x2BC bytes, cleared by func_8004FB20): text offsets and the text they index. */
+typedef struct MessageBank {
+    /* 0x000 */ u8 pad0[0x2B4];
+    /* 0x2B4 */ u16 *offsets;
+    /* 0x2B8 */ u8 *text;
+} MessageBank;
+extern MessageBank D_800BF548;
+
 /* Scratchpad variables with names (config/undefined_syms.ld); every other scratchpad byte is D_1F8xxxxx
  * (config/scratchpad.ld), declared `extern s8 D_1F8xxxxx[]` by the drafts. */
 extern volatile u8 g_DiscReadPending;   /* 0x1F80019B, cleared before a cooperative disc read */
