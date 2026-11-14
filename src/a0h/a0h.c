@@ -14,9 +14,37 @@ INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_801096E8);
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", f_DispatchStrengthTowerTombaContacts);
 
-INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_80109CC4);
+extern u16 D_800BF812;
 
-INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_80109D24);
+void func_80109CC4(u8 *a)
+{
+    u16 limit = D_800BF812;
+
+    if (!(a[0x145] & 1)) {
+        if (*(s16 *)(a + 0x32) >= (s16)limit - *(s16 *)(a + 0x62)) {
+            *(u16 *)(a + 0x32) = limit - *(u16 *)(a + 0x62);
+            func_80022C78(a);
+        }
+    }
+}
+
+extern u8 D_800BF808[];
+
+void func_80109D24(u8 *a)
+{
+    u8 *s = D_800BF808;
+    u16 limit;
+
+    if (s[0xE] != 0) {
+        limit = *(u16 *)(s + 0xA);
+        if (!(a[0x145] & 1)) {
+            if (*(s16 *)(a + 0x32) >= (s16)limit - *(s16 *)(a + 0x62)) {
+                *(u16 *)(a + 0x32) = limit - *(u16 *)(a + 0x62);
+                func_80022C78(a);
+            }
+        }
+    }
+}
 
 extern s8 D_1F800182[];
 

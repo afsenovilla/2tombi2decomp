@@ -14,9 +14,37 @@ INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010978C);
 
 INCLUDE_ASM("asm/a0g/nonmatchings/a0g", f_DispatchCourageTowerTombaContacts);
 
-INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_80109CC8);
+extern u16 D_800BF812;
 
-INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_80109D28);
+void func_80109CC8(u8 *a)
+{
+    u16 limit = D_800BF812;
+
+    if (!(a[0x145] & 1)) {
+        if (*(s16 *)(a + 0x32) >= (s16)limit - *(s16 *)(a + 0x62)) {
+            *(u16 *)(a + 0x32) = limit - *(u16 *)(a + 0x62);
+            func_80022C78(a);
+        }
+    }
+}
+
+extern u8 D_800BF808[];
+
+void func_80109D28(u8 *a)
+{
+    u8 *s = D_800BF808;
+    u16 limit;
+
+    if (s[0xE] != 0) {
+        limit = *(u16 *)(s + 0xA);
+        if (!(a[0x145] & 1)) {
+            if (*(s16 *)(a + 0x32) >= (s16)limit - *(s16 *)(a + 0x62)) {
+                *(u16 *)(a + 0x32) = limit - *(u16 *)(a + 0x62);
+                func_80022C78(a);
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_80109D98);
 
