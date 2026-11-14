@@ -21,8 +21,12 @@ extern GameState D_800BF870;
  * through a constant pointer, not a symbol (lui/ori). f_OpenCooperativeWorkerThread / f_CloseCooperativeWorkerThread. */
 typedef struct WorkerState {
     /* 0x00 */ u16 busy;
-    /* 0x02 */ u8 pad2[0x6A];
+    /* 0x02 */ u8 pad2[2];
+    /* 0x04 */ s32 thread;          /* CloseTh handle (f_TerminateCurrentCooperativeWorker) */
+    /* 0x08 */ u8 pad8[0x64];
     /* 0x6C */ u8 active;
+    /* 0x6D */ u8 pad6D[2];
+    /* 0x6F */ u8 unk6F;
 } WorkerState;
 #define WORKER_STATE ((WorkerState *)0x801FE070)
 

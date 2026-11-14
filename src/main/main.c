@@ -2764,7 +2764,21 @@ void f_YieldCurrentCooperativeWorker(s16 arg0) {
     ChangeTh(0xFF000000);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TerminateCurrentCooperativeWorker);
+extern WorkerState *D_1F800138_fd56;
+extern s32 D_800E7E80_34c0[];
+
+void f_TerminateCurrentCooperativeWorker(void)
+{
+    WorkerState *w = D_1F800138_fd56;
+
+    w->active = 0;
+    w->busy = 0;
+    D_1F800138_fd56->unk6F = 0;
+    EnterCriticalSection();
+    CloseTh(D_1F800138_fd56->thread);
+    ExitCriticalSection();
+    ChangeTh(0xFF000000);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_CloseCooperativeWorkerThread);
 
@@ -2808,7 +2822,30 @@ s16 func_80052144(s32 arg0, s32 arg1) {
     return var_v1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80052198);
+s32 func_80052198(s32 a, u8 *out)
+{
+    s32 t = a + 0x80;
+    u8 v;
+    s32 r;
+
+    *out = t;
+    if ((s8)a < 0) {
+        v = t;
+    } else {
+        v = 0x7F - a;
+    }
+    if (v < 0x29) {
+        r = 0;
+        *out = 0;
+    } else if (v < 0x44) {
+        r = 1;
+    } else if (v < 0x62) {
+        r = 2;
+    } else {
+        r = 3;
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_StartControllerVibration);
 
