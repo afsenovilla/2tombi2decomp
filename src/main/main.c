@@ -1697,12 +1697,36 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80039E80);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80039F4C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003A1E4);
+extern u8 D_800BF80E_58ec;
+extern s32 D_1F800184;
+extern s16 D_800BF82A;
+extern u8 D_800FB164;
+typedef struct { s16 seq; s16 id; s16 mode; s16 on; } SeqSlot_368;
+extern SeqSlot_368 D_800BE368[];
+
+s32 func_8003A1E4(u8 *a, u8 *b)
+{
+    s32 v = a[8] >> 1;
+
+    if (a[8] & 1) {
+        b = (u8 *)(u32)b[0x3F];
+        if ((s32)b == v) {
+            return 0;
+        }
+        if ((s32)b < v) {
+            return -((v - (s32)b) * 12);
+        }
+        return ((s32)b - v) * 12;
+    }
+    b = (u8 *)(u32)b[0x3F];
+    if ((s32)b >= v) {
+        return ((s32)b - v) * 12 + 6;
+    }
+    return -((v - (s32)b) * 12) + 6;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003A290);
 
-extern u8 D_800BF80E_58ec;
-extern s32 D_1F800184;
 extern u8 D_800E7E81;
 
 void func_8003A3E8(void *a, u8 *s)
@@ -2976,8 +3000,6 @@ extern SpuVoiceSlot_238 D_800BE238_df3f[];
 extern u8 D_1F8001FE;
 extern u16 *D_1F8001E0;
 extern s16 D_800BED80;
-typedef struct { s16 seq; u8 pad[6]; } SeqSlot_368;
-extern SeqSlot_368 D_800BE368[];
 extern s32 D_800BED78;
 typedef struct { s16 h0; s16 y; u8 pad[0x88]; } PopupLine_474;
 
@@ -5043,7 +5065,33 @@ void func_8006585C(u8 *t)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800658E4);
+void func_800658E4(u8 *t)
+{
+    s32 m;
+
+    switch (t[6]) {
+    case 0:
+        D_800BF80E_58ec = 0;
+        t[6]++;
+    case 1:
+        if (f_AdvanceActorSkeletalAnimation(t) == 1) {
+            D_800BF80E_58ec = 1;
+        }
+        m = D_1F800184;
+        if (m == 1) {
+            goto zero;
+        }
+        if (m == 2) {
+            f_UpdateTombaMovementOrientation(t);
+        zero:
+            *(s16 *)(t + 0x50) = 0;
+            *(s16 *)(t + 0x4A) = 0;
+            break;
+        }
+        f_UpdateTombaTransitionTerrainContact(t, 1);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80065990);
 
@@ -5864,7 +5912,28 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80071260);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800713F8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800714C0);
+s32 func_800714C0(u8 *a, s16 v)
+{
+    switch (a[6]) {
+    case 0:
+        *(s16 *)(a + 0x4A) = v;
+        a[6]++;
+        goto end;
+    case 1:
+        *(s16 *)(a + 0x4A) += 0x100;
+        if (*(s16 *)(a + 0x4A) > 0x3000) {
+            *(s16 *)(a + 0x4A) = 0x3000;
+        }
+        *(s32 *)(a + 0x30) += *(s16 *)(a + 0x4A) << 8;
+        if (D_800BF82A < *(s16 *)(a + 0x32)) {
+            *(s16 *)(a + 0x32) = D_800BF82A;
+            return 1;
+        }
+    end:
+    default:
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007156C);
 
@@ -6348,7 +6417,18 @@ loop_1:
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_OpenSequencedMusicSlot);
+void f_OpenSequencedMusicSlot(s16 slot, void *data, s16 mode, s16 id)
+{
+    SeqSlot_368 *e = &D_800BE368[slot];
+    s16 vol;
+
+    e->id = id;
+    vol = D_800FB164 * 127 / 9;
+    e->seq = SsSeqOpen(data, id);
+    e->mode = mode;
+    e->on = 1;
+    SsSeqSetVol(e->seq, vol, vol);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800754F4);
 
