@@ -104,7 +104,20 @@ void func_8010B450(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010B4F4);
+extern u16 D_1F8001A4;
+
+void func_8010B4F4(u8 *a)
+{
+    s16 v[8];
+
+    v[1] = *(u16 *)(a + 0x2E);
+    v[3] = D_1F8001A4;
+    v[5] = *(u16 *)(a + 0x36);
+    func_800312D4(0xF06, v, -0xA);
+    v[3] += 0x50;
+    func_800312D4(0xF0C, v, -0xA);
+    func_80074590(7, 0, 0);
+}
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010B568);
 

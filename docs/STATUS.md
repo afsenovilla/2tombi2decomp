@@ -44,7 +44,9 @@ All code in C: **1417 / 7011 functions (20.2 %, 4.2 % of the bytes)**; Phase 2 M
   CameraState (`g_CameraState`, a linker name for 0x800E8008), PopupRequest / PopupDisplayEntry, MessageBank;
   named scratchpad variables in config/undefined_syms.ld; `include/actor.h` (not yet used).
 - The permuter rarely helps on raw drafts (about 10 matches in some 150 near misses at 60-120 s each).
-- `tools/dupsweep.py` keeps the linker-global names of config/undefined_syms.ld (g_CameraState, ...) instead of
+- `tools/dupsweep.py` also installs copies that differ only in instruction immediates (the masked key groups them:
+  the same code with other sound / effect ids): it maps each differing immediate and rewrites that literal of the
+  C when it appears once (`imm_map`, `patch_consts`); 18 more copies at once. It keeps the linker-global names of config/undefined_syms.ld (g_CameraState, ...) instead of
   renaming them to a program's D_ name, which had no declaration (`-v` prints a copy's failed build).
 - Library: string literals now become the retail strings' symbols, objects with extra text are rejected (+4).
 - Known left-overs worth a look: f_LoadResourceChunkIntoGroup, f_ReleaseActorModelParts (lui order), func_8003F2F8, func_8003F31C, func_8004D8B0, func_8006914C (near misses written by hand, in no file yet).

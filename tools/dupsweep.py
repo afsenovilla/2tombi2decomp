@@ -35,6 +35,55 @@ def c_functions(prog):
     return out
 
 
+def imm_map(obj, name, want):
+    """{compiled immediate: retail immediate} when the compiled function differs from `want` only in the 16-bit
+    immediates of otherwise identical instructions (copies of shared code with other constants); None otherwise."""
+    d = os.path.dirname(obj)
+    subprocess.run(["mipsel-linux-gnu-objcopy", "-O", "binary", "-j", ".text", obj, d + "/t.bin"], check=True)
+    text = open(d + "/t.bin", "rb").read()
+    if len(text) < len(want):
+        return None
+    rel = set()
+    for l in subprocess.run(["mipsel-linux-gnu-objdump", "-r", "-j", ".text", obj], capture_output=True,
+                            text=True).stdout.splitlines():
+        m = re.match(r"([0-9a-f]{8})\s+R_MIPS_", l)
+        if m:
+            rel.add(int(m.group(1), 16))
+    out = {}
+    for i in range(0, len(want), 4):
+        g = struct.unpack("<I", text[i:i + 4])[0]
+        w = struct.unpack("<I", want[i:i + 4])[0]
+        if i in rel or g == w:
+            continue
+        op = g >> 26
+        if (g >> 16) != (w >> 16) or op < 8 or op in (0x23, 0x21, 0x25, 0x20, 0x24, 0x2B, 0x29, 0x28):
+            return None   # not an immediate-only difference (or a load/store offset)
+        gi, wi = g & 0xFFFF, w & 0xFFFF
+        if op in (8, 9, 0xA):   # addi/addiu/slti: signed
+            gi, wi = gi - 0x10000 if gi & 0x8000 else gi, wi - 0x10000 if wi & 0x8000 else wi
+        if out.get(gi, wi) != wi:
+            return None
+        out[gi] = wi
+    return out or None
+
+
+def patch_consts(body, m):
+    """Replace each literal of the C body whose value is a key of m by its value, when it appears exactly once."""
+    for a_, b_ in m.items():
+        pats = [r"(?<![\w.])0x%X\b" % abs(a_), r"(?<![\w.])0x%x\b" % abs(a_)] if abs(a_) > 9 else []
+        pats.append(r"(?<![\w.])%d\b" % abs(a_))
+        hits = [(mm.start(), mm.end()) for pt in set(pats) for mm in re.finditer(pt, body)]
+        hits = sorted(set(hits))
+        if len(hits) != 1:
+            return None
+        st, en = hits[0]
+        neg = body[:st].rstrip().endswith("-")
+        if (a_ < 0) != neg:
+            return None
+        body = body[:st] + ("0x%X" % abs(b_)) + body[en:]
+    return body
+
+
 def names_by_addr(prog):
     out = {}
     for p in [os.path.join(ROOT, "config", "symbol_addrs_%s.txt" % prog),
@@ -124,8 +173,22 @@ def main():
                 cc.compile_c(t + "/x.c", t + "/a.o")
                 syms = {}
                 if not L.matches(t + "/a.o", tname, b[ad - d:end - d], syms):
-                    continue
-            except cc.CompileError:
+                    im = imm_map(t + "/a.o", tname, b[ad - d:end - d])
+                    pb = patch_consts(body, im) if im else None
+                    if pb is not None:
+                        open(t + "/x.c", "w").write(PRELUDE + "\n".join(ext) + "\n" + pb + "\n")
+                        cc.compile_c(t + "/x.c", t + "/a.o")
+                        if L.matches(t + "/a.o", tname, b[ad - d:end - d], syms):
+                            body = pb
+                        else:
+                            pb = None
+                    if pb is None:
+                        if a.v:
+                            print("%s %s: copy of %s %s does not match" % (p, tname, sp, sname))
+                        continue
+            except cc.CompileError as e:
+                if a.v:
+                    print("%s %s: copy of %s %s does not compile: %s" % (p, tname, sp, sname, str(e)[-300:]))
                 continue
             finally:
                 shutil.rmtree(t, ignore_errors=True)

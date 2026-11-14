@@ -81,7 +81,18 @@ s32 func_8010B3DC(s32 arg0, s32 arg1) {
     return var_a3;
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010B42C);
+s32 func_8010B42C(u8 *a)
+{
+    u8 *b = *(u8 **)(a + 0x158);
+
+    if (b[0xC] != 4) {
+        return 0;
+    }
+    if (b[2] != 0x16) {
+        return 0;
+    }
+    return func_8010B0FC(a, b);
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010B474);
 

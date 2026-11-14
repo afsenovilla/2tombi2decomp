@@ -444,7 +444,20 @@ s32 func_80114784(u8 *a)
     return func_80113C30(a, b);
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801147CC);
+extern u16 D_1F8001A4;
+
+void func_801147CC(u8 *a)
+{
+    s16 v[6];
+
+    v[1] = *(u16 *)(a + 0x2E);
+    v[3] = D_1F8001A4;
+    v[5] = *(u16 *)(a + 0x36);
+    func_800312D4(0x704, v, -10);
+    v[3] += 0x50;
+    func_800312D4(0x709, v, -10);
+    func_80074590(7, 0, 0);
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80114840);
 

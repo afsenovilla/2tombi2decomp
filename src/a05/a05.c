@@ -1220,7 +1220,20 @@ void func_80130C80(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80130CC8);
+extern void *D_800ECF80_1c35;
+extern u8 D_80140E40_ebd8[];
+
+void func_80130CC8(u8 *a)
+{
+    *(void **)(a + 0x3C) = D_800ECF80_1c35;
+    func_80077B38(a, D_80140E40_ebd8, 0x12);
+    a[0xD] = 0;
+    *(s16 *)(a + 0x5C) = 0;
+    a[0xB] = 0x10;
+    *(s16 *)(a + 0x5A) = 0;
+    a[0x47] = 0;
+    a[8] = 0;
+}
 
 
 void func_80130D20(void *arg0) {

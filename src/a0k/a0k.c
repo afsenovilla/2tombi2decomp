@@ -244,7 +244,20 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80110938);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80110A34);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80110A68);
+extern u8 D_1F800137;
+extern u8 D_800BF808[];
+
+void func_80110A68(void)
+{
+    u8 *s;
+
+    D_1F800137 = 2;
+    s = D_800BF808;
+    s[7] = 2;
+    s[0x31] = 3;
+    s[5] = 0;
+    *(s16 *)(s + 0x32) = 0x1403;
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_IncrementBerryNutsScore);
 
@@ -402,11 +415,28 @@ block_8:
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801126E0);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8011273C);
+void func_8011273C(u8 *a)
+{
+    func_80051B70(a, 0xC, 0x29);
+    *(s16 *)(a + 0x54) = 0;
+    *(s16 *)(a + 0x56) = 0;
+    *(s16 *)(a + 0x58) = 0;
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112774);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801127C0);
+extern void *D_800ECF80;
+extern u8 D_8011FC38[];
+
+void func_801127C0(u8 *a)
+{
+    *(void **)(a + 0x3C) = D_800ECF80;
+    func_80077B38(a, D_8011FC38, 0x1);
+    *(s16 *)(a + 0x5C) = 0;
+    a[0xB] = 0x10;
+    *(s16 *)(a + 0x5A) = 0;
+    a[0x47] = 0;
+}
 
 extern u8 D_800BFA28;
 void func_80112810(void *arg0) {
