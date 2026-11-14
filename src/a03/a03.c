@@ -100,7 +100,19 @@ INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010E964);
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010EC34);
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010F174);
+extern u16 *D_800ECF78;
+
+void func_8010F174(u8 *a)
+{
+    u16 *p = D_800ECF78;
+    u16 t;
+
+    *(u16 **)(a + 0xC) = p;
+    *(u16 *)(a + 8) = p[0];
+    t = p[1];
+    a[7] = 0;
+    *(u16 *)(a + 0xA) = t;
+}
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_SubdivideProjectedTrolleyQuad);
 

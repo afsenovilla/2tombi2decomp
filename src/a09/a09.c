@@ -33,7 +33,25 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_80109D04);
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_80109DF4);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_80109E54);
+extern u8 D_800BF816;
+extern u8 D_800E806C;
+extern s32 D_1F800184;
+extern u8 D_800E7E80[];
+
+void func_80109E54(void)
+{
+    u8 *p;
+
+    D_800BF816 = 0;
+    D_800E806C = 0;
+    D_1F800184 = 0;
+    p = D_800E7E80;
+    p[5] = 0x24;
+    p[7] = 0;
+    p[6] = 0;
+    func_80054198(p);
+    p[0x16B] = 0;
+}
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", f_SpawnEvilPigDoorActorsFromPlacementTable);
 

@@ -61,7 +61,25 @@ INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010A248);
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010A33C);
 
-INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010A39C);
+extern u8 D_800BF816;
+extern u8 D_800E806C;
+extern s32 D_1F800184;
+extern u8 D_800E7E80[];
+
+void func_8010A39C(void)
+{
+    u8 *p;
+
+    D_800BF816 = 0;
+    D_800E806C = 0;
+    D_1F800184 = 0;
+    p = D_800E7E80;
+    p[5] = 0x24;
+    p[7] = 0;
+    p[6] = 0;
+    func_80054198(p);
+    p[0x16B] = 0;
+}
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", f_UpdateStrengthTowerExitDoorSequence);
 
@@ -121,6 +139,18 @@ INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010BCDC);
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010BFBC);
 
-INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010C4FC);
+extern u16 *D_800ECF78;
+
+void func_8010C4FC(u8 *a)
+{
+    u16 *p = D_800ECF78;
+    u16 t;
+
+    *(u16 **)(a + 0xC) = p;
+    *(u16 *)(a + 8) = p[0];
+    t = p[1];
+    a[7] = 0;
+    *(u16 *)(a + 0xA) = t;
+}
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", f_UpdateStrengthTowerInteriorEntranceActor);

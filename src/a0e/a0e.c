@@ -264,7 +264,19 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80114A78);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80114D30);
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80115270);
+extern u16 *D_800ECF78;
+
+void func_80115270(u8 *a)
+{
+    u16 *p = D_800ECF78;
+    u16 t;
+
+    *(u16 **)(a + 0xC) = p;
+    *(u16 *)(a + 8) = p[0];
+    t = p[1];
+    a[7] = 0;
+    *(u16 *)(a + 0xA) = t;
+}
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8011529C);
 

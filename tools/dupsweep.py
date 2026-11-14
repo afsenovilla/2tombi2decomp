@@ -21,16 +21,17 @@ def c_functions(prog):
     p = os.path.join(ROOT, "src", prog, prog + ".c")
     if not os.path.exists(p):
         return {}
-    out, pending = {}, []
-    for kind, seg in ptsrc.items(ptsrc.strip_comments(open(p).read())):
+    out, decls = {}, []
+    segs = ptsrc.items(ptsrc.strip_comments(open(p).read()))
+    for kind, seg in segs:   # every file-scope declaration (externs, types) is offered to each function
+        s = seg.strip()
+        if kind == "code" and not s.endswith("}") and (s.startswith(("extern ", "typedef ")) or
+                                                        (s.startswith(("struct ", "union ")) and s.endswith("};"))):
+            decls.append(s)
+    for kind, seg in segs:
         s = seg.strip()
         if kind == "code" and s.endswith("}") and ptsrc.func_name(s):
-            out[ptsrc.func_name(s)] = (s, pending)
-            pending = []
-        elif kind == "code" and s.startswith("extern "):
-            pending.append(s)
-        elif kind == "code" and not s.startswith("INCLUDE_ASM"):
-            pending = []
+            out[ptsrc.func_name(s)] = (s, decls)
     return out
 
 
@@ -106,6 +107,10 @@ def main():
             if tname not in pend:
                 continue
             body = re.sub(r"\b%s\b" % re.escape(sname), tname, text)
+            used = [e for e in ext if any(re.search(r"\b%s\b" % w, body) for w in
+                                          re.findall(r"\b(\w+)\s*(?:\[[^\]]*\])?\s*;?$", e.rstrip(";"))[-1:])
+                    or e.startswith(("typedef", "struct", "union"))]
+            ext = used
             cand = PRELUDE + "\n".join(ext) + "\n" + body + "\n"
             t = tempfile.mkdtemp(dir=os.path.join(ROOT, "build"))
             try:
