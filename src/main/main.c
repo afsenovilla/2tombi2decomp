@@ -3278,7 +3278,29 @@ u8 *f_FindEncodedMessagePage(u8 *p, s32 n)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_MeasureEncodedMessageBlock);
+extern u8 D_800E7E81;
+
+u8 f_MeasureEncodedMessageBlock(u8 *msg, s16 *maxw)
+{
+    s32 n = 0;
+    u8 len;
+    s16 w;
+
+    *maxw = 0;
+    for (;;) {
+        w = f_MeasureEncodedMessageLine(msg, &len);
+        msg += len;
+        if (*maxw < w) {
+            *maxw = w;
+        }
+        n++;
+        if (*msg == 0xFF) {
+            break;
+        }
+        msg++;
+    }
+    return n;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_FormatPopupPayloadPage);
 
@@ -5224,7 +5246,19 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006DC38);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006DCF4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006DEF0);
+void func_8006DEF0(u8 *a)
+{
+    s32 s = (rsin(*(s16 *)(a + 0x6E)) * *(s16 *)(a + 0x6C)) >> 12;
+    u8 *c = D_1F8000D0_b839;
+    s32 d = *(u16 *)(c + 6) + s - *(u16 *)(c + 0x12);
+
+    if ((u16)(d + 10) >= 0x15) {
+        *(s32 *)(c + 4) -= (d << 16) >> 3;
+    } else {
+        *(u16 *)(c + 6) = *(u16 *)(c + 0x12) - s;
+        a[0x66] |= 2;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006DF88);
 
@@ -5638,7 +5672,26 @@ u8 *func_800725D4(s16 *h)
     return a;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007263C);
+void func_8007263C(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        a[0xB] = 8;
+        a[4]++;
+        break;
+    case 1:
+        if (**(s16 **)(a + 0x10) == -2) {
+            a[4] = 3;
+        } else {
+            a[1] = 1;
+        }
+        break;
+    case 2:
+    case 3:
+        f_ResolveEffectEightByteStreamPayload();
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800726D4);
 
@@ -5692,7 +5745,29 @@ void f_InitializeInteriorDoorPartOpenYaw(void *arg0, void *arg1) {
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_OpenInteriorDoorPart);
+s32 f_OpenInteriorDoorPart(u8 *p, u8 *d)
+{
+    s32 r = 0;
+
+    switch (p[0x46]) {
+    case 0:
+        *(s16 *)(d + 0x12) -= 0x40;
+        if (*(s16 *)(d + 0x12) < -0x400) {
+            *(s16 *)(d + 0x12) = -0x400;
+            r = 1;
+        }
+        break;
+    case 1:
+        *(s16 *)(d + 0x12) += 0x40;
+        if (*(s16 *)(d + 0x12) > 0x400) {
+            *(s16 *)(d + 0x12) = 0x400;
+            r = 1;
+        }
+        break;
+    }
+    *(u16 *)(d + 0xA) = *(u16 *)(d + 0xE) - *(u16 *)(d + 0x12);
+    return r;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_CloseInteriorDoorPart);
 
