@@ -50,7 +50,16 @@ INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_80109D6C);
 
 INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_80109E6C);
 
-INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_80109F44);
+extern u8 D_1F800152;
+extern u8 D_1F800182;
+extern s32 D_1F800080;
+
+s32 func_80109F44(void)
+{
+    for (D_1F800182 = D_1F800152; D_1F800182 != 0; D_1F800182--) {
+    }
+    return D_1F800080;
+}
 
 INCLUDE_ASM("asm/a0i/nonmatchings/a0i", f_UpdateTombaWisdomTowerRockAction);
 

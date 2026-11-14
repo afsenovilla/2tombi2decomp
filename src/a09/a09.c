@@ -12,7 +12,20 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_801095B8);
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_80109708);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_80109790);
+extern u8 D_800E7E80[];
+extern u8 D_800BF816;
+extern s32 D_1F800184;
+extern u16 D_1F800210;
+extern u8 D_1F800152;
+extern u8 D_1F800182;
+extern s32 D_1F800080;
+
+s32 func_80109790(void)
+{
+    for (D_1F800182 = D_1F800152; D_1F800182 != 0; D_1F800182--) {
+    }
+    return D_1F800080;
+}
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", f_UpdateEvilPigDoorTombaTransitionSequence);
 

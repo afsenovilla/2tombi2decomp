@@ -90,6 +90,7 @@ def main():
     print("%d matched C functions to copy from" % len(sources))
     targets = [x for x in (a.progs.split(",") if a.progs else progs)]
     found = collections.defaultdict(list)
+    scratch = {}
     for p in targets:
         src = os.path.join(ROOT, "src", p, p + ".c")
         if not os.path.exists(src):
@@ -144,6 +145,7 @@ def main():
                 fn = re.sub(r"\b%s\b" % re.escape(s_), w, fn)
                 ex = [re.sub(r"\b%s\b" % re.escape(s_), w, e) for e in ex]
             found[p].append((tname, "\n".join(ex + [""] + [fn]) if ex else fn))
+            scratch[(p, tname)] = PRELUDE + "\n".join(ex) + "\n\n" + fn + "\n"
     print("found: " + ", ".join("%s %d" % (p, len(v)) for p, v in found.items()))
     if not a.install:
         return
@@ -174,6 +176,21 @@ def main():
         for gn, gfn in good:
             t = t.replace('INCLUDE_ASM("asm/%s/nonmatchings/%s", %s);' % (p, p, gn), gfn)
         open(path, "w").write(t)
+        # the rest through install_c.py, which aliases clashing global types and fixes declarations
+        done = {gn for gn, _ in good}
+        for n, fn in items:
+            if n in done:
+                continue
+            tf = tempfile.NamedTemporaryFile("w", suffix=".c", dir=os.path.join(ROOT, "build"), delete=False)
+            tf.write(scratch[(p, n)])
+            tf.close()
+            r = subprocess.run([sys.executable, "-I", "tools/install_c.py", tf.name, "--prog", p],
+                               capture_output=True, text=True, cwd=ROOT)
+            os.unlink(tf.name)
+            if "installed" in r.stdout:
+                good.append((n, fn))
+            elif a.v:
+                print("%s %s install_c failed:\n%s" % (p, n, (r.stdout + r.stderr)[-800:]))
         print("%s: installed %d of %d" % (p, len(good), len(items)))
 
 

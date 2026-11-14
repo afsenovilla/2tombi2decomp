@@ -70,7 +70,16 @@ INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_80109FAC);
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010A0AC);
 
-INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010A1AC);
+extern u8 D_1F800152;
+extern u8 D_1F800182_5650;
+extern s32 D_1F800080;
+
+s32 func_8010A1AC(void)
+{
+    for (D_1F800182_5650 = D_1F800152; D_1F800182_5650 != 0; D_1F800182_5650--) {
+    }
+    return D_1F800080;
+}
 
 
 void func_8010A1E4(void *arg0) {
