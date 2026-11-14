@@ -2463,7 +2463,32 @@ u32 func_80042090(void *arg0) {
     return (u32) (temp_v0 << 0x10) >> 0x1F;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800420AC);
+extern s16 D_1F8000C0[];
+extern u16 D_1F8000C8_208b[];
+extern u8 *D_800E7F50;
+extern u8 D_800BF80A_8fc3;
+
+s32 func_800420AC(u8 *p)
+{
+    switch (*(s16 *)(p + 0x72)) {
+    case 0:
+        if (D_800BF870.pad1[*(s16 *)(p + 0x74) + 0x143] == *(s16 *)(p + 0x76)) {
+            return 1;
+        }
+        break;
+    case 1:
+        if (D_800BF870.pad1[*(s16 *)(p + 0x74) + 0x143] & *(s16 *)(p + 0x76)) {
+            return 1;
+        }
+        break;
+    case 2:
+        if (!(D_800BF870.pad1[*(s16 *)(p + 0x74) + 0x143] & *(s16 *)(p + 0x76))) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80042170);
 
@@ -3501,7 +3526,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D8D8);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateUsedItemAttachmentPresentation);
 
-extern u8 D_800BF80A_8fc3;
 
 s32 func_8004DBB0(void) {
     return D_800BF80A_8fc3 == 0;
@@ -3536,7 +3560,38 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004E928);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_MeasureEncodedMessageLine);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004EAD0);
+u8 *func_8004EAD0(u8 *out, u8 *src)
+{
+    u8 *s;
+    u8 c;
+
+    switch (src[0]) {
+    case 0:
+        *out = 0xF4;
+        break;
+    case 1:
+        *out = 0xF2;
+        break;
+    case 2:
+        *out = 0xF3;
+        break;
+    default:
+        *out = 0xF0;
+        break;
+    }
+    s = *(u8 **)(src + 4);
+    for (out++; *s != 0; s++, out++) {
+        c = *s;
+        if (c == '\n' || c == ' ') {
+            *out = 0xFB;
+        } else {
+            *out = c - 0x20;
+        }
+    }
+    *out++ = 0xF0;
+    *out = 0xFF;
+    return out;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004EB94);
 
