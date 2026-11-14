@@ -479,9 +479,43 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnLinkedActorTrailEffect);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnActorImpactEffectPair);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80031708);
+void func_80031708(void *arg0)
+{
+  void **new_var;
+  void *new_var2;
+  void *temp_v1;
+  new_var2 = arg0;
+  temp_v1 = *((void **) (((signed char *) new_var2) + 0x3C));
+  if (temp_v1 != 0)
+  {
+    if ((*((u8 *) (((signed char *) temp_v1) + 3))) & 0x80)
+    {
+      *((void **) (((signed char *) new_var2) + 0x40)) = 0;
+      ;
+      *((void **) (((signed char *) new_var2) + 0x3C)) = 0;
+      return;
+    }
+    *((void **) (((signed char *) new_var2) + 0x40)) = (void *) (temp_v1 + 4);
+  }
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80031744);
+void func_80031744(void *arg0)
+{
+  u8 *temp_v1;
+  signed char *new_var;
+  new_var = (signed char *) arg0;
+  temp_v1 = *((u8 **) (new_var + 0x3C));
+  if (temp_v1 != 0)
+  {
+    if ((*temp_v1) & 0x80)
+    {
+      *((void **) (new_var + 0x40)) = 0;
+      *((u8 **) (new_var + 0x3C)) = 0;
+      return;
+    }
+    *((void **) (new_var + 0x40)) = (void *) (temp_v1 + 1);
+  }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80031780);
 
@@ -511,7 +545,13 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80032918);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SetEffectProjectionTransform);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80032A44);
+s32 func_80032A44(s32 arg0, s32 arg1)
+{
+  s32 new_var;
+  new_var = (s32) (rand() * (arg1 - arg0));
+  new_var = new_var >> 0xF;
+  return new_var + arg0;
+}
 
 s32 func_80032A88(s32 arg0) {
     return (s32) (rand() - 0x4000) >> arg0;
@@ -1346,7 +1386,19 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B208);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B2E8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetPickupWhiteTintEnabled);
+void f_SetPickupWhiteTintEnabled(void *arg0, s32 arg1)
+{
+  unsigned long new_var;
+  new_var = 0xFF;
+  if (arg1 == 0)
+  {
+    *((s8 *) (((signed char *) arg0) + 0x18)) = 0;
+    return;
+  }
+  *((s8 *) (((signed char *) arg0) + 0x18)) = new_var;
+  *((s8 *) (((signed char *) arg0) + 0x19)) = new_var;
+  *((s8 *) (((signed char *) arg0) + 0x1A)) = new_var;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdatePickupBlinkRenderFlag);
 
@@ -1761,7 +1813,56 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800538E0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80053968);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80053BF8);
+s32 func_80053BF8(void *arg0, s32 arg1)
+{
+  unsigned char temp_v1;
+  u8 temp_v0;
+  temp_v0 = *((u8 *) (((signed char *) arg0) + 0x61));
+  if (temp_v0 != 0)
+  {
+    if (temp_v0 & 1)
+    {
+      *((u8 *) (((signed char *) arg0) + 0)) = (u8) ((*((u8 *) (((signed char *) arg0) + 0))) & 7);
+      if (arg1 != 0)
+      {
+        temp_v1 = ((u8) (*((u8 *) (((signed char *) arg0) + 0x61)))) >> 4;
+        switch (temp_v1)
+        {
+          case 2:
+            if (((*((s16 *) (((signed char *) arg0) + 0x16C))) & 0xC000) == 0xC000)
+          {
+            func_80047B5C(arg0, 0);
+            if ((*((u16 *) 0x1F8001A8)) & 8)
+            {
+              func_8004960C(arg0, 0);
+              f_ApplyAreaPlaneDirectionToActor(arg0);
+              *((u16 *) (((signed char *) arg0) + 0x140)) = (u16) (*((u16 *) 0x1F8001A0));
+            }
+          }
+            break;
+
+          case 3:
+            *((s8 *) (((signed char *) arg0) + 0x16B)) = 1;
+            break;
+
+          case 4:
+            *((s8 *) (((signed char *) arg0) + 0x16B)) = 0;
+            break;
+
+        }
+
+        *((u8 *) (((signed char *) arg0) + 0x61)) = 0U;
+        *((u8 *) (((signed char *) arg0) + 0)) = (u8) ((*((u8 *) (((signed char *) arg0) + 0))) & 3);
+      }
+      return 1;
+    }
+    *((u8 *) (((signed char *) arg0) + 0x61)) = 0U;
+    goto block_17;
+  }
+  block_17:
+  return 0;
+
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ReleaseTombaInteractionTarget);
 
@@ -2137,7 +2238,80 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80061C64);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800620D0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006228C);
+extern s8 D_800BF80E;
+void func_8006228C(void *arg0) {
+    u16 temp_v0;
+    u16 temp_v0_3;
+    u8 temp_v0_2;
+    u8 temp_v1;
+
+    temp_v1 = M2C_FIELD(arg0, u8 *, 6);
+    switch (temp_v1) {                              /* irregular */
+    case 0:
+        M2C_FIELD(arg0, s8 *, 0x146) = 0;
+        f_ClearTombaInteractionState(arg0);
+        f_ResetTombaControlState(arg0);
+        f_SetTombaAnimationIfChanged(arg0, 0xE0, 4);
+        f_PlaySoundEffect(0x3A, 0, 0);
+        M2C_FIELD(arg0, u8 *, 0x167) = 0x1EU;
+        M2C_FIELD(arg0, s8 *, 7) = 0;
+        M2C_FIELD(arg0, u16 *, 0x40) = 7U;
+        M2C_FIELD(arg0, s16 *, 0x42) = 0;
+        M2C_FIELD(arg0, u8 *, 6) = (u8) (M2C_FIELD(arg0, u8 *, 6) + 1);
+        /* fallthrough */
+    case 1:
+        f_UpdateTombaHorizontalMovementSpeed(arg0, M2C_FIELD(arg0, u8 *, 0x147));
+        f_AdvanceActorSkeletalAnimation(arg0);
+        f_AdvanceTombaAlongMovementVector(arg0, 0);
+        f_UpdateTombaMovementOrientation(arg0);
+        M2C_FIELD(arg0, u16 *, 0x32) = (u16) (M2C_FIELD(arg0, u16 *, 0x32) + 8);
+        f_ResolveTombaGroundTerrainContact(arg0);
+        if (M2C_FIELD(arg0, u8 *, 0x29) != 0) {
+            temp_v0 = M2C_FIELD(arg0, u16 *, 0x40) - 1;
+            M2C_FIELD(arg0, u16 *, 0x40) = temp_v0;
+            if ((temp_v0 << 0x10) == 0) {
+                func_8005A714(arg0);
+            }
+        }
+        f_UpdateTombaLostGroundSupportMotion(arg0, 1);
+        f_UpdateTombaModelOrientationFromFacing(arg0);
+        temp_v0_2 = M2C_FIELD(arg0, u8 *, 0x167);
+        if (temp_v0_2 == 0) {
+            if (M2C_FIELD(arg0, u8 *, 0x29) != 0) {
+                M2C_FIELD(arg0, s8 *, 5) = 0;
+                M2C_FIELD(arg0, u8 *, 6) = 0U;
+                return;
+            }
+            f_DetachTombaFromSupport(arg0, 0);
+            return;
+        }
+        M2C_FIELD(arg0, u8 *, 0x167) = (u8) (temp_v0_2 - 1);
+        return;
+    case 2:
+        D_800BF80E = 0;
+        M2C_FIELD(arg0, s8 *, 0x146) = 0;
+        f_ClearTombaInteractionState(arg0);
+        f_ResetTombaControlState(arg0);
+        f_SetTombaAnimationIfChanged(arg0, 0xDF, 4);
+        f_PlaySoundEffect(0x3A, 0, 0);
+        M2C_FIELD(arg0, u16 *, 0x40) = 0x1EU;
+        M2C_FIELD(arg0, u8 *, 6) = (u8) (M2C_FIELD(arg0, u8 *, 6) + 1);
+        return;
+    case 3:
+        f_AdvanceActorSkeletalAnimation(arg0);
+        f_UpdateTombaModelOrientationFromFacing(arg0);
+        temp_v0_3 = M2C_FIELD(arg0, u16 *, 0x40) - 1;
+        M2C_FIELD(arg0, u16 *, 0x40) = temp_v0_3;
+        if ((temp_v0_3 << 0x10) == 0) {
+            D_800BF80E = 1;
+            M2C_FIELD(arg0, s8 *, 4) = 4;
+            M2C_FIELD(arg0, s8 *, 5) = 0x20;
+            M2C_FIELD(arg0, u8 *, 6) = 0U;
+            M2C_FIELD(arg0, s8 *, 7) = 0;
+        }
+        return;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800624B4);
 
@@ -2280,7 +2454,34 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800662D8);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800663A8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80066478);
+void func_80066478(void *arg0)
+{
+  int new_var;
+  s16 temp_v0_2;
+  u16 temp_v0;
+  if ((*((s16 *) (((signed char *) arg0) + 0x4A))) >= (-0x23FF))
+  {
+    new_var = -0x200U;
+    temp_v0 = (*((u16 *) (((signed char *) arg0) + 0x58))) + 0x40;
+    *((u16 *) (((signed char *) arg0) + 0x58)) = temp_v0;
+    if (((s16) temp_v0) >= (-0x1FF))
+    {
+      *((u16 *) (((signed char *) arg0) + 0x58)) = new_var;
+      f_AdvanceActorSkeletalAnimation();
+    }
+  }
+  f_AdvanceTombaAlongMovementVector(arg0, 1);
+  f_UpdateTombaMovementOrientation(arg0);
+  f_ResolveTombaOverheadTerrainContact(arg0, 3);
+  temp_v0_2 = ((u16) (*((s16 *) (((signed char *) arg0) + 0x4A)))) + 0x400;
+  *((s16 *) (((signed char *) arg0) + 0x4A)) = temp_v0_2;
+  if ((temp_v0_2 << 0x10) > 0)
+  {
+    *((s8 *) (((signed char *) arg0) + 0x145)) = 2;
+    *((u8 *) (((signed char *) arg0) + 6)) = (u8) ((*((u8 *) (((signed char *) arg0) + 6))) + 1);
+  }
+  *((s32 *) (((signed char *) arg0) + 0x30)) = (s32) ((*((s32 *) (((signed char *) arg0) + 0x30))) + ((*((s16 *) (((signed char *) arg0) + 0x4A))) << 8));
+}
 
 void func_80066538(void *arg0) {
     u16 temp_v0;
