@@ -2872,7 +2872,23 @@ void func_8005245C(void)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800524B4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800525D0);
+void func_800527C8();
+typedef struct Entry8w { u8 pad0[6]; u16 flags; } Entry8w;
+extern Entry8w *D_800A54A8_6044[];
+extern u8 D_800A55B0[];
+extern u8 *D_800A2B84[];
+
+u8 *func_800525D0(void *owner, s32 slot)
+{
+    u8 *a = f_AllocateActor(owner, 0x84, 3, 0);
+
+    if (a != NULL) {
+        *(void **)(a + 0x1C) = func_800527C8;
+        a[3] = slot;
+        *(void **)(a + 0x10) = owner;
+    }
+    return a;
+}
 
 
 void func_8005262C(void *arg0) {
@@ -4029,7 +4045,16 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006ACAC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006AE28);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006AFC4);
+void func_8006AFC4(u8 *a)
+{
+    u8 *b = *(u8 **)(a + 0x10);
+
+    if (b != NULL && b[0] == 1 && b[4] == b[0]) {
+        *(u16 *)(b + 0x2E) = *(u16 *)(a + 0x2E);
+        *(u16 *)(b + 0x32) = *(u16 *)(a + 0x32);
+        *(u16 *)(b + 0x36) = *(u16 *)(a + 0x36);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006B020);
 
@@ -4887,7 +4912,24 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80077F3C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_IntegerSquareRootRounded);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ApproximateVectorLength2D);
+s32 f_ApproximateVectorLength2D(s32 x, s32 y)
+{
+    s32 t;
+
+    if (x < 0) {
+        x = -x;
+    }
+    if (y < 0) {
+        y = -y;
+    }
+    if (x < y) {
+        x ^= y;
+        y ^= x;
+        x ^= y;
+    }
+    t = y + (y >> 1);
+    return x - (x >> 5) - (x >> 7) + (t >> 2) + (t >> 6);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ApproximateVectorLength3D);
 
