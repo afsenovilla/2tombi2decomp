@@ -433,7 +433,23 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80025D98);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80026024);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_AddEvilPigRobePower);
+typedef struct Linked { u8 pad0; u8 active; u8 pad2[0x1A]; void (*callback)(struct Linked *); u8 pad20[4]; struct Linked *next; } Linked;
+extern Linked *D_800F2738;
+extern Linked *D_800F2624;
+extern s8 *D_800ECF58[];
+extern u8 D_80017334[];
+extern u8 D_800ED058_93c7[];
+
+void f_AddEvilPigRobePower(u8 n)
+{
+    GameState *g = &D_800BF870;
+
+    g->pad1[0xD] += n;
+    if (g->pad1[0xE] < g->pad1[0xD]) {
+        g->pad1[0xD] = g->pad1[0xE];
+    }
+    D_800ED058_93c7[0xD] |= 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80026148);
 
@@ -1185,7 +1201,19 @@ void func_8003FA44(void) {
     f_DrawActiveTemplateEffectSlots();
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003FAA4);
+void func_8003FAA4(u8 *a)
+{
+    s32 v;
+
+    if (a[0xB] & 0x40) {
+        v = 0x50;
+    } else if (a[0xB] & 0x80) {
+        v = *(s16 *)(a + 0x80);
+    } else {
+        return;
+    }
+    func_8002AE0C(a, v, 0);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003FAE8);
 
@@ -3627,7 +3655,17 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80069A2C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80069AE4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80069B28);
+void func_80069B28(void)
+{
+    Linked *a = D_800F2738;
+    Linked *next;
+
+    while (a != NULL) {
+        next = a->next;
+        a->callback(a);
+        a = next;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80069B6C);
 
@@ -3654,9 +3692,23 @@ s32 func_8006A8C8(s32 arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006A900);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006ABF4);
+void func_8006ABF4(u8 *a)
+{
+    a[0xB] = 0x10;
+    a[0xD] = 0;
+    *(s16 *)(a + 0x5C) = 0;
+    *(s8 **)(a + 0x3C) = D_800ECF58[0];
+    f_StartActorTimedFrameSequence(a, D_80017334, 0x36);
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006AC38);
+void func_8006AC38(u8 *a)
+{
+    a[0xB] = 0x10;
+    a[0xD] = 0;
+    *(s16 *)(a + 0x5C) = 0;
+    *(s8 **)(a + 0x3C) = D_800ECF58[0];
+    f_StartActorTimedFrameSequence(a, D_80017334, 0x13C);
+}
 
 void func_8006AC7C(void *actor, s32 i)
 {
@@ -3866,7 +3918,12 @@ void func_8006E360(s32 arg0, M2C_UNK arg1) {
     f_RebuildCameraViewTransform(arg0);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SnapCameraPositionAndRebuildView);
+void f_SnapCameraPositionAndRebuildView(void *cam, void *pos)
+{
+    f_SetCameraPositionHorizontal(cam, pos);
+    f_SetCameraPositionVertical(cam, pos);
+    f_RebuildCameraViewTransform(cam);
+}
 
 
 void f_ApproachCameraPositionAndRebuildView(void *arg0, M2C_UNK arg1) {
@@ -4634,7 +4691,18 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007AE30);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007AF88);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007B008);
+void func_8007B008(void)
+{
+    Linked *a = D_800F2624;
+    Linked *next;
+
+    while (a != NULL) {
+        next = a->next;
+        a->active = 0;
+        a->callback(a);
+        a = next;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007B04C);
 
