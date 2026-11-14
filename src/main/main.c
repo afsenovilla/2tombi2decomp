@@ -1910,9 +1910,32 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F174);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F264);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F2F8);
+u8 func_8003F2F8(u8 a, u8 b)
+{
+    s32 d = a - 0x7F;
+    s32 s;
+    u8 r;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F31C);
+    s = b + d;
+    r = s;
+    if (s < 0) {
+        r = 0;
+    }
+    return r;
+}
+
+u8 func_8003F31C(u8 a, u8 b)
+{
+    s32 s;
+    u8 r;
+
+    s = a + b;
+    r = s;
+    if (s >= 0x100) {
+        r = 0xFF;
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F344);
 
