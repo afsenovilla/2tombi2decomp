@@ -818,7 +818,17 @@ void func_8011EF70(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011EFC8);
+extern void *D_8012B370[];
+
+void func_8011EFC8(u8 *a)
+{
+    if (a[0x71] == 0xFF) {
+        func_80040D68(a, D_8012B370[a[0x5E]]);
+        a[5] = 2;
+        a[6] = 0;
+        a[0x70] = 1;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011F028);
 

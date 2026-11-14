@@ -836,7 +836,16 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80120308);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80120420);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80120508);
+extern void *D_80137114[];
+
+void func_80120508(u8 *a)
+{
+    if (a[0x71] == 0xFF) {
+        func_80040D68(a, D_80137114[a[0x5E]]);
+        a[5] = 2;
+        a[0x70] = 1;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_ReturnThirstyMinerToIdleScript);
 
