@@ -41,6 +41,16 @@ def ccheck(src, prog):
     return res
 
 
+def restore_aliases(prog, text):
+    import libsweep
+    p = libsweep.aliases_path(prog)
+    if text is None:
+        if os.path.exists(p):
+            os.remove(p)
+    else:
+        open(p, "w").write(text)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("src")
@@ -59,6 +69,25 @@ def main():
         (funcs.append((n, s)) if n else pre.append(s))
     diff = ccheck(a.src, a.prog)
     t = old
+    # a global the target declares with another type is used under an alias name (as tools/install_c.py does)
+    import hashlib, libsweep
+    aliases = libsweep.read_aliases(a.prog)
+    decl_re = r"(?m)^(extern [^;(]*?\b(\w+)(?:\[[^\]]*\])?;)"
+    theirs = {m.group(2): m.group(1) for m in re.finditer(decl_re, t)}
+    for i, p in enumerate(pre):
+        m = re.match(decl_re, p)
+        if not m or m.group(2) not in theirs or theirs[m.group(2)] == m.group(1):
+            continue
+        k = m.group(2)
+        am = re.fullmatch(r"(?:D|func)_([0-9A-F]{8})", k)
+        if not am:
+            sys.exit("%s is declared differently in %s; rename it by hand" % (k, path))
+        new = "%s_%s" % (k, hashlib.sha1(p.encode()).hexdigest()[:4])
+        aliases[new] = int(am.group(1), 16)
+        pre[i] = re.sub(r"\b%s\b" % k, new, p)
+        funcs = [(n, re.sub(r"\b%s\b" % k, new, b)) for n, b in funcs]
+    old_aliases = open(libsweep.aliases_path(a.prog)).read() if os.path.exists(libsweep.aliases_path(a.prog)) else None
+    libsweep.write_aliases(a.prog, aliases)
     for n, body in funcs:
         if diff.get(n, 0) is None:
             sys.exit("%s matches: install it with tools/install_c.py" % n)
@@ -79,12 +108,14 @@ def main():
                        cwd=ROOT)
     if " OK " not in r.stdout:
         open(path, "w").write(old)
+        restore_aliases(a.prog, old_aliases)
         sys.exit("matching build not OK, restored:\n" + r.stdout + r.stderr[-2000:])
     d = tempfile.mkdtemp(dir=os.path.join(ROOT, "build"))
     try:
         cc.compile_c(path, d + "/nm.o", defines=["NON_MATCHING"])
     except cc.CompileError as e:
         open(path, "w").write(old)
+        restore_aliases(a.prog, old_aliases)
         sys.exit("does not compile with -DNON_MATCHING, restored:\n%s" % str(e)[-2000:])
     finally:
         subprocess.run(["rm", "-rf", d])

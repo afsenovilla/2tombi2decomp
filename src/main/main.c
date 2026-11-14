@@ -440,6 +440,7 @@ void func_80023528(void *arg0) {
     M2C_FIELD(arg0, s8 *, 6) = 0;
 }
 
+
 s32 func_80023548(void *a, void *b)
 {
     s32 cls = f_ClassifyTombaActorCylinderContact(a, b, 1);
@@ -718,6 +719,7 @@ void func_800264BC(void)
     f_SetStreamedAudioVolumeTarget(0x47FF);
 }
 
+
 void func_80026510(void)
 {
     s8 *p = D_800BF808_c1f7;
@@ -768,6 +770,7 @@ void f_ReleaseInteriorTransitionControl(void *arg0) {
     *((s8 *)D_1F800137) = 0;
 }
 
+
 void f_RetireInteriorSceneChildren(ChildList *l)
 {
     s32 i;
@@ -809,6 +812,7 @@ void func_80026A68(ChildList2 *l)
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80026AD0);
+
 
 void func_80026C88(void)
 {
@@ -1207,6 +1211,7 @@ void func_80033080(s32 arg0) {
     func_800288AC(arg0);
 }
 
+
 void func_800330AC(u8 *a)
 {
     switch (a[4]) {
@@ -1234,6 +1239,7 @@ void func_800330AC(u8 *a)
     }
 }
 
+
 u8 *f_SpawnLinkedActorShadow(u8 *owner)
 {
     u8 *a;
@@ -1251,6 +1257,7 @@ u8 *f_SpawnLinkedActorShadow(u8 *owner)
     }
     return 0;
 }
+
 
 u8 *f_SpawnLinkedActorSpriteRingEffect(u8 *src, void *owner, s32 v, s32 y)
 {
@@ -1309,6 +1316,7 @@ void func_8003393C(u8 *a, u8 c)
     f_DrawPackedUiQuadFrame(&r, D_800174AC, *(void **)(a + 4), &q);
 }
 
+
 void func_800339A4(u8 *a, u8 c)
 {
     struct { u8 b0; u8 b1; s16 h2; } q;
@@ -1332,6 +1340,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawPauseMenuButtonIcon);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80033B94);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80033FF4);
+
 
 void func_800342EC(u8 *a, s16 x, s16 y, u8 c)
 {
@@ -1494,6 +1503,7 @@ s32 f_GetPauseMenuEquipmentGroupRange(s32 g, s32 *start)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800365F0);
 
+
 s32 func_80036708(void *p)
 {
     s32 i;
@@ -1507,6 +1517,7 @@ s32 func_80036708(void *p)
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003675C);
+
 
 s32 func_8003687C(void *p)
 {
@@ -1628,6 +1639,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80037E44);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800384EC);
 
+
 s32 func_800386C0(u8 *p)
 {
     if (p[0x1F] < p[0x21] - 1) {
@@ -1660,6 +1672,7 @@ s32 func_80038708(u8 *p)
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80038758);
+
 
 s32 func_80038794(u8 *p)
 {
@@ -1704,6 +1717,7 @@ void func_8003989C(u8 *p)
     }
 }
 
+
 s32 func_8003990C(s32 n)
 {
     s32 i = 0;
@@ -1720,6 +1734,7 @@ s32 func_8003990C(s32 n)
     }
     return 0;
 }
+
 
 s32 func_80039978(u8 *p)
 {
@@ -1855,6 +1870,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8003EBE0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawActiveWorldActors);
 
+
 void func_8003EF9C(u8 *a)
 {
     s32 flag = a[0xB] == 0xF;
@@ -1948,6 +1964,7 @@ void func_8003FA44(void) {
     f_DrawActiveTemplateEffectSlots();
 }
 
+
 void func_8003FAA4(u8 *a)
 {
     s32 v;
@@ -2020,6 +2037,7 @@ void func_8003FC78(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x58) = 0;
     M2C_FIELD(arg0, s16 *, 0x56) = (s16) (M2C_FIELD(arg0, u8 *, 0x2A) * 0x10);
 }
+
 
 s32 func_8003FC8C(u8 *a)
 {
@@ -2104,6 +2122,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8003FFCC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004022C);
 
+
 void func_80040390(u8 *a)
 {
     if (a[0x29] != 0) {
@@ -2119,6 +2138,7 @@ void func_80040390(u8 *a)
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80040410);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80040558);
+
 
 s32 f_GetEventAPReward(s32 event, s32 low)
 {
@@ -2282,6 +2302,7 @@ s32 f_StepActorYawTowardAngle(s32 arg0, s16 arg1, s16 arg2) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80041468);
 
+
 s32 func_8004162C(u8 *p)
 {
     PartOwner *who;
@@ -2333,6 +2354,7 @@ s32 f_AdvanceActorAnimationAndStoreCompletion(void *arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80041938);
 
+
 s32 func_800419C4(u8 *a, s16 b, s16 c)
 {
     if (f_ProbeActorTerrainAlongFacing(a, b, c) != 1) {
@@ -2374,6 +2396,7 @@ s32 func_80041AC0(s32 arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeActorFixedStepMotion);
 
+
 s32 f_AdvanceActorFixedStepMotion(u8 *a)
 {
     if (*(s16 *)(a + 0x40) != 0) {
@@ -2389,6 +2412,7 @@ s32 f_AdvanceActorFixedStepMotion(u8 *a)
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80041C54);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80041D60);
+
 
 s32 func_80041F34(u8 *a)
 {
@@ -2434,6 +2458,7 @@ s32 func_80041FCC(u8 *p)
 void func_80041FF8(void *arg0) {
     func_80041FCC(M2C_FIELD(arg0, s32 *, 0x10));
 }
+
 
 s32 func_8004201C(u8 *p)
 {
@@ -2499,6 +2524,7 @@ s32 func_8004223C(void *arg0) {
     return D_800BF843 == M2C_FIELD(arg0, s16 *, 0x72);
 }
 
+
 s32 func_80042258(u8 *p)
 {
     switch (p[0x78]) {
@@ -2557,6 +2583,7 @@ s32 func_8004266C(void *arg0) {
     return 1;
 }
 
+
 s32 func_80042690(u8 *a)
 {
     s16 v[8];
@@ -2580,6 +2607,7 @@ s32 func_800426D8(void *arg0) {
     return 1;
 }
 
+
 s32 f_IsEventPresentationComplete(void)
 {
     if (D_800ED06D == 0 && D_800BF849 == 0) {
@@ -2587,6 +2615,7 @@ s32 f_IsEventPresentationComplete(void)
     }
     return 0;
 }
+
 
 s32 func_80042758(u8 *p)
 {
@@ -2609,6 +2638,7 @@ s32 func_80042758(u8 *p)
         return 0;
     }
 }
+
 
 s32 func_800427F4(u8 *p)
 {
@@ -2639,6 +2669,7 @@ s32 func_80042884(void) {
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80042894);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80042A8C);
+
 
 s32 func_80042BAC(u16 *p)
 {
@@ -2682,6 +2713,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_RunScriptedActorInterpolatedMovement
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800433FC);
 
+
 s32 func_80043634(u8 *p)
 {
     u16 v = *(u16 *)(p + 0x72);
@@ -2699,6 +2731,7 @@ s32 func_80043634(u8 *p)
     }
     return 1;
 }
+
 
 s32 func_800436BC(u8 *p)
 {
@@ -2718,6 +2751,7 @@ s32 func_800436BC(u8 *p)
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80043720);
+
 
 s32 func_80043858(u8 *p)
 {
@@ -2742,10 +2776,12 @@ s32 func_800438B4(u8 *actor)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800438D4);
 
+
 void func_80043964(u8 *p)
 {
     func_800438D4(*(s16 *)(p + 0x72), D_800BF870.pad1[*(s16 *)(p + 0x74) + 0x143], p[0x76]);
 }
+
 
 void func_800439A4(u8 *p)
 {
@@ -2852,6 +2888,7 @@ void f_StartTombaScriptedAnimation(u8 *t, s32 anim, s16 blend)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80044144);
 
+
 s32 func_800442A0(u8 *p)
 {
     u8 *t = D_800E7E80_f78d;
@@ -2872,6 +2909,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800444EC);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800446A4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004491C);
+
 
 s32 func_80044B38(u8 *p)
 {
@@ -2924,10 +2962,12 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80044E84);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80044F58);
 
+
 void func_80045080(void *dst, u8 i, s32 c, void *d)
 {
     func_8001DC40(dst, D_800BE118[i].sector, D_800BE118[i].size, d);
 }
+
 
 void func_800450BC(void **out, s32 i)
 {
@@ -2954,6 +2994,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800452C0);
 void func_80045558(s32 arg0, s32 arg1, s32 arg2, void *arg3) {
     func_80045080((void *)0x8018A000, arg0 & 0xFF, arg2, arg3);
 }
+
 
 s32 func_80045580(s32 i)
 {
@@ -3032,6 +3073,7 @@ s32 f_ClassifyActorTerrainAlongFacing(s32 arg0, s32 arg1, s32 arg2) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ClassifyActorTerrainAtOffset);
 
+
 void func_800493E8(u8 *actor, s16 a, s16 b)
 {
     func_80049418(actor, a, b, *(s16 *)(actor + 0x56));
@@ -3096,6 +3138,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004960C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ApplyTerrainProfileOrientationToActor);
 
+
 void f_ApplyAreaPlaneDirectionToActor(u8 *a)
 {
     s32 c;
@@ -3141,6 +3184,7 @@ s32 f_FindTerrainCellForActorProbe(u8 *a)
     return 1;
 }
 
+
 void f_SelectAreaPlaneCollisionTables(u8 i)
 {
     u16 *base = D_1F8001C8;
@@ -3152,6 +3196,7 @@ void f_SelectAreaPlaneCollisionTables(u8 i)
     D_1F8001D8 = h + h[8];
     D_1F8001DC = h + h[9];
 }
+
 
 void func_800499E8(void)
 {
@@ -3233,6 +3278,7 @@ void func_8004B150(u8 *a, s32 mode)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B208);
 
+
 void func_8004B2E8(void)
 {
     u8 *e = f_SpawnTransientEffect(0x1F, -0x8C);
@@ -3303,6 +3349,7 @@ s32 func_8004B428(s32 arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B4B0);
 
+
 void func_8004B4E8(s32 item, u8 v)
 {
     f_AddItemWithMessage(item, 1);
@@ -3318,6 +3365,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B788);
 INCLUDE_ASM("asm/main/nonmatchings/main", f_FillEquippedBucketFromSource);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004BB38);
+
 
 u8 *f_SpawnBackEquipmentProxyActor(void *owner, u8 item, s16 clut)
 {
@@ -3354,6 +3402,7 @@ void f_ClearBackItem(void)
     *(s32 *)(D_800E7E80 + 0x74) = 0;
 }
 
+
 void func_8004BEF4(u8 *a)
 {
     s32 r;
@@ -3377,6 +3426,7 @@ void func_8004BEF4(u8 *a)
         a[0x29] = 0;
     }
 }
+
 
 void func_8004BF84(u8 *a)
 {
@@ -3407,6 +3457,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnAreaIndexedPersistentPickup);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004C238);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004C930);
+
 
 u8 *f_SpawnAreaIndexedPersistentPickupOnce(void *area, u8 idx)
 {
@@ -3460,6 +3511,7 @@ void f_AddItemWithoutMessage(void) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_CompactInventoryAfterRemoval);
 
+
 void f_RemoveItemWithMessage(s32 item, s32 count)
 {
     D_800BF870.itemCounts[item] -= count;
@@ -3467,11 +3519,13 @@ void f_RemoveItemWithMessage(s32 item, s32 count)
     f_CompactInventoryAfterRemoval(item);
 }
 
+
 void f_RemoveItemWithoutMessage(s32 item, s32 count)
 {
     D_800BF870.itemCounts[item] -= count;
     f_CompactInventoryAfterRemoval(item);
 }
+
 
 void f_RemoveItemWithAltMessage(s32 item, s32 count)
 {
@@ -3535,6 +3589,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004DBC0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004DC84);
 
+
 void func_8004DD90(u8 *p)
 {
     if (f_GrantPickupHealth(p, 1)) {
@@ -3559,6 +3614,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004E808);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004E928);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_MeasureEncodedMessageLine);
+
 
 u8 *func_8004EAD0(u8 *out, u8 *src)
 {
@@ -3595,6 +3651,7 @@ u8 *func_8004EAD0(u8 *out, u8 *src)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004EB94);
 
+
 void f_QueueItemMessage(s32 item, s32 kind)
 {
     u16 msg[3];
@@ -3625,6 +3682,7 @@ void f_QueueResourceMessage(s16 id, u8 arg)
 {
     f_QueuePopupMessage(D_800BF548.text + D_800BF548.offsets[id], -1, arg);
 }
+
 
 void func_8004EDDC(s16 a, s16 b)
 {
@@ -3716,6 +3774,7 @@ u8 f_MeasureEncodedMessageBlock(u8 *msg, s16 *maxw)
 INCLUDE_ASM("asm/main/nonmatchings/main", f_FormatPopupPayloadPage);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_AppendPopupDisplayEntry);
+
 
 void f_PromoteNextPopupRequest(u8 *m)
 {
@@ -3923,6 +3982,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateActorScaledOffsetModelTransfor
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeMultiPartActorModel);
 
+
 void f_SetActorPartModel(u8 *actor, s32 bank, s32 index)
 {
     s8 *base = D_800ECF58[bank];
@@ -3980,6 +4040,7 @@ void f_TransformPointByModelPart(void *arg0, s32 arg1, void *arg2) {
     M2C_FIELD(arg2, u16 *, 4) = (u16) (M2C_FIELD(arg2, u16 *, 4) + M2C_FIELD(arg0, u16 *, 0x34));
 }
 
+
 void func_80051E00(void)
 {
     u8 *tcb = *(u8 **)0x110;
@@ -4029,6 +4090,7 @@ block_4:
     } while ((u32) temp_v0 <= 0x801FE14FU);
 }
 
+
 void f_OpenCooperativeWorkerThread(s32 i, void (*entry)())
 {
     WorkerState *w = &WORKER_SLOTS[i];
@@ -4068,6 +4130,7 @@ void f_TerminateCurrentCooperativeWorker(void)
     ChangeTh(0xFF000000);
 }
 
+
 void f_CloseCooperativeWorkerThread(s32 i)
 {
     WorkerState *w = (WorkerState *)((u8 *)0x801FE000 + i * 0x70);
@@ -4095,6 +4158,7 @@ void func_80052078(s32 arg0) {
     ExitCriticalSection();
     ChangeTh(0xFF000000);
 }
+
 
 void func_800520E0(void)
 {
@@ -4139,6 +4203,7 @@ s16 func_80052144(s32 arg0, s32 arg1) {
     return var_v1;
 }
 
+
 s32 func_80052198(s32 a, u8 *out)
 {
     s32 t = a + 0x80;
@@ -4163,6 +4228,7 @@ s32 func_80052198(s32 a, u8 *out)
     }
     return r;
 }
+
 
 void f_StartControllerVibration(u8 port, u8 lo, u8 hi, u8 dur)
 {
@@ -4248,6 +4314,7 @@ void func_8005262C(void *arg0) {
     }
     M2C_FIELD(arg0, s32 *, 0x30) = (s32) (M2C_FIELD(arg0, s32 *, 0x30) - ((s16) M2C_FIELD(arg0, u16 *, 0x4A) << 8));
 }
+
 
 void func_80052694(u8 *a)
 {
@@ -4345,6 +4412,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_CanTombaStartAttack);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80053670);
 
+
 s32 func_8005376C(u8 *p)
 {
     switch (p[0x176]) {
@@ -4357,6 +4425,7 @@ s32 func_8005376C(u8 *p)
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800537B8);
+
 
 void func_800538E0(u8 *a, u16 *pos, s32 flag)
 {
@@ -4432,6 +4501,7 @@ s32 func_80053BF8(void *arg0, s32 arg1)
 
 }
 
+
 void f_ReleaseTombaInteractionTarget(u8 *t)
 {
     u8 *o = *(u8 **)(t + 0x158);
@@ -4481,6 +4551,7 @@ void f_ResetTombaControlState(void *arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaOverheadTerrainContact);
 
+
 void func_800543C0(u8 *a)
 {
     u8 *o;
@@ -4526,6 +4597,7 @@ s32 f_SetTombaAnimationIfChanged(u8 *t, s32 anim, s32 blend)
     }
     return 1;
 }
+
 
 void f_SetTombaAnimation(u8 *t, s32 anim, s16 blend)
 {
@@ -4591,6 +4663,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_TryStartTombaContactAction);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80055704);
 
+
 s32 func_800557EC(u8 *p)
 {
     if (p[0x148] == 0) {
@@ -4633,6 +4706,7 @@ s32 func_80055864(void) {
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800558B4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800559F4);
+
 
 s32 func_80055C30(u8 *p)
 {
@@ -4728,6 +4802,7 @@ block_13:
     return M2C_FIELD(arg0, u8 *, 0x14A);
 }
 
+
 void f_SetTombaJumpLaunchVelocity(u8 *t, s32 boost)
 {
     if (t[0x174] & 0x30) {
@@ -4769,7 +4844,39 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaLostGroundSupportMotion);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_DetachTombaFromSupport);
 
+#ifdef NON_MATCHING
+// NON_MATCHING: 2 words differ (tools/ccheck.py); else arm schedules lui after the load
+extern u16 D_800ECF54;
+extern u16 D_1F800172_5cdb;
+extern u16 D_800A45A0[];
+extern u16 D_800A4588[];
+void func_80056E08(u8 *t)
+{
+    u16 *tbl;
+
+    if (D_800ECF54 & D_1F800172_5cdb) {
+        if (++t[0x167] >= 0xFF) {
+            t[0x167] = 0xFE;
+        }
+        return;
+    }
+    if (t[0x167] < 0xB) {
+        if (*(u16 *)(t + 0x17E) & 0x180) {
+            tbl = &D_800A45A0[t[0x167]];
+        } else {
+            tbl = &D_800A4588[t[0x167]];
+        }
+        *(u16 *)(t + 0x4A) += *tbl;
+        t[0x167] = 0x10;
+        if (*(s16 *)(t + 0x4A) > 0) {
+            *(s16 *)(t + 0x4A) = 0;
+        }
+    }
+}
+#else
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80056E08);
+#endif
+
 
 void func_80056EC8(u8 *p)
 {
@@ -5273,6 +5380,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800655DC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800656FC);
 
+
 void func_8006585C(u8 *t)
 {
     switch (t[6]) {
@@ -5291,6 +5399,7 @@ void func_8006585C(u8 *t)
         f_UpdateTombaTransitionTerrainContact(t, 0);
     }
 }
+
 
 void func_800658E4(u8 *t)
 {
@@ -5338,6 +5447,7 @@ void func_800661E0(void *arg0) {
         }
     }
 }
+
 
 void func_8006625C(u8 *t)
 {
@@ -5551,6 +5661,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80069858);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80069948);
 
+
 s16 func_80069A2C(u8 *a, s16 x, s16 y, s16 z)
 {
     u8 *r = a + 0x60;
@@ -5564,6 +5675,7 @@ s16 func_80069A2C(u8 *a, s16 x, s16 y, s16 z)
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80069AE4);
+
 
 void func_80069B28(void)
 {
@@ -5616,6 +5728,7 @@ s32 func_8006A8C8(s32 arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006A900);
 
+
 void func_8006ABF4(u8 *a)
 {
     a[0xB] = 0x10;
@@ -5624,6 +5737,7 @@ void func_8006ABF4(u8 *a)
     *(s8 **)(a + 0x3C) = D_800ECF58[0];
     f_StartActorTimedFrameSequence(a, D_80017334, 0x36);
 }
+
 
 void func_8006AC38(u8 *a)
 {
@@ -5634,6 +5748,7 @@ void func_8006AC38(u8 *a)
     f_StartActorTimedFrameSequence(a, D_80017334, 0x13C);
 }
 
+
 void func_8006AC7C(void *actor, s32 i)
 {
     f_InitializeSinglePartActorModel(actor, 1, D_800A4A94[i]);
@@ -5642,6 +5757,7 @@ void func_8006AC7C(void *actor, s32 i)
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006ACAC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006AE28);
+
 
 void func_8006AFC4(u8 *a)
 {
@@ -5653,6 +5769,7 @@ void func_8006AFC4(u8 *a)
         *(u16 *)(b + 0x36) = *(u16 *)(a + 0x36);
     }
 }
+
 
 void func_8006B020(u8 *a, s32 mode)
 {
@@ -5727,12 +5844,14 @@ void func_8006C59C(void *arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C608);
 
+
 void func_8006C77C(void)
 {
     if (D_800BF870.unk0 != 3) {
         D_800A4AF8[D_800BF870.unk0]();
     }
 }
+
 
 void func_8006C7C4(void)
 {
@@ -5754,6 +5873,7 @@ void f_SetCameraFocusPosition(u16 *pos)
     cam->focusY = pos[3];
     cam->focusZ = pos[5];
 }
+
 
 void f_SetCameraTransform(u8 *cam, u16 *t)
 {
@@ -5833,6 +5953,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006DC38);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006DCF4);
 
+
 void func_8006DEF0(u8 *a)
 {
     s32 s = (rsin(*(s16 *)(a + 0x6E)) * *(s16 *)(a + 0x6C)) >> 12;
@@ -5865,6 +5986,7 @@ void f_SetCameraMode(u8 mode)
     c->unk6 = 0;
     c->previousMode = old;
 }
+
 
 void f_RestorePreviousCameraMode(void)
 {
@@ -5922,6 +6044,7 @@ void func_8006E360(s32 arg0, M2C_UNK arg1) {
     f_RebuildCameraViewTransform(arg0);
 }
 
+
 void f_SnapCameraPositionAndRebuildView(void *cam, void *pos)
 {
     f_SetCameraPositionHorizontal(cam, pos);
@@ -5951,6 +6074,7 @@ void func_8006E8F8(void *arg0) {
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006E918);
+
 
 void f_UpdateCameraFollowTomba(void)
 {
@@ -6010,6 +6134,7 @@ void func_8006F02C(s32 bit)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006F04C);
 
+
 u8 *f_SpawnTombaMovementHintController(void)
 {
     u8 *a = f_AllocateActorRecordByType(2, 3, 1);
@@ -6036,6 +6161,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006FC34);
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnAreaLinkedWeaponPickupActor);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnLinkedItemPickupActor);
+
 
 s32 func_8006FFE8(void)
 {
@@ -6066,6 +6192,7 @@ void func_80070650(void *arg0) {
     }
 }
 
+
 s32 func_80070698(s32 n)
 {
     s32 r = rand() & (n - 1);
@@ -6086,6 +6213,7 @@ void f_ConfigureScriptActorConversation(u8 a, u8 b, u8 c)
     D_800BF808[0x3B] = 0;
 }
 
+
 void func_8007074C(u8 a, u8 b, u8 c, Vec3i_74C v)
 {
     f_ConfigureScriptActorConversation(a, b, c);
@@ -6101,6 +6229,7 @@ void f_StartCurrentScriptActorConversation(void) {
     M2C_FIELD(temp_v1, s8 *, 5) = 3;
 }
 
+
 s32 f_TrySetCurrentScriptActorStateActive(void)
 {
     u8 *a = *(u8 **)D_1F800214;
@@ -6111,6 +6240,7 @@ s32 f_TrySetCurrentScriptActorStateActive(void)
     }
     return 0;
 }
+
 
 s32 f_TryStartCurrentScriptActorAnimation2(void)
 {
@@ -6123,6 +6253,7 @@ s32 f_TryStartCurrentScriptActorAnimation2(void)
     }
     return 0;
 }
+
 
 s32 f_TrySetCurrentScriptActorAnimation0(void)
 {
@@ -6160,6 +6291,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007091C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80070BD0);
 
+
 void f_UpdateActorOrbitAroundAnchor(u8 *a)
 {
     *(s16 *)(a + 0x2E) = *(u16 *)(a + 0x4E) + rcos(*(s16 *)(a + 0x44)) * 24 / 4096;
@@ -6167,6 +6299,7 @@ void f_UpdateActorOrbitAroundAnchor(u8 *a)
     *(s16 *)(a + 0x36) = *(u16 *)(a + 0x52);
     *(s16 *)(a + 0x44) = (*(u16 *)(a + 0x44) + 0x20) & 0xFFF;
 }
+
 
 void f_SetScriptActorInteractionOffset(u8 *a, s32 mode, Vec3i_F08 *v)
 {
@@ -6193,6 +6326,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80071260);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800713F8);
 
+
 s32 func_800714C0(u8 *a, s16 v)
 {
     switch (a[6]) {
@@ -6217,6 +6351,7 @@ s32 func_800714C0(u8 *a, s16 v)
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007156C);
+
 
 void func_800716B4(u8 *a)
 {
@@ -6311,6 +6446,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800721DC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80072308);
 
+
 void func_80072520(u8 *a)
 {
     switch (a[4]) {
@@ -6337,6 +6473,7 @@ void func_80072520(u8 *a)
     }
 }
 
+
 u8 *func_800725D4(s16 *h)
 {
     u8 *a = f_AllocateActorRecordByType(1, 3, 1);
@@ -6351,6 +6488,7 @@ u8 *func_800725D4(s16 *h)
     *h = -1;
     return a;
 }
+
 
 void func_8007263C(u8 *a)
 {
@@ -6381,6 +6519,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80072898);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80072A78);
 
+
 u8 *f_AllocateActor(u8 *owner, u8 flags, u8 kind, u8 type)
 {
     u8 *r;
@@ -6398,6 +6537,7 @@ u8 *f_AllocateActor(u8 *owner, u8 flags, u8 kind, u8 type)
     r[2] = type;
     return r;
 }
+
 
 s32 f_OpenInteriorEntranceDoor(u8 *a)
 {
@@ -6447,6 +6587,7 @@ void f_InitializeInteriorDoorPartOpenYaw(void *arg0, void *arg1) {
     }
 }
 
+
 s32 f_OpenInteriorDoorPart(u8 *p, u8 *d)
 {
     s32 r = 0;
@@ -6475,6 +6616,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_CloseInteriorDoorPart);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_CloseMirroredInteriorDoorPart);
 
+
 void f_PrepareInteriorTransition(u8 *door)
 {
     u8 *t;
@@ -6490,6 +6632,7 @@ void f_PrepareInteriorTransition(u8 *door)
     t[6] = 0;
     t[7] = 0;
 }
+
 
 void f_BeginInteriorEntryTransition(u8 *door)
 {
@@ -6507,6 +6650,7 @@ void f_BeginInteriorExitTransition(void *arg0) {
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateInteriorEntranceDoorTransition);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateEntranceContactIndicator);
+
 
 s32 func_80073750(u8 *s)
 {
@@ -6538,6 +6682,7 @@ s32 func_80073750(u8 *s)
     }
     return r;
 }
+
 
 void func_800737F8(s32 arg)
 {
@@ -6594,6 +6739,7 @@ void f_SetSoundEffectHandleVolume(u8 handle)
     h->volume = 10;
 }
 
+
 u32 func_80074A60(s32 vol, s32 ang)
 {
     u16 hi, lo;
@@ -6618,6 +6764,7 @@ u32 func_80074A60(s32 vol, s32 ang)
     return (hi << 16) | lo;
 }
 
+
 void f_ComputeDirectionalStereoVolume(u32 handle)
 {
     u8 i = handle;
@@ -6628,6 +6775,7 @@ void f_ComputeDirectionalStereoVolume(u32 handle)
         ((u8 *)h)[1] = 0;
     }
 }
+
 
 void func_80074B44(void)
 {
@@ -6652,6 +6800,7 @@ void func_80074BC4(void) {
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_PlaySequencedMusic);
+
 
 void f_StopSequencedMusic(void)
 {
@@ -6707,6 +6856,7 @@ void func_800750A4(s8 arg0) {
     *((s8 *)D_1F80023B) = arg0;
 }
 
+
 s32 f_ControlStreamedAudioTrack(s32 track)
 {
     if (track == 0xFF) {
@@ -6721,6 +6871,7 @@ s32 f_ControlStreamedAudioTrack(s32 track)
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80075130);
+
 
 void func_80075240(void)
 {
@@ -6764,6 +6915,7 @@ loop_1:
     }
 }
 
+
 void f_OpenSequencedMusicSlot(s16 slot, void *data, s16 mode, s16 id)
 {
     SeqSlot_368 *e = &D_800BE368[slot];
@@ -6783,6 +6935,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007566C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80075824);
 
+
 void func_80075A30(void)
 {
     SpuAttrLite *a = &D_800BE1F8;
@@ -6797,6 +6950,7 @@ void func_80075A30(void)
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80075A80);
+
 
 void f_SetStreamedAudioVolumeTarget(s32 x)
 {
@@ -6813,6 +6967,7 @@ void f_SetStreamedAudioVolumeTarget(s32 x)
     *(s16 *)(a + 0x2A) = x;
 }
 
+
 void f_RefreshSoundEffectHandleLifetime(s32 x)
 {
     u8 *a = D_800BE1F8_296f;
@@ -6827,6 +6982,7 @@ void f_RefreshSoundEffectHandleLifetime(s32 x)
     }
     *(s16 *)(a + 0x2E) = x;
 }
+
 
 void func_80075D58(void)
 {
@@ -6864,6 +7020,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007703C);
 INCLUDE_ASM("asm/main/nonmatchings/main", f_TestActorVisibilityAndQueueForRender);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_StepWrappedAngleToward);
+
 
 s32 f_TestWrappedAngleSide(s32 a, s32 b, s32 flip)
 {
@@ -6903,6 +7060,7 @@ void f_StartActorTimedFrameSequence(u8 *actor, u16 **table, s32 index)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_AdvanceActorTimedFrameSequence);
 
+
 void f_StartActorSkeletalAnimation(u8 *a, u8 **tbl, s32 i)
 {
     u8 *s = tbl[i];
@@ -6928,6 +7086,7 @@ void f_StartActorSkeletalAnimation(u8 *a, u8 **tbl, s32 i)
     }
 }
 
+
 void f_StartActorSkeletalAnimationBlend(u8 *a, void **table, s32 i, s32 blend)
 {
     s16 b = blend;
@@ -6946,6 +7105,7 @@ void func_80077D64(void)
         D_800BF808[0x3A] = 0x81;
     }
 }
+
 
 void func_80077D8C(void)
 {
@@ -7030,6 +7190,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80077F3C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_IntegerSquareRootRounded);
 
+
 s32 f_ApproximateVectorLength2D(s32 x, s32 y)
 {
     s32 t;
@@ -7048,6 +7209,7 @@ s32 f_ApproximateVectorLength2D(s32 x, s32 y)
     t = y + (y >> 1);
     return x - (x >> 5) - (x >> 7) + (t >> 2) + (t >> 6);
 }
+
 
 s32 f_ApproximateVectorLength3D(s32 x, s32 y, s32 z)
 {
@@ -7076,6 +7238,7 @@ s32 f_ApproximateVectorLength3D(s32 x, s32 y, s32 z)
     return x - (x >> 4) + (s >> 2) + (s >> 3);
 }
 
+
 s16 f_CalculateYawFromPositionToPoint(s16 *pos, s16 x, s16 z)
 {
     s32 dx = x;
@@ -7089,6 +7252,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_UnlockWarpDestinationAndAreaDoor);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800783DC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80078610);
+
 
 s32 func_80078738(u8 a, u8 b)
 {
@@ -7129,17 +7293,20 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawMenuTextGlyphs);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80079014);
 
+
 void f_DrawSmallMenuText(s16 x, s32 y, s16 c, s32 d, s32 e)
 {
     D_1F800180 = -0x20;
     f_DrawMenuTextGlyphs(x | (y << 16), 0x80008, c, d, e);
 }
 
+
 void f_DrawTallMenuText(s16 x, s32 y, s16 c, s32 d, s32 e)
 {
     D_1F800180 = 0x20;
     f_DrawMenuTextGlyphs(x | (y << 16), 0x100008, c, d, e);
 }
+
 
 s32 f_CalculateCenteredTextPositions(char **lines, s32 n, s32 *xs)
 {
@@ -7156,6 +7323,7 @@ s32 f_CalculateCenteredTextPositions(char **lines, s32 n, s32 *xs)
     }
     return min - 0x10;
 }
+
 
 void func_80079464(s32 demo)
 {
@@ -7186,6 +7354,7 @@ s32 func_80079528(u8 *arg0) {
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80079554);
+
 
 u8 f_FormatIntegerText(s32 v, char *out)
 {
@@ -7243,6 +7412,7 @@ void func_8007A8E0(void) {
     *((s16 *)D_1F80017C) = 0;
 }
 
+
 void func_8007A904(void)
 {
     u8 *a;
@@ -7293,6 +7463,7 @@ void func_8007AC98(void) {
     memset(&D_800ED018, 0, 0x3C);
 }
 
+
 void func_8007ACC4(void)
 {
     s32 i;
@@ -7309,6 +7480,7 @@ void func_8007AD14(void) {
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007AD40);
+
 
 Slot4C *func_8007AD98(void)
 {
@@ -7333,6 +7505,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ReleaseActorModelParts);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007AE30);
 
+
 void func_8007AF88(u8 *a, u8 **head, u8 **tail)
 {
     u8 *prev = *(u8 **)(a + 0x20);
@@ -7355,6 +7528,7 @@ void func_8007AF88(u8 *a, u8 **head, u8 **tail)
     }
 }
 
+
 void func_8007B008(void)
 {
     Linked *a = D_800F2624;
@@ -7367,6 +7541,7 @@ void func_8007B008(void)
         a = next;
     }
 }
+
 
 void func_8007B04C(void)
 {
@@ -7389,6 +7564,7 @@ void func_8007B04C(void)
     }
 }
 
+
 void func_8007B0F0(void)
 {
     s32 i = 0;
@@ -7407,6 +7583,7 @@ void func_8007B0F0(void)
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007B18C);
+
 
 Slot40 *f_AllocateTemplateEffectSlot(void)
 {
@@ -7429,6 +7606,7 @@ void func_8007B2AC(void *arg0) {
     M2C_FIELD(arg0, s32 *, 4) = 0;
     M2C_FIELD(arg0, s16 *, 0xC) = 0x1000;
 }
+
 
 void func_8007B2C0(s32 reverse)
 {
@@ -7458,6 +7636,7 @@ void func_8007B328(void) {
     func_8007B2C0(0);
 }
 
+
 void func_8007B38C(void)
 {
     u8 *g = (u8 *)&D_800BF870;
@@ -7472,6 +7651,7 @@ void func_8007B38C(void)
     g[0x5DD] = s[7];
     func_8007B2C0(g[0x5DC]);
 }
+
 
 void func_8007B3F4(void)
 {
@@ -7576,6 +7756,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007EE74);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007EF60);
 
+
 void func_8007F078(void)
 {
     func_80078988(0x76, 0xC8, 0, D_800172A4, 0);
@@ -7598,6 +7779,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007FC24);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007FCC8);
 
+
 void f_DrawLoadingIndicator(void)
 {
     if ((D_1F800198 >> 2) & 1) {
@@ -7610,6 +7792,7 @@ void f_DrawLoadingIndicator(void)
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007FDB0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8008007C);
+
 
 void func_800803DC(u32 *p, void *b)
 {
