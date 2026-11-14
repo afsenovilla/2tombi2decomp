@@ -4,7 +4,20 @@
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801095C8);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80109788);
+void func_801095C8();
+
+u8 *func_80109788(void)
+{
+    u8 *a = func_8007A980(0, 3, 1);
+
+    if (a == NULL) {
+        return NULL;
+    }
+    *(void **)(a + 0x1C) = func_801095C8;
+    a[2] = 1;
+    a[0x28] |= 0x80;
+    return a;
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801097DC);
 
@@ -324,7 +337,18 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112218);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112268);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112350);
+void f_UpdateTinyMouseVillageRewardActor();
+
+u8 *func_80112350(void *a)
+{
+    u8 *r = func_80072DDC(a, 0, 3, 0x10);
+
+    if (r != NULL) {
+        *(void **)(r + 0x1C) = f_UpdateTinyMouseVillageRewardActor;
+        r[3] = 0x3;
+    }
+    return r;
+}
 
 extern void *D_800ECF80;
 extern u8 D_8011FC38[];

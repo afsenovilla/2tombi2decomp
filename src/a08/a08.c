@@ -1175,7 +1175,17 @@ s32 func_8012D320(void) {
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012D344);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012D398);
+void func_8012CCD4();
+
+u8 *func_8012D398(void *a)
+{
+    u8 *r = func_80072DDC(a, 1, 3, 0x26);
+
+    if (r != NULL) {
+        *(void **)(r + 0x1C) = func_8012CCD4;
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012D3D4);
 

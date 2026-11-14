@@ -166,6 +166,11 @@ def main():
                                           re.findall(r"\b(\w+)\s*(?:\[[^\]]*\])?\s*;?$", e.rstrip(";"))[-1:])
                     or e.startswith(("typedef", "struct", "union"))]
             ext = used
+            # functions the body uses as values (callbacks) need a declaration when the source got it from a
+            # prototype that is not an extern line
+            for fnm in sorted(set(re.findall(r"(?<![\w(])((?:func_|f_)\w+)\b(?!\s*\()", body)) - {sname}):
+                if not any(re.search(r"\b%s\b" % fnm, e) for e in ext):
+                    ext = ext + ["void %s();" % fnm]
             cand = PRELUDE + "\n".join(ext) + "\n" + body + "\n"
             t = tempfile.mkdtemp(dir=os.path.join(ROOT, "build"))
             try:
