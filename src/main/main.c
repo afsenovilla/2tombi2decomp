@@ -4637,7 +4637,24 @@ void func_80069B28(void)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80069B6C);
+extern u8 *D_800E7F5C;
+extern s32 D_800BED78;
+typedef struct { u8 on; u8 flags; u8 pad[10]; } SpuVoiceSlot_238;
+extern SpuVoiceSlot_238 D_800BE238_df3f[];
+extern s32 D_800BE358_bdda;
+
+s32 func_80069B6C(u8 *a)
+{
+    u8 *t = D_800E7F5C;
+
+    if ((u16)(*(u16 *)(t + 0x34) - *(u16 *)(a + 0x36) + 0xE6) >= 0x1CD) {
+        return 0;
+    }
+    if ((u16)(*(u16 *)(t + 0x2C) - *(u16 *)(a + 0x2E) + 0xE6) >= 0x1CD) {
+        return 0;
+    }
+    return (u16)(*(u16 *)(t + 0x30) - *(u16 *)(a + 0x32) + 0xE6) < 0x1CD;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80069BEC);
 
@@ -5240,7 +5257,23 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80072898);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80072A78);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_AllocateActor);
+u8 *f_AllocateActor(u8 *owner, u8 flags, u8 kind, u8 type)
+{
+    u8 *r;
+
+    if (kind == 3) {
+        r = f_AllocateActorRecordByType(flags & 0x7F, 3, 1);
+    } else {
+        r = f_AllocateActorRecordByType(flags & 0x7F, kind, 0);
+    }
+    if (r == 0) {
+        return 0;
+    }
+    r[0x28] = flags;
+    *(u8 **)(r + 0x10) = owner;
+    r[2] = type;
+    return r;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_OpenInteriorEntranceDoor);
 
@@ -5358,7 +5391,19 @@ void f_ComputeDirectionalStereoVolume(u32 handle)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80074B44);
+void func_80074B44(void)
+{
+    s32 i;
+    s32 mask = 0;
+
+    for (i = D_800BED78; i < 0x18; i++) {
+        mask |= 1 << i;
+        D_800BE238_df3f[i].on = 0;
+        D_800BE238_df3f[i].flags &= 0xC0;
+    }
+    D_800BE358_bdda = mask;
+    SpuSetKey(0, mask);
+}
 
 extern s8 D_1F80027E[];
 void func_80074BC4(void) {
@@ -5679,7 +5724,32 @@ s32 f_ApproximateVectorLength2D(s32 x, s32 y)
     return x - (x >> 5) - (x >> 7) + (t >> 2) + (t >> 6);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ApproximateVectorLength3D);
+s32 f_ApproximateVectorLength3D(s32 x, s32 y, s32 z)
+{
+    u32 s;
+
+    if (x < 0) {
+        x = -x;
+    }
+    if (y < 0) {
+        y = -y;
+    }
+    if (z < 0) {
+        z = -z;
+    }
+    if (x < y) {
+        x ^= y;
+        y ^= x;
+        x ^= y;
+    }
+    if (x < z) {
+        x ^= z;
+        z ^= x;
+        x ^= z;
+    }
+    s = y + z;
+    return x - (x >> 4) + (s >> 2) + (s >> 3);
+}
 
 s16 f_CalculateYawFromPositionToPoint(s16 *pos, s16 x, s16 z)
 {
@@ -5900,7 +5970,27 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ReleaseActorModelParts);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007AE30);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007AF88);
+void func_8007AF88(u8 *a, u8 **head, u8 **tail)
+{
+    u8 *prev = *(u8 **)(a + 0x20);
+
+    if (prev != 0) {
+        *(u8 **)(prev + 0x24) = *(u8 **)(a + 0x24);
+    } else {
+        *head = *(u8 **)(a + 0x24);
+        if (*(u8 **)(a + 0x24) != 0) {
+            *(u8 **)(*(u8 **)(a + 0x24) + 0x20) = 0;
+        }
+    }
+    if (*(u8 **)(a + 0x24) != 0) {
+        *(u8 **)(*(u8 **)(a + 0x24) + 0x20) = *(u8 **)(a + 0x20);
+    } else {
+        *tail = *(u8 **)(a + 0x20);
+        if (*(u8 **)(a + 0x20) != 0) {
+            *(u8 **)(*(u8 **)(a + 0x20) + 0x24) = 0;
+        }
+    }
+}
 
 void func_8007B008(void)
 {
