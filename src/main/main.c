@@ -1956,7 +1956,24 @@ s32 func_800440A8(u8 *p)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_StartTombaScriptedAnimation);
+extern u8 D_800E7E80_f78d[];
+void func_8004BB38();
+extern u16 D_800BED8C;
+extern u16 *D_800BED88;
+extern u16 D_800ECF54;
+
+void f_StartTombaScriptedAnimation(u8 *t, s32 anim, s16 blend)
+{
+    if (t[0x164] == 0) {
+        f_SetTombaAnimation(t, anim & 0x7FFF, blend);
+        if (anim & 0x8000) {
+            t[5] = 0x26;
+        } else {
+            t[5] = 0x22;
+        }
+        t[6] = 0;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80044144);
 
@@ -2279,7 +2296,20 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_FillEquippedBucketFromSource);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004BB38);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnBackEquipmentProxyActor);
+u8 *f_SpawnBackEquipmentProxyActor(void *owner, u8 item, s16 clut)
+{
+    u8 *a = f_AllocateActor(owner, 0x81, 5, 1);
+
+    if (a != NULL) {
+        *(void **)(a + 0x1C) = func_8004BB38;
+        a[3] = 0;
+        *(s16 *)(a + 0x5C) = clut;
+        do { /* a macro in the original source, probably */
+            a[0x5E] = item;
+        } while (0);
+    }
+    return a;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_PositionActorFromModelParts);
 
@@ -4601,7 +4631,21 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_CloseInteriorDoorPart);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_CloseMirroredInteriorDoorPart);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_PrepareInteriorTransition);
+void f_PrepareInteriorTransition(u8 *door)
+{
+    u8 *t;
+
+    door[0] = 2;
+    t = D_800E7E80_f78d;
+    if (door[0xBF] != 0) {
+        f_PlaySoundEffect(0x17, 0, 0xF);
+    }
+    t[0x145] = 0;
+    f_ResetTombaControlState(t);
+    t[5] = 0;
+    t[6] = 0;
+    t[7] = 0;
+}
 
 void f_BeginInteriorEntryTransition(u8 *door)
 {
@@ -4611,8 +4655,8 @@ void f_BeginInteriorEntryTransition(u8 *door)
 }
 
 extern s8 D_800BF818;
-void f_BeginInteriorExitTransition(void) {
-    f_PrepareInteriorTransition();
+void f_BeginInteriorExitTransition(void *arg0) {
+    f_PrepareInteriorTransition(arg0);
     D_800BF818 = 3;
 }
 
