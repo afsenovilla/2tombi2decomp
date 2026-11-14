@@ -12,6 +12,8 @@ The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
   equal) among the retail tables whose labels fall inside the function. Measured before: 878 pending functions
   (824 KB, about a third of the pending bytes) use a jump table. `tools/ccheck.py` needs nothing (it ignores
   relocated fields).
+- **Decision (user, 2026-11-14): the project stays byte-matching only**; no NON_MATCHING blocks in src. The tool below
+  is kept for later but not used.
 - **Equivalent C behind NON_MATCHING** (`tools/nonmatching.py FILE.c [--prog] [--note]`), for the native port: the
   function goes in `#ifdef NON_MATCHING <C> #else INCLUDE_ASM #endif`, so the matching build keeps the retail asm.
   The tool refuses a function that matches, checks the matching build and that the file compiles with
