@@ -687,7 +687,7 @@ extern s8 *D_800ECF58[];
 extern s8 D_1F800214[];
 extern u8 D_800A4A94[];
 extern u8 *D_800BF844;
-void f_InitializeSinglePartActorModel(void *, s32, s32);
+s32 f_InitializeSinglePartActorModel(void *, s32, s32);
 
 void f_RequestInteriorTransitionGateMode2(u8 *gate)
 {
@@ -1272,7 +1272,38 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80034BE0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80034CE0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80035088);
+extern void *D_800A3ED8;
+extern u8 D_80106228[];
+typedef struct { s32 sector; s32 size; } FileLoc_1E0;
+extern FileLoc_1E0 D_800BE1E0_8c5b[];
+extern void *D_800A3ECC[];
+extern s16 D_1F8000F2;
+extern u8 D_800A3B0C_b8ee;
+extern u8 *D_800BF544_37fb;
+extern u32 *D_800ED8C8;
+
+s32 func_80035088(void *unused, s32 item, s32 mode)
+{
+    u8 *g = (u8 *)&D_800BF870;
+
+    if ((g[0x11] & 4) || (*(u16 *)(g + 0x2E) & 0x200)) {
+        if (mode == 1) {
+            return 1;
+        }
+        return 4;
+    }
+    if (mode == 1) {
+        return 0;
+    }
+    if (g[0x5E5]) {
+        g[0x5E5] = 0;
+        func_8004D6F4(item);
+    } else {
+        g[0x5E5] = 1;
+        func_8004D6D4(item);
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003511C);
 
@@ -2304,7 +2335,25 @@ s32 f_IsEventPresentationComplete(void)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80042758);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800427F4);
+s32 func_800427F4(u8 *p)
+{
+    switch (p[0x78]) {
+    case 0:
+        if (f_UpdateEvent(*(s16 *)(p + 0x72)) != 1) {
+            return 1;
+        }
+        if (*(s16 *)(p + 0x74) != 0) {
+            return 1;
+        }
+        p[0x78]++;
+        goto end;
+    case 1:
+        return f_IsEventPresentationComplete();
+    end:
+    default:
+        return 0;
+    }
+}
 
 extern s8 D_800BF80A;
 s32 func_80042884(void) {
@@ -2588,7 +2637,20 @@ void func_80045080(void *dst, u8 i, s32 c, void *d)
     func_8001DC40(dst, D_800BE118[i].sector, D_800BE118[i].size, d);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800450BC);
+void func_800450BC(void **out, s32 i)
+{
+    void *v;
+
+    if (i == 3) {
+        v = D_800A3ED8;
+    } else {
+        func_8001DB8C(D_80106228, D_800BE1E0_8c5b[i].sector, D_800BE1E0_8c5b[i].size);
+        f_YieldCurrentCooperativeWorker(1);
+        v = D_800A3ECC[i];
+    }
+    out[0] = v;
+    out[1] = GetGp();
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004514C);
 
@@ -2931,7 +2993,29 @@ void f_ClearBackItem(void)
     *(s32 *)(D_800E7E80 + 0x74) = 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004BEF4);
+void func_8004BEF4(u8 *a)
+{
+    s32 r;
+    u16 k = *(u16 *)(a + 0x5C);
+
+    if (k == 0) {
+        r = f_InitializeSinglePartActorModel(a, 1, 0);
+    } else if (k == 1) {
+        r = f_InitializeSinglePartActorModel(a, 1, 1);
+    } else {
+        r = f_InitializeSinglePartActorModel(a, 1, 0x17);
+    }
+    if (r == 0) {
+        *(s16 *)(a + 0x80) = 0x46;
+        *(s16 *)(a + 0x82) = 0x8C;
+        *(s16 *)(a + 0x84) = 0x64;
+        *(s16 *)(a + 0x86) = 0x64;
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x58) = 0;
+        a[0x29] = 0;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004BF84);
 
@@ -5670,7 +5754,29 @@ void f_SetSoundEffectHandleVolume(u8 handle)
     h->volume = 10;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80074A60);
+u32 func_80074A60(s32 vol, s32 ang)
+{
+    u16 hi, lo;
+
+    ang = (ang - D_1F8000F2) & 0xFFF;
+    if (ang > 0x800) {
+        ang = 0x1000 - ang;
+    }
+    if (ang < 0x400) {
+        hi = (u32)(ang * vol) >> 10;
+        if (hi >= 0x80) {
+            hi = 0x7F;
+        }
+        lo = vol;
+    } else {
+        hi = vol;
+        lo = (u32)((0x800 - ang) * vol) >> 10;
+        if (lo >= 0x80) {
+            lo = 0x7F;
+        }
+    }
+    return (hi << 16) | lo;
+}
 
 void f_ComputeDirectionalStereoVolume(u32 handle)
 {
