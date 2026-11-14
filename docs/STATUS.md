@@ -29,6 +29,11 @@ Game code in C: **943 / 6180 functions** (MAIN ~300 / 1167; overlays ~640); libr
   give the function all four parameters; three `lw` + three `sw` through one base (also an argument spilled to its
   home slot and reloaded after a call) -> a struct copy (`Vec3` passed or assigned by value); `v = (x == K) ? 0 : 1`
   turned into `sltu` while retail branches -> still open (func_8001CBA8).
+- Script-state steps (`switch (p[0x78])`: case 0 sets up and advances, case 1 waits) match with the shared
+  `return 0` as a label inside the switch: `case 0: ...; goto end; case 1: if (done) return 1; end: default:
+  return 0;` (func_800425FC, func_8004201C).
+- A scratch file that matches can still fail once installed when main.c has no prototype (or a K&R one) for a
+  callee whose prototype in the scratch file narrows an argument (s16): cast the argument in the call instead.
 - A `switch` whose jump table sits in MAIN's shared rodata does not link once the function is in C (the table's
   `.L` labels vanish): leave such functions in asm until rodata is migrated per function.
 - Headers: `include/game.h` GameState (itemCounts at +0x244, appleBits +0x544, flag words), WorkerState,

@@ -1611,7 +1611,32 @@ void func_8003FBC4(void *arg0) {
     M2C_FIELD(arg0, u16 *, 0x56) = (u16) *(u16 *)0x1F8001A0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003FC00);
+extern u16 D_1F8001A0_6940;
+extern u8 D_1F80019A;
+extern char D_80015458[];
+extern char D_8001546C[];
+extern s32 D_800BE1E0[];
+typedef struct { u8 b[8]; } Bytes8_EE0;
+extern Bytes8_EE0 D_80016EE0;
+extern u8 *D_800E8098;
+extern u8 *D_800F239C;
+extern u8 *D_800F2624_9bdb;
+typedef struct { u32 pos; u32 size; char name[16]; } CdFileLite;
+
+void func_8003FC00(u8 *a)
+{
+    f_ResolveActorAreaPlanePosition(a);
+    do {
+        *(s16 *)(a + 0x32) += 10;
+    } while (f_ProbeActorTerrainAlongFacing(a, 0, (s16)(*(s16 *)(a + 0x86) - *(s16 *)(a + 0x84))) == 0);
+    f_ResolveActorTerrainSurfaceOrientation(a);
+    {
+        u16 x = D_1F8001A0_6940;
+        u16 y = D_1F8001A2;
+        *(u16 *)(a + 0x56) = x;
+        *(u16 *)(a + 0x58) = y;
+    }
+}
 
 
 void func_8003FC78(void *arg0) {
@@ -2465,7 +2490,19 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_FindTerrainCellForActorProbe);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SelectAreaPlaneCollisionTables);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800499E8);
+void func_800499E8(void)
+{
+    CdFileLite f;
+
+    D_1F80019A = 0;
+    if (CdSearchFile(&f, D_80015458) == 0) {
+        printf(D_8001546C, D_80015458);
+    } else {
+        D_800BE1E0[0] = CdPosToInt(&f);
+        D_800BE1E0[1] = f.size;
+    }
+    func_80052078(0);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80049A60);
 
