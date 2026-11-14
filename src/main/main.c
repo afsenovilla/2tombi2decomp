@@ -22,7 +22,29 @@ void func_8001CE90(s32 arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8001CEB0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetCdAudioMixEnabled);
+extern s32 D_800BE108;
+extern u8 D_800BF808[];
+extern u8 D_800A4F88[];
+extern s8 D_1F800090[];
+void f_SetActorModelResources(void *, s32, s32);
+void func_8001DC40(void *, s32, s32, void *);
+void SpuSetCommonAttr(void *);
+void func_8002847C(void *, s32, s32);
+typedef struct CdMixAttr {
+    /* 0x00 */ u32 mask;
+    /* 0x04 */ u8 pad4[0x14];
+    /* 0x18 */ s32 mix;
+    /* 0x1C */ u8 pad1C[0xC];
+} CdMixAttr;
+
+void f_SetCdAudioMixEnabled(s32 mix)
+{
+    CdMixAttr attr;
+
+    attr.mask = 0x200;
+    attr.mix = mix;
+    SpuSetCommonAttr(&attr);
+}
 
 
 void f_StopVoicePlayback(void)
@@ -600,7 +622,11 @@ void func_800328BC(void *arg0, M2C_UNK arg1) {
     f_DrawProjectedSpriteDefinitionStream(arg1, (M2C_FIELD(arg0, u16 *, 0x46) << 0x10) | M2C_FIELD(arg0, u16 *, 0x44));
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawEffectPrimitiveListWithoutDepthCue);
+void f_DrawEffectPrimitiveListWithoutDepthCue(void *list)
+{
+    *(s32 *)D_1F800090 = 0;
+    func_8002847C(list, 0, 0);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80032918);
 
@@ -1190,7 +1216,10 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004162C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SetActorModelResources);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800416F0);
+void func_800416F0(u8 *actor)
+{
+    f_SetActorModelResources(actor, *(s16 *)(actor + 0x72), *(s32 *)(actor + 0x74));
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SetActorAnimation);
 
@@ -3809,7 +3838,10 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80075240);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800752B4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800753AC);
+void func_800753AC(void *dst, s32 sector, s32 size, void *slot)
+{
+    func_8001DC40(dst, D_800BE108 + sector, size, slot);
+}
 
 
 void func_800753D4(s16 *arg0, M2C_UNK arg1, M2C_UNK arg2) {
@@ -3892,7 +3924,12 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_StartActorSkeletalAnimation);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_StartActorSkeletalAnimationBlend);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80077D64);
+void func_80077D64(void)
+{
+    if (!(D_800BF808[0x3A] & 0x80)) {
+        D_800BF808[0x3A] = 0x81;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80077D8C);
 
@@ -3963,7 +4000,10 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80078610);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80078738);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80078770);
+u8 func_80078770(u8 a, u8 b)
+{
+    return D_800A4F88[a * 4 + b];
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_GetWarpSectionDisplayName);
 
