@@ -906,7 +906,31 @@ void func_80031744(void *arg0)
   }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80031780);
+extern s32 *D_800E7E74;
+extern u8 D_800E7E80_f78d[];
+typedef struct { s32 x, y, z; } Vec3i_74C;
+typedef struct { u8 pad[0x1C]; Vec3i_74C v; } ConvTarget_74C;
+typedef struct { u8 pad[0x2C]; Vec3i_74C pos; } PosHolder_858;
+
+void func_80031780(u8 *p)
+{
+    s32 *e = *(s32 **)(p + 0x34);
+    s32 w;
+
+    if (e == 0) {
+        return;
+    }
+    do {
+        w = e[1];
+        e += 2;
+    } while (!(w & 0xC0000000));
+    if (w & 0x40000000) {
+        *(s32 *)(p + 0x38) = 0;
+        *(s32 *)(p + 0x34) = 0;
+    } else {
+        *(s32 **)(p + 0x38) = e;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ProjectEffectPointToScreenAndDepth);
 
@@ -1958,7 +1982,17 @@ s32 func_800436BC(u8 *p)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80043720);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80043858);
+s32 func_80043858(u8 *p)
+{
+    u8 *a = f_SpawnLinkedItemPickupActor(p, *(s16 *)(p + 0x72));
+
+    D_800BF844 = a;
+    if (a != 0) {
+        ((PosHolder_858 *)a)->pos = ((PosHolder_858 *)D_800E7E80_f78d)->pos;
+        return 1;
+    }
+    return 0;
+}
 
 
 s32 func_800438B4(u8 *actor)
@@ -2647,7 +2681,18 @@ u8 *f_CopyEncodedMessageSegment(u8 *dst, u8 *src)
     return dst;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_FindEncodedMessagePage);
+extern u8 D_800BE1F8_296f[];
+
+u8 *f_FindEncodedMessagePage(u8 *p, s32 n)
+{
+    if (n == 0) { return p; }
+    for (;;) {
+        if (*p == 0xFA) {
+            if (--n == 0) { return p + 1; }
+        }
+        p++;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_MeasureEncodedMessageBlock);
 
@@ -4572,7 +4617,11 @@ void f_ConfigureScriptActorConversation(u8 a, u8 b, u8 c)
     D_800BF808[0x3B] = 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007074C);
+void func_8007074C(u8 a, u8 b, u8 c, Vec3i_74C v)
+{
+    f_ConfigureScriptActorConversation(a, b, c);
+    ((ConvTarget_74C *)D_800BF808)->v = v;
+}
 
 extern s8 D_1F800214[];
 void f_StartCurrentScriptActorConversation(void) {
@@ -4975,9 +5024,35 @@ void func_80075A30(void)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80075A80);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetStreamedAudioVolumeTarget);
+void f_SetStreamedAudioVolumeTarget(s32 x)
+{
+    u8 *a = D_800BE1F8_296f;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_RefreshSoundEffectHandleLifetime);
+    if (x < 0) {
+        *(s16 *)(a + 0x2A) = -x;
+        *(s16 *)(a + 0x2C) = -x;
+        return;
+    }
+    if (x > 0x7FFF) {
+        x = 0x7FFF;
+    }
+    *(s16 *)(a + 0x2A) = x;
+}
+
+void f_RefreshSoundEffectHandleLifetime(s32 x)
+{
+    u8 *a = D_800BE1F8_296f;
+
+    if (x < 0) {
+        *(s16 *)(a + 0x2E) = -x;
+        *(s16 *)(a + 0x30) = -x;
+        return;
+    }
+    if (x >= 0x2000) {
+        x = 0x1FFF;
+    }
+    *(s16 *)(a + 0x2E) = x;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80075D58);
 
@@ -4997,7 +5072,15 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_TestActorVisibilityAndQueueForRender
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_StepWrappedAngleToward);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TestWrappedAngleSide);
+s32 f_TestWrappedAngleSide(s32 a, s32 b, s32 flip)
+{
+    s32 d = ((a - b) - 0x400) & 0xFFF;
+
+    if (!flip) {
+        return d < 0x800;
+    }
+    return (d < 0x800) ^ 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_TestAndQueueActorForRender);
 
