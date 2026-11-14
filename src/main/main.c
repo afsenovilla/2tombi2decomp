@@ -568,7 +568,31 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800262D8);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80026320);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80026368);
+extern u8 *D_800FB168;
+extern u8 *D_800F2624_9bdb;
+extern u16 *D_1F8001C8;
+extern u16 *D_1F8001CC;
+extern u16 *D_1F8001D0;
+extern u16 *D_1F8001D4_793a;
+extern u16 *D_1F8001D8;
+extern u16 *D_1F8001DC;
+extern u8 D_80100400_8e62[];
+extern void (*D_8009D314[])(u8 *);
+extern u8 D_800EC188_8e7d[];
+extern void (*D_8009D52C[])(u8 *);
+typedef struct { u8 pad[0x48]; s32 n; } Counter48_808;
+
+void func_80026368(void)
+{
+    u8 *e = D_80100400_8e62;
+    s32 i;
+
+    for (i = 0; i < 8; i++, e += 0x4C) {
+        if (e[0] != 0) {
+            D_8009D314[e[2]](e);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800263E8);
 
@@ -701,7 +725,18 @@ void func_80026A68(ChildList2 *l)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80026AD0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80026C88);
+void func_80026C88(void)
+{
+    s32 i = 0;
+    void (**t)(u8 *) = D_8009D52C;
+    u8 *e = D_800EC188_8e7d;
+
+    for (; i < 0x28; i++, e += 0x40) {
+        if (e[0] != 0) {
+            t[e[1]](e);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80026D08);
 
@@ -1750,7 +1785,17 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8003FFCC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004022C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80040390);
+void func_80040390(u8 *a)
+{
+    if (a[0x29] != 0) {
+        f_SpawnEffectTemplateInstances(*(void **)(*(u8 **)(a + 0xC0) + 0x40), a + 0x2C, 0x700, 8);
+        f_PlaySoundEffect(0xC, 0, 0);
+        a[4] = 3;
+        if (a[0x5E] == 5) {
+            ((Counter48_808 *)D_800BF808)->n--;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80040410);
 
@@ -2543,7 +2588,17 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80049800);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_FindTerrainCellForActorProbe);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SelectAreaPlaneCollisionTables);
+void f_SelectAreaPlaneCollisionTables(u8 i)
+{
+    u16 *base = D_1F8001C8;
+    u16 *h = base + base[i];
+
+    D_1F8001CC = h + 10;
+    D_1F8001D0 = h + h[6];
+    D_1F8001D4_793a = h + h[7];
+    D_1F8001D8 = h + h[8];
+    D_1F8001DC = h + h[9];
+}
 
 void func_800499E8(void)
 {
@@ -5755,7 +5810,22 @@ void func_8007A8E0(void) {
     *((s16 *)D_1F80017C) = 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007A904);
+void func_8007A904(void)
+{
+    u8 *a;
+    u8 *n;
+
+    for (a = D_800FB168; a != 0; a = n) {
+        n = *(u8 **)(a + 0x24);
+        a[1] = 0;
+        (*(void (**)(u8 *))(a + 0x1C))(a);
+    }
+    for (a = D_800F2624_9bdb; a != 0; a = n) {
+        n = *(u8 **)(a + 0x24);
+        a[1] = 0;
+        (*(void (**)(u8 *))(a + 0x1C))(a);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_AllocateActorRecordByType);
 
