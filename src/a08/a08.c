@@ -1040,7 +1040,16 @@ s32 func_8012D1C4(void *arg0) {
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012D1EC);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012D270);
+extern u8 D_800BFB06;
+
+s32 func_8012D270(u8 *a)
+{
+    if (D_800BFB06 != 0) {
+        a[0x5E] = 4;
+        return 3;
+    }
+    return 2;
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012D298);
 

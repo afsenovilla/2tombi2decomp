@@ -1729,7 +1729,16 @@ s32 func_8013A858(void *arg0) {
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013A870);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013A8A8);
+extern u8 D_800BFB49;
+
+s32 func_8013A8A8(u8 *a)
+{
+    if (D_800BFB49 != 0) {
+        a[0x5E] = 4;
+        return 3;
+    }
+    return 2;
+}
 
 
 s32 func_8013A8D0(void *arg0) {
