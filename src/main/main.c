@@ -1382,7 +1382,31 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80036DFC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800376EC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80037894);
+extern void *D_800174BC;
+extern void *D_800BF544;
+extern u8 D_1F8000F8[];
+extern s16 D_801003F8;
+
+void func_80037894(u8 *ui, s16 y, u8 c)
+{
+    struct { u8 b0; u8 b1; s16 h2; } q;
+    struct { s16 x; s16 y; s32 wh; } r;
+    void *res = D_800174BC;
+    s32 i = 0;
+    s32 x = 0x18;
+
+    q.b1 = c;
+    q.b0 = 0;
+    q.h2 = 0;
+    r.y = y;
+    r.wh = 0;
+    do {
+        r.x = x;
+        x += 8;
+        i++;
+        f_DrawPackedUiSpriteFrame(&r, res, *(void **)(ui + 4), &q);
+    } while (i < 0x22);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003791C);
 
@@ -1579,7 +1603,22 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8003EBE0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawActiveWorldActors);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003EF9C);
+void func_8003EF9C(u8 *a)
+{
+    s32 flag = a[0xB] == 0xF;
+    void *old;
+
+    switch (a[0xD] & 0xF) {
+    case 0:
+        func_8003F07C(a, flag);
+        break;
+    case 2:
+        old = D_800BF544;
+        func_8003F07C(a, flag);
+        func_8003D584(a, old, D_800BF544);
+        break;
+    }
+}
 
 extern u8 D_800EC188;
 void f_DrawActiveTemplateEffectSlots(void) {
@@ -2243,7 +2282,23 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_RunScriptedActorInterpolatedMovement
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800433FC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80043634);
+s32 func_80043634(u8 *p)
+{
+    u16 v = *(u16 *)(p + 0x72);
+    u8 *e;
+
+    if (v & 0x1000) {
+        D_800BF844 = f_SpawnAreaLinkedWeaponPickupActor(p, v & 0xFFF);
+    } else {
+        D_800BF844 = f_SpawnAreaLinkedItemPickupActor(p, v & 0xFFF);
+    }
+    e = D_800BF844;
+    if (e != 0) {
+        e[0x5E] = p[0x74];
+        *(u16 *)(e + 0x60) = *(u16 *)(p + 0x76);
+    }
+    return 1;
+}
 
 s32 func_800436BC(u8 *p)
 {
