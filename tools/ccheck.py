@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 """Compile a C file and compare each function in it with the retail bytes (fast check, no link).
 
-  python3 -I tools/ccheck.py src/main/foo.c [--prog main] [--cc gcc-2.8.1-psx] [--aspsx 2.79] [--opt=-O2] [-G 0] [-v]
+  python3 -I tools/ccheck.py src/main/foo.c [--prog main] [--cc gcc-2.7.2-psx] [--aspsx 2.56] [--flags "-O2 -G0"]
+      [--as gnu] [-v] [--func NAME] [--all]
 
-Pipeline (as Tombi-Decomp's ncheck): old-gcc 2.8.1 cpp + cc1 (the Psy-Q 4.4 compiler, docs/COMPILER.md; -O2 -G0 -funsigned-char unless overridden), maspsx, GNU as.
+Pipeline: tools/cc.py (the file's // CC, // FLAGS, // ASPSX, // AS headers; default the game's gcc 2.8.1 + ASPSX 2.79).
 Each defined function is looked up by name in config/symbol_addrs_<prog>.txt or as func_XXXXXXXX, and compared word by
 word with the retail file; relocated fields (jal target, %hi/%lo) are compared only where the object has no relocation.
 The length must also be the retail one (asm/<prog>/nonmatchings `nonmatching NAME, SIZE`).
 Prints OK / DIFF per function (with -v the differing words); --func NAME limits the check.
 """
 import argparse, os, re, struct, subprocess, sys, tempfile
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -29,18 +32,12 @@ def prog_info(prog):
 
 
 def compile_c(src, a, d):
-    gcc = "/opt/oldgcc/" + a.cc
-    inc = os.path.join(ROOT, "include")
-    subprocess.run([gcc + "/cpp", "-undef", "-D__GNUC__=2", "-DMIPSEL", "-D_LANGUAGE_C", "-I" + inc, "-I" + inc + "/psyq",
-                    src, d + "/a.i"], check=True)
-    subprocess.run([gcc + "/cc1", "-quiet", "-w", "-funsigned-char", a.O, "-G" + a.G] + a.cflags +
-                   [d + "/a.i", "-o", d + "/a.s"], check=True)
-    mas = subprocess.run([sys.executable, "/opt/maspsx/maspsx.py", "--aspsx-version=" + a.aspsx, "--expand-div"] +
-                         (["-G" + a.G] if a.G != "0" else []), input=open(d + "/a.s").read(), check=True,
-                         capture_output=True, text=True).stdout
-    open(d + "/b.s", "w").write(mas)
-    subprocess.run(["mipsel-linux-gnu-as", "-EL", "-march=r3000", "-mtune=r3000", "-no-pad-sections", "-O1", "-G0",
-                    "-I" + inc, d + "/b.s", "-o", d + "/a.o"], check=True, cwd=ROOT)
+    import cc
+    over = {k: v for k, v in (("cc", a.cc), ("aspsx", a.aspsx), ("flags", a.flags), ("as", a.asm)) if v}
+    try:
+        cc.compile_c(src, d + "/a.o", over)
+    except cc.CompileError as e:
+        sys.exit("compile error: %s" % e)
     subprocess.run(["mipsel-linux-gnu-objcopy", "-O", "binary", "-j", ".text", d + "/a.o", d + "/t.bin"], check=True)
     text = open(d + "/t.bin", "rb").read()
     funcs = []
@@ -73,10 +70,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("src")
     ap.add_argument("--prog", default="main")
-    ap.add_argument("--cc", default="gcc-2.8.1-psx")
-    ap.add_argument("--aspsx", default="2.79")
-    ap.add_argument("--opt", dest="O", default="-O2")
-    ap.add_argument("-G", default="0")
+    ap.add_argument("--cc", help="override the file's // CC (default gcc-2.8.1-psx)")
+    ap.add_argument("--aspsx", help="override // ASPSX (default 2.79)")
+    ap.add_argument("--flags", help="override // FLAGS (default -O2 -G0)")
+    ap.add_argument("--as", dest="asm", help="override // AS (maspsx or gnu)")
     ap.add_argument("-v", action="store_true")
     ap.add_argument("--all", action="store_true", help="also check the INCLUDE_ASM functions (sanity test)")
     ap.add_argument("--func", action="append", help="check only these functions (repeatable)")

@@ -1,3 +1,9 @@
+// CC gcc-2.7.2-psx
+// FLAGS -O2 -G0
+// ASPSX 2.79
 #include "common.h"
+s32 CD_sync();                                        /* extern */
 
-INCLUDE_ASM("asm/main/nonmatchings/psyq/libcd/CdSync", CdSync);
+void CdSync(void) {
+    CD_sync();
+}

@@ -1,3 +1,13 @@
+// CC gcc-2.7.2-psx
+// FLAGS -O2 -G0
+// AS gnu
 #include "common.h"
+extern s32 D_800267F4;
 
-INCLUDE_ASM("asm/boot/nonmatchings/psyq/libetc/SetVideoMode", SetVideoMode);
+s32 SetVideoMode(s32 arg0) {
+    s32 temp_v0;
+
+    temp_v0 = D_800267F4;
+    D_800267F4 = arg0;
+    return temp_v0;
+}

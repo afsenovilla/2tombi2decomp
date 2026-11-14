@@ -1,3 +1,9 @@
+// CC gcc-2.8.1-psx
+// FLAGS -O2 -G0
+// ASPSX 2.79
 #include "common.h"
+extern u16 *D_8002677C;
 
-INCLUDE_ASM("asm/boot/nonmatchings/psyq/libetc/GetIntrMask", GetIntrMask);
+u16 GetIntrMask(void) {
+    return *D_8002677C;
+}

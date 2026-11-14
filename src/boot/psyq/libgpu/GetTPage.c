@@ -1,3 +1,7 @@
+// CC gcc-2.8.1-psx
+// FLAGS -O2 -G0
+// ASPSX 2.79
 #include "common.h"
-
-INCLUDE_ASM("asm/boot/nonmatchings/psyq/libgpu/GetTPage", GetTPage);
+s32 GetTPage(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+    return ((arg0 & 3) << 7) | ((arg1 & 3) << 5) | ((s32) (arg3 & 0x100) >> 4) | ((s32) (arg2 & 0x3FF) >> 6) | ((arg3 & 0x200) * 4);
+}

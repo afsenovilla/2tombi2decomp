@@ -11,6 +11,8 @@ Output under build/ (git-ignored). Exit status 1 if any program does not match.
 """
 import argparse, concurrent.futures as cf, glob, hashlib, os, re, subprocess, sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 AS = ["mipsel-linux-gnu-as", "-EL", "-march=r3000", "-mtune=r3000", "-no-pad-sections", "-G0", "-Iinclude"]
 LD = "mipsel-linux-gnu-ld"
@@ -43,23 +45,18 @@ def fix_gte(path):
         open(path, "w").write("\n".join(txt))
 
 
-CC = "/opt/oldgcc/gcc-2.8.1-psx"   # Psy-Q 4.4 CC1PSX = gcc 2.8.1 (docs/COMPILER.md)
-CFLAGS = ["-O2", "-G0", "-funsigned-char", "-quiet", "-w"]
-ASPSX = "2.79"
+import cc as CCMOD   # the compiler pipeline (per-file // CC, // FLAGS, // ASPSX, // AS headers)
+
+
+SEG_SIZE = {}   # src path -> retail size of its c subsegment (library files are padded to it)
 
 
 def compile_c(src, obj):
-    """cpp + cc1 (gcc 2.8.1) + maspsx (ASPSX 2.79) + GNU as: the game's compiler pipeline."""
-    i, s = obj[:-2] + ".i", obj[:-2] + ".cc.s"
-    run([CC + "/cpp", "-undef", "-D__GNUC__=2", "-DMIPSEL", "-D_LANGUAGE_C", "-Iinclude", "-Iinclude/psyq", src, i])
-    run([CC + "/cc1"] + CFLAGS + [i, "-o", s])
-    r = subprocess.run([sys.executable, "/opt/maspsx/maspsx.py", "--aspsx-version=" + ASPSX, "--expand-div"],
-                       cwd=ROOT, input=open(os.path.join(ROOT, s)).read(), capture_output=True, text=True)
-    if r.returncode:
-        sys.exit("FAILED: maspsx %s\n%s" % (src, r.stderr))
-    m = s[:-5] + ".mas.s"
-    open(os.path.join(ROOT, m), "w").write(r.stdout)
-    run(AS + ["-O1", "-o", obj, m])
+    try:
+        pad = SEG_SIZE.get(src) if "/psyq/" in src else None
+        CCMOD.compile_c(os.path.join(ROOT, src), os.path.join(ROOT, obj), pad_to=pad)
+    except CCMOD.CompileError as e:
+        sys.exit("FAILED: %s" % e)
 
 
 def objects(ld):
@@ -80,6 +77,11 @@ def build(prog, split, jobs, cfg="config"):
                 subprocess.run(["rm", "-rf", os.path.join(ROOT, apath)])
                 run([sys.executable, "-m", "splat", "split", "%s/%s.yaml" % (cfg, prog)])
     bdir = re.search(r"build_path:\s*(\S+)", y).group(1)
+    srcp = re.search(r"src_path:\s*(\S+)", y).group(1)
+    subs = re.findall(r"(?m)^\s+- \[(0x\w+), (\w+)(?:, ([\w/]+))?\]", y)
+    for (o1, t1, n1), (o2, _, _) in zip(subs, subs[1:]):
+        if t1 == "c":
+            SEG_SIZE["%s/%s.c" % (srcp, n1)] = int(o2, 16) - int(o1, 16)
     objs = objects(ld)
 
     def assemble(o):

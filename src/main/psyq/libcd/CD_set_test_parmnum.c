@@ -1,3 +1,9 @@
+// CC gcc-2.7.2-psx
+// FLAGS -O2 -G0
+// AS gnu
 #include "common.h"
+extern s32 D_800AC264;
 
-INCLUDE_ASM("asm/main/nonmatchings/psyq/libcd/CD_set_test_parmnum", CD_set_test_parmnum);
+void CD_set_test_parmnum(s32 arg0) {
+    D_800AC264 = arg0;
+}
