@@ -46,7 +46,29 @@ INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_80109FB4);
 
 INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010A0BC);
 
-INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010A11C);
+extern u16 *D_800ECF78;
+extern u8 D_800BF816;
+extern u8 D_800E806C;
+extern s32 D_1F800184;
+extern u8 D_800E7E80[];
+extern void *D_800ECF80;
+extern u8 D_8010D8AC[];
+void func_8010CA1C();
+
+void func_8010A11C(void)
+{
+    u8 *p;
+
+    D_800BF816 = 0;
+    D_800E806C = 0;
+    D_1F800184 = 0;
+    p = D_800E7E80;
+    p[5] = 0x24;
+    p[7] = 0;
+    p[6] = 0;
+    func_80054198(p);
+    p[0x16B] = 0;
+}
 
 INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010A174);
 
@@ -92,7 +114,17 @@ INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010B140);
 
 INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010B420);
 
-INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010B960);
+void func_8010B960(u8 *a)
+{
+    u16 *p = D_800ECF78;
+    u16 t;
+
+    *(u16 **)(a + 0xC) = p;
+    *(u16 *)(a + 8) = p[0];
+    t = p[1];
+    a[7] = 0;
+    *(u16 *)(a + 0xA) = t;
+}
 
 INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010B98C);
 
@@ -102,7 +134,16 @@ INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010BC8C);
 
 INCLUDE_ASM("asm/a0j/nonmatchings/a0j", f_UpdateGoldenTowerPigElderActor);
 
-INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010C1D4);
+s32 func_8010C1D4(void *a)
+{
+    u8 *r = func_80072DDC(a, 0, 3, 0x10);
+
+    if (r != NULL) {
+        *(void **)(r + 0x1C) = func_8010CA1C;
+        r[3] = 2;
+    }
+    return 1;
+}
 
 extern s32 D_800BF850;
 void func_8010C218(void) {
@@ -152,7 +193,17 @@ void func_8010CEEC(void *arg0) {
     func_80077B5C(arg0);
 }
 
-INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010CF3C);
+void func_8010CF3C(u8 *a)
+{
+    *(void **)(a + 0x3C) = D_800ECF80;
+    func_80077B38(a, D_8010D8AC, 6);
+    a[0xD] = 0;
+    *(s16 *)(a + 0x5C) = 0;
+    a[0xB] = 0x10;
+    *(s16 *)(a + 0x5A) = 0;
+    a[0x47] = 0;
+    a[8] = 0;
+}
 
 INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010CF94);
 
