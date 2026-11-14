@@ -594,7 +594,21 @@ void func_80026368(void)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800263E8);
+extern u8 D_1F8000D0_b839[];
+extern u16 D_1F8001A0_6940;
+extern u8 *D_8009D414[];
+
+void func_800263E8(void)
+{
+    u8 *list = D_8009D414[D_800BF870.unk0];
+    u8 *e;
+
+    while (*list != 0xFF) {
+        e = func_8007AD98();
+        e[0] = 1;
+        e[2] = *list++;
+    }
+}
 
 typedef struct CameraTarget2 { u8 pad0[2]; u16 x; u8 pad4[2]; u16 y; u8 pad8[2]; u16 z; } CameraTarget2;
 extern CameraTarget2 D_1F8000D0_d63a;
@@ -1717,7 +1731,22 @@ void func_8003FC78(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x56) = (s16) (M2C_FIELD(arg0, u8 *, 0x2A) * 0x10);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003FC8C);
+s32 func_8003FC8C(u8 *a)
+{
+    u8 *g = D_800BF808;
+
+    if (g[0xE] != 1) {
+        return 0;
+    }
+    if (g[0xF] != *(s16 *)(a + 0x6A)) {
+        return 0;
+    }
+    f_ResolveActorAreaPlanePosition();
+    f_ResolveActorTerrainSurfaceOrientation(a);
+    *(u16 *)(a + 0x56) = D_1F8001A0_6940;
+    *(u16 *)(a + 0x32) = *(u16 *)(g + 0xA);
+    return 1;
+}
 
 extern s8 D_1F80017C[];
 void func_8003FD10(void *arg0) {
@@ -2921,7 +2950,29 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004EAD0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004EB94);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_QueueItemMessage);
+void f_QueueItemMessage(s32 item, s32 kind)
+{
+    u16 msg[3];
+    s32 style;
+
+    msg[1] = kind | 0x8000;
+    msg[2] = 0xFFFE;
+    msg[0] = item;
+    switch ((s16)kind) {
+    case 0:
+    case 3:
+        style = 0x40;
+        break;
+    case 2:
+        style = 0x42;
+        break;
+    case 1:
+    default:
+        style = 0x41;
+        break;
+    }
+    f_QueuePopupMessage(msg, 1, style);
+}
 
 void f_QueuePopupMessage(u8 *text, s32, s32);
 // Queues resource message `id` of the message bank as a pop-up.
@@ -3614,7 +3665,27 @@ s32 func_80053BF8(void *arg0, s32 arg1)
 
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ReleaseTombaInteractionTarget);
+void f_ReleaseTombaInteractionTarget(u8 *t)
+{
+    u8 *o = *(u8 **)(t + 0x158);
+
+    if (o != 0 && (s32)o != 1) {
+        switch (o[0xC]) {
+        case 2:
+        case 5:
+        case 9:
+            o[0x5E] = 0;
+            break;
+        case 4:
+            if ((u32)(o[2] - 0x2F) >= 2) {
+                o[0x29] = 0;
+            }
+            break;
+        }
+    }
+    *(u8 **)(t + 0x158) = 0;
+    t[0x164] = 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ClearTombaInteractionState);
 
@@ -4291,7 +4362,7 @@ void func_80064524(void *arg0) {
 
     M2C_FIELD(arg0, s8 *, 6) = 2;
     M2C_FIELD(arg0, s8 *, 7) = 0;
-    f_ReleaseTombaInteractionTarget();
+    f_ReleaseTombaInteractionTarget(arg0);
     M2C_FIELD(arg0, s16 *, 0x58) = 0;
     M2C_FIELD(arg0, s16 *, 0x40) = 8;
     f_PlaySoundEffect(0x1D, 0, 0);
