@@ -1166,7 +1166,16 @@ block_5:
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80041378);
+extern s8 D_1F800214[];
+extern u8 D_800BF808[];
+typedef struct SoundHandle { u8 volume; u8 pad1[11]; } SoundHandle;
+extern SoundHandle D_800BE238[];
+void f_SpawnAreaIndexedPersistentPickup(void *, s32, s32);
+
+void func_80041378(u8 *actor)
+{
+    f_ApplyActorOrientationToRotation(actor, *(s16 *)(actor + 0x72));
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_StepAngleTowardTarget);
 
@@ -1388,7 +1397,10 @@ s32 f_SetSharedScriptControlFlag(s32 arg0, s32 arg1) {
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80043BB0);
+void func_80043BB0(u8 *actor)
+{
+    f_SetSharedScriptControlFlag(actor, actor[0x72]);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80043BD4);
 
@@ -1705,7 +1717,10 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004C930);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnAreaIndexedPersistentPickupOnce);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004CC64);
+void func_8004CC64(void *a, u8 b)
+{
+    f_SpawnAreaIndexedPersistentPickup(a, b, 1);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004CC88);
 
@@ -3280,7 +3295,14 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C80C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C988);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetCameraFocusPosition);
+void f_SetCameraFocusPosition(u16 *pos)
+{
+    CameraState *cam = &g_CameraState;
+
+    cam->focusX = pos[1];
+    cam->focusY = pos[3];
+    cam->focusZ = pos[5];
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SetCameraTransform);
 
@@ -3487,7 +3509,13 @@ void func_80070650(void *arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80070698);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ConfigureScriptActorConversation);
+void f_ConfigureScriptActorConversation(u8 a, u8 b, u8 c)
+{
+    (*(u8 **)D_1F800214)[0xBF] = a;
+    D_800BF808[0x28] = b;
+    D_800BF808[0x29] = c;
+    D_800BF808[0x3B] = 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007074C);
 
@@ -3709,7 +3737,12 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007486C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007496C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetSoundEffectHandleVolume);
+void f_SetSoundEffectHandleVolume(u8 handle)
+{
+    SoundHandle *h = &D_800BE238[handle];
+
+    h->volume = 10;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80074A60);
 
@@ -3844,7 +3877,14 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_TestActorVisibilityWithXYZOffset);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80077ACC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_StartActorTimedFrameSequence);
+void f_StartActorTimedFrameSequence(u8 *actor, u16 **table, s32 index)
+{
+    u16 *seq = table[index];
+    u16 frames = seq[1];
+
+    *(u16 **)(actor + 0x38) = seq;
+    *(u16 *)(actor + 0xE) = frames & 0x3FFF;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_AdvanceActorTimedFrameSequence);
 

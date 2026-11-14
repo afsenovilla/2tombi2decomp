@@ -41,9 +41,17 @@ def main():
             sys.exit("%s: no INCLUDE_ASM line for %s" % (path, n))
         lines[n] = (t.index(line), line)
     first = min(lines, key=lambda n: lines[n][0])     # the declarations go before the earliest function in the file
+    before = t[:lines[first][0]]
+    defined = set(re.findall(r"(?m)^[\w][\w \*]*?\b(\w+)\s*\([^;{}]*\)\s*\{", t))
+
+    def wanted(p):
+        if p in before:
+            return False
+        m = re.match(r"[\w \*]+?\b(\w+)\s*\([^;{}]*\)\s*;$", p)   # a prototype of a function the file defines
+        return not (m and m.group(1) in defined)
     for n, body in funcs:
         if n == first:
-            extra = [p for p in pre if p not in t]
+            extra = [p for p in pre if wanted(p)]
             body = "\n".join(extra + ([""] if extra else []) + [body])
         t = t.replace(lines[n][1], body)
     open(path, "w").write(t)
