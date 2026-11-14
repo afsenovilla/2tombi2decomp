@@ -3174,7 +3174,37 @@ s32 f_DespawnGrabbedItem(s32 arg0) {
     return f_PlaySoundEffect(0x28, 0, 0);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B150);
+extern s32 D_1F800000[];
+extern u8 D_1F800020[];
+extern s16 D_1F8000C8[];
+
+void func_8004B150(u8 *a, s32 mode)
+{
+    if (a[5] == 0) {
+        a[5]++;
+        a[0] = 1;
+        if (mode == 0) {
+            a[0x18] = 0;
+        } else {
+            a[0x18] = 0xFF;
+            a[0x19] = 0xFF;
+            a[0x1A] = 0xFF;
+        }
+    }
+    if (mode == 0) {
+        if (!(D_1F80017C_0fe7 & 0x1F)) {
+            a[0xD] |= 0x20;
+        } else {
+            a[0xD] &= 0xDF;
+        }
+    } else {
+        if (!(D_1F80017C_0fe7 & 0x1F)) {
+            a[0xD] |= 2;
+        } else {
+            a[0xD] &= 0xFD;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B208);
 
@@ -5457,7 +5487,17 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80069858);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80069948);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80069A2C);
+s16 func_80069A2C(u8 *a, s16 x, s16 y, s16 z)
+{
+    u8 *r = a + 0x60;
+    s32 dx = x - *(s16 *)(a + 0x2E);
+    s32 dy = y - *(s16 *)(a + 0x32);
+    s32 dz = z - *(s16 *)(a + 0x36);
+    s32 c = rcos(-*(s16 *)(r + 8));
+    s32 s = rsin(-*(s16 *)(r + 8));
+
+    return ratan2(dy, (c * dx + s * dz) >> 12);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80069AE4);
 
@@ -5550,7 +5590,32 @@ void func_8006AFC4(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006B020);
+void func_8006B020(u8 *a, s32 mode)
+{
+    s32 k = 0;
+
+    switch (mode) {
+    case 0:
+        if (a[2] == 6) {
+            k = 1;
+        }
+        D_1F8000C8[0] = 0;
+        D_1F8000C8[1] = 0;
+        D_1F8000C8[2] = -0x10;
+        break;
+    case 2:
+        D_1F8000C8[0] = 0;
+        D_1F8000C8[1] = 0;
+        D_1F8000C8[2] = -0x40;
+        break;
+    case 1:
+        D_1F8000C8[0] = 0x96;
+        D_1F8000C8[1] = 0;
+        D_1F8000C8[2] = 0;
+        break;
+    }
+    func_80051614(a, D_1F8000C8, 7, k);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006B0D8);
 
@@ -6391,7 +6456,26 @@ s32 func_80073750(u8 *s)
     return r;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800737F8);
+void func_800737F8(s32 arg)
+{
+    struct { s16 x; s16 y; s16 w; s16 h; } r;
+    char *name = f_GetWarpSectionDisplayName(D_800BF870.unk0, arg);
+    s32 n = func_80073750(name);
+    s32 x;
+
+    if (n < 0) {
+        r.h = 0x20;
+        n = -n;
+    } else {
+        r.h = 0x10;
+    }
+    x = 0xA0 - n * 4;
+    f_DrawTallMenuText((s16)x, 0x50, 0, name, 0);
+    r.y = 0x50;
+    r.x = x;
+    r.w = n * 8;
+    func_8005019C(&r, 7, 1, 0);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800738B0);
 
