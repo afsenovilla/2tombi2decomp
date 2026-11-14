@@ -3,6 +3,7 @@
 compiler pipeline. Starts from a C file holding the function (or the m2c draft when none is given).
 
   python3 -I tools/permute.py NAME [--prog main] [--src FILE.c] [--seconds 600] [-j N]
+      [--cc gcc-2.7.2-psx] [--flags "-O2 -G0"] [--as gnu|maspsx] [--aspsx 2.79] [--quiet]
 
 Sets up build/permute/NAME/ (base.c preprocessed, target.o from the retail asm, compile.sh = gcc 2.8.1 + maspsx 2.79
 + as) and runs the permuter for --seconds. Its best candidates land in build/permute/NAME/output-*/; a score of 0 is a
@@ -19,11 +20,16 @@ COMPILE = """#!/bin/bash
 # decomp-permuter compile script: $1 = input .c, $3 = output .o
 set -e
 T=$(mktemp -d)
-{cc}/cpp -undef -D__GNUC__=2 -DMIPSEL -D_LANGUAGE_C -DPERMUTER -I{root}/include "$1" $T/a.i
-{cc}/cc1 -O2 -G0 -funsigned-char -quiet -w $T/a.i -o $T/a.s
-python3 /opt/maspsx/maspsx.py --aspsx-version=2.79 --expand-div < $T/a.s > $T/b.s
-mipsel-linux-gnu-as -EL -march=r3000 -mtune=r3000 -no-pad-sections -O1 -G0 -I{root}/include $T/b.s -o "$3"
+{cc}/cpp -undef -D__GNUC__=2 -DMIPSEL -D_LANGUAGE_C -DPERMUTER -I{root}/include -I{root}/include/psyq "$1" $T/a.i
+{cc}/cc1 {flags} -funsigned-char -quiet -w $T/a.i -o $T/a.s
+{asm}
 rm -rf $T
+"""
+ASM_MASPSX = """python3 /opt/maspsx/maspsx.py --aspsx-version={aspsx} --expand-div < $T/a.s > $T/b.s
+mipsel-linux-gnu-as -EL -march=r3000 -mtune=r3000 -no-pad-sections -O1 -G0 -I{root}/include $T/b.s -o "$3"
+"""
+ASM_GNU = """sed -E 's/^\\tmove\\t(\\$[0-9a-z]+),(\\$[0-9a-z]+)/\\taddu\\t\\1,\\2,$0/; s/^\\t\\.rdata$/\\t.section .rodata/' $T/a.s > $T/b.s
+mipsel-linux-gnu-as -EL -march=r3000 -mtune=r3000 -no-pad-sections -O2 -G0 -I{root}/include $T/b.s -o "$3"
 """
 
 
@@ -34,6 +40,11 @@ def main():
     ap.add_argument("--src")
     ap.add_argument("--seconds", type=int, default=600)
     ap.add_argument("-j", type=int, default=os.cpu_count())
+    ap.add_argument("--cc", default="gcc-2.8.1-psx")
+    ap.add_argument("--flags", default="-O2 -G0")
+    ap.add_argument("--aspsx", default="2.79")
+    ap.add_argument("--as", dest="asm", default="maspsx", help="maspsx or gnu")
+    ap.add_argument("--quiet", action="store_true")
     a = ap.parse_args()
     d = os.path.join(ROOT, "build", "permute", a.name)
     os.makedirs(d, exist_ok=True)
@@ -48,12 +59,15 @@ def main():
     text = re.sub(r'(?m)^INCLUDE_ASM\(.*\);\s*$', "", text)
     src = os.path.join(d, "in.c")
     open(src, "w").write(text)
-    pre = subprocess.run([CC + "/cpp", "-undef", "-D__GNUC__=2", "-DMIPSEL", "-D_LANGUAGE_C", "-DPERMUTER", "-P",
-                          "-I" + os.path.join(ROOT, "include"), src], capture_output=True, text=True, check=True).stdout
+    cc_dir = "/opt/oldgcc/" + a.cc
+    pre = subprocess.run([cc_dir + "/cpp", "-undef", "-D__GNUC__=2", "-DMIPSEL", "-D_LANGUAGE_C", "-DPERMUTER", "-P",
+                          "-I" + os.path.join(ROOT, "include"), "-I" + os.path.join(ROOT, "include", "psyq"), src],
+                         capture_output=True, text=True, check=True).stdout
     pre = re.sub(r"__asm__\(.*?\);", "", pre, flags=re.S)
     open(os.path.join(d, "base.c"), "w").write(pre)
     sh = os.path.join(d, "compile.sh")
-    open(sh, "w").write(COMPILE.format(cc=CC, root=ROOT))
+    asm = (ASM_GNU if a.asm == "gnu" else ASM_MASPSX).format(aspsx=a.aspsx, root=ROOT)
+    open(sh, "w").write(COMPILE.format(cc=cc_dir, root=ROOT, flags=a.flags, asm=asm))
     os.chmod(sh, 0o755)
     subprocess.run(["mipsel-linux-gnu-as", "-EL", "-march=r3000", "-mtune=r3000", "-no-pad-sections", "-G0",
                     "-I" + os.path.join(ROOT, "include"), D.find_asm(a.prog, a.name), "-o",
@@ -62,7 +76,8 @@ def main():
     print("permuter dir: " + os.path.relpath(d, ROOT))
     try:
         subprocess.run([sys.executable, "/opt/permuter/permuter.py", d, "-j", str(a.j), "--stop-on-zero"],
-                       timeout=a.seconds, cwd=ROOT)
+                       timeout=a.seconds, cwd=ROOT, stdout=subprocess.DEVNULL if a.quiet else None,
+                       stderr=subprocess.DEVNULL if a.quiet else None)
     except subprocess.TimeoutExpired:
         print("time limit reached; best candidates in %s/output-*" % os.path.relpath(d, ROOT))
 
