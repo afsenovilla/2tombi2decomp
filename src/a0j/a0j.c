@@ -46,7 +46,29 @@ void func_80109B34(u8 *a)
 
 INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_80109BA4);
 
-INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_80109C7C);
+extern u8 **D_1F80013C;
+extern u8 D_1F800144;
+extern u8 D_1F800182;
+
+void func_80109C7C(void *a)
+{
+    u8 **l = D_1F80013C;
+    u8 *e;
+
+    D_1F800182 = D_1F800144;
+    while (D_1F800182 != 0) {
+        e = *l;
+        D_1F800182--;
+        l++;
+        if (e[0] & 1) {
+            if (e[0xC] == 9) {
+                func_801090C4(a, e);
+            } else if (e[2] == 8) {
+                func_800205CC(a, e);
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_80109D40);
 
