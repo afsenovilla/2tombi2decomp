@@ -1595,7 +1595,20 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013EDD0);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013EEA0);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013EF58);
+extern s32 D_1F800090_3460;
+
+void func_8013EF58(u8 *a)
+{
+    u8 buf[0x30];
+    void *m;
+    s32 y;
+
+    func_800318A0(a + 0x2C, a + 0x50, a + 0x48);
+    m = *(void **)(a + 0x3C);
+    y = *(s16 *)(a + 0x32);
+    D_1F800090_3460 = *(s32 *)(a + 0x54);
+    func_80027768(m, 0, y, a[0x29]);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_CollectVisibleA00GridCellsForCamera);
 
