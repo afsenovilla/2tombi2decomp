@@ -1764,7 +1764,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004EB94);
 INCLUDE_ASM("asm/main/nonmatchings/main", f_QueueItemMessage);
 
 void f_QueuePopupMessage(u8 *text, s32, s32);
-
 // Queues resource message `id` of the message bank as a pop-up.
 void f_QueueResourceMessage(s16 id, u8 arg)
 {
@@ -1772,6 +1771,7 @@ void f_QueueResourceMessage(s16 id, u8 arg)
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004EDDC);
+
 
 void f_ResetPopupRequest(PopupRequest *req)
 {
@@ -1837,6 +1837,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004F6D0);
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ForcePromotePopupRequest);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_QueuePopupMessage);
+
 
 void func_8004FB20(void) {
     memset(&D_800BF548, 0, 0x2BC);

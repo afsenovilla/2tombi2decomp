@@ -1500,9 +1500,22 @@ s32 func_8013B37C(void *arg0) {
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013B38C);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013B3D0);
+extern s8 D_800BFA20_0787;
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013B400);
+s32 func_8013B3D0(void) {
+    func_8004D688(0x4F, 1);
+    D_800BFA20_0787 = 7;
+    return 1;
+}
+
+extern s8 D_800BFA20_0787;
+
+s32 func_8013B400(void) {
+    func_8004D4C4(0x50, 1);
+    func_8004B2E8();
+    D_800BFA20_0787 = 0xA;
+    return 1;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013B438);
 

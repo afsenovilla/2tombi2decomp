@@ -80,7 +80,8 @@ def attempt(prog, name, ctx):
     d = os.path.join(ROOT, "build", "sweep")
     os.makedirs(d, exist_ok=True)
     test = os.path.join(d, name + ".c")
-    for body in [body0] + scratch_variants(body0):
+    vol = re.sub(r"(?m)^extern (?!volatile)([^;(]*;)$", r"extern volatile \1", body0)
+    for body in [body0] + scratch_variants(body0) + ([vol] if vol != body0 else []):
         open(test, "w").write('#include "common.h"\n#include "game.h"\n#include "m2c.h"\n' + body)
         c = subprocess.run([sys.executable, "-I", os.path.join(ROOT, "tools", "ccheck.py"), test, "--prog", prog,
                             "--func", name], capture_output=True, text=True, cwd=ROOT)
@@ -115,21 +116,37 @@ def main():
         return
     files = glob.glob(os.path.join(ROOT, "src", a.prog, "**", "*.c"), recursive=True)
     backup = {f: open(f).read() for f in files}
-    decl = {}   # global name -> its extern line; a draft whose extern disagrees with an earlier one is left out
-    for t in backup.values():
+    decl = {}   # global name -> its extern line; a clashing draft gets the global under another name (an alias)
+    hdrs = [open(h).read() for h in glob.glob(os.path.join(ROOT, "include", "*.h"))]
+    for t in list(backup.values()) + hdrs:
         for l in re.findall(r"(?m)^extern [^;(]*?\b(\w+)(?:\[[^\]]*\])?;", t):
             pass
         for m in re.finditer(r"(?m)^(extern [^;(]*?\b(\w+)(?:\[[^\]]*\])?;)", t):
             decl[m.group(2)] = m.group(1)
     keep = []
+    sys.path.insert(0, os.path.join(ROOT, "tools"))
+    import libsweep
+    aliases = libsweep.read_aliases(a.prog)
     for n, fn in res:
         mine = {m.group(2): m.group(1) for m in re.finditer(r"(?m)^(extern [^;(]*?\b(\w+)(?:\[[^\]]*\])?;)", fn)}
-        if any(k in decl and decl[k] != v for k, v in mine.items()):
+        clash = [k for k, v in mine.items() if k in decl and decl[k] != v]
+        bad = False
+        for k in clash:
+            am = re.fullmatch(r"(?:D|func)_([0-9A-F]{8})", k)
+            if not am:
+                bad = True; break
+            import hashlib
+            new = "%s_%s" % (k, hashlib.sha1(mine[k].encode()).hexdigest()[:4])
+            fn = re.sub(r"\b%s\b" % k, new, fn)
+            aliases[new] = int(am.group(1), 16)
+            mine[new] = mine.pop(k).replace(k, new)
+        if bad:
             print("  skipped (type clash with an earlier declaration): " + n)
             continue
         decl.update(mine)
         keep.append((n, fn))
     res = keep
+    libsweep.write_aliases(a.prog, aliases)
     def build_ok():
         b = subprocess.run([sys.executable, os.path.join(ROOT, "tools", "build.py"), a.prog, "--no-split"],
                            capture_output=True, text=True, cwd=ROOT)
