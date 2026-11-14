@@ -2927,7 +2927,31 @@ void f_ApplyAreaPlaneDirectionToActor(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80049800);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_FindTerrainCellForActorProbe);
+typedef struct { u8 on; u8 flags; u8 pad[10]; } SpuVoiceSlot_238;
+extern SpuVoiceSlot_238 D_800BE238_df3f[];
+extern u8 D_1F8001FE;
+extern u16 *D_1F8001E0;
+extern s16 D_800BED80;
+typedef struct { s16 seq; u8 pad[6]; } SeqSlot_368;
+extern SeqSlot_368 D_800BE368[];
+extern s32 D_800BED78;
+typedef struct { s16 h0; s16 y; u8 pad[0x88]; } PopupLine_474;
+
+s32 f_FindTerrainCellForActorProbe(u8 *a)
+{
+    do {
+        f_ProjectTerrainProbeOntoAreaPlane(a);
+        f_SelectAreaPlaneCollisionTables(D_1F8001FE);
+        if (f_FindAreaPlaneCollisionCell() == 0) {
+            return 0;
+        }
+        if (!(*D_1F8001E0 & 0x4000)) {
+            return 1;
+        }
+        a[0x2A] = *(u8 *)D_1F8001E0;
+    } while (*D_1F8001E0 & 0x4000);
+    return 1;
+}
 
 void f_SelectAreaPlaneCollisionTables(u8 i)
 {
@@ -5183,9 +5207,6 @@ void func_80069B28(void)
 }
 
 extern u8 *D_800E7F5C;
-extern s32 D_800BED78;
-typedef struct { u8 on; u8 flags; u8 pad[10]; } SpuVoiceSlot_238;
-extern SpuVoiceSlot_238 D_800BE238_df3f[];
 extern s32 D_800BE358_bdda;
 
 s32 func_80069B6C(u8 *a)
@@ -5710,7 +5731,13 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007091C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80070BD0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateActorOrbitAroundAnchor);
+void f_UpdateActorOrbitAroundAnchor(u8 *a)
+{
+    *(s16 *)(a + 0x2E) = *(u16 *)(a + 0x4E) + rcos(*(s16 *)(a + 0x44)) * 24 / 4096;
+    *(s16 *)(a + 0x32) = *(u16 *)(a + 0x50) + rsin(*(s16 *)(a + 0x44) * 2) * 24 / 4096;
+    *(s16 *)(a + 0x36) = *(u16 *)(a + 0x52);
+    *(s16 *)(a + 0x44) = (*(u16 *)(a + 0x44) + 0x20) & 0xFFF;
+}
 
 void f_SetScriptActorInteractionOffset(u8 *a, s32 mode, Vec3i_F08 *v)
 {
@@ -6081,10 +6108,23 @@ void func_80074BC4(void) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_PlaySequencedMusic);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_StopSequencedMusic);
+void f_StopSequencedMusic(void)
+{
+    s32 i;
+
+    if (D_800BED80 != -1) {
+        SsSeqStop(D_800BE368[D_800BED80].seq);
+        for (i = 0; i < D_800BED78; i++) {
+            D_800BE238_df3f[i].on = 0;
+            D_800BE238_df3f[i].flags &= 0xC0;
+        }
+        D_800BED78 = 0;
+        D_800BED80 = -1;
+        SsSetReservedVoice(0);
+    }
+}
 
 extern s8 D_800BE22A;
-extern s16 D_800BED80;
 void f_StopNonReservedSequencedMusic(void) {
     D_800BE22A = 0;
     if (D_800BED80 >= 4) {

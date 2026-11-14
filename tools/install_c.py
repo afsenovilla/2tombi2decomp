@@ -72,9 +72,12 @@ def main():
             return True
         # ... unless a function is used as a value (its address taken), which needs a declaration
         return any(re.search(r"\b%s\b(?!\s*\()" % m.group(1), b) for _, b in funcs)
+    extra = [p for p in pre if wanted(p)]
+    for p in extra:   # a declaration the file already has further down moves up to the new first use
+        if p.startswith(("extern", "typedef", "struct", "union")) and p in t:
+            t = t.replace(p + "\n", "", 1) if p + "\n" in t else t.replace(p, "", 1)
     for n, body in funcs:
         if n == first:
-            extra = [p for p in pre if wanted(p)]
             body = "\n".join(extra + ([""] if extra else []) + [body])
         t = t.replace(lines[n][1], body)
     open(path, "w").write(t)
