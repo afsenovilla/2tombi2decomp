@@ -60,7 +60,34 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010B834);
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010B9AC);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010BAD4);
+void func_8010BAD4(void *arg0) {
+    u8 temp_v1;
+
+    temp_v1 = M2C_FIELD(arg0, u8 *, 4);
+    switch (temp_v1) {                              /* irregular */
+    case 0:
+        M2C_FIELD(arg0, u8 *, 4) = 1U;
+        func_8010B834(arg0, 0U);
+        func_8010B9AC(0);
+        func_80113708();
+        func_800752B4(0);
+        func_80075D24(0x1FFF);
+        return;
+    case 1:
+        if (func_80026AD0(arg0) != 0) {
+            func_8010B834(arg0, M2C_FIELD(arg0, u8 *, 3));
+        }
+        func_80026A68(arg0);
+        func_80113724();
+        func_8010B9AC(1);
+        return;
+    case 3:
+        func_8007ADD0(arg0);
+        /* fallthrough */
+    case 2:
+        return;
+    }
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010BBB4);
 
@@ -156,9 +183,22 @@ void func_801136F8(void) {
 void func_80113700(void) {
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80113708);
+extern M2C_UNK D_80127974;
+void func_80113708(void) {
+    M2C_FIELD(&D_80127974, s8 *, 0) = 0;
+    M2C_FIELD(&D_80127974, s8 *, 1) = 0;
+    M2C_FIELD(&D_80127974, s8 *, 2) = 0;
+    M2C_FIELD(&D_80127974, s8 *, 3) = 0;
+}
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80113724);
+extern M2C_UNK D_80127974;
+void func_80113724(void) {
+    if (M2C_FIELD(&D_80127974, u8 *, 0) == 0) {
+        M2C_FIELD(&D_80127974, s16 *, 4) = 0;
+        func_800310F4(0xB00, 0);
+        M2C_FIELD(&D_80127974, u8 *, 0) = 1U;
+    }
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80113768);
 
@@ -248,7 +288,11 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80117EC8);
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80117F58);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80118004);
+s32 func_80118004(void *arg0) {
+    M2C_FIELD(M2C_FIELD(arg0, void **, 0x38), s8 *, 4) = 2;
+    func_80074590(0x37, 0x16, 0);
+    return 1;
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80118038);
 
@@ -266,8 +310,20 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80118A5C);
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80118C8C);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80118CE0);
+void func_80118CE0(s32 arg0) {
+    s32 temp_s0;
+
+    temp_s0 = arg0 + 0x2C;
+    func_8003116C(0xB05, temp_s0, -0x1E);
+    func_8003116C(0xB05, temp_s0, -0x1E);
+    func_8003116C(0xB09, temp_s0, -0x28);
+    func_8003116C(0xB0B, temp_s0, 0);
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80118D40);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", f_UpdateEvilPigBagOfferingSequence);
+extern s16 D_800BED82;
+extern M2C_UNK D_801271F4;
+void f_UpdateEvilPigBagOfferingSequence(void) {
+    func_80075448(0xA, &D_801271F4, 0x10, D_800BED82);
+}

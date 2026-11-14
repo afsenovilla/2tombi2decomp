@@ -16,7 +16,16 @@ INCLUDE_ASM("asm/a03/nonmatchings/a03", f_SetTrolleyHudSegmentEnabled);
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_DrawTrolleyRaceHud);
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010B328);
+extern M2C_UNK D_800F2418;
+void func_8010B328(void) {
+    func_8004FD30();
+    func_80025D98();
+    f_DrawTrolleyRaceHud();
+    f_UpdateAndDrawTrolleyRiderModel();
+    func_8003BCF4();
+    func_801109D4(&D_800F2418);
+    func_8003C048();
+}
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdatePlayerTrolleyActor);
 
@@ -48,13 +57,42 @@ INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyCourseProgressActor);
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateDetachedTrolleyActor);
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010E820);
+extern M2C_UNK D_8011B748;
+s32 func_8010E820(void *arg0) {
+    return (u32) &D_8011B748 < (u32) M2C_FIELD(arg0, u32 *, 0x60);
+}
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010E834);
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010E8F4);
+void func_8010E8F4(s32 arg0) {
+    s16 temp_v1;
+    void *temp_a0;
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010E92C);
+    temp_a0 = arg0 + 0x60;
+    temp_v1 = M2C_FIELD(temp_a0, s16 *, 0xC);
+    if (temp_v1 < 0x8D0) {
+        M2C_FIELD(temp_a0, s16 *, 0xC) = 0x8D0;
+        return;
+    }
+    if (temp_v1 >= 0x1A81) {
+        M2C_FIELD(temp_a0, s16 *, 0xC) = 0x1A80;
+    }
+}
+
+void func_8010E92C(s32 arg0) {
+    s16 temp_v1;
+    void *temp_a0;
+
+    temp_a0 = arg0 + 0x60;
+    temp_v1 = M2C_FIELD(temp_a0, s16 *, 0xC);
+    if (temp_v1 < 0x8D0) {
+        M2C_FIELD(temp_a0, s16 *, 0xC) = 0x8D0;
+        return;
+    }
+    if (temp_v1 >= 0x3511) {
+        M2C_FIELD(temp_a0, s16 *, 0xC) = 0x3510;
+    }
+}
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010E964);
 
@@ -78,7 +116,9 @@ INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyTrailActor);
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", func_80111158);
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", func_801113B4);
+void func_801113B4(s32 arg0) {
+    func_80110B00(4, arg0 + 0x3C, 0x10);
+}
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", func_801113DC);
 

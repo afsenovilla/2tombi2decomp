@@ -16,7 +16,17 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_80109790);
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", f_UpdateEvilPigDoorTombaTransitionSequence);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_80109CA0);
+void func_80109CA0(void *arg0) {
+    func_8006F0E4();
+    M2C_FIELD(arg0, s8 *, 1) = 1;
+    func_80055D5C(arg0);
+    M2C_FIELD(arg0, s16 *, 0x142) = 0;
+    M2C_FIELD(arg0, s16 *, 0x58) = 0;
+    func_80054198(arg0);
+    func_80055284(arg0);
+    func_80054D14(arg0, 2, 0);
+    func_8003315C(arg0);
+}
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_80109D04);
 

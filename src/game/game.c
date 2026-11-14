@@ -102,7 +102,14 @@ INCLUDE_ASM("asm/game/nonmatchings/game", func_80108CA4);
 
 INCLUDE_ASM("asm/game/nonmatchings/game", func_80108CAC);
 
-INCLUDE_ASM("asm/game/nonmatchings/game", func_80108D5C);
+void func_80108D5C(void) {
+    void *temp_v0;
+
+    temp_v0 = *(void **)0x1F800138;
+    M2C_FIELD(temp_v0, s16 *, 0x4A) = 3;
+    M2C_FIELD(temp_v0, s16 *, 0x4C) = 0;
+    M2C_FIELD(temp_v0, s16 *, 0x4E) = 0;
+}
 
 INCLUDE_ASM("asm/game/nonmatchings/game", func_80108D78);
 
