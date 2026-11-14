@@ -104,6 +104,9 @@ def build(prog, split, jobs, cfg="config"):
         list(ex.map(assemble, objs))
     elf = "%s/%s.elf" % (bdir, prog)
     extra = []
+    al = os.path.join(cfg, "aliases_%s.ld" % prog)   # names library C from other projects uses (tools/libsweep.py)
+    if os.path.exists(os.path.join(ROOT, al)):
+        extra += ["-T", al]
     for k in ("undefined_syms_auto_path", "undefined_funcs_auto_path"):
         m = re.search(k + r":\s*(\S+)", y)
         if m and os.path.exists(os.path.join(ROOT, m.group(1))):

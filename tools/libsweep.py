@@ -118,8 +118,13 @@ def matches(obj, name, want, syms=None):
     return True
 
 
-def candidates(prog, name, ctx, t1src, sources=("pt", "t1", "m2c")):
+def candidates(prog, name, ctx, t1src, sources=("main", "pt", "t1", "m2c")):
     out = []
+    if "main" in sources and prog != "main":   # the same function already matched in MAIN.EXE
+        mf = glob.glob(os.path.join(ROOT, "src", "main", "psyq", "*", name + ".c"))
+        if mf and "INCLUDE_ASM" not in open(mf[0]).read():
+            t = re.sub(r"(?m)^//\s*(CC|FLAGS|ASPSX|AS)\s.*\n", "", open(mf[0]).read())
+            out.append(("main:" + os.path.relpath(mf[0], ROOT), t))
     if "pt" in sources:
         text, f = ptsrc.cut(name)
         if text:
@@ -135,7 +140,7 @@ def candidates(prog, name, ctx, t1src, sources=("pt", "t1", "m2c")):
     return out
 
 
-def attempt(prog, name, ctx, t1src, binary, delta, sources=("pt", "t1", "m2c")):
+def attempt(prog, name, ctx, t1src, binary, delta, sources=("main", "pt", "t1", "m2c")):
     addr, size = asm_info(prog, name)
     if addr is None or size is None:
         return name, None
@@ -202,6 +207,8 @@ def write_aliases(prog, al):
 def note_for(kind):
     if kind == "t1":
         return "// Source: Tombi-Decomp (matched C of the same Psy-Q function).\n"
+    if kind.startswith("main:"):
+        return "// Same function as %s (MAIN.EXE).\n" % kind[5:]
     if kind.startswith("pt:"):
         return "// Source: psx_tomba %s (MIT), cut to this function by tools/ptsrc.py.\n" % kind[3:]
     return ""
@@ -218,7 +225,8 @@ def main():
     ap.add_argument("--prog", default="main")
     ap.add_argument("--lib")
     ap.add_argument("--install", action="store_true")
-    ap.add_argument("--source", default="pt,t1,m2c", help="comma list of pt (psx_tomba), t1 (Tombi-Decomp), m2c")
+    ap.add_argument("--source", default="main,pt,t1,m2c",
+                    help="comma list of main (the MAIN.EXE file, for boot), pt (psx_tomba), t1 (Tombi-Decomp), m2c")
     ap.add_argument("-j", type=int, default=os.cpu_count())
     a = ap.parse_args()
     files = {}
