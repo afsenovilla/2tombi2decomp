@@ -1108,7 +1108,24 @@ s32 func_800386C0(u8 *p)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80038708);
+extern u8 D_1F800231;
+extern s32 D_800BF808_4426[];
+extern s16 D_1F800180;
+
+s32 func_80038708(u8 *p)
+{
+    s32 i;
+    s32 last = p[0x21] - 1;
+
+    for (i = 0; i < 6; i++) {
+        if (p[0x1F] >= last) {
+            return i != 0;
+        }
+        p[0x1F]++;
+        p[0x1E]++;
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80038758);
 
@@ -4220,7 +4237,17 @@ s32 f_TrySetCurrentScriptActorStateActive(void)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TryStartCurrentScriptActorAnimation2);
+s32 f_TryStartCurrentScriptActorAnimation2(void)
+{
+    u8 *a = *(u8 **)D_1F800214;
+
+    if (a[0x70] == 0) {
+        f_SetActorAnimation(a, 2, 2);
+        a[0x70] = 1;
+        return 1;
+    }
+    return 0;
+}
 
 s32 f_TrySetCurrentScriptActorAnimation0(void)
 {
@@ -4729,9 +4756,17 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawMenuTextGlyphs);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80079014);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawSmallMenuText);
+void f_DrawSmallMenuText(s16 x, s32 y, s16 c, s32 d, s32 e)
+{
+    D_1F800180 = -0x20;
+    f_DrawMenuTextGlyphs(x | (y << 16), 0x80008, c, d, e);
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawTallMenuText);
+void f_DrawTallMenuText(s16 x, s32 y, s16 c, s32 d, s32 e)
+{
+    D_1F800180 = 0x20;
+    f_DrawMenuTextGlyphs(x | (y << 16), 0x100008, c, d, e);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_CalculateCenteredTextPositions);
 
