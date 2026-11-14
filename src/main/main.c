@@ -4844,38 +4844,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaLostGroundSupportMotion);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_DetachTombaFromSupport);
 
-#ifdef NON_MATCHING
-// NON_MATCHING: 2 words differ (tools/ccheck.py); else arm schedules lui after the load
-extern u16 D_800ECF54;
-extern u16 D_1F800172_5cdb;
-extern u16 D_800A45A0[];
-extern u16 D_800A4588[];
-void func_80056E08(u8 *t)
-{
-    u16 *tbl;
-
-    if (D_800ECF54 & D_1F800172_5cdb) {
-        if (++t[0x167] >= 0xFF) {
-            t[0x167] = 0xFE;
-        }
-        return;
-    }
-    if (t[0x167] < 0xB) {
-        if (*(u16 *)(t + 0x17E) & 0x180) {
-            tbl = &D_800A45A0[t[0x167]];
-        } else {
-            tbl = &D_800A4588[t[0x167]];
-        }
-        *(u16 *)(t + 0x4A) += *tbl;
-        t[0x167] = 0x10;
-        if (*(s16 *)(t + 0x4A) > 0) {
-            *(s16 *)(t + 0x4A) = 0;
-        }
-    }
-}
-#else
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80056E08);
-#endif
 
 
 void func_80056EC8(u8 *p)
