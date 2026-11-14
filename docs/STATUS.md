@@ -5,8 +5,10 @@ The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
 ## 2026-11-14 (2): Phase 2 under way (user chose B: engine first, library in parallel)
 
-Game code in C: **943 / 6180 functions** (MAIN ~300 / 1167; overlays ~640); library 322 + 71 asm by design / 867.
-29 / 29 byte-identical.
+All code in C: **1417 / 7011 functions (20.2 %, 4.2 % of the bytes)**; Phase 2 MAIN 373 / 1167 (32 %); library 393 /
+867 (incl. asm by design). 29 / 29 byte-identical. `python3 -I tools/progress.py --phases` gives the per-phase table.
+- Late in the session: MAIN hand batches of 5-6 functions of 20-35 instructions (smallest INCLUDE_ASM first, skipping
+  jump-table switches and the handwritten GTE ones) land about 70 % on the first or second try.
 - **Best lever at the end of the session: copies.** Area overlays carry many copies of the same function; one written
   by hand is then installed in every program by `tools/dupsweep.py --install` (it renames the callees and globals to
   each program's names and takes every declaration of the source file). `tools/dupgroups.py` picks the targets:
@@ -31,7 +33,9 @@ Game code in C: **943 / 6180 functions** (MAIN ~300 / 1167; overlays ~640); libr
   turned into `sltu` while retail branches -> still open (func_8001CBA8).
 - Script-state steps (`switch (p[0x78])`: case 0 sets up and advances, case 1 waits) match with the shared
   `return 0` as a label inside the switch: `case 0: ...; goto end; case 1: if (done) return 1; end: default:
-  return 0;` (func_800425FC, func_8004201C).
+  return 0;` (func_800425FC, func_8004201C). Still open: when case 0 stores the compare constant (`p[0x78] = 1`)
+  retail reuses the register holding 1; `s32 one = 1; ... = one;` reproduces the reuse but swaps v0/v1
+  (func_80117EC8 with 6 overlay copies, func_8006585C, func_8003A3E8: 5 words each).
 - A scratch file that matches can still fail once installed when main.c has no prototype (or a K&R one) for a
   callee whose prototype in the scratch file narrows an argument (s16): cast the argument in the call instead.
 - A `switch` whose jump table sits in MAIN's shared rodata does not link once the function is in C (the table's
