@@ -4044,7 +4044,25 @@ void func_80052694(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80052720);
+extern s32 D_1F8000D0_42d8[];
+typedef struct { void *p0; void *p4; u8 *p8; } UiBank_F58;
+extern UiBank_F58 D_800ECF58_02d8;
+
+void func_80052720(u8 *a)
+{
+    s16 ang;
+    s32 c;
+
+    ang = f_StepWrappedAngleToward((s16)f_CalculateYawFromPositionToPoint(a + 0x2C, *(s16 *)(a + 0x64), *(s16 *)(a + 0x68)),
+                                   *(s16 *)(a + 0x56), 0x18);
+    *(s16 *)(a + 0x56) = ang;
+    c = (rcos(ang) * *(s16 *)(a + 0x44)) >> 4;
+    {
+        s32 s = (rsin(*(s16 *)(a + 0x56)) * *(s16 *)(a + 0x44)) >> 4;
+        *(s32 *)(a + 0x2C) += c;
+        *(s32 *)(a + 0x34) -= s;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800527C8);
 
@@ -5441,7 +5459,21 @@ void f_SetCameraTransform(u8 *cam, u16 *t)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_StartCameraTransformInterpolation);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateCameraTransformInterpolation);
+
+s32 f_UpdateCameraTransformInterpolation(u8 *c)
+{
+    if (*(s16 *)(c + 0x84) == 0) {
+        return 1;
+    }
+    *(s16 *)(c + 0x84) -= 1;
+    D_1F8000D0_42d8[0] += *(s16 *)(c + 0x78) << 9;
+    D_1F8000D0_42d8[1] += *(s16 *)(c + 0x7A) << 9;
+    D_1F8000D0_42d8[2] += *(s16 *)(c + 0x7C) << 9;
+    *(s32 *)(c + 0x38) += *(s16 *)(c + 0x7E) << 9;
+    *(s32 *)(c + 0x3C) += *(s16 *)(c + 0x80) << 9;
+    *(s32 *)(c + 0x40) += *(s16 *)(c + 0x82) << 9;
+    return 0;
+}
 
 
 s16 f_ClampSignedCameraDelta(s16 arg0, s16 arg1) {
@@ -6079,7 +6111,36 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateInteriorEntranceDoorTransition
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateEntranceContactIndicator);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80073750);
+s32 func_80073750(u8 *s)
+{
+    s32 n[2];
+    s32 flag = 0;
+    s32 r;
+
+    n[1] = 0;
+    n[0] = 0;
+    while (*s != 0) {
+        if (*s == 10) {
+            flag = 1;
+        }
+        s++;
+        if (flag) {
+            n[1]++;
+        } else {
+            n[0]++;
+        }
+    }
+    if (flag) {
+        r = n[1];
+        if (r < n[0]) {
+            r = n[0];
+        }
+        r = -r;
+    } else {
+        r = n[0];
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800737F8);
 
