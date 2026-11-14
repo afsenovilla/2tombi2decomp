@@ -16,6 +16,7 @@
 /build/
 /asm/
 /include/psyq/
+/include/pt/
 /include/macro.inc
 /include/labels.inc
 /include/gte_macros.inc

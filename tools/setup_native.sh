@@ -17,4 +17,12 @@ if [ ! -d include/psyq ]; then
   [ -d /tmp/psx_tomba ] || git clone -q --depth 1 https://github.com/hansbonini/psx_tomba /tmp/psx_tomba
   cp -r /tmp/psx_tomba/include/psyq include/psyq
 fi
+# psx_tomba's own base headers (MIT, per its README), used by the library C taken from it (src/*/psyq, `#include "pt/common.h"`)
+if [ ! -f include/pt/common.h ]; then
+  [ -d /tmp/psx_tomba ] || git clone -q --depth 1 https://github.com/hansbonini/psx_tomba /tmp/psx_tomba
+  mkdir -p include/pt && cp /tmp/psx_tomba/include/{common.h,types.h,include_asm.h,version.h} include/pt/
+  (cd /tmp/psx_tomba/src/psyq && find . -name '*.h') | while read -r h; do
+    mkdir -p "include/pt/$(dirname "$h")"; sed 's|#include "common.h"|#include "pt/common.h"|' "/tmp/psx_tomba/src/psyq/$h" > "include/pt/$h"
+  done
+fi
 echo "toolchain ready"
