@@ -9,7 +9,7 @@ Game code in C: **943 / 6180 functions** (MAIN ~300 / 1167; overlays ~640); libr
 29 / 29 byte-identical.
 - **Best lever at the end of the session: copies.** Area overlays carry many copies of the same function; one written
   by hand is then installed in every program by `tools/dupsweep.py --install` (it renames the callees and globals to
-  each program's names and takes every declaration of the source file). `/tmp`-style helper used to pick targets:
+  each program's names and takes every declaration of the source file). `tools/dupgroups.py` picks the targets:
   group the pending functions by masked word sequence (as funcstats) and take the groups with most copies and few
   bytes. Example: func_80146478 (permuter-assisted) went into 14 programs at once.
 - `tools/install_c.py` cannot take K&R definitions yet; callers that pass fewer arguments than a new prototype
