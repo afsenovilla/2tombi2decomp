@@ -13,11 +13,29 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8001CBA8);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8001CC00);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8001CE04);
+extern u16 D_1F8001A2;
+extern s32 D_1F800080;
+extern u8 D_8011600C[];
+extern u8 D_801189C4[];
+
+s32 func_8001CE04(u8 cmd, u8 *param, u8 *result)
+{
+    CdControlF(cmd, param);
+    for (;;) {
+        switch (CdSync(1, result)) {
+        case 2:
+            return 0;
+        case 5:
+            f_YieldCurrentCooperativeWorker(1);
+            return 1;
+        }
+        f_YieldCurrentCooperativeWorker(1);
+    }
+}
 
 
-void func_8001CE90(s32 arg0) {
-    func_8001CE04(arg0 & 0xFF);
+void func_8001CE90(s32 arg0, u8 *param, u8 *result) {
+    func_8001CE04(arg0 & 0xFF, param, result);
 }
 
 
@@ -28,7 +46,7 @@ s32 func_8001CEB0(s32 arg0, s32 arg1) {
     var_v0 = CdMode();
     if (var_v0 != arg0) {
         sp10 = (s8) arg0;
-        func_8001CE04(0xE, (s32) &sp10, arg1);
+        func_8001CE04(0xE, (u8 *) &sp10, arg1);
         var_v0 = f_YieldCurrentCooperativeWorker(2);
     }
     return var_v0;
@@ -3634,7 +3652,21 @@ void func_8005262C(void *arg0) {
     M2C_FIELD(arg0, s32 *, 0x30) = (s32) (M2C_FIELD(arg0, s32 *, 0x30) - ((s16) M2C_FIELD(arg0, u16 *, 0x4A) << 8));
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80052694);
+void func_80052694(u8 *a)
+{
+    *(s16 *)(a + 0x44) -= 0x40;
+    if (*(s16 *)(a + 0x44) < 0xA00) {
+        *(s16 *)(a + 0x44) = 0xA00;
+    }
+    *(s16 *)(a + 0x4A) += 0xA0;
+    if (*(s16 *)(a + 0x4A) > 0x1000) {
+        *(s16 *)(a + 0x4A) = 0x1000;
+    }
+    *(s32 *)(a + 0x30) += *(s16 *)(a + 0x4A) << 8;
+    if (*(s16 *)(a + 0x32) > *(s16 *)(a + 0x66)) {
+        *(s16 *)(a + 0x32) = *(s16 *)(a + 0x66);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80052720);
 
@@ -3825,7 +3857,22 @@ void f_ResetTombaControlState(void *arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaOverheadTerrainContact);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800543C0);
+void func_800543C0(u8 *a)
+{
+    u8 *o;
+    s32 d;
+
+    if (a[0x16B] != 0 || a[0x29] != 0) {
+        return;
+    }
+    if (a[0x78] != 0) {
+        o = *(u8 **)(a + 0x10);
+        d = (*(s16 *)(o + 0x86) - *(s16 *)(o + 0x84)) - (*(s16 *)(a + 0x32) - *(s16 *)(o + 0x32));
+    } else {
+        d = *(s16 *)(a + 0x62);
+    }
+    f_ProbeActorTerrainAlongFacing(a, 0, (s16)d);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaGroundTerrainContact);
 
