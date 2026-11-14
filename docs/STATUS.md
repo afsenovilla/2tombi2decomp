@@ -5,8 +5,8 @@ The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
 ## 2026-11-14 (2): Phase 2 under way (user chose B: engine first, library in parallel)
 
-All code in C: **1417 / 7011 functions (20.2 %, 4.2 % of the bytes)**; Phase 2 MAIN 373 / 1167 (32 %); library 393 /
-867 (incl. asm by design). 29 / 29 byte-identical. `python3 -I tools/progress.py --phases` gives the per-phase table.
+All code in C: **1532 / 7011 functions (21.9 %, 4.7 % of the bytes)**; Phase 2 MAIN 419 / 1167 (36 %); Phase 4
+areas 711 / 4816; library 393 / 867 (incl. asm by design). 29 / 29 byte-identical. `python3 -I tools/progress.py --phases` gives the per-phase table.
 - Late in the session: MAIN hand batches of 5-6 functions of 20-35 instructions (smallest INCLUDE_ASM first, skipping
   jump-table switches and the handwritten GTE ones) land about 70 % on the first or second try.
 - **Best lever at the end of the session: copies.** Area overlays carry many copies of the same function; one written
@@ -36,6 +36,13 @@ All code in C: **1417 / 7011 functions (20.2 %, 4.2 % of the bytes)**; Phase 2 M
   return 0;` (func_800425FC, func_8004201C). When case 0 sets the state to 1 and retail reuses the register
   that held the compare constant, the source was `p[0x78]++` (gcc knows the value is 0 there): writing `= 1` or
   `s32 one = 1` gives a v0/v1 swap (func_80117EC8 and its 7 copies, func_8006585C, func_8003A3E8).
+- More recipes from this session: a global read that retail does before a run of stores -> read it into a local
+  first (the stores might alias it); a callee that receives the caller's argument untouched (`jal` with no
+  `move a0`) -> pass that argument explicitly, or call with no arguments when the K&R declaration is in use
+  (f_ResolveEffectEightByteStreamPayload(a)); `p = *x; *y = p; if (p == 0)` instead of re-reading; a 0x20-byte
+  frame larger than the code needs -> an unused local of that size; a `goto` into the shared `return 0` /
+  `*start = 0` tail of an if-chain (f_GetPauseMenuEquipmentGroupRange); an array member of a struct (`->parts[i]`)
+  for `base + index` operand order.
 - A scratch file that matches can still fail once installed when main.c has no prototype (or a K&R one) for a
   callee whose prototype in the scratch file narrows an argument (s16): cast the argument in the call instead.
 - A `switch` whose jump table sits in MAIN's shared rodata does not link once the function is in C (the table's
