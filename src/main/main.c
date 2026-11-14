@@ -2311,7 +2311,19 @@ void func_8004D6F4(s32 item)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D714);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D79C);
+extern s16 D_800BF808_e253[];
+typedef struct SpuAttrLite { u32 mask; s16 mvolL; s16 mvolR; s16 h8; s16 hA; s16 hC; s16 hE; s16 h10; s16 h12; } SpuAttrLite;
+extern SpuAttrLite D_800BE1F8;
+typedef struct Slot4Cb { u8 b[0x4C]; } Slot4Cb;
+extern Slot4Cb D_80100400_fb37[];
+
+void func_8004D79C(s32 n)
+{
+    s32 byte = n / 8;
+    s32 bit = n - byte * 8;
+
+    D_800BF870.appleBits[(s16)byte] |= 1 << (s16)bit;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_TestWorldOrOtherPickupCollectedBit);
 
@@ -2370,7 +2382,18 @@ void f_QueueResourceMessage(s16 id, u8 arg)
     f_QueuePopupMessage(D_800BF548.text + D_800BF548.offsets[id], -1, arg);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004EDDC);
+void func_8004EDDC(s16 a, s16 b)
+{
+    u16 m[6];
+
+    m[1] = 0x8003;
+    m[2] = 0xFFFF;
+    m[4] = 0x8000;
+    m[0] = a;
+    m[3] = b;
+    m[5] = 0xFFFE;
+    f_QueuePopupMessage(m, 2, 0x40);
+}
 
 
 void f_ResetPopupRequest(PopupRequest *req)
@@ -4569,7 +4592,18 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007566C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80075824);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80075A30);
+void func_80075A30(void)
+{
+    SpuAttrLite *a = &D_800BE1F8;
+
+    a->h12 = 0x7FFF;
+    a->h10 = 0x7FFF;
+    a->mask |= 0xC3;
+    a->mvolR = 0x3FFF;
+    a->mvolL = 0x3FFF;
+    SpuSetCommonAttr(a);
+    D_800BE1F8.mask = 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80075A80);
 
@@ -4859,7 +4893,15 @@ void func_8007AC98(void) {
     memset(&D_800ED018, 0, 0x3C);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007ACC4);
+void func_8007ACC4(void)
+{
+    s32 i;
+    Slot4Cb *s;
+
+    for (i = 0, s = D_80100400_fb37; i < 8; i++, s++) {
+        memset(s, 0, sizeof(Slot4Cb));
+    }
+}
 
 extern M2C_UNK D_800ED058;
 void func_8007AD14(void) {
