@@ -26,14 +26,17 @@ Game code in C: **943 / 6180 functions** (MAIN ~300 / 1167; overlays ~640); libr
   a global/scratchpad store that must not move into a delay slot -> `volatile`; constants loaded in the wrong order
   -> hold them in local variables (`u32 end = 0xFF`); a base+offset access the compiler folds -> struct field or
   array element; branch layout -> swap the if/else or early return; argument registers passed through untouched ->
-  give the function all four parameters.
+  give the function all four parameters; three `lw` + three `sw` through one base (also an argument spilled to its
+  home slot and reloaded after a call) -> a struct copy (`Vec3` passed or assigned by value); `v = (x == K) ? 0 : 1`
+  turned into `sltu` while retail branches -> still open (func_8001CBA8).
+- A `switch` whose jump table sits in MAIN's shared rodata does not link once the function is in C (the table's
+  `.L` labels vanish): leave such functions in asm until rodata is migrated per function.
 - Headers: `include/game.h` GameState (itemCounts at +0x244, appleBits +0x544, flag words), WorkerState,
   CameraState (`g_CameraState`, a linker name for 0x800E8008), PopupRequest / PopupDisplayEntry, MessageBank;
   named scratchpad variables in config/undefined_syms.ld; `include/actor.h` (not yet used).
 - The permuter rarely helps on raw drafts (about 10 matches in some 150 near misses at 60-120 s each).
 - Library: string literals now become the retail strings' symbols, objects with extra text are rejected (+4).
-- Known left-overs worth a look: f_LoadResourceChunkIntoGroup, f_FindEncodedMessagePage, f_TestWrappedAngleSide,
-  func_8003F2F8, func_8003F31C, func_8004D8B0, func_8006914C (near misses written by hand, in no file yet).
+- Known left-overs worth a look: f_LoadResourceChunkIntoGroup, f_ReleaseActorModelParts (lui order), func_8003F2F8, func_8003F31C, func_8004D8B0, func_8006914C (near misses written by hand, in no file yet).
 
 ## 2026-11-14: Phase 1 (Psy-Q library), partly done
 
