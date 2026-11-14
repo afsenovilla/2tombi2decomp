@@ -112,7 +112,42 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_StartStreamedAudioTrack);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8001D41C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_PlayOrStopVoiceLine);
+extern u8 *D_800BF544_37fb;
+extern u32 *D_800ED8C8;
+typedef struct { u8 b[8]; } Bytes8_368;
+extern Bytes8_368 D_80015368;
+extern u8 D_800BF84B;
+extern u8 D_1F800137_104c;
+typedef struct { u8 ch; u8 mode; u16 start; u16 len; } VoiceLine_110;
+extern VoiceLine_110 D_8009D110[];
+extern u8 *D_1F800220;
+extern u8 D_800FB162;
+extern u8 D_800BE0E4_9d53;
+extern u8 D_800ECF48_7ec2[];
+extern u8 D_1F80019A;
+extern u8 D_800FB167;
+
+void f_PlayOrStopVoiceLine(s16 id)
+{
+    VoiceLine_110 *e;
+    u8 *s;
+    u8 *end;
+    s32 ch;
+
+    if (id < 0) {
+        f_StopVoicePlayback();
+        return;
+    }
+    e = &D_8009D110[id];
+    s = D_1F800220 + e->start * 8;
+    end = s + e->len * 8;
+    ch = e->ch;
+    if (e->mode == 0 && D_800FB162 == 1) {
+        *(volatile u8 *)&D_800BE0E4_9d53 = 2;
+        return;
+    }
+    f_StartStreamedAudioRange(ch, s, end, e->mode);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8001D7C4);
 
@@ -222,7 +257,6 @@ extern s32 D_800BFE34;
 extern u16 D_1F800160;
 extern u16 D_1F800162;
 extern u16 D_1F800164;
-extern u8 D_1F800137_104c;
 extern s32 D_1F800080;
 extern s32 D_1F800084_8c7c;
 extern u16 D_1F8000D0_fb20[];
@@ -263,7 +297,6 @@ void f_ResolveTombaType12ActorContact(void) {
 INCLUDE_ASM("asm/main/nonmatchings/main", f_TestActorAgainstPartCylinderBounds);
 
 extern u16 D_800A4A6C[];
-extern u8 D_800BE0E4_9d53;
 extern u16 D_800E7FFE;
 extern u16 D_1F8001A2;
 
@@ -287,7 +320,6 @@ extern u8 D_800BFE55;
 extern u8 D_1F800137_104c;
 extern u8 *D_800BF844;
 extern u8 D_800BF4F8[];
-extern u8 D_800ECF48_7ec2[];
 
 s32 f_CanTombaTakeDamage(u8 *t)
 {
@@ -1327,8 +1359,6 @@ extern FileLoc_1E0 D_800BE1E0_8c5b[];
 extern void *D_800A3ECC[];
 extern s16 D_1F8000F2;
 extern u8 D_800A3B0C_b8ee;
-extern u8 *D_800BF544_37fb;
-extern u32 *D_800ED8C8;
 
 s32 func_80035088(void *unused, s32 item, s32 mode)
 {
@@ -1890,7 +1920,6 @@ void func_8003FBC4(void *arg0) {
 }
 
 extern u16 D_1F8001A0_6940;
-extern u8 D_1F80019A;
 extern char D_80015458[];
 extern char D_8001546C[];
 extern s32 D_800BE1E0[];
@@ -3914,7 +3943,31 @@ s32 func_80052198(s32 a, u8 *out)
     return r;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_StartControllerVibration);
+void f_StartControllerVibration(u8 port, u8 lo, u8 hi, u8 dur)
+{
+    u8 *v = D_800ECF48_7ec2;
+
+    if (D_1F80019A == 1) {
+        return;
+    }
+    if (D_800FB167 != 0) {
+        return;
+    }
+    if (*(u16 *)(v + 2) == 0) {
+        return;
+    }
+    if (v[6] != 0) {
+        return;
+    }
+    if (*(u16 *)(v + 4) != 0) {
+        return;
+    }
+    v[4] = lo;
+    v[5] = hi;
+    PadSetAct(port, v + 4, 2);
+    v[7] = dur;
+    v[6] = 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005229C);
 
@@ -6604,7 +6657,31 @@ s32 func_80079528(u8 *arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80079554);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_FormatIntegerText);
+u8 f_FormatIntegerText(s32 v, char *out)
+{
+    char buf[16];
+    u8 n = (u32)v >> 31;
+    char *p = buf;
+    s32 d;
+
+    do {
+        d = v % 10;
+        if (d < 0) {
+            d = -d;
+        }
+        *p++ = d + '0';
+        v /= 10;
+    } while (v != 0);
+    if (n != 0) {
+        *p++ = '-';
+    }
+    n = p - buf;
+    for (p--; p >= buf; p--) {
+        *out++ = *p;
+    }
+    *out = 0;
+    return n;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800796DC);
 
