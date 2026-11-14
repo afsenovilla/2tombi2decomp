@@ -29,17 +29,24 @@ def main():
     ap.add_argument("--max-distance", type=int, default=6)
     ap.add_argument("--seconds", type=int, default=90)
     ap.add_argument("--install", action="store_true")
+    ap.add_argument("--game", action="store_true", help="game functions (build/gamenear_<prog>.csv, src/<prog>/<prog>.c)")
     a = ap.parse_args()
-    rows = [r for r in csv.DictReader(open(os.path.join(ROOT, "build", "libnear_%s.csv" % a.prog)))
+    rows = [r for r in csv.DictReader(open(os.path.join(ROOT, "build", "%snear_%s.csv" % ("game" if a.game else "lib",
+                                                                                         a.prog))))
             if int(r["distance"]) <= a.max_distance]
     binary, delta = L.prog_bytes(a.prog)
     found = []
     for r in rows:
         name, v = r["name"], L.VARIANTS[int(r["variant"])]
-        f = glob.glob(os.path.join(ROOT, "src", a.prog, "psyq", "*", name + ".c"))
-        if not f or "INCLUDE_ASM" not in open(f[0]).read():
-            continue
-        cands = dict(L.candidates(a.prog, name, None, None, ("pt", "m2c")))
+        if a.game:
+            f = [os.path.join(ROOT, "src", a.prog, a.prog + ".c")]
+            if 'INCLUDE_ASM("asm/%s/nonmatchings/%s", %s);' % (a.prog, a.prog, name) not in open(f[0]).read():
+                continue
+        else:
+            f = glob.glob(os.path.join(ROOT, "src", a.prog, "psyq", "*", name + ".c"))
+            if not f or "INCLUDE_ASM" not in open(f[0]).read():
+                continue
+        cands = dict(L.candidates(a.prog, name, None, None, ("m2c",) if a.game else ("pt", "m2c")))
         text = next((t for k, t in cands.items() if k.split(":")[0] == r["source"].split(":")[0]), None)
         if not text:
             continue
@@ -90,7 +97,14 @@ def main():
             if k not in known:
                 aliases[k] = ad
         old = open(path).read()
-        open(path, "w").write(L.header(v) + L.note_for(source) + "// Permuted with decomp-permuter.\n" + text)
+        if a.game:
+            # the function and the extern declarations it needs go where its INCLUDE_ASM line was
+            fn = func_text(text, name)
+            ext = [l for l in text.splitlines() if l.startswith("extern ")]
+            line = 'INCLUDE_ASM("asm/%s/nonmatchings/%s", %s);' % (a.prog, a.prog, name)
+            open(path, "w").write(old.replace(line, "\n".join(ext + ["", fn])))
+        else:
+            open(path, "w").write(L.header(v) + L.note_for(source) + "// Permuted with decomp-permuter.\n" + text)
         b = subprocess.run([sys.executable, "tools/build.py", a.prog, "--no-split"], capture_output=True, text=True,
                            cwd=ROOT)
         L.write_aliases(a.prog, aliases)

@@ -50,11 +50,16 @@ nothing from the disc is committed.
 
 ## Phase 2 — MAIN.EXE engine (1107 game functions, 402 KB)
 
-- [ ] **2.1 Core headers** in `include/`: game-state struct at `D_800BFFC0` (USA address to confirm), actor struct
+- [ ] **2.1 Core headers** in `include/` (started: `include/game.h` GameState, `include/actor.h` the 0xC0-byte actor
+  record from Tomba2Edit's simulator offsets; not yet used by the drafts, whose field types m2c infers from the code): game-state struct at `D_800BFFC0` (USA address to confirm), actor struct
   (`f_SetActorAnimation`: +0x46, +0x79, +0x7C ...), item/event tables, task/thread system
   (`f_CloseCooperativeWorkerThread`). Grow them as functions are matched; keep field names English.
 - [ ] **2.2 Small leaf functions first** (< 64 bytes, ~300 of them): setters, getters, flag tests. *Target*: 300
   functions; measures the pace (functions per session) for the estimate.
+  Status 2026-11-14: the sweep with compilable m2c drafts (`--valid-syntax`, `include/m2c.h`) put **115 / 1167 MAIN
+  game functions** in C (88 in one run over functions <= 0x200 bytes; larger ones almost never match as drafted).
+  Near misses: `tools/libnear.py --game` (57 within 2 instructions, 112 within 5) and `tools/libpermute.py --game`.
+  The drafts use `M2C_FIELD(p, T *, off)` for unknown struct fields: they become real fields as the headers grow.
 - [ ] **2.3 Split `main.c` into files** by subsystem as they become clear (sound, CD/loader, text/messages, items,
   actors, camera, render, save/card, menus). splat subsegments per file; rodata moves with its functions.
 - [ ] **2.4 Subsystems in order**: loader + overlay loading (confirms load addresses), text/messages (helps the port's

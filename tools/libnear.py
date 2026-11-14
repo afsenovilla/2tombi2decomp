@@ -3,13 +3,17 @@
 compiler set-up and report how far the best one is from the retail bytes (differing words, size difference), so the
 permuter (tools/permute.py) can be pointed at the closest. Writes build/libnear_<prog>.csv.
 
-  python3 -I tools/libnear.py [--prog main] [--max-size 0x200] [-j N]
+  python3 -I tools/libnear.py [--prog main] [--max-size 0x200] [-j N] [--game]
+
+--game: the game functions still INCLUDE_ASM in src/<prog>/<prog>.c, game compiler only (build/gamenear_<prog>.csv).
 """
 import argparse, concurrent.futures as cf, csv, glob, os, re, shutil, struct, subprocess, sys, tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 import cc, libsweep as L
+
+GAME = False
 
 
 def distance(obj, name, want):
@@ -38,10 +42,10 @@ def one(prog, name, binary, delta):
     best = None
     d = tempfile.mkdtemp(dir=os.path.join(ROOT, "build"))
     try:
-        for kind, text in L.candidates(prog, name, None, None, ("pt", "m2c")):
+        for kind, text in L.candidates(prog, name, None, None, ("m2c",) if GAME else ("pt", "m2c")):
             src = os.path.join(d, name + ".c")
             open(src, "w").write(text)
-            for i, v in enumerate(L.VARIANTS):
+            for i, v in enumerate(L.VARIANTS[:1] if GAME else L.VARIANTS):
                 try:
                     cc.compile_c(src, os.path.join(d, "a.o"), v)
                 except cc.CompileError:
@@ -59,20 +63,27 @@ def main():
     ap.add_argument("--prog", default="main")
     ap.add_argument("--max-size", default="0x200")
     ap.add_argument("-j", type=int, default=os.cpu_count())
+    ap.add_argument("--game", action="store_true", help="the game functions of src/<prog>/<prog>.c instead")
     a = ap.parse_args()
     lim = int(a.max_size, 0)
     names = []
-    for f in glob.glob(os.path.join(ROOT, "src", a.prog, "psyq", "*", "*.c")):
-        if "INCLUDE_ASM" in open(f).read():
-            n = os.path.basename(f)[:-2]
-            ad, sz = L.asm_info(a.prog, n)
-            if sz and sz <= lim:
-                names.append(n)
+    if a.game:
+        t = open(os.path.join(ROOT, "src", a.prog, a.prog + ".c")).read()
+        pend = re.findall(r'INCLUDE_ASM\("[^"]+", (\w+)\);', t)
+    else:
+        pend = [os.path.basename(f)[:-2] for f in glob.glob(os.path.join(ROOT, "src", a.prog, "psyq", "*", "*.c"))
+                if "INCLUDE_ASM" in open(f).read()]
+    for n in pend:
+        ad, sz = L.asm_info(a.prog, n)
+        if sz and sz <= lim:
+            names.append(n)
+    global GAME
+    GAME = a.game
     binary, delta = L.prog_bytes(a.prog)
     with cf.ThreadPoolExecutor(a.j) as ex:
         rows = [r for r in ex.map(lambda n: one(a.prog, n, binary, delta), names) if r]
     rows.sort(key=lambda r: (r[1], r[4]))
-    out = os.path.join(ROOT, "build", "libnear_%s.csv" % a.prog)
+    out = os.path.join(ROOT, "build", "%snear_%s.csv" % ("game" if a.game else "lib", a.prog))
     with open(out, "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["name", "distance", "source", "variant", "size"])
