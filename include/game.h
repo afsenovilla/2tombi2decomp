@@ -5,9 +5,12 @@
 
 /* The global game state at 0x800BF870 (USA). Fields are added as functions using them are matched. */
 typedef struct GameState {
-    /* 0x000 */ u8 unk0;
-    /* 0x001 */ u8 pad1[0x543];
-    /* 0x544 */ u8 appleBits[1]; /* collected-apple flags, one bit per apple (f_TestAppleCollectedBit) */
+    /* 0x000 */ u8 unk0;            /* current area? (switches over it pick per-area code) */
+    /* 0x001 */ u8 pad1[0x543];     /* +0x244: item counts (f_RemoveItemWithoutMessage) */
+    /* 0x544 */ u8 appleBits[0x80]; /* collected-apple flags, one bit per apple (f_TestAppleCollectedBit) */
+    /* 0x5C4 */ s32 flags5C4;       /* bit flags set by func_8006F02C */
+    /* 0x5C8 */ u8 pad5C8[0x10];
+    /* 0x5D8 */ s32 flags5D8;       /* bit flags set by func_8006F00C */
 } GameState;
 
 extern GameState D_800BF870;
@@ -43,6 +46,21 @@ typedef struct MessageBank {
     /* 0x2B8 */ u8 *text;
 } MessageBank;
 extern MessageBank D_800BF548;
+
+/* Camera state (0x90 bytes) at 0x800E8008, named g_CameraState (config/undefined_syms.ld; the drafts still call it
+ * D_800E8008). f_SetCameraMode. */
+typedef struct CameraState {
+    /* 0x00 */ u8 pad0[4];
+    /* 0x04 */ u8 unk4;
+    /* 0x05 */ u8 unk5;
+    /* 0x06 */ s16 unk6;
+    /* 0x08 */ u8 pad8[0x5C];
+    /* 0x64 */ u8 mode;
+    /* 0x65 */ u8 pad65[2];
+    /* 0x67 */ u8 previousMode;
+    /* 0x68 */ u8 pad68[0x28];
+} CameraState;
+extern CameraState g_CameraState;
 
 /* Scratchpad variables with names (config/undefined_syms.ld); every other scratchpad byte is D_1F8xxxxx
  * (config/scratchpad.ld), declared `extern s8 D_1F8xxxxx[]` by the drafts. */

@@ -1394,9 +1394,18 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80043BD4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80043D8C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80043E9C);
+void func_80043D8C(void *, s32);
+void f_QueueItemMessage(s32, s32);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80043EBC);
+void func_80043E9C(void *a)
+{
+    func_80043D8C(a, 1);
+}
+
+void func_80043EBC(void *a)
+{
+    func_80043D8C(a, 0);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80043EDC);
 
@@ -1729,9 +1738,15 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_RemoveItemWithoutMessage);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_RemoveItemWithAltMessage);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D6D4);
+void func_8004D6D4(s32 item)
+{
+    f_QueueItemMessage(item, 0);
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D6F4);
+void func_8004D6F4(s32 item)
+{
+    f_QueueItemMessage(item, 3);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D714);
 
@@ -3328,7 +3343,17 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006E010);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006E0F0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetCameraMode);
+void f_SetCameraMode(u8 mode)
+{
+    CameraState *c = &g_CameraState;
+    u8 old = c->mode;
+
+    c->mode = mode;
+    c->unk4 = 0;
+    c->unk5 = 0;
+    c->unk6 = 0;
+    c->previousMode = old;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_RestorePreviousCameraMode);
 
@@ -3412,9 +3437,15 @@ s32 func_8006EFF4(s32 arg0) {
     return ((s32) D_800BFE48 >> arg0) & 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006F00C);
+void func_8006F00C(s32 bit)
+{
+    D_800BF870.flags5D8 |= 1 << bit;
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006F02C);
+void func_8006F02C(s32 bit)
+{
+    D_800BF870.flags5C4 |= 1 << bit;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006F04C);
 
