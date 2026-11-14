@@ -6,7 +6,7 @@
 /* The global game state at 0x800BF870 (USA). Fields are added as functions using them are matched. */
 typedef struct GameState {
     /* 0x000 */ u8 unk0;            /* current area? (switches over it pick per-area code) */
-    /* 0x001 */ u8 pad1[0x543];     /* +0x244: item counts (f_RemoveItemWithoutMessage) */
+    /* 0x001 */ u8 pad1[0x543];     /* +0x004: s32 (func_8004B3F4 adds to it); +0x244: item counts */     /* +0x244: item counts (f_RemoveItemWithoutMessage) */
     /* 0x544 */ u8 appleBits[0x80]; /* collected-apple flags, one bit per apple (f_TestAppleCollectedBit) */
     /* 0x5C4 */ s32 flags5C4;       /* bit flags set by func_8006F02C */
     /* 0x5C8 */ u8 pad5C8[0x10];

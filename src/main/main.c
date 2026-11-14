@@ -957,7 +957,24 @@ s32 func_80036D90(s32 arg0) {
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80036DC4);
+extern s16 D_800ED098;
+extern s32 *D_800E7E74;
+extern u8 D_800A24E4[];
+extern u8 D_800BF88C;
+extern u8 D_800E7EEC;
+extern u16 D_1F800172_5cdb;
+extern u8 **D_800A54A8[];
+void func_80071B44(s32, s32, s32);
+
+s32 func_80036DC4(s32 i)
+{
+    if (D_800BF873 != 0) {
+        if (D_800A24E4[i] == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80036DFC);
 
@@ -2712,7 +2729,15 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_TryStartTombaContactAction);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80055704);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800557EC);
+s32 func_800557EC(u8 *p)
+{
+    if (p[0x148] == 0) {
+        if (D_800E7E68 & D_1F800172_5cdb) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 extern s8 D_1F800172[];
 extern u16 D_800E7E68;
