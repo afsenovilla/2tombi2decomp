@@ -30,7 +30,7 @@ segments:
   - name: game
     type: code
     start: 0x0
-    vram: 0x80106220
+    vram: 0x80106228
     align: 4
     subalign: 4
     subsegments:

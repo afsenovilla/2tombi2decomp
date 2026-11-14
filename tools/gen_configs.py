@@ -6,7 +6,7 @@ last `jr ra` before a long run without one). The matching all-asm build (tools/b
   python3 -I tools/gen_configs.py game/usa [--force] [--out config]
 
 Load addresses are found per version from the overlays' jal targets landing on prologues (docs/DISCS.md; USA: areas
-0x80108F9C, GAME/DEMO 0x80106220, OPN/CRD 0x8018A000; EU: 0x80109D84, 0x80106D80, 0x80188000). START.BIN is data. Existing yamls are kept unless --force (they may carry hand-made splits).
+0x80108F9C, GAME/DEMO 0x80106228, OPN/CRD 0x8018A000; EU: 0x80109D84, 0x80106D88, 0x80188000; a function start is a prologue or the word after a `jr $ra` pair). START.BIN is data. Existing yamls are kept unless --force (they may carry hand-made splits).
 """
 import hashlib, os, struct, sys
 
@@ -25,7 +25,9 @@ def load_addrs(fs):
         b = open(os.path.join(fs, "BIN", f), "rb").read()
         n = len(b) // 4
         w = struct.unpack("<%dI" % n, b[: n * 4])
-        pro = [i * 4 for i, x in enumerate(w) if (x & 0xFFFF8000) == 0x27BD8000]
+        # function starts: a prologue, or the word right after a `jr $ra` + delay slot (gcc may schedule a lui/lw
+        # above the stack adjust, so the first word is not always the prologue)
+        pro = [i * 4 for i, x in enumerate(w) if (x & 0xFFFF8000) == 0x27BD8000 or (i >= 2 and w[i - 2] == 0x03E00008)]
         tg = collections.Counter(((x & 0x3FFFFFF) << 2) | 0x80000000 for x in w if x >> 26 == 3)
         best = collections.Counter()
         for t, c in tg.items():
@@ -34,8 +36,6 @@ def load_addrs(fs):
                     best[t - p] += c
         if best:
             out[f[:-4].upper()] = best.most_common(1)[0][0]
-    if "GAME" in out:   # DEMO.BIN loads where GAME.BIN does (its own table says so; few jal to vote with)
-        out["DEMO"] = out["GAME"]
     return out
 
 

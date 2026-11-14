@@ -51,7 +51,7 @@ Every program rebuilds byte-identical from the splat disassembly (`python3 tools
 rodata, after it data).
 
 Load addresses per version (from the overlays' `jal` targets landing on prologues; EU and USA confirmed by Tomba2Edit's
-build tables): USA areas + SOP 0x80108F9C, GAME/DEMO 0x80106220, OPN/CRD 0x8018A000; EU 0x80109D84, 0x80106D80,
+build tables): USA areas + SOP 0x80108F9C, GAME/DEMO 0x80106228, OPN/CRD 0x8018A000; EU 0x80109D84, 0x80106D88,
 0x80188000.
 
 | Program | File | Load | Size | Text | Text size |
