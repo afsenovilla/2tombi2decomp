@@ -1296,7 +1296,46 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80036240);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800364AC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_GetPauseMenuEquipmentGroupRange);
+extern char D_800172A4[];
+extern char D_800172A8[];
+extern u8 D_800A2854[];
+typedef struct { u8 pad[0xA4]; void *a; void *pad2; void *b; } MenuText_854;
+extern u8 *D_800BF544_37fb;
+extern u32 *D_800ED8C8;
+extern u8 D_800BF816;
+typedef struct { s32 x, y, z; } Vec3i_F08;
+typedef struct { u8 pad[0x1C]; Vec3i_F08 v; } ConvTarget_F08;
+
+s32 f_GetPauseMenuEquipmentGroupRange(s32 g, s32 *start)
+{
+    s32 n;
+
+    if (g == 0) {
+        n = 2;
+        goto zero;
+    }
+    if (g == 1) {
+        n = 4;
+        *start = 2;
+    } else if (g == 2) {
+        n = 3;
+        *start = 6;
+    } else if (g == 3) {
+        n = 3;
+        *start = 9;
+    } else if (g == 4) {
+        n = 1;
+        *start = 0xC;
+    } else if (g == 5) {
+        n = 1;
+        *start = 0xD;
+    } else {
+        n = 0;
+    zero:
+        *start = 0;
+    }
+    return n;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800365F0);
 
@@ -5288,7 +5327,16 @@ void func_80070650(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80070698);
+s32 func_80070698(s32 n)
+{
+    s32 r = rand() & (n - 1);
+
+    r = r * r / n;
+    if (rand() & 1) {
+        r = -r;
+    }
+    return r;
+}
 
 
 void f_ConfigureScriptActorConversation(u8 a, u8 b, u8 c)
@@ -5375,7 +5423,22 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80070BD0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateActorOrbitAroundAnchor);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetScriptActorInteractionOffset);
+void f_SetScriptActorInteractionOffset(u8 *a, s32 mode, Vec3i_F08 *v)
+{
+    u8 *g;
+
+    switch (mode) {
+    case 0:
+        g = D_800BF808;
+        *(s16 *)(g + 0x1E) = D_1F800160 - *(u16 *)(a + 0x2E);
+        *(s16 *)(g + 0x22) = D_1F800162 - *(u16 *)(a + 0x32);
+        *(s16 *)(g + 0x26) = D_1F800164 - *(u16 *)(a + 0x36);
+        break;
+    case 1:
+        ((ConvTarget_F08 *)D_800BF808)->v = *v;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ApproachShortCoordinate);
 
@@ -6408,7 +6471,13 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007EE74);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007EF60);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007F078);
+void func_8007F078(void)
+{
+    func_80078988(0x76, 0xC8, 0, D_800172A4, 0);
+    f_DrawSmallMenuText(0x82, 0xC8, 6, ((MenuText_854 *)D_800A2854)->a, 0);
+    func_80078988(0xC6, 0xC8, 0, D_800172A8, 0);
+    f_DrawSmallMenuText(0xD2, 0xC8, 6, ((MenuText_854 *)D_800A2854)->b, 0);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007F104);
 
