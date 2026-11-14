@@ -15,6 +15,18 @@ sys.path.insert(0, os.path.join(ROOT, "tools"))
 import decomp as D
 
 
+def prog_context(prog):
+    """m2c context: the project headers plus every pending function's guessed parameter count (tools/arity.py)."""
+    base = open(D.context()).read()
+    subprocess.run([sys.executable, "-I", os.path.join(ROOT, "tools", "arity.py"), prog], cwd=ROOT,
+                   capture_output=True)
+    ar = os.path.join(ROOT, "build", "arity_%s.h" % prog)
+    extra = open(ar).read() if os.path.exists(ar) else ""
+    out = os.path.join(ROOT, "build", "ctx_%s.c" % prog)
+    open(out, "w").write(base + "\ntypedef int M2C_UNK;\n" + extra)
+    return out
+
+
 def pending(prog):
     out = []
     for f in glob.glob(os.path.join(ROOT, "src", prog, "**", "*.c"), recursive=True):
@@ -106,7 +118,7 @@ def main():
     a = ap.parse_args()
     lim = int(a.max_size, 0)
     names = [n for n in pending(a.prog) if size_of(a.prog, n) <= lim]
-    ctx = D.context()
+    ctx = prog_context(a.prog)
     with cf.ThreadPoolExecutor(a.j) as ex:
         res = [r for r in ex.map(lambda n: attempt(a.prog, n, ctx), names) if r[1]]
     print("%d / %d functions <= 0x%X match as drafted" % (len(res), len(names), lim))

@@ -20,7 +20,18 @@ void func_8001CE90(s32 arg0) {
     func_8001CE04(arg0 & 0xFF);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8001CEB0);
+s32 func_8001CEB0(s32 arg0, s32 arg1) {
+    s8 sp10;
+    s32 var_v0;
+
+    var_v0 = CdMode();
+    if (var_v0 != arg0) {
+        sp10 = (s8) arg0;
+        func_8001CE04(0xE, (s32) &sp10, arg1);
+        var_v0 = f_YieldCurrentCooperativeWorker(2);
+    }
+    return var_v0;
+}
 
 extern s32 D_800BE108;
 extern u8 D_800BF808[];
@@ -64,7 +75,14 @@ void f_RequestStreamedAudioStop(void) {
     D_800BE0E4 |= 0x10;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8001CF94);
+s32 func_8001CF94(s32 arg0) {
+    s32 var_v0;
+
+    if ((arg0 & 0x11) || (var_v0 = arg0 & 2, (var_v0 == 0))) {
+        var_v0 = f_YieldCurrentCooperativeWorker(2);
+    }
+    return var_v0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8001CFC8);
 
@@ -326,7 +344,48 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_SnapActorOntoCylinderTop);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_TestTombaSupportPointAgainstActorBounds);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80024448);
+extern s8 D_1F800084[];
+extern s8 D_1F8001A0[];
+extern s8 D_1F8001A6[];
+
+s32 func_80024448(s32 arg0) {
+    s32 temp_v0;
+    s32 var_a3;
+    u16 temp_v1;
+
+    var_a3 = 0x25;
+    if (M2C_FIELD(arg0, s16 *, 0x17E) >= 0) {
+        var_a3 = 0x4A;
+    }
+    M2C_FIELD(arg0, u8 *, 0x17D) = 0U;
+    temp_v0 = func_80046A44(arg0, (s32) M2C_FIELD(arg0, s16 *, 0x66), (s32) (s16) ((s32) M2C_FIELD(arg0, u16 *, 0x68) * -1), var_a3);
+    if (temp_v0 != 0) {
+        M2C_FIELD(arg0, u8 *, 0x17D) = (u8) (((u16) *((u16 *)D_1F8001A6) >> 0xB) & 3);
+        func_80048654(arg0);
+        temp_v1 = *((u16 *)D_1F8001A0);
+        M2C_FIELD(arg0, u16 *, 0x140) = temp_v1;
+        if (M2C_FIELD(arg0, u8 *, 0x147) != 0) {
+            M2C_FIELD(arg0, u16 *, 0x56) = (u16) ((temp_v1 - 0x800) & 0xFFF);
+        } else {
+            M2C_FIELD(arg0, u16 *, 0x56) = temp_v1;
+        }
+        if (temp_v0 == 2) {
+            if (M2C_FIELD(arg0, u8 *, 0x17D) & 1) {
+                M2C_FIELD(arg0, s8 *, 0x164) = 7;
+                f_UpdateTombaForwardContactProbe(arg0);
+            } else {
+                goto block_10;
+            }
+        } else {
+block_10:
+            M2C_FIELD(arg0, s8 *, 0x164) = 4;
+        }
+        M2C_FIELD(arg0, s8 *, 0x15C) = (s8) temp_v0;
+        *((s32 *)D_1F800084) = 0;
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_FindTombaSupportInteractionTarget);
 
@@ -543,11 +602,57 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80030A3C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80030D68);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnTransientEffect);
+extern u8 D_800E7E7C;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnTransientEffectAtFixedPosition);
+s32 f_SpawnTransientEffect(s32 arg0, s32 arg1) {
+    s32 temp_v0;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnTransientEffectAtShortPosition);
+    if ((u8) D_800E7E7C >= 7U) {
+        temp_v0 = f_AllocateActorRecordByType(0, 6, 1);
+        if (temp_v0 != 0) {
+            M2C_FIELD(temp_v0, s16 *, 0x32) = (s16) arg1;
+            f_InitializeTransientEffectActor(temp_v0, arg0);
+            return temp_v0;
+        }
+    }
+    return 0;
+}
+
+extern u8 D_800E7E7C;
+
+s32 f_SpawnTransientEffectAtFixedPosition(s32 arg0, s32 arg1, s32 arg2) {
+    s32 temp_v0;
+
+    if (((u8) D_800E7E7C < 7U) || (temp_v0 = f_AllocateActorRecordByType(0, 6, 1), (temp_v0 == 0))) {
+        return 0;
+    }
+    if (arg1 != 0) {
+        M2C_FIELD(temp_v0, u16 *, 0x2C) = (u16) M2C_FIELD(arg1, u16 *, 2);
+        M2C_FIELD(temp_v0, u16 *, 0x2E) = (u16) M2C_FIELD(arg1, u16 *, 6);
+        M2C_FIELD(temp_v0, u16 *, 0x30) = (u16) M2C_FIELD(arg1, u16 *, 0xA);
+    }
+    M2C_FIELD(temp_v0, s16 *, 0x32) = (s16) arg2;
+    f_InitializeTransientEffectActor(temp_v0, arg0);
+    return temp_v0;
+}
+
+extern u8 D_800E7E7C;
+
+s32 f_SpawnTransientEffectAtShortPosition(s32 arg0, s32 arg1, s32 arg2) {
+    s32 temp_v0;
+
+    if (((u8) D_800E7E7C < 7U) || (temp_v0 = f_AllocateActorRecordByType(0, 6, 1), (temp_v0 == 0))) {
+        return 0;
+    }
+    if (arg1 != 0) {
+        M2C_FIELD(temp_v0, u16 *, 0x2C) = (u16) M2C_FIELD(arg1, u16 *, 0);
+        M2C_FIELD(temp_v0, u16 *, 0x2E) = (u16) M2C_FIELD(arg1, u16 *, 2);
+        M2C_FIELD(temp_v0, u16 *, 0x30) = (u16) M2C_FIELD(arg1, u16 *, 4);
+    }
+    M2C_FIELD(temp_v0, s16 *, 0x32) = (s16) arg2;
+    f_InitializeTransientEffectActor(temp_v0, arg0);
+    return temp_v0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnFlaggedTransientEffectAtFixedPosition);
 
@@ -694,7 +799,14 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800342EC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80034338);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80034548);
+s32 func_80034548(s32 arg0) {
+    func_80033FF4(arg0, 0x65);
+    func_800336DC(arg0, 0, 0, 0x6C);
+    func_80033B94(arg0, 0, 0x64);
+    f_DrawFullscreenOverlay(0x404040, 0, 0x74);
+    func_800336DC(arg0, 3, 3, 0x84);
+    return func_8007FCC8(0, 0, 0x140, 0xF0, /* extra? */ 0x81);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800345D8);
 
@@ -773,7 +885,11 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800368D0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80036A14);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80036AE8);
+s32 func_80036AE8(s32 arg0) {
+    func_80036A14(arg0, 0);
+    func_80036A14(arg0, 1);
+    return func_80036A14(arg0, 2);
+}
 
 
 void func_80036B28(u8 *arg0, u8 *arg1) {
@@ -1221,7 +1337,16 @@ void func_800416F0(u8 *actor)
     f_SetActorModelResources(actor, *(s16 *)(actor + 0x72), *(s32 *)(actor + 0x74));
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetActorAnimation);
+s32 f_SetActorAnimation(s32 arg0, s32 arg1, s32 arg2) {
+    M2C_FIELD(arg0, s8 *, 0x46) = (s8) arg1;
+    M2C_FIELD(arg0, s8 *, 0x79) = 0;
+    if ((s16) arg2 == 0) {
+        f_StartActorSkeletalAnimation(arg0, M2C_FIELD(arg0, s32 *, 0x7C), arg1);
+    } else {
+        f_StartActorSkeletalAnimationBlend(arg0, M2C_FIELD(arg0, s32 *, 0x7C), arg1, (s32) (s16) arg2);
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SetActorAnimationIfChanged);
 
@@ -1239,7 +1364,16 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800419C4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80041A1C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80041AC0);
+extern s8 D_1F8001A0[];
+
+s32 func_80041AC0(s32 arg0) {
+    s32 temp_s1;
+
+    temp_s1 = f_ResolveActorAreaPlanePosition(arg0);
+    f_ApplyAreaPlaneDirectionToActor(arg0);
+    M2C_FIELD(arg0, u16 *, 0x60) = (u16) *((u16 *)D_1F8001A0);
+    return temp_s1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeActorFixedStepMotion);
 
@@ -1583,9 +1717,13 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_TransitionOrClampAreaPlaneEndpoint);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SelectAreaPlaneContainingPosition);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ProbeActorTerrainAlongFacing);
+s32 f_ProbeActorTerrainAlongFacing(s32 arg0, s32 arg1, s32 arg2) {
+    return f_ProbeActorTerrainAtOffset(arg0, (s32) (s16) arg1, (s32) (s16) arg2, (s32) M2C_FIELD(arg0, s16 *, 0x56));
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ClassifyActorTerrainAlongFacing);
+s32 f_ClassifyActorTerrainAlongFacing(s32 arg0, s32 arg1, s32 arg2) {
+    return f_ClassifyActorTerrainAtOffset(arg0, (s32) (s16) arg1, (s32) (s16) arg2, (s32) M2C_FIELD(arg0, s16 *, 0x56));
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ClassifyActorTerrainAtOffset);
 
@@ -1621,15 +1759,25 @@ s32 func_80049418(void *arg0, s16 arg1, s32 arg2, s16 arg3) {
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004951C);
+s32 func_8004951C(s32 arg0, s32 arg1, s32 arg2) {
+    return func_80045B30(arg0, (s32) (s16) arg1, (s32) (s16) arg2, (s32) M2C_FIELD(arg0, s16 *, 0x56));
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveActorFacingTerrainContact);
+s32 f_ResolveActorFacingTerrainContact(s32 arg0, s32 arg1, s32 arg2) {
+    return f_ResolveActorRadialTerrainContact(arg0, (s32) (s16) arg1, (s32) (s16) arg2, (s32) M2C_FIELD(arg0, s16 *, 0x56));
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004957C);
+s32 func_8004957C(s32 arg0, s32 arg1, s32 arg2) {
+    return f_TestActorRadialTerrainContact(arg0, (s32) (s16) arg1, (s32) (s16) arg2, (s32) M2C_FIELD(arg0, s16 *, 0x56));
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveActorDirectionalTerrainAlongFacing);
+s32 f_ResolveActorDirectionalTerrainAlongFacing(s32 arg0, s32 arg1, s32 arg2) {
+    return f_ResolveActorDirectionalTerrainContact(arg0, (s32) (s16) arg1, (s32) (s16) arg2, (s32) M2C_FIELD(arg0, s16 *, 0x56));
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ClassifyActorDirectionalTerrainAlongFacing);
+s32 f_ClassifyActorDirectionalTerrainAlongFacing(s32 arg0, s32 arg1, s32 arg2) {
+    return f_ClassifyActorDirectionalTerrainContact(arg0, (s32) (s16) arg1, (s32) (s16) arg2, (s32) M2C_FIELD(arg0, s16 *, 0x56));
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004960C);
 
@@ -1663,7 +1811,18 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004A9A4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004AAC4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DespawnGrabbedItem);
+s32 f_DespawnGrabbedItem(s32 arg0) {
+    s32 temp_v0;
+
+    temp_v0 = f_SpawnTransientEffect(0x1F, -0x8C);
+    if (temp_v0 != 0) {
+        M2C_FIELD(temp_v0, u8 *, 0x28) = (u8) (M2C_FIELD(temp_v0, u8 *, 0x28) | 0x80);
+        M2C_FIELD(temp_v0, u16 *, 0x2C) = (u16) M2C_FIELD(arg0, u16 *, 0x2E);
+        M2C_FIELD(temp_v0, u16 *, 0x2E) = (u16) M2C_FIELD(arg0, u16 *, 0x32);
+        M2C_FIELD(temp_v0, u16 *, 0x30) = (u16) M2C_FIELD(arg0, u16 *, 0x36);
+    }
+    return f_PlaySoundEffect(0x28, 0, 0);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B150);
 
@@ -1705,7 +1864,22 @@ void f_UpdatePickupBlinkRenderFlag(void *arg0, s32 arg1) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B3F4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B428);
+extern s8 D_800BF820;
+
+s32 func_8004B428(s32 arg0) {
+    s32 temp_v0;
+
+    temp_v0 = f_SpawnTransientEffect(0x1F, -0x8C);
+    if (temp_v0 != 0) {
+        M2C_FIELD(temp_v0, u8 *, 0x28) = (u8) (M2C_FIELD(temp_v0, u8 *, 0x28) | 0x80);
+        M2C_FIELD(temp_v0, u16 *, 0x2C) = (u16) M2C_FIELD(arg0, u16 *, 0x2E);
+        M2C_FIELD(temp_v0, u16 *, 0x2E) = (u16) M2C_FIELD(arg0, u16 *, 0x32);
+        M2C_FIELD(temp_v0, u16 *, 0x30) = (u16) M2C_FIELD(arg0, u16 *, 0x36);
+    }
+    f_PlaySoundEffect(0x28, 0, 0);
+    D_800BF820 = 1;
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B4B0);
 
@@ -2039,7 +2213,13 @@ void f_SetScaleMatrix(void *arg0, s16 arg1, s16 arg2, s16 arg3) {
     M2C_FIELD(arg0, s32 *, 0x1C) = 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateActorUnscaledModelTransforms);
+s32 f_UpdateActorUnscaledModelTransforms(s32 arg0) {
+    RotMatrix_gte(arg0 + 0x54, arg0 + 0x98);
+    M2C_FIELD(arg0, s32 *, 0xAC) = (s32) M2C_FIELD(arg0, s16 *, 0x2E);
+    M2C_FIELD(arg0, s32 *, 0xB0) = (s32) M2C_FIELD(arg0, s16 *, 0x32);
+    M2C_FIELD(arg0, s32 *, 0xB4) = (s32) M2C_FIELD(arg0, s16 *, 0x36);
+    return f_UpdateActorUnscaledPartTransforms(arg0);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateActorScaledModelTransforms);
 
@@ -2060,7 +2240,26 @@ void func_80051B34(void *arg0, void *arg1) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeSinglePartActorModel);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80051C8C);
+s32 func_80051C8C(s32 arg0) {
+    s32 temp_s1;
+
+    temp_s1 = arg0 + 0x98;
+    M2C_FIELD(arg0, s32 *, 0x98) = 0x1000;
+    M2C_FIELD(arg0, s32 *, 0x9C) = 0;
+    M2C_FIELD(arg0, s32 *, 0xA0) = 0x1000;
+    M2C_FIELD(arg0, s32 *, 0xA4) = 0;
+    M2C_FIELD(arg0, s32 *, 0xA8) = 0x1000;
+    M2C_FIELD(arg0, s32 *, 0xAC) = 0;
+    M2C_FIELD(arg0, s32 *, 0xB0) = 0;
+    M2C_FIELD(arg0, s32 *, 0xB4) = 0;
+    RotMatrixX((s32) M2C_FIELD(arg0, s16 *, 0x54), temp_s1);
+    RotMatrixY((s32) M2C_FIELD(arg0, s16 *, 0x56), temp_s1);
+    RotMatrixZ((s32) M2C_FIELD(arg0, s16 *, 0x58), temp_s1);
+    M2C_FIELD(arg0, s32 *, 0xAC) = (s32) M2C_FIELD(arg0, s16 *, 0x2E);
+    M2C_FIELD(arg0, s32 *, 0xB0) = (s32) M2C_FIELD(arg0, s16 *, 0x32);
+    M2C_FIELD(arg0, s32 *, 0xB4) = (s32) M2C_FIELD(arg0, s16 *, 0x36);
+    return func_80051464(arg0);
+}
 
 
 void func_80051D20(void *arg0, s32 arg1, void *arg2) {
@@ -2896,7 +3095,29 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80063158);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800633B0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800634A8);
+extern u16 D_800ECF54;
+
+s32 func_800634A8(s32 arg0) {
+    s32 temp_lo;
+    s32 temp_s0;
+    s32 temp_s1;
+
+    f_UpdateTombaSupportSwingMotion(arg0, 1);
+    f_AdvanceActorSkeletalAnimation(arg0);
+    if ((M2C_FIELD(arg0, u8 *, 0x169) == 0) && (D_800ECF54 & (*(u16 *)0x1F800172 | 0x50))) {
+        M2C_FIELD(arg0, u16 *, 0x2E) = (u16) M2C_FIELD(arg0, u16 *, 0x14C);
+        M2C_FIELD(arg0, u16 *, 0x36) = (u16) M2C_FIELD(arg0, u16 *, 0x150);
+        M2C_FIELD(arg0, s16 *, 0x32) = (s16) (M2C_FIELD(arg0, u16 *, 0x14E) + M2C_FIELD(arg0, u16 *, 0x64));
+        return (s32) D_800ECF54;
+    }
+    temp_s0 = (s32) (rsin(M2C_FIELD(arg0, s16 *, 0x58)) * (s16) M2C_FIELD(arg0, u16 *, 0x64)) >> 0xC;
+    temp_s1 = (s32) (rsin(M2C_FIELD(arg0, s16 *, 0x56)) * (s16) temp_s0) >> 0xC;
+    temp_lo = rcos((s32) M2C_FIELD(arg0, s16 *, 0x56)) * (s16) temp_s0;
+    M2C_FIELD(arg0, u16 *, 0x36) = (u16) (M2C_FIELD(arg0, u16 *, 0x150) + temp_s1);
+    M2C_FIELD(arg0, u16 *, 0x2E) = (u16) (M2C_FIELD(arg0, u16 *, 0x14C) - (temp_lo >> 0xC));
+    M2C_FIELD(arg0, s16 *, 0x32) = (s16) (M2C_FIELD(arg0, u16 *, 0x14E) + ((s32) (rcos((s32) M2C_FIELD(arg0, s16 *, 0x58)) * (s16) M2C_FIELD(arg0, u16 *, 0x64)) >> 0xC));
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaSupportSwingMotion);
 
@@ -3252,7 +3473,15 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006A240);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006A384);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006A8C8);
+s32 func_8006A8C8(s32 arg0) {
+    s32 temp_v0;
+
+    temp_v0 = f_SpawnTransientEffect(0x27, 0);
+    if (temp_v0 != 0) {
+        M2C_FIELD(temp_v0, s32 *, 0x10) = arg0;
+    }
+    return temp_v0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006A900);
 
@@ -3941,7 +4170,13 @@ void f_SetActorRenderTint(void *arg0, s8 arg1, s8 arg2, s8 arg3) {
     M2C_FIELD(arg0, u8 *, 0xD) = (u8) (M2C_FIELD(arg0, u8 *, 0xD) | 2);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80077E3C);
+s32 func_80077E3C(s32 arg0, s32 arg1, s32 arg2) {
+    s32 temp_v0;
+
+    temp_v0 = func_80075FF8(arg0, arg1, (s32) (s16) arg2);
+    M2C_FIELD(arg0, s16 *, 0xE) = (s16) (arg2 + 0x1000);
+    return temp_v0;
+}
 
 extern s8 D_1F80013C[];
 extern s8 D_1F800144[];
@@ -4190,11 +4425,23 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C2A4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C3CC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C5E4);
+extern u16 D_800BF9CA;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C620);
+s32 func_8007C5E4(s32 arg0, s32 arg1, s32 arg2) {
+    return func_8007C2A4(arg0, arg1, arg2 & 0xFF, ((D_800BF9CA + 1) | 0x80) & 0xFF, /* extra? */ 3);
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C654);
+extern u8 D_800BFA21;
+
+s32 func_8007C620(s32 arg0, s32 arg1, s32 arg2) {
+    return func_8007C2A4(arg0, arg1, arg2 & 0xFF, D_800BFA21 | 0x80, /* extra? */ 1);
+}
+
+extern u8 D_800BFA2A;
+
+s32 func_8007C654(s32 arg0, s32 arg1, s32 arg2) {
+    return func_8007C2A4(arg0, arg1, arg2 & 0xFF, D_800BFA2A | 0x80, /* extra? */ 1);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C688);
 
