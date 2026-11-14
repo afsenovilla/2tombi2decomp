@@ -622,7 +622,21 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011C158);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011C19C);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011C270);
+
+void func_8011C270(s32 arg0)
+{
+  void *temp_v1;
+  temp_v1 = *((void **) (((signed char *) arg0) + 0x10));
+  if (temp_v1)
+  {
+  }
+  if (temp_v1 != 0)
+  {
+    *((s8 *) (((signed char *) temp_v1) + 4)) = 3;
+    *((void **) (((signed char *) arg0) + 0x10)) = 0;
+  }
+  return 3;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011C290);
 
@@ -870,7 +884,19 @@ void func_80122ADC(s32 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80122B20);
+
+void func_80122B20(s32 arg0)
+{
+  void *temp_v1;
+  ;
+  if ((*((void **) (((signed char *) arg0) + 0x10))) != 0)
+  {
+    *((s8 *) (((signed char *) (*((void **) (((signed char *) arg0) + 0x10)))) + 4)) = 3;
+    *((void **) (((signed char *) arg0) + 0x10)) = 0;
+    *((s8 *) (((signed char *) arg0) + 0x5E)) = 0;
+  }
+  return 3;
+}
 
 
 void func_80122B44(void *arg0, M2C_UNK arg1) {

@@ -2814,7 +2814,24 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_StartControllerVibration);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005229C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005245C);
+extern u8 D_800ECF48_7ec2[];
+extern u8 D_800A3FA0[];
+typedef struct Slot40c { u8 pad0[7]; u8 index; u8 pad8[4]; s16 scale; u8 padE[0x32]; } Slot40c;
+extern Slot40c D_800EC188_d83b[];
+extern u16 D_1F800198;
+extern u8 D_80017304[];
+
+void func_8005245C(void)
+{
+    u8 *p = D_800ECF48_7ec2;
+
+    p[4] = 0;
+    p[5] = 0;
+    PadSetAct(0, p + 4, 2);
+    if (PadGetState(0) == 6) {
+        PadSetActAlign(0, D_800A3FA0);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800524B4);
 
@@ -5199,7 +5216,14 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007FC24);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007FCC8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawLoadingIndicator);
+void f_DrawLoadingIndicator(void)
+{
+    if ((D_1F800198 >> 2) & 1) {
+        f_DrawTallMenuText(0xA0, 0xB4, 0, D_80017304, 0);
+    } else {
+        f_DrawTallMenuText(0xA0, 0xB4, 6, D_80017304, 0);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007FDB0);
 
