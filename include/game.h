@@ -21,10 +21,11 @@ typedef struct WorkerState {
 } WorkerState;
 #define WORKER_STATE ((WorkerState *)0x801FE070)
 
-/* Scratchpad (config/undefined_syms.ld) */
-extern volatile u8 D_1F80019B;
-extern s32 D_1F8001F0;      /* disc read: first sector */
-extern s32 D_1F8001F4;      /* disc read: length in words */
-extern void *D_1F8001F8;    /* disc read: destination */
+/* Scratchpad variables with names (config/undefined_syms.ld); every other scratchpad byte is D_1F8xxxxx
+ * (config/scratchpad.ld), declared `extern s8 D_1F8xxxxx[]` by the drafts. */
+extern volatile u8 g_DiscReadPending;   /* 0x1F80019B, cleared before a cooperative disc read */
+extern s32 g_DiscReadSector;            /* 0x1F8001F0 */
+extern s32 g_DiscReadWords;             /* 0x1F8001F4 */
+extern void *g_DiscReadDest;            /* 0x1F8001F8 */
 
 #endif

@@ -26,6 +26,7 @@ INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_80109F44);
 
 INCLUDE_ASM("asm/a0i/nonmatchings/a0i", f_UpdateTombaWisdomTowerRockAction);
 
+
 void func_8010A554(void *arg0) {
     func_8006F0E4();
     M2C_FIELD(arg0, s8 *, 1) = 1;

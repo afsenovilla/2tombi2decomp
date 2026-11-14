@@ -84,13 +84,16 @@ INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010D108);
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010D2D8);
 
+
 void func_8010D5E4(void) {
 }
+
 
 void func_8010D5EC(void) {
 }
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010D5F4);
+
 
 void func_8010D76C(void *arg0) {
     u8 temp_v1;
@@ -203,6 +206,7 @@ INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80114E00);
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80115048);
 
+
 void func_80115228(void *arg0) {
     u8 temp_v1;
 
@@ -258,11 +262,13 @@ INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80116FAC);
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8011703C);
 
+
 s32 func_801170E8(void *arg0) {
     M2C_FIELD(M2C_FIELD(arg0, void **, 0x38), s8 *, 4) = 2;
     func_80074590(0x37, 0x16, 0);
     return 1;
 }
+
 
 void func_8011711C(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x2E) = (s16) (((s32) (func_80083F50(M2C_FIELD(arg0, s16 *, 0x76)) * 0x4B0) >> 0xC) + 0x1600);
@@ -294,6 +300,7 @@ INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80117BF4);
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", f_UpdateGhostEvilPigRicochetProjectile);
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80118168);
+
 
 void func_801181CC(void *arg0) {
     s16 temp_s1;

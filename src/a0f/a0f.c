@@ -38,6 +38,7 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010AE6C);
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010AEC0);
 
+
 void func_8010AEE4(void *arg0, void *arg1) {
     u16 var_v0;
 
@@ -55,6 +56,7 @@ void func_8010AEE4(void *arg0, void *arg1) {
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010AF60);
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010B078);
+
 
 void func_8010B194(void *arg0, void *arg1) {
     s32 temp_lo;
@@ -92,8 +94,10 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010BC78);
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010BE48);
 
+
 void func_8010C098(void) {
 }
+
 
 void func_8010C0A0(void) {
 }
@@ -136,6 +140,7 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010DAC4);
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010DB90);
 
+
 void func_8010DC48(void *arg0) {
     u8 temp_v1;
 
@@ -155,6 +160,7 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", f_SpawnLastEvilPigCopiedWeaponProjectile
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010DDE4);
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010DF5C);
+
 
 void func_8010E084(void *arg0) {
     u8 temp_v1;
@@ -286,6 +292,7 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80116C2C);
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80116E5C);
 
+
 void func_801175B8(void) {
 }
 
@@ -297,6 +304,7 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80117A64);
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80117C70);
 
+
 void func_80117E40(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x56) = (s16) -(s16) *(u16 *)0x1F8000F2;
     func_800517F8();
@@ -307,6 +315,7 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80117E6C);
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80117F08);
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80117FA4);
+
 
 s32 func_80118250(void *arg0) {
     M2C_FIELD(arg0, u8 *, 0x47) = (u8) M2C_FIELD(arg0, u8 *, 0x72);
@@ -348,6 +357,7 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80119CC0);
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8011A1EC);
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8011A27C);
+
 
 s32 func_8011A328(void *arg0) {
     M2C_FIELD(M2C_FIELD(arg0, void **, 0x38), s8 *, 4) = 2;

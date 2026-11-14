@@ -8,6 +8,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010A7F8);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010AC20);
 
+
 void func_8010AD68(void *arg0, void *arg1) {
     s32 temp_lo;
     s32 temp_s0;
@@ -57,6 +58,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTombaInteriorEntry);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C740);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C780);
+
 
 void func_8010C87C(void) {
     func_8010A7F8();
@@ -278,6 +280,7 @@ void func_801175A8(void *arg0) {
     }
 }
 
+
 void func_80117628(void *arg0) {
     if (M2C_FIELD(arg0, u8 *, 0x5E) == 0) {
         f_HandleKainenHouseQuestItemActor();
@@ -289,6 +292,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleRareFishOrBlueBucketPickup);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnRareFishPickup);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117D7C);
+
 
 void func_80117E5C(void *arg0) {
     func_8004D4C4(0x3A, 1);
@@ -303,6 +307,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnBlueBucketPickup);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117FAC);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801180CC);
+
 
 void func_801181BC(void *arg0, void *arg1) {
     if (M2C_FIELD(arg0, u8 *, 0x2B) == 2) {
@@ -400,6 +405,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011CD14);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011CDB8);
 
+
 s32 func_8011CE64(void *arg0) {
     if (M2C_FIELD(arg0, u8 *, 0x7A) == 1) {
         func_80040B48(0x4E);
@@ -475,6 +481,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012175C);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801217F4);
 
+
 void func_8012185C(void *arg0) {
     s16 temp_v1;
 
@@ -529,6 +536,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801230A4);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80123180);
 
+
 s32 func_801231B0(void) {
     func_8004D650(0x45, 1);
     func_8004ED0C(0x45, 4);
@@ -581,6 +589,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80125FE0);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateCarriedChickCollision);
 
+
 void func_801260CC(void *arg0) {
     if (func_80077768(M2C_FIELD(arg0, u8 *, 0x46) * 0x10, M2C_FIELD(arg0, s16 *, 0x56), 0) != 0) {
         M2C_FIELD(arg0, s16 *, 0x44) = -0x800;
@@ -593,6 +602,7 @@ void func_801260CC(void *arg0) {
     M2C_FIELD(arg0, s8 *, 0xBF) = 1;
     M2C_FIELD(arg0, s8 *, 0x2B) = 0;
 }
+
 
 void f_UpdateCarriedChickMotion(void *arg0) {
     s16 temp_v1;
@@ -631,6 +641,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RestoreFedChicksFromProgress);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateNestChickQuestState);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnNestChickFromParent);
+
 
 void func_80127420(void *arg0) {
     if (M2C_FIELD(M2C_FIELD(arg0, void **, 0x10), u8 *, 0x5E) == 0) {
@@ -724,6 +735,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_GetWindmillControllerBearing);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012CEE0);
 
+
 void f_UpdateKainenHouseWobbleWide(void *arg0) {
     u8 temp_v1;
 
@@ -750,6 +762,7 @@ void f_UpdateKainenHouseWobbleWide(void *arg0) {
     }
 }
 
+
 void f_UpdateKainenHouseWobbleNarrow(void *arg0) {
     u8 temp_v1;
 
@@ -775,6 +788,7 @@ void f_UpdateKainenHouseWobbleNarrow(void *arg0) {
         }
     }
 }
+
 
 void f_UpdateKainenHouseWobbleInverted(void *arg0) {
     u8 temp_v1;
@@ -818,13 +832,26 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012DF08);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012DF50);
 
+
 void func_8012DFF8(void *arg0) {
     func_8004D4C4(0x1D, 1);
     func_8004B0D8(arg0);
     M2C_FIELD(arg0, s8 *, 4) = 3;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E034);
+
+void func_8012E034(void *arg0)
+{
+  int new_var;
+  *((s8 *) (((signed char *) arg0) + 0xB)) = 0x10;
+  *((s8 *) (((signed char *) arg0) + 0xD)) = 0;
+  *((s16 *) (((signed char *) arg0) + 0x5C)) = 0;
+  *((s16 *) (((signed char *) arg0) + 0x5A)) = 0;
+  *((s8 *) (((signed char *) arg0) + 0x47)) = 0;
+  *((s16 *) (((signed char *) arg0) + 0x60)) = 0;
+  new_var = 0xF0;
+  *((s8 *) (((signed char *) arg0) + 8)) = new_var;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeTownQuestRewardVisualModel);
 
@@ -847,6 +874,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E678);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E70C);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E7EC);
+
 
 s32 func_8012E87C(void *arg0) {
     u16 temp_v1;
@@ -1089,6 +1117,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013AC34);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013AC98);
 
+
 void func_8013ADBC(void *arg0) {
     u8 temp_v1;
 
@@ -1129,6 +1158,7 @@ void func_8013ADBC(void *arg0) {
     }
 }
 
+
 void func_8013AEC0(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x80) = 0x50;
     M2C_FIELD(arg0, s16 *, 0x82) = 0xA0;
@@ -1136,6 +1166,7 @@ void func_8013AEC0(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x86) = 0x190;
     M2C_FIELD(arg0, s16 *, 0x40) = 0x1E;
 }
+
 
 void func_8013AEEC(void *arg0) {
     if (M2C_FIELD(arg0, u8 *, 5) == 0) {
@@ -1301,6 +1332,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80145F30);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80145F6C);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8014601C);
+
 
 s16 func_801460A4(void *arg0) {
     s16 temp_v0;

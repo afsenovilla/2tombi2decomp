@@ -6,6 +6,7 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80109208);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80109268);
 
+
 s32 func_801092D8(void) {
     return *(s32 *)0x1F800080;
 }
@@ -28,8 +29,10 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010A680);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010A768);
 
+
 void func_8010A7D0(void) {
 }
+
 
 void func_8010A7D8(void) {
 }
@@ -95,6 +98,7 @@ s32 func_8010D460(void *arg0) {
     return 1;
 }
 
+
 s32 func_8010D474(void *arg0) {
     M2C_FIELD(arg0, u8 *, 7) = (u8) (M2C_FIELD(arg0, u8 *, 7) + M2C_FIELD(arg0, u8 *, 0x72));
     return 1;
@@ -103,6 +107,7 @@ s32 func_8010D474(void *arg0) {
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010D490);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010D504);
+
 
 void func_8010D558(void *arg0) {
     func_80041098();
@@ -115,6 +120,7 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010D590);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010D8F0);
 
+
 s32 func_8010DB44(void *arg0) {
     void *temp_v1;
 
@@ -125,6 +131,7 @@ s32 func_8010DB44(void *arg0) {
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010DB68);
 
+
 s32 func_8010DF90(void *arg0) {
     void *temp_v1;
 
@@ -132,6 +139,7 @@ s32 func_8010DF90(void *arg0) {
     M2C_FIELD(temp_v1, u8 *, 4) = (u8) (M2C_FIELD(temp_v1, u8 *, 4) + 1);
     return 1;
 }
+
 
 s32 func_8010DFB4(void *arg0) {
     M2C_FIELD(arg0, s8 *, 0x5E) = 1;
@@ -155,6 +163,7 @@ s32 func_8010E51C(void *arg0) {
 }
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010E530);
+
 
 void func_8010E598(void *arg0) {
     if (M2C_FIELD(arg0, u8 *, 5) == 0) {
@@ -243,6 +252,7 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111744);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111BF4);
 
+
 void func_80111C28(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
@@ -252,6 +262,7 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111C34);
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111CFC);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111DB0);
+
 
 void func_80111DE4(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
@@ -268,6 +279,7 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111FA4);
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8011208C);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80112130);
+
 
 void func_80112180(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;

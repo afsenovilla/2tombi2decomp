@@ -28,19 +28,43 @@ def size_of(prog, name):
     return int(m.group(1), 16) if m else 1 << 30   # data words splat found in the text (dlabel): never drafted
 
 
+SCRATCH = re.compile(r"\(([\w ]+?\s*\*+)\s*\)\s*0x(1F8[0-9A-Fa-f]{5})\b")
+
+
+def scratch_variants(body):
+    """m2c writes scratchpad variables as constant addresses (`*(s32 *)0x1F8000E0`), which gcc reaches through $at;
+    the game's source had symbols there (lui into a register). Variants with `(T *)D_1F8xxxxx` (declared
+    `extern s8 D_1F8xxxxx[]`, config/scratchpad.ld), plain and volatile."""
+    names = sorted(set(m.group(2).upper() for m in SCRATCH.finditer(body)))
+    if not names:
+        return []
+    out = []
+    for vol in ("", "volatile "):
+        def rep(m):
+            t = m.group(1).strip()
+            return "((%s%s)D_%s)" % (vol, t, m.group(2).upper())
+        b = SCRATCH.sub(rep, body)
+        decl = "".join("extern s8 D_%s[];\n" % n for n in names)
+        out.append(decl + b)
+    return out
+
+
 def attempt(prog, name, ctx):
     r = subprocess.run([sys.executable, D.M2C, "--target", "mipsel-gcc-c", "--valid-syntax", "--context", ctx,
                         D.find_asm(prog, name)],
                        capture_output=True, text=True, cwd=ROOT)
     if r.returncode or not r.stdout.strip() or "Decompilation failure" in r.stdout:
         return name, None
-    body = re.sub(r"(?m)^(extern )?\? ", r"\1s32 ", r.stdout)
+    body0 = re.sub(r"(?m)^(extern )?\? ", r"\1s32 ", r.stdout)
     d = os.path.join(ROOT, "build", "sweep")
     os.makedirs(d, exist_ok=True)
     test = os.path.join(d, name + ".c")
-    open(test, "w").write('#include "common.h"\n#include "game.h"\n#include "m2c.h"\n' + body)
-    c = subprocess.run([sys.executable, "-I", os.path.join(ROOT, "tools", "ccheck.py"), test, "--prog", prog,
-                        "--func", name], capture_output=True, text=True, cwd=ROOT)
+    for body in [body0] + scratch_variants(body0):
+        open(test, "w").write('#include "common.h"\n#include "game.h"\n#include "m2c.h"\n' + body)
+        c = subprocess.run([sys.executable, "-I", os.path.join(ROOT, "tools", "ccheck.py"), test, "--prog", prog,
+                            "--func", name], capture_output=True, text=True, cwd=ROOT)
+        if c.returncode == 0 and c.stdout.startswith("OK"):
+            break
     if c.returncode == 0 and c.stdout.startswith("OK"):
         fn = re.search(r"(?ms)^[^\n]*\b%s\(.*?^}\n" % re.escape(name), body)
         if not fn:

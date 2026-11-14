@@ -50,7 +50,7 @@ def main():
         return addr2name.get(ad, m.group(0))
     text = re.sub(r"\bfunc_([0-9A-F]{8})\b", ren, text)
     # 2. split into header + items
-    item_re = re.compile(r'(?ms)^INCLUDE_ASM\("[^"]+", (\w+)\);\n|^(?:[^\n;{}]*\n)??([^\n;{}#]*?\b(\w+)\s*\([^;{}]*\)\s*\n?\{.*?^\}\n)')
+    item_re = re.compile(r'(?ms)^INCLUDE_ASM\("[^"]+", (\w+)\);\n|^((?:[^\n;{}]*\n)??[^\n;{}#]*?\b(\w+)\s*\([^;{}]*\)\s*\n?\{.*?^\}\n)')
     first = item_re.search(text)
     header, body = text[:first.start()], text[first.start():]
     cdefs = {}      # addr -> text (with its leading externs/comments)

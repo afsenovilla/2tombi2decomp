@@ -64,6 +64,7 @@ s32 func_8010E820(void *arg0) {
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010E834);
 
+
 void func_8010E8F4(s32 arg0) {
     s16 temp_v1;
     void *temp_a0;
@@ -78,6 +79,7 @@ void func_8010E8F4(s32 arg0) {
         M2C_FIELD(temp_a0, s16 *, 0xC) = 0x1A80;
     }
 }
+
 
 void func_8010E92C(s32 arg0) {
     s16 temp_v1;
@@ -115,6 +117,7 @@ INCLUDE_ASM("asm/a03/nonmatchings/a03", func_80110B00);
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyTrailActor);
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", func_80111158);
+
 
 void func_801113B4(s32 arg0) {
     func_80110B00(4, arg0 + 0x3C, 0x10);

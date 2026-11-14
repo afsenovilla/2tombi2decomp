@@ -28,6 +28,7 @@ INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010A034);
 
 INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010A134);
 
+
 void func_8010A16C(void *arg0) {
     func_8006F0E4();
     M2C_FIELD(arg0, s8 *, 1) = 1;

@@ -16,6 +16,7 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_80109790);
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", f_UpdateEvilPigDoorTombaTransitionSequence);
 
+
 void func_80109CA0(void *arg0) {
     func_8006F0E4();
     M2C_FIELD(arg0, s8 *, 1) = 1;

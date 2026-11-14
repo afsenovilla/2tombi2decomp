@@ -111,7 +111,7 @@ def build(prog, split, jobs, cfg="config"):
         m = re.search(k + r":\s*(\S+)", y)
         if m and os.path.exists(os.path.join(ROOT, m.group(1))):
             extra += ["-T", m.group(1)]
-    run([LD, "-EL", "-o", elf, "-T", ld, "-T", "config/undefined_syms.ld"] + extra + [ "--no-check-sections", "-nostdlib",
+    run([LD, "-EL", "-o", elf, "-T", ld, "-T", "config/undefined_syms.ld", "-T", "config/scratchpad.ld"] + extra + [ "--no-check-sections", "-nostdlib",
          "-Map", "%s/%s.map" % (bdir, prog)])
     out = "%s/%s.bin" % (bdir, prog)
     run([OBJCOPY, "-O", "binary", elf, out])

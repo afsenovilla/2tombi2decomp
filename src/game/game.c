@@ -102,6 +102,7 @@ INCLUDE_ASM("asm/game/nonmatchings/game", func_80108CA4);
 
 INCLUDE_ASM("asm/game/nonmatchings/game", func_80108CAC);
 
+
 void func_80108D5C(void) {
     void *temp_v0;
 

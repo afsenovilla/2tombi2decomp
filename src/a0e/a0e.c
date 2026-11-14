@@ -22,6 +22,7 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010A0C0);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010A1D4);
 
+
 void func_8010A3DC(void *arg0) {
     if (M2C_FIELD(arg0, u8 *, 0x181) == 0) {
         if (M2C_FIELD(arg0, u8 *, 5) == 6) {
@@ -42,6 +43,7 @@ void func_8010A3DC(void *arg0) {
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010A448);
 
+
 void func_8010A49C(void) {
     if (*(u8 *)0x1F800137 == 0) {
         func_8010967C();
@@ -53,6 +55,7 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010A4C8);
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010A520);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010A59C);
+
 
 s32 func_8010A660(void) {
     return 0;
@@ -68,6 +71,7 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010B09C);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010B238);
 
+
 void func_8010B3E8(void) {
     func_8010AB24();
 }
@@ -82,8 +86,10 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010B568);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010B78C);
 
+
 void func_8010BCB8(void) {
 }
+
 
 void func_8010BCC0(void) {
 }
@@ -93,6 +99,7 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010BCC8);
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010BD38);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010BEB0);
+
 
 void func_8010BFD0(void *arg0) {
     u8 temp_v1;
@@ -154,6 +161,7 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010F9B4);
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010FE74);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_801100B0);
+
 
 void func_80110128(void) {
 }
@@ -267,6 +275,7 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80117254);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_801172E4);
 
+
 s32 func_80117390(void *arg0) {
     M2C_FIELD(M2C_FIELD(arg0, void **, 0x38), s8 *, 4) = 2;
     func_80074590(0x37, 0x16, 0);
@@ -290,6 +299,7 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80117960);
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80117ADC);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80117BE0);
+
 
 u8 func_80117C78(void *arg0) {
     s16 temp_s0;
