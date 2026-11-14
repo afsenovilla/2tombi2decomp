@@ -4345,7 +4345,16 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_CanTombaStartAttack);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80053670);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005376C);
+s32 func_8005376C(u8 *p)
+{
+    switch (p[0x176]) {
+    case 0: case 1: case 2: case 6: case 7: case 8:
+        return p[0x79] != 0;
+    case 3: case 4: case 5: case 9:
+        return 0;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800537B8);
 

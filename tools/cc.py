@@ -56,7 +56,7 @@ def pad_text(obj, asm, pad_to, assemble):
         assemble()
 
 
-def compile_c(src, obj, override=None, defines=(), pad_to=None):
+def compile_c(src, obj, override=None, defines=(), pad_to=None, asm_filter=None):
     """src (.c) -> obj (.o) with the file's options; intermediate files beside obj. pad_to: the retail size of the
     file's text (a library function file), filled with nops when the compiled code is shorter by up to 12 bytes."""
     o = options(src, override)
@@ -86,7 +86,7 @@ def compile_c(src, obj, override=None, defines=(), pad_to=None):
                        input=s, capture_output=True, text=True)
     if r.returncode:
         raise CompileError("maspsx %s\n%s" % (src, r.stderr))
-    open(base + ".mas.s", "w").write(r.stdout)
+    open(base + ".mas.s", "w").write(asm_filter(r.stdout) if asm_filter else r.stdout)
 
     def assemble():
         _run(AS + ["-O1", "-I" + inc, base + ".mas.s", "-o", obj])

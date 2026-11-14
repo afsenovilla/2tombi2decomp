@@ -51,10 +51,10 @@ import cc as CCMOD   # the compiler pipeline (per-file // CC, // FLAGS, // ASPSX
 SEG_SIZE = {}   # src path -> retail size of its c subsegment (library files are padded to it)
 
 
-def compile_c(src, obj):
+def compile_c(src, obj, jt=None):
     try:
         pad = SEG_SIZE.get(src) if "/psyq/" in src else None
-        CCMOD.compile_c(os.path.join(ROOT, src), os.path.join(ROOT, obj), pad_to=pad)
+        CCMOD.compile_c(os.path.join(ROOT, src), os.path.join(ROOT, obj), pad_to=pad, asm_filter=jt)
     except CCMOD.CompileError as e:
         sys.exit("FAILED: %s" % e)
 
@@ -83,6 +83,10 @@ def build(prog, split, jobs, cfg="config"):
         if t1 == "c":
             SEG_SIZE["%s/%s.c" % (srcp, n1)] = int(o2, 16) - int(o1, 16)
     objs = objects(ld)
+    import jtbl
+    asm_dir = re.search(r"asm_path:\s*(\S+)", y).group(1)
+    syms = tuple(re.findall(r"(?m)^\s+- (config/\S*symbol_addrs\S*\.txt)", y))
+    jt = lambda text: jtbl.filter_asm(text, asm_dir, syms)   # C switches use the retail jump tables
 
     def assemble(o):
         src = o[len(bdir) + 1:-2]
@@ -91,7 +95,7 @@ def build(prog, split, jobs, cfg="config"):
             fix_gte(os.path.join(ROOT, src))
             run(AS + ["-o", o, src])
         elif src.endswith(".c"):
-            compile_c(src, o)
+            compile_c(src, o, jt)
         elif src.endswith(".bin"):
             run(["mipsel-linux-gnu-ld", "-r", "-b", "binary", "-o", o, src])
         else:
