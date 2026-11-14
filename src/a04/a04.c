@@ -1122,7 +1122,18 @@ s32 func_801299E8(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     return (s32) var_t0;
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80129A88);
+
+void func_80129A88(s32 arg0)
+{
+  void *temp_v1;
+  temp_v1 = *((void **) (((signed char *) arg0) + 0x14));
+  if (temp_v1 != 0)
+  {
+    *((s8 *) (((signed char *) temp_v1) + 4)) = 2;
+    *((void **) (((signed char *) arg0) + 0x14)) = 0;
+  }
+  return 2;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80129AA8);
 

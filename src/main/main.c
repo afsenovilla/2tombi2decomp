@@ -546,7 +546,24 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80026F88);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeEffectSlotFromTemplateIndex);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_CountEffectTemplates);
+extern void (*D_800A4AF8[])(void);
+extern void (*D_800A4B50[])(void);
+typedef struct EventReward { u8 pad0; u8 ap; u8 pad2[10]; } EventReward;
+extern EventReward D_800A33C8[];
+extern s32 D_800A3B38[];
+
+s16 f_CountEffectTemplates(u16 *c)
+{
+    s32 n = c[0] + c[1];
+
+    n += c[2];
+    n += c[3];
+    n += c[4];
+    n += c[5];
+    n += c[6];
+    n += c[7];
+    return n;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnEffectTemplateInstances);
 
@@ -1356,7 +1373,17 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80040410);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80040558);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_GetEventAPReward);
+s32 f_GetEventAPReward(s32 event, s32 low)
+{
+    s32 v = D_800A33C8[event].ap;
+
+    if (low == 0) {
+        v >>= 4;
+    } else {
+        v &= 0xF;
+    }
+    return D_800A3B38[v];
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80040AA4);
 
@@ -2169,11 +2196,25 @@ void f_AddItemWithoutMessage(void) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_CompactInventoryAfterRemoval);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_RemoveItemWithMessage);
+void f_RemoveItemWithMessage(s32 item, s32 count)
+{
+    D_800BF870.itemCounts[item] -= count;
+    f_QueueItemMessage(item, 1);
+    f_CompactInventoryAfterRemoval(item);
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_RemoveItemWithoutMessage);
+void f_RemoveItemWithoutMessage(s32 item, s32 count)
+{
+    D_800BF870.itemCounts[item] -= count;
+    f_CompactInventoryAfterRemoval(item);
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_RemoveItemWithAltMessage);
+void f_RemoveItemWithAltMessage(s32 item, s32 count)
+{
+    D_800BF870.itemCounts[item] -= count;
+    f_QueueItemMessage(item, 4);
+    f_CompactInventoryAfterRemoval(item);
+}
 
 
 void func_8004D6D4(s32 item)
@@ -3811,9 +3852,19 @@ void func_8006C59C(void *arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C608);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C77C);
+void func_8006C77C(void)
+{
+    if (D_800BF870.unk0 != 3) {
+        D_800A4AF8[D_800BF870.unk0]();
+    }
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C7C4);
+void func_8006C7C4(void)
+{
+    if (D_800BF870.unk0 != 3) {
+        D_800A4B50[D_800BF870.unk0]();
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C80C);
 
