@@ -36,7 +36,11 @@ void f_StopVoicePlayback(void)
         ;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_RequestStreamedAudioStop);
+extern volatile u8 D_800BE0E4;
+
+void f_RequestStreamedAudioStop(void) {
+    D_800BE0E4 |= 0x10;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8001CF94);
 
@@ -1727,7 +1731,11 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D8D8);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateUsedItemAttachmentPresentation);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004DBB0);
+extern u8 D_800BF80A_8fc3;
+
+s32 func_8004DBB0(void) {
+    return D_800BF80A_8fc3 == 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004DBC0);
 
@@ -1759,13 +1767,34 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_QueueResourceMessage);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004EDDC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResetPopupRequest);
+void f_ResetPopupRequest(PopupRequest *req)
+{
+    u32 none = 0xFFFF;
+    s32 i;
+
+    for (i = 11; i >= 0; i--) {
+        req->entries[i] = none;
+    }
+    req->count = 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResetPopupDisplayEntry);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_RemoveOldestPopupDisplayEntry);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_CopyEncodedMessageSegment);
+// Copies one segment of an encoded message (bytes up to the 0xFA page break or the 0xFF end) and ends the copy
+// with 0xFF; returns the end of the copy.
+u8 *f_CopyEncodedMessageSegment(u8 *dst, u8 *src)
+{
+    u32 page = 0xFA;
+    u32 end = 0xFF;
+
+    do {
+        *dst++ = *src++;
+    } while (*src != page && *src != end);
+    *dst = end;
+    return dst;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_FindEncodedMessagePage);
 
@@ -1811,7 +1840,11 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004FFB4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005019C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800506B4);
+extern volatile u16 D_800E809C_da0a;
+
+void func_800506B4(void) {
+    D_800E809C_da0a += 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800506D0);
 

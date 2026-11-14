@@ -21,6 +21,12 @@ typedef struct WorkerState {
 } WorkerState;
 #define WORKER_STATE ((WorkerState *)0x801FE070)
 
+/* A pop-up message request: a count and up to 12 entries (0xFFFF = empty). f_ResetPopupRequest. */
+typedef struct PopupRequest {
+    /* 0x00 */ s32 count;
+    /* 0x04 */ u16 entries[12];
+} PopupRequest;
+
 /* Scratchpad variables with names (config/undefined_syms.ld); every other scratchpad byte is D_1F8xxxxx
  * (config/scratchpad.ld), declared `extern s8 D_1F8xxxxx[]` by the drafts. */
 extern volatile u8 g_DiscReadPending;   /* 0x1F80019B, cleared before a cooperative disc read */
