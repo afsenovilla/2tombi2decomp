@@ -1887,7 +1887,26 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_StartEvent);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateEvent);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeActorScript);
+extern u8 D_800BF80E_58ec;
+extern s32 D_1F800184;
+typedef struct { u8 pad[0x48]; s32 bits; } Bits48_808;
+
+void f_InitializeActorScript(u8 *a, void *skel, u16 *cmd)
+{
+    *(void **)(a + 0x7C) = skel;
+    a[0x46] = 0xFF;
+    *(s32 *)(a + 0x10) = 0;
+    a[0x70] = 0;
+    a[0x78] = 0;
+    f_LoadActorScriptCommand(a, cmd);
+    a[0x71] = 0;
+    if (cmd[0] & 0x1000) {
+        a[0x71] = 2;
+    }
+    if (cmd[0] & 0x4000) {
+        a[0x71] |= 4;
+    }
+}
 
 
 void f_LoadActorScript(void *arg0, u16 *arg1) {
@@ -1969,7 +1988,7 @@ extern s8 D_1F800214[];
 extern u8 D_800BF808[];
 typedef struct SoundHandle { u8 volume; u8 pad1[11]; } SoundHandle;
 extern SoundHandle D_800BE238[];
-void f_SpawnAreaIndexedPersistentPickup(void *, s32, s32);
+u8 *f_SpawnAreaIndexedPersistentPickup(void *, s32, s32);
 
 void func_80041378(u8 *actor)
 {
@@ -2867,7 +2886,26 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004C238);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004C930);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnAreaIndexedPersistentPickupOnce);
+u8 *f_SpawnAreaIndexedPersistentPickupOnce(void *area, u8 idx)
+{
+    Bits48_808 *g;
+    s32 bit;
+    u8 *r;
+
+    if (D_800BF870.unk0 == 0) {
+        g = (Bits48_808 *)D_800BF808;
+        bit = 1 << idx;
+        if (g->bits & bit) {
+            return 0;
+        }
+        r = f_SpawnAreaIndexedPersistentPickup(area, idx, 0);
+        if (r != 0) {
+            g->bits |= bit;
+        }
+        return r;
+    }
+    return f_SpawnAreaIndexedPersistentPickup(area, idx, 0);
+}
 
 
 void func_8004CC64(void *a, u8 b)
@@ -3664,7 +3702,25 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8005376C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800537B8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800538E0);
+void func_800538E0(u8 *a, u16 *pos, s32 flag)
+{
+    s16 v[6];
+    u8 *e;
+    s32 m;
+
+    if (flag == 0) {
+        m = (*(u16 *)(a + 0x6A) >> 8) & 0xF;
+        if (m == 0 || m == 3) {
+            v[1] = pos[1];
+            v[3] = pos[3] + *(u16 *)(a + 0x84);
+            v[5] = pos[5];
+            e = f_SpawnTransientEffectAtFixedPosition(0x35, v, -0x5A);
+            if (e != 0) {
+                e[0x28] |= 0x80;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80053968);
 
