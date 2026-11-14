@@ -85,7 +85,27 @@ def main():
                        cwd=ROOT)
     if " OK " not in r.stdout:
         open(path, "w").write(old)
-        sys.exit("linked build not OK, restored:\n" + r.stdout + r.stderr[-2500:])
+        if len(funcs) < 2:
+            sys.exit("linked build not OK, restored:\n" + r.stdout + r.stderr[-2500:])
+        # one function at a time: the others may still go in (a callee prototype in the target, for instance,
+        # can change one function's code)
+        print("linked build not OK with all %d; trying one at a time" % len(funcs))
+        segs = ptsrc.items(text)
+        done, failed = [], []
+        for n, _ in funcs:
+            one = "".join(seg for kind, seg in segs
+                          if not (seg.strip().endswith("}") and ptsrc.func_name(seg.strip()) not in (None, n)))
+            tmp = os.path.join(ROOT, "build", "install_one.c")
+            open(tmp, "w").write(one)
+            r = subprocess.run([sys.executable, "-I", os.path.abspath(__file__), tmp, "--prog", a.prog],
+                               capture_output=True, text=True, cwd=ROOT)
+            (done if "installed" in r.stdout else failed).append(n)
+            if n in failed:
+                print("  %s: %s" % (n, (r.stdout + r.stderr).strip().splitlines()[-1:]))
+        print("installed %d functions: %s" % (len(done), " ".join(done)))
+        if failed:
+            sys.exit("not installed: " + " ".join(failed))
+        return
     print("installed %d functions: %s" % (len(funcs), " ".join(n for n, _ in funcs)))
 
 
