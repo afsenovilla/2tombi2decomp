@@ -12,4 +12,19 @@ typedef struct GameState {
 
 extern GameState D_800BF870;
 
+/* The cooperative worker (a second thread for disc reads and streaming), state at 0x801FE070 (USA): reached
+ * through a constant pointer, not a symbol (lui/ori). f_OpenCooperativeWorkerThread / f_CloseCooperativeWorkerThread. */
+typedef struct WorkerState {
+    /* 0x00 */ u16 busy;
+    /* 0x02 */ u8 pad2[0x6A];
+    /* 0x6C */ u8 active;
+} WorkerState;
+#define WORKER_STATE ((WorkerState *)0x801FE070)
+
+/* Scratchpad (config/undefined_syms.ld) */
+extern volatile u8 D_1F80019B;
+extern s32 D_1F8001F0;      /* disc read: first sector */
+extern s32 D_1F8001F4;      /* disc read: length in words */
+extern void *D_1F8001F8;    /* disc read: destination */
+
 #endif

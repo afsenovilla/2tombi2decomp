@@ -1242,7 +1242,28 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80044B38);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_StartCooperativeWorker);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_StartCooperativeDiscRead);
+extern s32 D_800BE100;          /* first sector of TOMBA2.DAT? (added to every read) */
+void f_OpenCooperativeWorkerThread(s32, void (*)());
+void func_8001DB38();
+
+/* Starts reading `size` bytes from disc sector D_800BE100 + `sector` to `dst` on the cooperative worker; 0 when the
+ * worker is still busy. */
+s32 f_StartCooperativeDiscRead(void *dst, s32 sector, s32 size)
+{
+    WorkerState *w = WORKER_STATE;
+
+    D_1F80019B = 0;
+    f_CloseCooperativeWorkerThread(2);
+    if (w->busy != 0) {
+        return 0;
+    }
+    D_1F8001F8 = dst;
+    D_1F8001F0 = D_800BE100 + sector;
+    D_1F8001F4 = (size + 3) / 4;
+    w->active = 1;
+    f_OpenCooperativeWorkerThread(1, func_8001DB38);
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80044D8C);
 
