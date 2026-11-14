@@ -29,15 +29,16 @@ def size_of(prog, name):
 
 
 def attempt(prog, name, ctx):
-    r = subprocess.run([sys.executable, D.M2C, "--target", "mipsel-gcc-c", "--context", ctx, D.find_asm(prog, name)],
+    r = subprocess.run([sys.executable, D.M2C, "--target", "mipsel-gcc-c", "--valid-syntax", "--context", ctx,
+                        D.find_asm(prog, name)],
                        capture_output=True, text=True, cwd=ROOT)
-    if r.returncode or not r.stdout.strip():
+    if r.returncode or not r.stdout.strip() or "Decompilation failure" in r.stdout:
         return name, None
     body = re.sub(r"(?m)^(extern )?\? ", r"\1s32 ", r.stdout)
     d = os.path.join(ROOT, "build", "sweep")
     os.makedirs(d, exist_ok=True)
     test = os.path.join(d, name + ".c")
-    open(test, "w").write('#include "common.h"\n' + body)
+    open(test, "w").write('#include "common.h"\n#include "game.h"\n#include "m2c.h"\n' + body)
     c = subprocess.run([sys.executable, "-I", os.path.join(ROOT, "tools", "ccheck.py"), test, "--prog", prog,
                         "--func", name], capture_output=True, text=True, cwd=ROOT)
     if c.returncode == 0 and c.stdout.startswith("OK"):
