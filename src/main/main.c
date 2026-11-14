@@ -2102,8 +2102,8 @@ void func_80041378(u8 *actor)
 INCLUDE_ASM("asm/main/nonmatchings/main", f_StepAngleTowardTarget);
 
 
-void f_StepActorYawTowardAngle(s32 arg0, s16 arg1, s16 arg2) {
-    f_StepAngleTowardTarget(arg0 + 0x56, arg1, arg2);
+s32 f_StepActorYawTowardAngle(s32 arg0, s16 arg1, s16 arg2) {
+    return f_StepAngleTowardTarget(arg0 + 0x56, arg1, arg2);
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80041468);
@@ -2349,7 +2349,27 @@ s32 f_IsEventPresentationComplete(void)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80042758);
+s32 func_80042758(u8 *p)
+{
+    switch (p[0x78]) {
+    case 0:
+        if (*(s16 *)(p + 0x72) >= 0) {
+            if (f_StartEvent(*(s16 *)(p + 0x72)) != 1) {
+                return 1;
+            }
+            if (*(s16 *)(p + 0x74) != 0) {
+                return 1;
+            }
+        }
+        p[0x78]++;
+        goto end;
+    case 1:
+        return f_IsEventPresentationComplete();
+    end:
+    default:
+        return 0;
+    }
+}
 
 s32 func_800427F4(u8 *p)
 {
@@ -2615,7 +2635,25 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800446A4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004491C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80044B38);
+s32 func_80044B38(u8 *p)
+{
+    u8 *t = D_800E7E80_f78d;
+
+    switch (p[0x78]) {
+    case 0:
+        *(s16 *)(p + 0x74) = f_CalculateYawFromPositionToPoint(t + 0x2C, *(s16 *)(p + 0x2E), *(s16 *)(p + 0x36));
+        *(s16 *)(t + 0x58) = 0;
+        p[0x78]++;
+        goto end;
+    case 1:
+        if (f_StepActorYawTowardAngle(t, *(s16 *)(p + 0x74), *(s16 *)(p + 0x72)) != 0) {
+            return 1;
+        }
+    end:
+    default:
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_StartCooperativeWorker);
 
@@ -5772,7 +5810,29 @@ u8 *f_AllocateActor(u8 *owner, u8 flags, u8 kind, u8 type)
     return r;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_OpenInteriorEntranceDoor);
+s32 f_OpenInteriorEntranceDoor(u8 *a)
+{
+    s32 r = 0;
+
+    switch (a[0x46]) {
+    case 0:
+        *(s16 *)(a + 0x50) -= 0x40;
+        if (*(s16 *)(a + 0x50) < -0x400) {
+            *(s16 *)(a + 0x50) = -0x400;
+            r = 1;
+        }
+        break;
+    case 1:
+        *(s16 *)(a + 0x50) += 0x40;
+        if (*(s16 *)(a + 0x50) > 0x400) {
+            *(s16 *)(a + 0x50) = 0x400;
+            r = 1;
+        }
+        break;
+    }
+    *(u16 *)(a + 0x56) = *(u16 *)(a + 0x5A) + *(u16 *)(a + 0x50);
+    return r;
+}
 
 
 void f_ApplyInteriorEntranceDoorMirroredYaw(void *arg0) {
