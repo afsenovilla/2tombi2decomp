@@ -3,7 +3,7 @@
 and bytes. A function is done when the C defines it (tools/build.py proves the bytes); library functions marked
 `// ASM by design` (tools/asm_by_design.py) are done as assembly and shown apart.
 
-  python3 -I tools/progress.py
+  python3 -I tools/progress.py [--phases]     (--phases: per roadmap phase, docs/ROADMAP.md)
 """
 import collections, glob, os, re, sys
 
@@ -36,7 +36,19 @@ def addr_of(prog):
     return {int(k, 16): v for k, v in out.items()}
 
 
+PHASES = [   # docs/ROADMAP.md
+    ("Phase 1  Psy-Q library (MAIN + boot)", None, "lib"),
+    ("Phase 2  MAIN.EXE engine", ["main"], "game"),
+    ("Phase 3  boot + game/demo/opn/sop/crd", ["boot", "game", "demo", "opn", "sop", "crd"], "game"),
+    ("Phase 4a small areas a0g-a0j", ["a0g", "a0h", "a0i", "a0j"], "game"),
+    ("Phase 4b medium areas + bosses", ["a09", "a0a", "a0b", "a0c", "a0d", "a0e", "a0f", "a0k", "a0l"], "game"),
+    ("Phase 4c big areas a00-a08", ["a0%d" % i for i in range(9)], "game"),
+]
+
+
 def main():
+    if "--phases" in sys.argv:
+        return phases()
     total = collections.Counter()
     print("%-6s %-26s %-26s %-18s" % ("prog", "game in C", "library in C", "library asm by design"))
     for prog, b, delta, ts, te, addrs in programs():
@@ -58,6 +70,42 @@ def main():
         if has_c:
             show(prog, c)
     show("total", total)
+
+
+def counts():
+    out = {}
+    for prog, b, delta, ts, te, addrs in programs():
+        has_c = bool(glob.glob(os.path.join(ROOT, "src", prog, "**", "*.c"), recursive=True))
+        st = file_state(prog) if has_c else {}
+        names = addr_of(prog) if has_c else {}
+        ends = list(addrs[1:]) + [te + delta]
+        c = collections.Counter()
+        for s, e in zip(addrs, ends):
+            n = names.get(s)
+            lib, state = st.get(n, (False, "c" if has_c else "pending")) if n else (False, "c" if has_c else "pending")
+            cat = "lib" if lib else "game"
+            c[cat + "_n"] += 1; c[cat + "_b"] += e - s
+            if state in ("c", "asm"):
+                c[cat + "_done_n"] += 1; c[cat + "_done_b"] += e - s
+        out[prog] = c
+    return out
+
+
+def phases():
+    """Progress per roadmap phase: functions and bytes done (C, or asm by design for the library)."""
+    c = counts()
+    print("%-40s %15s %22s" % ("", "functions", "bytes"))
+    tot = collections.Counter()
+    for title, progs, cat in PHASES:
+        t = collections.Counter()
+        for p in (progs or ["main", "boot"]):
+            for k in ("_n", "_b", "_done_n", "_done_b"):
+                t[k] += c.get(p, {}).get(cat + k, 0)
+        tot.update(t)
+        print("%-40s %5d/%-5d %5.1f%% %8d/%-8d %5.1f%%" % (title, t["_done_n"], t["_n"], 100.0 * t["_done_n"] / t["_n"],
+                                                   t["_done_b"], t["_b"], 100.0 * t["_done_b"] / t["_b"]))
+    print("%-40s %5d/%-5d %5.1f%% %8d/%-8d %5.1f%%" % ("All code", tot["_done_n"], tot["_n"], 100.0 * tot["_done_n"] / tot["_n"],
+                                               tot["_done_b"], tot["_b"], 100.0 * tot["_done_b"] / tot["_b"]))
 
 
 def show(prog, c):
