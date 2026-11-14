@@ -56,7 +56,7 @@ def reloc_symbols(obj, name, want, text, off):
     pend = {}
     for at, typ, sym in rel:
         i = at - off
-        if not 0 <= i < len(want) or sym.startswith("."):
+        if not 0 <= i < len(want) or (sym.startswith(".") and sym != ".rodata"):
             continue
         g, w = word(text, at), word(want, i)
         if typ == "R_MIPS_26":
@@ -92,7 +92,7 @@ def matches(obj, name, want, syms=None):
         p = l.split()
         if len(p) == 4 and p[3] == name and p[2] in "Tt":
             off, size = int(p[0], 16), int(p[1], 16)
-    if off is None or size != len(want):
+    if off is None or size != len(want) or cc.text_size(obj) != size:   # nothing else in the object's text
         return False
     rel = set()
     for l in subprocess.run(["mipsel-linux-gnu-objdump", "-r", "-j", ".text", obj], capture_output=True,
@@ -159,6 +159,29 @@ def candidates(prog, name, ctx, t1src, sources=("main", "pt", "t1", "m2c")):
     return out
 
 
+def rodata(obj):
+    d = os.path.dirname(obj)
+    subprocess.run(["mipsel-linux-gnu-objcopy", "-O", "binary", "-j", ".rodata", obj, d + "/r.bin"], check=True)
+    return open(d + "/r.bin", "rb").read() if os.path.exists(d + "/r.bin") else b""
+
+
+def strings_to_symbols(text, ro, base):
+    """Replace the C string literals of `text`, found in the object's rodata `ro` (whose offset 0 the retail code
+    puts at `base`), by `D_<address>` symbols of the retail strings (splat labels them in the rodata asm), so the
+    function adds no rodata of its own."""
+    out, decl = text, []
+    code = "\n".join(l for l in text.split("\n") if not l.lstrip().startswith("#"))
+    for lit in sorted(set(re.findall(r'"(?:[^"\\\n]|\\.)*"', code)), key=len, reverse=True):
+        raw = bytes(lit[1:-1], "latin1").decode("unicode_escape").encode("latin1") + b"\0"
+        off = ro.find(raw)
+        if off < 0:
+            return None
+        name = "D_%08X" % (base + off)
+        out = "\n".join(l if l.lstrip().startswith("#") else l.replace(lit, name) for l in out.split("\n"))
+        decl.append("extern char %s[];" % name)
+    return "\n".join(decl) + "\n" + out
+
+
 def attempt(prog, name, ctx, t1src, binary, delta, sources=("main", "pt", "t1", "m2c")):
     addr, size = asm_info(prog, name)
     if addr is None or size is None:
@@ -178,6 +201,19 @@ def attempt(prog, name, ctx, t1src, binary, delta, sources=("main", "pt", "t1", 
                     continue
                 syms = {}
                 if matches(os.path.join(d, "a.o"), name, want, syms):
+                    ro = rodata(os.path.join(d, "a.o"))
+                    if ro.strip(b"\0") and ".rodata" in syms:
+                        t2 = strings_to_symbols(text, ro, syms[".rodata"])
+                        if t2 is None:
+                            continue
+                        text = t2
+                        del syms[".rodata"]
+                        open(src, "w").write(text)
+                        cc.compile_c(src, os.path.join(d, "a.o"), v)
+                        syms = {}
+                        if not matches(os.path.join(d, "a.o"), name, want, syms) or rodata(os.path.join(d, "a.o")).strip(b"\0"):
+                            continue
+                    syms.pop(".rodata", None)
                     return name, (kind, v, text, syms)
     finally:
         shutil.rmtree(d, ignore_errors=True)

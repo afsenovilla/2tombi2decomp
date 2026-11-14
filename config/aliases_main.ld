@@ -1,10 +1,13 @@
 /* Names used by library C taken from other projects (psx_tomba, Tombi-Decomp) for addresses this
  * program knows under another name; addresses read off the retail code by tools/libsweep.py. */
+D_8001BEC8 = 0x8001BEC8;
 D_8001BEDC = 0x8001BEDC;
 D_8001BF14 = 0x8001BF14;
+D_8001BF20 = 0x8001BF20;
 D_8001BF2C = 0x8001BF2C;
 D_8001BF38 = 0x8001BF38;
 D_8001BF80 = 0x8001BF80;
+D_8001C110 = 0x8001C110;
 func_80047B5C = 0x80047B5C;
 func_8004960C = 0x8004960C;
 get_cs = 0x80082240;
