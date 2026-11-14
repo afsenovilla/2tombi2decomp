@@ -1,4 +1,6 @@
 #include "common.h"
+#include "game.h"
+#include "m2c.h"
 
 INCLUDE_ASM("asm/boot/nonmatchings/boot", func_80010D54);
 

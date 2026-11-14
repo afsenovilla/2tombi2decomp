@@ -1,0 +1,1025 @@
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00TombaWaterSurfaceMotion);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010A7F8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010AC20);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010AD68);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00TombaVerticalClimb);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010B07C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010B29C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010B42C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010B600);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010B754);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00TombaClingOrientation0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010BD7C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00TombaClingOrientation1);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C290);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C40C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTombaInteriorEntry);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C740);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C780);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C87C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C89C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C8E4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C9F8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010CAEC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeA00InteriorState);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00InteriorCamera);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010CED0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateFishermensTownCamera);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010D89C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DA70);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DAB0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DB58);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DBE4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DC74);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DCB8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DE0C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DFD8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaSpecialCylinderContact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleFishermensTownTombaHazardsAndBounds);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_EnforceA00TombaBoundsAndInteriorExit);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaType13ActorContact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010EC58);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010F034);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaBoxPartContact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaOrientedWallContact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActiveColliderOrientedWallContact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80110024);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80110298);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011040C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaOrientedPlatformContact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80110CA0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80110DE8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveCarriedChickSurfaceContact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80111128);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaPlaneSwitchActorContact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActorPairType0Contact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActorPairType3Contact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80111A00);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaSelectedCompoundContact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80111E18);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaInteractiveCylinderContact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActiveColliderType0Contact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActorAgainstA00CollisionLists);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveA00ActorPairContacts);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveA00PlatformPairContacts);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaQuestAndSpecialContacts);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaActorContacts);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActiveColliderStaticContacts);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActiveColliderActorContacts);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00CollisionInteractions);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_FindTombaSupportActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801140D0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011415C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801141C8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114290);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114320);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801143A4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114408);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114528);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaMultipartActorContact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114640);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114664);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801146E0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011479C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801147EC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114888);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801148D8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011499C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActorPairMultipartContact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114AF4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114B8C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114BBC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114C5C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114CD0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114D48);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114DF4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114E74);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114ED4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114F54);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114F94);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80115084);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801150A8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801150CC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801151F4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveA00ActiveActorCollisionCandidates);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011534C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80115598);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801158E0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80115B88);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnFishermensTownActorsFromPlacementTable);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80116094);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateFishermensTownAmbientAudio);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801167AC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", block);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateCrabBasketRewardDrop);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80116E3C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleKainenHouseQuestItemActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117228);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnCrabBasketRewardActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117460);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801174D8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801175A8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117628);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleRareFishOrBlueBucketPickup);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnRareFishPickup);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117D7C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117E5C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117E98);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnBlueBucketPickup);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117FAC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801180CC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801181BC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801181E0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleBeachQuestPickup);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011884C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801188A0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnGoldFishhookPickup);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80118974);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801189B8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80118B10);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80118DB0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00PickupHandlerCase9);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80119160);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80119254);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80119350);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80119454);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80119510);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SubmitPendingGoldenCrabs);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80119828);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldenCrabDialogueFirstVisit);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldenCrabDialogueRepeatVisit);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_StageWindmillCutsceneActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ApplyWindmillCutsceneTransition);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RunWinsWindmillCutscene);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleWinConversationState);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011A804);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011A928);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011AB00);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011AB84);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011ABF0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011AC5C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011ACDC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateWindmillExplosionDebris);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateWindmillFallingActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011B738);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011BC3C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011BDB8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseSceneActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011C090);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldenCrabAndWindmillActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011C610);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleNetBridgeRaiseNpcInteraction);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011CA04);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011CBD0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011CD14);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011CDB8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011CE64);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AdvanceKainenHouseRescueSequence);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleKainenInteraction);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleKainenNpcActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011D82C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011D8AC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011D910);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleFeedChicksSceneActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeFeedChicksSceneActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateFeedChicksActorSplinePatrol);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateFeedChicksActorEndpointTransit);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011E7CC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateFeedChicksActorRoaming);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011F088);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateFeedChicksActorTombaReaction);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateFeedChicksActorRecoveryOrExit);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011FC78);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveFeedChicksActorFacingAngle);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011FF78);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_TryStartFeedChicksActorTombaReaction);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AdvanceFeedChicksActorMotion);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801205EC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801206F4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80120A64);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80120C50);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleFeedTheChicksController);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SelectFeedChicksNpcSpawn);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateFeedChicksNpcPresence);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012138C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801214AC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AdvanceFeedChicksActorTurn);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121574);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_CheckFeedChicksActorRoutePointDistance);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012175C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801217F4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012185C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnFeedChicksNpc);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121918);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121978);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121B44);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121CF8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_FinishStuckFishhookLineSequence);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121FD8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleStuckFishhookQuestNpc);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleNetBridgeCutsceneTrigger);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122974);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122BF4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122CA4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122D58);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122DF0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122F0C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122F5C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122FAC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801230A4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80123180);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801231B0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801231E0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801232DC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801233DC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801234A4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80123C94);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AnimateSmallFishSuspendedMotion);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AnimateReleasedSmallFishBounce);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801241BC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AnimateNetBridgeFishIdle);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801244E8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateNetBridgeFishAfterCollapse);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AnimateNetBridgeFishDropSequence);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80124C6C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleSmallFishActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnSmallFishActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801253E8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801255CC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_DeliverCarriedChickToNest);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80125C4C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80125E0C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_EnsureCarriedChickActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80125FE0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateCarriedChickCollision);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801260CC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateCarriedChickMotion);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801261FC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80126264);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeNestChickActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801266C8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012681C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80126AA8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleFeedChicksInventoryUse);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RestoreFedChicksFromProgress);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateNestChickQuestState);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnNestChickFromParent);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80127420);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80127450);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801274BC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_DeliverChickItemToNest);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_FeedChicksAtNest);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UseNishikiWingsAtNest);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80127798);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80127D1C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801280E8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801281B8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeRareFishOrBucketController);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801284AC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateBlueBucketPendulumMotion);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleRareFishOrBucketSuspension);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801288D8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012894C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RunA00Event4ItemUseCutscene);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RunNetBridgeCogInstallationCutscene);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldFishhookRecovery);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80129008);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80129100);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseRotatingEffect);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateWindmillInteriorEffect);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801295B4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801296E0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeTableDrivenInteriorEffect);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeLinkedWindmillInteriorEffect);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleInteriorEffectActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateCurvedSupportGeometry);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012A0B8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012A2D8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012A43C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012A54C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnWindmillCollapseDebrisPieces);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AdvanceWindmillCollapseEffectPoint);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AnimateWindmillCollapseOpening);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AnimateWindmillCollapseMainSequence);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AnimateWindmillCollapseFinale);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00InteriorTransitionActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleA00InteriorSceneEffectActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012CE30);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_GetWindmillControllerBearing);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012CEE0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseWobbleWide);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseWobbleNarrow);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseWobbleInverted);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseWobbleEffect);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012D404);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldFishhookScenePropActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012D908);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleTownQuestRewardVisualActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012DE34);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012DF08);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012DF50);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012DFF8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E034);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeTownQuestRewardVisualModel);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E0D0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E10C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E1E4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E2BC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E478);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E53C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E5CC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E678);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E70C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E7EC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E87C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownBarrelChildTransforms);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleTownBarrelSeesawController);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeTownBarrelSeesawController);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012F494);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateBarrelSeesawRide);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RotateSelectedTownBarrel);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80130524);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80130788);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleBarrelSeesawContact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80130AC4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateBarrelLinkedSegmentSequence);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_TriggerBarrelLinkedSegments);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HideCollectedBarrelLinkedPickups);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_BeginScriptedBarrelRotation);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateBarrelSeesawSupportHeight);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ApplyBarrelSeesawContactImpulse);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RestoreTownBarrelOrientations);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801316CC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ActivateBarrelLinkedSegmentPair);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80131840);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80131D08);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SettleDryingRackGrabHandleRotation);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateDryingRackGrabHandle);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80132400);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80132548);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013259C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013272C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80132954);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateAquaticPlantHitWobble);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80132D58);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateAquaticPlantGrabMotion);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80133184);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SyncAquaticPlantLinkedState);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnAquaticPlantActors);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80133500);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateAquaticPlantRotationKick);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ConfigureAquaticPlantMotion);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ClassifyAquaticPlantContact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateAquaticPlantCollisionBounds);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateSingleSegmentSwingMotion);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleSingleSegmentSwingActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80133D6C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_DrawNetBridgeStrip);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_DrawNetBridgeSupportStrips);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AnimateNetBridgeCollapse);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateCollapsedNetBridgeMotion);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaOnNetBridge);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80134C5C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActorOnNetBridge);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80134FD8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateRopeSwingInteraction);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80135D64);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801360F4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleA00PendulumPlatformActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801365C4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80136748);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013681C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80136954);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80136D9C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80136F08);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateSegmentedTownActorSequence);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_EmitSegmentedTownActorEffect);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ConfigureSegmentedTownActorMorph);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801386A0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnSegmentedTownActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801389C8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80138A64);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleA00Warp0813Entrance);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleTinyMousesHouseEntrance);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleFishermensTownEntranceActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleCurvedSupportContactActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80139838);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeDryingRackControllerState);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80139A70);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_DeployDryingRackSegments);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RetractDryingRackSegments);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A008);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnStarShapedCogPickup);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleDryingRackController);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A730);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A784);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A818);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A900);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013AC34);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013AC98);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013ADBC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013AEC0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013AEEC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013AF18);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateMagicFlowerWateringSequence);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleMagicFlowerActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeEvilPigDoorActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeEvilPigDoorFromTravelState);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_OpenEvilPigDoor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013BAB0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013BCC8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013C0BC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013C1DC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseProgressEffectActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseFallingParticleActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013C7F0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013C9C0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013CDD4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013D454);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013D588);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013D828);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013D9D4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013DBE4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013DD34);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013E08C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013E424);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013E620);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013E840);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013E9D8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013EA64);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013EBA0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013EC48);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013ED08);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013ED54);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013EDD0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013EEA0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013EF58);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_CollectVisibleA00GridCellsForCamera);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_CollectA00GridCellsInsideTriangle);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_TestA00GridCellMask);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_GetA00GridCellValue);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013FB4C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_DrawTownCreatureGt3Batch);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_DrawTownCreatureGt4Batch);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801401B8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801402B8);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8014047C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80140544);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureTerrainContact);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureFaceTomba);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801409C0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureKnockbackBounce);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8014103C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureFleeRun);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureStraightRun);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80141AC4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureHopAndBrake);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureVerticalLaunch);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureLaunchLanding);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreaturePostKnockbackRecovery);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureRandomIdle);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureIdleDecision);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureApproachTomba);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureLeapingCharge);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureExtendedLeap);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureJumpingAttack);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureBehaviorState);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureVariantActivation);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureInteractionLifecycle);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleTownCreatureActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureSpawner);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateCrabBasketCarrierSequence);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateLinkedTownCreatureActor);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80145C78);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80145CD0);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80145DD4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80145E20);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80145EA4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80145F30);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80145F6C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8014601C);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801460A4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureTurnaround);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801461E4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80146288);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801462E4);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80146348);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801463EC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80146478);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ApplyOverlayModelFrameRange);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801465EC);
+
+INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateWindmillCollapseParticleActor);
