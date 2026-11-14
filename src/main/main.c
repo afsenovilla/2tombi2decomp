@@ -4009,7 +4009,22 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80054B34);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80054C08);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetTombaAnimationIfChanged);
+extern void *D_800ECF58_449d;
+
+s32 f_SetTombaAnimationIfChanged(u8 *t, s32 anim, s32 blend)
+{
+    if (t[0x46] == (u8)anim) {
+        return 0;
+    }
+    t[0x46] = anim;
+    func_80054790(t, anim);
+    if ((s16)blend == 0) {
+        f_StartActorSkeletalAnimation(t, D_80017FE8, anim);
+    } else {
+        f_StartActorSkeletalAnimationBlend(t, D_80017FE8, anim, (s16)blend);
+    }
+    return 1;
+}
 
 void f_SetTombaAnimation(u8 *t, s32 anim, s16 blend)
 {
@@ -6041,7 +6056,28 @@ void func_80077D64(void)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80077D8C);
+void func_80077D8C(void)
+{
+    u8 *g = D_800BF808;
+    u8 v = g[0x3A];
+
+    if (v == 0) {
+        return;
+    }
+    switch (v & 0x7F) {
+    case 1:
+        f_PlaySoundEffect(0x29, 2, -0x41);
+        g[0x3A] = 0x87;
+        break;
+    case 2:
+        f_PlaySoundEffect(0x2A, 2, -0x41);
+        g[0x3A] = 0;
+        break;
+    default:
+        D_800BF808[0x3A]--;
+        break;
+    }
+}
 
 
 void f_SetActorRenderTint(void *arg0, s8 arg1, s8 arg2, s8 arg3) {
