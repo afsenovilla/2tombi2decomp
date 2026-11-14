@@ -150,7 +150,13 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801134E8);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80113550);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80113644);
+void func_80113644(void)
+{
+    CameraState *c = &g_CameraState;
+
+    c->unk6C = 0x500;
+    c->unk6E = 0x100;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80113660);
 
@@ -318,7 +324,17 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011926C);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801192F0);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801193DC);
+void func_80119454();
+
+u8 *func_801193DC(void *a)
+{
+    u8 *r = func_80072DDC(a, 1, 3, 0x28);
+
+    if (r != NULL) {
+        *(void **)(r + 0x1C) = func_80119454;
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80119418);
 
@@ -748,7 +764,15 @@ void func_801224E8(void *arg0) {
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80122558);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801225B4);
+extern u8 D_800BFB48;
+
+s32 func_801225B4(void)
+{
+    if (D_800BFB48 != 0) {
+        return 2;
+    }
+    return 3;
+}
 
 
 s32 func_801225D4(void *arg0) {

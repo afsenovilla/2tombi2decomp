@@ -481,7 +481,13 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80115F08);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80115F70);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80115FB4);
+void func_80115FB4(u8 *a)
+{
+    func_80051B70(a, 0xC, 0x4A);
+    *(s16 *)(a + 0x54) = 0;
+    *(s16 *)(a + 0x56) = 0;
+    *(s16 *)(a + 0x58) = 0;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80115FEC);
 

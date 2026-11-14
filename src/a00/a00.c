@@ -1116,7 +1116,12 @@ void func_8012E034(void *arg0)
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeTownQuestRewardVisualModel);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E0D0);
+void func_8012E0D0(void *a)
+{
+    if (func_80051B70(a, 0xC, 7) == 0) {
+        func_800517F8(a);
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E10C);
 
