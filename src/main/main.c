@@ -628,7 +628,32 @@ void f_RetireInteriorSceneChildren(ChildList *l)
     l->count = 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80026A68);
+extern u16 D_1F80017C_0fe7;
+extern u16 D_800ECF54_4583[];
+extern u16 D_800BED8C;
+extern u8 *D_800BED88_191b;
+extern u8 D_800E80A8_42d3[];
+typedef struct ChildList2 {
+    /* 0x0 */ u8 pad0[3];
+    /* 0x3 */ u8 active;
+    /* 0x4 */ u8 pad4[4];
+    /* 0x8 */ s16 count;
+    /* 0xA */ u8 padA[2];
+    /* 0xC */ u8 *children[1];
+} ChildList2;
+
+void func_80026A68(ChildList2 *l)
+{
+    s32 i;
+
+    if (l->active != 0) {
+        for (i = 0; i < l->count; i++) {
+            if (l->children[i] != NULL && l->children[i][4] == 3) {
+                l->children[i] = NULL;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80026AD0);
 
@@ -2854,7 +2879,19 @@ void f_TerminateCurrentCooperativeWorker(void)
     ChangeTh(0xFF000000);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_CloseCooperativeWorkerThread);
+void f_CloseCooperativeWorkerThread(s32 i)
+{
+    WorkerState *w = (WorkerState *)((u8 *)0x801FE000 + i * 0x70);
+
+    if (w->busy != 0) {
+        w->busy = 0;
+        w->active = 0;
+        w->unk6F = 0;
+        EnterCriticalSection();
+        CloseTh(w->thread);
+        ExitCriticalSection();
+    }
+}
 
 extern s8 D_1F800138[];
 void func_80052078(s32 arg0) {
@@ -4945,7 +4982,16 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_AdvanceActorTimedFrameSequence);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_StartActorSkeletalAnimation);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_StartActorSkeletalAnimationBlend);
+void f_StartActorSkeletalAnimationBlend(u8 *a, void **table, s32 i, s32 blend)
+{
+    s16 b = blend;
+    void *seq = table[i];
+
+    *(void **)(a + 0x38) = seq;
+    func_80075FF8(a, seq, b);
+    func_80075F0C(a, b);
+    *(s16 *)(a + 0xE) = blend + 0x1000;
+}
 
 
 void func_80077D64(void)
@@ -5105,7 +5151,15 @@ void f_DrawTallMenuText(s16 x, s32 y, s16 c, s32 d, s32 e)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_CalculateCenteredTextPositions);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80079464);
+void func_80079464(s32 demo)
+{
+    D_1F80017C_0fe7 = 0;
+    srand(0x45);
+    D_800ECF54_4583[1] = 0;
+    D_800ECF54_4583[0] = 0;
+    D_800BED8C = 1;
+    D_800BED88_191b = (u8 *)0x80157000 + (demo << 10);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800794C8);
 
