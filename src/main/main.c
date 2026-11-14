@@ -482,11 +482,38 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80026368);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800263E8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80026470);
+typedef struct CameraTarget2 { u8 pad0[2]; u16 x; u8 pad4[2]; u16 y; u8 pad8[2]; u16 z; } CameraTarget2;
+extern CameraTarget2 D_1F8000D0_d63a;
+extern s8 D_800BF808_c1f7[];
+extern void *D_800174C4;
+typedef struct ChildList {
+    /* 0x0 */ u8 pad0[8];
+    /* 0x8 */ s16 count;
+    /* 0xA */ u8 padA[2];
+    /* 0xC */ u8 *children[1];
+} ChildList;
+
+void func_80026470(void)
+{
+    s8 *p = D_800BF808_c1f7;
+
+    if (p[5] < 2 && ((u8 *)p)[0x31] == 0) {
+        return;
+    }
+    f_SetStreamedAudioVolumeTarget(0);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800264BC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80026510);
+void func_80026510(void)
+{
+    s8 *p = D_800BF808_c1f7;
+
+    if (p[5] < 2 && ((u8 *)p)[0x31] == 0) {
+        return;
+    }
+    f_SetStreamedAudioVolumeTarget(-1);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002655C);
 
@@ -528,7 +555,18 @@ void f_ReleaseInteriorTransitionControl(void *arg0) {
     *((s8 *)D_1F800137) = 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_RetireInteriorSceneChildren);
+void f_RetireInteriorSceneChildren(ChildList *l)
+{
+    s32 i;
+
+    for (i = 0; i < l->count; i++) {
+        if (l->children[i] != NULL) {
+            l->children[i][4] = 3;
+            l->children[i] = NULL;
+        }
+    }
+    l->count = 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80026A68);
 
@@ -875,7 +913,19 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80033B94);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80033FF4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800342EC);
+void func_800342EC(u8 *a, s16 x, s16 y, u8 c)
+{
+    struct { u8 b0; u8 b1; s16 h2; } q;
+    struct { s16 x; s16 y; s32 z; } pos;
+
+    pos.x = x;
+    q.b1 = c;
+    q.b0 = 0;
+    q.h2 = 0;
+    pos.y = y;
+    pos.z = 0;
+    f_DrawPackedUiSpriteFrame(&pos, D_800174C4, *(void **)(a + 4), &q);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80034338);
 
@@ -1062,7 +1112,21 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80038708);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80038758);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80038794);
+s32 func_80038794(u8 *p)
+{
+    s32 i;
+
+    for (i = 0; i < 6; i++) {
+        if (p[0x1F] == 0) {
+            return i != 0;
+        }
+        p[0x1F]--;
+        if (p[0x1E] != 0) {
+            p[0x1E]--;
+        }
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800387E0);
 
@@ -3880,7 +3944,17 @@ void f_SetCameraFocusPosition(u16 *pos)
     cam->focusZ = pos[5];
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetCameraTransform);
+void f_SetCameraTransform(u8 *cam, u16 *t)
+{
+    CameraTarget2 *c = &D_1F8000D0_d63a;
+
+    c->x = t[0];
+    c->y = t[1];
+    c->z = t[2];
+    *(u16 *)(cam + 0x3A) = t[3];
+    *(u16 *)(cam + 0x3E) = t[4];
+    *(u16 *)(cam + 0x42) = t[5];
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_StartCameraTransformInterpolation);
 
