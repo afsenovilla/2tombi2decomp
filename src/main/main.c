@@ -5906,7 +5906,26 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006EA7C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006EC44);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006EF38);
+typedef struct { u8 b[4]; } Bytes4_058;
+extern Bytes4_058 D_80010058;
+
+void func_8006EF38(void)
+{
+    u8 *c = (u8 *)&g_CameraState;
+    s32 dx;
+    s32 dz;
+    u16 *d;
+
+    if ((u32)(D_1F800236_18be - 3) < 2) {
+        dx = (rcos(*(s16 *)(c + 0x70)) * 500) >> 12;
+        dz = (rsin(*(s16 *)(c + 0x70)) * 500) >> 12;
+        d = (u16 *)D_1F8000D0_b839;
+        d[1] = *(u16 *)(c + 0x3A) + dx;
+        d[5] = *(u16 *)(c + 0x42) + dz;
+        *(u16 *)(c + 0x70) += 8;
+        f_SnapCameraPositionAndRebuildView(c, c + 0x38);
+    }
+}
 
 extern s32 D_800BFE48;
 s32 func_8006EFF4(s32 arg0) {
@@ -6820,7 +6839,30 @@ void f_StartActorTimedFrameSequence(u8 *actor, u16 **table, s32 index)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_AdvanceActorTimedFrameSequence);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_StartActorSkeletalAnimation);
+void f_StartActorSkeletalAnimation(u8 *a, u8 **tbl, s32 i)
+{
+    u8 *s = tbl[i];
+    u16 f = *(u16 *)(s + 6);
+    u16 v;
+
+    *(u8 **)(a + 0x38) = s;
+    *(s16 *)(a + 0xE) = f & 0xFFF;
+    func_80076904(a);
+    v = *(u16 *)(s + 6);
+    if (v & 0x2000) {
+        switch (v & 0xC000) {
+        case 0:
+            func_80075FF8(a, s + 8, *(s16 *)(a + 0xE));
+            break;
+        case 0x4000:
+        case 0xC000:
+            func_80075FF8(a, *(void **)(s + 8), *(s16 *)(a + 0xE));
+            break;
+        case 0x8000:
+            break;
+        }
+    }
+}
 
 void f_StartActorSkeletalAnimationBlend(u8 *a, void **table, s32 i, s32 blend)
 {
