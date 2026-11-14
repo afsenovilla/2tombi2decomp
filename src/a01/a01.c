@@ -437,7 +437,14 @@ void func_80115BF4(s32 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80115C34);
+void func_80115C34(u8 *a)
+{
+    if (func_80051B70(a, 0xC, 0x1F) == 0) {
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x58) = 0;
+    }
+}
 
 
 void func_80115C74(void *arg0) {

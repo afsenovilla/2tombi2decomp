@@ -545,7 +545,18 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80119998);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80119A50);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80119B20);
+void f_UpdateDonglinInteriorQuestObjectActor();
+
+u8 *func_80119B20(void *a)
+{
+    u8 *r = func_80072DDC(a, 0, 3, 0x10);
+
+    if (r != NULL) {
+        *(void **)(r + 0x1C) = f_UpdateDonglinInteriorQuestObjectActor;
+        r[3] = 7;
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80119B64);
 
@@ -757,7 +768,15 @@ void func_8011DF04(void *arg0) {
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011E040);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011E124);
+void func_8011E124(u8 *a)
+{
+    if (a[0x29] == 0) {
+        func_8011E308(a, 1);
+        a[5] = 3;
+        a[6] = 1;
+        *(s16 *)(a + 0x6C) = 1;
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011E174);
 

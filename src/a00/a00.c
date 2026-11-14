@@ -323,7 +323,18 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114888);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801148D8);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011499C);
+extern void *D_1F800080;
+extern u8 D_1F800182_5650;
+
+void func_8011499C(u8 *a, u8 *b)
+{
+    if (func_80024BD8(a, b, *(void **)(b + 0xC4)) != 0) {
+        b[0x29] = 1;
+        a[0x164] = 3;
+        D_1F800080 = b;
+        D_1F800182_5650 = 0;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActorPairMultipartContact);
 
@@ -1249,7 +1260,15 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SyncAquaticPlantLinkedState);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnAquaticPlantActors);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80133500);
+void func_80133500(u8 *a)
+{
+    if (a[0x29] == 0) {
+        f_ConfigureAquaticPlantMotion(a, 1);
+        a[5] = 3;
+        a[6] = 1;
+        *(s16 *)(a + 0x6C) = 1;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateAquaticPlantRotationKick);
 

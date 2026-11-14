@@ -842,7 +842,15 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80127734);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801279B4);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80127C4C);
+void func_80127C4C(u8 *a)
+{
+    if (a[0x29] == 0) {
+        func_80127E30(a, 1);
+        a[5] = 3;
+        a[6] = 1;
+        *(s16 *)(a + 0x6C) = 1;
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80127C9C);
 
