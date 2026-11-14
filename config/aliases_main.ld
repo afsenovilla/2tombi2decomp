@@ -1,6 +1,8 @@
 /* Names used by library C taken from other projects (psx_tomba, Tombi-Decomp) for addresses this
  * program knows under another name; addresses read off the retail code by tools/libsweep.py. */
+D_1F800084_8c7c = 0x1F800084;
 D_1F8000D0_d63a = 0x1F8000D0;
+D_1F8000D0_fb20 = 0x1F8000D0;
 D_1F800137_104c = 0x1F800137;
 D_1F800138_fd56 = 0x1F800138;
 D_1F800172_5cdb = 0x1F800172;
@@ -41,6 +43,7 @@ MDEC_out_sync = 0x8009CB80;
 MDEC_status = 0x8009CC14;
 D_800A54A8_6044 = 0x800A54A8;
 D_800A54A8_7082 = 0x800A54A8;
+D_800A54A8_86de = 0x800A54A8;
 D_800A5998 = 0x800A5998;
 gpu = 0x800A5998;
 D_800A599C = 0x800A599C;
@@ -108,6 +111,7 @@ D_800BF808_c1f7 = 0x800BF808;
 D_800BF808_e253 = 0x800BF808;
 D_800BF80A_8fc3 = 0x800BF80A;
 D_800BF80F_fcc6 = 0x800BF80F;
+D_800BF81E_6fe1 = 0x800BF81E;
 D_800E7E74_7ca1 = 0x800E7E74;
 D_800E7E80_34c0 = 0x800E7E80;
 D_800E7E80_f78d = 0x800E7E80;

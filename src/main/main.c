@@ -196,7 +196,36 @@ void func_80022A80(void)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80022AC8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ApplyTombaEnvironmentalDamage);
+extern u8 D_800BFE55;
+extern s8 D_800BF80D;
+extern u8 D_800BF81E_6fe1;
+extern s32 D_800A3AC4[];
+extern s32 D_800BFE34;
+extern u16 D_1F800160;
+extern u16 D_1F800162;
+extern u16 D_1F800164;
+extern u8 D_1F800137_104c;
+extern s32 D_1F800080;
+extern s32 D_1F800084_8c7c;
+extern u16 D_1F8000D0_fb20[];
+
+s32 f_ApplyTombaEnvironmentalDamage(u8 *t, s32 dmg)
+{
+    if (D_800BFE55 != 0) {
+        return 0;
+    }
+    t[0] |= 2;
+    if (*(s16 *)(t + 0x17E) < 0) {
+        dmg *= 2;
+    }
+    *(s16 *)(t + 0x16E) -= dmg;
+    if (*(s16 *)(t + 0x16E) <= 0) {
+        *(s16 *)(t + 0x16E) = 0;
+        D_800BF80D = -1;
+    }
+    D_800BF81E_6fe1 = 0;
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ApplyTombaSupportedContactState);
 
@@ -1320,9 +1349,39 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80039034);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80039110);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003989C);
+extern u8 D_800E806E;
+extern u8 D_800BF843;
+typedef struct { s16 x, y, z; u8 flags; u8 pad; } SpawnPoint_8824;
+extern SpawnPoint_8824 *D_800A54A8_86de[];
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003990C);
+void func_8003989C(u8 *p)
+{
+    s32 i = 0;
+
+    while (D_800A3AC4[i + 1] != 0) {
+        if ((D_800BF870.flags5C4 >> i) & 1) {
+            p[0x23]++;
+        }
+        i++;
+    }
+}
+
+s32 func_8003990C(s32 n)
+{
+    s32 i = 0;
+    s32 cnt = 0;
+
+    while (D_800A3AC4[i + 1] != 0) {
+        if ((D_800BFE34 >> i) & 1) {
+            if (n == cnt) {
+                return i;
+            }
+            cnt++;
+        }
+        i++;
+    }
+    return 0;
+}
 
 s32 func_80039978(u8 *p)
 {
@@ -2375,7 +2434,22 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B150);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B208);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B2E8);
+void func_8004B2E8(void)
+{
+    u8 *e = f_SpawnTransientEffect(0x1F, -0x8C);
+    u16 x, y, z;
+
+    if (e != 0) {
+        e[0x28] |= 0x80;
+        x = D_1F800160;
+        y = D_1F800162;
+        z = D_1F800164;
+        *(s16 *)(e + 0x2C) = x;
+        *(s16 *)(e + 0x2E) = y;
+        *(s16 *)(e + 0x30) = z;
+    }
+    f_PlaySoundEffect(0x28, 0, 0);
+}
 
 
 void f_SetPickupWhiteTintEnabled(void *arg0, s32 arg1)
@@ -3447,7 +3521,22 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800558B4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800559F4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80055C30);
+s32 func_80055C30(u8 *p)
+{
+    if (*(s16 *)(p + 0x16E) == 0) {
+        return 0;
+    }
+    if (D_1F800137_104c != 0) {
+        return 0;
+    }
+    if ((p[0x29] & 0x80) && (*(u16 *)(p + 0x6A) & 0x10)) {
+        p[5] = 0xB;
+        p[6] = 0;
+        p[7] = 0;
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80055C9C);
 
