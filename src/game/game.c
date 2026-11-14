@@ -112,14 +112,80 @@ void func_80108D5C(void) {
     M2C_FIELD(temp_v0, s16 *, 0x4E) = 0;
 }
 
-INCLUDE_ASM("asm/game/nonmatchings/game", func_80108D78);
+extern s8 D_1F800138[];
 
-INCLUDE_ASM("asm/game/nonmatchings/game", func_80108D9C);
+void func_80108D78(void) {
+    void *temp_v1;
 
-INCLUDE_ASM("asm/game/nonmatchings/game", func_80108DEC);
+    temp_v1 = *((void **)D_1F800138);
+    M2C_FIELD(temp_v1, s16 *, 0x4A) = 1;
+    M2C_FIELD(temp_v1, s16 *, 0x4C) = 2;
+    M2C_FIELD(temp_v1, s16 *, 0x4E) = 3;
+}
 
-INCLUDE_ASM("asm/game/nonmatchings/game", func_80108E50);
+extern s8 D_1F800138[];
+extern s8 D_1F800236[];
 
-INCLUDE_ASM("asm/game/nonmatchings/game", func_80108EB4);
+void func_80108D9C(void) {
+    void *temp_v1;
 
-INCLUDE_ASM("asm/game/nonmatchings/game", func_80108F1C);
+    if ((u8) *((u8 *)D_1F800236) >= 5U) {
+        func_80050894(0);
+    }
+    temp_v1 = *((void **)D_1F800138);
+    M2C_FIELD(temp_v1, s16 *, 0x4A) = 1;
+    M2C_FIELD(temp_v1, s16 *, 0x4C) = 2;
+    M2C_FIELD(temp_v1, s16 *, 0x4E) = 6;
+}
+
+extern s8 D_1F800138[];
+
+void func_80108DEC(void) {
+    void *temp_v1;
+
+    func_8007B18C();
+    func_800796DC();
+    func_800263E8();
+    func_80072A78();
+    func_80075240();
+    func_800783DC();
+    func_80078610();
+    temp_v1 = *((void **)D_1F800138);
+    M2C_FIELD(temp_v1, s16 *, 0x4E) = 1;
+    M2C_FIELD(temp_v1, s8 *, 0x6B) = 0;
+}
+
+extern s8 D_1F800138[];
+
+void func_80108E50(void) {
+    s32 temp_a0;
+    void *temp_v1;
+
+    temp_a0 = (M2C_FIELD(*((void **)D_1F800138), u8 *, 0x6B) * 8) & 0xFF;
+    func_8007E9C8((temp_a0 << 0x10) | (temp_a0 << 8) | temp_a0, 0, 4);
+    temp_v1 = *((void **)D_1F800138);
+    M2C_FIELD(temp_v1, u8 *, 0x6B) = (u8) (M2C_FIELD(temp_v1, u8 *, 0x6B) - 1);
+}
+
+extern s8 D_1F800138[];
+
+void func_80108EB4(void) {
+    s32 temp_a0;
+    void *temp_v1;
+
+    temp_a0 = -(M2C_FIELD(*((void **)D_1F800138), u8 *, 0x6B) * 8) & 0xFF;
+    func_8007E9C8((temp_a0 << 0x10) | (temp_a0 << 8) | temp_a0, 1, 4);
+    temp_v1 = *((void **)D_1F800138);
+    M2C_FIELD(temp_v1, u8 *, 0x6B) = (u8) (M2C_FIELD(temp_v1, u8 *, 0x6B) - 1);
+}
+
+extern s8 D_1F800136[];
+extern s8 D_1F800138[];
+extern s8 D_800BF819;
+
+void func_80108F1C(void) {
+    M2C_FIELD(*((void **)D_1F800138), s8 *, 0x6B) = 0;
+    *((s8 *)D_1F800136) = 0;
+    D_800BF819 = 8;
+    func_80050970();
+}

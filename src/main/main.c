@@ -262,7 +262,12 @@ void f_ResolveActiveColliderOffsetActorContact(void *arg0, void *arg1) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002369C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80023764);
+
+void func_80023764(s32 arg0, void *arg1) {
+    if (f_ResolveTombaRadialContactAndSide() != 0) {
+        M2C_FIELD(arg1, s8 *, 0x29) = 1;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80023794);
 
@@ -1349,7 +1354,16 @@ s32 func_80043A10(void *arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80043A40);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetSharedScriptControlFlag);
+extern s8 D_800BF84C;
+
+s32 f_SetSharedScriptControlFlag(s32 arg0, s32 arg1) {
+    if (!(arg1 & 0xFF)) {
+        D_800BF84C = 0;
+    } else {
+        D_800BF84C = 1;
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80043BB0);
 
@@ -1915,9 +1929,21 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeSinglePartActorModel);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80051C8C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80051D20);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TransformPointByModelPart);
+void func_80051D20(void *arg0, s32 arg1, void *arg2) {
+    ApplyMatrixSV(arg0 + 0x98);
+    M2C_FIELD(arg2, u16 *, 0) = (u16) (M2C_FIELD(arg2, u16 *, 0) + M2C_FIELD(arg0, u16 *, 0xAC));
+    M2C_FIELD(arg2, u16 *, 2) = (u16) (M2C_FIELD(arg2, u16 *, 2) + M2C_FIELD(arg0, u16 *, 0xB0));
+    M2C_FIELD(arg2, u16 *, 4) = (u16) (M2C_FIELD(arg2, u16 *, 4) + M2C_FIELD(arg0, u16 *, 0xB4));
+}
+
+
+void f_TransformPointByModelPart(void *arg0, s32 arg1, void *arg2) {
+    ApplyMatrixSV(arg0 + 0x18);
+    M2C_FIELD(arg2, u16 *, 0) = (u16) (M2C_FIELD(arg2, u16 *, 0) + M2C_FIELD(arg0, u16 *, 0x2C));
+    M2C_FIELD(arg2, u16 *, 2) = (u16) (M2C_FIELD(arg2, u16 *, 2) + M2C_FIELD(arg0, u16 *, 0x30));
+    M2C_FIELD(arg2, u16 *, 4) = (u16) (M2C_FIELD(arg2, u16 *, 4) + M2C_FIELD(arg0, u16 *, 0x34));
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80051E00);
 
@@ -3198,7 +3224,11 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006D654);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SetCameraPositionHorizontal);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetCameraPositionVertical);
+extern s8 D_1F8000E0[];
+
+void f_SetCameraPositionVertical(s32 arg0, void *arg1) {
+    *((s32 *)D_1F8000E0) = M2C_FIELD(arg1, s32 *, 4);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ApproachCameraPositionHorizontal);
 

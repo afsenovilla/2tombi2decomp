@@ -49,13 +49,34 @@ def scratch_variants(body):
     return out
 
 
+def fill_args(body, name):
+    """m2c leaves unused leading parameters out (`f(void *arg1)` for a function that only reads $a1): put dummy
+    `s32 argN` back for every missing lower index so the others land in the right registers."""
+    m = re.search(r"\b%s\(([^)]*)\)\s*\{" % re.escape(name), body)
+    if not m or not m.group(1).strip() or m.group(1).strip() == "void":
+        return body
+    params = [p.strip() for p in m.group(1).split(",")]
+    idx = []
+    for p in params:
+        a = re.search(r"\barg(\d+)\s*$", p)
+        if not a:
+            return body
+        idx.append(int(a.group(1)))
+    if idx == list(range(len(idx))):
+        return body
+    full = []
+    for i in range(max(idx) + 1):
+        full.append(params[idx.index(i)] if i in idx else "s32 arg%d" % i)
+    return body[:m.start(1)] + ", ".join(full) + body[m.end(1):]
+
+
 def attempt(prog, name, ctx):
     r = subprocess.run([sys.executable, D.M2C, "--target", "mipsel-gcc-c", "--valid-syntax", "--context", ctx,
                         D.find_asm(prog, name)],
                        capture_output=True, text=True, cwd=ROOT)
     if r.returncode or not r.stdout.strip() or "Decompilation failure" in r.stdout:
         return name, None
-    body0 = re.sub(r"(?m)^(extern )?\? ", r"\1s32 ", r.stdout)
+    body0 = fill_args(re.sub(r"(?m)^(extern )?\? ", r"\1s32 ", r.stdout), name)
     d = os.path.join(ROOT, "build", "sweep")
     os.makedirs(d, exist_ok=True)
     test = os.path.join(d, name + ".c")

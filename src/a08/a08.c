@@ -172,9 +172,23 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80114B90);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80114C1C);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80114C78);
+extern s8 D_1F800138[];
+extern s8 D_1F80019B[];
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80114CB8);
+void func_80114C78(void) {
+    func_80045258(M2C_FIELD(*((volatile void **)D_1F800138), u8 *, 0x6E), 0xF);
+    *((volatile s8 *)D_1F80019B) = 1;
+    func_80051FB4();
+}
+
+extern s8 D_1F800138[];
+extern s8 D_1F80019B[];
+
+void func_80114CB8(void) {
+    func_80045258(M2C_FIELD(*((volatile void **)D_1F800138), u8 *, 0x6E), 8);
+    *((volatile s8 *)D_1F80019B) = 1;
+    func_80051FB4();
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", f_SpawnWaterTempleSceneActorsFromPlacementTable);
 
@@ -1378,7 +1392,26 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80135388);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80135424);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801354F4);
+extern s8 D_1F8001A0[];
+
+void func_801354F4(void *arg0) {
+    u16 temp_a0;
+
+    if (M2C_FIELD(arg0, u8 *, 0xBF) != 0) {
+        func_80049760();
+    } else {
+        func_80049674(arg0);
+    }
+    temp_a0 = *((u16 *)D_1F8001A0);
+    M2C_FIELD(arg0, u16 *, 0x60) = temp_a0;
+    if (M2C_FIELD(arg0, s16 *, 0x6E) == -1) {
+        if (M2C_FIELD(arg0, u8 *, 0xBE) == 0) {
+            M2C_FIELD(arg0, u16 *, 0x56) = temp_a0;
+            return;
+        }
+        M2C_FIELD(arg0, u16 *, 0x56) = (u16) ((temp_a0 + 0x800) & 0xFFF);
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80135574);
 

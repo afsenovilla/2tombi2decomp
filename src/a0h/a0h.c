@@ -18,7 +18,21 @@ INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_80109CC4);
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_80109D24);
 
-INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_80109D94);
+extern s8 D_1F800182[];
+
+void func_80109D94(void *arg0, void *arg1) {
+    if (func_80022F04() != 0) {
+        if (func_8001E860(arg0, arg1, 0, 0x100) & 0x80) {
+            M2C_FIELD(arg0, s8 *, 0x2B) = 2;
+            M2C_FIELD(arg1, s8 *, 0) = 2;
+            M2C_FIELD(arg1, s8 *, 4) = 2;
+            M2C_FIELD(arg1, s8 *, 5) = 6;
+            M2C_FIELD(arg1, s8 *, 6) = 0;
+        }
+        M2C_FIELD(arg1, s8 *, 0x2B) = 1;
+        *((s8 *)D_1F800182) = 0;
+    }
+}
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_80109E10);
 

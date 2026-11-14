@@ -8,7 +8,15 @@ INCLUDE_ASM("asm/sop/nonmatchings/sop", func_801092B4);
 
 INCLUDE_ASM("asm/sop/nonmatchings/sop", func_80109450);
 
-INCLUDE_ASM("asm/sop/nonmatchings/sop", func_80109750);
+extern s8 D_1F800138[];
+extern M2C_UNK D_800BE0F0;
+extern M2C_UNK D_800EF478;
+
+void func_80109750(void) {
+    func_8001DC40(&D_800EF478, M2C_FIELD(&D_800BE0F0, s32 *, 0) + M2C_FIELD(*((void **)D_1F800138), u8 *, 0x6E), 0x800);
+    func_8001DC40((M2C_UNK *)0x8018A000, M2C_FIELD(&D_800BE0F0, s32 *, 8) + ((u32) M2C_FIELD(&D_800EF478, u32 *, 0) >> 0xB), M2C_FIELD(&D_800EF478, s32 *, 4) - M2C_FIELD(&D_800EF478, u32 *, 0));
+    func_80044E84(0x8018A000, 0x1F8000);
+}
 
 INCLUDE_ASM("asm/sop/nonmatchings/sop", func_801097E4);
 
