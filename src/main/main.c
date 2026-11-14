@@ -4581,7 +4581,26 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaHorizontalMovementSpeed);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80056878);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_AdvanceTombaAlongMovementVector);
+typedef struct { u8 pad[0x40]; void *p40; void *p44; } UiBankB_F58;
+extern UiBankB_F58 D_800ECF58_674d;
+extern u8 *D_1F800214_120a;
+extern u8 D_800A4BC8[];
+extern u8 D_8001B860[];
+extern u16 D_800A3CD0[];
+
+void f_AdvanceTombaAlongMovementVector(u8 *t, s32 noY)
+{
+    *(s32 *)(t + 0x2C) += *(s16 *)(t + 0x48) * *(s16 *)(t + 0x44);
+    *(s32 *)(t + 0x34) += *(s16 *)(t + 0x4C) * *(s16 *)(t + 0x44);
+    if (noY == 0) {
+        *(s32 *)(t + 0x30) += *(s16 *)(t + 0x4A) * *(s16 *)(t + 0x44);
+    }
+    if (t[0x16B] == 0 && t[0x61] == 0) {
+        f_UpdateTombaForwardTerrainContact(t, 0);
+    } else {
+        t[0x5F] &= 0xFB;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaLostGroundSupportMotion);
 
@@ -5982,7 +6001,30 @@ s32 func_800714C0(u8 *a, s16 v)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007156C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800716B4);
+void func_800716B4(u8 *a)
+{
+    void *bank;
+
+    D_1F800214_120a = a;
+    if (f_InitializeMultiPartActorModel(a, 0xC, D_800ECF58_674d.p40, D_800A4BC8) != 0) {
+        return;
+    }
+    bank = D_800ECF58_674d.p44;
+    a[0xB] = 0xF;
+    *(s32 *)(a + 0x34) = 0;
+    *(s32 *)(a + 0x30) = 0;
+    *(s32 *)(a + 0x2C) = 0;
+    *(s16 *)(a + 0xBC) = 0x200;
+    *(s16 *)(a + 0xBA) = 0x200;
+    *(s16 *)(a + 0xB8) = 0x200;
+    *(s16 *)(a + 0x58) = 0;
+    *(s16 *)(a + 0x56) = 0;
+    *(s16 *)(a + 0x54) = 0;
+    a[0x7B] = 0;
+    *(void **)(a + 0x3C) = bank;
+    f_InitializeActorScript(a, D_8001B860, D_800A3CD0);
+    a[4]++;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80071768);
 
@@ -6052,7 +6094,31 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800721DC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80072308);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80072520);
+void func_80072520(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        a[4]++;
+        *(s16 *)(a + 0x40) = 0x3C;
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+        case 1:
+            func_80071DFC(a);
+            break;
+        case 2:
+            func_80072308(a);
+            break;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 u8 *func_800725D4(s16 *h)
 {
