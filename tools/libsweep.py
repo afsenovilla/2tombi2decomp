@@ -118,6 +118,25 @@ def matches(obj, name, want, syms=None):
     return True
 
 
+_LIBCTX = None
+
+
+def lib_context():
+    """include/psyq_all.h preprocessed for m2c (build/libctx.c): typed Psy-Q signatures for the drafts."""
+    global _LIBCTX
+    if _LIBCTX is None:
+        out = os.path.join(ROOT, "build", "libctx.c")
+        r = subprocess.run([cc.OLDGCC + "/gcc-2.7.2-psx/cpp", "-undef", "-D__GNUC__=2", "-DMIPSEL", "-D_LANGUAGE_C",
+                            "-DM2CTX", "-P", "-I" + os.path.join(ROOT, "include"),
+                            "-I" + os.path.join(ROOT, "include", "psyq"), os.path.join(ROOT, "include", "psyq_all.h")],
+                           capture_output=True, text=True)
+        t = re.sub(r"__asm__\s*\(.*?\);", "", r.stdout, flags=re.S)
+        t = re.sub(r"(?m)^#define M2C.*$", "", t)
+        open(out, "w").write(t)
+        _LIBCTX = out
+    return _LIBCTX
+
+
 def candidates(prog, name, ctx, t1src, sources=("main", "pt", "t1", "m2c")):
     out = []
     if "main" in sources and prog != "main":   # the same function already matched in MAIN.EXE
@@ -129,10 +148,10 @@ def candidates(prog, name, ctx, t1src, sources=("main", "pt", "t1", "m2c")):
         text, f = ptsrc.cut(name)
         if text:
             out.append(("pt:" + f, text))
-    r = subprocess.run([sys.executable, D.M2C, "--target", "mipsel-gcc-c", "--context", ctx, D.find_asm(prog, name)],
-                       capture_output=True, text=True, cwd=ROOT) if "m2c" in sources else None
-    if r and r.returncode == 0 and r.stdout.strip():
-        out.append(("m2c", '#include "common.h"\n' + re.sub(r"(?m)^(extern )?\? ", r"\1s32 ", r.stdout)))
+    r = subprocess.run([sys.executable, D.M2C, "--target", "mipsel-gcc-c", "--valid-syntax", "--context", lib_context(),
+                        D.find_asm(prog, name)], capture_output=True, text=True, cwd=ROOT) if "m2c" in sources else None
+    if r and r.returncode == 0 and r.stdout.strip() and "Decompilation failure" not in r.stdout:
+        out.append(("m2c", '#define %s %s_hdr\n#include "psyq_all.h"\n#undef %s\n' % (name, name, name) + r.stdout))
     if "t1" in sources and t1src and "__asm__(" not in open(t1src).read():
         t = open(t1src).read()
         t = re.sub(r"(?m)^//.*\n", "", t)

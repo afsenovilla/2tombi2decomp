@@ -20,10 +20,10 @@ def context():
     out = os.path.join(ROOT, "build", "ctx.c")
     os.makedirs(os.path.dirname(out), exist_ok=True)
     hs = ["common.h"] + sorted(os.path.basename(h) for h in glob.glob(os.path.join(ROOT, "include", "*.h"))
-                               if os.path.basename(h) != "common.h")
+                               if os.path.basename(h) not in ("common.h", "m2c.h", "psyq_all.h"))
     src = "".join('#include "%s"\n' % h for h in hs)
     r = subprocess.run([CC + "/cpp", "-undef", "-D__GNUC__=2", "-DMIPSEL", "-D_LANGUAGE_C", "-DM2CTX", "-P",
-                        "-I" + os.path.join(ROOT, "include")], input=src, capture_output=True, text=True)
+                        "-I" + os.path.join(ROOT, "include"), "-I" + os.path.join(ROOT, "include", "psyq")], input=src, capture_output=True, text=True)
     if r.returncode:
         sys.exit(r.stderr)
     open(out, "w").write(re.sub(r"__asm__\(.*?\);", "", r.stdout, flags=re.S))

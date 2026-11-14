@@ -1,3 +1,14 @@
-#include "common.h"
+// CC gcc-2.7.2-psx
+// FLAGS -O2 -G0
+// AS gnu
+#define func_8001B678 func_8001B678_hdr
+#include "psyq_all.h"
+#undef func_8001B678
+s32 func_8001B678(s32 arg0, s32 arg1, u32 *arg2) {
+    CdlLOC sp10;
 
-INCLUDE_ASM("asm/boot/nonmatchings/psyq/libcd/func_8001B678", func_8001B678);
+    CdIntToPos(arg1, &sp10);
+    CdControl(2U, &sp10.minute, NULL);
+    CdRead(arg0, arg2, 0x80);
+    return CdReadSync(0, NULL) == 0;
+}
