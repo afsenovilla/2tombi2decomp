@@ -1623,7 +1623,23 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8003A1E4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003A290);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003A3E8);
+extern u8 D_800BF80E_58ec;
+extern s32 D_1F800184;
+extern u8 D_800E7E81;
+
+void func_8003A3E8(void *a, u8 *s)
+{
+    switch (s[0x3E]) {
+    case 0:
+        s[0x3E]++;
+        *(s16 *)s = func_8003A1E4(a, s);
+        *(s16 *)(s + 0x12) = (rand() & 0x1F) << 7;
+    case 1:
+        *(s16 *)(s + 2) = (rcos(*(s16 *)(s + 0x12)) * 3) >> 12;
+        *(s16 *)(s + 0x12) += 0x80;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003A470);
 
@@ -3017,7 +3033,27 @@ void func_8004BEF4(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004BF84);
+void func_8004BF84(u8 *a)
+{
+    u8 v;
+
+    switch (a[5]) {
+    case 0:
+        a[5]++;
+        a[0] = 3;
+        *(s16 *)(a + 0x88) = -0x50;
+        *(s16 *)(a + 0x8A) = 0x14;
+        *(s16 *)(a + 0x8C) = 0;
+    case 1:
+        func_80051614(a, a + 0x88, 0, 0);
+        v = D_800E7E81;
+        a[1] = v;
+        if (v != 0) {
+            f_QueueClass5ActorForRender(a);
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004C01C);
 
@@ -4775,7 +4811,24 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800655DC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800656FC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006585C);
+void func_8006585C(u8 *t)
+{
+    switch (t[6]) {
+    case 0:
+        t[6]++;
+    case 1:
+        f_AdvanceActorSkeletalAnimation(t);
+        D_800BF80E_58ec = 1;
+        break;
+    }
+    if (D_1F800184 == 2) {
+        f_UpdateTombaMovementOrientation(t);
+        *(s16 *)(t + 0x50) = 0;
+        *(s16 *)(t + 0x4A) = 0;
+    } else {
+        f_UpdateTombaTransitionTerrainContact(t, 0);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800658E4);
 

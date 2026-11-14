@@ -33,9 +33,9 @@ All code in C: **1417 / 7011 functions (20.2 %, 4.2 % of the bytes)**; Phase 2 M
   turned into `sltu` while retail branches -> still open (func_8001CBA8).
 - Script-state steps (`switch (p[0x78])`: case 0 sets up and advances, case 1 waits) match with the shared
   `return 0` as a label inside the switch: `case 0: ...; goto end; case 1: if (done) return 1; end: default:
-  return 0;` (func_800425FC, func_8004201C). Still open: when case 0 stores the compare constant (`p[0x78] = 1`)
-  retail reuses the register holding 1; `s32 one = 1; ... = one;` reproduces the reuse but swaps v0/v1
-  (func_80117EC8 with 6 overlay copies, func_8006585C, func_8003A3E8: 5 words each).
+  return 0;` (func_800425FC, func_8004201C). When case 0 sets the state to 1 and retail reuses the register
+  that held the compare constant, the source was `p[0x78]++` (gcc knows the value is 0 there): writing `= 1` or
+  `s32 one = 1` gives a v0/v1 swap (func_80117EC8 and its 7 copies, func_8006585C, func_8003A3E8).
 - A scratch file that matches can still fail once installed when main.c has no prototype (or a K&R one) for a
   callee whose prototype in the scratch file narrows an argument (s16): cast the argument in the call instead.
 - A `switch` whose jump table sits in MAIN's shared rodata does not link once the function is in C (the table's
@@ -44,6 +44,8 @@ All code in C: **1417 / 7011 functions (20.2 %, 4.2 % of the bytes)**; Phase 2 M
   CameraState (`g_CameraState`, a linker name for 0x800E8008), PopupRequest / PopupDisplayEntry, MessageBank;
   named scratchpad variables in config/undefined_syms.ld; `include/actor.h` (not yet used).
 - The permuter rarely helps on raw drafts (about 10 matches in some 150 near misses at 60-120 s each).
+- `tools/dupsweep.py` keeps the linker-global names of config/undefined_syms.ld (g_CameraState, ...) instead of
+  renaming them to a program's D_ name, which had no declaration (`-v` prints a copy's failed build).
 - Library: string literals now become the retail strings' symbols, objects with extra text are rejected (+4).
 - Known left-overs worth a look: f_LoadResourceChunkIntoGroup, f_ReleaseActorModelParts (lui order), func_8003F2F8, func_8003F31C, func_8004D8B0, func_8006914C (near misses written by hand, in no file yet).
 

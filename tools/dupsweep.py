@@ -49,10 +49,14 @@ def names_by_addr(prog):
     return out
 
 
+GLOBAL_NAMES = set(re.findall(r"^\s*(\w+)\s*=", open(os.path.join(ROOT, "config", "undefined_syms.ld")).read(), re.M))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--install", action="store_true")
     ap.add_argument("--progs")
+    ap.add_argument("-v", action="store_true", help="print the build output of a copy that fails to link")
     a = ap.parse_args()
     progs = {p: (b, d, ts, te, ad) for p, b, d, ts, te, ad in programs()}
     sym = {}
@@ -124,10 +128,11 @@ def main():
                 continue
             finally:
                 shutil.rmtree(t, ignore_errors=True)
-            # rename every referenced symbol to the target's name for that address
+            # rename every referenced symbol to the target's name for that address (names the linker defines for
+            # every program, config/undefined_syms.ld, and header-declared ones stay as they are)
             ren = {}
             for s_, at in syms.items():
-                if s_ == tname:
+                if s_ == tname or s_ in GLOBAL_NAMES:
                     continue
                 want = nb.get(at) or ("func_%08X" % at if (at in addr_set or s_.startswith(("func_", "f_")))
                                       else "D_%08X" % at)
@@ -163,6 +168,8 @@ def main():
                                cwd=ROOT)
             if " OK " in r.stdout:
                 good.append((n, fn))
+            elif a.v:
+                print("%s %s failed:\n%s" % (p, n, (r.stdout + r.stderr)[-1500:]))
         t = old
         for gn, gfn in good:
             t = t.replace('INCLUDE_ASM("asm/%s/nonmatchings/%s", %s);' % (p, p, gn), gfn)
