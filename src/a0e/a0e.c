@@ -372,7 +372,30 @@ s32 func_80117254(u8 *p)
     }
 }
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_801172E4);
+extern s16 D_80125248[];
+extern s16 D_800E8046;
+
+s32 func_801172E4(u8 *p)
+{
+    s16 y;
+
+    switch (p[0x78]) {
+    case 0:
+        p[0x78]++;
+        *(s32 *)(p + 0x38) = func_8003116C(D_80125248[D_800BF870.unk0 - 10], p + 0x2C, -0x32);
+        goto end;
+    case 1:
+        y = *(u16 *)(p + 0x32) + 0x10;
+        *(s16 *)(p + 0x32) = y;
+        *(s16 *)(*(u8 **)(p + 0x38) + 0x2E) = y;
+        if (*(s16 *)(p + 0x32) >= D_800E8046 - 0xF0) {
+            return 1;
+        }
+    end:
+    default:
+        return 0;
+    }
+}
 
 
 s32 func_80117390(void *arg0) {
