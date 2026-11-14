@@ -283,9 +283,22 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveActorPartCylinderContactClass
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800240FC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800241FC);
+extern s8 D_800E80A8[];
+typedef struct { u8 pad0[0xC]; s32 x; s32 y; s32 z; } CameraTarget;
+extern CameraTarget D_1F8000D0;
+extern s8 D_800BF88E;
+extern s8 D_800E7E80[];
+s32 f_ResolveActorPairCylinderContactClass(void *a, void *b, s32 cls);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002421C);
+void func_800241FC(void *a, void *b)
+{
+    f_ResolveActorPairCylinderContactClass(a, b, 0);
+}
+
+void func_8002421C(void *a, void *b)
+{
+    f_ResolveActorPairCylinderContactClass(a, b, 1);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SnapActorOntoCylinderTop);
 
@@ -1336,7 +1349,13 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80043720);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80043858);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800438B4);
+s32 func_800438B4(u8 *actor)
+{
+    if (*(s16 *)(actor + 0x72) == actor[0x7A]) {
+        return 3;
+    }
+    return 2;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800438D4);
 
@@ -1654,7 +1673,12 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnBackEquipmentProxyActor);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_PositionActorFromModelParts);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetEquippedBackItemActor);
+void f_SetEquippedBackItemActor(s8 item, s32 actor)
+{
+    D_800BF88E = item;
+    D_800E7E80[0x6E] = item;
+    *(s32 *)(D_800E7E80 + 0x74) = actor;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ClearBackItem);
 
@@ -1865,7 +1889,11 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80050738);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SetDoubleBufferedClearColor);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80050894);
+void func_80050894(s8 v)
+{
+    D_800E80A8[0x409C] = v;
+    D_800E80A8[0x202C] = v;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800508A8);
 
@@ -3268,7 +3296,13 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006D2AC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006D654);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetCameraPositionHorizontal);
+void f_SetCameraPositionHorizontal(s32 unused, s32 *pos)
+{
+    CameraTarget *c = &D_1F8000D0;
+
+    c->x = pos[0];
+    c->z = pos[2];
+}
 
 extern s8 D_1F8000E0[];
 
@@ -3312,7 +3346,7 @@ void func_8006E228(void *arg0, M2C_UNK arg1) {
 
 
 void func_8006E294(void *arg0, M2C_UNK arg1) {
-    f_SetCameraPositionHorizontal();
+    f_SetCameraPositionHorizontal(arg0, arg1);
     f_SetCameraPositionVertical(arg0, arg1);
     if (M2C_FIELD(arg0, u8 *, 0x76) == 0) {
         func_8006DC38(arg0);
@@ -3323,7 +3357,7 @@ void func_8006E294(void *arg0, M2C_UNK arg1) {
 
 
 void func_8006E2FC(void *arg0, M2C_UNK arg1) {
-    f_SetCameraPositionHorizontal();
+    f_SetCameraPositionHorizontal(arg0, arg1);
     f_SetCameraPositionVertical(arg0, arg1);
     if (M2C_FIELD(arg0, u8 *, 0x76) == 0) {
         func_8006DAD8(arg0);
