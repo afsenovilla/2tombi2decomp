@@ -133,7 +133,16 @@ INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010B6BC);
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010B960);
 
-INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010BC94);
+void func_8010BC94(u32 *p, void *b)
+{
+    u32 lo = *p;
+    u32 packed;
+
+    packed = lo;
+    lo = packed & 0xFFFF;
+    p += 4;
+    func_8010B960(func_8010B6BC(p, b, lo), b, packed >> 16);
+}
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010BCDC);
 

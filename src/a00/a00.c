@@ -1653,7 +1653,16 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80146348);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801463EC);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80146478);
+void func_80146478(u32 *p, void *b)
+{
+    u32 lo = *p;
+    u32 packed;
+
+    packed = lo;
+    lo = packed & 0xFFFF;
+    p += 4;
+    f_UpdateWindmillCollapseParticleActor(func_801465EC(p, b, lo), b, packed >> 16);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ApplyOverlayModelFrameRange);
 

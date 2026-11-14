@@ -47,7 +47,16 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010AD40);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010B0B8);
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010B1B8);
+void func_8010B1B8(u32 *p, void *b)
+{
+    u32 lo = *p;
+    u32 packed;
+
+    packed = lo;
+    lo = packed & 0xFFFF;
+    p += 4;
+    f_DispatchEndingAreaCameraSequence(func_80112DEC(p, b, lo), b, packed >> 16);
+}
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010B200);
 

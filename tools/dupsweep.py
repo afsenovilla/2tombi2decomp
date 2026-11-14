@@ -93,6 +93,7 @@ def main():
         pend = set(re.findall(r'INCLUDE_ASM\("[^"]+", (\w+)\);', open(src).read()))
         nb = names_by_addr(p)
         b, d, ts, te, addrs = progs[p]
+        addr_set = set(addrs)
         for i, ad in enumerate(addrs):
             end = addrs[i + 1] if i + 1 < len(addrs) else te + d
             try:
@@ -128,7 +129,8 @@ def main():
             for s_, at in syms.items():
                 if s_ == tname:
                     continue
-                want = nb.get(at) or ("func_%08X" % at if s_.startswith("func_") else "D_%08X" % at)
+                want = nb.get(at) or ("func_%08X" % at if (at in addr_set or s_.startswith(("func_", "f_")))
+                                      else "D_%08X" % at)
                 if want != s_:
                     ren[s_] = want
             fn = body
