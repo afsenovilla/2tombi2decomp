@@ -3,6 +3,22 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-14 (3): jump tables in C, NON_MATCHING equivalent C
+
+- **Switches with a jump table can go to C** (`tools/jtbl.py`, called by `tools/build.py` through `cc.compile_c(...,
+  asm_filter=)`): the compiler's own table is dropped from the assembly, the code is pointed at the retail
+  `jtbl_<addr>` that stays in the program's rodata, and the case labels get the global `.L<addr>` names that table
+  refers to (the same names `jlabel` gives them in asm). The table is found by shape (length and which entries are
+  equal) among the retail tables whose labels fall inside the function. Measured before: 878 pending functions
+  (824 KB, about a third of the pending bytes) use a jump table. `tools/ccheck.py` needs nothing (it ignores
+  relocated fields).
+- **Equivalent C behind NON_MATCHING** (`tools/nonmatching.py FILE.c [--prog] [--note]`), for the native port: the
+  function goes in `#ifdef NON_MATCHING <C> #else INCLUDE_ASM #endif`, so the matching build keeps the retail asm.
+  The tool refuses a function that matches, checks the matching build and that the file compiles with
+  -DNON_MATCHING. The C is not verified byte for byte (the comment says how many words differ): it has to be tested
+  in the port. `tools/install_c.py` replaces the whole block once the function matches; `tools/sync_src.py` keeps the
+  block with its INCLUDE_ASM line; `tools/progress.py --phases` shows the bytes "with equivalent C" in a last column.
+
 ## 2026-11-14 (2): Phase 2 under way (user chose B: engine first, library in parallel)
 
 All code in C: **1532 / 7011 functions (21.9 %, 4.7 % of the bytes)**; Phase 2 MAIN 419 / 1167 (36 %); Phase 4

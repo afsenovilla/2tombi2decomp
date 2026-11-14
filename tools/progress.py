@@ -20,8 +20,9 @@ def file_state(prog):
         t = open(f).read()
         lib = "/psyq/" in f.replace(os.sep, "/")
         by_design = "// ASM by design:" in t
+        equiv = set(re.findall(r'(?ms)^#ifdef NON_MATCHING\n(?:(?!^#endif).)*?^#else\nINCLUDE_ASM\([^,]+,\s*(\w+)\)', t))
         for n in re.findall(r"INCLUDE_ASM\([^,]+,\s*(\w+)\)", t):
-            out[n] = (lib, "asm" if by_design else "pending")
+            out[n] = (lib, "asm" if by_design else "equiv" if n in equiv else "pending")
         if lib and "INCLUDE_ASM" not in t:
             out[os.path.basename(f)[:-2]] = (True, "c")
     return out
@@ -87,6 +88,8 @@ def counts():
             c[cat + "_n"] += 1; c[cat + "_b"] += e - s
             if state in ("c", "asm"):
                 c[cat + "_done_n"] += 1; c[cat + "_done_b"] += e - s
+            if state in ("c", "asm", "equiv"):
+                c[cat + "_eq_n"] += 1; c[cat + "_eq_b"] += e - s
         out[prog] = c
     return out
 
@@ -94,18 +97,21 @@ def counts():
 def phases():
     """Progress per roadmap phase: functions and bytes done (C, or asm by design for the library)."""
     c = counts()
-    print("%-40s %15s %22s" % ("", "functions", "bytes"))
+    print("%-40s %15s %22s   %s" % ("", "functions", "bytes", "with equivalent C (NON_MATCHING): bytes"))
     tot = collections.Counter()
+
+    def row(title, t):
+        print("%-40s %5d/%-5d %5.1f%% %8d/%-8d %5.1f%%   %5.1f%%" % (
+            title, t["_done_n"], t["_n"], 100.0 * t["_done_n"] / t["_n"], t["_done_b"], t["_b"],
+            100.0 * t["_done_b"] / t["_b"], 100.0 * t["_eq_b"] / t["_b"]))
     for title, progs, cat in PHASES:
         t = collections.Counter()
         for p in (progs or ["main", "boot"]):
-            for k in ("_n", "_b", "_done_n", "_done_b"):
+            for k in ("_n", "_b", "_done_n", "_done_b", "_eq_n", "_eq_b"):
                 t[k] += c.get(p, {}).get(cat + k, 0)
         tot.update(t)
-        print("%-40s %5d/%-5d %5.1f%% %8d/%-8d %5.1f%%" % (title, t["_done_n"], t["_n"], 100.0 * t["_done_n"] / t["_n"],
-                                                   t["_done_b"], t["_b"], 100.0 * t["_done_b"] / t["_b"]))
-    print("%-40s %5d/%-5d %5.1f%% %8d/%-8d %5.1f%%" % ("All code", tot["_done_n"], tot["_n"], 100.0 * tot["_done_n"] / tot["_n"],
-                                               tot["_done_b"], tot["_b"], 100.0 * tot["_done_b"] / tot["_b"]))
+        row(title, t)
+    row("All code", tot)
 
 
 def show(prog, c):

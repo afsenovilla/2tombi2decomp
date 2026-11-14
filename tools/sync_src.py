@@ -8,6 +8,7 @@
 2. The file's functions are re-laid in address order: C definitions are kept as written (with the extern / comment
    lines just above them), everything else becomes INCLUDE_ASM of the current nonmatchings file, so a function that
    splat now splits in two gets two lines. A C function whose address no longer starts a function is an error.
+A NON_MATCHING block (tools/nonmatching.py) stays around its INCLUDE_ASM line.
 Then split again (tools/build.py does all of this: split, sync, split again when the file changed).
 """
 import argparse, glob, os, re, sys
@@ -49,6 +50,14 @@ def main():
         ad = int(m.group(1), 16)
         return addr2name.get(ad, m.group(0))
     text = re.sub(r"\bfunc_([0-9A-F]{8})\b", ren, text)
+    # NON_MATCHING blocks (tools/nonmatching.py) travel with their INCLUDE_ASM line
+    nm = {}
+
+    def keep(m):
+        nm[m.group(2)] = m.group(0).rstrip("\n")
+        return m.group(1) + "\n"
+    text = re.sub(r'(?ms)^#ifdef NON_MATCHING\n(?:(?!^#endif).)*?^#else\n(INCLUDE_ASM\("[^"]+", (\w+)\);)\n#endif\n',
+                  keep, text)
     # 2. split into header + items
     item_re = re.compile(r'(?ms)^INCLUDE_ASM\("[^"]+", (\w+)\);\n|^((?:[^\n;{}]*\n)??[^\n;{}#]*?\b(\w+)\s*\([^;{}]*\)\s*\n?\{.*?^\}\n)')
     first = item_re.search(text)
@@ -91,6 +100,8 @@ def main():
     for ad, name in cur:
         if ad in cdefs:
             out.append(cdefs[ad])
+        elif name in nm:
+            out.append(nm[name])
         else:
             out.append('INCLUDE_ASM("asm/%s/nonmatchings/%s", %s);' % (prog, prog, name))
     new = "\n".join(out[:1]) + "\n" + "\n\n".join(out[1:]) + "\n"

@@ -52,6 +52,11 @@ def main():
         pre[i] = re.sub(r"\b%s\b" % k, new, p)
         funcs = [(n, re.sub(r"\b%s\b" % k, new, b)) for n, b in funcs]
     libsweep.write_aliases(a.prog, aliases)
+    # a function that had equivalent C (tools/nonmatching.py) loses its whole NON_MATCHING block
+    for n, _ in funcs:
+        line = 'INCLUDE_ASM("asm/%s/nonmatchings/%s", %s);' % (a.prog, a.prog, n)
+        t = re.sub(r"(?ms)^#ifdef NON_MATCHING\n(?:(?!^#endif).)*?^#else\n" + re.escape(line) + r"\n#endif$",
+                   lambda m: line, t)
     lines = {}
     for n, body in funcs:
         line = 'INCLUDE_ASM("asm/%s/nonmatchings/%s", %s);' % (a.prog, a.prog, n)
