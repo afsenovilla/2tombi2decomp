@@ -2746,7 +2746,41 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800506D0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80050738);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetDoubleBufferedClearColor);
+extern u16 D_1F800170;
+extern u16 D_1F800174_de41;
+extern u16 D_1F800176;
+extern u8 D_800FB160_9a03[];
+void func_8007263C(u8 *);
+typedef struct { u8 pad[0x18]; u8 isbg; u8 r0, g0, b0; } DrawEnvLite_E80A8;
+
+void f_SetDoubleBufferedClearColor(u8 r, u8 g, u8 b)
+{
+    u8 *base = D_800E80A8_42d3;
+    DrawEnvLite_E80A8 *e0;
+    DrawEnvLite_E80A8 *e1;
+    u8 bg = base[0x202C];
+    u8 r0, g0, b0;
+    u8 *gs;
+
+    base[0x409C] = 1;
+    base[0x202C] = 1;
+    e0 = (DrawEnvLite_E80A8 *)(base + 0x2014);
+    r0 = base[0x202D];
+    g0 = base[0x202E];
+    b0 = base[0x202F];
+    e1 = (DrawEnvLite_E80A8 *)(base + 0x4084);
+    e0->r0 = r;
+    e0->g0 = g;
+    e0->b0 = b;
+    e1->r0 = r;
+    e1->g0 = g;
+    e1->b0 = b;
+    gs = (u8 *)&D_800BF870;
+    gs[0x37] = (bg << 7) | 1;
+    gs[0x34] = r0;
+    gs[0x35] = g0;
+    gs[0x36] = b0;
+}
 
 
 void func_80050894(s8 v)
@@ -2912,7 +2946,25 @@ void f_TransformPointByModelPart(void *arg0, s32 arg1, void *arg2) {
     M2C_FIELD(arg2, u16 *, 4) = (u16) (M2C_FIELD(arg2, u16 *, 4) + M2C_FIELD(arg0, u16 *, 0x34));
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80051E00);
+void func_80051E00(void)
+{
+    u8 *tcb = *(u8 **)0x110;
+    WorkerState *w = (WorkerState *)0x801FE000;
+    s32 i = 0;
+    s32 mode = 0x40000404;
+    u32 stack = 0x801FEA00;
+
+    for (; i < 3; i++) {
+        tcb += 0xC0;
+        w->busy = 0;
+        *(u32 *)w->pad8 = stack;
+        w->active = 0;
+        w->unk6F = 0;
+        w++;
+        stack += 0x800;
+        *(s32 *)(tcb + 0x94) = mode;
+    }
+}
 
 extern s8 D_1F800138[];
 void func_80051E60(void) {
@@ -4779,7 +4831,20 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80072308);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80072520);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800725D4);
+u8 *func_800725D4(s16 *h)
+{
+    u8 *a = f_AllocateActorRecordByType(1, 3, 1);
+
+    if (a == 0) {
+        return 0;
+    }
+    a[2] = 0x17;
+    *(void **)(a + 0x1C) = func_8007263C;
+    *(s16 **)(a + 0x10) = h;
+    a[0x28] |= 0x80;
+    *h = -1;
+    return a;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007263C);
 
@@ -5461,7 +5526,20 @@ void func_8007B2AC(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0xC) = 0x1000;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007B2C0);
+void func_8007B2C0(s32 reverse)
+{
+    if (reverse == 0) {
+        D_1F800170 = 0x8000;
+        D_1F800172_5cdb = 0x4000;
+        D_1F800174_de41 = 0x2000;
+        D_1F800176 = 0x1000;
+    } else {
+        D_1F800170 = 0x1000;
+        D_1F800172_5cdb = 0x2000;
+        D_1F800174_de41 = 0x4000;
+        D_1F800176 = 0x8000;
+    }
+}
 
 extern M2C_UNK D_800FB160;
 void func_8007B328(void) {
@@ -5476,9 +5554,35 @@ void func_8007B328(void) {
     func_8007B2C0(0);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007B38C);
+void func_8007B38C(void)
+{
+    u8 *g = (u8 *)&D_800BF870;
+    u8 *s = D_800FB160_9a03;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007B3F4);
+    g[0x5DC] = s[6];
+    g[0x33] = s[1];
+    g[0x5DE] = s[2];
+    g[0x5DF] = s[3];
+    g[0x1A] = s[4];
+    g[0x1B] = s[5];
+    g[0x5DD] = s[7];
+    func_8007B2C0(g[0x5DC]);
+}
+
+void func_8007B3F4(void)
+{
+    u8 *s = D_800FB160_9a03;
+    u8 *g = (u8 *)&D_800BF870;
+
+    s[6] = g[0x5DC];
+    s[1] = g[0x33];
+    s[2] = g[0x5DE];
+    s[3] = g[0x5DF];
+    s[4] = g[0x1A];
+    s[5] = g[0x1B];
+    s[7] = g[0x5DD];
+    func_8007B2C0(s[6]);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007B45C);
 
