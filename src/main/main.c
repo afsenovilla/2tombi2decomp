@@ -986,9 +986,45 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80033630);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800336DC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003393C);
+extern u16 D_800A239C[];
+extern void *D_800174AC;
+extern void *D_800174B0;
+extern u8 D_800E7E80_f78d[];
+extern u8 *D_1F8001E4;
+extern u8 *D_1F8001D4;
+typedef struct UiRect { s16 x, y, w, h; } UiRect;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800339A4);
+void func_8003393C(u8 *a, u8 c)
+{
+    struct { u8 b0; u8 b1; s16 h2; } q;
+    UiRect r;
+    u16 *t = D_800A239C;
+
+    r.x = t[0];
+    r.y = t[1];
+    r.w = t[2];
+    r.h = t[3];
+    q.b1 = c;
+    q.b0 = 0;
+    q.h2 = 0;
+    f_DrawPackedUiQuadFrame(&r, D_800174AC, *(void **)(a + 4), &q);
+}
+
+void func_800339A4(u8 *a, u8 c)
+{
+    struct { u8 b0; u8 b1; s16 h2; } q;
+    UiRect r;
+    u16 *t = D_800A239C;
+
+    r.x = t[4];
+    r.y = t[5];
+    r.w = t[6];
+    r.h = t[7];
+    q.b1 = c;
+    q.b0 = 0;
+    q.h2 = 0;
+    f_DrawPackedUiQuadFrame(&r, D_800174B0, *(void **)(a + 4), &q);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80033A0C);
 
@@ -2046,7 +2082,18 @@ void f_StartTombaScriptedAnimation(u8 *t, s32 anim, s16 blend)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80044144);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800442A0);
+s32 func_800442A0(u8 *p)
+{
+    u8 *t = D_800E7E80_f78d;
+    u8 *who = p;
+
+    if (*(s16 *)(p + 0x72) & 0x8000) {
+        who = *(u8 **)D_1F800214;
+    }
+    f_SetActorAnimation(who, *(s16 *)(p + 0x74), 4);
+    f_StartTombaScriptedAnimation(t, *(s16 *)(p + 0x76), 4);
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80044308);
 
