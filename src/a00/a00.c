@@ -358,7 +358,9 @@ void func_80114F54(s32 arg0, void *arg1) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114F94);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80115084);
+s32 func_80115084(s32 arg0, s32 arg1) {
+    return func_8001F650(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC0));
+}
 
 
 s32 func_801150A8(s32 arg0, s32 arg1) {
