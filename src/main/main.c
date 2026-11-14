@@ -2134,7 +2134,35 @@ s32 f_GetEventAPReward(s32 event, s32 low)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80040AA4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_StartEvent);
+typedef struct { s32 w[8]; } PopupReq32;
+extern s16 D_800E7FEE;
+typedef struct { void *t[8]; } AudioBanks_05C;
+extern AudioBanks_05C D_8001005C;
+extern u8 *D_1F800224;
+extern u16 D_800E7EAE;
+extern u16 D_800E7EB6;
+
+s32 f_StartEvent(s32 ev)
+{
+    u8 *g;
+    s32 r;
+
+    if (D_800E7FEE == 0) {
+        return -1;
+    }
+    g = (u8 *)&D_800BF870;
+    if (g[ev + 0x44] != 0) {
+        return 0;
+    }
+    g[ev + 0x44] = 1;
+    *(u16 *)(g + 0x38) += 1;
+    r = f_GetEventAPReward(ev, 0);
+    *(s32 *)(g + 4) += r;
+    D_800ED058_93c7[D_800ED058_93c7[0x15] + 0x16] = ev;
+    D_800ED058_93c7[D_800ED058_93c7[0x15] + 0x1C] = 0;
+    D_800ED058_93c7[0x15] += 1;
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateEvent);
 
@@ -2177,7 +2205,6 @@ extern u16 D_800A4582;
 extern u16 D_800A457C[];
 extern u16 D_1F800174_de41;
 extern u8 D_800BF9B4[];
-extern s16 D_800E7FEE;
 extern u8 D_800BF87D;
 
 void f_LoadActorScriptCommand(u8 *a, u16 *cmd)
@@ -2447,7 +2474,31 @@ s32 func_8004223C(void *arg0) {
     return D_800BF843 == M2C_FIELD(arg0, s16 *, 0x72);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80042258);
+s32 func_80042258(u8 *p)
+{
+    switch (p[0x78]) {
+    case 0:
+        *(s16 *)(p + 0x64) = 0;
+        p[0x78]++;
+        goto end;
+    case 1:
+        if (*(u16 *)(p + 0x72) & 1) {
+            D_800E7EAE = *(u16 *)(p + 0x74);
+        }
+        if (*(u16 *)(p + 0x72) & 2) {
+            D_800E7EB6 = *(u16 *)(p + 0x76);
+        }
+        if (D_800BF80E_58ec != 0) {
+            return 1;
+        }
+        if (++*(s16 *)(p + 0x64) >= 0x1F4) {
+            return 1;
+        }
+    end:
+    default:
+        return 0;
+    }
+}
 
 extern s8 D_1F800137[];
 s32 f_EndScriptedInteractionAudio(void) {
@@ -3581,12 +3632,30 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_FormatPopupPayloadPage);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_AppendPopupDisplayEntry);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_PromoteNextPopupRequest);
+void f_PromoteNextPopupRequest(u8 *m)
+{
+    PopupReq32 *q;
+    s32 i;
+    PopupReq32 spare;
+
+    func_80077D64();
+    q = (PopupReq32 *)(m + 0x1B0);
+    f_AppendPopupDisplayEntry(m, q);
+    if (--*(s16 *)(m + 0xA) > 0) {
+        i = 0;
+        do {
+            i++;
+            q[0] = q[1];
+            q++;
+        } while (i < *(s16 *)(m + 0xA));
+    }
+    f_ResetPopupRequest(q);
+}
 
 
 void func_8004F430(void *arg0) {
     if (M2C_FIELD(arg0, s16 *, 0xA) != 0) {
-        f_PromoteNextPopupRequest();
+        f_PromoteNextPopupRequest(arg0);
         M2C_FIELD(arg0, s16 *, 4) = 0;
         M2C_FIELD(arg0, s8 *, 1) = 1;
     }
