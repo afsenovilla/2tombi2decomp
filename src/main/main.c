@@ -235,7 +235,26 @@ void func_80023238(u8 *a, u8 *b)
     *(u16 *)(b + 0x36) = *(u16 *)(a + 0x36);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_CanTombaTakeDamage);
+extern u8 D_800BF839;
+extern u8 D_800BFE55;
+extern u8 D_1F800137_104c;
+extern u8 *D_800BF844;
+extern u8 D_800BF4F8[];
+extern u8 D_800ECF48_7ec2[];
+
+s32 f_CanTombaTakeDamage(u8 *t)
+{
+    if (*(s16 *)(t + 0x16E) == 0 || D_800BF839 != 0) {
+        return 0;
+    }
+    if (D_800BFE55 != 0) {
+        return 0;
+    }
+    if (D_1F800137_104c != 0 || (t[0] & 2)) {
+        return 0;
+    }
+    return 1;
+}
 
 extern s8 D_800BF80D;
 extern s8 D_800BF81E;
@@ -1670,7 +1689,17 @@ s32 func_80041AC0(s32 arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeActorFixedStepMotion);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_AdvanceActorFixedStepMotion);
+s32 f_AdvanceActorFixedStepMotion(u8 *a)
+{
+    if (*(s16 *)(a + 0x40) != 0) {
+        *(u16 *)(a + 0x40) -= 1;
+        *(s32 *)(a + 0x2C) += *(s16 *)(a + 0x4E) << 8;
+        *(s32 *)(a + 0x30) += *(s16 *)(a + 0x50) << 8;
+        *(s32 *)(a + 0x34) += *(s16 *)(a + 0x52) << 8;
+        return 0;
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80041C54);
 
@@ -1849,7 +1878,22 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800433FC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80043634);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800436BC);
+s32 func_800436BC(u8 *p)
+{
+    u8 *b = D_800BF844;
+
+    if (*(s16 *)(p + 0x72) == -1) {
+        b[4] = 2;
+        b[5] = 0;
+        *(u16 *)(b + 0x74) = *(u16 *)(p + 0x74);
+    } else {
+        b[5] = p[0x72];
+        b[0x5E] = p[0x74];
+        *(u16 *)(b + 0x60) = *(u16 *)(p + 0x76);
+    }
+    b[6] = 0;
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80043720);
 
@@ -2826,7 +2870,24 @@ void func_80052078(s32 arg0) {
     ChangeTh(0xFF000000);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800520E0);
+void func_800520E0(void)
+{
+    u8 *pad;
+    u8 *s;
+
+    func_8007B328();
+    pad = D_800BF4F8;
+    *(u16 *)(pad + 2) = 0xFFFF;
+    s = D_800ECF48_7ec2;
+    *(s16 *)(s + 2) = 0;
+    s[4] = 0;
+    s[5] = 0;
+    s[6] = 0;
+    s[7] = 0;
+    PadInitDirect(pad, pad + 0x22);
+    PadEnableCom(1);
+    PadStartCom();
+}
 
 
 s16 func_80052144(s32 arg0, s32 arg1) {
