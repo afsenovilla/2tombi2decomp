@@ -778,7 +778,36 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80026EB8);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80026F88);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeEffectSlotFromTemplateIndex);
+extern u8 D_800F2740[];
+extern u8 D_800FB11C[];
+extern u8 D_800ED8C0[];
+extern s32 *D_800E7E74;
+extern u16 D_1F8001B2;
+extern u16 D_1F8001B4;
+extern u16 D_1F8001B6;
+extern u16 D_1F8001B8;
+void func_8002B7B0(u8 *);
+void func_8002B3A4(u8 *);
+
+void f_InitializeEffectSlotFromTemplateIndex(void *a, u16 *t, s32 n)
+{
+    void *r = func_80026D08(a, t, t + 8, n);
+
+    if (r == 0) {
+        return;
+    }
+    n -= t[0];
+    r = func_80026DD8(a, t, r, n);
+    if (r == 0) {
+        return;
+    }
+    n -= t[1];
+    r = func_80026EB8(a, t, r, n);
+    if (r == 0) {
+        return;
+    }
+    func_80026F88(a, t, r, n - t[2]);
+}
 
 extern void (*D_800A4AF8[])(void);
 extern void (*D_800A4B50[])(void);
@@ -1145,7 +1174,26 @@ u8 *f_SpawnLinkedActorShadow(u8 *owner)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnLinkedActorSpriteRingEffect);
+u8 *f_SpawnLinkedActorSpriteRingEffect(u8 *src, void *owner, s32 v, s32 y)
+{
+    u8 *e;
+
+    if (src[0x1B] & 0x40) {
+        return 0;
+    }
+    e = f_AllocateActorRecordByType(0, 6, 1);
+    if (e == 0) {
+        return 0;
+    }
+    e[0xB] = 0x20;
+    *(void **)(e + 0x1C) = func_8002B7B0;
+    *(void **)(e + 0x10) = owner;
+    *(u8 **)(e + 0x14) = src;
+    *(s32 *)(e + 0x50) = v;
+    *(s16 *)(e + 0x32) = y;
+    *(void **)(e + 0x18) = func_8002B3A4;
+    return e;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80033278);
 
@@ -2858,7 +2906,24 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004960C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ApplyTerrainProfileOrientationToActor);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ApplyAreaPlaneDirectionToActor);
+void f_ApplyAreaPlaneDirectionToActor(u8 *a)
+{
+    s32 c;
+    s32 s;
+    s32 ang;
+    u16 t;
+
+    ang = ratan2(D_1F8001B8 - D_1F8001B4, D_1F8001B6 - D_1F8001B2) & 0xFFF;
+
+    D_1F8001A0_6940 = ang;
+    c = rcos(ang);
+    s = rsin((s16)D_1F8001A0_6940);
+    D_1F8001A2 = 0;
+    t = D_1F8001A0_6940;
+    *(s16 *)(a + 0x48) = c >> 4;
+    *(s16 *)(a + 0x4C) = s >> 4;
+    D_1F8001A0_6940 = -t & 0xFFF;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80049800);
 
@@ -6438,7 +6503,21 @@ void f_DrawTallMenuText(s16 x, s32 y, s16 c, s32 d, s32 e)
     f_DrawMenuTextGlyphs(x | (y << 16), 0x100008, c, d, e);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_CalculateCenteredTextPositions);
+s32 f_CalculateCenteredTextPositions(char **lines, s32 n, s32 *xs)
+{
+    s32 min = 0xA0;
+    s32 i;
+    s32 x;
+
+    for (i = 0; i < n; i++) {
+        x = 0xA0 - (strlen(lines[i]) >> 1) * 8;
+        xs[i] = x;
+        if (x < min) {
+            min = x;
+        }
+    }
+    return min - 0x10;
+}
 
 void func_80079464(s32 demo)
 {
@@ -6629,7 +6708,22 @@ void func_8007B008(void)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007B04C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007B0F0);
+void func_8007B0F0(void)
+{
+    s32 i = 0;
+    u8 *p = D_800F2740;
+    u8 *q;
+
+    for (; i < 0x208; i++, p += 0x44) {
+        memset(p, 0, 0x44);
+    }
+    q = D_800FB11C;
+    D_800E7E74 = (s32 *)D_800ED8C0;
+    for (i = 0; i < 0x208; i++, q -= 0x44) {
+        *--D_800E7E74 = (s32)q;
+    }
+    D_800ED098 = 0x208;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007B18C);
 
