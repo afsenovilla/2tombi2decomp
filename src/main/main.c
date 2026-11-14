@@ -180,7 +180,19 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaClass5ActorContacts);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_PrepareTombaCollisionFrame);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80022A80);
+extern s8 *D_800ECF68;
+extern u8 D_80017FE8[];
+extern s8 *D_800ECF58[];
+extern void (*D_8009D1D4[])(void);
+extern void *D_80017334_ae99[];
+typedef struct SVec { s16 vx, vy, vz, pad; } SVec;
+
+void func_80022A80(void)
+{
+    if (D_800BF870.unk0 != 3) {
+        D_8009D1D4[D_800BF870.unk0]();
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80022AC8);
 
@@ -1017,7 +1029,17 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80037E44);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800384EC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800386C0);
+s32 func_800386C0(u8 *p)
+{
+    if (p[0x1F] < p[0x21] - 1) {
+        p[0x1F]++;
+        if (p[0x1F] >= p[0x1E] + 6) {
+            p[0x1E]++;
+        }
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80038708);
 
@@ -1039,7 +1061,17 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8003989C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003990C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80039978);
+s32 func_80039978(u8 *p)
+{
+    if (p[0x1F] < p[0x23] - 1) {
+        p[0x1F]++;
+        if (p[0x1F] >= p[0x1E] + 5) {
+            p[0x1E]++;
+        }
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800399C0);
 
@@ -1551,7 +1583,17 @@ s32 func_8004266C(void *arg0) {
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80042690);
+s32 func_80042690(u8 *a)
+{
+    s16 v[8];
+
+    v[1] = *(u16 *)(a + 0x72);
+    v[3] = *(u16 *)(a + 0x74);
+    v[5] = *(u16 *)(a + 0x76);
+    f_SetScriptActorInteractionOffset(a, 1, v);
+    f_SetCurrentScriptActorMode(3);
+    return 1;
+}
 
 
 s32 func_800426D8(void *arg0) {
