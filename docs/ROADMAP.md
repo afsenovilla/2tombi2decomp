@@ -30,14 +30,23 @@ nothing from the disc is committed.
 
 ## Phase 1 — Psy-Q 4.4 library (859 functions, 170 KB; MAIN + boot)
 
-- [ ] **1.1 Name every library function** from the signature hits (`tools/funcstats.py` knows object -> label offsets)
-  into `config/symbol_addrs_main.txt` / `_boot.txt`. *Done when* no library function is `func_*`.
-- [ ] **1.2 Headers**: Psy-Q 4.4 headers (`include/psyq`, fetched, not committed) usable from `src/`.
-- [ ] **1.3 Library C**: reuse existing open Psy-Q decompilations (T1's matched library C, other projects; check each
+- [x] **1.1 Name every library function** from the signature hits (`tools/funcstats.py` knows object -> label offsets)
+  into `config/symbol_addrs_main.txt` / `_boot.txt`. *Done when* no library function is `func_*`. (Done for the public functions: `tools/name_lib.py`, 368 MAIN + 213 boot
+  names; the library is 0x80080820..0x8009D090 in MAIN, 0x80012D2C..0x8001FB5C in boot, entirely covered by
+  signatures. ~180 static helpers keep `func_*` names: the signatures carry no names for them.)
+- [x] **1.2 Headers**: Psy-Q 4.4 headers (`include/psyq`, fetched, not committed) usable from `src/`.
+- [ ] **1.3 Library C** — in progress (see the status below): reuse existing open Psy-Q decompilations (T1's matched library C, other projects; check each
   license, list them in THIRD_PARTY_NOTICES.md) per library: LIBAPI, LIBC2, LIBETC, LIBGPU, LIBGTE, LIBCD, LIBPAD,
   LIBCARD, LIBSPU, LIBSND, LIBPRESS. Library files go to `src/main/psyq/<lib>/` with their own splat subsegments.
   *Done when* all library functions of MAIN and boot are C (or `INCLUDE_ASM` kept on purpose for hand-written asm, e.g.
   syscall stubs) and counted apart in progress.py.
+  Status 2026-11-14: one C file per library function (`tools/libsplit.py`, `src/<prog>/psyq/<lib>/`); **314 / 867 in
+  C, 71 asm by design** (BIOS stubs, syscall wrappers, crt0: `tools/asm_by_design.py`), ~480 left. Automatic sources
+  are exhausted: psx_tomba (MIT, ~130 matched), Tombi-Decomp (~20), m2c drafts under the library compiler set-ups
+  (~110), psyz (Psy-Q 4.0 decomp, MIT: only 8, 4.4 code differs). The library objects were built with gcc 2.7.2 and
+  either maspsx (ASPSX 2.79) or plain GNU as per object, not the game's 2.8.1. The rest needs hand decompilation
+  (m2c draft + headers + permuter: `tools/libnear.py`, `tools/libpermute.py`); psyz notes that Psy-Q >= 4.1 objects
+  are hard to match, its compiler flags are not known.
 
 ## Phase 2 — MAIN.EXE engine (1107 game functions, 402 KB)
 

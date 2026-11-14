@@ -48,7 +48,9 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   `game`, `opn`, `sop` (BIN/*.BIN).
 - `python3 -I tools/funcstats.py --csv build/funcs.csv`: function census (Psy-Q 4.4 library by signature, code shared
   between programs, game code left).
-- `python3 -I tools/progress.py`: functions / bytes in C per program.
+- `python3 -I tools/progress.py`: game / library functions in C per program.
+- Library: `python3 -I tools/libsweep.py [--prog boot] --install` (automatic candidates), `tools/libnear.py`,
+  `tools/libpermute.py`, `tools/asm_by_design.py`; one file per library function in `src/<prog>/psyq/<lib>/`.
 - C lives in `src/<prog>/*.c` (`INCLUDE_ASM` for what is not decompiled yet, `include/common.h`); see docs/STATUS.md.
 - `python3 -I tools/decomp.py NAME [--check] [--write]`: m2c draft of one function; `python3 -I tools/sweep.py
   [--max-size 0x100] --install`: install every draft that matches as is (build-checked).
