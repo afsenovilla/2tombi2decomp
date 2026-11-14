@@ -76,7 +76,12 @@ void func_8010B3E8(void) {
     func_8010AB24();
 }
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010B408);
+void func_8010B408(void *a, void *b)
+{
+    func_80056B48(a, 1);
+    func_8010A668(a, b);
+    func_80055D5C(a);
+}
 
 extern s8 D_1F80027E[];
 extern u8 D_800BFA1A;

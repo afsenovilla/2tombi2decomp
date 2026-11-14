@@ -374,7 +374,20 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80116114);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801161EC);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801162E8);
+extern u16 D_1F8001A4;
+
+void func_801162E8(u8 *a)
+{
+    s16 v[8];
+
+    v[1] = *(u16 *)(a + 0x2E);
+    v[3] = D_1F8001A4;
+    v[5] = *(u16 *)(a + 0x36);
+    func_800312D4(0x515, v, -0xA);
+    v[3] += 0x50;
+    func_800312D4(0x514, v, -0xA);
+    func_80074590(7, 0, 0);
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", f_SpawnKujaraRanchSceneActorsFromPlacementTable);
 
@@ -582,7 +595,14 @@ void func_8011B0B8(void *arg0) {
     func_80077B5C();
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011B0DC);
+void func_8011B0DC(u8 *a)
+{
+    if (func_80051B70(a, 0xC, 0x15) == 0) {
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x58) = 0;
+    }
+}
 
 extern s16 D_800ED098;
 void func_8011B11C(void *arg0) {

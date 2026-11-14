@@ -356,7 +356,12 @@ void func_801145EC(void) {
     func_80112838();
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011460C);
+void func_8011460C(void *a, void *b)
+{
+    func_80056B48(a, 1);
+    func_8011237C(a, b);
+    func_80055D5C(a);
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80114654);
 

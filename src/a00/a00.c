@@ -115,7 +115,12 @@ void func_8010C87C(void) {
     func_8010A7F8();
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C89C);
+void func_8010C89C(void *a, void *b)
+{
+    func_80056B48(a, 1);
+    f_UpdateA00TombaWaterSurfaceMotion(a, b);
+    func_80055D5C(a);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C8E4);
 
