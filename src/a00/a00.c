@@ -408,7 +408,23 @@ s32 func_801150A8(s32 arg0, s32 arg1) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801150CC);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801151F4);
+extern s32 D_1F80009C;
+
+void func_801151F4(u8 *a, u8 *b)
+{
+    s32 v;
+
+    if (func_8002313C(a, b, *(void **)(b + 0xC0)) != 0) {
+        func_8001E860(a, b, *(void **)(b + 0xC0), 0x400);
+        v = D_1F80009C;
+        b[0x2B] = 1;
+        b[0x46] = v >> 4;
+        if (a[0x5E] != 0) {
+            b[0x2B] = 0x81;
+        }
+        D_1F800182_5650 = 0;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveA00ActiveActorCollisionCandidates);
 
