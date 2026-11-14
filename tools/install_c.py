@@ -68,7 +68,7 @@ def main():
         # prototypes are left out: the asm drafts call functions with the argument counts m2c saw (pass-through
         # arguments dropped), which a prototype would reject; calls compile the same without one
         m = re.match(r"[\w \*]+?\b(\w+)\s*\([^;{}]*\)\s*;$", p)
-        return not m
+        return not m or p.startswith(("extern", "typedef"))
     for n, body in funcs:
         if n == first:
             extra = [p for p in pre if wanted(p)]

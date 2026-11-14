@@ -400,7 +400,18 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaForwardContactProbe);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_TestTombaSupportPointAgainstPartBounds);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80024CF4);
+extern s8 D_1F800214[];
+extern void (*D_8009D22C[])(void);
+extern s32 D_800A3EC8;
+typedef struct Range8b { s32 sector; s32 size; } Range8b;
+extern Range8b D_800BE118_9ace[];
+extern u8 D_800BF88D;
+extern u8 D_1F800251;
+
+void func_80024CF4(void)
+{
+    D_8009D22C[D_800BF870.unk0]();
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80024D34);
 
@@ -1608,9 +1619,15 @@ s32 func_800438B4(u8 *actor)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800438D4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80043964);
+void func_80043964(u8 *p)
+{
+    func_800438D4(*(s16 *)(p + 0x72), D_800BF870.pad1[*(s16 *)(p + 0x74) + 0x143], p[0x76]);
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800439A4);
+void func_800439A4(u8 *p)
+{
+    func_800438D4(*(s16 *)(p + 0x72), D_800BF870.pad1[*(s16 *)(p + 0x74) + 0x43], p[0x76]);
+}
 
 
 s32 func_800439E4(void *arg0) {
@@ -1757,7 +1774,10 @@ void func_80045558(s32 arg0, s32 arg1, s32 arg2, void *arg3) {
     func_80045080((void *)0x8018A000, arg0 & 0xFF, arg2, arg3);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80045580);
+s32 func_80045580(s32 i)
+{
+    return f_StartCooperativeDiscRead((void *)0x8018A000, D_800A3EC8, D_800BE118_9ace[i].size) != 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ProbeActorTerrainAtOffset);
 
@@ -1996,7 +2016,13 @@ s32 func_8004B428(s32 arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B4B0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B4E8);
+void func_8004B4E8(s32 item, u8 v)
+{
+    f_AddItemWithMessage(item, 1);
+    D_800BF88D = v;
+    D_800E7E80[0x6D] = v;
+    func_80067DA8(D_800E7E80);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B528);
 
@@ -3784,7 +3810,19 @@ void f_SetCameraMode(u8 mode)
     c->previousMode = old;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_RestorePreviousCameraMode);
+void f_RestorePreviousCameraMode(void)
+{
+    s8 *p = D_800E7E80;
+    CameraState *c = &g_CameraState;
+
+    if ((u8)p[2] == 1) {
+        c->mode = 0;
+        *(s32 *)((u8 *)c + 0xC) = *(s32 *)(p + 0x30);
+        return;
+    }
+    *(s32 *)((u8 *)c + 0xC) = *(s32 *)(p + 0x30);
+    c->mode = c->previousMode;
+}
 
 
 void func_8006E228(void *arg0, M2C_UNK arg1) {
@@ -3960,7 +3998,16 @@ s32 f_TrySetCurrentScriptActorStateActive(void)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_TryStartCurrentScriptActorAnimation2);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TrySetCurrentScriptActorAnimation0);
+s32 f_TrySetCurrentScriptActorAnimation0(void)
+{
+    s8 *a = *(s8 **)D_1F800214;
+
+    if (a[0x70] > 0) {
+        return 0;
+    }
+    f_SetActorAnimation(a, 0, 2);
+    return 1;
+}
 
 
 s8 f_GetCurrentScriptActorControlState(void) {
