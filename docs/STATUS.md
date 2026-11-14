@@ -3,6 +3,31 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-14 (2): Phase 2 under way (user chose B: engine first, library in parallel)
+
+Game code in C: **844 / 6180 functions** (MAIN 291 / 1167, 5.4 % of its bytes; overlays ~550); library 322 + 71 asm
+by design / 867. 29 / 29 byte-identical.
+- Every overlay and boot is now a splat `c` segment (`src/<prog>/<prog>.c`), swept like MAIN.
+- Sweep (`tools/sweep.py`) improvements, each measured: compilable m2c drafts (`--valid-syntax`, `include/m2c.h`);
+  scratchpad variables as symbols (`config/scratchpad.ld` defines every D_1F8xxxxx; drafts declare
+  `extern s8 D_1F8xxxxx[]`); missing leading parameters filled; volatile-globals variant; clashing global types go
+  through linker aliases (`config/aliases_<prog>.ld`); **parameter counts guessed from the asm** (`tools/arity.py`) in
+  m2c's context, so pass-through arguments are kept (the biggest single gain after --valid-syntax).
+- Hand decompilation: ~90 MAIN functions, written in scratch files and installed with `tools/install_c.py FILE.c`
+  (replaces INCLUDE_ASM lines, adds the declarations before the first use, aliases clashing globals, leaves
+  prototypes out because asm drafts call functions with m2c's argument counts). Recurring fixes, worth trying first:
+  a global/scratchpad store that must not move into a delay slot -> `volatile`; constants loaded in the wrong order
+  -> hold them in local variables (`u32 end = 0xFF`); a base+offset access the compiler folds -> struct field or
+  array element; branch layout -> swap the if/else or early return; argument registers passed through untouched ->
+  give the function all four parameters.
+- Headers: `include/game.h` GameState (itemCounts at +0x244, appleBits +0x544, flag words), WorkerState,
+  CameraState (`g_CameraState`, a linker name for 0x800E8008), PopupRequest / PopupDisplayEntry, MessageBank;
+  named scratchpad variables in config/undefined_syms.ld; `include/actor.h` (not yet used).
+- The permuter rarely helps on raw drafts (about 10 matches in some 150 near misses at 60-120 s each).
+- Library: string literals now become the retail strings' symbols, objects with extra text are rejected (+4).
+- Known left-overs worth a look: f_LoadResourceChunkIntoGroup, f_FindEncodedMessagePage, f_TestWrappedAngleSide,
+  func_8003F2F8, func_8003F31C, func_8004D8B0, func_8006914C (near misses written by hand, in no file yet).
+
 ## 2026-11-14: Phase 1 (Psy-Q library), partly done
 
 - 1.1 / 1.2 done. 1.3: **314 of 867 library functions in C, 71 asm by design, ~480 left** (`python3 -I tools/progress.py`).

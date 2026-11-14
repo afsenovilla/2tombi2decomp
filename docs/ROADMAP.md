@@ -56,7 +56,8 @@ nothing from the disc is committed.
   (`f_CloseCooperativeWorkerThread`). Grow them as functions are matched; keep field names English.
 - [ ] **2.2 Small leaf functions first** (< 64 bytes, ~300 of them): setters, getters, flag tests. *Target*: 300
   functions; measures the pace (functions per session) for the estimate.
-  Status 2026-11-14: the sweep with compilable m2c drafts (`--valid-syntax`, `include/m2c.h`) put **115 / 1167 MAIN
+  Status 2026-11-14 (later): 291 / 1167 MAIN game functions, 844 game functions over all programs (docs/STATUS.md).
+  Earlier the same day: the sweep with compilable m2c drafts (`--valid-syntax`, `include/m2c.h`) put **115 / 1167 MAIN
   game functions** in C (88 in one run over functions <= 0x200 bytes; larger ones almost never match as drafted).
   Near misses: `tools/libnear.py --game` (57 within 2 instructions, 112 within 5) and `tools/libpermute.py --game`.
   The drafts use `M2C_FIELD(p, T *, off)` for unknown struct fields: they become real fields as the headers grow.

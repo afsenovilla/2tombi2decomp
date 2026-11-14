@@ -54,6 +54,8 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
 - C lives in `src/<prog>/*.c` (`INCLUDE_ASM` for what is not decompiled yet, `include/common.h`); see docs/STATUS.md.
 - `python3 -I tools/decomp.py NAME [--check] [--write]`: m2c draft of one function; `python3 -I tools/sweep.py
   [--max-size 0x100] --install`: install every draft that matches as is (build-checked).
+- Hand-written C: check a scratch file with `tools/ccheck.py FILE.c`, install with `python3 -I tools/install_c.py FILE.c
+  [--prog main]` (build-checked); recurring fixes are listed in docs/STATUS.md.
 - `python3 -I tools/permute.py NAME --src FILE.c`: decomp-permuter with the game's pipeline (near-misses).
 - `python3 -I tools/ccheck.py src/main/<file>.c`: compile with the game's compiler (gcc 2.8.1 + ASPSX 2.79,
   docs/COMPILER.md) and compare every function in the file with the retail bytes.
