@@ -121,7 +121,20 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C8E4);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C9F8);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010CAEC);
+extern u16 D_1F8001A4;
+
+void func_8010CAEC(u8 *a)
+{
+    s16 v[8];
+
+    v[1] = *(u16 *)(a + 0x2E);
+    v[3] = D_1F8001A4;
+    v[5] = *(u16 *)(a + 0x36);
+    func_8003116C(0x10D, v, -0xA);
+    v[3] += 0x50;
+    func_8003116C(0x107, v, -0xA);
+    func_80074590(7, 0, 0);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeA00InteriorState);
 
@@ -1556,7 +1569,22 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_TestA00GridCellMask);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_GetA00GridCellValue);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013FB4C);
+extern s8 *D_800ECF58[];
+extern s8 *D_8014C804;
+
+void func_8013FB4C(u8 *a)
+{
+    s8 **t = D_800ECF58;
+    u16 *p = (u16 *)t[8];
+    u16 v;
+
+    *(u16 **)(a + 0xC) = p;
+    *(u16 *)(a + 8) = p[0];
+    v = p[1];
+    a[7] = 0;
+    *(u16 *)(a + 0xA) = v;
+    D_8014C804 = t[9];
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_DrawTownCreatureGt3Batch);
 

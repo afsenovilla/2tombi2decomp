@@ -276,7 +276,13 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80115D84);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80115F58);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801167A8);
+void func_801167A8(void)
+{
+    CameraState *c = &g_CameraState;
+
+    c->unk6C = 0x500;
+    c->unk6E = 0xA0;
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801167C4);
 
