@@ -163,7 +163,28 @@ void func_8001DB38(void) {
     f_TerminateCurrentCooperativeWorker();
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8001DB8C);
+extern u8 D_800FB160_9a03[];
+extern s16 D_800BE220;
+extern u8 D_800BED7C[];
+extern u8 D_800A1EB8[];
+extern u8 D_800A1EA0[];
+extern u8 D_1F800236_18be;
+void func_8001DB38();
+
+s32 func_8001DB8C(void *dest, s32 sector, s32 bytes)
+{
+    WorkerState *w = WORKER_STATE;
+
+    f_CloseCooperativeWorkerThread(1);
+    g_DiscReadDest = dest;
+    g_DiscReadSector = sector;
+    *(volatile s32 *)&g_DiscReadWords = (bytes + 3) / 4;
+    f_OpenCooperativeWorkerThread(1, func_8001DB38);
+    while (w->busy != 0) {
+        f_YieldCurrentCooperativeWorker(1);
+    }
+    return bytes;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8001DC40);
 
@@ -1186,7 +1207,32 @@ void func_80033080(s32 arg0) {
     func_800288AC(arg0);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800330AC);
+void func_800330AC(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        a[4]++;
+        *(void **)(a + 0x40) = D_800A1EB8;
+        *(void **)(a + 0x50) = D_800A1EA0;
+        *(s16 *)(a + 0x32) = -0x32;
+        *(s32 *)(a + 0x34) = 0x1000100;
+    case 1: {
+        void *p = *(void **)(a + 0x40);
+
+        *(void **)(a + 0x3C) = p;
+        if (p == 0) {
+            a[4] = 3;
+        } else {
+            a[1] = 1;
+        }
+        break;
+    }
+    case 2:
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 u8 *f_SpawnLinkedActorShadow(u8 *owner)
 {
@@ -3584,7 +3630,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80050738);
 extern u16 D_1F800170;
 extern u16 D_1F800174_de41;
 extern u16 D_1F800176;
-extern u8 D_800FB160_9a03[];
 void func_8007263C(u8 *);
 typedef struct { u8 pad[0x18]; u8 isbg; u8 r0, g0, b0; } DrawEnvLite_E80A8;
 
@@ -6481,7 +6526,26 @@ void f_RefreshSoundEffectHandleLifetime(s32 x)
     *(s16 *)(a + 0x2E) = x;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80075D58);
+void func_80075D58(void)
+{
+    u8 *o = D_800FB160_9a03;
+
+    D_800BE220 = o[4] * 0x7FFF / 9;
+    if (o[3] == 0) {
+        D_800BED7C[0] = 0x80;
+        D_800BED7C[1] = 0;
+        D_800BED7C[2] = 0x80;
+        D_800BED7C[3] = 0;
+        SsSetStereo();
+    } else {
+        D_800BED7C[0] = 0x40;
+        D_800BED7C[1] = 0x40;
+        D_800BED7C[2] = 0x40;
+        D_800BED7C[3] = 0x40;
+        SsSetMono();
+    }
+    CdMix(D_800BED7C);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_QueueSoundEffectVoice);
 
