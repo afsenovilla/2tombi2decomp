@@ -1670,7 +1670,27 @@ s32 func_80044090(void) {
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800440A8);
+typedef struct Entry8 { u8 pad0[6]; u16 flags; } Entry8;
+extern Entry8 *D_800A54A8_7082[];
+typedef struct Slot4C { u8 used; u8 pad[0x4B]; } Slot4C;
+extern Slot4C D_80100400[];
+typedef struct Range8 { s32 sector; s32 size; } Range8;
+extern Range8 D_800BE118[];
+extern u8 D_800A4A84[];
+extern u8 D_800A4A8C[];
+typedef struct Slot40 { u8 used; u8 pad[0x3F]; } Slot40;
+extern Slot40 D_800EC188_44f3[];
+
+s32 func_800440A8(u8 *p)
+{
+    s8 *d = D_800E7E80;
+
+    d[0x2A] = p[0x72];
+    *(u16 *)(d + 0x2E) = *(u16 *)(p + 0x74);
+    *(u16 *)(d + 0x32) = *(u16 *)(p + 0x76);
+    *(u16 *)(d + 0x36) = *(u16 *)(p + 0x64);
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_StartTombaScriptedAnimation);
 
@@ -1719,7 +1739,10 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80044E84);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80044F58);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80045080);
+void func_80045080(void *dst, u8 i, s32 c, void *d)
+{
+    func_8001DC40(dst, D_800BE118[i].sector, D_800BE118[i].size, d);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800450BC);
 
@@ -1730,8 +1753,8 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_LoadResourceChunkIntoGroup);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800452C0);
 
 
-void func_80045558(s32 arg0) {
-    func_80045080(0x8018A000, arg0 & 0xFF);
+void func_80045558(s32 arg0, s32 arg1, s32 arg2, void *arg3) {
+    func_80045080((void *)0x8018A000, arg0 & 0xFF, arg2, arg3);
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80045580);
@@ -4100,7 +4123,12 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_CloseMirroredInteriorDoorPart);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_PrepareInteriorTransition);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_BeginInteriorEntryTransition);
+void f_BeginInteriorEntryTransition(u8 *door)
+{
+    f_PrepareInteriorTransition(door);
+    D_800BF808[0x10] = 1;
+    D_800BF808[0xF] = door[3];
+}
 
 extern s8 D_800BF818;
 void f_BeginInteriorExitTransition(void) {
@@ -4377,7 +4405,13 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ApproximateVectorLength2D);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ApproximateVectorLength3D);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_CalculateYawFromPositionToPoint);
+s16 f_CalculateYawFromPositionToPoint(s16 *pos, s16 x, s16 z)
+{
+    s32 dx = x;
+    s32 dz = z;
+
+    return ratan2(pos[5] - dz, dx - pos[1]);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UnlockWarpDestinationAndAreaDoor);
 
@@ -4385,7 +4419,13 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800783DC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80078610);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80078738);
+s32 func_80078738(u8 a, u8 b)
+{
+    Entry8 *row = D_800A54A8_7082[a];
+
+    row += b;
+    return (row->flags & 0x600) >> 9;
+}
 
 
 u8 func_80078770(u8 a, u8 b)
@@ -4522,7 +4562,18 @@ void func_8007AD14(void) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007AD40);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007AD98);
+Slot4C *func_8007AD98(void)
+{
+    Slot4C *s = D_80100400;
+    s32 i;
+
+    for (i = 0; i < 8; i++, s++) {
+        if (s->used == 0) {
+            return s;
+        }
+    }
+    return NULL;
+}
 
 
 void f_RetireSceneController(void *arg0) {
@@ -4544,7 +4595,20 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007B0F0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007B18C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_AllocateTemplateEffectSlot);
+Slot40 *f_AllocateTemplateEffectSlot(void)
+{
+    s32 i = 0;
+    u32 one = 1;
+    Slot40 *s = D_800EC188_44f3;
+
+    for (; i < 0x28; i++, s++) {
+        if (s->used == 0) {
+            s->used = one;
+            return s;
+        }
+    }
+    return NULL;
+}
 
 
 void func_8007B2AC(void *arg0) {

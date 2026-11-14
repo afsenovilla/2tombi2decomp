@@ -65,8 +65,10 @@ def main():
     def wanted(p):
         if p in before:
             return False
-        m = re.match(r"[\w \*]+?\b(\w+)\s*\([^;{}]*\)\s*;$", p)   # a prototype of a function the file defines
-        return not (m and m.group(1) in defined)
+        # prototypes are left out: the asm drafts call functions with the argument counts m2c saw (pass-through
+        # arguments dropped), which a prototype would reject; calls compile the same without one
+        m = re.match(r"[\w \*]+?\b(\w+)\s*\([^;{}]*\)\s*;$", p)
+        return not m
     for n, body in funcs:
         if n == first:
             extra = [p for p in pre if wanted(p)]

@@ -82,9 +82,9 @@ def fill_args(body, name):
     return body[:m.start(1)] + ", ".join(full) + body[m.end(1):]
 
 
-def attempt(prog, name, ctx):
-    r = subprocess.run([sys.executable, D.M2C, "--target", "mipsel-gcc-c", "--valid-syntax", "--context", ctx,
-                        D.find_asm(prog, name)],
+def attempt(prog, name, ctx, m2c_opts=()):
+    r = subprocess.run([sys.executable, D.M2C, "--target", "mipsel-gcc-c", "--valid-syntax", "--context", ctx] +
+                       list(m2c_opts) + [D.find_asm(prog, name)],
                        capture_output=True, text=True, cwd=ROOT)
     if r.returncode or not r.stdout.strip() or "Decompilation failure" in r.stdout:
         return name, None
@@ -109,18 +109,30 @@ def attempt(prog, name, ctx):
     return name, None
 
 
+M2C_VARIANTS = [(), ("--descending-regs",), ("--no-andor",), ("--no-andor", "--descending-regs")]
+
+
+def attempt_all(prog, name, ctx, many):
+    for opts in (M2C_VARIANTS if many else M2C_VARIANTS[:1]):
+        r = attempt(prog, name, ctx, opts)
+        if r[1]:
+            return r
+    return name, None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--prog", default="main")
     ap.add_argument("--max-size", default="0x80")
     ap.add_argument("--install", action="store_true")
     ap.add_argument("-j", type=int, default=os.cpu_count())
+    ap.add_argument("--m2c-variants", action="store_true", help="also try m2c's --descending-regs / --no-andor drafts")
     a = ap.parse_args()
     lim = int(a.max_size, 0)
     names = [n for n in pending(a.prog) if size_of(a.prog, n) <= lim]
     ctx = prog_context(a.prog)
     with cf.ThreadPoolExecutor(a.j) as ex:
-        res = [r for r in ex.map(lambda n: attempt(a.prog, n, ctx), names) if r[1]]
+        res = [r for r in ex.map(lambda n: attempt_all(a.prog, n, ctx, a.m2c_variants), names) if r[1]]
     print("%d / %d functions <= 0x%X match as drafted" % (len(res), len(names), lim))
     for n, _ in res:
         print("  " + n)
