@@ -1712,7 +1712,27 @@ void f_LoadActorScript(void *arg0, u16 *arg1) {
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_LoadActorScriptCommand);
+extern u16 D_800A4582;
+extern u16 D_800A457C[];
+extern u16 D_1F800174_de41;
+extern u8 D_800BF9B4[];
+extern s16 D_800E7FEE;
+extern u8 D_800BF87D;
+
+void f_LoadActorScriptCommand(u8 *a, u16 *cmd)
+{
+    *(u16 **)(a + 0x6C) = cmd;
+    *(u16 *)(a + 0x72) = cmd[1];
+    *(u16 *)(a + 0x74) = cmd[2];
+    *(u16 *)(a + 0x76) = cmd[3];
+    if (cmd[0] & 0x2000) {
+        cmd += 4;
+        *(u16 *)(a + 0x64) = cmd[0];
+        *(u16 *)(a + 0x66) = cmd[1];
+        *(u16 *)(a + 0x68) = cmd[2];
+        *(u16 *)(a + 0x6A) = cmd[3];
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80040E54);
 
@@ -1849,7 +1869,24 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80041C54);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80041D60);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80041F34);
+s32 func_80041F34(u8 *a)
+{
+    if (a == 0) {
+        goto ok;
+    }
+    if (a[5] == 3) {
+        if (*(u16 *)(a + 0x42) == 0xFFFF) {
+            *(u16 *)(a + 0x42) = 0;
+        }
+        if ((D_800E7E68 & D_1F800174_de41) && !(a[0x46] & 1)) {
+            a[5] = 10;
+            goto ok;
+        }
+    }
+    return 0;
+ok:
+    return 1;
+}
 
 
 void func_80041FA8(void *arg0) {
@@ -1877,7 +1914,24 @@ void func_80041FF8(void *arg0) {
     func_80041FCC(M2C_FIELD(arg0, s32 *, 0x10));
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004201C);
+s32 func_8004201C(u8 *p)
+{
+    u8 *q = D_800BF9B4 + *(s16 *)(p + 0x72);
+
+    switch (p[0x78]) {
+    case 0:
+        *q = p[0x74];
+        p[0x78]++;
+        goto end;
+    case 1:
+        if (*q == *(s16 *)(p + 0x76)) {
+            return 1;
+        }
+    end:
+    default:
+        return 0;
+    }
+}
 
 
 u32 func_80042090(void *arg0) {
@@ -2676,7 +2730,16 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004DBC0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004DC84);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004DD90);
+void func_8004DD90(u8 *p)
+{
+    if (f_GrantPickupHealth(p, 1)) {
+        if (--*(s16 *)(p + 0x42) == 0 || D_800E7FEE == D_800BF87D) {
+            p[4] = 2;
+        } else {
+            p[7] = 0;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004DE04);
 
@@ -3615,7 +3678,17 @@ block_13:
     return M2C_FIELD(arg0, u8 *, 0x14A);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetTombaJumpLaunchVelocity);
+void f_SetTombaJumpLaunchVelocity(u8 *t, s32 boost)
+{
+    if (t[0x174] & 0x30) {
+        *(u16 *)(t + 0x4A) = D_800A4582;
+    } else {
+        *(u16 *)(t + 0x4A) = D_800A457C[t[0x6D]];
+    }
+    if (boost != 0 && (*(u16 *)(t + 0x17E) & 0x180)) {
+        *(u16 *)(t + 0x4A) += 0x1940;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaHorizontalMovementSpeed);
 
@@ -3629,7 +3702,25 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_DetachTombaFromSupport);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80056E08);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80056EC8);
+void func_80056EC8(u8 *p)
+{
+    u8 *a = *(u8 **)(p + 0x104);
+    u8 *e;
+
+    *(s16 *)(a + 0xA) = 0x280;
+    *(s16 *)(a + 0x38) = 0x200;
+    *(s16 *)(a + 0x3A) = 0x200;
+    *(s16 *)(a + 0x3C) = 0x200;
+    a = *(u8 **)(p + 0x108);
+    *(s16 *)(a + 0xA) = 0xD80;
+    *(s16 *)(a + 0x38) = 0x200;
+    *(s16 *)(a + 0x3A) = 0x200;
+    *(s16 *)(a + 0x3C) = 0x200;
+    e = f_SpawnTransientEffect(0x22, 0);
+    if (e != 0) {
+        e[0x28] |= 0x80;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80056F3C);
 
