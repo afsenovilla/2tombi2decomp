@@ -337,7 +337,17 @@ void func_8011479C(s32 arg0, M2C_UNK arg1) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801147EC);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114888);
+extern void *D_1F800080;
+extern u8 D_1F800182_5650;
+
+void func_80114888(u8 *a, u8 *b)
+{
+    if (func_8011040C(a, b, *(void **)(b + 0xC0)) != 0) {
+        a[0x164] = 3;
+        D_1F800080 = b;
+        D_1F800182_5650 = 0;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801148D8);
 

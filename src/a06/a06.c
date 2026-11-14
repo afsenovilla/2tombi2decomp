@@ -367,7 +367,18 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80114654);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80114730);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80114784);
+s32 func_80114784(u8 *a)
+{
+    u8 *b = *(u8 **)(a + 0x158);
+
+    if (b[0xC] != 4) {
+        return 0;
+    }
+    if (b[2] != 0x3B) {
+        return 0;
+    }
+    return func_80113C30(a, b);
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801147CC);
 

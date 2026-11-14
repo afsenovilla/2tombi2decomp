@@ -4,7 +4,20 @@
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010A528);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010A6E8);
+void func_8010A528();
+
+u8 *func_8010A6E8(void)
+{
+    u8 *a = func_8007A980(0, 3, 1);
+
+    if (a == NULL) {
+        return NULL;
+    }
+    *(void **)(a + 0x1C) = func_8010A528;
+    a[2] = 1;
+    a[0x28] |= 0x80;
+    return a;
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010A73C);
 
