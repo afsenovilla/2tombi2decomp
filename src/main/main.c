@@ -503,7 +503,21 @@ void func_80026470(void)
     f_SetStreamedAudioVolumeTarget(0);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800264BC);
+typedef struct SoundHandle3 { u32 id; u8 pad4[8]; } SoundHandle3;
+extern SoundHandle3 D_800BE238_0a61[];
+extern u32 D_800BE358;
+extern s16 D_800ED098;
+extern u32 *D_800E7E74_7ca1;
+void func_8006F2D0();
+
+void func_800264BC(void)
+{
+    if (D_800BF808_c1f7[5] < 2 && ((u8 *)D_800BF808_c1f7)[0x31] == 0) {
+        return;
+    }
+    f_SetStreamedAudioVolumeTarget(-1);
+    f_SetStreamedAudioVolumeTarget(0x47FF);
+}
 
 void func_80026510(void)
 {
@@ -1006,11 +1020,31 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_GetPauseMenuEquipmentGroupRange);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800365F0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80036708);
+s32 func_80036708(void *p)
+{
+    s32 i;
+
+    for (i = 0; i < 6; i++) {
+        if (func_800365F0(p, 1) == 0) {
+            return i != 0;
+        }
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003675C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003687C);
+s32 func_8003687C(void *p)
+{
+    s32 i;
+
+    for (i = 0; i < 6; i++) {
+        if (func_8003675C(p, 1) == 0) {
+            return i != 0;
+        }
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800368D0);
 
@@ -4182,7 +4216,18 @@ void func_8006F02C(s32 bit)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006F04C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnTombaMovementHintController);
+u8 *f_SpawnTombaMovementHintController(void)
+{
+    u8 *a = f_AllocateActorRecordByType(2, 3, 1);
+
+    if (a == NULL) {
+        return NULL;
+    }
+    *(void **)(a + 0x1C) = func_8006F2D0;
+    a[2] = 1;
+    a[0x28] |= 0x80;
+    return a;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006F138);
 
@@ -4501,7 +4546,16 @@ void f_SetSoundEffectHandleVolume(u8 handle)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80074A60);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ComputeDirectionalStereoVolume);
+void f_ComputeDirectionalStereoVolume(u32 handle)
+{
+    u8 i = handle;
+    SoundHandle3 *h = &D_800BE238_0a61[i];
+
+    if ((h->id & ~0xFF) == (handle & ~0xFF)) {
+        D_800BE358 |= 1 << i;
+        ((u8 *)h)[1] = 0;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80074B44);
 
