@@ -215,7 +215,25 @@ void f_ResolveTombaType12ActorContact(void) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_TestActorAgainstPartCylinderBounds);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80023238);
+extern u16 D_800A4A6C[];
+extern u8 D_800BE0E4_9d53;
+extern u16 D_800E7FFE;
+extern u16 D_1F8001A2;
+
+void func_80023238(u8 *a, u8 *b)
+{
+    if (D_800E7FFE & 0x200) {
+        return;
+    }
+    if (*(u8 **)(a + 0x10) != NULL) {
+        return;
+    }
+    *(u8 **)(a + 0x10) = b;
+    a[0x2B] = 2;
+    *(u16 *)(b + 0x2E) = *(u16 *)(a + 0x2E);
+    *(u16 *)(b + 0x32) = *(u16 *)(a + 0x32);
+    *(u16 *)(b + 0x36) = *(u16 *)(a + 0x36);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_CanTombaTakeDamage);
 
@@ -303,7 +321,16 @@ void func_80023528(void *arg0) {
     M2C_FIELD(arg0, s8 *, 6) = 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80023548);
+s32 func_80023548(void *a, void *b)
+{
+    s32 cls = f_ClassifyTombaActorCylinderContact(a, b, 1);
+
+    if (cls < 0) {
+        return 0;
+    }
+    f_ResolveTombaActorImpactResponse(a, b, cls, 1);
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800235A0);
 
@@ -1618,7 +1645,15 @@ s32 f_AdvanceActorAnimationAndStoreCompletion(void *arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80041938);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800419C4);
+s32 func_800419C4(u8 *a, s16 b, s16 c)
+{
+    if (f_ProbeActorTerrainAlongFacing(a, b, c) != 1) {
+        return 0;
+    }
+    f_ApplyTerrainProfileOrientationToActor(a);
+    *(u16 *)(a + 0x62) = D_1F8001A2;
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80041A1C);
 
@@ -4610,7 +4645,18 @@ void func_800750A4(s8 arg0) {
     *((s8 *)D_1F80023B) = arg0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ControlStreamedAudioTrack);
+s32 f_ControlStreamedAudioTrack(s32 track)
+{
+    if (track == 0xFF) {
+        return D_800BE0E4_9d53 & 4;
+    }
+    if (track == 0xFE) {
+        f_StopVoicePlayback();
+        return;
+    }
+    f_StartStreamedAudioTrack(track);
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80075130);
 
