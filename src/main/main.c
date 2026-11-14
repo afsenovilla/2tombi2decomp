@@ -906,7 +906,29 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnMovingTransientEffectAtFixedPos
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnImpactTransientEffect);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnLinkedActorTrailEffect);
+extern u8 D_800E7E80_f78d[];
+typedef struct { u8 pad[0xC0]; u8 *parts[64]; } PartOwner;
+extern PartOwner *D_1F800214_50e7;
+void func_80059ED8(u8 *);
+void func_8002AB5C(u8 *);
+void func_80029B40(u8 *);
+void func_80029F6C(u8 *);
+
+u8 *f_SpawnLinkedActorTrailEffect(u8 *owner, u8 kind)
+{
+    u8 *a = f_AllocateActorRecordByType(0, 6, 1);
+
+    if (a == 0) {
+        return 0;
+    }
+    *(void **)(a + 0x1C) = func_80029B40;
+    a[0xB] = 0x20;
+    *(u8 **)(a + 0x10) = owner;
+    *(void **)(a + 0x18) = func_80029F6C;
+    a[3] = kind;
+    a[0x28] |= 0x80;
+    return a;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnActorImpactEffectPair);
 
@@ -1038,7 +1060,23 @@ void func_80033080(s32 arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800330AC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnLinkedActorShadow);
+u8 *f_SpawnLinkedActorShadow(u8 *owner)
+{
+    u8 *a;
+
+    if (D_800E7E7C >= 7) {
+        a = f_AllocateActorRecordByType(0, 6, 1);
+        if (a != 0) {
+            *(void **)(a + 0x1C) = func_80059ED8;
+            a[0xB] = 0x20;
+            *(u8 **)(a + 0x10) = owner;
+            *(void **)(a + 0x18) = func_8002AB5C;
+            a[0x28] |= 0x80;
+            return a;
+        }
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnLinkedActorSpriteRingEffect);
 
@@ -1834,7 +1872,24 @@ void f_StepActorYawTowardAngle(s32 arg0, s16 arg1, s16 arg2) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80041468);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004162C);
+s32 func_8004162C(u8 *p)
+{
+    PartOwner *who;
+    s32 idx;
+
+    if (*(s16 *)(p + 0x72) & 0x8000) {
+        who = D_1F800214_50e7;
+    } else {
+        who = (PartOwner *)p;
+    }
+    idx = *(u16 *)(p + 0x72) & 0x7FFF;
+    if (*(s16 *)(p + 0x74) == -1) {
+        *(s32 *)(who->parts[idx] + 0x40) = 0;
+    } else {
+        f_SetActorPartModel(who->parts[idx], *(s16 *)(p + 0x74), *(s16 *)(p + 0x76));
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SetActorModelResources);
 
@@ -4299,7 +4354,17 @@ void func_800661E0(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006625C);
+void func_8006625C(u8 *t)
+{
+    if (D_800BFE55 != 0) {
+        return;
+    }
+    f_ApplyTombaEnvironmentalDamage(t, 1);
+    f_PlaySoundEffect(*(s16 *)(t + 0x16E) == 0 ? 0x24 : 0x23, 0, 0);
+    f_StartControllerVibration(0, 0x81, 0x81, 0xF);
+    *(u16 *)(t + 0x170) = *(u16 *)(t + 0x16E);
+    f_ApplyTombaStatusCommand(t, 0xB);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800662D8);
 
@@ -4827,7 +4892,19 @@ void func_8006E8F8(void *arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006E918);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateCameraFollowTomba);
+void f_UpdateCameraFollowTomba(void)
+{
+    u8 *c = (u8 *)&g_CameraState;
+    u8 *t = D_800E7E80_f78d;
+
+    *(u16 *)(c + 0xE) = *(u16 *)(t + 0x32) - 0xC8;
+    *(u16 *)(c + 0xA) = *(u16 *)(t + 0x2E);
+    *(u16 *)(c + 0x12) = *(u16 *)(t + 0x36);
+    f_SetCameraPositionHorizontal(c, c + 8);
+    f_SetCameraPositionVertical(c, c + 8);
+    func_8006E918(c);
+    f_RebuildCameraViewTransform(c);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006EA7C);
 
