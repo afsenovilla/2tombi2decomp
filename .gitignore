@@ -24,3 +24,4 @@
 /config/symbol_addrs_*.txt.bak
 __pycache__/
 *.pyc
+!docs/logo*.png
