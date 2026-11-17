@@ -1,4 +1,4 @@
-<!-- logo: <p align="center"><img src="docs/logo.png" alt="Tomba! 2" width="400"></p> -->
+<p align="center"><img src="docs/logo.png" alt="Tombi! 2" width="350">&nbsp;<img src="docs/logo_us.png" alt="Tomba! 2: The Evil Swine Return" width="350"></p>
 
 # Tombi! 2 / Tomba! 2: The Evil Swine Return decomp
 
