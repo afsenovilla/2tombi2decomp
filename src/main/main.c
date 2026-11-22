@@ -4821,7 +4821,19 @@ s32 f_ClassifyActorDirectionalTerrainAlongFacing(s32 arg0, s32 arg1, s32 arg2) {
     return f_ClassifyActorDirectionalTerrainContact(arg0, (s32) (s16) arg1, (s32) (s16) arg2, (s32) M2C_FIELD(arg0, s16 *, 0x56));
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004960C);
+s32 func_8004960C(u8 *a, s32 b)
+{
+    u8 *p;
+
+    if (b != 0) {
+        b = *(u16 *)(D_1F8001E4 + 6) >> 8;
+    } else {
+        b = D_1F8001E4[6];
+    }
+    p = D_1F8001D4 + *(u16 *)(D_1F8001E4 + 2) * 8 + b * 8;
+    a[0x2A] = *p;
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ApplyTerrainProfileOrientationToActor);
 
