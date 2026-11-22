@@ -597,6 +597,7 @@ u32 *func_8010A3AC(u32 *f, u32 *ot, s32 n)
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
+#include "gte.h"
 typedef struct {
     u32 tag;
     u32 rgb0;
@@ -1080,7 +1081,59 @@ void func_8010B0F8(u32 *p, void *b)
     func_8010ADC4(func_8010AB20(p, b, lo), b, packed >> 16);
 }
 
-INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010B140);
+typedef struct {
+    s16 vx, vy, vz, pad;
+} T2SVec;
+typedef struct {
+    u8 pad0[2];
+    s16 x;
+    u8 pad4[6];
+    s16 y;
+    u8 padC[0x14];
+    s16 rx;
+    u16 ry;
+} T2CamD0;
+extern T2CamD0 D_1F8000D0_3bb0;
+extern s32 D_800A3F90;
+extern s32 D_800A3F94;
+
+void func_8010B140(u8 *a)
+{
+    T2SVec v0, v1, v2;
+    T2CamD0 *c = &D_1F8000D0_3bb0;
+    s32 ang, r, dx, dz;
+    u16 t;
+
+    t = c->ry;
+    D_800A3F90 = 0x2F80;
+    ang = (-(s16)t - D_800A3F94) & 0xFFF;
+    v0.vx = c->x;
+    v0.vy = c->y;
+    v1.vx = v0.vx + ((func_80083E80(ang) * D_800A3F90) >> 12);
+    v1.vy = v0.vy + ((func_80083F50(ang) * D_800A3F90) >> 12);
+    ang = (D_800A3F94 - (s16)c->ry) & 0xFFF;
+    v2.vx = v0.vx + ((func_80083E80(ang) * D_800A3F90) >> 12);
+    v2.vy = v0.vy + ((func_80083F50(ang) * D_800A3F90) >> 12);
+    r = abs(func_80083E80(c->rx));
+    dx = (func_80083E80(-(s16)c->ry) * r) >> 12;
+    dz = (func_80083F50(-(s16)c->ry) * r) >> 12;
+    dx = (dx * D_800A3F90 * 5) >> 16;
+    dz = (dz * D_800A3F90 * 5) >> 16;
+    v1.vx -= dx;
+    v0.vx -= dx;
+    v1.vy -= dz;
+    v0.vy -= dz;
+    v2.vx -= dx;
+    v2.vy -= dz;
+    v0.vx /= 640;
+    v0.vy /= 640;
+    v1.vx /= 640;
+    v1.vy /= 640;
+    v2.vx /= 640;
+    v2.vy /= 640;
+    a[6] = 0;
+    func_8010B420(a, &v0, &v1, &v2);
+}
 
 INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010B420);
 
