@@ -2373,7 +2373,33 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012D908);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleTownQuestRewardVisualActor);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012DE34);
+extern u8 D_800BF9DD;
+extern s32 D_800ECF80;
+extern u8 D_8014C808[];
+
+void func_8012DE34(u8 *a) {
+    u8 *g = D_800E7E80;
+
+    switch (a[5]) {
+    case 0:
+        if (D_800BF9DD == 9) {
+            a[5] = 1;
+            M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+            func_80077B38(a, D_8014C808, 0xF);
+            M2C_FIELD(a, s16 *, 0x60) = 0x40;
+            M2C_FIELD(a, s16 *, 0x62) = 0;
+            M2C_FIELD(a, s16 *, 0x64) = -0x20;
+        }
+        break;
+    case 1:
+        func_8004BD64(a, 2, M2C_FIELD(g, s32 *, 0xDC), M2C_FIELD(g, s32 *, 0xD0), a + 0x60);
+        a[1] = 1;
+        if (D_800BF9DD == 0xB) {
+            a[4] = 3;
+        }
+        break;
+    }
+}
 
 u8 *func_8012DF08(s32 a) {
     u8 *p = func_80072DDC(a, 128, 3, 16);
@@ -2386,8 +2412,6 @@ u8 *func_8012DF08(s32 a) {
     return p;
 }
 
-extern s32 D_800ECF80;
-extern u8 D_8014C808[];
 void func_8012DF50(u8 *a) {
     u8 *p = M2C_FIELD(a, u8 **, 0x10);
 
