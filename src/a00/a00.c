@@ -376,7 +376,20 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114290);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114320);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801143A4);
+typedef struct { u8 pad[0x60]; s32 unk60; s32 unk64; } AreaStateF58;
+extern s8 *D_800ECF58[];
+extern u8 D_8014C0BC[];
+extern u8 D_8014DE54[];
+extern u8 D_1F800182_5650;
+
+void func_801143A4(u8 *a, u8 *b) {
+    if (func_80022F04(a, b) != 0) {
+        b[0x2B] = 1;
+        b[0x46] = M2C_FIELD(a, u16 *, 0x56) >> 4;
+        func_8001E860(a, b, 0, 0);
+        D_1F800182_5650 = 0;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114408);
 
@@ -408,7 +421,6 @@ void func_8011479C(s32 arg0, M2C_UNK arg1) {
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801147EC);
 
 extern void *D_1F800080;
-extern u8 D_1F800182_5650;
 
 void func_80114888(u8 *a, u8 *b)
 {
@@ -811,7 +823,18 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleKainenNpcActor);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011D82C);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011D8AC);
+s32 func_8011D8AC(u8 *a) {
+    AreaStateF58 *g = (AreaStateF58 *)D_800ECF58;
+    s32 t;
+
+    if (func_800519E0(a, 0xD, g->unk60, D_8014C0BC) == 0) {
+        t = g->unk64;
+        M2C_FIELD(a, u8 **, 0x7C) = D_8014DE54;
+        M2C_FIELD(a, s32 *, 0x3C) = t;
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011D910);
 
@@ -2092,7 +2115,6 @@ s32 f_GetA00GridCellValue(s32 x, s32 y) {
     return D_8014C804_6a3a[y * 52 + x];
 }
 
-extern s8 *D_800ECF58[];
 extern s8 *D_8014C804;
 
 void func_8013FB4C(u8 *a)
