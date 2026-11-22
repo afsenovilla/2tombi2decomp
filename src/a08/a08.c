@@ -92,7 +92,36 @@ void func_8010A670(u8 *a, u8 *b) {
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010A83C);
+extern u8 **D_1F800158;
+extern u8 D_1F80015E;
+static inline s32 cyl_test(u8 *a, u8 *b)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(b + 0x2E);
+    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(b + 0x36);
+    s32 d = func_80084080(dx * dx + dz * dz);
+
+    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80)) {
+        return 0;
+    }
+    return (u16)((*(u16 *)(a + 0x32) - *(u16 *)(b + 0x32)) + ((*(u16 *)(b + 0x84) + *(u16 *)(a + 0x86)) - *(u16 *)(a + 0x84))) <= *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86);
+}
+
+u8 *func_8010A83C(u8 *a)
+{
+    u8 **l = D_1F800158;
+    u8 *p;
+
+    D_1F800182 = D_1F80015E;
+    while (D_1F800182 != 0) {
+        p = *l;
+        D_1F800182--;
+        l++;
+        if ((p[0] & 1) && p[2] == 1 && p[3] == 0 && cyl_test(a, p)) {
+            return p;
+        }
+    }
+    return NULL;
+}
 
 extern u8 D_1F800137;
 extern u8 D_800BF840;

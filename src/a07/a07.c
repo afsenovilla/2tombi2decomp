@@ -98,7 +98,35 @@ void func_8010B944(u8 *a, u8 *b)
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010BAD0);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010BC9C);
+extern u16 D_1F80008C;
+extern u8 D_800BF808[];
+
+void func_8010BC9C(u8 *a, u8 *b)
+{
+    s16 ang;
+
+    if (func_8002300C(a, b, *(s16 *)(b + 0x80) + 0xC8) == 0) {
+        return;
+    }
+    ang = *(u16 *)&D_1F80009C_baed & 0xFFF;
+    if ((*(u16 *)(a + 0x17E) & 0x7C00) && D_800BF808[1] == 0 && D_1F800137 == 0 && !(b[0] & 2)) {
+        if (abs((s16)((ang - *(u16 *)(a + 0x56)) << 4)) < 0x4001) {
+            D_1F80018E = 0x1800;
+            D_1F800184 = b;
+            D_800BF808[0x38] = 0x4B;
+        }
+    }
+    if (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) >= D_1F80008C) {
+        s32 temp_s0;
+        s32 temp_lo;
+
+        ang += 0x800;
+        temp_s0 = (s32) (func_80083F50(ang) * (M2C_FIELD(a, s16 *, 0x80) + M2C_FIELD(b, s16 *, 0x80))) >> 0xC;
+        temp_lo = func_80083E80(ang) * (M2C_FIELD(a, s16 *, 0x80) + M2C_FIELD(b, s16 *, 0x80));
+        M2C_FIELD(a, s16 *, 0x2E) = (s16) (M2C_FIELD(b, u16 *, 0x2E) + temp_s0);
+        M2C_FIELD(a, s16 *, 0x36) = (s16) (M2C_FIELD(b, u16 *, 0x36) - (temp_lo >> 0xC));
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010BE08);
 
@@ -128,11 +156,31 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", f_DispatchCircusActorContacts);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_DispatchCircusActorContactCleanup);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010CA60);
+void func_8010CA60(u8 *a, u8 *b)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(b + 0x2E);
+    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(b + 0x36);
+    s32 d = func_80084080(dx * dx + dz * dz);
+    s32 ang;
+
+    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80)) {
+        return;
+    }
+    if ((u16)((*(u16 *)(a + 0x32) - *(u16 *)(b + 0x32)) + ((*(u16 *)(b + 0x84) + *(u16 *)(a + 0x86)) - *(u16 *)(a + 0x84))) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+        return;
+    }
+    ang = func_80085690(-dz, dx);
+    D_1F80009C_baed = ang;
+    {
+        s32 temp_s0 = (s32) (func_80083F50(ang) * (M2C_FIELD(a, s16 *, 0x80) + M2C_FIELD(b, s16 *, 0x80))) >> 0xC;
+        s32 temp_lo = func_80083E80(D_1F80009C_baed) * (M2C_FIELD(a, s16 *, 0x80) + M2C_FIELD(b, s16 *, 0x80));
+        M2C_FIELD(a, s16 *, 0x2E) = (s16) (M2C_FIELD(b, u16 *, 0x2E) + temp_s0);
+        M2C_FIELD(a, s16 *, 0x36) = (s16) (M2C_FIELD(b, u16 *, 0x36) - (temp_lo >> 0xC));
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_DispatchCircusSupportContacts);
 
-extern u8 D_800BF808[];
 extern u8 D_800E7E80[];
 extern u8 **D_1F800154;
 extern u8 D_1F80015C;
