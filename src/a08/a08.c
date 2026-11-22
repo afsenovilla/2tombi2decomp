@@ -5422,9 +5422,94 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801401AC);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80140314);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80140608);
+// nearcopy: 10 words off, C from crd func_8018F414
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+extern u16 D_800E7E68;
+extern s32 D_800A2914;
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80140730);
+void func_80140608(u8 *a)
+{
+    CrdMenu *s;
+    s32 w, m, ff;
+    ff = 0xFF;
+    if (a[0x46] != ff && (a + a[0x46])[0x4A] != 0) {
+        w = 0x30;
+        s = &D_800BF498;
+        m = -1;
+        if (s->x18 != w) {
+            func_8009A5B0(s->xC, D_800A2914);
+            s->x18 = w;
+        }
+        if (s->x1A != m) {
+            *s->x10 = 0;
+            s->x1A = m;
+        }
+        a[0x50] = 0;
+        a[0x44] = 0;
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        (a + a[0x46])[0x48] = 0;
+        (a + a[0x46])[0x4E] = ff;
+        a[3] = 0x64;
+        a[0x46] = ff;
+        a[0x47] = 0;
+        a[0] = 0x6D;
+    } else if (D_800E7E68 & 0x6000) {
+        func_80074590(0x11, 0, 0);
+        a[1] = 0;
+        a[0] = a[3];
+    }
+}
+
+// nearcopy: 11 words off, C from crd func_8018F548
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+extern s32 D_800A2914;
+
+void func_80140730(u8 *a)
+{
+    CrdMenu *s;
+    s32 w, m;
+    s32 k;
+    u8 j;
+    k = a[0x3E];
+    j = k;
+    if (k == 0) {
+    } else if (j == 1) {
+        w = 0x30;
+        s = &D_800BF498;
+        m = -1;
+        if (s->x18 != w) {
+            func_8009A5B0(s->xC, D_800A2914);
+            s->x18 = w;
+        }
+        if (s->x1A != m) {
+            *s->x10 = 0;
+            s->x1A = m;
+        }
+        a[0] = 0x66;
+        a[1] = 0;
+        a[0x3F] = 0x6A;
+    } else {
+        a[0x50] = 0;
+        a[0x44] = 0;
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        (a + a[0x46])[0x48] = 0;
+        (a + a[0x46])[0x4E] = 0xFF;
+        a[3] = 0x64;
+        a[0x46] = 0xFF;
+        a[0x47] = 0;
+        a[0] = 0x6D;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80140834);
 
