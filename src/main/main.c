@@ -6663,7 +6663,23 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80068E68);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80068FBC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006914C);
+void func_8006914C(u8 *a)
+{
+    u8 *b;
+    u8 s;
+    u8 t;
+
+    s = a[0];
+    b = a + 0x60;
+    if (s == 2) {
+        *(s16 *)(a + 0x44) = 0;
+        a[0x2B] = 1;
+        a[4] = s;
+        t = D_1F800251;
+        *(s16 *)(b + 0xE) = 1;
+        D_1F800251 = t - 1;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006918C);
 
@@ -6673,7 +6689,16 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80069300);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80069634);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80069688);
+void func_80069688(u8 *a)
+{
+    u8 *b = a + 0x60;
+
+    if (a[0x5E] == 0) {
+        *(s16 *)(b + 0x16) = D_800A4A84[a[2]];
+    } else {
+        *(s16 *)(b + 0x16) = D_800A4A8C[a[2]];
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800696C4);
 
@@ -6694,7 +6719,14 @@ s16 func_80069A2C(u8 *a, s16 x, s16 y, s16 z)
     return ratan2(dy, (c * dx + s * dz) >> 12);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80069AE4);
+void func_80069AE4(u16 *a)
+{
+    struct { u8 pad[0xDC]; u16 *p; } *g = (void *)D_800E7E80;
+
+    a[0x17] = g->p[0x16];
+    a[0x19] = g->p[0x18];
+    a[0x1B] = g->p[0x1A];
+}
 
 
 void func_80069B28(void)
@@ -6818,7 +6850,25 @@ void func_8006B020(u8 *a, s32 mode)
     func_80051614(a, D_1F8000C8, 7, k);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006B0D8);
+void func_8006B0D8(u8 *a)
+{
+    u8 *b;
+    u8 s;
+    u8 t;
+
+    if (a[2] != 4) {
+        s = a[0];
+        b = a + 0x60;
+        if (s == 2) {
+            a[0x2B] = s;
+            a[1] = 0;
+            a[4] = s;
+            t = D_1F800231;
+            *(s16 *)(b + 0xE) = 1;
+            D_1F800231 = t - 1;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006B124);
 
@@ -7328,7 +7378,19 @@ void f_SetCurrentScriptActorMode(s8 arg0) {
     M2C_FIELD(temp_v0, s8 *, 3) = arg0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800708CC);
+void func_800708CC(u8 *a)
+{
+    u8 *g;
+
+    *(s16 *)(a + 0x44) = 0x400;
+    g = D_800BF808;
+    a[3] = 0;
+    *(u16 *)(g + 0x1E) = *(u16 *)(a + 0x4E) = *(u16 *)(a + 0x2E);
+    *(u16 *)(g + 0x22) = *(u16 *)(a + 0x50) = *(u16 *)(a + 0x32);
+    *(u16 *)(g + 0x26) = *(u16 *)(a + 0x52) = *(u16 *)(a + 0x36);
+    a[6] = 0;
+    a[5] = 2;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007091C);
 
@@ -8534,7 +8596,16 @@ s32 f_AllocateActorRecordByType(u8 type, u8 b, s32 c)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007AA38);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_AllocateActorModelPart);
+s32 f_AllocateActorModelPart(void)
+{
+    s32 *p;
+
+    if (D_800ED098 > 0) {
+        D_800ED098--;
+        return *D_800E7E74++;
+    }
+    return 0;
+}
 
 
 void func_8007AB20(void) {
