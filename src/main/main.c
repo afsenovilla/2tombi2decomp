@@ -2175,9 +2175,97 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawPackedGouraudQuadStream);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawProjectedSpriteDefinitionStream);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80027CB4);
+extern s8 D_1F80008C[];
+void func_80031780(u8 *p);
+#define gte_ldv0_2C(r0) __asm__ volatile("lwc2 $0, 0x2C(%0); lwc2 $1, 0x30(%0)" : : "r"(r0))
+/* f_SetEffectProjectionTransform, inlined */
+static inline void SetProj_7CB4(s32 dqa)
+{
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_SetTransMatrix(D_1F8000F8);
+    gte_lddqa(dqa);
+    gte_lddqb0();
+}
+/* sprite depth projection, inlined */
+static inline s32 ProjZ(u8 *a, s32 *otz0, s32 *flag0)
+{
+    s32 *flag = flag0;
+    s32 *otz = otz0;
+    s32 *sxy = (s32 *)D_1F80008C;
+    u16 h = *(u16 *)(a + 0x32);
+    s32 e;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80027E5C);
+    gte_rtps();
+    gte_stflg(flag);
+    if (*flag < 0) {
+        return 1;
+    }
+    gte_stsz(flag);
+    if (*flag <= 0) {
+        return 1;
+    }
+    *flag = (*flag >> 2) + (s16)h;
+    if (*flag < 4) {
+        *flag = 4;
+    }
+    e = *flag >> 10;
+    *flag = (*flag >> e) + (e << 9);
+    if ((u32)(*flag - 4) >= 0x7FC) {
+        *flag = -1;
+    }
+    if (*flag < 0) {
+        return 1;
+    }
+    gte_stsxy(sxy);
+    gte_stopz(otz);
+    return 0;
+}
+
+void func_80027CB4(u8 *a)
+{
+    s32 *flag = &D_1F800080;
+    s32 *otz = (s32 *)D_1F800084;
+    s32 *o2 = &D_1F800088;
+    s32 *z = (s32 *)D_1F800090;
+    s32 d = *(s32 *)(a + 0x34);
+
+    if (d == 0) {
+        return;
+    }
+    SetProj_7CB4(6);
+    gte_ldv0_2C(a);
+    if (ProjZ(a, (s32 *)D_1F800084, &D_1F800080)) {
+        func_80031780(a);
+        return;
+    }
+    *o2 = *otz;
+    *z = 0;
+    *(s32 *)(a + 0x38) = f_DrawProjectedSpriteDefinitionStream(d, (*(u16 *)(a + 0x46) << 16) | *(u16 *)(a + 0x44));
+}
+
+void func_80027E5C(a)
+    u8 *a;
+{
+    s32 *flag = &D_1F800080;
+    s32 *otz = (s32 *)D_1F800084;
+    s32 *o2 = &D_1F800088;
+    s32 *z = (s32 *)D_1F800090;
+    s32 d = *(s32 *)(a + 0x34);
+
+    if (d == 0) {
+        return;
+    }
+    SetProj_7CB4(6);
+    gte_ldv0_2C(a);
+    if (ProjZ(a, (s32 *)D_1F800084, &D_1F800080)) {
+        func_80031780(a);
+        return;
+    }
+    *otz = (*otz * a[6]) >> 4;
+    *o2 = *otz;
+    *z = 0;
+    *(s32 *)(a + 0x38) = f_DrawProjectedSpriteDefinitionStream(d, (*(u16 *)(a + 0x46) << 16) | *(u16 *)(a + 0x44));
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002801C);
 
@@ -2555,7 +2643,27 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8002CD18);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002D65C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002DBE4);
+void func_8002DBE4(u8 *a)
+{
+    s32 *flag = &D_1F800080;
+    s32 *otz = (s32 *)D_1F800084;
+    s32 *o2 = &D_1F800088;
+    s32 *z = (s32 *)D_1F800090;
+    s32 d = *(s32 *)(a + 0x34);
+
+    if (d == 0) {
+        return;
+    }
+    SetProj_7CB4(6);
+    gte_ldv0_2C(a);
+    if (ProjZ(a, (s32 *)D_1F800084, &D_1F800080) == 0) {
+        u16 hi;
+        *o2 = *otz;
+        hi = *(u16 *)(a + 0x46);
+        *z = a[7] << 4;
+        *(s32 *)(a + 0x38) = f_DrawProjectedSpriteDefinitionStream(d, (hi << 16) | *(u16 *)(a + 0x44));
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002DD88);
 
@@ -4757,7 +4865,6 @@ void func_8003FAE8(s16 z, s16 stp)
     D_800BF544_5fe3 = (u32 *)p;
 }
 
-extern s8 D_1F80008C[];
 void func_8003FB84(void) {
     *((s32 *)D_1F80008C) = 0xFF;
 }
@@ -6530,9 +6637,87 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_GrantPickupHealth);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80049F80);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004A118);
+/* f_DespawnGrabbedItem, inlined */
+static inline s32 Despawn_A2A0(s32 arg0) {
+    s32 temp_v0;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004A2A0);
+    temp_v0 = f_SpawnTransientEffect(0x1F, -0x8C);
+    if (temp_v0 != 0) {
+        M2C_FIELD(temp_v0, u8 *, 0x28) = (u8) (M2C_FIELD(temp_v0, u8 *, 0x28) | 0x80);
+        M2C_FIELD(temp_v0, u16 *, 0x2C) = (u16) M2C_FIELD(arg0, u16 *, 0x2E);
+        M2C_FIELD(temp_v0, u16 *, 0x2E) = (u16) M2C_FIELD(arg0, u16 *, 0x32);
+        M2C_FIELD(temp_v0, u16 *, 0x30) = (u16) M2C_FIELD(arg0, u16 *, 0x36);
+    }
+    return f_PlaySoundEffect(0x28, 0, 0);
+}
+
+s32 func_8004A118(u8 *a)
+{
+    u8 *g;
+    s32 k;
+    u8 c;
+
+    switch (a[6]) {
+    case 0:
+        if (D_800E7FEE <= 0) {
+            break;
+        }
+        Despawn_A2A0((s32)a);
+        g = (u8 *)&D_800BF870;
+        c = ++g[0x12];
+        if (c == 1) {
+            f_QueueResourceMessage(0x17, 0x41);
+            return 1;
+        }
+        if (c != 2) {
+            goto one;
+        }
+        k = (g[0xAE] == 0xFF) ? 0xE : ((g[0xD] < 8) ? 0xE : 0x17);
+        f_QueueResourceMessage(k, 0x41);
+        {
+            u8 *h = (u8 *)&D_800BF870;
+            h[0x12] -= 2;
+        }
+        a[7] = 0;
+        a[6]++;
+        D_800ED058_93c7[9] |= 2;
+    case 1:
+    one:
+        if (func_80049F80(a)) {
+            D_800ED058_93c7[9] &= ~2;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
+
+s32 func_8004A2A0(u8 *a)
+{
+    u8 *g;
+    s32 k;
+
+    switch (a[6]) {
+    case 0:
+        if (D_800E7FEE <= 0) {
+            break;
+        }
+        Despawn_A2A0((s32)a);
+        g = (u8 *)&D_800BF870;
+        k = (g[0xAE] == 0xFF) ? 0xC : ((g[0xD] < 8) ? 0xC : 0x16);
+        f_QueueResourceMessage(k, 0x41);
+        a[7] = 0;
+        a[6]++;
+        D_800ED058_93c7[9] |= 2;
+    case 1:
+        if (func_80049F80(a)) {
+            D_800ED058_93c7[9] &= ~2;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_GrantNonGemPickupReward);
 
