@@ -380,7 +380,21 @@ void func_80115EB0(void) {
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80115EF0);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80115F8C);
+void func_801196C8();
+void func_8011B674();
+void f_UpdateBigIcePigActor();
+void func_80120F08();
+
+void func_80115F8C(void) {
+    u8 *p = func_8007A980(2, 3, 1);
+
+    if (p != NULL) {
+        M2C_FIELD(p, void **, 0x1C) = func_801196C8;
+        p[0x2] = 0;
+        p[0x3] = 1;
+        p[0x28] = (p[0x28] | 0x80);
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80115FE0);
 
@@ -721,7 +735,18 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011B618);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011B674);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011B79C);
+u8 *func_8011B79C(void) {
+    u8 *p = func_8007A980(1, 3, 1);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    p[0x2] = 18;
+    p[0x3] = 0;
+    M2C_FIELD(p, void **, 0x1C) = func_8011B674;
+    p[0x28] = (p[0x28] | 0x80);
+    return p;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011B7F4);
 
@@ -1039,7 +1064,20 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80120C14);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80120F08);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801211E4);
+s32 func_801211E4(u8 *a) {
+    u8 *p = func_8007A980(2, 4, 0);
+
+    if (p == NULL) {
+        return 0;
+    }
+    M2C_FIELD(p, void **, 0x1C) = func_80120F08;
+    p[0x2] = 49;
+    M2C_FIELD(p, s16 *, 0x2E) = M2C_FIELD(a, u16 *, 0x2E);
+    M2C_FIELD(p, s16 *, 0x32) = (M2C_FIELD(a, u16 *, 0x32) + -100);
+    M2C_FIELD(p, s16 *, 0x36) = M2C_FIELD(a, u16 *, 0x36);
+    p[0x2A] = a[0x2A];
+    return 1;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012126C);
 
@@ -1607,7 +1645,17 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801332D0);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", f_UpdateBigIcePigActor);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80133A30);
+u8 *func_80133A30(s32 a, s32 b) {
+    u8 *p = func_8007A980(3, 2, 0);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    M2C_FIELD(p, void **, 0x1C) = f_UpdateBigIcePigActor;
+    p[0x2] = 40;
+    p[0x3] = (b | 0x80);
+    return p;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80133A88);
 

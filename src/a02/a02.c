@@ -418,7 +418,20 @@ void func_80115090(void *arg0) {
     func_8007778C(arg0);
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801150EC);
+void f_UpdateCoalMiningTownScenePropActor();
+
+u8 *func_801150EC(s32 a) {
+    u8 *p = func_8007A980(1, 3, 1);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    p[0x2] = 16;
+    p[0x3] = 12;
+    M2C_FIELD(p, void **, 0x1C) = f_UpdateCoalMiningTownScenePropActor;
+    M2C_FIELD(p, s32 *, 0x10) = a;
+    return p;
+}
 
 extern s32 D_800BF844;
 #define PLAYER (*(u8 **)&D_800BF844)

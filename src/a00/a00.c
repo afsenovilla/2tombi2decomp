@@ -1632,7 +1632,19 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnStarShapedCogPickup);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleDryingRackController);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A730);
+void f_HandleDryingRackController();
+
+u8 *func_8013A730(s32 a) {
+    u8 *p = func_8007A980(3, 4, 0);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    M2C_FIELD(p, void **, 0x1C) = f_HandleDryingRackController;
+    M2C_FIELD(p, s32 *, 0x10) = a;
+    p[0x2] = 16;
+    return p;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A784);
 
