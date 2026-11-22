@@ -12,7 +12,6 @@ extern u8 D_1F800182;
 extern u8 D_1F800183;
 extern u8 **D_1F800148;
 extern u8 **D_1F80013C;
-
 void func_8010959C(void)
 {
     u8 **q;
@@ -49,7 +48,6 @@ extern u8 D_1F800182;
 extern u8 D_1F800182;
 extern u8 D_1F800182;
 extern u8 D_1F800182;
-
 void func_801096E0(void)
 {
     u8 **l;
@@ -71,7 +69,6 @@ void func_801096E0(void)
 }
 
 extern u8 *D_800F2738;
-
 void func_8010978C(void)
 {
     u8 *a;
@@ -106,7 +103,6 @@ void func_8010978C(void)
 INCLUDE_ASM("asm/a0g/nonmatchings/a0g", f_DispatchCourageTowerTombaContacts);
 
 extern u16 D_800BF812;
-
 void func_80109CC8(u8 *a)
 {
     u16 limit = D_800BF812;
@@ -120,7 +116,6 @@ void func_80109CC8(u8 *a)
 }
 
 extern u8 D_800BF808[];
-
 void func_80109D28(u8 *a)
 {
     u8 *s = D_800BF808;
@@ -138,7 +133,6 @@ void func_80109D28(u8 *a)
 }
 
 extern u8 D_1F800150;
-
 void func_80109D98(u8 *a)
 {
     u8 **l;
@@ -161,7 +155,6 @@ void func_80109D98(u8 *a)
 extern u8 **D_1F80013C;
 extern u8 D_1F800144;
 extern u8 D_1F800182;
-
 void func_80109E70(void *a)
 {
     u8 **l = D_1F80013C;
@@ -181,7 +174,6 @@ void func_80109E70(void *a)
         }
     }
 }
-
 
 void func_80109F34(u8 *a)
 {
@@ -213,7 +205,6 @@ void func_80109F34(u8 *a)
     }
 }
 
-
 void func_8010A034(void)
 {
     u8 *a;
@@ -241,14 +232,12 @@ void func_8010A034(void)
 extern u8 D_1F800152;
 extern u8 D_1F800182;
 extern s32 D_1F800080;
-
 s32 func_8010A134(void)
 {
     for (D_1F800182 = D_1F800152; D_1F800182 != 0; D_1F800182--) {
     }
     return D_1F800080;
 }
-
 
 void func_8010A16C(void *arg0) {
     func_8006F0E4();
@@ -277,7 +266,6 @@ typedef struct {
     u8 x16B;
 } Area7E80;
 extern Area7E80 D_800E7E80_eac2;
-
 void func_8010A2B4(void)
 {
     func_80054198(&D_800E7E80_eac2);
@@ -291,7 +279,6 @@ void func_8010A2B4(void)
 
 extern u8 D_800E806C;
 extern u8 D_800E7E80[];
-
 void func_8010A314(void)
 {
     u8 *p;
@@ -314,7 +301,6 @@ INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010A4F4);
 extern u8 D_1F800137;
 extern u8 D_1F800236;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void f_UpdateCourageTowerExitDoorSequence(u8 *a)
 {
     u8 *t = D_800E7E80;
@@ -365,7 +351,6 @@ INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010ADC4);
 INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010B08C);
 
 INCLUDE_ASM("asm/a0g/nonmatchings/a0g", f_UpdateCourageTowerInteriorEntranceActor);
-
 
 s32 func_8010B91C(u8 *a, s16 id)
 {
@@ -426,7 +411,6 @@ typedef struct { s16 x, y, z; } V3;
 typedef struct { s16 x, y, z, pad; } SVec;
 typedef struct { u16 x, p0, y, p1, z, p2; } LVec;
 typedef struct { u16 a, b; } Range;
-
 void func_8010B9E0(Owner *a, s32 sel)
 {
     Spawn *e;
@@ -509,7 +493,6 @@ typedef struct {
     u32 *tbl;
     u16 list[1];
 } PartList;
-
 void func_8010C2A4(PartList *a)
 {
     u16 *p = a->list;
@@ -540,7 +523,6 @@ INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010C3A4);
 
 INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010C664);
 
-
 void func_8010C9B4(u32 *p, void *b)
 {
     u32 lo = *p;
@@ -557,7 +539,6 @@ INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010C9FC);
 INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010CCDC);
 
 extern u16 *D_800ECF78;
-
 void func_8010D21C(u8 *a)
 {
     u16 *p = D_800ECF78;

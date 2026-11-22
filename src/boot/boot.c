@@ -28,7 +28,6 @@ typedef struct {
     u32 *vlcbuf[2];
     s32 vlcid;
 } DecEnvHead;
-
 s32 func_8001174C(DecEnvHead *dec)
 {
     s32 cnt = 2000;
@@ -69,7 +68,6 @@ typedef struct {
     u16 height;
 } StHeader;
 extern s32 D_800253EC;
-
 void func_800117D0(DecEnv *dec)
 {
     volatile u32 cnt = 0x800000;
@@ -84,7 +82,6 @@ void func_800117D0(DecEnv *dec)
     }
     dec->isdone = 0;
 }
-
 
 u32 *func_80011864(DecEnv *dec)
 {
@@ -106,7 +103,6 @@ u32 *func_80011864(DecEnv *dec)
     return addr;
 }
 
-
 void func_80011904(u8 *pos)
 {
     u8 mode = 0x80;
@@ -127,7 +123,6 @@ typedef struct {
     void *prect;
     u32 *paddr;
 } TimImage;
-
 void func_80011974(u32 *addr)
 {
     TimImage t;
@@ -160,7 +155,6 @@ INCLUDE_ASM("asm/boot/nonmatchings/boot", func_80012674);
 INCLUDE_ASM("asm/boot/nonmatchings/boot", func_800127E0);
 
 INCLUDE_ASM("asm/boot/nonmatchings/boot", func_80012954);
-
 
 u32 func_80012B08(u8 *p)
 {

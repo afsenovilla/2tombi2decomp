@@ -47,7 +47,6 @@ void func_80109078(u8 *a, u8 *b) {
 #define FU16(p, o) M2C_FIELD(p, u16 *, o)
 extern s8 D_800BF80D;
 extern u8 D_1F800182;
-
 void func_801091CC(u8 *a, u8 *b) {
     u8 *q = a + 0x60;
     u32 k;
@@ -94,7 +93,6 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_80109398);
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_801095B8);
 
 extern u8 D_800E7E80[];
-
 void func_80109708(void)
 {
     u8 *pl = D_800E7E80;
@@ -123,7 +121,6 @@ extern s32 D_1F800184;
 extern u16 D_1F800210;
 extern u8 D_1F800152;
 extern s32 D_1F800080;
-
 s32 func_80109790(void)
 {
     for (D_1F800182 = D_1F800152; D_1F800182 != 0; D_1F800182--) {
@@ -132,7 +129,6 @@ s32 func_80109790(void)
 }
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", f_UpdateEvilPigDoorTombaTransitionSequence);
-
 
 void func_80109CA0(void *arg0) {
     func_8006F0E4();
@@ -158,7 +154,6 @@ typedef struct {
     u8 x16B;
 } Area7E80;
 extern Area7E80 D_800E7E80_eac2;
-
 void func_80109DF4(void)
 {
     func_80054198(&D_800E7E80_eac2);
@@ -174,7 +169,6 @@ extern u8 D_800BF816;
 extern u8 D_800E806C;
 extern s32 D_1F800184;
 extern u8 D_800E7E80[];
-
 void func_80109E54(void)
 {
     u8 *p;
@@ -193,7 +187,6 @@ void func_80109E54(void)
 INCLUDE_ASM("asm/a09/nonmatchings/a09", f_SpawnEvilPigDoorActorsFromPlacementTable);
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010A060);
-
 
 void func_8010A188(u8 *a)
 {
@@ -269,7 +262,6 @@ done:
 extern u8 D_800BF841;
 extern u8 D_800E806E;
 extern u16 D_1F8000D6;
-
 void f_UpdateEvilPigGateOpeningSequence(u8 *a) {
     u8 *t;
 
@@ -325,7 +317,6 @@ void f_UpdateEvilPigGateOpeningSequence(u8 *a) {
 
 extern u8 D_1F800236;
 extern u8 D_800BF808_1760[];
-
 void func_8010AD9C(u8 *a) {
     u8 *t = D_800E7E80;
     u8 v;
@@ -385,7 +376,6 @@ typedef struct {
 } TexAnim;
 extern TexAnim D_8010E260[];
 extern s8 D_8010E608[];
-
 void func_8010B3A8(s32 run)
 {
     RECT16 r;
@@ -423,7 +413,6 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010B4C8);
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010B664);
 
 extern s16 D_801003F8;
-
 s32 func_8010B8B4(u8 *a)
 {
     CameraState *c;
@@ -450,7 +439,6 @@ s32 func_8010B8B4(u8 *a)
 }
 
 extern u8 D_800E7EAC[];
-
 s32 func_8010B974(void)
 {
     CameraState *c = &g_CameraState;
@@ -461,7 +449,6 @@ s32 func_8010B974(void)
     func_8006CBA8(D_800E7EAC);
     return 1;
 }
-
 
 s32 func_8010B9CC(void)
 {
@@ -479,7 +466,6 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010BA24);
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010BB20);
 
 extern u8 *D_800BF860;
-
 s32 func_8010BBFC(u8 *a)
 {
     u8 *s = D_800BF860;
@@ -501,7 +487,6 @@ s32 func_8010BBFC(u8 *a)
         return 0;
     }
 }
-
 
 s32 func_8010BC9C(u8 *a)
 {
@@ -526,7 +511,6 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", f_UpdateEvilPigStatueActor);
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010C588);
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010C6B8);
-
 
 s32 func_8010CAF8(u8 *a)
 {
@@ -556,7 +540,6 @@ s32 func_8010CAF8(u8 *a)
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010CBB0);
 
 extern u8 D_8010E3FC[];
-
 s32 func_8010CCD8(u8 *a)
 {
     switch (a[6]) {
@@ -630,7 +613,6 @@ typedef struct {
     u16 pad2;
 } AreaPolyFT4;
 extern u32 *D_800ED8C8;
-
 AreaPolyFT4 *func_8010D7D4(AreaPolyFT4 *p, s32 x, s32 y, s32 w, s32 h, s16 c, s16 cy) {
     u32 rgbc;
     u16 clut;
@@ -676,7 +658,6 @@ AreaPolyFT4 *func_8010D7D4(AreaPolyFT4 *p, s32 x, s32 y, s32 w, s32 h, s16 c, s1
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010D910);
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void func_8010DE2C(u8 *a)
 {
     switch (a[4]) {
@@ -701,7 +682,6 @@ void func_8010DE2C(u8 *a)
     }
 }
 
-
 void func_8010DEE0(u8 *a)
 {
     u32 v;
@@ -725,7 +705,6 @@ typedef struct { u16 start; u16 len; } AudioSeg;
 extern AudioSeg D_8010E5A8[];
 extern AudioSeg D_8010E5C0[];
 extern s32 D_1F80021C;
-
 void f_UpdateEvilPigInteriorEntranceDoorActor(s16 a, s16 i)
 {
     AudioSeg *t;

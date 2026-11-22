@@ -74,7 +74,6 @@ typedef struct { u8 pad[0x18]; u8 isbg; u8 r0, g0, b0; } DrawEnvLite_E80A8;
 typedef struct Slot40c { u8 pad0[7]; u8 index; u8 pad8[4]; s16 scale; u8 padE[0x32]; } Slot40c;
 typedef struct Entry8w { u8 pad0[6]; u16 flags; } Entry8w;
 typedef struct { u8 on; u8 flags; u8 pad[10]; } SpuVoiceSlot_238;
-
 s32 func_80109C48(u8 *t, s32 anim, s32 blend)
 {
     if (t[0x46] == (u8)anim) {
@@ -143,7 +142,6 @@ s32 func_8010E820(void *arg0) {
 }
 
 extern s8 D_800BF808[];
-
 void func_8010E834(u8 *a) {
     s8 *g = D_800BF808;
     u8 *q = a + 0x60;
@@ -170,7 +168,6 @@ void func_8010E834(u8 *a) {
     }
 }
 
-
 void func_8010E8F4(s32 arg0) {
     s16 temp_v1;
     void *temp_a0;
@@ -185,7 +182,6 @@ void func_8010E8F4(s32 arg0) {
         M2C_FIELD(temp_a0, s16 *, 0xC) = 0x1A80;
     }
 }
-
 
 void func_8010E92C(s32 arg0) {
     s16 temp_v1;
@@ -207,7 +203,6 @@ INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010E964);
 INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010EC34);
 
 extern u16 *D_800ECF78;
-
 void func_8010F174(u8 *a)
 {
     u16 *p = D_800ECF78;
@@ -236,7 +231,6 @@ INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyTrailActor);
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", func_80111158);
 
-
 void func_801113B4(s32 arg0) {
     func_80110B00(4, arg0 + 0x3C, 0x10);
 }
@@ -246,7 +240,6 @@ typedef struct {
 } Pair16;
 extern Pair16 D_8011BB64;
 extern u8 D_8011BB68[];
-
 void func_801113DC(u8 *a) {
     u8 *p;
     s16 x, y;

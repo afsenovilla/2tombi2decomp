@@ -16,7 +16,6 @@ INCLUDE_ASM("asm/demo/nonmatchings/demo", func_80106C24);
 
 extern u16 D_1F80017C;
 extern u8 D_1F800136;
-
 void func_80106E28(void)
 {
     D_1F80017C++;
@@ -39,7 +38,6 @@ void func_80106E28(void)
     func_80077D8C();
     func_80075A80();
 }
-
 
 void func_80106EE4(void)
 {
@@ -94,7 +92,6 @@ extern MovieDef D_80107718[];
 extern DecEnv D_1F800000;
 extern u8 *D_1F800138;
 extern u8 D_1F800135;
-
 void func_801072F4(void)
 {
     Rect16 r;
@@ -138,7 +135,6 @@ void func_80107400(DecEnv *d, s16 x0, s16 y0, s16 x1, s16 y1)
     d->slice.h = 0xF0;
 }
 
-
 void func_801074BC(s32 a, s32 b)
 {
     u8 *buf = D_80107718[D_1F800138[0x69]].buf;
@@ -154,7 +150,6 @@ typedef struct {
     u32 *vlcbuf[2];
     s32 vlcid;
 } VlcEnv;
-
 s32 func_8010755C(VlcEnv *dec, s32 b)
 {
     s32 cnt = 2000;
@@ -170,7 +165,6 @@ s32 func_8010755C(VlcEnv *dec, s32 b)
     func_8008CF40(next);
     return 0;
 }
-
 
 u32 *func_801075F8(DecEnv *dec, u32 limit)
 {
@@ -191,7 +185,6 @@ u32 *func_801075F8(DecEnv *dec, u32 limit)
     dec->slice.h = sector->height;
     return addr;
 }
-
 
 void func_801076B0(s32 a)
 {

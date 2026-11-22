@@ -4,7 +4,6 @@
 
 extern u16 D_800BF812;
 
-
 void func_80109208(u8 *a)
 {
     u16 limit = D_800BF812;
@@ -18,7 +17,6 @@ void func_80109208(u8 *a)
 }
 
 extern u8 D_800BF808[];
-
 void func_80109268(u8 *a)
 {
     u8 *s = D_800BF808;
@@ -35,7 +33,6 @@ void func_80109268(u8 *a)
     }
 }
 
-
 s32 func_801092D8(void) {
     return *(s32 *)0x1F800080;
 }
@@ -48,7 +45,6 @@ typedef struct {
 } PartPos;
 extern u8 D_800BFA58_9b2e;
 extern PartPos D_801178E0[];
-
 void func_801094B8(u8 *a)
 {
     s32 k = 0x27;
@@ -81,7 +77,6 @@ extern u8 D_800BF871;
 extern u8 D_800BF84C;
 extern u8 D_800BFA55;
 extern u8 D_80114F5C[];
-
 void func_8010A680(u8 *a)
 {
     switch (D_800BF871) {
@@ -116,7 +111,6 @@ extern u8 *D_800BF544;
 extern u8 *D_800ED8C8;
 extern s16 D_800E7ED6;
 extern u8 D_8011605C[];
-
 void func_8010A768(u8 *a)
 {
     if (a[2] == 0) {
@@ -128,10 +122,8 @@ void func_8010A768(u8 *a)
     }
 }
 
-
 void func_8010A7D0(void) {
 }
-
 
 void func_8010A7D8(void) {
 }
@@ -173,7 +165,6 @@ typedef struct { u8 pad[0x28]; AreaMatrix m; } AreaScratchD0;
 typedef struct { s16 x, y, z, pad; } SVecL;
 typedef struct { u16 x, p0, y, p1, z, p2; } LVecL;
 typedef struct { u16 a, b; } Range;
-
 void func_8010A7E0(Owner *a, s32 sel)
 {
     Spawn *e;
@@ -213,7 +204,6 @@ void func_8010A7E0(Owner *a, s32 sel)
 
 extern s32 D_800BF850;
 extern s16 D_800BED80;
-
 void func_8010A958(u8 *a)
 {
     u8 *s;
@@ -253,7 +243,6 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010AD40);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010B0B8);
 
-
 void func_8010B1B8(u32 *p, void *b)
 {
     u32 lo = *p;
@@ -272,7 +261,6 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010B4EC);
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010B61C);
 
 extern u16 *D_800ECF78;
-
 void func_8010B8EC(u8 *a)
 {
     u16 *p = D_800ECF78;
@@ -314,7 +302,6 @@ void f_ResetEndingIllustrationState(void) {
     D_8011A6D0 = 0;
 }
 
-
 void func_8010D058(s32 i, s32 b, s32 c, s32 d, s32 e)
 {
     u8 *m = D_800BF544;
@@ -334,12 +321,10 @@ s32 func_8010D460(void *arg0) {
     return 1;
 }
 
-
 s32 func_8010D474(void *arg0) {
     M2C_FIELD(arg0, u8 *, 7) = (u8) (M2C_FIELD(arg0, u8 *, 7) + M2C_FIELD(arg0, u8 *, 0x72));
     return 1;
 }
-
 
 void func_8010D490(u8 *a)
 {
@@ -357,7 +342,6 @@ void func_8010D490(u8 *a)
     f_UpdateEndingContinuePrompt(a);
 }
 
-
 void func_8010D504(u8 *a)
 {
     u8 *s;
@@ -372,7 +356,6 @@ void func_8010D504(u8 *a)
     }
 }
 
-
 void func_8010D558(void *arg0) {
     func_80041098();
     if (M2C_FIELD(arg0, u8 *, 0x70) == 0xFF) {
@@ -384,7 +367,6 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010D590);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010D8F0);
 
-
 s32 func_8010DB44(void *arg0) {
     void *temp_v1;
 
@@ -395,7 +377,6 @@ s32 func_8010DB44(void *arg0) {
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010DB68);
 
-
 s32 func_8010DF90(void *arg0) {
     void *temp_v1;
 
@@ -404,12 +385,10 @@ s32 func_8010DF90(void *arg0) {
     return 1;
 }
 
-
 s32 func_8010DFB4(void *arg0) {
     M2C_FIELD(arg0, s8 *, 0x5E) = 1;
     return 1;
 }
-
 
 s32 func_8010DFC4(u8 *a)
 {
@@ -423,7 +402,6 @@ s32 func_8010DFC4(u8 *a)
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010DFEC);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010E3D4);
-
 
 void func_8010E438(s32 a)
 {
@@ -439,7 +417,6 @@ typedef struct {
 extern SVec D_1F8000C0;
 extern LVec D_1F8000A0;
 extern u8 *D_1F800248;
-
 void func_8010E45C(u8 *a)
 {
     u8 *o;
@@ -455,12 +432,10 @@ void func_8010E45C(u8 *a)
     *(s16 *)(a + 0x56) = *(s16 *)(o + 0x56);
 }
 
-
 s32 func_8010E51C(void *arg0) {
     D_800BF850 = (s32) M2C_FIELD(arg0, s16 *, 0x72);
     return 1;
 }
-
 
 void func_8010E530(u8 *a)
 {
@@ -471,7 +446,6 @@ void func_8010E530(u8 *a)
     func_80040D68(a, D_8011605C);
     a[0x70] = 2;
 }
-
 
 void func_8010E598(void *arg0) {
     if (M2C_FIELD(arg0, u8 *, 5) == 0) {
@@ -486,7 +460,6 @@ extern s16 D_1F800160;
 extern s16 D_1F800164;
 extern u8 *D_1F80024C;
 void func_80111744();
-
 void func_8010E5F0(u8 *a)
 {
     a[0xB] = (a[0xB] & 0xC0) | 0x80;
@@ -497,7 +470,6 @@ void func_8010E5F0(u8 *a)
 
 extern u8 D_800BFA56;
 extern u8 D_800BFA57;
-
 void func_8010E650(u8 *a)
 {
     switch (a[5]) {
@@ -520,7 +492,6 @@ void func_8010E650(u8 *a)
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", f_UpdateEndingCompletionBranchScript);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010E8B8);
-
 
 s32 func_8010EB90(u8 *a)
 {
@@ -550,7 +521,6 @@ s32 func_8010EBF0(void *arg0) {
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010EC30);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010EF28);
-
 
 void func_8010F250(u8 *a)
 {
@@ -628,18 +598,15 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_801115A4);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111744);
 
-
 void func_80111BF4(void *a)
 {
     func_80051B70(a, 0xC, 0x5);
     func_800517F8(a);
 }
 
-
 void func_80111C28(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
-
 
 void func_80111C34(u8 *a)
 {
@@ -662,7 +629,6 @@ void func_80111C34(u8 *a)
     func_800517F8(a);
 }
 
-
 void func_80111CFC(u8 *a)
 {
     u8 *o;
@@ -677,18 +643,15 @@ void func_80111CFC(u8 *a)
     *(s16 *)(a + 0x36) = *(s16 *)(o + 0x36) + D_1F8000A0.vz;
 }
 
-
 void func_80111DB0(void *a)
 {
     func_80051B70(a, 0xC, 0x6);
     func_800517F8(a);
 }
 
-
 void func_80111DE4(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
-
 
 void func_80111DF0(u8 *a)
 {
@@ -718,7 +681,6 @@ void func_80111DF0(u8 *a)
 
 extern void *D_800ECF80;
 extern u8 D_8011A6D4[];
-
 void func_80111EB0(u8 *a)
 {
     *(void **)(a + 0x3C) = D_800ECF80;
@@ -736,7 +698,6 @@ void func_80111EB0(u8 *a)
     *(s16 *)(a + 0x36) = 0x960;
 }
 
-
 u8 *func_80111F3C(void *a, u8 b)
 {
     u8 *r = func_80072DDC(0, 0, 3, 0x10);
@@ -752,7 +713,6 @@ u8 *func_80111F3C(void *a, u8 b)
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111FA4);
 
-
 void func_8011208C(u8 *a)
 {
     s32 v;
@@ -766,7 +726,6 @@ void func_8011208C(u8 *a)
     *(s16 *)(a + 0x66) += 0x30;
 }
 
-
 void func_80112130(u8 *a)
 {
     *(void **)(a + 0x3C) = D_800ECF80;
@@ -776,7 +735,6 @@ void func_80112130(u8 *a)
     *(s16 *)(a + 0x5A) = 0;
     a[0x47] = 0;
 }
-
 
 void func_80112180(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
@@ -803,7 +761,6 @@ typedef struct {
 } DecEnv;
 extern DecEnv D_1F800000;
 extern u8 D_1F800135;
-
 void func_801129D4(void)
 {
     Rect16 r;
@@ -843,7 +800,6 @@ typedef struct {
     u32 unk8;
 } MovieDef;
 extern MovieDef D_8011A6AC[];
-
 void func_80112BA0(s32 a, s32 b)
 {
     u8 *buf = D_8011A6AC[D_1F800138[0x69]].buf;
@@ -859,7 +815,6 @@ typedef struct {
     u32 *vlcbuf[2];
     s32 vlcid;
 } VlcEnv;
-
 s32 func_80112C40(VlcEnv *dec, s32 b)
 {
     s32 cnt = 2000;
@@ -875,7 +830,6 @@ s32 func_80112C40(VlcEnv *dec, s32 b)
     func_8008CF40(next);
     return 0;
 }
-
 
 u32 *func_80112CDC(DecEnv *dec, u32 limit)
 {
@@ -899,7 +853,6 @@ u32 *func_80112CDC(DecEnv *dec, u32 limit)
     dec->slice.h = sector->height;
     return addr;
 }
-
 
 void func_80112D98(s32 a)
 {

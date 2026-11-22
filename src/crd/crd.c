@@ -139,8 +139,6 @@ static inline void crd_draw_label(u8 *str, CrdRect *r, s32 sel)
     func_8005019C(r, mode, 0, 3);
 }
 
-/* One menu label: text at the right edge of the rect, then the rect widened to the text and filled (highlighted when
- * sel) */
 extern u16 D_800ECF54;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 
@@ -216,7 +214,6 @@ extern u16 D_800ECF54;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern char D_8018A090[];
 extern char D_8018A0A0[];
-
 s32 func_8018AEB8(u8 *buf, s32 port, u8 *st)
 {
     char name[0x20];
@@ -313,7 +310,6 @@ done:
 typedef struct { u8 b[0x5F4]; } CrdSaveBlk;
 extern u8 D_1F8001FF;
 extern u16 D_1F800278;
-
 void func_8018B1A4(CrdMenu *a)
 {
     u8 *p, *b;
@@ -380,7 +376,6 @@ void func_8018B1A4(CrdMenu *a)
     a->x3F = 0;
     a->x40 = 0;
 }
-
 
 void func_8018B478(CrdMenu *a)
 {
@@ -557,7 +552,6 @@ INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018C4B4);
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018C790);
 
 extern u8 *D_800A2854[];
-
 void func_8018CCCC(u8 *a)
 {
     s16 ids[2] = { 0x2E, 0x2F };
@@ -603,7 +597,6 @@ INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018D418);
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018D74C);
 
-
 void func_8018DB28(u8 *a)
 {
     s16 *n = *(s16 **)(a + 8);
@@ -628,7 +621,6 @@ void func_8018DB28(u8 *a)
 
 extern u16 D_800E7E68;
 extern u8 *D_1F800138;
-
 void func_8018DC2C(u8 *a)
 {
     u16 k;
@@ -666,7 +658,6 @@ void func_8018DC2C(u8 *a)
 extern s32 D_800A2914;
 extern s32 D_800A2918;
 extern s32 D_800A292C;
-
 void func_8018DD38(u8 *a)
 {
     u8 mask;
@@ -723,7 +714,6 @@ void func_8018DD38(u8 *a)
 extern s32 D_800A291C;
 extern s32 D_800A2920;
 extern s32 D_800A2928;
-
 void func_8018DFEC(u8 *a)
 {
     s32 k;
@@ -811,7 +801,6 @@ void func_8018DFEC(u8 *a)
 }
 
 extern s32 D_800A297C;
-
 void func_8018E2B4(u8 *a)
 {
     s32 c;
@@ -878,7 +867,6 @@ void func_8018E2B4(u8 *a)
 
 extern s32 D_800A2924;
 extern s32 D_800A2980;
-
 void func_8018E54C(u8 *a)
 {
     s32 k;
@@ -914,7 +902,6 @@ void func_8018E54C(u8 *a)
 
 extern s32 D_800A293C;
 extern s32 D_800A2938;
-
 void func_8018E6BC(u8 *a)
 {
     u8 *e;
@@ -977,7 +964,6 @@ void func_8018E6BC(u8 *a)
 
 extern s32 D_800A2940;
 extern s32 D_800A2934;
-
 void func_8018E95C(u8 *a)
 {
     s32 c;
@@ -1035,7 +1021,6 @@ void func_8018E95C(u8 *a)
 
 extern s32 D_800A2948;
 extern s32 D_800A2944;
-
 void func_8018EC00(u8 *a)
 {
     u8 *e;
@@ -1074,7 +1059,6 @@ void func_8018EC00(u8 *a)
 }
 
 extern s32 D_800A2954;
-
 void func_8018ED94(u8 *a)
 {
     u16 p;
@@ -1129,7 +1113,6 @@ void func_8018ED94(u8 *a)
 
 extern s32 D_800A2970;
 extern s32 D_800A2950;
-
 void func_8018EFDC(u8 *a)
 {
     s32 c;
@@ -1187,7 +1170,6 @@ void func_8018EFDC(u8 *a)
 
 extern s32 D_800A2978;
 extern s32 D_800A2974;
-
 void func_8018F280(u8 *a)
 {
     u8 *e;
@@ -1226,7 +1208,6 @@ void func_8018F280(u8 *a)
 }
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void func_8018F414(u8 *a)
 {
     CrdMenu *s;
@@ -1384,7 +1365,6 @@ void func_8018F660(CrdMenu *a)
 
 extern u8 *D_800A2904;
 extern u8 *D_800A2908;
-
 void func_8018F854(CrdMenu *a)
 {
     u8 *e;
@@ -1423,7 +1403,6 @@ void func_8018F854(CrdMenu *a)
 
 extern u8 D_800E7AD8[];
 extern u8 D_800D34E0[];
-
 void func_8018FA88(u8 n)
 {
     s32 i, w, m;

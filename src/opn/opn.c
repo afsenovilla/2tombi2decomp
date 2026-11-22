@@ -74,7 +74,6 @@ s32 func_8018AAA4(u8 *a, s32 target, s32 cur)
 
 typedef struct { s16 x, y, z, w; } OpnPoint;
 extern OpnPoint D_8018D390[];
-
 s32 func_8018AB78(u8 *a, u8 *b)
 {
     OpnPoint *p;
@@ -102,7 +101,6 @@ INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018B924);
 
 extern u8 D_800BF9ED;
 extern u16 D_1F80017C;
-
 void func_8018BD30(u8 *a)
 {
     u16 t;
@@ -139,7 +137,6 @@ extern u8 D_800BF80E;
 extern s32 D_1F800184;
 extern u8 D_800BF89C;
 extern u8 D_800E7E80[];
-
 void func_8018BE40(u8 *a)
 {
     u8 *t;
@@ -174,7 +171,6 @@ INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018BF08);
 INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018C574);
 
 extern u8 D_8012DA04[];
-
 u8 *func_8018C7D8(void *a)
 {
     u8 *r = func_80072DDC(a, 0, 3, 0x10);
@@ -189,7 +185,6 @@ u8 *func_8018C7D8(void *a)
 
 extern s32 D_8014A270;
 #define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
-
 void func_8018C820(u8 *a)
 {
     switch (a[6]) {
@@ -264,7 +259,6 @@ typedef struct {
     u8 pad9[0xB7];
     u8 *parts[4];
 } PartOwner;
-
 void func_8018CCFC(PartOwner *a, s16 b)
 {
     HiPos p;
@@ -275,7 +269,6 @@ void func_8018CCFC(PartOwner *a, s16 b)
     func_80027144(*(void **)(a->parts[a->count - 1] + 0x40), &p, 0x800, b);
     func_80074590(0xC, 0, 0);
 }
-
 
 void func_8018CDC4(u8 *a)
 {

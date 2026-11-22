@@ -35,7 +35,6 @@ INCLUDE_ASM("asm/game/nonmatchings/game", func_801084F8);
 extern u8 *D_1F800138_5432;
 extern u8 D_1F800136_8901;
 extern u8 D_800BF819_cf3c;
-
 void func_80108624(void)
 {
     u8 *p = D_1F800138_5432;
@@ -64,7 +63,6 @@ void func_80108624(void)
     }
 }
 
-
 s32 func_801086E0(void) {
     void *temp_v0;
 
@@ -82,7 +80,6 @@ extern s16 D_1F800278;
 extern u8 D_1F800206;
 extern u8 D_1F800236;
 extern u8 D_1F800234;
-
 void func_80108720(void)
 {
     u8 *p = D_1F800138_5432;
@@ -98,7 +95,6 @@ void func_80108720(void)
     D_1F800236 = 0;
     D_1F800234 = 0;
 }
-
 
 void func_80108784(void)
 {
@@ -123,7 +119,6 @@ void func_80108784(void)
         break;
     }
 }
-
 
 void func_8010882C(void)
 {
@@ -153,7 +148,6 @@ void func_8010882C(void)
 
 extern u8 D_800452C0[];
 extern u8 D_80108F60[];
-
 void func_801088D8(void)
 {
     switch (*(u16 *)(D_1F800138_5432 + 0x4C)) {
@@ -182,7 +176,6 @@ void func_801088D8(void)
     }
 }
 
-
 void func_801089C4(void)
 {
     switch (*(u16 *)(D_1F800138_5432 + 0x4C)) {
@@ -201,7 +194,6 @@ void func_801089C4(void)
         break;
     }
 }
-
 
 void func_80108A60(void)
 {
@@ -237,7 +229,6 @@ void func_80108A60(void)
 
 extern u16 D_1F80017C;
 typedef struct { u8 pad0[8]; s32 frames; } GameFrames;
-
 void func_80108B0C(void)
 {
     D_1F80017C++;
@@ -262,7 +253,6 @@ void func_80108B0C(void)
     func_80077D8C();
     func_80075A80();
 }
-
 
 void func_80108BE4(void)
 {
@@ -308,7 +298,6 @@ void func_80108CAC(void)
     func_80075A80();
 }
 
-
 s32 func_80108D64(void) {
     void *temp_v0;
 
@@ -319,7 +308,6 @@ s32 func_80108D64(void) {
     return (s32) temp_v0;
 }
 
-
 void func_80108D80(void)
 {
     u8 *p = D_1F800138_5432;
@@ -328,7 +316,6 @@ void func_80108D80(void)
     *(s16 *)(p + 0x4C) = 2;
     *(s16 *)(p + 0x4E) = 3;
 }
-
 
 void func_80108DA4(void)
 {
@@ -342,7 +329,6 @@ void func_80108DA4(void)
     *(s16 *)(p + 0x4C) = 2;
     *(s16 *)(p + 0x4E) = 6;
 }
-
 
 void func_80108DF4(void)
 {
@@ -360,7 +346,6 @@ void func_80108DF4(void)
     p[0x6B] = 0;
 }
 
-
 void func_80108E58(void)
 {
     u8 c = D_1F800138_5432[0x6B] * 8;
@@ -368,7 +353,6 @@ void func_80108E58(void)
     func_8007E9C8((c << 16) | (c << 8) | c, 0, 4);
     D_1F800138_5432[0x6B]--;
 }
-
 
 void func_80108EBC(void)
 {
@@ -381,7 +365,6 @@ void func_80108EBC(void)
 extern s8 D_1F800136[];
 extern s8 D_1F800138[];
 extern s8 D_800BF819;
-
 s32 func_80108F24(void) {
     M2C_FIELD(*((void **)D_1F800138), s8 *, 0x6B) = 0;
     *((s8 *)D_1F800136) = 0;

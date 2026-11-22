@@ -59,16 +59,25 @@ def main():
     text = re.sub(r'(?ms)^#ifdef NON_MATCHING\n(?:(?!^#endif).)*?^#else\n(INCLUDE_ASM\("[^"]+", (\w+)\);)\n#endif\n',
                   keep, text)
     # 2. split into header + items
-    item_re = re.compile(r'(?ms)^INCLUDE_ASM\("[^"]+", (\w+)\);\n|^((?:[^\n;{}]*\n)??[^\n;{}#]*?\b(\w+)\s*\([^;{}]*\)\s*\n?\{.*?^\}\n)')
-    first = item_re.search(text)
+    # a definition starts at column 0 (not a line of a multi-line #define); static (inline) helpers are not items:
+    # they stay with the text around them (the header, or the lines above the next C function)
+    item_re = re.compile(r'(?ms)^INCLUDE_ASM\("[^"]+", (\w+)\);\n|^((?:[^\s;{}/*][^\n;{}]*\n)??[^\s;{}#/*][^\n;{}#]*?\b(\w+)\s*\([^;{}]*\)\s*\n?\{.*?^\}\n)')
+
+    def is_static(m):
+        return m.group(2) and re.match(r"(?:[^\n]*\n)??\s*static\b", m.group(2))
+    first = next(m for m in item_re.finditer(text) if not is_static(m))
     header, body = text[:first.start()], text[first.start():]
     cdefs = {}      # addr -> text (with its leading externs/comments)
     pending = ""
     pos = 0
     for m in item_re.finditer(body):
+        if is_static(m):
+            continue
         gap = body[pos:m.start()]
         pos = m.end()
         if m.group(1):
+            if gap.strip():
+                sys.exit("%s: text between INCLUDE_ASM lines would be lost:\n%s" % (path, gap.strip()[:300]))
             pending = ""
             continue
         name = m.group(3)

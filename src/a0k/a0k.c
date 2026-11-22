@@ -6,7 +6,6 @@
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801095C8);
 
 void func_801095C8();
-
 u8 *func_80109788(void)
 {
     u8 *a = func_8007A980(0, 3, 1);
@@ -36,14 +35,12 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010A034);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010A1F8);
 
-
 void func_8010A498(void) {
 }
 
 extern u8 **D_1F800154;
 extern u8 D_1F80015C;
 extern u8 D_1F800183;
-
 void func_8010A4A0(void)
 {
     u8 **l = D_1F800154;
@@ -73,7 +70,6 @@ typedef struct {
     u32 pending;
     u32 done;
 } RewardSet;
-
 void func_8010A550(void *a, u8 *b)
 {
     RewardSet *r = (RewardSet *)(b + 0x60);
@@ -95,7 +91,6 @@ void func_8010A550(void *a, u8 *b)
 extern u8 **D_1F80013C;
 extern u8 D_1F800144;
 extern u8 D_1F800182;
-
 void func_8010A62C(void *a)
 {
     u8 **l = D_1F80013C;
@@ -128,17 +123,14 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010AD0C);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010B2F0);
 
-
 void func_8010B460(void) {
 }
-
 
 void func_8010B468(void) {
 }
 
 extern u8 D_800E7E80[];
 extern u8 D_1F8000D0[];
-
 void func_8010B470(u8 *a, s16 ang)
 {
     u8 *t = D_800E7E80;
@@ -153,7 +145,6 @@ void func_8010B470(u8 *a, s16 ang)
     a[0x66] |= 1;
 }
 
-
 void func_8010B54C(u8 *a, u8 *b)
 {
     s32 d = ((*(u16 *)(b + 0x56) - *(u16 *)(a + 0x52)) << 20) >> 8;
@@ -164,7 +155,6 @@ void func_8010B54C(u8 *a, u8 *b)
 }
 
 extern s16 D_1F8000EE;
-
 void func_8010B5EC(u8 *a, s16 b)
 {
     s16 v;
@@ -191,7 +181,6 @@ void func_8010B5EC(u8 *a, s16 b)
 
 extern s16 D_1F8001C6;
 extern u8 D_800BF80F;
-
 void func_8010B6D0(u8 *a, u8 *b)
 {
     if (D_1F8001C6 != 0) {
@@ -200,7 +189,6 @@ void func_8010B6D0(u8 *a, u8 *b)
         *(s16 *)(a + 0x52) = func_8010A828(*(s16 *)(b + 0x56), *(s16 *)(a + 0x52), 1);
     }
 }
-
 
 void func_8010B744(void)
 {
@@ -230,7 +218,6 @@ typedef struct {
 extern AreaPadAnalog D_800ECF48;
 extern u16 D_800ECF54;
 typedef struct { u8 pad0[7]; u8 unk7; u8 pad8[0x29]; u8 unk31; s16 unk32; } AreaState808_7;
-
 void func_8010C160(u8 *a) {
     AreaPadAnalog *p = &D_800ECF48;
     u8 m;
@@ -286,7 +273,6 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010C674);
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010C7D4);
 
 extern s8 D_800BF80E;
-
 void func_8010C9D8(void *arg0) {
     s16 temp_v0;
     u16 temp_v0_3;
@@ -397,7 +383,6 @@ extern u16 D_800E7E68;
 extern u8 D_1F800137;
 extern u16 D_1F800166;
 extern u16 D_1F800190;
-
 void func_8010F654(u8 *a) {
     u16 held;
     u16 pad;
@@ -447,7 +432,6 @@ void func_8010F654(u8 *a) {
     }
 }
 
-
 void func_8010F7B0(s16 *a, s16 m)
 {
     if (a[1] < m + 0x16A8) {
@@ -461,7 +445,6 @@ void func_8010F7B0(s16 *a, s16 m)
         a[5] = 0x6658 - m;
     }
 }
-
 
 void func_8010F830(u8 *a)
 {
@@ -493,7 +476,6 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010FDD8);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010FF0C);
 
-
 s32 func_801100B4(u8 *a, u8 *b, s32 bit)
 {
     u8 *q = a + 0x60;
@@ -512,7 +494,6 @@ typedef struct {
     s16 pad8;
     s16 z;
 } HiPos;
-
 void func_801100E4(void *a, u8 *b)
 {
     HiPos p;
@@ -539,7 +520,6 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80110938);
 extern u8 D_800BF808[];
 extern u8 D_800BF871;
 void func_80112884();
-
 void func_80110A34(void)
 {
     u8 *s;
@@ -551,7 +531,6 @@ void func_80110A34(void)
     s[0x31] = 0;
     D_800BF871 = 5;
 }
-
 
 void func_80110A68(void)
 {
@@ -568,7 +547,6 @@ void func_80110A68(void)
 void f_UpdateTinyMouseVillageRewardActor();
 extern u16 D_800BFA26;
 extern s32 D_800BF854;
-
 void f_IncrementBerryNutsScore(void *a)
 {
     u16 *p = &D_800BFA26;
@@ -587,7 +565,6 @@ void f_IncrementBerryNutsScore(void *a)
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_SpawnTinyMouseVillageActorsFromPlacementTable);
 
 extern u8 D_800BF8F9;
-
 void func_80110C80(u8 *a)
 {
     switch (a[4]) {
@@ -626,7 +603,6 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80111658);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_UpdateTinyMouseVillageRewardActor);
 
-
 u8 *func_80111E0C(void *a, u8 b)
 {
     u8 *r = func_80072DDC(0, 3, 3, 0x10);
@@ -653,7 +629,6 @@ void func_80111E70(void *arg0) {
 }
 
 extern u8 D_800BF841_2c52;
-
 void func_80111EE4(u8 *a)
 {
     switch (a[5]) {
@@ -678,7 +653,6 @@ void func_80111EE4(u8 *a)
     a[1] = 1;
 }
 
-
 void func_80111F94(void *arg0) {
     if (M2C_FIELD(arg0, u8 *, 5) == 0) {
         M2C_FIELD(arg0, u8 *, 5) = 1U;
@@ -687,7 +661,6 @@ void func_80111F94(void *arg0) {
     func_800517F8(arg0);
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
-
 
 void func_80111FE8(u8 *a)
 {
@@ -717,7 +690,6 @@ void func_80111FE8(u8 *a)
     a[1] = 1;
 }
 
-
 void func_801120BC(void *arg0) {
     if ((u8) D_800BF871 < 4U) {
         M2C_FIELD(arg0, s8 *, 4) = 3;
@@ -731,7 +703,6 @@ void func_801120BC(void *arg0) {
 }
 
 extern s16 D_1F800240;
-
 void func_80112120(u8 *a)
 {
     switch (a[5]) {
@@ -761,7 +732,6 @@ void func_80112120(u8 *a)
     func_800517F8(a);
 }
 
-
 void func_80112218(u8 *a)
 {
     func_80051B70(a, 0xC, 0xA);
@@ -773,7 +743,6 @@ void func_80112218(u8 *a)
 }
 
 extern u8 D_800BFA28;
-
 void func_80112268(u8 *a)
 {
     switch (a[5]) {
@@ -801,7 +770,6 @@ void func_80112268(u8 *a)
 }
 
 void f_UpdateTinyMouseVillageRewardActor();
-
 u8 *func_80112350(void *a)
 {
     u8 *r = func_80072DDC(a, 0, 3, 0x10);
@@ -815,7 +783,6 @@ u8 *func_80112350(void *a)
 
 extern void *D_800ECF80;
 extern u8 D_8011FC38[];
-
 void func_80112394(u8 *a)
 {
     *(void **)(a + 0x3C) = D_800ECF80;
@@ -826,7 +793,6 @@ void func_80112394(u8 *a)
     a[0x47] = 0;
 }
 
-
 void func_801123E4(u8 *a)
 {
     u8 *o = *(u8 **)(a + 0x10);
@@ -836,7 +802,6 @@ void func_801123E4(u8 *a)
     *(s16 *)(a + 0x32) -= 0x10;
     *(s16 *)(a + 0x36) += 0x10;
 }
-
 
 s32 func_8011243C(void *a)
 {
@@ -852,7 +817,6 @@ s32 func_8011243C(void *a)
 
 extern s8 *D_800ECF58[];
 extern void *D_80017334[];
-
 void func_80112488(u8 *a)
 {
     *(s8 **)(a + 0x3C) = D_800ECF58[0];
@@ -862,7 +826,6 @@ void func_80112488(u8 *a)
     *(s16 *)(a + 0x5A) = 0;
     a[0x47] = 0;
 }
-
 
 void func_801124D8(void *arg0) {
     void *temp_v1;
@@ -878,7 +841,6 @@ void func_801124D8(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
 
-
 s32 func_8011254C(void *a)
 {
     u8 *r = func_80072DDC(a, 1, 3, 0x10);
@@ -890,7 +852,6 @@ s32 func_8011254C(void *a)
     }
     return 0;
 }
-
 
 void func_80112598(u8 *a)
 {
@@ -943,7 +904,6 @@ block_8:
     func_800517F8(arg0);
 }
 
-
 s32 func_801126E0(void *a)
 {
     u8 *r = func_80072DDC(a, 1, 3, 0x10);
@@ -957,7 +917,6 @@ s32 func_801126E0(void *a)
     return 0;
 }
 
-
 void func_8011273C(u8 *a)
 {
     func_80051B70(a, 0xC, 0x29);
@@ -965,7 +924,6 @@ void func_8011273C(u8 *a)
     *(s16 *)(a + 0x56) = 0;
     *(s16 *)(a + 0x58) = 0;
 }
-
 
 s32 func_80112774(void *a)
 {
@@ -981,7 +939,6 @@ s32 func_80112774(void *a)
 
 extern void *D_800ECF80;
 extern u8 D_8011FC38[];
-
 void func_801127C0(u8 *a)
 {
     *(void **)(a + 0x3C) = D_800ECF80;
@@ -1011,7 +968,6 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112884);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112D80);
 
-
 u8 *func_80112F34(void *a)
 {
     u8 *r = func_80072DDC(a, 3, 3, 0x23);
@@ -1022,10 +978,8 @@ u8 *func_80112F34(void *a)
     return r;
 }
 
-
 void func_80112F70(void) {
 }
-
 
 void func_80112F78(u8 *a)
 {
@@ -1038,7 +992,6 @@ void func_80112F78(u8 *a)
 }
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112FF8);
-
 
 void func_80113338(u8 *a)
 {
@@ -1062,7 +1015,6 @@ void func_80113338(u8 *a)
 }
 
 void func_80113338();
-
 void f_SpawnBerryNutsScorePopup(u8 *p, s32 n)
 {
     u8 *r;
@@ -1102,7 +1054,6 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801147D0);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_UpdateTinyMouseVillageNpcActor);
 
-
 s32 func_80114EAC(u8 *a)
 {
     u8 *t;
@@ -1135,7 +1086,6 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80116708);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80116AE8);
 
-
 void func_80116B14(u32 *a, s32 b)
 {
     u8 pad[0x20];
@@ -1158,7 +1108,6 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80116B9C);
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80116E68);
 
 extern u16 *D_800ECF78;
-
 void func_801173A8(u8 *a)
 {
     u16 *p = D_800ECF78;

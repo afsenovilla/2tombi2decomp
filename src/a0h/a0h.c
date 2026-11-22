@@ -12,7 +12,6 @@ extern u8 D_1F800182_5650;
 extern u8 D_1F800183;
 extern u8 **D_1F800148;
 extern u8 **D_1F80013C;
-
 void func_801094F8(void)
 {
     u8 **q;
@@ -49,7 +48,6 @@ extern u8 D_1F800182_5650;
 extern u8 D_1F800182_5650;
 extern u8 D_1F800182_5650;
 extern u8 D_1F800182_5650;
-
 void func_8010963C(void)
 {
     u8 **l;
@@ -71,7 +69,6 @@ void func_8010963C(void)
 }
 
 extern u8 *D_800F2738;
-
 void func_801096E8(void)
 {
     u8 *a;
@@ -119,7 +116,6 @@ void func_801096E8(void)
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", f_DispatchStrengthTowerTombaContacts);
 
 extern u16 D_800BF812;
-
 void func_80109CC4(u8 *a)
 {
     u16 limit = D_800BF812;
@@ -133,7 +129,6 @@ void func_80109CC4(u8 *a)
 }
 
 extern u8 D_800BF808[];
-
 void func_80109D24(u8 *a)
 {
     u8 *s = D_800BF808;
@@ -151,7 +146,6 @@ void func_80109D24(u8 *a)
 }
 
 extern s8 D_1F800182[];
-
 void func_80109D94(void *arg0, void *arg1) {
     if (func_80022F04() != 0) {
         if (func_8001E860(arg0, arg1, 0, 0x100) & 0x80) {
@@ -167,7 +161,6 @@ void func_80109D94(void *arg0, void *arg1) {
 }
 
 extern u8 D_1F800150;
-
 void func_80109E10(u8 *a)
 {
     u8 **l;
@@ -190,7 +183,6 @@ void func_80109E10(u8 *a)
 extern u8 **D_1F80013C;
 extern u8 D_1F800144;
 extern u8 D_1F800182_5650;
-
 void func_80109EE8(void *a)
 {
     u8 **l = D_1F80013C;
@@ -210,7 +202,6 @@ void func_80109EE8(void *a)
         }
     }
 }
-
 
 void func_80109FAC(u8 *a0)
 {
@@ -244,7 +235,6 @@ void func_80109FAC(u8 *a0)
     }
 }
 
-
 void func_8010A0AC(void)
 {
     u8 *a;
@@ -272,14 +262,12 @@ void func_8010A0AC(void)
 extern u8 D_1F800152;
 extern u8 D_1F800182_5650;
 extern s32 D_1F800080;
-
 s32 func_8010A1AC(void)
 {
     for (D_1F800182_5650 = D_1F800152; D_1F800182_5650 != 0; D_1F800182_5650--) {
     }
     return D_1F800080;
 }
-
 
 void func_8010A1E4(void *arg0) {
     func_8006F0E4();
@@ -303,7 +291,6 @@ typedef struct {
 } HiPos;
 extern u8 D_800E7E80[];
 extern u8 D_1F8000D0[];
-
 void func_8010A248(u8 *a)
 {
     u8 *t = D_800E7E80;
@@ -349,7 +336,6 @@ typedef struct {
     u8 x16B;
 } Area7E80;
 extern Area7E80 D_800E7E80_eac2;
-
 void func_8010A33C(void)
 {
     func_80054198(&D_800E7E80_eac2);
@@ -362,7 +348,6 @@ void func_8010A33C(void)
 }
 
 extern u8 D_800E806C;
-
 void func_8010A39C(void)
 {
     u8 *p;
@@ -381,7 +366,6 @@ void func_8010A39C(void)
 extern u8 D_1F800137;
 extern u8 D_1F800236;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void f_UpdateStrengthTowerExitDoorSequence(u8 *a)
 {
     u8 *t;
@@ -431,7 +415,6 @@ void f_UpdateStrengthTowerExitDoorSequence(u8 *a)
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010A574);
 
-
 s32 func_8010A854(u8 *a, s16 id)
 {
     u8 *o;
@@ -462,7 +445,6 @@ INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010A918);
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 void func_8010A918();
-
 void func_8010ABE8(u8 *a)
 {
     s32 i, j;
@@ -516,7 +498,6 @@ typedef struct { s16 x, y, z; } V3;
 typedef struct { s16 x, y, z, pad; } SVec;
 typedef struct { u16 x, p0, y, p1, z, p2; } LVec;
 typedef struct { u16 a, b; } Range;
-
 void func_8010ACF8(Owner *a, s32 sel)
 {
     Spawn *e;
@@ -599,7 +580,6 @@ typedef struct {
     u32 *tbl;
     u16 list[1];
 } PartList;
-
 void func_8010B5BC(PartList *a)
 {
     u16 *p = a->list;
@@ -630,7 +610,6 @@ INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010B6BC);
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010B960);
 
-
 void func_8010BC94(u32 *p, void *b)
 {
     u32 lo = *p;
@@ -647,7 +626,6 @@ INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010BCDC);
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010BFBC);
 
 extern u16 *D_800ECF78;
-
 void func_8010C4FC(u8 *a)
 {
     u16 *p = D_800ECF78;
