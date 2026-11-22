@@ -6614,7 +6614,47 @@ s32 func_80045580(s32 i)
     return f_StartCooperativeDiscRead((void *)0x8018A000, D_800A3EC8, D_800BE118_9ace[i].size) != 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ProbeActorTerrainAtOffset);
+extern s8 D_1F8001BC[];
+extern s8 D_1F8001BE[];
+extern s8 D_1F8001C0[];
+extern s8 D_1F8001C4[];
+
+s32 f_ProbeActorTerrainAtOffset(u8 *arg0, s16 arg1, s32 arg2, s16 arg3)
+{
+    s32 temp_a1;
+    s32 temp_lo;
+    s32 temp_s0;
+    u16 k;
+
+    temp_s0 = (s32) (-rsin(arg3) * arg1) >> 0xC;
+    temp_lo = rcos(arg3) * arg1;
+    *((s16 *)D_1F8001BE) = *(u16 *)(arg0 + 0x32) + arg2;
+    *((s16 *)D_1F8001C0) = *(u16 *)(arg0 + 0x36) + temp_s0;
+    temp_a1 = temp_lo >> 0xC;
+    *((s16 *)D_1F8001BC) = *(u16 *)(arg0 + 0x2E) + temp_a1;
+    if (f_FindTerrainCellForActorProbe(arg0, temp_a1) != 0) {
+        if (f_ResolveTerrainProbeVerticalContact() != 0) {
+            k = *(u16 *)D_1F8001A6;
+            switch (k & 0xF00) {
+            case 0x100:
+                if (D_800BF873 != 0) {
+                    u16 v = *(u16 *)(arg0 + 0x32) + *(u16 *)D_1F8001C4;
+
+                    *(u16 *)D_1F8001A6 = k & 0xFF;
+                    *(u16 *)(arg0 + 0x32) = v;
+                    return 1;
+                }
+            case 0x600:
+            case 0x700:
+                return 2;
+            }
+            *(u16 *)(arg0 + 0x32) += *(u16 *)D_1F8001C4;
+            return 1;
+        }
+        return 0;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTerrainProbeVerticalContact);
 
@@ -6742,10 +6782,6 @@ void func_800493E8(u8 *actor, s16 a, s16 b)
 }
 
 extern s8 D_1F8001A6[];
-extern s8 D_1F8001BC[];
-extern s8 D_1F8001BE[];
-extern s8 D_1F8001C0[];
-extern s8 D_1F8001C4[];
 s32 func_80049418(void *arg0, s16 arg1, s32 arg2, s16 arg3) {
     s32 temp_a1;
     s32 temp_lo;
