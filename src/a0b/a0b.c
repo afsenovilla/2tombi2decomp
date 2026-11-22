@@ -824,7 +824,55 @@ INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801110BC);
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801113B4);
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_8011159C);
+typedef struct {
+    u8 b[4];
+} T2Bytes4;
+typedef struct {
+    s16 x, y, z;
+} T2Vec3s;
+extern T2Bytes4 D_801091CC;
+extern s32 D_800ED8C8_7a94;
+
+void func_8011159C(u8 *a)
+{
+    T2Bytes4 c;
+    T2Vec3s pos, rot;
+    s32 i = 0;
+    u8 *e = a + 0x50;
+    s32 ang;
+    s32 r, sx, sz, k, o;
+
+    c = D_801091CC;
+    ang = H(a, 0x4C);
+    do {
+        r = e[i * 4 + 2] * 16;
+        sx = func_80083F50(ang) * e[i * 4 + 1];
+        sz = func_80083E80(ang) * e[i * 4 + 1];
+        pos.x = U(a, 0x2C) + ((sx * r) >> 20);
+        pos.z = U(a, 0x30) + ((sz * r) >> 20);
+        pos.y = U(a, 0x2E) - ((func_80083E80(r) * e[i * 4 + 0]) >> 10);
+        k = i & 3;
+        if (i & 1) {
+            rot.x = -U(a, 0x48);
+            rot.y = -U(a, 0x4A);
+            rot.z = -U(a, 0x4C);
+        } else {
+            rot.x = U(a, 0x48);
+            rot.y = U(a, 0x4A);
+            rot.z = U(a, 0x4C);
+        }
+        func_800318A0(&pos, &c, &rot);
+        if (k == 0) {
+            func_8003F698(W(a, 0x3C), D_800ED8C8_7a94, 0);
+        } else if (k == 1) {
+            func_8003F698(W(a, 0x34), D_800ED8C8_7a94, 0);
+        } else {
+            func_8003F698(W(a, 0x38), D_800ED8C8_7a94, 0);
+        }
+        i++;
+        ang += 0x124;
+    } while (i < 14);
+}
 
 void func_80111770(u8 *a)
 {
