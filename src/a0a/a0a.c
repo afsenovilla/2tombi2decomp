@@ -119,7 +119,64 @@ s32 func_8010B42C(u8 *a)
     return func_8010B0FC(a, b);
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010B474);
+typedef struct { u16 lo; u16 hi; } Fix;
+typedef struct {
+    Fix at[3];
+    Fix pos[3];
+    s16 dir[3];
+    u8 pad1E[0x2A];
+    u8 m[0x20];
+} Cam;
+extern Cam D_1F8000D0;
+extern u16 D_1F8000EE;
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+
+void func_8010B474(u8 *a, u8 *b, s32 ang)
+{
+    Cam *c;
+    s32 h, d;
+    s16 t, dist, x, z;
+    if (D_800BF870.unk0 == 0xC || D_800BF870.unk0 == 0xF) {
+        return;
+    }
+    if (ang != 0) {
+        if (D_1F800246_6eef == 2) {
+            dist = 0x258;
+            if (W(a, 0x60) < 0x190) {
+                return;
+            }
+            h = 0x190;
+        } else {
+            dist = 0x3E8;
+            h = 0x320;
+        }
+        t = ang + 0x800;
+        t = U(b, 0x56) + t;
+    } else {
+        h = 0x190;
+        t = U(b, 0x56) + 0x800;
+        dist = -D_1F8000EE;
+    }
+    c = &D_1F8000D0;
+    d = c->at[1].hi + h - c->pos[1].hi;
+    if ((u16)(d + 10) >= 0x15) {
+        W(c, 4) -= (d << 16) >> 3;
+    } else {
+        c->at[1].hi = c->pos[1].hi - h;
+        a[0x66] |= 2;
+    }
+    x = U(b, 0x2E) + ((func_80083F50(t) * dist) >> 12);
+    z = U(b, 0x36) - ((func_80083E80(t) * dist) >> 12) - D_1F8000D0.at[2].hi;
+    x = x - D_1F8000D0.at[0].hi;
+    t = func_80085690(-z, x);
+    dist = func_80084080(x * x + z * z);
+    W(&D_1F8000D0, 0) += func_80083F50(t) * dist;
+    W(&D_1F8000D0, 8) -= func_80083E80(t) * dist;
+    if (dist < 0x191) {
+        a[0x66] |= 1;
+    }
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010B698);
 
@@ -221,15 +278,6 @@ void func_8010BAD4(void *arg0) {
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010BBB4);
 
-typedef struct { u16 lo; u16 hi; } Fix;
-typedef struct {
-    Fix at[3];
-    Fix pos[3];
-    s16 dir[3];
-    u8 pad1E[0x2A];
-    u8 m[0x20];
-} Cam;
-extern Cam D_1F8000D0;
 extern u8 D_800E7E80[];
 extern void *D_8011BCB0[];
 extern u8 *D_1F800248;
