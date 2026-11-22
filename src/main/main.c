@@ -2708,7 +2708,26 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800399FC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80039BCC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80039E80);
+s32 func_80039E80(u8 *s, u8 *p)
+{
+    if (s[0] == 0x20) {
+        return -1;
+    }
+    D_1F800180 = 0x20;
+    p[0xC] = ((s[0] + 0x20) % 32) * 8;
+    p[0xD] = ((s[0] + D_1F800180) / 32) * 16 + 8;
+    p[0x14] = p[0xC] + 8;
+    p[0x1C] = p[0xC];
+    p[0x24] = p[0xC] + 8;
+    if (p[0x14] == 0) {
+        p[0x14] = 0xFF;
+        p[0x24] = 0xFF;
+    }
+    p[0x15] = p[0xD];
+    p[0x1D] = p[0xD] + 0x10;
+    p[0x25] = p[0xD] + 0x10;
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80039F4C);
 
@@ -4597,7 +4616,41 @@ s32 func_80042E10(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80042EA4);
+s32 f_PlaySoundEffect();
+
+s32 func_80042EA4(u8 *a, u16 *flags, s32 snd)
+{
+    s32 id = snd;
+    u16 v;
+
+    snd &= 0xFF00;
+    snd >>= 8;
+
+    if (*(s16 *)flags == 0) {
+        return 0;
+    }
+    v = *flags;
+    if (v & 0x3F) {
+        if (D_1F80017C_0fe7 & *(s16 *)flags) {
+            return 0;
+        }
+        ((void (*)(u8, s32, s8))f_PlaySoundEffect)(id, 0, snd);
+        return 0;
+    }
+    if (!(v & 0x80)) {
+        return 0;
+    }
+    if (*(*(u8 **)(a + 0x38) + 4) != 0) {
+        if (v & 0x40) {
+            return 0;
+        }
+        *flags = v | 0x40;
+        ((void (*)(u8, s32, s8))f_PlaySoundEffect)(id, 0, snd);
+        return 1;
+    }
+    *flags = v & 0xFFBF;
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80042F70);
 
