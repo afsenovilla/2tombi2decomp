@@ -2771,7 +2771,31 @@ void func_8012866C(u8 *a) {
     func_800517F8(a);
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801286F4);
+typedef struct {
+    s16 x, y, z;
+} SVec3T;
+extern SVec3T D_1F8000C0_4e9b;
+void f_UpdatePipeAreaPersistentSceneryRewardActor();
+
+void func_801286F4(u8 *a) {
+    u8 *p = M2C_FIELD(a, u8 **, 0x10);
+    u8 *e;
+
+    func_80051D20(p, a + 0x88, &D_1F8000C0_4e9b);
+    M2C_FIELD(a, s16 *, 0x2E) = D_1F8000C0_4e9b.x;
+    M2C_FIELD(a, s16 *, 0x32) = D_1F8000C0_4e9b.y;
+    M2C_FIELD(a, s16 *, 0x36) = D_1F8000C0_4e9b.z;
+    M2C_FIELD(a, s16 *, 0x56) = M2C_FIELD(p, s16 *, 0x56);
+    func_800517F8(a);
+    if (M2C_FIELD(a, s16 *, 0xE) == 5 && !(D_800BFA06 & 1)) {
+        e = func_80072DDC(a, 0, 2, 0x1E);
+        if (e != NULL) {
+            M2C_FIELD(e, void **, 0x1C) = f_UpdatePipeAreaPersistentSceneryRewardActor;
+            e[3] = 0;
+            a[0] = 3;
+        }
+    }
+}
 
 s32 func_801287D0(void *arg0, s32 arg1) {
     s32 var_a0;

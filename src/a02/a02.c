@@ -1225,7 +1225,33 @@ void func_80119BAC(u8 *a) {
     a[0x2B] = 0;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80119C7C);
+void func_80119C7C(u8 *a) {
+    switch (a[5]) {
+    case 0:
+        func_80119390(a);
+        break;
+    case 1:
+        if ((s16)func_80119F78(a)) {
+            if (M2C_FIELD(a, s16 *, 0x40) != 0) {
+                a[5] = 2;
+                a[6] = 0;
+            } else {
+                a[0] = 1;
+                a[5] = 0;
+                a[6] = 2;
+                M2C_FIELD(a, s16 *, 0x40) = 1;
+            }
+        }
+        break;
+    case 2:
+        func_8011A348(a);
+        break;
+    case 3:
+        func_80119510(a);
+        break;
+    }
+    a[0x2B] = 0;
+}
 
 #define P(a, o) M2C_FIELD(a, u8 **, o)
 s32 func_80119D58(u8 *a, s32 b) {
@@ -2104,7 +2130,44 @@ void func_80122264(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801222DC);
+s32 func_801222DC(u8 *a) {
+    u8 *g = D_800BF808_1760;
+
+    M2C_FIELD(a, s16 *, 0x60) = g[3];
+    switch (g[3]) {
+    case 0x7B:
+        a[0x5E] = 2;
+        M2C_FIELD(a, s16 *, 0x60) = 0x66;
+        break;
+    case 0x78:
+        a[0x5E] = 2;
+        M2C_FIELD(a, s16 *, 0x60) = 0x67;
+        break;
+    case 0x7E:
+        a[0x5E] = 2;
+        M2C_FIELD(a, s16 *, 0x60) = 0x68;
+        break;
+    case 0x79:
+        a[0x5E] = 4;
+        break;
+    case 0x7A:
+        a[0x5E] = 5;
+        break;
+    case 0x77:
+        a[0x5E] = 6;
+        break;
+    case 0x7C:
+        a[0x5E] = 7;
+        break;
+    case 0x7D:
+        a[0x5E] = 8;
+        break;
+    default:
+        M2C_FIELD(a, s16 *, 0x60) = -1;
+        return 0;
+    }
+    return 1;
+}
 
 s32 func_801223B4(u8 *a) {
     u8 *p = func_8006FB0C(a, M2C_FIELD(a, s16 *, 0x60));
@@ -2455,10 +2518,29 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80127170);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80127678);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80127784);
-
 #define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
 extern s32 D_1F800090[];
+extern u8 D_801386BC[];
+extern u8 D_80138794[];
+
+void func_80127784(u8 *a) {
+    s32 *d;
+    s32 t;
+
+    d = D_1F800090;
+    gte_ldfcdir(0, 0, 0);
+    t = M2C_FIELD(a, u16 *, 0x4A) + 0x400;
+    *d = M2C_FIELD(a, s32 *, 0x58);
+    M2C_FIELD(a, s16 *, 0x4A) = t;
+    func_800318A0(a + 0x2C, a + 0x50, a + 0x48);
+    M2C_FIELD(a, s16 *, 0x4A) -= 0x400;
+    func_80027768(D_801386BC, 0, -0x14, M2C_FIELD(a, s32 *, 0x5C));
+    if (a[0x2B] != 0) {
+        func_800318A0(a + 0x2C, a + 0x50, a + 0x48);
+        func_80027768(D_80138794, 0, -0x14, M2C_FIELD(a, s32 *, 0x5C));
+    }
+}
+
 extern u8 D_8013886C[];
 void func_80127860(u8 *p) {
     u8 c[4];
