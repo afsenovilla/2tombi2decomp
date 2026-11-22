@@ -91,7 +91,31 @@ s32 func_80109C48(u8 *t, s32 anim, s32 blend)
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateAndDrawTrolleyRiderModel);
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_SetTrolleyHudSegmentEnabled);
+extern u8 D_80111AEC[];
+
+void f_SetTrolleyHudSegmentEnabled(s32 i, s32 on) {
+    if (i < 4) {
+        if (on) {
+            D_80111AEC[i * 8 + 0xA] |= 1;
+        } else {
+            D_80111AEC[i * 8 + 0xA] &= ~1;
+        }
+    } else if (i == 4) {
+        if (on) {
+            D_80111AEC[0x2A] |= 1;
+            D_80111AEC[0x32] |= 1;
+        } else {
+            D_80111AEC[0x2A] &= ~1;
+            D_80111AEC[0x32] &= ~1;
+        }
+    } else {
+        if (on) {
+            D_80111AEC[i * 8 + 0x12] |= 1;
+        } else {
+            D_80111AEC[i * 8 + 0x12] &= ~1;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_DrawTrolleyRaceHud);
 

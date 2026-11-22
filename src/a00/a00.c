@@ -1314,7 +1314,32 @@ s32 func_8011AC5C(u8 *a) {
     return a[0x5F];
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011ACDC);
+s32 func_8011ACDC(u8 *a) {
+    s32 i;
+    s32 k;
+    u8 *e;
+    GameState *g;
+    s32 one;
+
+    i = 0;
+    g = &D_800BF870;
+    one = 1;
+    do {
+        if ((a[0x5F] >> i) & 1) {
+            k = i + 4;
+            e = func_8011C610(a, k);
+            if (e != NULL) {
+                e[0x28] |= 0x80;
+                g->pad1[0x172] |= one << k;
+                a[0x5F] -= one << i;
+                func_8004D604(0x2A, 1);
+                return 1;
+            }
+        }
+        i++;
+    } while (i < 3);
+    return 0;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateWindmillExplosionDebris);
 
@@ -2371,7 +2396,30 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E1E4);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E2BC);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E478);
+void func_8012E478(u8 *a) {
+    switch (a[4]) {
+    case 0:
+        switch (a[0x5E]) {
+        case 0:
+            func_8012E2BC(a);
+            break;
+        case 1:
+        case 2:
+            func_8012E678(a);
+            break;
+        }
+        break;
+    case 1:
+        func_8007778C(a);
+        func_8012E70C(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_8012E478();
 u8 *func_8012E53C(u8 *a, s32 b, s16 *c) {
@@ -2955,7 +3003,25 @@ void f_SpawnSegmentedTownActor(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801389C8);
+typedef struct {
+    u8 b[0xC0];
+    u8 *parts[1];
+} PartsActor;
+extern u8 D_1F800000[];
+
+void func_801389C8(PartsActor *a0) {
+    PartsActor *a = a0;
+    s32 pad[4];
+    s32 i;
+    u8 *p;
+
+    func_80051C8C(a);
+    for (i = 0; i < a->b[8]; i++) {
+        p = a->parts[i];
+        func_800517BC(D_1F800000, M2C_FIELD(p, s16 *, 0x38), M2C_FIELD(p, s16 *, 0x3A), M2C_FIELD(p, s16 *, 0x3C));
+        func_80084250(p + 0x18, D_1F800000);
+    }
+}
 
 void func_80138A64(u8 *a) {
     u8 *p;
