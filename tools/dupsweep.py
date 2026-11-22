@@ -23,16 +23,47 @@ def c_functions(prog):
         return {}
     out, decls = {}, []
     segs = ptsrc.items(ptsrc.strip_comments(open(p).read()))
-    for kind, seg in segs:   # every file-scope declaration (externs, types) is offered to each function
+    for kind, seg in segs:   # every file-scope declaration (externs, types, macros, static helpers) is offered
         s = seg.strip()
         if kind == "code" and not s.endswith("}") and (s.startswith(("extern ", "typedef ")) or
                                                         (s.startswith(("struct ", "union ")) and s.endswith("};"))):
             decls.append(s)
+        elif kind == "pp" and s.startswith("#define"):
+            decls.append(s)        # H() / U() / W() field macros, gte_* asm macros
+        elif kind == "code" and s.startswith("static") and s.endswith("}"):
+            decls.append(s)        # static inline helpers
     for kind, seg in segs:
         s = seg.strip()
-        if kind == "code" and s.endswith("}") and ptsrc.func_name(s):
+        if kind == "code" and s.endswith("}") and ptsrc.func_name(s) and not s.startswith("static"):
             out[ptsrc.func_name(s)] = (s, decls)
     return out
+
+
+def decl_name(e):
+    """the name a file-scope declaration defines (None: keep it always)."""
+    if e.startswith(("typedef", "struct", "union")):
+        return None
+    m = re.match(r"#define\s+(\w+)", e)
+    if m:
+        return m.group(1)
+    if e.startswith("static"):
+        return ptsrc.func_name(e)
+    m = re.findall(r"\b(\w+)\s*(?:\[[^\]]*\])*\s*;?$", e.rstrip(";"))
+    return m[-1] if m else None
+
+
+def needed(body, decls):
+    """the declarations the body uses, transitively (a macro or static helper uses others), in file order."""
+    used, keep, ch = set(re.findall(r"\w+", body)), set(), True
+    while ch:
+        ch = False
+        for i, e in enumerate(decls):
+            n = decl_name(e)
+            if i not in keep and (n is None or n in used):
+                keep.add(i)
+                used |= set(re.findall(r"\w+", e))
+                ch = True
+    return [decls[i] for i in sorted(keep)]
 
 
 def imm_map(obj, name, want):
@@ -162,10 +193,7 @@ def main():
             if tname not in pend:
                 continue
             body = re.sub(r"\b%s\b" % re.escape(sname), tname, text)
-            used = [e for e in ext if any(re.search(r"\b%s\b" % w, body) for w in
-                                          re.findall(r"\b(\w+)\s*(?:\[[^\]]*\])?\s*;?$", e.rstrip(";"))[-1:])
-                    or e.startswith(("typedef", "struct", "union"))]
-            ext = used
+            ext = needed(body, ext)
             # functions the body uses as values (callbacks) need a declaration when the source got it from a
             # prototype that is not an extern line
             for fnm in sorted(set(re.findall(r"(?<![\w(])((?:func_|f_)\w+)\b(?!\s*\()", body)) - {sname}):

@@ -4142,7 +4142,139 @@ u8 *func_8013DD48(u8 *a, s32 b) {
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013DDD4);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013E038);
+typedef struct {
+    u8 x0;
+    u8 x1;
+    u8 x2;
+    u8 x3;
+    s32 x4;
+    void *x8;
+    void *xC;
+    u8 *x10;
+    u8 *x14;
+    s16 x18;
+    s16 x1A;
+    s32 x1C;
+    s32 x20;
+    s32 x24;
+    s32 x28;
+    s32 x2C;
+    s32 x30;
+    s32 x34;
+    s32 x38;
+    u8 x3C;
+    u8 x3D;
+    u8 x3E;
+    u8 x3F;
+    u8 x40;
+    u8 x41;
+    u8 x42;
+    u8 x43;
+    u8 x44;
+    u8 x45;
+    u8 x46;
+    u8 x47;
+    u8 x48[2];
+    u8 x4A[2];
+    u8 x4C[2];
+    u8 x4E[2];
+    u8 x50;
+    u8 x51;
+    u8 sel;
+    u8 x53;
+    s16 x54;
+    s16 x56;
+    s16 x58;
+    u8 x5A;
+    u8 x5B;
+} CrdMenu;
+extern CrdMenu D_800BF498;
+static inline u8 crd_card_event_wait(void)
+{
+    if (func_80080840(D_800BF498.x1C) == 1) {
+        return 1;
+    }
+    if (func_80080840(D_800BF498.x20) == 1) {
+        return 2;
+    }
+    if (func_80080840(D_800BF498.x24) == 1) {
+        return 3;
+    }
+    if (func_80080840(D_800BF498.x28) == 1) {
+        return 4;
+    }
+    if (++D_800BF498.x43 >= 0xFF) {
+        return 2;
+    }
+    return 0;
+}
+typedef struct { s16 x; s16 y; u16 w; s16 h; } CrdRect;
+typedef struct { u8 b[0x5F4]; } CrdSaveBlk;
+u8 func_8013E038(CrdMenu *a)
+{
+    s32 port = a->x3D << 4;
+    s32 one = 1;
+    u8 r;
+    switch (a->x40) {
+    case 0:
+        func_8009BA90(port);
+        a->x40 = one;
+        a->x43 = 0;
+        a->x41 = 0xFF;
+        break;
+    case 1:
+        r = crd_card_event_wait();
+        if (r == 0) {
+            break;
+        }
+        switch (r) {
+        case 4:
+            if (((u8 *)a + a->x3D)[0x4A] == 0) {
+                a->x42 = 0;
+                break;
+            }
+            func_80080840(D_800BF498.x2C);
+            func_80080840(D_800BF498.x30);
+            func_80080840(D_800BF498.x34);
+            func_80080840(D_800BF498.x38);
+            func_8009BAB0(port);
+            while (1) {
+                if (func_80080840(D_800BF498.x2C) == 1) {
+                    break;
+                }
+                if (func_80080840(D_800BF498.x30) == 1) {
+                    break;
+                }
+                if (func_80080840(D_800BF498.x34) == 1) {
+                    break;
+                }
+                if (func_80080840(D_800BF498.x38) == 1) {
+                    break;
+                }
+            }
+            a->x42 = 1;
+            ((u8 *)a + a->x3D)[0x48] = 0;
+            ((u8 *)a + a->x3D)[0x4E] = 0xFF;
+            break;
+        case 1:
+            a->x42 = 0;
+            break;
+        case 2 ... 3:
+            a->x42 = 0xFE;
+            ((u8 *)a + a->x3D)[0x48] = 0;
+            ((u8 *)a + a->x3D)[0x4E] = 0xFF;
+            break;
+        }
+        a->x41 = a->x42;
+        ((u8 *)a + a->x3D)[0x4A] = a->x41;
+        a->x40 = 0;
+        a->x3D = 1 - a->x3D;
+        break;
+    case 2:
+        break;
+    }
+    return a->x41;
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013E278);
 

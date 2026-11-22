@@ -24,7 +24,7 @@ bytes of the disc; everything else is still built from the original assembly, so
 byte-identical at every step.
 
 <!-- progress:start -->
-**Whole game: 15.2 % of the code matches byte for byte** (429336 of 2827992 bytes, 3028 of 7011 functions; 2026-11-22).
+**Whole game: 15.2 % of the code matches byte for byte** (429912 of 2827992 bytes, 3029 of 7011 functions; 2026-11-22).
 
 | Part | Functions | Bytes | Matching (bytes) |
 |---|---:|---:|---|
@@ -33,7 +33,7 @@ byte-identical at every step.
 | 3. boot + game/demo/opn/sop/crd | 90 / 162 | 22980 / 75544 | 🟩🟩🟩⬜⬜⬜⬜⬜⬜⬜ 30.4 % |
 | 4a. small areas a0g-a0j | 102 / 158 | 19028 / 61632 | 🟩🟩🟩⬜⬜⬜⬜⬜⬜⬜ 30.9 % |
 | 4b. medium areas + bosses | 439 / 1020 | 85004 / 502332 | 🟩🟩⬜⬜⬜⬜⬜⬜⬜⬜ 16.9 % |
-| 4c. big areas a00-a08 | 1242 / 3638 | 171496 / 1609968 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 10.7 % |
+| 4c. big areas a00-a08 | 1243 / 3638 | 172072 / 1609968 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 10.7 % |
 
 <details>
 <summary><b>Per program</b> (game code, without the Psy-Q library)</summary>
@@ -55,7 +55,7 @@ byte-identical at every step.
 | A05.BIN: area overlay | 154 / 470 | 21632 / 200480 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 10.8 % |
 | A06.BIN: area overlay | 169 / 519 | 23600 / 227456 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 10.4 % |
 | A07.BIN: area overlay | 127 / 373 | 14412 / 159552 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 9.0 % |
-| A08.BIN: area overlay | 198 / 536 | 26624 / 225048 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 11.8 % |
+| A08.BIN: area overlay | 199 / 536 | 27200 / 225048 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 12.1 % |
 | A09.BIN: area overlay | 24 / 51 | 5408 / 20364 | 🟩🟩🟩⬜⬜⬜⬜⬜⬜⬜ 26.6 % |
 | A0A.BIN: area overlay | 56 / 133 | 12008 / 64328 | 🟩🟩⬜⬜⬜⬜⬜⬜⬜⬜ 18.7 % |
 | A0B.BIN: area overlay | 42 / 107 | 10088 / 61368 | 🟩🟩⬜⬜⬜⬜⬜⬜⬜⬜ 16.4 % |

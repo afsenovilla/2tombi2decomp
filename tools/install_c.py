@@ -20,6 +20,19 @@ def main():
     ap.add_argument("src")
     ap.add_argument("--prog", default="main")
     a = ap.parse_args()
+    if os.environ.get("INSTALL_C_LOCKED") == a.prog:   # the one-at-a-time retries below run under our lock
+        return install(a)
+    # one installer per program at a time: the target .c and config/aliases_<prog>.ld are read, changed and maybe
+    # restored, so two agents installing into the same program would undo each other's lines
+    import fcntl
+    os.makedirs(os.path.join(ROOT, "build"), exist_ok=True)
+    with open(os.path.join(ROOT, "build", ".install_%s" % a.prog), "w") as lk:
+        fcntl.flock(lk, fcntl.LOCK_EX)
+        os.environ["INSTALL_C_LOCKED"] = a.prog
+        return install(a)
+
+
+def install(a):
     path = os.path.join(ROOT, "src", a.prog, a.prog + ".c")
     old = open(path).read()
     t = old
@@ -58,13 +71,21 @@ def main():
     ap_ = libsweep.aliases_path(a.prog)
     old_aliases = open(ap_).read() if os.path.exists(ap_) else None
 
+    added = {k: v for k, v in aliases.items() if k not in libsweep.read_aliases(a.prog)}
+
     def restore_aliases():
-        if old_aliases is None:
-            if os.path.exists(ap_):
-                os.remove(ap_)
-        else:
-            open(ap_, "w").write(old_aliases)
-    libsweep.write_aliases(a.prog, aliases)
+        # only the lines this run added go: other lines may have come in meanwhile (merged, never a snapshot)
+        cur = libsweep.read_aliases(a.prog)
+        for k in added:
+            cur.pop(k, None)
+        if cur:
+            libsweep.write_aliases(a.prog, cur)
+        elif old_aliases is None and os.path.exists(ap_):
+            os.remove(ap_)
+    if added:
+        cur = libsweep.read_aliases(a.prog)
+        cur.update(added)
+        libsweep.write_aliases(a.prog, cur)
     # a function that had equivalent C (tools/nonmatching.py) loses its whole NON_MATCHING block
     for n, _ in funcs:
         line = 'INCLUDE_ASM("asm/%s/nonmatchings/%s", %s);' % (a.prog, a.prog, n)

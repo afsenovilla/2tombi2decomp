@@ -40,6 +40,10 @@ def items(t):
                 j = t.find("\n", j + 1)
             j = n if j < 0 else j
             out.append(("pp", t[i:j])); i = start = j; continue
+        if t.startswith("/*", i):    # comments stay in the item's text but are not parsed (an apostrophe in one)
+            j = t.find("*/", i + 2); i = n if j < 0 else j + 2; continue
+        if t.startswith("//", i):
+            j = t.find("\n", i); i = n if j < 0 else j; continue
         if c in "\"'":
             j = i + 1
             while j < n and t[j] != c:
