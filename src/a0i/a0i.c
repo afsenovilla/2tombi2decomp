@@ -145,7 +145,31 @@ INCLUDE_ASM("asm/a0i/nonmatchings/a0i", f_UpdateWisdomTowerExitDoorSequence);
 
 INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_8010A9C0);
 
-INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_8010ACA0);
+s32 func_8010ACA0(u8 *a, s16 id)
+{
+    u8 *o;
+
+    switch (a[7]) {
+    case 0:
+        break;
+    case 1:
+        if ((*(u8 **)(a + 0x14) = (u8 *)func_8007E038(id, 2)) != NULL) {
+            *(s16 *)(a + 0xE) = 0x5A;
+            a[7]++;
+        }
+        break;
+    case 2:
+        if (--*(s16 *)(a + 0xE) == -1) {
+            o = *(u8 **)(a + 0x14);
+            if (o[4] < 2) {
+                o[4] = 2;
+                *(u8 **)(a + 0x14) = NULL;
+            }
+            a[7] = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_8010AD64);
 

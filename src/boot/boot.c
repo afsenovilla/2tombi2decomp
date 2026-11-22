@@ -30,7 +30,18 @@ INCLUDE_ASM("asm/boot/nonmatchings/boot", func_800117D0);
 
 INCLUDE_ASM("asm/boot/nonmatchings/boot", func_80011864);
 
-INCLUDE_ASM("asm/boot/nonmatchings/boot", func_80011904);
+void func_80011904(u8 *pos)
+{
+    u8 mode = 0x80;
+
+    do {
+        while (CdControl(2, pos, 0) == 0) {
+        }
+        while (CdControl(0xE, &mode, 0) == 0) {
+        }
+        VSync(3);
+    } while (CdRead2(0x1C0) == 0);
+}
 
 typedef struct {
     u32 mode;

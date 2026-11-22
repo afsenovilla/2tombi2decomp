@@ -176,7 +176,21 @@ s32 func_8010D474(void *arg0) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010D490);
+void func_8010D490(u8 *a)
+{
+    u8 *s;
+
+    if (a[5] == 0) {
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            s = D_800BF808;
+            s[0x31] = 3;
+            *(s16 *)(s + 0x32) = 0x1503;
+            a[5]++;
+        }
+    }
+    f_UpdateEndingContinuePrompt(a);
+}
 
 void func_8010D504(u8 *a)
 {

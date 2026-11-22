@@ -191,7 +191,31 @@ INCLUDE_ASM("asm/a0h/nonmatchings/a0h", f_UpdateStrengthTowerExitDoorSequence);
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010A574);
 
-INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010A854);
+s32 func_8010A854(u8 *a, s16 id)
+{
+    u8 *o;
+
+    switch (a[7]) {
+    case 0:
+        break;
+    case 1:
+        if ((*(u8 **)(a + 0x14) = (u8 *)func_8007E038(id, 2)) != NULL) {
+            *(s16 *)(a + 0xE) = 0x5A;
+            a[7]++;
+        }
+        break;
+    case 2:
+        if (--*(s16 *)(a + 0xE) == -1) {
+            o = *(u8 **)(a + 0x14);
+            if (o[4] < 2) {
+                o[4] = 2;
+                *(u8 **)(a + 0x14) = NULL;
+            }
+            a[7] = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010A918);
 

@@ -93,7 +93,17 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010B54C);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010B5EC);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010B6D0);
+extern s16 D_1F8001C6;
+extern u8 D_800BF80F;
+
+void func_8010B6D0(u8 *a, u8 *b)
+{
+    if (D_1F8001C6 != 0) {
+        *(s16 *)(a + 0x52) = func_8010A828(*(s16 *)(b + 0x56), *(s16 *)(a + 0x52), 2);
+    } else if (D_800BF80F == 0 && b[0x17A] == 0) {
+        *(s16 *)(a + 0x52) = func_8010A828(*(s16 *)(b + 0x56), *(s16 *)(a + 0x52), 1);
+    }
+}
 
 void func_8010B744(void)
 {
@@ -663,7 +673,23 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801147D0);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_UpdateTinyMouseVillageNpcActor);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80114EAC);
+extern u8 D_800E7E80[];
+
+s32 func_80114EAC(u8 *a)
+{
+    u8 *t;
+
+    if (a[3] == 4) {
+        *(s16 *)(a + 0x36) += 0xC;
+    } else {
+        *(s16 *)(a + 0x2E) += 0xC;
+    }
+    t = D_800E7E80;
+    *(s16 *)(t + 0x2E) = *(s16 *)(a + 0x2E);
+    *(s16 *)(t + 0x32) = *(s16 *)(a + 0x32) + (s16)(*(s16 *)(a + 0x8A) - 100);
+    *(s16 *)(t + 0x36) = *(s16 *)(a + 0x36);
+    return 0;
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80114F1C);
 
