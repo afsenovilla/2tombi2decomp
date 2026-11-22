@@ -1700,7 +1700,21 @@ void func_80120188(u8 *a) {
     D_800BF808.unk48++;
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801201E0);
+extern u8 D_80141410[];
+
+void func_801201E0(u8 *a)
+{
+    u8 *g = D_800BF808_1760;
+
+    if (*(s32 *)(g + 0x4C) != 0 && func_8007778C(a) != 0) {
+        func_800517F8(a);
+        if (*(s32 *)(g + 0x48) == D_80141410[a[3]]) {
+            a[0] = 1;
+        } else {
+            a[0] = 5;
+        }
+    }
+}
 
 void func_80120260(u8 *a, s32 b)
 {

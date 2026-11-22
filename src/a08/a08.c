@@ -196,7 +196,20 @@ void func_8010F214(u8 *p)
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010F288);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010F35C);
+void func_8010F35C(u8 *a, u8 *b)
+{
+    s32 r = func_8001F40C(a, b, 1);
+
+    if (r >= 0) {
+        b[0x2B] = (*(s32 *)0x1F80009C + 0x800) >> 4;
+        if (func_8001FF7C(a, b, r, 1) != 1) {
+            b[0] = 2;
+            b[4] = 2;
+            b[5] = 2;
+            b[6] = 0;
+        }
+    }
+}
 
 s32 func_8010F3D8(s32 arg0, s32 arg1) {
     return func_8010B598(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC0));
@@ -3214,7 +3227,30 @@ void func_80130424(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80130484);
+extern u8 D_800BF8F8;
+
+void func_80130484(u8 *a)
+{
+    u8 k = a[0x71];
+
+    if (k == 0xFF) {
+        switch (a[0x5E]) {
+        case 0:
+            D_800BF870.pad1[0xC2] |= 0x80;
+            a[0x5E]++;
+            break;
+        case 2:
+            if (D_800BF8F8 == k) {
+                a[0x5E] = 4;
+            } else {
+                a[0x5E] = 3;
+            }
+            break;
+        }
+        a[5] = 0;
+        a[6] = 0;
+    }
+}
 
 void func_80130500(void *arg0) {
     u8 temp_v1;
