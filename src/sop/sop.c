@@ -257,7 +257,28 @@ INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010B588);
 
 INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010B798);
 
-INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010B8AC);
+s32 func_8010B8AC(u8 *a)
+{
+    switch (a[0x78]) {
+    case 0:
+        *(s16 *)(a + 0x4A) = -0x3000;
+        a[0x78]++;
+        break;
+    case 1:
+        if (a[1] == 0) {
+            func_80074590(7, 0, 0);
+            a[0x78]++;
+        }
+    case 2:
+        if ((*(s16 *)(a + 0x4A) += 0x360) > 0x3E00) {
+            *(s16 *)(a + 0x4A) = 0x3E00;
+        }
+        *(s32 *)(a + 0x30) += *(s16 *)(a + 0x4A) << 8;
+        *(s16 *)(a + 0x2E) -= 0x10;
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010B990);
 

@@ -564,7 +564,33 @@ void func_80112218(u8 *a)
     *(s16 *)(a + 0x86) = 0x190;
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112268);
+extern u8 D_800BFA28;
+
+void func_80112268(u8 *a)
+{
+    switch (a[5]) {
+    case 0:
+        if (D_800BFA28 >= 7) {
+            a[5]++;
+            *(s16 *)(a + 0x4A) = -0x3000;
+            *(s16 *)(a + 0x50) = 0x180;
+        }
+        break;
+    case 1:
+        if (D_800BFA28 >= 8) {
+            a[4] = 3;
+        } else {
+            *(s16 *)(a + 0x36) -= 0xC;
+            *(s16 *)(a + 0x54) += 0x80;
+            *(s32 *)(a + 0x30) += *(s16 *)(a + 0x4A) << 8;
+            *(s16 *)(a + 0x4A) += *(s16 *)(a + 0x50);
+        }
+        break;
+    }
+    a[1] = 1;
+    func_80077EBC(a);
+    func_800517F8(a);
+}
 
 void f_UpdateTinyMouseVillageRewardActor();
 
@@ -627,7 +653,6 @@ void func_80112488(u8 *a)
     a[0x47] = 0;
 }
 
-extern u8 D_800BFA28;
 void func_801124D8(void *arg0) {
     void *temp_v1;
 

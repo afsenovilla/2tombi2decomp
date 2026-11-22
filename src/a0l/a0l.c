@@ -76,10 +76,41 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", f_UpdateEndingArea4CameraSequence);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", f_UpdateEndingArea5MysteryCameraSequence);
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010A680);
-
+extern u8 D_800BF871;
+extern u8 D_800BF84C;
 extern u8 D_800BFA55;
 extern u8 D_80114F5C[];
+
+void func_8010A680(u8 *a)
+{
+    switch (D_800BF871) {
+    case 0:
+        break;
+    case 1:
+        func_8010983C(a);
+        break;
+    case 2:
+        f_UpdateEndingArea2CameraSequence(a);
+        break;
+    case 3:
+        if (a[2] == 0) {
+            D_800BFA55 = 0;
+            a[0x64] |= 0x80;
+            func_8006CBD0(a, D_80114F5C);
+            func_8006E3B0(a, a + 0x38);
+            a[2]++;
+        }
+        break;
+    case 4:
+        f_UpdateEndingArea4CameraSequence(a);
+        break;
+    case 5:
+        f_UpdateEndingArea5MysteryCameraSequence(a);
+        break;
+    }
+    D_800BF84C = 1;
+}
+
 extern u8 *D_800BF544;
 extern u8 *D_800ED8C8;
 extern s16 D_800E7ED6;
