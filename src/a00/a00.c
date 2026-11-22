@@ -911,7 +911,30 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_CheckFeedChicksActorRoutePointDistance
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012175C);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801217F4);
+extern s16 D_800E7ED6;
+
+void func_801217F4(u8 *a) {
+    if (a[3] == 0) {
+        switch (M2C_FIELD(a, s16 *, 0x60)) {
+        case 8:
+        case 9:
+        case 10:
+        case 12:
+        case 13:
+        case 14:
+            a[0x2A] = 1;
+            return;
+        case 3:
+        case 4:
+        case 5:
+        case 16:
+        case 17:
+        case 18:
+            a[0x2A] = 0xA;
+            break;
+        }
+    }
+}
 
 
 void func_8012185C(void *arg0) {
@@ -1109,7 +1132,15 @@ void f_UpdateCarriedChickMotion(void *arg0) {
     M2C_FIELD(arg0, u16 *, 0x54) = (u16) ((M2C_FIELD(arg0, u16 *, 0x54) + ((s32) ((u16) M2C_FIELD(arg0, s16 *, 0x44) << 0x10) >> 0x14)) & 0xFFF);
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801261FC);
+void func_801261FC(u8 *a) {
+    a[4] = 1;
+    if (func_80077768(D_800E7ED6, M2C_FIELD(a, s16 *, 0x56), 0) != 0) {
+        a[0x46] = (u32)(M2C_FIELD(a, s16 *, 0x56) + 0x800) >> 4;
+    } else {
+        a[0x46] = M2C_FIELD(a, u16 *, 0x56) >> 4;
+    }
+    func_80125C4C(a);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80126264);
 

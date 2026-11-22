@@ -267,9 +267,21 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801115D0);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80111710);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801117C0);
-
 extern s16 D_1F80009C_c31a;
+
+void func_801117C0(u8 *a, s32 b) {
+    s32 r = func_80023A04(a, b, 1);
+
+    if (r < 0) {
+        return;
+    }
+    if (r == 0) {
+        a[0x5F] = func_80077768(D_1F80009C_c31a, M2C_FIELD(a, s16 *, 0x60), 1) + 2;
+    } else if (r == 2) {
+        a[0x29] = 1;
+    }
+}
+
 extern u16 D_800BFE56;
 typedef struct { u8 pad[0x48]; s32 unk48; } AreaState808;
 extern AreaState808 D_800BF808;
@@ -530,7 +542,18 @@ void func_801189C4(void *arg0) {
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", f_UpdateKujaraQuestPickupActor);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80118E50);
+void func_80118E50(u8 *a) {
+    if (func_80051B70(a, 0xC, 0x37) == 0) {
+        a[0xB] = 0xF;
+        a[0] = 1;
+        a[0xD] = 0;
+        M2C_FIELD(a, s16 *, 0x80) = 0x20;
+        M2C_FIELD(a, s16 *, 0x82) = 0x40;
+        M2C_FIELD(a, s16 *, 0x84) = 0x20;
+        M2C_FIELD(a, s16 *, 0x86) = 0x40;
+        func_8004B354(a, 1);
+    }
+}
 
 
 void func_80118EB8(void *arg0) {
