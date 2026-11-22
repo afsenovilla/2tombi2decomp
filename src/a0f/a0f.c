@@ -178,11 +178,28 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010D738);
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010D830);
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010D924);
+extern u8 D_8011A9E4[];
+extern u16 D_8011A9D8[];
+extern u8 D_800BF88C;
+extern u8 D_800BF9EB;
+extern s16 D_1F800268;
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010D94C);
+void func_8010D924(u8 *a)
+{
+    u16 v = D_8011A9D8[a[3]];
+    *(u16 *)(a + 0x40) = 2;
+    *(u16 *)(a + 0x44) = v;
+}
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010D968);
+void func_8010D94C(u8 *a)
+{
+    *(u16 *)(a + 0x76) = D_8011A9E4[a[3]];
+}
+
+s32 func_8010D968(void *a)
+{
+    return func_800495DC(a, 0, 0) > 0;
+}
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010D98C);
 
@@ -282,9 +299,20 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80112B80);
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80112BE8);
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80112CB4);
+void func_80112CB4(u8 *a)
+{
+    a[3] = D_800BF88C;
+    if (a[3] >= 9) {
+        a[3] = 0;
+    }
+}
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80112CE0);
+void func_80112CE0(u8 *a)
+{
+    s32 t = D_1F800268;
+    t |= a[0xBE];
+    f_SpawnLastEvilPigCopiedWeaponProjectile(a, t, a[3]);
+}
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80112D10);
 
@@ -417,7 +445,16 @@ s32 func_80118250(void *arg0) {
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80118264);
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80118378);
+s32 func_80118378(u8 *a)
+{
+    void *p = func_80118534(a);
+    if (p != 0) {
+        D_800BF9EB = 0;
+        *(void **)(a + 0x14) = p;
+        return 1;
+    }
+    return 0;
+}
 
 extern s8 D_1F800233[];
 
@@ -428,7 +465,18 @@ s32 func_801183B8(void) {
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_801183C8);
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80118534);
+void func_801183C8();
+
+u8 *func_80118534(void *a)
+{
+    u8 *p = func_80072DDC(a, 4, 3, 0x24);
+    if (p != 0) {
+        *(void **)(p + 0x1C) = func_801183C8;
+        p[3] = 1;
+        *(void **)(p + 0x10) = a;
+    }
+    return p;
+}
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80118588);
 

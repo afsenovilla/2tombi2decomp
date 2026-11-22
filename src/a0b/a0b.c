@@ -394,7 +394,13 @@ INCLUDE_ASM("asm/a0b/nonmatchings/a0b", f_UpdateEvilPigBattleProjectile);
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801175B8);
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80117720);
+extern s32 D_8012460C[];
+
+void func_80117720(u8 *a)
+{
+    func_80051B04(*(void **)(a + 0xC0), 0xC, D_8012460C[a[0x5E] - 1]);
+    func_80074590(0x8D, 0, 0);
+}
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80117774);
 

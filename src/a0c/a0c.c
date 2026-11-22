@@ -51,7 +51,17 @@ s32 func_8010BB20(s32 arg0, s32 arg1) {
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010BB44);
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010BBB0);
+extern void *D_1F800080;
+
+void func_8010BBB0(u8 *a, u8 *b)
+{
+    if (func_8010A870(a, b, *(void **)(b + 0xC0)) != 0) {
+        D_1F800080 = b;
+        a[0x15C] = 0;
+        a[0x164] = 1;
+        b[0x29] = 1;
+    }
+}
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010BC00);
 
@@ -111,7 +121,15 @@ INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010CCCC);
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010CDA4);
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010CE90);
+void func_8010CE90(u8 *a, void *b)
+{
+    u8 *c = *(u8 **)(a + 0x158);
+    if (c[2] == 0x47) {
+        func_8010C268(a, c, b);
+    } else if (c[2] == 1) {
+        func_8010C7EC(a, c, b);
+    }
+}
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010CEE4);
 
