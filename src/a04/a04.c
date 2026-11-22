@@ -1715,7 +1715,40 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011F0CC);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011F3CC);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011F5FC);
+typedef struct { s16 x0; s16 id; u8 k; u8 p5; s16 v6; s16 v8; } Entry10;
+extern Entry10 D_80141414[];
+void D_80040558();
+
+s32 func_8011F5FC(u8 *a, s32 i)
+{
+    Entry10 *t = D_80141414;
+    Entry10 *e = &t[i];
+    u8 *p;
+
+    if (func_8004D7EC(e->id, 1)) {
+        return 0;
+    }
+    p = func_80072DDC(a, 2, 2, 8);
+    if (p != NULL) {
+        *(void **)(p + 0x1C) = D_80040558;
+        *(s16 *)(p + 0x2E) = *(s16 *)(a + 0x2E);
+        *(s16 *)(p + 0x32) = *(s16 *)(a + 0x32);
+        *(s16 *)(p + 0x36) = *(s16 *)(a + 0x36);
+        p[0x2A] = a[0x2A];
+        p[0x5E] = 1;
+        *(s16 *)(p + 0xE) = e->id;
+        p[3] = e->k;
+        *(s16 *)(p + 0x68) = e->v6;
+        *(s16 *)(p + 0x60) = e->v8;
+        if (*(s16 *)(p + 0x68) == 0) {
+            *(s16 *)(p + 0x62) = 1;
+        } else {
+            *(s16 *)(p + 0x62) = 4;
+        }
+        *(s16 *)(p + 0x64) = 2;
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", f_SpawnKujaraRanchPlacementReward);
 
@@ -2986,7 +3019,28 @@ void func_801391A4(void *arg0) {
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801391E4);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013939C);
+void func_80121A58();
+
+void func_8013939C(u8 *a)
+{
+    u8 *p;
+    u8 *g;
+
+    if (a[6] == 0) {
+        g = (u8 *)&D_800BF870;
+        g[0x144] |= 2;
+        a[4] = 3;
+        func_8003116C(0x504, a + 0x2C, -0x32);
+        func_8003116C(0x503, a + 0x2C, -0x32);
+        p = func_80072DDC(0, 0, 4, 0x37);
+        if (p != NULL) {
+            *(void **)(p + 0x1C) = func_80121A58;
+            *(s16 *)(p + 0x2E) = *(s16 *)(a + 0x2E);
+            *(s16 *)(p + 0x32) = *(s16 *)(a + 0x32);
+            *(s16 *)(p + 0x36) = *(s16 *)(a + 0x36);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013945C);
 
@@ -3399,7 +3453,47 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", f_UpdateCapturedSnowFireflyMotion);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013E910);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013EBE4);
+extern u8 D_800E7EAA;
+void func_8013E910();
+
+u8 *func_8013EBE4(u8 *a, s32 b, s32 c)
+{
+    u8 *p;
+    u8 *g;
+
+    if (b == 2) {
+        u8 *s = D_800BF808_1760;
+        if (*(s32 *)(s + 0x50) != 0) {
+            return NULL;
+        }
+        g = (u8 *)&D_800BF870;
+        if (g[0x19D] + g[0x19E] >= 11) {
+            return NULL;
+        }
+        if (g[0x19D] >= 10) {
+            return NULL;
+        }
+        *(s32 *)(s + 0x50) = 1;
+    }
+    p = func_80072DDC(0, 0, 2, 0x47);
+    if (p != NULL) {
+        *(void **)(p + 0x1C) = func_8013E910;
+        p[0x5E] = b;
+        p[3] = c;
+        if (b == 3) {
+            *(s32 *)(p + 0x10) = c;
+        } else {
+            if (b == 1) {
+                return p;
+            }
+            *(s16 *)(p + 0x2E) = *(s16 *)(a + 2);
+            *(s16 *)(p + 0x32) = *(s16 *)(a + 6);
+            *(s16 *)(p + 0x36) = *(s16 *)(a + 0xA);
+            p[0x2A] = D_800E7EAA;
+        }
+    }
+    return p;
+}
 
 
 void func_8013ECF8(void *arg0) {

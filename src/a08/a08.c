@@ -1815,7 +1815,26 @@ void func_801246F0(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801247C4);
+void func_801246F0();
+
+s32 func_801247C4(u8 *a)
+{
+    u8 *p = func_80072DDC(a, 1, 4, 0x58);
+
+    if (p != NULL) {
+        *(void **)(p + 0x1C) = func_801246F0;
+        p[3] = a[3];
+        p[0x2A] = a[0x2A];
+        *(s16 *)(p + 0x2E) = *(s16 *)(a + 0x7C);
+        *(s16 *)(p + 0x32) = *(s16 *)(a + 0x32);
+        *(s16 *)(p + 0x36) = *(s16 *)(a + 0x7E);
+        *(s16 *)(p + 0x56) = *(s16 *)(a + 0x60);
+        *(s16 *)(p + 0x54) = 0;
+        *(s16 *)(p + 0x58) = 0;
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012485C);
 
@@ -2729,7 +2748,38 @@ void func_8012B3E8(u8 *a)
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012B414);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012B89C);
+typedef struct { s16 x0; s16 id; u8 k; u8 p5; s16 v6; s16 v8; } Entry10;
+extern Entry10 D_80145AA0[];
+void f_UpdateLastEvilPigAccessActor();
+
+u8 *func_8012B89C(u8 *a, s32 i)
+{
+    Entry10 *t = D_80145AA0;
+    Entry10 *e = &t[i];
+    u8 *p;
+
+    if (func_8004D7EC(e->id, 1)) {
+        return NULL;
+    }
+    p = func_80072DDC(a, 2, 2, 8);
+    if (p != NULL) {
+        *(void **)(p + 0x1C) = f_UpdateLastEvilPigAccessActor;
+        p[0x5E] = 0;
+        *(s16 *)(p + 0xE) = e->id;
+        p[3] = e->k;
+        *(s16 *)(p + 0x68) = e->v6;
+        *(s16 *)(p + 0x60) = e->v8;
+        if (*(s16 *)(p + 0x68) == 0) {
+            *(s16 *)(p + 0x62) = 1;
+        } else {
+            *(s16 *)(p + 0x62) = 4;
+        }
+        *(s16 *)(p + 0x64) = 2;
+        p[0x2A] = 0;
+        return p;
+    }
+    return NULL;
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", f_UpdateLastEvilPigAccessActor);
 
