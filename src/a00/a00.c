@@ -2853,7 +2853,29 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012A0B8);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012A2D8);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012A43C);
+void func_8012A43C(u8 *a) {
+    u8 *p;
+    u8 *s;
+    u8 *c;
+
+    a[8]--;
+    func_8003CCA4();
+    a[8]++;
+    p = ((PartsOwner *)a)->parts[a[8] - 1];
+    D_1F8000C0[0] = FU16(p, 0x2C);
+    D_1F8000C0[1] = FU16(p, 0x30);
+    D_1F8000C0[2] = FU16(p, 0x34);
+    func_80084110(D_1F8000D0_b839 + 0x28, p + 0x18, D_1F800000);
+    func_80084220(D_1F8000C0, D_1F800000 + 0x14);
+    s = D_1F800000;
+    c = D_1F8000D0_b839;
+    M2C_FIELD(s, s32 *, 0x14) += M2C_FIELD(c, s32 *, 0x3C);
+    M2C_FIELD(s, s32 *, 0x18) += M2C_FIELD(c, s32 *, 0x40);
+    M2C_FIELD(s, s32 *, 0x1C) += M2C_FIELD(c, s32 *, 0x44);
+    func_80084660(s);
+    func_80084690(s);
+    func_8012A2D8(a, p);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012A54C);
 
