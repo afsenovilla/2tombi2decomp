@@ -1444,7 +1444,44 @@ s32 func_80117390(void *arg0) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_801173C4);
+extern Range D_80125A5C[];
+extern Range D_80125A74[];
+extern Range D_80125AAC[];
+extern Range D_80125AD0[];
+extern u8 *D_1F80021C;
+
+void func_801173C4(s16 kind, s16 idx)
+{
+    Range *t;
+    s32 n, base;
+    u8 *p;
+    switch (kind) {
+    case 0:
+        t = D_80125A5C;
+        n = 3;
+        base = 0;
+        break;
+    case 1:
+        t = D_80125A74;
+        n = 0x1F;
+        base = 0x1C8;
+        break;
+    case 2:
+        t = D_80125AAC;
+        n = 0xB;
+        base = 0x2EC;
+        break;
+    case 3:
+        t = D_80125AD0;
+        n = 9;
+        base = 0x272;
+        break;
+    default:
+        return;
+    }
+    p = D_1F80021C + t[idx].a * 32 + base * 32;
+    func_8001D2A8(n, p, p + (t[idx].b + 1) * 32, 0);
+}
 
 extern s16 D_800BED82;
 extern M2C_UNK D_80125474;

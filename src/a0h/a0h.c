@@ -206,11 +206,32 @@ void func_8010A248(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010A33C);
-
 extern u8 D_800BF816;
-extern u8 D_800E806C;
 extern s32 D_1F800184;
+extern u16 D_1F800210;
+typedef struct {
+    u8 pad0[5];
+    u8 x5;
+    u8 x6;
+    u8 pad7[0x139];
+    u16 x140;
+    u8 pad142[0x29];
+    u8 x16B;
+} Area7E80;
+extern Area7E80 D_800E7E80_eac2;
+
+void func_8010A33C(void)
+{
+    func_80054198(&D_800E7E80_eac2);
+    D_800BF816 = 1;
+    D_1F800184 = 0;
+    D_800E7E80_eac2.x5 = 0x24;
+    D_800E7E80_eac2.x6 = 0;
+    D_800E7E80_eac2.x16B = 8;
+    D_1F800210 = D_800E7E80_eac2.x140;
+}
+
+extern u8 D_800E806C;
 
 void func_8010A39C(void)
 {
