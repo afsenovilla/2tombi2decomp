@@ -348,7 +348,23 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveActorAgainstPartCylinderConta
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaRadialContactAndSide);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TestActorOffsetCylinderOverlap);
+extern s32 D_1F80009C;
+
+s32 f_TestActorOffsetCylinderOverlap(u8 *a, u8 *b)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - (*(u16 *)(b + 0x2E) + *(u16 *)(b + 0x60));
+    s16 dz = *(u16 *)(a + 0x36) - (*(u16 *)(b + 0x36) + *(u16 *)(b + 0x64));
+    s32 d = SquareRoot0(dx * dx + dz * dz);
+
+    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80)) {
+        return 0;
+    }
+    if ((u16)((*(u16 *)(a + 0x32) - (*(u16 *)(b + 0x32) + *(u16 *)(b + 0x62))) + (*(u16 *)(a + 0x84) + *(u16 *)(b + 0x84))) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+        return 0;
+    }
+    D_1F80009C = ratan2(-dz, dx);
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaPlaneTransitionActorContact);
 
@@ -512,11 +528,57 @@ void f_ApplyTombaSupportedContactState(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_TryApplyTombaActorDamage);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TestActorAgainstPartCylinderOverlap);
+s32 f_TestActorAgainstPartCylinderOverlap(u8 *a, u8 *b, u8 *p)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(p + 0x2C);
+    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(p + 0x34);
+    s32 d = SquareRoot0(dx * dx + dz * dz);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TestActorCylinderOverlap);
+    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80)) {
+        return 0;
+    }
+    if ((u16)((*(u16 *)(a + 0x32) - *(u16 *)(p + 0x30)) + (*(u16 *)(a + 0x84) + *(u16 *)(b + 0x84))) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+        return 0;
+    }
+    D_1F80009C = ratan2(-dz, dx);
+    return 1;
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TestActorCylinderOverlapWithRadius);
+extern s32 D_1F80008C_f832;
+
+s32 f_TestActorCylinderOverlap(u8 *a, u8 *b)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(b + 0x2E);
+    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(b + 0x36);
+    s32 d = SquareRoot0(dx * dx + dz * dz);
+
+    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80)) {
+        return 0;
+    }
+    if ((u16)((*(u16 *)(a + 0x32) - *(u16 *)(b + 0x32)) + (*(u16 *)(a + 0x84) + *(u16 *)(b + 0x84))) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+        return 0;
+    }
+    D_1F80008C_f832 = (s16)d;
+    D_1F80009C = ratan2(-dz, dx, d);
+    return 1;
+}
+
+s32 f_TestActorCylinderOverlapWithRadius(u8 *a, u8 *b, s32 r)
+{
+    s16 dx = *(u16 *)(b + 0x2E) - *(u16 *)(a + 0x2E);
+    s16 dz = *(u16 *)(b + 0x36) - *(u16 *)(a + 0x36);
+    s32 d = SquareRoot0(dx * dx + dz * dz);
+
+    if ((u16)d > *(s16 *)(a + 0x80) + r) {
+        return 0;
+    }
+    if ((u16)((*(u16 *)(a + 0x32) - *(u16 *)(b + 0x32)) + (*(u16 *)(a + 0x84) + *(u16 *)(b + 0x84))) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+        return 0;
+    }
+    D_1F80008C_f832 = (s16)d;
+    D_1F80009C = ratan2(-dz, dx, d);
+    return 1;
+}
 
 void f_ResolveTombaType12ActorContact(void) {
     func_8001EC3C();
@@ -664,7 +726,7 @@ s32 func_800235A0(u8 *t, u8 *other)
 }
 
 void f_ResolveActiveColliderOffsetActorContact(void *arg0, void *arg1) {
-    if ((M2C_FIELD(arg0, u8 *, 0x2A) == M2C_FIELD(arg1, u8 *, 0x2A)) && (f_TestActorOffsetCylinderOverlap() != 0)) {
+    if ((M2C_FIELD(arg0, u8 *, 0x2A) == M2C_FIELD(arg1, u8 *, 0x2A)) && (f_TestActorOffsetCylinderOverlap(arg0, arg1) != 0)) {
         f_ApplyActiveColliderImpactResponse(arg0, arg1, 0, 0);
         if ((u32) (M2C_FIELD(arg0, u8 *, 2) - 1) < 9U) {
             M2C_FIELD(arg1, s8 *, 0x2B) = 1;
