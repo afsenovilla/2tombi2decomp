@@ -193,9 +193,51 @@ void func_8010DA70(void) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DAB0);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DB58);
+extern u8 D_80146EEC[];
+extern u8 D_800BF871;
+extern s16 D_1F8000D0[];
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DBE4);
+void func_8010DB58(u8 *a) {
+    s16 *v;
+
+    switch (a[2]) {
+    case 0:
+        a[2]++;
+        if ((a[3] = D_80146EEC[D_800BF871]) == 9) {
+            v = D_1F8000D0;
+            v[1] = 0x354F;
+            v[3] = -0xF8D;
+            v[5] = 0x1BFD;
+        }
+    case 1:
+        f_UpdateFishermensTownCamera();
+        break;
+    }
+}
+
+extern s16 D_800E7FFE;
+extern u8 D_800BF821;
+extern s16 D_1F800160_71b4;
+
+void func_8010DBE4(u8 *a) {
+    s32 d;
+
+    if (D_800E7FFE & 0x8000) {
+        M2C_FIELD(a, s16 *, 0x26) = 0;
+        return;
+    }
+    if (D_800BF821 != 0) {
+        M2C_FIELD(a, s16 *, 0x26) = -600;
+        return;
+    }
+    if (D_1F800160_71b4 < 0x364D) {
+        d = D_1F800160_71b4 - 0x2D50;
+        M2C_FIELD(a, s16 *, 0x26) = 0;
+        if (d > 0) {
+            M2C_FIELD(a, s16 *, 0x26) = ((d * 0x7800) / 2300) >> 8;
+        }
+    }
+}
 
 
 void func_8010DC74(u8 *a, s32 target, s32 step) {
@@ -583,7 +625,6 @@ void func_80114B8C(u8 *a, u8 *b) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114BBC);
 
-extern u8 D_800BF871;
 
 void func_80114C5C(u8 *a, s32 b) {
     if (b == 0) {
@@ -637,7 +678,6 @@ s32 func_80114DF4(u8 *a, u8 *b) {
     return 0;
 }
 
-extern s16 D_1F800160_71b4;
 extern s16 D_1F800162;
 extern s16 D_1F800164_d75f;
 
@@ -1462,7 +1502,27 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80125C4C);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80125E0C);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_EnsureCarriedChickActor);
+extern u8 D_800BF9F2;
+void func_80125E0C();
+
+s32 f_EnsureCarriedChickActor(u8 *a) {
+    s32 n;
+    u8 *p;
+
+    if (a[3] == 0) {
+        n = D_800BF9F2 & 0xF;
+    } else {
+        n = D_800BF9F2 >> 4;
+    }
+    if (n == 0) {
+        p = func_80072DDC(a, 2, 2, 0x13);
+        if (p != NULL) {
+            M2C_FIELD(p, void **, 0x1C) = func_80125E0C;
+            p[3] = a[3];
+        }
+    }
+    return n;
+}
 
 
 void func_80125FE0(u8 *a) {
@@ -1477,7 +1537,26 @@ void func_80125FE0(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateCarriedChickCollision);
+s32 f_UpdateCarriedChickCollision(u8 *a) {
+    switch (a[7]) {
+    case 0:
+        if (M2C_FIELD(a, s16 *, 0x4A) >= 0) {
+            a[0xBF] = 2;
+            a[7]++;
+        }
+    case 1:
+        M2C_FIELD(a, s16 *, 0x4A) += 0x200;
+        if (M2C_FIELD(a, s16 *, 0x4A) > 0x2000) {
+            M2C_FIELD(a, s16 *, 0x4A) = 0x2000;
+        }
+        if (a[0x29] != 0) {
+            a[0xBF] = 0;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 
 void func_801260CC(void *arg0) {
@@ -2882,7 +2961,23 @@ void func_8013E620(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013E840);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013E9D8);
+typedef struct {
+    s16 x, y, z, pad;
+} SVec4;
+
+void func_8013E9D8(u8 *a) {
+    SVec4 v;
+    SVec4 w;
+
+    v.x = M2C_FIELD(M2C_FIELD(a, s16 **, 0x14), s16 *, 0);
+    v.y = M2C_FIELD(M2C_FIELD(a, s16 **, 0x14), s16 *, 2);
+    v.z = M2C_FIELD(M2C_FIELD(a, s16 **, 0x14), s16 *, 4);
+    w.x = M2C_FIELD(a, s16 *, 0x4E);
+    w.y = M2C_FIELD(a, s16 *, 0x50);
+    w.z = M2C_FIELD(a, s16 *, 0x52);
+    func_8013DD34(&v, &w);
+    func_8003CCA4(a);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013EA64);
 
@@ -2898,9 +2993,6 @@ void func_8013ED08(void *arg0) {
     func_80027768(M2C_FIELD(arg0, s32 *, 0x50), 0, M2C_FIELD(arg0, s16 *, 0x32), M2C_FIELD(arg0, u8 *, 7));
 }
 
-typedef struct {
-    s16 x, y, z, pad;
-} SVec4;
 
 void func_8013ED54(u8 *a) {
     SVec4 v;
@@ -3153,7 +3245,6 @@ void func_80145F30(void *arg0) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80145F6C);
 
-extern s16 D_800E7FFE;
 
 s32 func_8014601C(u8 *a) {
     s16 d = func_800781E0(M2C_FIELD(a, s16 *, 0x2E) - D_1F800160_71b4, M2C_FIELD(a, s16 *, 0x36) - D_1F800164_d75f);
@@ -3224,7 +3315,26 @@ u8 *func_801462E4(s32 a, s32 b) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80146348);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801463EC);
+extern u8 D_800BF823;
+
+void func_801463EC(u8 *a) {
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        a[5] = 0;
+        D_800BF823 = 0;
+        break;
+    case 1:
+        if (D_1F800137 == 0) {
+            f_UpdateTownCreatureSpawner(a);
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007ADD0(a);
+        break;
+    }
+}
 
 
 void func_80146478(u32 *p, void *b)

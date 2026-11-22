@@ -339,7 +339,19 @@ void func_80110A94(void *arg0, void *arg1) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80110B2C);
+void func_80110B2C(u8 *a, u8 *b) {
+    s32 r = func_8001F40C(a, b, 1);
+
+    if (r >= 0) {
+        if (a[0x164] == 12) {
+            func_8001FF7C(a, b, r, 4);
+        } else if (b[3] == 3 || b[3] == 4) {
+            func_8001FF7C(a, b, r, 2);
+        } else {
+            func_8001FF7C(a, b, r, 1);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80110BB8);
 

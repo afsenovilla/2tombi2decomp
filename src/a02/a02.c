@@ -481,7 +481,23 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801146D8);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateCoalMiningTownScenePropActor);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80114CC8);
+void f_UpdateCoalMiningTownScenePropActor();
+
+void func_80114CC8(u8 *a) {
+    u8 *p;
+
+    if (func_80051B70(a, 0xC, 0x26) == 0) {
+        M2C_FIELD(a, s16 *, 0x54) = 0;
+        M2C_FIELD(a, s16 *, 0x56) = 0;
+        M2C_FIELD(a, s16 *, 0x58) = 0;
+        p = func_80072DDC(a, 0x81, 3, 0x10);
+        M2C_FIELD(p, void **, 0x1C) = f_UpdateCoalMiningTownScenePropActor;
+        p[3] = 1;
+        M2C_FIELD(p, s16 *, 0x2E) = M2C_FIELD(a, s16 *, 0x2E);
+        M2C_FIELD(p, s16 *, 0x32) = M2C_FIELD(a, s16 *, 0x32) + 0x136;
+        M2C_FIELD(p, s16 *, 0x36) = M2C_FIELD(a, s16 *, 0x36);
+    }
+}
 
 
 void func_80114D54(s32 arg0) {
