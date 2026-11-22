@@ -8778,7 +8778,43 @@ void func_80051B34(void *arg0, void *arg1) {
     M2C_FIELD(arg1, s32 *, 0x10) = (s32) M2C_FIELD(arg0, s32 *, 0x10);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeSinglePartActorModel);
+/* f_SetActorPartModel, inlined */
+static inline void SetModel_1B74(u8 *actor, s32 bank, s32 index)
+{
+    s8 *base = D_800ECF58[bank];
+    s32 *entry = (s32 *)base + index;
+
+    *(s8 **)(actor + 0x40) = base + entry[1];
+}
+
+s32 f_InitializeSinglePartActorModel(void *av, s32 bank, s32 index)
+{
+    u8 *a = av;
+
+    if (D_800ED098 <= 0) {
+        a[4] = 3;
+        return 1;
+    }
+    a[8] = 1;
+    a[9] = 1;
+    a[0xD] = 0;
+    *(s16 *)(a + 0xBC) = 0x1000;
+    *(s16 *)(a + 0xBA) = 0x1000;
+    *(s16 *)(a + 0xB8) = 0x1000;
+    *(u8 **)(a + 0xC0) = (u8 *)f_AllocateActorModelPart();
+    *(s16 *)(*(u8 **)(a + 0xC0) + 6) = -1;
+    *(s16 *)(*(u8 **)(a + 0xC0) + 0) = 0;
+    *(s16 *)(*(u8 **)(a + 0xC0) + 2) = 0;
+    *(s16 *)(*(u8 **)(a + 0xC0) + 4) = 0;
+    *(s16 *)(*(u8 **)(a + 0xC0) + 8) = 0;
+    *(s16 *)(*(u8 **)(a + 0xC0) + 0xA) = 0;
+    *(s16 *)(*(u8 **)(a + 0xC0) + 0xC) = 0;
+    *(s16 *)(*(u8 **)(a + 0xC0) + 0x38) = 0x1000;
+    *(s16 *)(*(u8 **)(a + 0xC0) + 0x3A) = 0x1000;
+    *(s16 *)(*(u8 **)(a + 0xC0) + 0x3C) = 0x1000;
+    SetModel_1B74(*(u8 **)(a + 0xC0), bank, index);
+    return 0;
+}
 
 s32 func_80051C8C(s32 arg0) {
     s32 temp_s1;
