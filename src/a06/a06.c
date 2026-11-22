@@ -568,7 +568,30 @@ s32 func_8011215C(void *arg0, s8 *arg1) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801121D0);
+extern u8 **D_1F800154;
+extern u8 D_1F80015C;
+
+void func_801121D0(void) {
+    u8 **list = D_1F800154;
+    u8 *a;
+
+    for (D_1F800183 = D_1F80015C; D_1F800183 != 0;) {
+        a = *list++;
+        D_1F800183--;
+        if (!(a[0] & 2)) {
+            switch (a[2]) {
+            case 1:
+                if (a[3] != 1) {
+                    break;
+                }
+            case 0:
+            case 4:
+                func_8010F2E8(a);
+                break;
+            }
+        }
+    }
+}
 
 extern u8 D_800BF8D3;
 

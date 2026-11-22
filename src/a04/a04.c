@@ -2407,17 +2407,87 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012F788);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012FA5C);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012FBD8);
+extern u8 D_800ECF58[];
+extern u8 D_8013FA74[];
+extern u8 D_8013FAEC[];
+extern u8 D_8013FB64[];
+extern u8 D_80144404[];
+extern u8 D_800A3D18[];
+
+s32 func_8012FBD8(u8 *p)
+{
+    u8 *s = D_800ECF58;
+
+    if (func_800519E0(p, 0xF, *(s32 *)(s + 0x6C), D_8013FA74) != 0) {
+        return 0;
+    }
+    *(s32 *)(p + 0x3C) = *(s32 *)(s + 0x38);
+    func_80040CDC(p, D_80144404, D_800A3D18);
+    p[0xB] = 0x40;
+    p[0] = 9;
+    *(s16 *)(p + 0x80) = 0x55;
+    *(s16 *)(p + 0x82) = 0xAA;
+    *(s16 *)(p + 0x84) = 0x80;
+    *(s16 *)(p + 0x86) = 0x100;
+    p[0x2B] = 0;
+    p[0x29] = 0;
+    *(s16 *)(p + 0x58) = 0;
+    *(s16 *)(p + 0x56) = 0;
+    *(s16 *)(p + 0x54) = 0;
+    return 1;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012FC8C);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012FDEC);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012FF68);
+s32 func_8012FF68(u8 *p)
+{
+    u8 *s = D_800ECF58;
+
+    if (func_800519E0(p, 0xF, *(s32 *)(s + 0x70), D_8013FAEC) != 0) {
+        return 0;
+    }
+    *(s32 *)(p + 0x3C) = *(s32 *)(s + 0x38);
+    func_80040CDC(p, D_80144404, D_800A3D18);
+    p[0xB] = 0x40;
+    p[0] = 9;
+    *(s16 *)(p + 0x80) = 0x55;
+    *(s16 *)(p + 0x82) = 0xAA;
+    *(s16 *)(p + 0x84) = 0x80;
+    *(s16 *)(p + 0x86) = 0xE0;
+    p[0x2B] = 0;
+    p[0x29] = 0;
+    *(s16 *)(p + 0x58) = 0;
+    *(s16 *)(p + 0x56) = 0;
+    *(s16 *)(p + 0x54) = 0;
+    return 1;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013001C);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80130290);
+s32 func_80130290(u8 *p)
+{
+    u8 *s = D_800ECF58;
+
+    if (func_800519E0(p, 0xF, *(s32 *)(s + 0x74), D_8013FB64) != 0) {
+        return 0;
+    }
+    *(s32 *)(p + 0x3C) = *(s32 *)(s + 0x38);
+    func_80040CDC(p, D_80144404, D_800A3D18);
+    p[0xB] = 0x40;
+    p[0] = 9;
+    *(s16 *)(p + 0x80) = 0x55;
+    *(s16 *)(p + 0x82) = 0xAA;
+    *(s16 *)(p + 0x84) = 0x80;
+    *(s16 *)(p + 0x86) = 0xD0;
+    p[0x2B] = 0;
+    p[0x29] = 0;
+    *(s16 *)(p + 0x58) = 0;
+    *(s16 *)(p + 0x56) = 0;
+    *(s16 *)(p + 0x54) = 0;
+    return 1;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", f_UpdateFirstReadyOrNotKujaraFoundSequence);
 
