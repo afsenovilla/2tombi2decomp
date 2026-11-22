@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
+#include "gte.h"
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_0x8010a32c);
 
@@ -47,7 +48,51 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010B424);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010B5E8);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010B724);
+extern u8 D_800BF840;
+extern u16 D_1F80009C_baed_759c;
+extern s16 D_1F80018C;
+extern s16 D_1F80018E;
+extern u16 D_1F80008C_7310;
+
+void func_8010B724(u8 *a, u8 *b)
+{
+    s16 ang;
+    s32 d;
+    s32 k;
+    s16 t;
+
+    if (func_8002300C(a, b, *(s16 *)(b + 0x80) * 4) != 0) {
+        ang = D_1F80009C_baed_759c + 0x800;
+        b[0x2B] = 1;
+        if (D_1F800137 == 0) {
+            k = *(u16 *)(a + 0x140) - 0x400;
+            d = func_80085690(-(s16)(*(u16 *)(b + 0x36) - *(u16 *)(a + 0x36)), (s16)(*(u16 *)(b + 0x2E) - *(u16 *)(a + 0x2E))) << 4;
+            t = d - k * 16;
+            if (abs(t) < 0x1000) {
+                D_1F80018E = 0x4100;
+                D_1F80018C = *(u16 *)(a + 0x140) - 0x400;
+                D_800BF840 = 0x42;
+            } else {
+                s32 m = *(u16 *)(a + 0x140) + 0x400;
+                t = d - m * 16;
+                if (abs(t) < 0x1000) {
+                    D_1F80018C = m;
+                    D_1F80018E = 0x4200;
+                    D_800BF840 = 0x43;
+                }
+            }
+        }
+        if (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) + 0x50 >= D_1F80008C_7310) {
+            b[0x2B] = 2;
+            if (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) >= D_1F80008C_7310 && !(a[0] & 4)) {
+                s32 x = (func_80083F50(ang) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80))) >> 12;
+                s32 z = func_80083E80(ang) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80));
+                *(s16 *)(a + 0x2E) = *(s16 *)(b + 0x2E) + x;
+                *(s16 *)(a + 0x36) = *(s16 *)(b + 0x36) - (z >> 12);
+            }
+        }
+    }
+}
 
 extern u8 **D_1F800154;
 extern u8 D_1F80015C;

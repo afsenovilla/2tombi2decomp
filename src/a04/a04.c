@@ -214,7 +214,51 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8010D700);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8010DB48);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8010DEF0);
+extern u8 D_800BF840;
+extern u16 D_1F80009C_efeb;
+extern s16 D_1F80018C;
+extern s16 D_1F80018E;
+extern u16 D_1F80008C;
+
+void func_8010DEF0(u8 *a, u8 *b)
+{
+    s16 ang;
+    s32 d;
+    s32 k;
+    s16 t;
+
+    if (func_8002300C(a, b, *(s16 *)(b + 0x80) * 4) != 0) {
+        ang = D_1F80009C_efeb + 0x800;
+        b[0x2B] = 1;
+        if (D_1F800137_104c == 0) {
+            k = *(u16 *)(a + 0x140) - 0x400;
+            d = func_80085690(-(s16)(*(u16 *)(b + 0x36) - *(u16 *)(a + 0x36)), (s16)(*(u16 *)(b + 0x2E) - *(u16 *)(a + 0x2E))) << 4;
+            t = d - k * 16;
+            if (abs(t) < 0x1000) {
+                D_1F80018E = 0x4100;
+                D_1F80018C = *(u16 *)(a + 0x140) - 0x400;
+                D_800BF840 = 0x42;
+            } else {
+                s32 m = *(u16 *)(a + 0x140) + 0x400;
+                t = d - m * 16;
+                if (abs(t) < 0x1000) {
+                    D_1F80018C = m;
+                    D_1F80018E = 0x4200;
+                    D_800BF840 = 0x43;
+                }
+            }
+        }
+        if (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) + 0x50 >= D_1F80008C) {
+            b[0x2B] = 2;
+            if (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) >= D_1F80008C && !(a[0] & 4)) {
+                s32 x = (func_80083F50(ang) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80))) >> 12;
+                s32 z = func_80083E80(ang) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80));
+                *(s16 *)(a + 0x2E) = *(s16 *)(b + 0x2E) + x;
+                *(s16 *)(a + 0x36) = *(s16 *)(b + 0x36) - (z >> 12);
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8010E0FC);
 
@@ -2341,7 +2385,70 @@ void func_80123B90(s32 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80123CB0);
+extern u8 D_800E7E80_d97c;
+extern u8 D_80141590[];
+extern u8 D_801415B0[];
+extern s16 D_1F800160_71b4;
+extern s16 D_1F800162_a8d4;
+extern s16 D_1F800164_d75f;
+extern u8 D_1F80027A;
+
+void func_80123CB0(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        switch (a[5]) {
+        case 0:
+            func_80123B90(0);
+            a[0xBF] = 0xD0;
+            *(s16 *)(a + 0x7E) = 0x1A;
+            *(s16 *)(a + 0x7C) = 0x400;
+            *(s16 *)(a + 0x7A) = 4;
+            *(s16 *)(a + 0x78) = 0x29;
+            a[5]++;
+        case 1:
+            func_801231E0(a, D_80141590);
+            break;
+        case 2:
+            if (func_80078240(D_1F800160_71b4 - *(s16 *)(a + 0x2E), D_1F800162_a8d4 - *(s16 *)(a + 0x32), D_1F800164_d75f - *(s16 *)(a + 0x36)) <= 1000
+                && D_1F80027A == 0 && D_800E7E80_d97c != 6 && D_800BF80D == 0) {
+                a[4] = 1;
+                a[5] = 0;
+                a[0x5E] = 0;
+            }
+            break;
+        }
+        break;
+    case 1:
+        if (func_8007778C(a) != 0) {
+            func_80123B90(1);
+            func_80051844(a);
+        }
+        switch (a[0x5E]) {
+        case 0:
+            func_8012333C(a);
+            a[0x29] = 0;
+            break;
+        case 1:
+            func_80123584(a);
+            a[0x29] = 0;
+            break;
+        case 2:
+            func_8012379C(a, D_801415B0);
+            a[0x29] = 0;
+            break;
+        default:
+            a[0x29] = 0;
+            break;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80123EC8);
 
@@ -2427,8 +2534,6 @@ void func_80127E44(u8 *a) {
     func_80127EF0(a, 4, 4);
 }
 
-extern s16 D_1F800160_71b4;
-extern s16 D_1F800164_d75f;
 s32 func_80127E68(u8 *a)
 {
     u8 *p = a + 0x60;
@@ -2939,7 +3044,6 @@ void func_8012F690(u8 *a, s32 x, s32 z, s32 w)
 }
 
 extern u8 D_1F800207_9c67;
-extern s16 D_1F800162_a8d4;
 s32 func_8012F734(u8 *a)
 {
     if ((u32)(D_1F800207_9c67 - 0xF) >= 6) return 1;
