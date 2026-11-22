@@ -2070,7 +2070,50 @@ void func_8003A3E8(void *a, u8 *s)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003A470);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003A5E4);
+void func_8003A5E4(u8 *a, u8 *b)
+{
+    switch (b[0x3E]) {
+    case 0:
+        b[0x3E]++;
+        if (*(s16 *)b < 0) {
+            *(s16 *)(b + 0x10) = *(s16 *)b / 3 - 5;
+        } else {
+            *(s16 *)(b + 0x10) = *(s16 *)b / 3 + 5;
+        }
+        *(s16 *)(b + 0x12) = -0x100;
+    case 1:
+        *(s16 *)(b + 0x0) += *(s16 *)(b + 0x10);
+        *(s16 *)(b + 0x2) += *(s16 *)(b + 0x12) >> 4;
+        *(s16 *)(b + 0x12) += 0x20;
+        if (*(s16 *)(b + 0x12) > 0x100) {
+            *(s16 *)(b + 0x12) = -0xC0;
+            b[0x3E]++;
+        }
+        break;
+    case 2:
+        *(s16 *)(b + 0x0) += *(s16 *)(b + 0x10);
+        *(s16 *)(b + 0x2) += *(s16 *)(b + 0x12) >> 4;
+        *(s16 *)(b + 0x12) += 0x18;
+        if (*(s16 *)(b + 0x12) > 0xC0) {
+            *(s16 *)(b + 0x12) = -0x80;
+            b[0x3E]++;
+        }
+        break;
+    case 3:
+        *(s16 *)(b + 0x0) += *(s16 *)(b + 0x10);
+        *(s16 *)(b + 0x2) += *(s16 *)(b + 0x12) >> 4;
+        *(s16 *)(b + 0x12) += 0x10;
+        if (*(s16 *)(b + 0x12) > 0x80) {
+            b[0x3E]++;
+        }
+        break;
+    case 4:
+        if (b[0x3F] == 0) {
+            a[4] = 2;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003A790);
 
@@ -2090,12 +2133,80 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateAndDrawTombaModel);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003B704);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawClass2And9ActorRenderQueue);
+extern u8 D_1F800136;
+extern s8 D_1F800144[];
+extern s8 D_1F800146[];
+extern s8 D_1F80013C[];
+extern s8 D_1F800140[];
+extern u8 D_800F2410;
+
+void f_DrawClass2And9ActorRenderQueue(void)
+{
+    s32 n;
+    u8 **list;
+    u8 *e;
+    u16 cnt;
+    void *old;
+
+    if (D_1F800136 == 0) {
+        cnt = *(u16 *)D_1F800144;
+        *(u16 *)D_1F800144 = 0;
+        old = *(void **)D_1F80013C;
+        *(void **)D_1F80013C = &D_800F2410;
+        *(u16 *)D_1F800146 = cnt;
+        *(void **)D_1F800140 = old;
+    }
+    n = *(s16 *)D_1F800146;
+    list = *(u8 ***)D_1F800140;
+    while (n != 0) {
+        e = *list++;
+        n--;
+        if (e[1] != 0) {
+            switch (e[0xB]) {
+            case 0: case 15: case 64: case 79: case 128: case 143:
+                f_DrawActorModelByRenderMode(e);
+                if (e[0xB] & 0x40) {
+                    func_8002AE0C(e, 0x50, 0);
+                } else if (e[0xB] & 0x80) {
+                    func_8002AE0C(e, *(s16 *)(e + 0x80), 0);
+                }
+                break;
+            case 1: case 65: case 129:
+                func_80122974(e);
+                if (e[0xB] & 0x40) {
+                    func_8002AE0C(e, 0x50, 0);
+                } else if (e[0xB] & 0x80) {
+                    func_8002AE0C(e, *(s16 *)(e + 0x80), 0);
+                }
+                break;
+            case 16:
+                f_DrawActorSpritePartsWithZRotation(e);
+                break;
+            case 17:
+                f_DrawActorSpritePartsWithScaleAndZRotation(e);
+                break;
+            case 18:
+                func_8003C5F8(e);
+                break;
+            case 19:
+                func_8003C788(e);
+                break;
+            case 21:
+                f_DrawActorSpritePartsWithZRotation(e);
+            case 22:
+                (*(void (**)(u8 *))(e + 0x7C))(e);
+                break;
+            case 32:
+                (*(void (**)(u8 *))(e + 0x18))(e);
+                break;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawClass4ActorRenderQueue);
 
 extern s8 D_1F80028C[];
-extern u8 D_1F800136;
 extern s8 D_1F80015E[];
 extern s8 D_1F800158[];
 
@@ -5212,7 +5323,6 @@ s32 func_800535D4(void *arg0) {
 }
 
 extern u8 D_800BF8A3;
-extern u8 D_800F2410;
 
 s32 f_CanTombaStartAttack(u8 *a, s32 b)
 {
@@ -7260,7 +7370,68 @@ void f_UpdateCameraFollowTomba(void)
     f_RebuildCameraViewTransform(c);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006EA7C);
+extern u8 D_800BF89C;
+
+void func_8006EA7C(u8 *a)
+{
+    *(s16 *)(a + 0x56) = 0x100;
+    a[0x72] = 0;
+    a[0x76] = 0;
+    a[0x77] = 0;
+    a[0x74] = 0;
+    *(s16 *)(a + 0x6) = 0;
+    *(s32 *)(a + 0xC) = *(s32 *)D_1F8000E0;
+    *(s16 *)(a + 0x52) = 0x400;
+    *(s16 *)(a + 0x22) = 0xF0;
+    *(s16 *)(a + 0x8C) = 0;
+    switch (D_800BF870.unk0) {
+    case 0:
+        if (D_800BF89C == 2) {
+            a[0x64] = 7;
+            *(s16 *)(a + 0x3A) = 0xABA;
+            *(s16 *)(a + 0x3E) = -0x320;
+            *(s16 *)(a + 0x42) = 0xEE0;
+            D_1F8000D0_fb20[1] = 0xD3B;
+            *(s16 *)&D_1F8000D0_fb20[3] = -0xA83;
+            D_1F8000D0_fb20[5] = 0xDB2;
+            break;
+        }
+        if (D_800BF816 != 0) {
+            break;
+        }
+        a[0x64] = 0;
+        goto common;
+    case 2: case 7: case 20:
+        a[0x64] = 0;
+        break;
+    case 3:
+        a[0x64] = 0xE;
+        break;
+    case 16: case 17: case 18: case 19:
+        a[0x64] = 0x80;
+        break;
+    default:
+        a[0x64] = 0;
+    common:
+        func_8006E0F0(a);
+        func_8006E918(a);
+        break;
+    }
+    if ((u8)(D_1F800236[0] - 5) < 2) {
+        f_SetCameraFocusPosition(D_800E7E80_f78d + 0x2C);
+        *(s16 *)(a + 0x3E) += 0x3E8;
+        if (D_800E7E80_f78d[2] == 0) {
+            *(s16 *)(a + 0x3E) -= 0x8C;
+            *(s16 *)(a + 0xE) = *(s16 *)(a + 0x3E);
+            a[0x64] = 0xF;
+            *(s16 *)(a + 0x6C) = 0x578;
+            *(s16 *)(a + 0x6E) = 0x40;
+            *(s16 *)(a + 0x70) = *(u16 *)(D_800E7E80_f78d + 0x140) + 0x400;
+            func_8006E294(a, a + 0x38);
+            f_SnapCameraPositionAndRebuildView(a, D_800E7E80_f78d + 0x2C);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006EC44);
 
@@ -8397,8 +8568,6 @@ s32 func_80077E3C(s32 arg0, s32 arg1, s32 arg2) {
     return temp_v0;
 }
 
-extern s8 D_1F80013C[];
-extern s8 D_1F800144[];
 void f_QueueClass2Or9ActorForRender(s32 arg0) {
     void *temp_a0;
 
