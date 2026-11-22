@@ -12576,7 +12576,36 @@ void func_8006B1FC(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006B390);
+s32 func_8006B390(u8 *a)
+{
+    s32 k;
+
+    if (func_80069858(a, 0, 0) != 0) {
+        k = a[2];
+        if (k == 4) {
+            if (a[0x2B] != 0) {
+                return 1;
+            }
+        } else if (k >= 4) {
+            if (k < 7) {
+                f_PlaySoundEffect(0x2C, 0, 0);
+                f_PlaySoundEffect(0x2D, 0, 0);
+                f_SpawnEffectTemplateInstances(*(void **)(*(u8 **)(a + 0xC0) + 0x40), a + 0x2C, 0x400, 0x15);
+                f_PlaySoundEffect(0xC, 0, 0);
+            }
+        }
+        if (*(s16 *)(a + 0x44) > 0) {
+            *(s16 *)(a + 0x44) = 0;
+        }
+        f_PlaySoundEffect(0x2F, 0, 0);
+        f_SpawnImpactTransientEffect(2, a + 0x2C, a[0x5E], (u16 *)(a + 0x68));
+        a[0] = 2;
+        a[0x2B] = 2;
+        func_8006B0D8(a);
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006B494);
 
