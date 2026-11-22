@@ -2557,7 +2557,26 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80128794);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80128A70);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80128D30);
+s32 func_80128D30(u8 *a)
+{
+    switch (a[0x78]) {
+    default:
+        return 0;
+    case 0:
+        *(s16 *)(a + 0x72) = 0;
+        a[0x78]++;
+        break;
+    case 1:
+        if (++*(s16 *)(a + 0x72) % 6 == 0) {
+            func_80074590(8, 6, -0x1E);
+        }
+        if (*(s16 *)(a + 0x72) >= 0x2A) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80128DF0);
 

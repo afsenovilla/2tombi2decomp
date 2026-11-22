@@ -87,10 +87,16 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010E36C);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010E4B0);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010E5A8);
-
+extern s32 D_80140D38[];
 extern s16 D_80140E38;
 extern void *D_80140E3C;
+
+void func_8010E5A8(void)
+{
+    D_80140E3C = &D_80140D38[0x40];
+    D_80140E38 = 0;
+}
+
 void func_8010E5C4(s32 arg0) {
     void *temp_a0;
 
