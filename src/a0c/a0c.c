@@ -889,7 +889,101 @@ void func_80110208(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8011041C);
+extern u8 D_800BF80E;
+extern u8 D_800BF80F;
+extern u8 D_800E8008[];
+extern u8 D_80118C78[];
+extern s16 D_8011AC28[];
+extern s32 D_8011BF84[];
+void func_8010DA50();
+
+void func_8011041C(u8 *a)
+{
+    u8 *pl = D_800E7E80;
+    u8 *e;
+    s16 *t;
+
+    switch (a[6]) {
+    case 0:
+        pl[5] = 0x22;
+        pl[6] = 2;
+        func_80054D14(pl, 0x73, 0);
+        e = func_80072DDC(0, 1, 3, 0x21);
+        if (e != NULL) {
+            *(void **)(e + 0x1C) = func_8010DA50;
+        }
+        *(u8 **)(a + 0x14) = e;
+        a[6]++;
+        break;
+    case 1:
+        if (D_800BF80F == 0) {
+            a[6]++;
+            pl[6] = 0;
+            func_8004D604(D_8011BF84[D_800BF870.unk0 - 10], 1);
+        }
+        break;
+    case 2:
+        if (D_800BF80E != 0) {
+            a[6]++;
+            func_80054D14(pl, 0xEA, 2);
+            pl[6] = 0;
+        }
+        break;
+    case 3:
+        if (D_800BF80E != 0) {
+            a[6]++;
+            (*(u8 **)(a + 0x14))[5] = 1;
+            H(a, 0x40) = 10;
+        }
+        break;
+    case 4:
+        if (--H(a, 0x40) == 0) {
+            a[6]++;
+            pl[6] = 0;
+            func_80054D14(pl, 2, 5);
+        }
+        break;
+    case 5:
+        if (D_800BF80E != 0) {
+            a[6]++;
+            pl[6] = 0;
+            H(a, 0x40) = 100;
+        }
+        break;
+    case 6:
+        if (--H(a, 0x40) == 0) {
+            a[6]++;
+            pl[6] = 0;
+            func_80054D14(pl, 1, 5);
+            H(a, 0x40) = 20;
+        }
+        break;
+    case 7:
+        if (H(a, 0x40) == 0) {
+            if (D_800BF80E != 0) {
+                a[6]++;
+                pl[6] = 0;
+            }
+        } else {
+            H(a, 0x40)--;
+        }
+        break;
+    case 8:
+        if (D_800E8008[0x64] != 7) {
+            a[6] = 0;
+            H(a, 0x6A) = 0;
+            a[5]++;
+            func_8006CBD0(D_800E8008, D_80118C78);
+            t = &D_8011AC28[H(a, 0x6A) * 3];
+            U(a, 0x2E) = t[0];
+            U(a, 0x32) = t[1];
+            U(a, 0x36) = t[2];
+            H(a, 0x6A)++;
+            func_8006E1C0(7);
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80110714);
 
