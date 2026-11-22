@@ -3130,7 +3130,27 @@ u8 *f_SpawnMovingTransientEffectAtFixedPosition(s32 id, u8 *pos, s16 y, u16 *vel
     return NULL;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnImpactTransientEffect);
+s32 f_AllocateActorRecordByType(u8 type, u8 b, s32 c);
+
+s32 f_SpawnImpactTransientEffect(s32 kind, u8 *pos, s16 flag, u16 *rot)
+{
+    s32 e;
+
+    if (D_800E7E7C < 7U || (e = f_AllocateActorRecordByType(0, 6, 1)) == 0) {
+        return 0;
+    }
+    M2C_FIELD(e, u16 *, 0x2C) = *(u16 *)(pos + 2);
+    M2C_FIELD(e, u16 *, 0x2E) = *(u16 *)(pos + 6);
+    M2C_FIELD(e, u16 *, 0x30) = *(u16 *)(pos + 0xA);
+    M2C_FIELD(e, s16 *, 0x32) = -0x50;
+    M2C_FIELD(e, s16 *, 0x48) = 0;
+    M2C_FIELD(e, u16 *, 0x4A) = rot[0];
+    M2C_FIELD(e, u16 *, 0x4C) = rot[1];
+    M2C_FIELD(e, u8 *, 0x28) |= 0x80;
+    f_InitializeTransientEffectActor(e, kind);
+    M2C_FIELD(e, u8 *, 6) = flag ? 0x18 : 0x10;
+    return e;
+}
 
 extern u8 D_800E7E80_f78d[];
 typedef struct { u8 pad[0xC0]; u8 *parts[64]; } PartOwner;
@@ -3155,7 +3175,41 @@ u8 *f_SpawnLinkedActorTrailEffect(u8 *owner, u8 kind)
     return a;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnActorImpactEffectPair);
+/* f_SpawnTransientEffectAtFixedPosition, inlined */
+static inline u8 *SpawnFixed_15D4(s32 id, u8 *pos, s16 y)
+{
+    u8 *t;
+
+    if (D_800E7E7C < 7) {
+        return NULL;
+    }
+    t = (u8 *)f_AllocateActorRecordByType(0, 6, 1);
+    if (t == NULL) {
+        return NULL;
+    }
+    if (pos != NULL) {
+        *(u16 *)(t + 0x2C) = *(u16 *)(pos + 2);
+        *(u16 *)(t + 0x2E) = *(u16 *)(pos + 6);
+        *(u16 *)(t + 0x30) = *(u16 *)(pos + 0xA);
+    }
+    *(s16 *)(t + 0x32) = y;
+    f_InitializeTransientEffectActor(t, id);
+    return t;
+}
+
+void f_SpawnActorImpactEffectPair(u8 *pos)
+{
+    u8 *e;
+
+    e = SpawnFixed_15D4(9, pos, -0x14);
+    if (e != NULL) {
+        *(s32 *)(e + 0x48) = 0x1000100;
+    }
+    e = SpawnFixed_15D4(5, pos, -0x19);
+    if (e != NULL) {
+        *(s32 *)(e + 0x48) = 0x1000100;
+    }
+}
 
 void func_80031708(void *arg0)
 {
