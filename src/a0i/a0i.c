@@ -156,7 +156,130 @@ void func_8010949C(void)
     }
 }
 
-INCLUDE_ASM("asm/a0i/nonmatchings/a0i", f_DispatchWisdomTowerTombaContacts);
+extern s16 D_1F800144_138c;
+extern u8 D_800BF808[];
+extern u8 D_800E7E80[];
+static inline void inl_80109D28(u8 *a)
+{
+    u8 *s = D_800BF808;
+    u16 limit;
+
+    if (s[0xE] != 0) {
+        limit = *(u16 *)(s + 0xA);
+        if (!(a[0x145] & 1)) {
+            if (*(s16 *)(a + 0x32) >= (s16)limit - *(s16 *)(a + 0x62)) {
+                *(u16 *)(a + 0x32) = limit - *(u16 *)(a + 0x62);
+                func_80022C78(a);
+            }
+        }
+    }
+}
+static inline void inl_80109E70(void *a)
+{
+    u8 **l = D_1F80013C;
+    u8 *e;
+
+    D_1F800182 = D_1F800144;
+    while (D_1F800182 != 0) {
+        e = *l;
+        D_1F800182--;
+        l++;
+        if (e[0] & 1) {
+            if (e[0xC] == 9) {
+                func_801090F0(a, e);
+            } else if (e[2] == 8) {
+                func_800205CC(a, e);
+            }
+        }
+    }
+}
+static inline void inl_80109F34(u8 *a)
+{
+    u8 **p;
+    u8 *b;
+    p = D_1F800148;
+    D_1F800182 = D_1F800150;
+    while (D_1F800182 != 0) {
+        b = *p;
+        D_1F800182--;
+        p++;
+        if (b[0] & 1) {
+            switch (b[2]) {
+            case 14:
+            case 15:
+                func_8001FAE0(a, b);
+                break;
+            case 12:
+                func_80020868(a, b);
+                break;
+            case 31:
+                func_80023764(a, b);
+                break;
+            case 18:
+            case 32:
+                func_8002311C(a, b);
+                break;
+            }
+        }
+    }
+}
+static inline void inl_8010A034(void)
+{
+    u8 *a;
+    u8 **p;
+    u8 *b;
+    if (D_1F800144_138c == 0) {
+        return;
+    }
+    for (a = D_800F2738; a != NULL; a = *(u8 **)(a + 0x24)) {
+        if ((a[0] & 1) && a[0x2B] == 0) {
+            p = D_1F80013C;
+            D_1F800182 = *(u8 *)&D_1F800144_138c;
+            while (D_1F800182 != 0) {
+                b = *p;
+                D_1F800182--;
+                p++;
+                if ((b[0] & 1) && b[2] == 8) {
+                    func_80021394(a, b, 0x100);
+                }
+            }
+        }
+    }
+}
+
+void f_DispatchWisdomTowerTombaContacts(void)
+{
+    u8 *g = D_800E7E80;
+
+    func_8002288C(g);
+    switch (g[0]) {
+    case 0:
+    case 6:
+        break;
+    case 2:
+        if (*(u32 *)(g + 0x158) < 2) {
+            inl_80109F34(g);
+        }
+        break;
+    case 1:
+    case 3:
+    case 4:
+    case 5:
+    case 7:
+    default:
+        func_80022760(g);
+        inl_80109E70(g);
+        if (*(u32 *)(g + 0x158) < 2) {
+            inl_80109F34(g);
+        }
+        break;
+    }
+    func_80022554();
+    inl_8010A034();
+    func_801092E8();
+    func_8010949C();
+    inl_80109D28(g);
+}
 
 extern u16 D_800BF812;
 void func_80109AD8(u8 *a)
@@ -171,7 +294,6 @@ void func_80109AD8(u8 *a)
     }
 }
 
-extern u8 D_800BF808[];
 void func_80109B38(u8 *a)
 {
     u8 *s = D_800BF808;
@@ -240,7 +362,6 @@ void func_80109C6C(u8 *a0)
     }
 }
 
-extern s16 D_1F800144_138c;
 void func_80109D6C(void)
 {
     u8 *a;
@@ -334,7 +455,6 @@ void func_8010A788(void)
 }
 
 extern u8 D_800E806C;
-extern u8 D_800E7E80[];
 void func_8010A7E8(void)
 {
     u8 *p;
