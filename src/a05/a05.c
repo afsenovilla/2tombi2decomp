@@ -2572,7 +2572,45 @@ void func_80129730(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801297EC);
+/* func_801298E0, inlined */
+static inline void Init_97EC(void *arg0) {
+    M2C_FIELD(arg0, s16 *, 0x80) = 0x8C;
+    M2C_FIELD(arg0, s16 *, 0x82) = 0x118;
+    M2C_FIELD(arg0, s16 *, 0x84) = 0x1F4;
+    M2C_FIELD(arg0, s16 *, 0x86) = 0x3E8;
+    M2C_FIELD(arg0, s8 *, 0x2A) = 4;
+    M2C_FIELD(arg0, s32 *, 0x2C) = 0x35200000;
+    M2C_FIELD(arg0, s32 *, 0x30) = 0xCEC80000;
+    M2C_FIELD(arg0, s32 *, 0x34) = 0x35E80000;
+}
+
+void func_801297EC(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        a[8] = 0;
+        a[9] = 0;
+        a[0] = 1;
+        a[0xB] = 0;
+        a[0x5E] = 0;
+        a[0x29] = 0;
+        a[4]++;
+        if (a[3] == 0) {
+            Init_97EC(a);
+        }
+        *(s16 *)(a + 0x60) = a[3];
+        a[3] = 2;
+        func_800517F8(a);
+        break;
+    case 1:
+        func_8007778C(a);
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_801298E0(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x80) = 0x8C;
@@ -3192,7 +3230,43 @@ s32 func_80130AA0(s32 arg0, s32 arg1) {
     return (s32) var_v0;
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80130AFC);
+/* func_801309B8, inlined */
+static inline u8 *Spawn_0AFC(void *a0, u8 a1)
+{
+    u8 *r = func_80072DDC(0, 1, 3, 0x10);
+
+    if (r) {
+        *(void **)(r + 0x1C) = f_UpdateKujaraSummitMechanismActor;
+        r[3] = 5;
+        r[0x5E] = a1;
+        *(void **)(r + 0x10) = a0;
+        r[0x28] |= 0x80;
+    }
+    return r;
+}
+
+void func_80130AFC(u8 *p)
+{
+    u8 *g = (u8 *)&D_800BF870;
+    s32 k;
+
+    if (*(u16 *)(g + 0x5E6) & 0x20) {
+        p[4] = 3;
+        return;
+    }
+    if (g[0x5D] == 0xFF) {
+        Spawn_0AFC(p, 1);
+        p[5] = 3;
+        k = 0x2C;
+    } else {
+        k = 0x27;
+        p[6] = 0;
+        g[0x17B] = 0;
+    }
+    if (func_80051B70(p, 0xC, k) == 0) {
+        *(s16 *)(p + 0x56) = -0x177;
+    }
+}
 
 void func_80130BC8(u8 *p)
 {

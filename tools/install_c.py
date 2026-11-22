@@ -13,12 +13,44 @@ layout) is not repeated (moved up when the target defines it further down); one 
 here (Name_xxxx) and reported. Prototypes are dropped (m2c's argument counts), except those of functions used as
 values or defined further down in the target; a call with fewer arguments than a kept prototype or an installed
 definition is reported (it would not compile). tools/ccheck.py --no-protos compiles a scratch the same way.
+`static inline` helpers go after the declarations (externs, types, prototypes) of the scratch, just above the first
+installed function; a helper the target already has (same text) is not repeated (moved up when it is further down),
+one it defines differently is renamed (Name_xxxx). K&R definitions (`s32 f(a, b) s32 a; u8 *b; {`) are installed
+like the others (a prototype kept for one written further down is `T f();`). On failure the last line is
+`NOT INSTALLED: <names> (<reason>)`.
 """
 import argparse, hashlib, os, re, subprocess, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 import ptsrc
+
+# a function definition header (K&R parameter declarations allowed before its `{`); group 2 is the name
+HEAD = r"(?m)^([\w][\w \*]*?\b(%s)\s*\([^;{}]*\)(?:\s*[^;{}()=#]+;)*)\s*\{"
+
+
+def heads(text, name=r"\w+"):
+    """[(name, header text, offset)] of the function definitions in text (K&R ones too)."""
+    return [(m.group(2), m.group(1), m.start()) for m in re.finditer(HEAD % name, text)]
+
+
+def proto_of(header):
+    """A prototype from a definition header: the header itself, or `T f();` for a K&R one."""
+    h = " ".join(header.split())
+    m = re.match(r"(.*?\b\w+)\s*\(([^()]*)\)\s*(.*)$", h)
+    if m and m.group(3):      # K&R: parameter declarations follow the parentheses
+        return m.group(1) + "();"
+    return h + ";"
+
+
+def is_static(seg):
+    return ptsrc.strip_comments(seg).strip().startswith("static")
+
+
+def fail(msg, names):
+    print(msg)
+    print("NOT INSTALLED: %s (%s)" % (" ".join(names) or "-", msg.strip().splitlines()[0][:120]))
+    sys.exit(1)
 
 
 def norm(s):
@@ -102,6 +134,8 @@ def main():
     a = ap.parse_args()
     if os.environ.get("INSTALL_C_LOCKED") == a.prog:   # the one-at-a-time retries below run under our lock
         return install(a)
+    if not os.path.exists(a.src):
+        fail("%s: no such file" % a.src, [])
     # one installer per program at a time: the target .c and config/aliases_<prog>.ld are read, changed and maybe
     # restored, so two agents installing into the same program would undo each other's lines
     import fcntl
@@ -133,7 +167,7 @@ def install(a):
                 includes.append(s)   # e.g. psyq/inline_c.h for GTE macros: goes after the target's own includes
             continue
         # a static (inline) helper goes with the declarations, before the first function that uses it
-        n = ptsrc.func_name(s) if s.endswith("}") and not s.startswith("static") else None
+        n = ptsrc.func_name(s) if s.endswith("}") and not is_static(s) else None
         if n:
             funcs.append((n, s))
         else:
@@ -152,7 +186,8 @@ def install(a):
         am = re.fullmatch(r"(?:D|func)_([0-9A-F]{8})", k)
         adr = int(am.group(1), 16) if am else nearcopy.name_addrs(a.prog).get(k)
         if adr is None:
-            sys.exit("%s is declared differently in %s and has no address; rename it by hand" % (k, path))
+            fail("%s is declared differently in %s and has no address; rename it by hand" % (k, path),
+                 [n for n, _ in funcs])
         new = "%s_%s" % (k, hashlib.sha1(p.encode()).hexdigest()[:4])
         aliases[new] = adr
         pre[i] = re.sub(r"\b%s\b" % k, new, p)
@@ -184,7 +219,7 @@ def install(a):
     for n, body in funcs:
         line = 'INCLUDE_ASM("asm/%s/nonmatchings/%s", %s);' % (a.prog, a.prog, n)
         if line not in t:
-            sys.exit("%s: no INCLUDE_ASM line for %s" % (path, n))
+            fail("%s: no INCLUDE_ASM line for %s" % (path, n), [n for n, _ in funcs])
         lines[n] = (t.index(line), line)
     first = min(lines, key=lambda n: lines[n][0])     # the declarations go before the earliest function in the file
     at = lines[first][0]
@@ -215,14 +250,36 @@ def install(a):
                 print("renamed type %s -> %s (the target defines %s differently)" % (n, new, n))
                 pre = [re.sub(r"\b%s\b" % n, new, q) if q else q for q in pre]
                 funcs = [(fn, re.sub(r"\b%s\b" % n, new, b)) for fn, b in funcs]
+    # static helpers: one the target has with the same text is not repeated (moved up from further down), one it
+    # defines differently is renamed here
+    tfuncs = {}
+    for kind, seg in ptsrc.items(t):
+        if kind == "code" and seg.strip().endswith("}") and ptsrc.func_name(seg.strip()):
+            tfuncs.setdefault(ptsrc.func_name(seg.strip()), seg.strip())
+    for i, p in enumerate(list(pre)):
+        if not p or not (p.endswith("}") and is_static(p)):
+            continue
+        hn = ptsrc.func_name(p)
+        if hn not in tfuncs:
+            continue
+        h = tfuncs[hn]
+        if norm(h) == norm(p):
+            if t.find(h) < at:
+                pre[i] = None
+            elif h not in moved:
+                moved.append(h)
+            continue
+        new = "%s_%s" % (hn, hashlib.sha1(p.encode()).hexdigest()[:4])
+        print("renamed helper %s -> %s (the target defines %s differently)" % (hn, new, hn))
+        pre = [re.sub(r"\b%s\b" % hn, new, q) if q else q for q in pre]
+        funcs = [(fn, re.sub(r"\b%s\b" % hn, new, b)) for fn, b in funcs]
     pre = [p for p in pre if p]
     for h in moved:     # the target's copy further down goes: ours is inserted above its first use
         t = t.replace(h + "\n", "", 1) if h + "\n" in t else t.replace(h, "", 1)
         print("moved up: " + h.split("\n")[0][:70])
     at = t.index(lines[first][1])
     before = t[:at]
-    defined = set(re.findall(r"(?m)^[\w][\w \*]*?\b(\w+)\s*\([^;{}]*\)\s*\{", t))
-    later = {n for n in re.findall(r"(?m)^[\w][\w \*]*?\b(\w+)\s*\([^;{}]*\)\s*\{", t[at:])}
+    later = {n for n, _, _ in heads(t[at:])}
     later |= {n for n, _ in funcs if n != first}
 
     def wanted(p):
@@ -235,18 +292,17 @@ def install(a):
             return True
         # ... unless a function is used as a value (its address taken), which needs a declaration, or the target
         # defines it further down (a call before the definition would declare it `int f()`: conflicting types)
-        if pr[0] in later and not re.search(r"(?m)^[\w][\w \*]*?\b%s\s*\([^;{}]*\)\s*\{" % pr[0], before):
+        if pr[0] in later and not heads(before, re.escape(pr[0])):
             return True     # (written as the definition's own header below)
         return any(re.search(r"\b%s\b(?!\s*\()" % pr[0], b) for _, b in funcs)
     extra = [p for p in pre if wanted(p)]
     for i, p in enumerate(extra):   # a kept prototype takes the target's definition header: same types for sure
         pr = proto(p)
         if pr and pr[0] in later:
-            m = re.search(r"(?m)^([\w][\w \*]*?\b%s\s*\([^;{}]*\))\s*\{" % re.escape(pr[0]),
-                          t[at:] + "\n" + "\n".join(b for _, b in funcs))
-            if m and norm(m.group(1) + ";") != norm(p):
-                print("prototype of %s from its definition: %s;" % (pr[0], " ".join(m.group(1).split())))
-                extra[i] = " ".join(m.group(1).split()) + ";"
+            hd = heads(t[at:] + "\n" + "\n".join(b for _, b in funcs), re.escape(pr[0]))
+            if hd and norm(proto_of(hd[0][1])) != norm(p):
+                print("prototype of %s from its definition: %s" % (pr[0], proto_of(hd[0][1])))
+                extra[i] = proto_of(hd[0][1])
     # a prototype or a definition with N parameters makes a call with fewer arguments an error: say where
     sigs = {}
     for p in extra:
@@ -254,8 +310,10 @@ def install(a):
         if pr and pr[1]:
             sigs[pr[0]] = pr[1]
     for n, b in funcs:
+        hd = heads(b, re.escape(n))
         m = re.match(r"[^(]*?\b%s\s*\(([^)]*)\)" % re.escape(n), b)
-        if m and params(m.group(1)):
+        kr = hd and proto_of(hd[0][1]).endswith("();")      # a K&R definition takes any argument count
+        if m and params(m.group(1)) and not kr:
             sigs[n] = params(m.group(1))
     for n, k in sigs.items():
         for where, text_ in [("the target", t)] + [(fn, b) for fn, b in funcs]:
@@ -264,6 +322,9 @@ def install(a):
                 print("warning: %s calls %s with %s argument(s), the %s has %d" %
                       (where, n, "/".join(map(str, sorted(set(few)))), "prototype" if n not in dict(funcs)
                        else "definition", k))
+    # static helpers after every declaration (they use the externs / types / prototypes above them)
+    extra = [p for p in extra if not (p.endswith("}") and is_static(p))] + \
+        [p for p in extra if p.endswith("}") and is_static(p)]
     for p in extra:   # a declaration the file already has further down moves up to the new first use
         if p.startswith(("extern", "typedef", "struct", "union")) and p in t:
             t = t.replace(p + "\n", "", 1) if p + "\n" in t else t.replace(p, "", 1)
@@ -282,7 +343,8 @@ def install(a):
         open(path, "w").write(old)
         restore_aliases()
         if len(funcs) < 2:
-            sys.exit("linked build not OK, restored:\n" + r.stdout + r.stderr[-2500:])
+            print(r.stdout + r.stderr[-2500:])
+            fail("linked build not OK, restored", [n for n, _ in funcs])
         # one function at a time: the others may still go in (a callee prototype in the target, for instance,
         # can change one function's code)
         print("linked build not OK with all %d; trying one at a time" % len(funcs))
@@ -290,7 +352,7 @@ def install(a):
         done, failed = [], []
         for n, _ in funcs:
             one = "".join(seg for kind, seg in segs
-                          if not (seg.strip().endswith("}") and not seg.strip().startswith("static")
+                          if not (seg.strip().endswith("}") and not is_static(seg)
                                   and ptsrc.func_name(seg.strip()) not in (None, n)))
             tmp = os.path.join(ROOT, "build", "install_one.c")
             open(tmp, "w").write(one)
@@ -301,7 +363,7 @@ def install(a):
                 print("  %s: %s" % (n, (r.stdout + r.stderr).strip().splitlines()[-1:]))
         print("installed %d functions: %s" % (len(done), " ".join(done)))
         if failed:
-            sys.exit("not installed: " + " ".join(failed))
+            fail("%d of %d did not build" % (len(failed), len(funcs)), failed)
         return
     print("installed %d functions: %s" % (len(funcs), " ".join(n for n, _ in funcs)))
 

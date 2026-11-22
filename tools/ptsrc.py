@@ -29,12 +29,21 @@ def strip_comments(t):
     return "".join(out)
 
 
+# the end of a function header before its `{`: `)` then K&R parameter declarations (`s32 a; u8 *b;`), if any
+HEAD_END = re.compile(r"\)\s*(?:[^;{}()=#]+;\s*)*$")
+# a K&R header cut at one of its parameter declarations' `;`: `T f(a, b) T a;` (identifiers only in the parens)
+KR_PART = re.compile(r"^\s*[A-Za-z_][\w \t\n\*]*?\b[A-Za-z_]\w*\s*\(\s*[A-Za-z_]\w*(?:\s*,\s*[A-Za-z_]\w*)*\s*\)"
+                     r"\s*(?:[^;{}()=#]+;\s*)+$")
+
+
 def items(t):
-    """Top-level items: ('pp', line) or ('code', text) split at depth-0 ';' or the '}' closing a function body."""
+    """Top-level items: ('pp', line) or ('code', text) split at depth-0 ';' or the '}' closing a function body
+    (K&R definitions too: the `;` of their parameter declarations does not split). A comment just before a
+    preprocessor line is dropped with it (`// note` then `#include`: the line is still a pp item)."""
     out, i, n, start, depth = [], 0, len(t), 0, 0
     while i < n:
         c = t[i]
-        if depth == 0 and c == "#" and t[start:i].strip() == "":
+        if depth == 0 and c == "#" and strip_comments(t[start:i]).strip() == "":
             j = t.find("\n", i)
             while j > 0 and t[j - 1] == "\\":
                 j = t.find("\n", j + 1)
@@ -56,10 +65,11 @@ def items(t):
             if depth == 0:
                 seg = t[start:i + 1]
                 head = seg[:seg.find("{")]
-                if re.search(r"\)\s*$", head) and "=" not in head:     # a function body ends here
+                if HEAD_END.search(strip_comments(head)) and "=" not in head:     # a function body ends here
                     out.append(("code", seg)); start = i + 1
         elif c == ";" and depth == 0:
-            out.append(("code", t[start:i + 1])); start = i + 1
+            if not KR_PART.match(strip_comments(t[start:i + 1])):
+                out.append(("code", t[start:i + 1])); start = i + 1
         i += 1
     return out
 
@@ -73,8 +83,8 @@ def func_name(seg):
     """The name a function definition defines (also for functions returning function pointers)."""
     if "{" not in seg:
         return None
-    head = seg[:seg.find("{")]
-    if not re.search(r"\)\s*$", head) or "=" in head:
+    head = strip_comments(seg[:seg.find("{")])
+    if not HEAD_END.search(head) or "=" in head:
         return None
     for m in re.finditer(r"\b([A-Za-z_]\w*)\s*\(", head):
         if m.group(1) not in KEYWORDS:

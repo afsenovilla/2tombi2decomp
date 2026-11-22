@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
+#include "gte.h"
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00TombaWaterSurfaceMotion);
 
@@ -1088,10 +1089,6 @@ void func_801151F4(u8 *a, u8 *b)
     }
 }
 
-// nearcopy: 7 words off, C from a01 func_80110CB8
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
 extern u8 D_1F800183;
 extern u8 **D_1F800154;
 extern u8 D_1F80015C;
@@ -1193,10 +1190,6 @@ typedef struct {
     s16 y;
 } ClutCycle;
 
-// nearcopy: 5 words off, C from a07 func_80113C20
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
 extern ClutCycle D_80147D84[];
 extern s8 D_8014C4F0[];
 extern u8 D_800BF873;
@@ -3567,10 +3560,6 @@ block_13:
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013272C);
 
-// nearcopy: 8 words off, C from a04 func_8011C974
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
 extern s8 D_1F80017C[];
 typedef struct { s16 x, y, z; } AreaVec3s;
 extern AreaVec3s D_8014A684[];
@@ -3604,11 +3593,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateAquaticPlantHitWobble);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80132D58);
 
-// nearcopy: 9 words off, C from a04 func_8011CCE8
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 extern u8 D_800E7E80[];
 void f_UpdateAquaticPlantGrabMotion(u8 *a)
 {

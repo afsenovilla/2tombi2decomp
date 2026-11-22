@@ -1952,11 +1952,6 @@ void func_8011448C(u32 *p, void *b)
     func_80114158(func_80113EB4(p, b, lo), b, packed >> 16);
 }
 
-// nearcopy: 2 words off, C from a0b func_80113770
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 typedef struct {
     s32 vx, vy;
 } T2Pt32;

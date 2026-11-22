@@ -94,11 +94,6 @@ void func_8010A670(u8 *a, u8 *b) {
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010A83C);
 
-// nearcopy: 8 words off, C from a01 func_8010E6BC
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 extern u8 D_1F800137;
 extern u8 D_800BF840;
 extern u16 D_1F80009C_efeb;
@@ -1079,11 +1074,6 @@ void func_8011B654(u8 *p)
     func_80027768(D_80144C10, 0, -0xA, p[0x60]);
 }
 
-// nearcopy: 6 words off, C from a05 func_80139F44
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 typedef struct { s32 a, b; } Pair9F44;
 typedef struct { Pair9F44 e[14]; } Tbl9F44;
 extern Tbl9F44 D_80109864;
@@ -1747,11 +1737,6 @@ void func_8011FD74(void *arg0) {
     func_800735F4(arg0, 0x7E);
 }
 
-// nearcopy: 4 words off, C from a01 func_80126140
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 extern u8 D_800E7E80[];
 extern s8 D_800BF81F;
 void func_8011FDD0(u8 *a) {
@@ -2682,12 +2667,6 @@ void func_8012579C(s32 arg0) {
     }
 }
 
-// nearcopy: 26 words off, C from a04 func_80123CB0
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
-#include "gte.h"
 extern s8 D_800BF80D;
 extern u8 D_800BF8F5;
 extern u8 D_800E7E80_d97c;
@@ -3642,11 +3621,6 @@ s32 func_8012BF5C(u8 *a)
     return func_8004190C(a);
 }
 
-// nearcopy: 5 words off, C from a01 func_8011ADA0
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 extern u8 D_800A3CF0[];
 extern u8 D_80145B24[];
 void func_8012C018(u8 *a) {
@@ -4338,11 +4312,6 @@ s32 func_80132468(void)
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80132488);
 
-// nearcopy: 14 words off, C from a07 func_80121C64
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 extern u8 D_800E7E80[];
 extern u8 D_800BF81E;
 extern s32 D_1F80023C;
@@ -4376,11 +4345,6 @@ s32 func_80132564(u8 *a)
     return 0;
 }
 
-// nearcopy: 6 words off, C from a07 func_80121C64
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 extern u8 D_800E7E80[];
 s32 func_8013263C(u8 *a)
 {
@@ -5534,10 +5498,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801401AC);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80140314);
 
-// nearcopy: 10 words off, C from crd func_8018F414
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern u16 D_800E7E68;
@@ -5576,10 +5536,6 @@ void func_80140608(u8 *a)
     }
 }
 
-// nearcopy: 11 words off, C from crd func_8018F548
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern s32 D_800A2914;

@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
+#include "gte.h"
 
 typedef struct {
     u8 pad[0xD0];
@@ -736,11 +737,6 @@ void func_80110CB8(void) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_SpawnPipeAreaSceneActorsFromPlacementTable);
 
-// nearcopy: 12 words off, C from a07 func_80113C20
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 extern ClutCycle D_801352CC[];
 extern s8 D_80138FD0[];
 void func_801112C0(s32 arg0) {

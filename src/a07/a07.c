@@ -306,11 +306,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801129A8);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80112B1C);
 
-// nearcopy: 9 words off, C from a0k func_8010B5EC
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 extern u8 D_1F8000D0[];
 extern s16 D_1F8000EE;
 extern u8 D_800BF816;

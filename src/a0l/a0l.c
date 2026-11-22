@@ -238,11 +238,6 @@ void func_8010A958(u8 *a)
     }
 }
 
-// nearcopy: 22 words off, C from a02 func_801246A4
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 typedef struct {
     u32 tag;
     u32 rgb0;
@@ -393,11 +388,6 @@ u32 *func_8010AA4C(u32 *f, u32 *ot, s32 n)
     return f;
 }
 
-// nearcopy: 20 words off, C from a00 f_DrawTownCreatureGt4Batch
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 #define T2_rtpt() __asm__ volatile(".word 0x4A280030")
 #define T2_nclip() __asm__ volatile(".word 0x4B400006")
 #define T2_stflg(r0) __asm__ volatile("cfc2 $12, $31;" "nop;" "sw $12, 0( %0 )" : : "r"(r0) : "$12", "memory")

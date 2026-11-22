@@ -1,0 +1,258 @@
+#!/usr/bin/env python3
+"""Known inline bodies: pending functions that contain an inlined copy of a function already matched in C.
+
+  python3 -I tools/inlined.py [PROG ...] [--from PROG,...] [--min-len 10] [--min-cover 0.8] [--names A,B]
+      [--copies] [--top 60] [--csv build/inlined.csv]
+
+Every function of every program (asm/<prog>/**/*.s) is turned into a normalised instruction list: nops, register
+moves (`addu rd,rs,$zero`), the prologue / epilogue (`addiu $sp,$sp,K`, saves and restores of $s0-$s8 / $ra,
+`jr $ra`) are dropped; each instruction keeps its opcode, function code, shift amount and immediate, except
+relocated immediates (`%hi` / `%lo` / scratchpad `>> 16` / `& 0xFFFF` forms), branch offsets and $sp offsets,
+which are masked; `jal` keeps its callee's name. Registers are not part of the key (renaming is allowed): the
+report gives how consistently the matched body's registers map onto the pending ones (1.00: a pure renaming).
+
+For every matched C function (a target program's function that is not INCLUDE_ASM: game code and library files)
+of --min-len normalised instructions or more, every pending function of the given programs (default all) sharing
+enough 5-instruction runs with it is aligned with it (difflib on the instruction keys, in a window around the
+longest common run): `cover` is the part of the matched body found there in order. Pending functions of about the
+same length as the matched body are copies (tools/nearcopy.py's job) and are left out unless --copies.
+
+Output: pending functions with a cover >= --min-cover, smallest first: the pending function, its size, the
+matched function(s) found inside (program:name, cover, register consistency, the pending address range) and the
+`static inline` helper of src/ that already copies that body (a `/* NAME, inlined */` comment above it), when there
+is one. --csv writes every hit (default build/inlined.csv).
+
+Recipe: copy the matched C into the pending function's file as `static inline` (comment `/* NAME, inlined */`),
+call it where the pending code has the copy (its `return 0` / `return 1` become the caller's branches), then
+ccheck / install as usual (docs/STATUS.md, "Inlined functions").
+"""
+import argparse, collections, csv, difflib, glob, os, re, sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, "tools"))
+import libsweep as L, nearcopy as N
+
+LINE = re.compile(r"/\* \w+ ([0-9A-F]{8}) ([0-9A-F]{8}) \*/\s+(\S+)\s*(.*)$")
+SAVED = set(range(16, 24)) | {30, 31}
+RELOC = re.compile(r"%hi|%lo|%gp_rel|>> 16\)|& 0xFFFF\)")
+K = 5
+
+
+def regs(w):
+    """(key fields, register operands) of one instruction word."""
+    op, rs, rt, rd, sa, fn = w >> 26, (w >> 21) & 31, (w >> 16) & 31, (w >> 11) & 31, (w >> 6) & 31, w & 0x3F
+    if op == 0:
+        if fn in (0, 2, 3):                       # sll srl sra
+            return ("s", fn, sa), (rt, rd)
+        if fn in (8, 9):                          # jr jalr
+            return ("s", fn), (rs, rd) if fn == 9 else (rs,)
+        if fn in (0x10, 0x12):                    # mfhi mflo
+            return ("s", fn), (rd,)
+        if fn in (0x11, 0x13):
+            return ("s", fn), (rs,)
+        if fn in (0x18, 0x19, 0x1A, 0x1B):        # mult div
+            return ("s", fn), (rs, rt)
+        if fn in (0xC, 0xD):
+            return ("s", fn, w >> 6 & 0xFFFFF), ()
+        return ("s", fn), (rs, rt, rd)
+    if op == 1:
+        return ("r", rt), (rs,)
+    if op in (4, 5):
+        return (op,), (rs, rt)
+    if op in (6, 7):
+        return (op,), (rs,)
+    if op == 0x0F:
+        return (op, w & 0xFFFF), (rt,)
+    if op in (0x10, 0x11, 0x13):
+        return ("c", op, rs, rd if rs in (0, 2, 4, 6) else w & 0x3FFFFFF), (rt,) if rs in (0, 2, 4, 6) else ()
+    if op == 0x12:
+        if (w >> 25) & 1:
+            return ("c2", w & 0x1FFFFFF), ()
+        return ("c2m", rs, rd), (rt,)
+    return (op, w & 0xFFFF), (rs, rt)
+
+
+def norm(lines):
+    """normalised (key, regs, address) list of one function's (word, mnemonic, operands, address) lines."""
+    out = []
+    for w, mn, ops, ad in lines:
+        if w == 0:
+            continue
+        op, rs, rt, rd, fn = w >> 26, (w >> 21) & 31, (w >> 16) & 31, (w >> 11) & 31, w & 0x3F
+        if op == 0 and fn in (0x21, 0x25) and (rt == 0) != (rs == 0) and rd != 0:
+            continue                               # move
+        if op == 0 and fn == 8 and rs == 31:
+            continue                               # jr $ra
+        if op == 9 and rs == 29 and rt == 29:
+            continue                               # addiu $sp,$sp,K
+        if op in (0x23, 0x2B) and rs == 29 and rt in SAVED:
+            continue                               # save / restore
+        key, rg = regs(w)
+        if op in (2, 3):
+            key = (op, ops.strip().split()[0] if op == 3 else "")
+        elif 4 <= op <= 7 or op in (0x14, 0x15, 0x16, 0x17) or op == 1:
+            key = key[:2] if op == 1 else (op,)
+        elif op == 0x0F and RELOC.search(ops):
+            key = (op, "hi")
+        elif op >= 8 and op != 0x0F and len(key) == 2 and (RELOC.search(ops) or rs == 29):
+            key = (op, "lo" if rs != 29 else "sp")
+        out.append((key, rg, ad))
+    return out
+
+
+def read_funcs(prog):
+    """name -> list of (word, mnemonic, operands, address) of every function of the program's .s files."""
+    out = {}
+    for f in glob.glob(os.path.join(ROOT, "asm", prog, "*matchings", "**", "*.s"), recursive=True):
+        name, lines = None, []
+        for l in open(f):
+            m = re.match(r"\s*glabel (\w+)", l)
+            if m and name is None:
+                name = m.group(1)
+            m = LINE.search(l)
+            if m:
+                b = bytes.fromhex(m.group(2))
+                lines.append((int.from_bytes(b, "little"), m.group(3), m.group(4), int(m.group(1), 16)))
+        if name and lines:
+            out[name] = lines
+    return out
+
+
+def pending_names(prog):
+    tp = N.Prog(prog)
+    return set(tp.pending) | set(L.pending_files(prog)), tp
+
+
+def helpers():
+    """matched name -> [helper name] from `/* NAME, inlined */` comments above static inline functions in src/."""
+    out = collections.defaultdict(list)
+    for f in glob.glob(os.path.join(ROOT, "src", "**", "*.c"), recursive=True):
+        t = open(f).read()
+        for m in re.finditer(r"/\*[^*]*?(\w+), inlined \*/\s*\n\s*static\s+inline\s+[^(]*?(\w+)\s*\(", t):
+            out[m.group(1)].append("%s:%s" % (os.path.basename(os.path.dirname(f)), m.group(2)))
+    return out
+
+
+def reg_consistency(a, b, blocks):
+    cnt = collections.defaultdict(collections.Counter)
+    for i, j, n in blocks:
+        for k in range(n):
+            for x, y in zip(a[i + k][1], b[j + k][1]):
+                if x != 0 or y != 0:
+                    cnt[x][y] += 1
+    tot = sum(sum(c.values()) for c in cnt.values())
+    return sum(max(c.values()) for c in cnt.values()) / tot if tot else 1.0
+
+
+def align(body, pend, j0, i0):
+    """cover, blocks of the body against the window of pend around the seed body[i0] ~ pend[j0]."""
+    n = len(body)
+    lo, hi = max(0, j0 - i0 - n // 2), min(len(pend), j0 + (n - i0) + n // 2)
+    sm = difflib.SequenceMatcher(None, [x[0] for x in body], [x[0] for x in pend[lo:hi]], autojunk=False)
+    bl = [(i, j + lo, k) for i, j, k in sm.get_matching_blocks() if k]
+    return sum(k for _, _, k in bl) / n, bl
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("progs", nargs="*", help="programs whose pending functions are searched (default all)")
+    ap.add_argument("--from", dest="src", default="", help="programs whose matched functions are used (default all)")
+    ap.add_argument("--min-len", type=int, default=10)
+    ap.add_argument("--min-cover", type=float, default=0.8)
+    ap.add_argument("--names", default="", help="only these matched functions")
+    ap.add_argument("--copies", action="store_true", help="also pending functions of the matched body's length")
+    ap.add_argument("--top", type=int, default=60)
+    ap.add_argument("--csv", default=os.path.join(ROOT, "build", "inlined.csv"))
+    a = ap.parse_args()
+    allp = N.progs_list()
+    targets = a.progs or allp
+    sources = a.src.split(",") if a.src else allp
+    only = set(a.names.split(",")) if a.names else None
+    pend, body = {}, {}            # (prog, name) -> normalised list
+    size = {}
+    for prog in sorted(set(targets) | set(sources)):
+        if not os.path.isdir(os.path.join(ROOT, "asm", prog)):
+            continue
+        pn, tp = pending_names(prog)
+        for name, lines in read_funcs(prog).items():
+            nl = norm(lines)
+            size[(prog, name)] = len(lines) * 4
+            if name in pn:
+                if prog in targets:
+                    pend[(prog, name)] = nl
+            elif prog in sources and len(nl) >= a.min_len and (only is None or name in only):
+                body[(prog, name)] = nl
+    # one body per distinct key sequence (copies of matched code in several programs)
+    seen, bodies = {}, []
+    for k in sorted(body, key=lambda k: (k[0] != "main", k)):
+        sig = tuple(x[0] for x in body[k])
+        if sig not in seen:
+            seen[sig] = k
+            bodies.append(k)
+    index = collections.defaultdict(set)
+    for pk, nl in pend.items():
+        ks = [x[0] for x in nl]
+        for i in range(len(ks) - K + 1):
+            index[tuple(ks[i:i + K])].add(pk)
+    common = {g for g, s in index.items() if len(s) > 150}
+    hits = []
+    for bk in bodies:
+        b = body[bk]
+        ks = [x[0] for x in b]
+        grams = {tuple(ks[i:i + K]) for i in range(len(ks) - K + 1)} - common
+        if not grams:
+            continue
+        c = collections.Counter()
+        for g in grams:
+            for pk in index.get(g, ()):
+                c[pk] += 1
+        need = max(2, int(len(grams) * a.min_cover * 0.5))
+        for pk, n in c.items():
+            if n < need or (pk == bk):
+                continue
+            p = pend[pk]
+            is_copy = len(p) <= len(b) * 1.3
+            if is_copy and not a.copies:
+                continue
+            pks = [x[0] for x in p]
+            sm = difflib.SequenceMatcher(None, ks, pks, autojunk=False)
+            i0, j0, m = sm.find_longest_match(0, len(ks), 0, len(pks))
+            if m < K:
+                continue
+            cover, bl = align(b, p, j0, i0)
+            if cover < a.min_cover:
+                continue
+            j1, j2 = bl[0][1], bl[-1][1] + bl[-1][2] - 1
+            hits.append({"prog": pk[0], "name": pk[1], "size": size[pk], "from": "%s:%s" % bk,
+                         "cover": round(cover, 2), "regs": round(reg_consistency(b, p, bl), 2),
+                         "start": "%08X" % p[j1][2], "end": "%08X" % p[j2][2], "copy": int(is_copy),
+                         "body_len": len(b)})
+    hl = helpers()
+    for h in hits:
+        h["helper"] = " ".join(hl.get(h["from"].split(":")[1], [])) or "-"
+    hits.sort(key=lambda h: (h["size"], h["prog"], h["name"], -h["cover"]))
+    if a.csv:
+        os.makedirs(os.path.dirname(a.csv), exist_ok=True)
+        with open(a.csv, "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=["prog", "name", "size", "from", "cover", "regs", "start", "end",
+                                              "copy", "body_len", "helper"])
+            w.writeheader()
+            w.writerows(hits)
+    byf = collections.OrderedDict()
+    for h in hits:
+        byf.setdefault((h["prog"], h["name"]), []).append(h)
+    print("%d pending functions contain an inlined copy of matched code (%d hits, %d matched bodies searched); "
+          "smallest first:" % (len(byf), len(hits), len(bodies)))
+    for (prog, name), hs in list(byf.items())[:a.top]:
+        hs.sort(key=lambda h: (-h["cover"] * h["body_len"]))
+        print("%-4s %-44s %#6x  %s" % (prog, name, hs[0]["size"], "; ".join(
+            "%s %.2f r%.2f @%s-%s%s%s" % (h["from"], h["cover"], h["regs"], h["start"], h["end"],
+                                         " copy" if h["copy"] else "",
+                                         " [" + h["helper"] + "]" if h["helper"] != "-" else "")
+            for h in hs[:3]) + (" (+%d)" % (len(hs) - 3) if len(hs) > 3 else "")))
+    if a.csv:
+        print("all: " + os.path.relpath(a.csv, ROOT))
+
+
+if __name__ == "__main__":
+    main()

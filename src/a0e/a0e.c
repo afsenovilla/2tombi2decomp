@@ -1571,11 +1571,6 @@ typedef struct {
     __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz0(r0) __asm__ volatile("swc2 $16, 0( %0 )" : : "r"(r0) : "memory")
 
-// nearcopy: 27 words off, C from a0b func_80112A24
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 #define T2_ldv3t(r0)                                                                                                   \
     __asm__ volatile("lwc2 $0, 0x10(%0);"                                                                              \
                      "lw $12, 0x14(%0);"                                                                               \
@@ -1700,11 +1695,6 @@ u32 *func_80113AEC(u32 *f, u32 *ot, s32 n)
     return f;
 }
 
-// nearcopy: 35 words off, C from a0b func_80112CF0
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 #define T2_ldv3p(r0)                                                                                                   \
     __asm__ volatile("lw $12, 0x18(%0);"                                                                               \
                      "lwc2 $0, 0x14(%0);"                                                                              \
@@ -2070,11 +2060,6 @@ void func_80114A30(u32 *p, void *b)
     func_801146FC(func_80114458(p, b, lo), b, packed >> 16);
 }
 
-// nearcopy: 3 words off, C from a0b func_80113770
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 typedef struct {
     s32 vx, vy;
 } T2Pt32;

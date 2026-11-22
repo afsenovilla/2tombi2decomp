@@ -186,10 +186,6 @@ void func_80109E54(void)
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", f_SpawnEvilPigDoorActorsFromPlacementTable);
 
-// nearcopy: 5 words off, C from a07 func_80113C20
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
 extern ClutCycle D_8010E0DC[];
 extern s8 D_8010E5FC[];
 extern u8 D_800BF873;

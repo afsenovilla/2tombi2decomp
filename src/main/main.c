@@ -538,7 +538,38 @@ s32 func_80020B08(u8 *a, u8 *b)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ClassifyActorCylinderContact);
+s32 f_ClassifyActorCylinderContact(u8 *a, u8 *b)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(b + 0x2E);
+    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(b + 0x36);
+    s32 d = SquareRoot0(dx * dx + dz * dz);
+    s16 dy;
+    s16 h;
+    s16 y0;
+
+    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80)) {
+        return -1;
+    }
+    dy = *(u16 *)(a + 0x32) - *(u16 *)(b + 0x32);
+    h = *(u16 *)(a + 0x84) + *(u16 *)(b + 0x84);
+    if ((u16)(dy + h) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+        return -1;
+    }
+    y0 = dy;
+    if (dy < 0) {
+        dy = -dy;
+    } else {
+        h = (*(u16 *)(b + 0x86) - *(u16 *)(b + 0x84)) + (*(u16 *)(a + 0x86) - *(u16 *)(a + 0x84));
+    }
+    if (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) - (s16)d < h - dy) {
+        D_1F80009C = ratan2(-dz, dx);
+        return 1;
+    }
+    if (y0 <= 0) {
+        return 2;
+    }
+    return 3;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ClassifyActiveColliderPartCylinderContact);
 
@@ -13539,7 +13570,56 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80076904);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_AdvanceActorSkeletalAnimation);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007703C);
+/* f_QueueClass2Or9ActorForRender, inlined */
+static inline void QueueC2_703C(s32 arg0) {
+    void *temp_a0;
+
+    if (*((s16 *)D_1F800144) < 0x18) {
+        temp_a0 = *((void **)D_1F80013C);
+        *((void **)D_1F80013C) = temp_a0 - 4;
+        M2C_FIELD(temp_a0, s32 *, -4) = arg0;
+        *((s16 *)D_1F800144) = (u16) *((s16 *)D_1F800144) + 1;
+    }
+}
+/* f_QueueClass4ActorForRender, inlined */
+static inline void QueueC4_703C(s32 arg0) {
+    void *temp_a0;
+
+    if (*((s16 *)D_1F800150) < 0x28) {
+        temp_a0 = *((void **)D_1F800148);
+        *((void **)D_1F800148) = temp_a0 - 4;
+        M2C_FIELD(temp_a0, s32 *, -4) = arg0;
+        *((s16 *)D_1F800150) = (u16) *((s16 *)D_1F800150) + 1;
+    }
+}
+/* f_QueueClass5ActorForRender, inlined */
+static inline void QueueC5_703C(s32 arg0) {
+    void *temp_a0;
+
+    if (*((s16 *)D_1F80015C) < 0x1C) {
+        temp_a0 = *((void **)D_1F800154);
+        *((void **)D_1F800154) = temp_a0 - 4;
+        M2C_FIELD(temp_a0, s32 *, -4) = arg0;
+        *((s16 *)D_1F80015C) = (u16) *((s16 *)D_1F80015C) + 1;
+    }
+}
+
+void func_8007703C(u8 *a)
+{
+    a[1] = 1;
+    switch (a[0xC]) {
+    case 2:
+    case 9:
+        QueueC2_703C((s32)a);
+        break;
+    case 4:
+        QueueC4_703C((s32)a);
+        break;
+    case 5:
+        QueueC5_703C((s32)a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_TestActorVisibilityAndQueueForRender);
 
@@ -14720,7 +14800,38 @@ void func_8007B0F0(void)
     D_800ED098 = 0x208;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007B18C);
+/* func_8007B0F0, inlined */
+static inline void Init_B0F0(void)
+{
+    s32 i = 0;
+    u8 *p = D_800F2740;
+    u8 *q;
+
+    for (; i < 0x208; i++, p += 0x44) {
+        memset(p, 0, 0x44);
+    }
+    q = D_800FB11C;
+    D_800E7E74 = (s32 *)D_800ED8C0;
+    for (i = 0; i < 0x208; i++, q -= 0x44) {
+        *--D_800E7E74 = (s32)q;
+    }
+    D_800ED098 = 0x208;
+}
+
+void func_8007B18C(void)
+{
+    func_8004FB20();
+    func_800798F8();
+    Init_B0F0();
+    func_8007ACC4();
+    func_8007A810();
+    func_8007AC14();
+    func_8007AC40();
+    func_8007AC6C();
+    func_8007AC98();
+    func_8007AD14();
+    func_8007AD40();
+}
 
 Slot40 *f_AllocateTemplateEffectSlot(void)
 {

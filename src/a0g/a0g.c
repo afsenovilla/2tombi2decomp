@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
+#include "gte.h"
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
@@ -900,11 +901,6 @@ void func_8010C2A4(PartList *a)
     }
 }
 
-// nearcopy: 13 words off, C from a0a func_801103F4
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 #define T2_ldv3t(r0)                                                                                                   \
     __asm__ volatile("lwc2 $0, 0x10(%0);"                                                                              \
                      "lw $12, 0x14(%0);"                                                                               \
@@ -1021,11 +1017,6 @@ u32 *func_8010C3A4(u32 *f, u32 *ot, s32 n)
     return f;
 }
 
-// nearcopy: 14 words off, C from a0a func_80110698
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 #define T2_ldv3p(r0)                                                                                                   \
     __asm__ volatile("lw $12, 0x18(%0);"                                                                               \
                      "lwc2 $0, 0x14(%0);"                                                                              \

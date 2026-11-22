@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
+#include "gte.h"
 typedef struct { s16 x, y, w, h; } ClutRect;
 
 extern u8 D_1F800246_6eef;
@@ -461,11 +462,6 @@ void func_8010B834(Owner *a, s32 sel)
     }
 }
 
-// nearcopy: 4 words off, C from a07 func_80113C20
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 typedef struct {
     u8 *ptr;
     u8 *clut;

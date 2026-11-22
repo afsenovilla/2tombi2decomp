@@ -451,10 +451,6 @@ void func_8010A2EC(void *arg0) {
     }
 }
 
-// nearcopy: 9 words off, C from a0g func_8010BC40
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
 typedef struct {
     u32 tag;
     u32 rgb0;
@@ -467,7 +463,7 @@ typedef struct {
     u16 x2, y2;
     u16 uv2;
     u16 pad;
-} T2PolyGT3A;
+} T2PolyGT3;
 #define T2_ldv3t(r0)                                                                                                   \
     __asm__ volatile("lwc2 $0, 0x10(%0);"                                                                              \
                      "lw $12, 0x14(%0);"                                                                               \
@@ -496,7 +492,7 @@ u32 *func_8010A3AC(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[6];
     s32 *otz = (s32 *)0x1F800004;
-    T2PolyGT3A *p = D_800BF544;
+    T2PolyGT3 *p = D_800BF544;
     s32 *flg = (s32 *)0x1F800000;
     u32 c;
     u32 mode;
@@ -592,11 +588,6 @@ u32 *func_8010A3AC(u32 *f, u32 *ot, s32 n)
     return f;
 }
 
-// nearcopy: 10 words off, C from a0g func_8010BF28
-#include "common.h"
-#include "game.h"
-#include "m2c.h"
-#include "gte.h"
 typedef struct {
     u32 tag;
     u32 rgb0;
@@ -611,7 +602,7 @@ typedef struct {
     u32 rgb3;
     u16 x3, y3;
     u32 uv3;
-} T2PolyGT4A;
+} T2PolyGT4;
 #define T2_ldv3p(r0)                                                                                                   \
     __asm__ volatile("lw $12, 0x18(%0);"                                                                               \
                      "lwc2 $0, 0x14(%0);"                                                                              \
@@ -643,7 +634,7 @@ u32 *func_8010A69C(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[8];
     s32 *otz = (s32 *)0x1F800004;
-    T2PolyGT4A *p = D_800BF544;
+    T2PolyGT4 *p = D_800BF544;
     s32 *flg = (s32 *)0x1F800000;
     u32 c;
     u32 w;
@@ -793,42 +784,6 @@ void func_8010AA20(PartList *a)
     }
 }
 
-typedef struct {
-    u32 tag;
-    u32 rgb0;
-    u16 x0, y0;
-    u32 uv0;
-    u32 rgb1;
-    u16 x1, y1;
-    u32 uv1;
-    u32 rgb2;
-    u16 x2, y2;
-    u16 uv2;
-    u16 pad;
-} T2PolyGT3;
-#define T2_ldv3t(r0)                                                                                                   \
-    __asm__ volatile("lwc2 $0, 0x10(%0);"                                                                              \
-                     "lw $12, 0x14(%0);"                                                                               \
-                     "lwc2 $2, 0x18(%0);"                                                                              \
-                     "mtc2 $12, $1;"                                                                                   \
-                     "lwc2 $4, 0x1C(%0);"                                                                              \
-                     "srl $12, $12, 16;"                                                                               \
-                     "mtc2 $12, $3;"                                                                                   \
-                     "lwc2 $5, 0x20(%0)"                                                                               \
-                     :                                                                                                 \
-                     : "r"(r0)                                                                                         \
-                     : "$12")
-#define T2_rtpt() __asm__ volatile(".word 0x4A280030")
-#define T2_nclip() __asm__ volatile(".word 0x4B400006")
-#define T2_avsz3() __asm__ volatile(".word 0x4B58002D")
-#define T2_stflg(r0) __asm__ volatile("cfc2 $12, $31;" "nop;" "sw $12, 0( %0 )" : : "r"(r0) : "$12", "memory")
-#define T2_stopz(r0) __asm__ volatile("swc2 $24, 0( %0 )" : : "r"(r0) : "memory")
-#define T2_stotz(r0) __asm__ volatile("swc2 $7, 0( %0 )" : : "r"(r0) : "memory")
-#define T2_stsxy3_gt3(r0)                                                                                              \
-    __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
-#define T2_stsz1(r0) __asm__ volatile("swc2 $17, 0( %0 )" : : "r"(r0) : "memory")
-#define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
-#define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
 u32 *func_8010AB20(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[3];
@@ -918,48 +873,6 @@ u32 *func_8010AB20(u32 *f, u32 *ot, s32 n)
     return f;
 }
 
-typedef struct {
-    u32 tag;
-    u32 rgb0;
-    u16 x0, y0;
-    u32 uv0;
-    u32 rgb1;
-    u16 x1, y1;
-    u32 uv1;
-    u32 rgb2;
-    u16 x2, y2;
-    u32 uv2;
-    u32 rgb3;
-    u16 x3, y3;
-    u32 uv3;
-} T2PolyGT4;
-#define T2_ldv3p(r0)                                                                                                   \
-    __asm__ volatile("lw $12, 0x18(%0);"                                                                               \
-                     "lwc2 $0, 0x14(%0);"                                                                              \
-                     "mtc2 $12, $1;"                                                                                   \
-                     "srl $12, $12, 16;"                                                                               \
-                     "mtc2 $12, $3;"                                                                                   \
-                     "lwc2 $2, 0x1C(%0);"                                                                              \
-                     "lw $12, 0x24(%0);"                                                                               \
-                     "lwc2 $4, 0x20(%0);"                                                                              \
-                     "mtc2 $12, $5"                                                                                    \
-                     :                                                                                                 \
-                     : "r"(r0)                                                                                         \
-                     : "$12")
-#define T2_ldv1p(r0)                                                                                                   \
-    __asm__ volatile("lw $12, 0x24(%0);"                                                                               \
-                     "lwc2 $0, 0x28(%0);"                                                                              \
-                     "srl $12, $12, 16;"                                                                               \
-                     "mtc2 $12, $1"                                                                                    \
-                     :                                                                                                 \
-                     : "r"(r0)                                                                                         \
-                     : "$12")
-#define T2_rtps() __asm__ volatile(".word 0x4A180001")
-#define T2_avsz4() __asm__ volatile(".word 0x4B68002E")
-#define T2_stsxy(r0) __asm__ volatile("swc2 $14, 0( %0 )" : : "r"(r0) : "memory")
-#define T2_stsxy3_gt4(r0)                                                                                              \
-    __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
-#define T2_stsz0(r0) __asm__ volatile("swc2 $16, 0( %0 )" : : "r"(r0) : "memory")
 u32 *func_8010ADC4(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[4];
