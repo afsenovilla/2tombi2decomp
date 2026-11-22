@@ -2546,7 +2546,36 @@ u8 *func_8011FB2C(s32 a, s32 b) {
     return p;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011FB80);
+extern u8 D_800BF80E;
+extern s8 D_800BF9FA_0556;
+
+s32 func_8011FB80(u8 *a) {
+    switch (a[0x78]) {
+    case 0:
+        func_8004D604(0x2B, 1);
+        func_800440E4(D_800E7E80, 0x72, 4);
+        func_80115D84(a);
+        a[0x78]++;
+        break;
+    case 1:
+        if (D_800BF80E != 0) {
+            func_800440E4(D_800E7E80, 0x73, 4);
+            a[0x78]++;
+        }
+        break;
+    case 2:
+        if (D_800BF80E != 0) {
+            func_800440E4(D_800E7E80, 2, 4);
+            D_800BF9FA_0556 = 0x17;
+            func_80074810(0x96, 0);
+            return 1;
+        }
+        break;
+    default:
+        return 0;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011FC88);
 
