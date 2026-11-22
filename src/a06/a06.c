@@ -390,7 +390,14 @@ s32 func_8011215C(void *arg0, s8 *arg1) {
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801121D0);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801122A0);
+extern u8 D_800BF8D3;
+
+void func_801122A0(void *a0, u8 *a1)
+{
+    if (func_80023D48(a0, a1, *(s32 *)(a1 + 0xC8), 0) || func_80023D48(a0, a1, *(s32 *)(a1 + 0xCC), 0)) {
+        *((s8 *)D_1F800182) = 0;
+    }
+}
 
 extern s8 D_1F800182[];
 
@@ -559,7 +566,24 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80115438);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801154D4);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801155C4);
+void func_801155C4(u8 *p, u8 *a1)
+{
+    s16 x;
+
+    p[0x72] = 0;
+    switch (p[3]) {
+    case 0:
+        p[3] = 1;
+    case 1:
+        x = *(s16 *)(a1 + 0x2E);
+        if (x >= 0x45ED) {
+            p[0x72] = 2;
+        } else if (x < 0x396C) {
+            p[0x72] = 3;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", f_SpawnDonglinForestSceneActorsFromPlacementTable);
 
@@ -768,7 +792,16 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80119CC0);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80119D94);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80119E88);
+void func_80119E88(u8 *p)
+{
+    if (D_800BF8D3 != 0xFF) {
+        func_80051B70(p, 0xC, 0x4C);
+    } else {
+        func_80051B70(p, 0xC, 0x4D);
+    }
+    *(s16 *)(p + 0x56) = -0x244;
+    func_800517F8(p);
+}
 
 
 void func_80119EE8(void *arg0) {
@@ -1496,7 +1529,17 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012D864);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012D8E4);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012D954);
+void func_8012D954(u8 *p)
+{
+    *(s16 *)(p + 0x32) += 0x10;
+    if (*(s16 *)(p + 0x32) >= -0xD98) {
+        *(s16 *)(p + 0x32) = -0xD98;
+    }
+    if (p[6] == 0 && *(s16 *)(p + 0xE) == 0) {
+        *(s16 *)(p + 0x60) = 0;
+        p[6]++;
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012D9B4);
 
@@ -2118,7 +2161,19 @@ void func_80141770(void *arg0) {
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801417C4);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8014183C);
+void func_8014183C(u8 *p)
+{
+    switch (p[6]) {
+    case 0:
+        p[6]++;
+        p[7] = 0;
+    case 1:
+        if (func_80049E54(p, 1)) {
+            p[4] = 3;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8014189C);
 
