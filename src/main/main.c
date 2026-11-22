@@ -2036,17 +2036,145 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ProjectEffectPointToScreenAndDepth);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SetEffectRenderTransform);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80031AC4);
+extern s32 D_1F800000[];
+extern s16 D_1F800002[];
+extern s16 D_1F800004[];
+extern s32 D_1F800014[];
+extern s32 D_1F800020_edd9[];
+extern s32 D_1F8000D0_42d8[];
+void f_SetIdentityMatrix(s32 *m);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80031D24);
+void func_80031AC4(void *pos, u8 *scale, s16 *rot)
+{
+    s32 v[3];
+
+    RotMatrix_gte(rot, D_1F800000);
+    f_SetIdentityMatrix(D_1F800020_edd9);
+    RotMatrixX(rot[3], D_1F800020_edd9);
+    MulMatrix(D_1F800000, D_1F800020_edd9);
+    v[0] = scale[0] * 4;
+    v[1] = scale[1] * 4;
+    v[2] = scale[2] * 4;
+    ScaleMatrix(D_1F800000, v);
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_ldclmv(D_1F800000);
+    gte_rtir();
+    gte_stclmv(D_1F800000);
+    gte_ldclmv(D_1F800002);
+    gte_rtir();
+    gte_stclmv(D_1F800002);
+    gte_ldclmv(D_1F800004);
+    gte_rtir();
+    gte_stclmv(D_1F800004);
+    gte_ldv0(pos);
+    gte_rtv0();
+    gte_stlvnl(D_1F800014);
+    D_1F800000[5] += D_1F8000D0_42d8[15];
+    D_1F800000[6] += D_1F8000D0_42d8[16];
+    D_1F800000[7] += D_1F8000D0_42d8[17];
+    gte_SetRotMatrix(D_1F800000);
+    gte_SetTransMatrix(D_1F800000);
+}
+
+void func_80031D24(void *pos, u8 *scale, s16 *rot)
+{
+    s32 v[3];
+
+    RotMatrix_gte(rot, D_1F800000);
+    f_SetIdentityMatrix(D_1F800020_edd9);
+    RotMatrixY(rot[3], D_1F800020_edd9);
+    MulMatrix(D_1F800000, D_1F800020_edd9);
+    v[0] = scale[0] * 4;
+    v[1] = scale[1] * 4;
+    v[2] = scale[2] * 4;
+    ScaleMatrix(D_1F800000, v);
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_ldclmv(D_1F800000);
+    gte_rtir();
+    gte_stclmv(D_1F800000);
+    gte_ldclmv(D_1F800002);
+    gte_rtir();
+    gte_stclmv(D_1F800002);
+    gte_ldclmv(D_1F800004);
+    gte_rtir();
+    gte_stclmv(D_1F800004);
+    gte_ldv0(pos);
+    gte_rtv0();
+    gte_stlvnl(D_1F800014);
+    D_1F800000[5] += D_1F8000D0_42d8[15];
+    D_1F800000[6] += D_1F8000D0_42d8[16];
+    D_1F800000[7] += D_1F8000D0_42d8[17];
+    gte_SetRotMatrix(D_1F800000);
+    gte_SetTransMatrix(D_1F800000);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80031F84);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800321D8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800323FC);
+void func_800323FC(void *pos, u8 *scale, s16 *rot)
+{
+    s32 v[3];
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003265C);
+    RotMatrixZYX(rot, D_1F800000);
+    f_SetIdentityMatrix(D_1F800020_edd9);
+    RotMatrixY(rot[3], D_1F800020_edd9);
+    MulMatrix(D_1F800000, D_1F800020_edd9);
+    v[0] = scale[0] * 4;
+    v[1] = scale[1] * 4;
+    v[2] = scale[2] * 4;
+    ScaleMatrix(D_1F800000, v);
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_ldclmv(D_1F800000);
+    gte_rtir();
+    gte_stclmv(D_1F800000);
+    gte_ldclmv(D_1F800002);
+    gte_rtir();
+    gte_stclmv(D_1F800002);
+    gte_ldclmv(D_1F800004);
+    gte_rtir();
+    gte_stclmv(D_1F800004);
+    gte_ldv0(pos);
+    gte_rtv0();
+    gte_stlvnl(D_1F800014);
+    D_1F800000[5] += D_1F8000D0_42d8[15];
+    D_1F800000[6] += D_1F8000D0_42d8[16];
+    D_1F800000[7] += D_1F8000D0_42d8[17];
+    gte_SetRotMatrix(D_1F800000);
+    gte_SetTransMatrix(D_1F800000);
+}
+
+void func_8003265C(void *pos, u8 *scale, s16 *rot)
+{
+    s32 v[3];
+
+    RotMatrixZYX(rot, D_1F800000);
+    f_SetIdentityMatrix(D_1F800020_edd9);
+    RotMatrixX(rot[3], D_1F800020_edd9);
+    MulMatrix(D_1F800000, D_1F800020_edd9);
+    v[0] = scale[0] * 4;
+    v[1] = scale[1] * 4;
+    v[2] = scale[2] * 4;
+    ScaleMatrix(D_1F800000, v);
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_ldclmv(D_1F800000);
+    gte_rtir();
+    gte_stclmv(D_1F800000);
+    gte_ldclmv(D_1F800002);
+    gte_rtir();
+    gte_stclmv(D_1F800002);
+    gte_ldclmv(D_1F800004);
+    gte_rtir();
+    gte_stclmv(D_1F800004);
+    gte_ldv0(pos);
+    gte_rtv0();
+    gte_stlvnl(D_1F800014);
+    D_1F800000[5] += D_1F8000D0_42d8[15];
+    D_1F800000[6] += D_1F8000D0_42d8[16];
+    D_1F800000[7] += D_1F8000D0_42d8[17];
+    gte_SetRotMatrix(D_1F800000);
+    gte_SetTransMatrix(D_1F800000);
+}
 
 void func_800328BC(void *arg0, M2C_UNK arg1) {
     f_DrawProjectedSpriteDefinitionStream(arg1, (M2C_FIELD(arg0, u16 *, 0x46) << 0x10) | M2C_FIELD(arg0, u16 *, 0x44));
@@ -5501,7 +5629,6 @@ s32 f_DespawnGrabbedItem(s32 arg0) {
     return f_PlaySoundEffect(0x28, 0, 0);
 }
 
-extern s32 D_1F800000[];
 extern u8 D_1F800020[];
 extern s16 D_1F8000C8[];
 void func_8004B150(u8 *a, s32 mode)
@@ -7011,7 +7138,6 @@ void func_80052694(u8 *a)
     }
 }
 
-extern s32 D_1F8000D0_42d8[];
 typedef struct { void *p0; void *p4; u8 *p8; } UiBank_F58;
 extern UiBank_F58 D_800ECF58_02d8;
 void func_80052720(u8 *a)
