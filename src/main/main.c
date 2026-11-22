@@ -3928,7 +3928,39 @@ s32 func_8003499C(void) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800349A4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80034BE0);
+extern u8 D_800BF81C;
+
+s32 func_80034BE0(s32 unused, s32 item, s32 mode)
+{
+    u8 *t = (u8 *)D_800E7E80;
+    u8 *g = (u8 *)&D_800BF870;
+
+    if (g[3] != 0 || (g[0x11] & 4) || (*(u16 *)(g + 0x2E) & 0x200) || (D_800BF870.unk0 == 7 && g[0x276] != 0)) {
+        if (mode == 1) {
+            return 1;
+        }
+        return 4;
+    }
+    if (mode == 1) {
+        return 0;
+    }
+    if (item == (u8)D_800BF88E) {
+        if (item == t[0x6E]) {
+            D_800BF81C = 2;
+        } else {
+            D_800BF81C = 0;
+        }
+        D_800BF88E = 0;
+        return 0;
+    }
+    if (item != t[0x6E]) {
+        D_800BF81C = 1;
+    } else {
+        D_800BF81C = 0;
+    }
+    D_800BF88E = item;
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80034CE0);
 
@@ -5954,7 +5986,6 @@ void func_80041FA8(void *arg0) {
 
 extern u8 D_800A55C8[];
 extern void *D_800A2B64[];
-extern u8 D_800BF81C;
 void f_DrawUiQuadResource(s16, s16, s32, s32);
 s32 func_80041FCC(u8 *p)
 {
