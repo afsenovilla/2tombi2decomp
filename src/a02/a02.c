@@ -311,11 +311,26 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80112140);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801122A4);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80112654);
+extern s8 D_800BF808_c1f7[];
+extern u8 D_1F800236;
+
+void func_80112654(u8 *a) {
+    s8 *g;
+
+    if (a[0x17B] == 0) {
+        g = D_800BF808_c1f7;
+        if (g[5] == 0 && ((u8 *)g)[0x31] == 0 && M2C_FIELD(a, s16 *, 0x2E) > 0x2710 && M2C_FIELD(a, s16 *, 0x36) < 0xAF0) {
+            D_1F800236 = 1;
+            D_1F800137 = 2;
+            g[7] = 2;
+            g[0x31] = 1;
+            M2C_FIELD(g, s16 *, 0x32) = 0x102;
+        }
+    }
+}
 
 typedef struct { u8 pad0[7]; u8 unk7; u8 pad8[0x29]; u8 unk31; s16 unk32; } AreaState808_7;
 extern AreaState808_7 D_800BF808;
-extern u8 D_1F800236;
 
 void func_801126DC(u8 *a) {
     if (M2C_FIELD(a, s16 *, 0x2E) > 0x2710 && M2C_FIELD(a, s16 *, 0x36) < 0xAF0) {
@@ -439,7 +454,28 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80114024);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateCoalMiningTownInteriorSceneryAssemblyActor);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80114650);
+s32 func_80114650(u8 *a, u8 *b) {
+    s32 r = 0;
+
+    switch (a[0x46]) {
+    case 0:
+        M2C_FIELD(a, s16 *, 0x50) -= 0x40;
+        if (M2C_FIELD(a, s16 *, 0x50) < 0) {
+            M2C_FIELD(a, s16 *, 0x50) = 0;
+            r = 1;
+        }
+        break;
+    case 1:
+        M2C_FIELD(a, s16 *, 0x50) += 0x40;
+        if (M2C_FIELD(a, s16 *, 0x50) > 0) {
+            M2C_FIELD(a, s16 *, 0x50) = 0;
+            r = 1;
+        }
+        break;
+    }
+    M2C_FIELD(b, s16 *, 0xA) = M2C_FIELD(a, s16 *, 0x5A) - M2C_FIELD(a, s16 *, 0x50);
+    return r;
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801146D8);
 
@@ -508,7 +544,24 @@ void func_80114F24(u8 *a) {
 void func_80114F90(void) {
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80114F98);
+extern u8 D_80129A7C[];
+
+void func_80114F98(u8 *a) {
+    switch (a[6]) {
+    case 0:
+        a[6]++;
+        func_80040CDC(a, NULL, D_80129A7C);
+        a[0x70] = 1;
+        break;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[4] = 3;
+            func_80042310();
+        }
+        break;
+    }
+}
 
 extern u8 D_800BFA03;
 void func_8011501C(void *arg0) {
@@ -618,7 +671,28 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80116C14);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011718C);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801175D0);
+s32 func_801175D0(u8 *a) {
+    s32 r = 0;
+
+    switch (a[0x46]) {
+    case 0:
+        M2C_FIELD(a, s16 *, 0x50) += 0x40;
+        if (M2C_FIELD(a, s16 *, 0x50) > 0) {
+            M2C_FIELD(a, s16 *, 0x50) = 0;
+            r = 1;
+        }
+        break;
+    case 1:
+        M2C_FIELD(a, s16 *, 0x50) -= 0x40;
+        if (M2C_FIELD(a, s16 *, 0x50) < 0) {
+            M2C_FIELD(a, s16 *, 0x50) = 0;
+            r = 1;
+        }
+        break;
+    }
+    M2C_FIELD(a, s16 *, 0x56) = M2C_FIELD(a, s16 *, 0x5A) - M2C_FIELD(a, s16 *, 0x50);
+    return r;
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80117658);
 

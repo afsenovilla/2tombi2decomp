@@ -1999,7 +1999,34 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_BeginScriptedBarrelRotation);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateBarrelSeesawSupportHeight);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ApplyBarrelSeesawContactImpulse);
+void f_ApplyBarrelSeesawContactImpulse(u8 *a) {
+    u8 k = a[0x2B];
+    s32 t;
+
+    if (k == 0) {
+        return;
+    }
+    switch (a[0x47] & 3) {
+    case 0:
+        if (k != 2) {
+            M2C_FIELD(a, s16 *, 0x48) -= 0x2000;
+        } else {
+            M2C_FIELD(a, s16 *, 0x48) += 0x2000;
+        }
+        break;
+    case 2:
+        if (k == 2) {
+            M2C_FIELD(a, s16 *, 0x48) -= 0x2000;
+        } else {
+            M2C_FIELD(a, s16 *, 0x48) += 0x2000;
+        }
+        break;
+    }
+    t = a[0x2B];
+    a[0x2B] = 0;
+    a[6] = 1;
+    M2C_FIELD(a, s16 *, 0x6C) = t;
+}
 
 extern u8 D_800BF9D2;
 void f_RestoreTownBarrelOrientations(void *arg0) {
@@ -3126,7 +3153,22 @@ void func_80145F30(void *arg0) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80145F6C);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8014601C);
+extern s16 D_800E7FFE;
+
+s32 func_8014601C(u8 *a) {
+    s16 d = func_800781E0(M2C_FIELD(a, s16 *, 0x2E) - D_1F800160_71b4, M2C_FIELD(a, s16 *, 0x36) - D_1F800164_d75f);
+
+    if ((D_800E7FFE & 0x8200) || d > 0x640) {
+        return -1;
+    }
+    if (d >= 0x44D) {
+        return 0;
+    }
+    if (d >= 0x259) {
+        return 1;
+    }
+    return 2;
+}
 
 
 s16 func_801460A4(void *arg0) {
