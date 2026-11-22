@@ -3679,9 +3679,192 @@ void func_8012D908(u8 *a) {
     func_800517F8(a);
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleTownQuestRewardVisualActor);
+/* tools/dispatch.py draft of f_HandleTownQuestRewardVisualActor (a00, 0x430 bytes): 4 inlined bodies
+ * register maps (body -> here): 
+ *   f_InitializeTownQuestRewardVisualModel_inl (a00:f_InitializeTownQuestRewardVisualModel, cover 1.00, regs 1.00): same registers
+ *   inl_8012DE34 (a00:func_8012DE34, cover 1.00, regs 1.00): s0->s1, s1->s0
+ *   inl_8012DF50 (a00:func_8012DF50, cover 1.00, regs 1.00): same registers
+ *   inl_8012E1E4 (a00:func_8012E1E4, cover 1.00, regs 1.00): same registers
+ * notes:
+ *   f_InitializeTownQuestRewardVisualModel_inl: code inside the copy is also reached from outside (.L8012DB08 8012DB08: a tail gcc cross-jumped, or a case entering it): that path is missing from the draft; write it out in full (gcc merges the identical tails again), from tools/decomp.py's draft
+ *   f_InitializeTownQuestRewardVisualModel_inl: replaces 8012DABC-8012DB2C
+ *   inl_8012DE34: replaces 8012DB60-8012DC0C
+ *   inl_8012DF50: replaces 8012DC20-8012DC9C
+ *   inl_8012E1E4: code inside the copy is also reached from outside (.L8012DDE8 8012DDE8, .L8012DDFC 8012DDFC: a tail gcc cross-jumped, or a case entering it): that path is missing from the draft; write it out in full (gcc merges the identical tails again), from tools/decomp.py's draft
+ *   inl_8012E1E4: replaces 8012DD4C-8012DE14
+ * next: fix the draft's types and the helper calls' arguments, then
+ *   python3 -I tools/ccheck.py THIS.c --prog a00 --func f_HandleTownQuestRewardVisualActor --sbs
+ *   python3 -I tools/install_c.py THIS.c --prog a00 */
 
+extern u8 D_800E7E80[];
 extern u8 D_800BF9DD;
+/* f_InitializeTownQuestRewardVisualModel, inlined */
+static inline void f_InitializeTownQuestRewardVisualModel_inl(u8 *a) {
+    if (func_80051B70(a, 0xC, 0x4F) == 0) {
+        switch (a[3]) {
+        case 3:
+            M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), s16 *, 0x8) = 0xB6;
+            break;
+        case 4:
+            M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), s16 *, 0x8) = -0xB6;
+            break;
+        }
+        func_800517F8(a);
+    }
+}
+/* func_8012DE34, inlined */
+static inline void inl_8012DE34(u8 *a) {
+    u8 *g = D_800E7E80;
+
+    switch (a[5]) {
+    case 0:
+        if (D_800BF9DD == 9) {
+            a[5] = 1;
+            M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+            func_80077B38(a, D_8014C808, 0xF);
+            M2C_FIELD(a, s16 *, 0x60) = 0x40;
+            M2C_FIELD(a, s16 *, 0x62) = 0;
+            M2C_FIELD(a, s16 *, 0x64) = -0x20;
+        }
+        break;
+    case 1:
+        func_8004BD64(a, 2, M2C_FIELD(g, s32 *, 0xDC), M2C_FIELD(g, s32 *, 0xD0), a + 0x60);
+        a[1] = 1;
+        if (D_800BF9DD == 0xB) {
+            a[4] = 3;
+        }
+        break;
+    }
+}
+/* func_8012DF50, inlined */
+static inline void inl_8012DF50(u8 *a) {
+    u8 *p = M2C_FIELD(a, u8 **, 0x10);
+
+    switch (a[5]) {
+    case 0:
+        a[5]++;
+        M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+        func_80077B38(a, D_8014C808, 2);
+        M2C_FIELD(a, s16 *, 0x60) = 0x20;
+        M2C_FIELD(a, s16 *, 0x62) = 0x10;
+        M2C_FIELD(a, s16 *, 0x64) = 0;
+    case 1:
+        func_8004BD64(a, 1, M2C_FIELD(p, void **, 0xDC), 0, a + 0x60);
+        a[1] = p[1];
+        break;
+    }
+}
+/* func_8012E1E4, inlined */
+static inline void inl_8012E1E4(u8 *a) {
+    u8 *p = M2C_FIELD(a, u8 **, 0x10);
+
+    switch (a[5]) {
+    case 0:
+        a[5]++;
+        M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+        func_80077B38(a, D_8014C808, 0xE);
+        M2C_FIELD(a, s16 *, 0x60) = -0xC8;
+        M2C_FIELD(a, s16 *, 0x62) = 0x30;
+        M2C_FIELD(a, s16 *, 0x64) = 0;
+    case 1:
+        func_8004BD64(a, 2, 0, M2C_FIELD(p, s32 *, 0xD0), a + 0x60);
+        a[1] = p[1];
+        if (D_800BF9B5 == 6) {
+            func_8004D4C4(0x23, 1);
+            func_8004B0D8(a);
+            a[4] = 3;
+        }
+        break;
+    }
+}
+
+void f_HandleTownQuestRewardVisualActor(u8 *a)
+{
+    u8 *p;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        switch (a[3]) {
+        case 0:
+        case 1:
+        case 2:
+        case 6:
+        case 7:
+            a[0xB] = 0x10;
+            a[0xD] = 0;
+            M2C_FIELD(a, s16 *, 0x5C) = 0;
+            M2C_FIELD(a, s16 *, 0x5A) = 0;
+            a[0x47] = 0;
+            M2C_FIELD(a, s16 *, 0x60) = 0;
+            a[8] = 0xF0;
+            break;
+        case 3:
+        case 4:
+            f_InitializeTownQuestRewardVisualModel_inl(a);
+            break;
+        case 5:
+            if (func_80051B70(a, 0xC, 7) == 0) {
+                func_800517F8(a);
+            }
+            break;
+        }
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            inl_8012DE34(a);
+            break;
+        case 1:
+            func_8018C574(a);
+            break;
+        case 2:
+            inl_8012DF50(a);
+            break;
+        case 3:
+        case 4:
+        case 5:
+            func_8007778C(a);
+            break;
+        case 6:
+            p = M2C_FIELD(a, u8 **, 0x10);
+            switch (a[5]) {
+            case 0:
+                a[5]++;
+                M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+                func_80077B38(a, D_8014C808, 0x11);
+                M2C_FIELD(a, s16 *, 0x60) = -0xC8;
+                M2C_FIELD(a, s16 *, 0x62) = 0x20;
+                M2C_FIELD(a, s16 *, 0x64) = 0;
+            case 1:
+                func_8004BD64(a, 2, 0, M2C_FIELD(p, s32 *, 0xD0), a + 0x60);
+                a[1] = p[1];
+                if (D_800BF9B5 == 5) {
+                    func_8004D4C4(0xE, 1);
+                    func_8004B0D8(a);
+                    a[4] = 3;
+                }
+                break;
+            }
+            break;
+        case 7:
+            inl_8012E1E4(a);
+            break;
+        }
+        break;
+    case 2:
+        if (a[3] == 2) {
+            func_8004D4C4(0x1D, 1);
+            func_8004B0D8(a);
+            a[4] = 3;
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
+
 void func_8012DE34(u8 *a) {
     u8 *g = D_800E7E80;
 
