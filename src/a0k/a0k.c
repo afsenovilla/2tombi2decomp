@@ -40,7 +40,31 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010A1F8);
 void func_8010A498(void) {
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010A4A0);
+extern u8 **D_1F800154;
+extern u8 D_1F80015C;
+extern u8 D_1F800183;
+
+void func_8010A4A0(void)
+{
+    u8 **l = D_1F800154;
+    u8 *e;
+
+    D_1F800183 = D_1F80015C;
+    while (D_1F800183 != 0) {
+        e = *l;
+        D_1F800183--;
+        l++;
+        if (!(e[0] & 2)) {
+            switch (e[2]) {
+            case 0:
+            case 4:
+            case 5:
+                func_80109DBC(e);
+                break;
+            }
+        }
+    }
+}
 
 typedef struct {
     u8 pad[0xA];
