@@ -1091,7 +1091,18 @@ s32 func_8011A0D8(u8 *a) {
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011A10C);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011A1F0);
+void func_8011A1F0(u8 *a) {
+    if (M2C_FIELD(a, s16 *, 0x40) != 0) {
+        if ((s16)func_80119694(a, M2C_FIELD(a, s16 *, 0x2E), M2C_FIELD(a, s16 *, 0x36)) != 0) {
+            a[5] = 0;
+            a[6] = 3;
+        }
+    } else if ((s16)func_80119694(a, M2C_FIELD(a, s16 *, 0x2E), (s16)(M2C_FIELD(a, s16 *, 0x36) - 0x1C2)) != 0) {
+        a[5] = 1;
+        a[6] = 0;
+        a[0x5E] = 5;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011A280);
 
