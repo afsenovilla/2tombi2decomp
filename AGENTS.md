@@ -39,7 +39,7 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
 - Library C sources to adapt (MIT): psx_tomba (/tmp/psx_tomba), psyz (/opt/psyz/decomp/src, Psy-Q 4.0),
   psy-q-decomp (/opt/psy-q-decomp/src, `-DVERSION=40`). Mark each file `// Source: ...`; keep THIRD_PARTY_NOTICES.md
   current. 4.0 differs from 4.4 in places (libsnd `_svm_voice` is 0x38 bytes in 4.4; SeqStruct `l_count`, `unk21..23`,
-  `vab_id` are signed char; `_SsSndStop` has no SsUtReverbOff; see STATUS 2026-11-22 (8)).
+  `vab_id` are signed char; `_SsSndStop` has no SsUtReverbOff; the full list is in STATUS 2026-11-22 (8)).
 - Jump tables: a C `switch` keeps the retail table (tools/jtbl.py rewrites %hi/%lo and bare `$Lnn` operands).
 - GTE: `#include "gte.h"` (real cop2 command words over psyq/inline_c.h's placeholders).
 - Functions hand-written in assembly in the original (BIOS stubs, setjmp, libgte RotMatrix*, DecDCTvlc, ...) are
@@ -104,6 +104,8 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
 - Retail re-reads a stored field: write the field expression again; `*(T * volatile *)(a + off)` or
   `*(volatile u8 *)(a + off)` for a reload; a union of arrays lets CSE keep a field across stores to other fields.
 - lhu + sll/sra instead of lh: the u16 was read before an aliasing store and sign-extended after it.
+- A struct-member access (any mode but QImode) never aliases a fixed scalar global; to keep a global's store in
+  place after struct-member stores, access the global as a struct member too (`D_800BF870.pad1[0x143]`).
 
 **Constants and CSE**
 - `n = 3; a[9] = n;` stops reuse of an older register holding 3; `s32 k = 3;` across a call keeps it in a saved
@@ -123,6 +125,8 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
   register: declare s32 and `x &= 0xFF`; a u8 flag passed on: s32, test `!(f & 0xFF)`, pass `(u8)f`; `s32 s = a[4]`
   for a switch variable (u8 adds an andi); `abs()` (builtin) on s32 / s16 gives `bgez/negu`.
 - Compare order sets registers (`x > sum` vs `sum < x`); `(r & 0xFF) == 0`, `(a ^ b) == 0`.
+- Copy the parameter into a local (`void f(u8 *a0) { u8 *a = a0; ...}`) when an argument and a derived pointer
+  have swapped saved registers; dead copies in regswap / permuter output hide this.
 
 **Control flow and layout**
 - Case order in source is block order; an empty `case 2: break;` gives the `beq 1; slti 2; beqz; bnez` tree; GNU
@@ -140,6 +144,13 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
   `do {} while (c)` decides the re-materialised `lui`; `D[i].lo` inside the loop; `e[i * 4 + k]` for one pointer;
   empty countdown loops are real code; separate loop variables for nested loops.
 - `if (x == 0) f(0x62); else f(0x61);`: the arm order picks beqz / bnez; calling in each arm can hoist a `lui`.
+
+**Inlined code**
+- Many functions inline already-matched ones (tools/inlined.py): copy them as `static inline` helpers, several per
+  function; big dispatchers are switches over such handlers (write each case out instead of a goto into a shared
+  tail; a separate pointer local per case for repeated scratchpad loads). A helper returning through a local adds a
+  `move`: write that body out. Scratchpad pointers and loads can be locals of a parameterless inline helper, with
+  the same dead pointer locals declared in the callers.
 
 **Calls and prototypes**
 - install_c drops scratch prototypes: cast arguments (`(s16)`), give callees their real return types (a void
@@ -161,6 +172,10 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
 - Struct copies from an extern reproduce local array initialisers (a local struct copy of a rodata table for a
   16-byte copy loop); lw/sw copies need an s32 member, byte structs copy with lwl/lwr.
 - Locals sit at increasing stack offsets in declaration order; an unused `s32 pad[N]` fixes a frame size.
+- Small forms: `if (x) call(); k = 0;` for a value set in a delay slot and again after a call; `move t0,v0` right
+  after a test means the field was re-read; a scratchpad pointer set after an early return moves its `lui`; speed
+  tables as u16 fields into u32 locals, `(u32)((s16)x * 19) >> 4`; a clamp with a copy `if (u >= 0x80) v = 0x80;
+  else v = u;`.
 - Primitives: addPrim / setaddr / setlen with `struct { unsigned addr:24; unsigned len:8; }`; `TERM_PRIM` through a
   local pointer.
 

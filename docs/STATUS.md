@@ -3,6 +3,60 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-22 (8): fifth round of five agents
+
+All code in C: **3920 / 7011 functions (55.9 %, 26.8 % of the bytes)**, from 3686 (23.1 %). main +38 (the GTE
+projection family of 5 with shared inline helpers), library +42 (39 + SpuSetCommonAttr x2 / SsSetTickMode once
+jtbl.py learnt the bare-operand jump table; most adapted from psyz and psy-q-decomp, MIT, now in
+THIRD_PARTY_NOTICES.md and cloned by setup_native.sh), a00-a03 +46, a04-a08 +54, a09-a0l + overlays +53 (tower
+contact dispatchers, big a0k / a0l actors). 29 / 29 byte-identical. AGENTS.md is new: the distilled method and recipe
+catalogue (keep it current with CLAUDE.md, the user's standing instruction). sync_src.py keeps declarations placed
+just above an INCLUDE_ASM line. a02 func_8010CFAC (copy of a07 func_8010F954) matches in ccheck but not in the link:
+look at its symbols.
+
+New recipes (folded into AGENTS.md):
+- **Inlined handlers**: 25 of a00-a03's 35 hand matches and most big functions of a09-a0l are switches / sequences
+  of already-matched functions copied as `static inline`, several per function. A helper returning through a local
+  adds a `move`: write that body out. Scratchpad pointers and loads as locals inside a parameterless inline helper,
+  with the same dead pointer locals declared in the callers (GTE projection family).
+- **Struct-member access** (non-QImode) never aliases a fixed scalar global in gcc 2.8: `S16F(p, o)` struct-member
+  macros to keep a global load above the stores, and a global accessed as a struct member
+  (`D_800BF870.pad1[0x143]`) to keep its store in place.
+- **Copy the parameter to a local** (`void f(u8 *a0) { u8 *a = a0; ...}`) when the argument and a derived pointer
+  have swapped saved registers (func_800281EC 16 words -> OK); check for dead copies in regswap / permuter output.
+- **Sony's single exit**: `__asm__ volatile("");` before the closing brace (library).
+- **Library 4.0 vs 4.4**: `_svm_voice` 0x38 bytes (s16 at 0x1A and 0x36); SeqStruct l_count / unk21..23 / vab_id
+  signed char (`!= -1`); `(s8)_svm_cur.fake_program`; _SsSndStop has no SsUtReverbOff; SpuClearReverbWorkArea
+  `size = 0x400; if (length <= 0x400) { size = length; last = 0; }`; SsVabTransBody tests SpuSetTransferStartAddr;
+  _SsNoteOn has no voll check; Snd_SetPlayMode `s8 play_mode`, `_SsVmSetSeqVol(..., 1)`; SpuInit's loop runs down
+  with a pointer; `volatile flush *p = &D; p->c = 0; p->b = p->c; p->a = 2;` for CD_flush / CD_init; `extern s32
+  D_x[]` (not char[]) for strings copied by __builtin_memcpy.
+- **Smaller**: `if (x) call(); k = 0;` for a value set in a delay slot and again after a call; `move t0,v0` after a
+  test = the field re-read; scratchpad pointer set after an early return moves its `lui`; speed tables as u16 fields
+  into u32 locals `(u32)((s16)x * 19) >> 4`; `s16 k = -0xA00; x = k - y`; clamp with a copy `if (u >= 0x80) v =
+  0x80; else v = u;`; `e[i * 4 + k]` for a single pointer.
+
+Near misses (words off; scratch in the session scratchpad r5b/<scope>/): a0b func_8010B73C 1, a01 func_80116294 1,
+region func_80012954 1, main func_80059ED8 2, func_800726D4 2, a01 func_8012B464 2, func_801206D8 2, a00
+func_80118B10 2, a0b func_8010A3D0 2, a0k func_801147D0 ~2 lines, func_8008C260 2, main
+f_ClassifyActiveColliderPartCylinderContact 3, a00 func_8013BCC8 / a04 func_8012379C 3 (the 6-copy family: lui of
+D_1F800137), Snd_SetPlayMode 3, a06 func_80124AA0 4, _dws 4, SetGraphQueue 4, _SsVmVSetUp 4, SpuRGetAllKeysStatus 4,
+main func_80050738 5, a0e func_80117600 5, _SsSetControlChange 5, main func_80035338 6 (and twin func_80035424 41:
+the parameter must get s0), f_StartCooperativeWorker 7, a08 func_8012282C 7, a08 func_8010A660 8, a05 func_8010B5E8
+8, main func_8002E458 8, a06 func_8011CEDC 9, StCdInterrupt 9, a06 func_8010B59C 10, a06 func_80129218 11, a0a
+func_801140D0 21 (3 copies), a07 func_8010D0B4 22 (3 copies), a03 f_UpdateTrolleyRetryMenu 24 (3 copies).
+
+Tool work left: regswap: "copy parameter to a local" per parameter, "read field into a local before the previous
+store", "constant as an early local", cast <-> struct-member toggle, volatile re-read, goto -> duplicated tail,
+ternary -> if/else, split shared temporaries per path; ccheck: allocno priorities (refs, live length) next to
+retail's register order; a dispatcher drafter (inlined.csv: one pending function covering several matched bodies ->
+switch skeleton with static inline copies); inlined.py: ready scratch output, copies with other offsets / constants,
+per-scope csv names; install_c: name clashing externs and suggest the existing alias, no prototypes with undefined
+typedefs or K&R conflicts; install_lib split(): structs with function-pointer fields, `extern T *a, *b;`;
+nearcopy.fix_names: report a symbol that gets two addresses; libsweep: psyz / psy-q-decomp as sources (whole-file
+compile, masked compare against every pending function); variants.py: `\&` literal; decomp.py: flag guessed call
+arguments; a sched-priority hint (-dS) for order-only diffs.
+
 ## 2026-11-22 (7): tools after round 4
 
 One agent turned the round-4 "tool work left" list into tools, each tried on real functions. +14 functions: main
