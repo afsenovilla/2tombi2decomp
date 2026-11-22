@@ -617,7 +617,33 @@ s32 func_80111790(s32 arg0, s32 arg1) {
     return func_8010D9F0(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC0));
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801117B4);
+void func_801117B4(u8 *a, u8 *b)
+{
+    u16 f = *(u16 *)(a + 0x17E);
+    s32 r;
+
+    if (f & 0x200) {
+        return;
+    }
+    if (f & 0x8000) {
+        func_8001F054(a, b);
+        return;
+    }
+    r = func_8001F40C(a, b, 1);
+    if (r < 0) {
+        return;
+    }
+    if (a[0x144] == 1 && r < 2) {
+        func_8001FDB4(b, 8, 0x10, 0x20);
+        return;
+    }
+    if (!(a[0] & 4)) {
+        s32 temp_s0 = (s32) (func_80083F50(D_1F80009C) * (M2C_FIELD(a, s16 *, 0x80) + M2C_FIELD(b, s16 *, 0x80))) >> 0xC;
+        s32 temp_lo = func_80083E80(D_1F80009C) * (M2C_FIELD(a, s16 *, 0x80) + M2C_FIELD(b, s16 *, 0x80));
+        M2C_FIELD(a, s16 *, 0x2E) = (s16) (M2C_FIELD(b, u16 *, 0x2E) + temp_s0);
+        M2C_FIELD(a, s16 *, 0x36) = (s16) (M2C_FIELD(b, u16 *, 0x36) - (temp_lo >> 0xC));
+    }
+}
 
 void func_801118DC(u8 *a, u8 *b)
 {
@@ -4467,7 +4493,56 @@ void func_8013EDC0(u8 *a)
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013EF60);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013F14C);
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+typedef struct {
+    u8 b[4];
+} T2Bytes4;
+typedef struct {
+    s16 x, y, z;
+} T2Vec3s;
+extern T2Bytes4 D_8010A460;
+extern s32 D_800ED8C8;
+
+void func_8013F14C(u8 *a)
+{
+    T2Bytes4 c;
+    T2Vec3s pos, rot;
+    s32 i = 0;
+    u8 *e = a + 0x50;
+    s32 ang;
+    s32 r, sx, sz, k, o;
+
+    c = D_8010A460;
+    ang = H(a, 0x4C);
+    do {
+        r = e[i * 4 + 2] * 16;
+        sx = func_80083F50(ang) * e[i * 4 + 1];
+        sz = func_80083E80(ang) * e[i * 4 + 1];
+        pos.x = U(a, 0x2C) + ((sx * r) >> 20);
+        pos.z = U(a, 0x30) + ((sz * r) >> 20);
+        pos.y = U(a, 0x2E) - ((func_80083E80(r) * e[i * 4 + 0]) >> 10);
+        k = i & 3;
+        if (i & 1) {
+            rot.x = -U(a, 0x48);
+            rot.y = -U(a, 0x4A);
+            rot.z = -U(a, 0x4C);
+        } else {
+            rot.x = U(a, 0x48);
+            rot.y = U(a, 0x4A);
+            rot.z = U(a, 0x4C);
+        }
+        func_800318A0(&pos, &c, &rot);
+        if (k == 0) {
+            func_8003F698(W(a, 0x3C), D_800ED8C8, 0);
+        } else if (k == 1) {
+            func_8003F698(W(a, 0x34), D_800ED8C8, 0);
+        } else {
+            func_8003F698(W(a, 0x38), D_800ED8C8, 0);
+        }
+        i++;
+        ang += 0x124;
+    } while (i < 14);
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013F320);
 
