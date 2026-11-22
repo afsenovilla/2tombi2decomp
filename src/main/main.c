@@ -711,7 +711,72 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800251F0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80025588);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80025744);
+typedef struct UiRect { s16 x, y, w, h; } UiRect;
+extern u8 D_800A4554[];
+extern u8 D_800BF87E;
+extern u16 D_1F80017C_0fe7;
+extern void *D_800173C0;
+extern void *D_800173BC;
+
+void func_80025744(u8 *a)
+{
+    struct { u8 b0; u8 b1; s16 h2; } q;
+    UiRect r;
+    GameState *g;
+    void **tbl;
+    void *qp;
+    s32 flag;
+
+    q.b1 = 8;
+    q.h2 = -0x8000;
+    r.x = 0x20;
+    q.b0 = 0;
+    r.w = 0;
+    r.h = 0;
+    r.y = 0xC8;
+    f_DrawPackedUiQuadFrame(&r, *(void **)(a + 0x38), *(void **)(a + 0x3C), &q);
+    tbl = (void **)D_80017334;
+    g = &D_800BF870;
+    qp = &q;
+    q.h2 = 0;
+    r.w = g->pad1[0xE] - 0x18;
+    r.x += 0x18;
+    f_DrawPackedUiQuadFrame(&r, tbl[0x29], *(void **)(a + 0x3C), qp);
+    r.x += r.w;
+    r.w = 0;
+    f_DrawPackedUiQuadFrame(&r, tbl[0x2A], *(void **)(a + 0x3C), qp);
+    if (g->pad1[0xD] != 0) {
+        r.x = 0x32;
+        r.y = 0xCC;
+        r.w = g->pad1[0xD];
+        flag = 0;
+        switch (D_800E7EEF) {
+        case 0x12:
+            if (D_800BF87E >= (D_800A4554[0] >> 1)) { flag = 1; }
+            break;
+        case 0x13:
+            if (D_800BF87E >= (D_800A4554[1] >> 1)) { flag = 1; }
+            break;
+        case 0x14:
+            if (D_800BF87E >= (D_800A4554[2] >> 1)) { flag = 1; }
+            break;
+        case 0x15:
+            if (D_800BF87E >= (D_800A4554[3] >> 1)) { flag = 1; }
+            break;
+        case 0x16:
+            if (D_800BF87E >= (D_800A4554[4] >> 1)) { flag = 1; }
+            break;
+        default:
+            goto draw;
+        }
+    draw:
+        if (flag && (D_1F80017C_0fe7 & 3)) {
+            f_DrawPackedUiQuadFrame(&r, D_800173C0, *(void **)(a + 0x3C), &q);
+        } else {
+            f_DrawPackedUiQuadFrame(&r, D_800173BC, *(void **)(a + 0x3C), &q);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80025934);
 
@@ -919,7 +984,6 @@ void f_RetireInteriorSceneChildren(ChildList *l)
     l->count = 0;
 }
 
-extern u16 D_1F80017C_0fe7;
 extern u16 D_800ECF54_4583[];
 extern u16 D_800BED8C;
 extern u8 *D_800BED88_191b;
@@ -1597,7 +1661,6 @@ extern void *D_800174B0;
 extern u8 D_800E7E80_f78d[];
 extern u8 *D_1F8001E4;
 extern u8 *D_1F8001D4;
-typedef struct UiRect { s16 x, y, w, h; } UiRect;
 
 void func_8003393C(u8 *a, u8 c)
 {
@@ -3139,7 +3202,6 @@ s32 func_800419C4(u8 *a, s16 b, s16 c)
 extern u8 D_800BF809;
 extern u8 D_1F800230_d8aa;
 extern u16 D_800ECF54;
-extern u8 D_800A4554[];
 
 s32 func_80041A1C(u8 *a, s32 flags)
 {
