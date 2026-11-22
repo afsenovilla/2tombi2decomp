@@ -122,7 +122,37 @@ void func_8010C89C(void *a, void *b)
     func_80055D5C(a);
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C8E4);
+extern u16 D_1F800172;
+extern u16 D_1F8001A6;
+extern u16 D_1F8001A2;
+
+s32 func_8010C8E4(u8 *a, u8 *b) {
+    b[0x29] = 1;
+    M2C_FIELD(b, s16 *, 0x60) = -M2C_FIELD(a, s16 *, 0x152);
+    func_800635D4(a, 1);
+    func_80076D68(a);
+    if (a[0x169] == 0 && (D_800ECF54 & (D_1F800172 | 0x50))) {
+        M2C_FIELD(a, s16 *, 0x58) = 0;
+        func_8010B42C(a, b);
+        return D_800ECF54;
+    }
+    func_8010B42C(a, b);
+    if (func_80049280(a, 0, M2C_FIELD(a, s16 *, 0x62)) != 0) {
+        a[0x29] = 1;
+        M2C_FIELD(a, s16 *, 0x6A) = D_1F8001A6;
+        func_80049674(a);
+        M2C_FIELD(a, s16 *, 0x142) = D_1F8001A2;
+        b[0x29] = 0;
+        a[0x164] = 0;
+        M2C_FIELD(a, s32 *, 0x158) = 0;
+        func_80054198(a);
+        a[5] = 0;
+        a[6] = 0;
+        a[7] = 0;
+        func_80054D14(a, 2, 4);
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C9F8);
 
@@ -738,7 +768,14 @@ u8 *func_8011884C(s32 a, s32 b) {
     return p;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801188A0);
+void func_801188A0(u8 *a) {
+    a[4] = 3;
+    func_8004D4C4(0x78, 1);
+    func_8004B0D8(a);
+    D_800BF870.pad1[0x179] &= ~(1 << M2C_FIELD(a, s16 *, 0x60));
+    D_800BF870.pad1[0x179] &= ~(1 << (M2C_FIELD(a, s16 *, 0x60) + 4));
+    func_80040C00(0x4E);
+}
 
 u8 *f_SpawnGoldFishhookPickup(s32 a, s32 b) {
     u8 *p = func_80072DDC(a, 0, 5, 3);
@@ -867,7 +904,20 @@ s32 func_8011ABF0(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011AC5C);
+s32 func_8011AC5C(u8 *a) {
+    s32 i;
+
+    a[0x5F] = 0;
+    if (D_800BF870.pad1[0x172] == 0) {
+        return 0;
+    }
+    for (i = 0; i < 3; i++) {
+        if (((D_800BF870.pad1[0x172] >> i) & 1) && !((D_800BF870.pad1[0x172] >> (i + 4)) & 1)) {
+            a[0x5F] |= 1 << i;
+        }
+    }
+    return a[0x5F];
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011ACDC);
 
@@ -1030,7 +1080,23 @@ s32 func_80121574(void) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_CheckFeedChicksActorRoutePointDistance);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012175C);
+extern u8 D_8014E1A4[];
+
+void func_8012175C(u8 *a) {
+    if (a[6] == 0) {
+        a[0x5E] = 0;
+        a[0x1B] &= 0xBF;
+        func_80077C40(a, D_8014E1A4, 7);
+        func_80026100(6);
+        func_80074590(0x99, 0, 0);
+        M2C_FIELD(a, s16 *, 0x84) = 0x28;
+        M2C_FIELD(a, s16 *, 0x86) = 0x50;
+        a[6]++;
+    }
+    if (M2C_FIELD(a, s16 *, 0x72) == 0) {
+        func_80076D68(a);
+    }
+}
 
 extern s16 D_800E7ED6;
 
@@ -1995,7 +2061,24 @@ u8 *func_8013A730(s32 a) {
     return p;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A784);
+void func_8013A784(u8 *a) {
+    s32 lim;
+    s32 y;
+
+    if (a[3] == 0) {
+        lim = M2C_FIELD(a, s16 *, 0x68);
+        y = lim << 16;
+    } else {
+        lim = M2C_FIELD(a, s16 *, 0x62);
+        y = lim << 16;
+    }
+    do {
+        M2C_FIELD(a, s32 *, 0x30) += M2C_FIELD(a, s16 *, 0x50) << 8;
+        func_800517F8(a);
+        f_DeployDryingRackSegments(a);
+    } while (M2C_FIELD(a, s16 *, 0x32) < lim);
+    M2C_FIELD(a, s32 *, 0x30) = y;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A818);
 
@@ -2446,7 +2529,25 @@ s16 func_801460A4(void *arg0) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureTurnaround);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801461E4);
+s32 func_801461E4(u8 *a, s32 b, u8 c) {
+    u16 *f = (u16 *)(a + 0x60);
+    s32 r = 0;
+
+    if (a[7] == 0) {
+        f[1] &= 0xFFFB;
+        func_801402B8(a, (s16)b, 8);
+        a[7] = c;
+        M2C_FIELD(a, s16 *, 0x4E) = 0;
+    }
+    if (a[7] < 2) {
+        r = 1;
+    } else {
+        a[7]--;
+    }
+    M2C_FIELD(a, s16 *, 0x32) += 0x10;
+    f_UpdateTownCreatureTerrainContact(a);
+    return r;
+}
 
 s32 func_80146288(s16 *v, u32 r) {
     return (u32)func_80078240(D_1F800160_71b4 - v[0], D_1F800162 - v[1], D_1F800164_d75f - v[2]) < r;
