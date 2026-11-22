@@ -568,7 +568,40 @@ void f_RetireActorOnTombaContact(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80022190);
+/* static inline Test3794_2190: func_80023794, inlined */
+extern u8 D_800A29CC[][8];
+
+static inline s32 Test3794_2190(u8 *a, u8 *pos, u8 *r)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(pos + 4);
+    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(pos + 8);
+    s32 d = SquareRoot0(dx * dx + dz * dz);
+
+    if ((u16)d > *(s16 *)(a + 0x80) + r[4]) {
+        return 0;
+    }
+    return (u16)((*(u16 *)(a + 0x32) - *(u16 *)(pos + 6)) + (*(u16 *)(a + 0x84) + r[5])) <= *(s16 *)(a + 0x86) + r[5] * 2;
+}
+
+void func_80022190(u8 *a, u8 *e)
+{
+    u8 *m = e + 0x60;
+    u8 *p = *(u8 **)(m + 0xC);
+    s32 i;
+
+    for (i = 0; i < *(s16 *)(m + 0xA); i++, p += 0x10) {
+        u8 *r = D_800A29CC[p[3]];
+        s32 one = 1;
+        if (*(s32 *)(m + 0x10) & (one << i)) {
+            if (Test3794_2190(a, p, r)) {
+                *(s32 *)(m + 0x14) |= one << i;
+                *(s32 *)(m + 0x10) &= ~(one << i);
+                func_8004D19C(e, p, 0);
+                return;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80022330);
 
