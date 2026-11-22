@@ -423,7 +423,15 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveActiveColliderConfiguredActor
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveActiveColliderActorContact);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80021800);
+extern s8 D_1F800182[];
+void func_80021800(u8 *a, u8 *b)
+{
+    if (TestCyl_0B08(a, b)) {
+        f_ApplyActiveColliderImpactResponse(a, b, 0, 0x100);
+        b[0x2B] = 1;
+        *(u8 *)D_1F800182 = 0;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveActiveColliderStaticActorContact);
 
@@ -431,7 +439,14 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80021AB0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80021DF4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80021F34);
+void func_80021F34(u8 *a, u8 *b)
+{
+    if (TestCyl_0B08(a, b)) {
+        if (!(f_ApplyActiveColliderBlockingResponse(a, b, 0, 0) & 0x80)) {
+            *(u8 *)D_1F800182 = 0;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_RetireActorOnTombaContact);
 
