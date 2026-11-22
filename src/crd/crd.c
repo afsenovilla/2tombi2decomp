@@ -64,6 +64,23 @@ extern CrdMenu D_800BF498;
             s->x1A = m;                      \
         }                                    \
     }
+/* The same for the second message line (x10 / x1A), clearing the first */
+#define CRD_MSG2(id, msg)                    \
+    {                                        \
+        CrdMenu *s;                          \
+        s32 w, m;                            \
+        m = -1;                              \
+        s = &D_800BF498;                     \
+        w = id;                              \
+        if (s->x18 != m) {                   \
+            *(u8 *)s->xC = 0;                \
+            s->x18 = m;                      \
+        }                                    \
+        if (s->x1A != w) {                   \
+            func_8009A5B0(s->x10, msg);      \
+            s->x1A = w;                      \
+        }                                    \
+    }
 extern u16 D_800ECF54;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern char D_8018A090[];
@@ -336,7 +353,72 @@ INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018DD38);
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018DFEC);
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018E2B4);
+extern s32 D_800A2914;
+extern s32 D_800A297C;
+
+void func_8018E2B4(u8 *a)
+{
+    s32 c;
+    if ((a + a[0x46])[0x4A] != 0) {
+        CRD_MSG(0x30, D_800A2914);
+        a[0x50] = 0x1E;
+        a[0x44] = 0;
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        (a + a[0x46])[0x48] = 0;
+        (a + a[0x46])[0x4E] = 0xFF;
+        a[0x46] = 0xFF;
+        a[0x47] = 0;
+        a[0x52] = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0;
+        a[3] = 0;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xF;
+        return;
+    }
+    if ((D_800E7E68 & 0x80) && a[0x53] != 0) {
+        func_80074590(0x15, 0, 0);
+        a[0x53] = 0;
+    }
+    if ((D_800E7E68 & 0x20) && a[0x53] == 0) {
+        func_80074590(0x15, 0, 0);
+        a[0x53] = 1;
+    }
+    c = -1;
+    if (D_800E7E68 & 0x4000) {
+        c = a[0x53];
+    } else if (D_800E7E68 & 0x2000) {
+        c = 1;
+    }
+    switch (c) {
+    case 0:
+        func_80074590(0x11, 0, 0);
+        CRD_MSG(0x4A, D_800A297C);
+        a[0] = 5;
+        a[2] = 0;
+        a[1] = 0;
+        a[0x3F] = 0xA;
+        break;
+    case 1:
+        func_80074590(0x14, 0, 0);
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        a[0x46] = 0xFF;
+        a[0x50] = 0;
+        a[0x47] = 0;
+        a[0x52] = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0;
+        a[3] = 0;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xF;
+        a[0x44] = a[0x45];
+        break;
+    }
+}
 
 extern s32 D_800A2924;
 extern s32 D_800A2980;
@@ -374,9 +456,126 @@ void func_8018E54C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018E6BC);
+extern s32 D_800A293C;
+extern s32 D_800A2938;
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018E95C);
+void func_8018E6BC(u8 *a)
+{
+    u8 *e;
+    s32 k;
+    u16 p;
+    e = *(u8 **)(a + 8);
+    if ((a + a[0x46])[0x4A] != 0) {
+        CRD_MSG(0x30, D_800A2914);
+        a[0x50] = 0;
+        a[0x44] = 0;
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        (a + a[0x46])[0x48] = 0;
+        (a + a[0x46])[0x4E] = 0xFF;
+        a[0x46] = 0xFF;
+        a[0x47] = 0;
+        a[0x52] = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0;
+        a[3] = 0;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xF;
+        return;
+    }
+    func_8018DB28(a);
+    p = D_800E7E68;
+    if (p & 0x2000) {
+        func_80074590(0x14, 0, 0);
+        CRD_MSG(0x30, D_800A2914);
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        a[0x46] = 0xFF;
+        a[0x50] = 0;
+        a[0x47] = 0;
+        a[0x52] = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0;
+        a[3] = 0;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xF;
+        a[0x44] = a[0x45];
+        return;
+    }
+    if (H(a, 0x56) == 0 && (p & 0x4000)) {
+        func_80074590(0x11, 0, 0);
+        k = a[0x47] * 0x3C;
+        if ((e + k)[6] == 1) {
+            CRD_MSG(0x3A, D_800A293C);
+        } else {
+            CRD_MSG(0x39, D_800A2938);
+        }
+        a[0x53] = 1;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 7;
+    }
+}
+
+extern s32 D_800A2940;
+extern s32 D_800A2934;
+
+void func_8018E95C(u8 *a)
+{
+    s32 c;
+    if ((a + a[0x46])[0x4A] != 0) {
+        CRD_MSG(0x30, D_800A2914);
+        a[0x50] = 0;
+        a[0x44] = 0;
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        (a + a[0x46])[0x48] = 0;
+        (a + a[0x46])[0x4E] = 0xFF;
+        a[0x46] = 0xFF;
+        a[0x47] = 0;
+        a[0x52] = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0;
+        a[3] = 0;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xF;
+        return;
+    }
+    if ((D_800E7E68 & 0x80) && a[0x53] != 0) {
+        func_80074590(0x15, 0, 0);
+        a[0x53] = 0;
+    }
+    if ((D_800E7E68 & 0x20) && a[0x53] == 0) {
+        func_80074590(0x15, 0, 0);
+        a[0x53] = 1;
+    }
+    c = -1;
+    if (D_800E7E68 & 0x4000) {
+        c = a[0x53];
+    } else if (D_800E7E68 & 0x2000) {
+        c = 1;
+    }
+    switch (c) {
+    case 0:
+        func_80074590(0x11, 0, 0);
+        CRD_MSG(0x3B, D_800A2940);
+        a[0] = 8;
+        a[2] = 0;
+        a[1] = 0;
+        a[0x3F] = 4;
+        break;
+    case 1:
+        func_80074590(0x14, 0, 0);
+        CRD_MSG2(0x38, D_800A2934);
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 6;
+        break;
+    }
+}
 
 extern s32 D_800A2948;
 extern s32 D_800A2944;
@@ -418,9 +617,117 @@ void func_8018EC00(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018ED94);
+extern s32 D_800A2954;
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018EFDC);
+void func_8018ED94(u8 *a)
+{
+    u16 p;
+    if ((a + a[0x46])[0x4A] != 0) {
+        CRD_MSG(0x30, D_800A2914);
+        a[0x50] = 0;
+        a[0x44] = 0;
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        (a + a[0x46])[0x48] = 0;
+        (a + a[0x46])[0x4E] = 0xFF;
+        a[0x46] = 0xFF;
+        a[0x47] = 0;
+        a[0x52] = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0;
+        a[3] = 0;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xF;
+        return;
+    }
+    func_8018DB28(a);
+    p = D_800E7E68;
+    if (p & 0x2000) {
+        func_80074590(0x14, 0, 0);
+        CRD_MSG(0x30, D_800A2914);
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        a[0x46] = 0xFF;
+        a[0x50] = 0;
+        a[0x47] = 0;
+        a[0x52] = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0;
+        a[3] = 0;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xF;
+        a[0x44] = a[0x45];
+        return;
+    }
+    if (H(a, 0x56) == 0 && (p & 0x4000)) {
+        func_80074590(0x11, 0, 0);
+        CRD_MSG(0x40, D_800A2954);
+        a[0x53] = 0;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xB;
+    }
+}
+
+extern s32 D_800A2970;
+extern s32 D_800A2950;
+
+void func_8018EFDC(u8 *a)
+{
+    s32 c;
+    if ((a + a[0x46])[0x4A] != 0) {
+        CRD_MSG(0x30, D_800A2914);
+        a[0x50] = 0;
+        a[0x44] = 0;
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        (a + a[0x46])[0x48] = 0;
+        (a + a[0x46])[0x4E] = 0xFF;
+        a[0x46] = 0xFF;
+        a[0x47] = 0;
+        a[0x52] = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0;
+        a[3] = 0;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xF;
+        return;
+    }
+    if ((D_800E7E68 & 0x80) && a[0x53] != 0) {
+        func_80074590(0x15, 0, 0);
+        a[0x53] = 0;
+    }
+    if ((D_800E7E68 & 0x20) && a[0x53] == 0) {
+        func_80074590(0x15, 0, 0);
+        a[0x53] = 1;
+    }
+    c = -1;
+    if (D_800E7E68 & 0x4000) {
+        c = a[0x53];
+    } else if (D_800E7E68 & 0x2000) {
+        c = 1;
+    }
+    switch (c) {
+    case 0:
+        func_80074590(0x11, 0, 0);
+        CRD_MSG(0x47, D_800A2970);
+        a[0] = 0xC;
+        a[2] = 0;
+        a[1] = 0;
+        a[0x3F] = 1;
+        break;
+    case 1:
+        func_80074590(0x14, 0, 0);
+        CRD_MSG2(0x3F, D_800A2950);
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xA;
+        break;
+    }
+}
 
 extern s32 D_800A2978;
 extern s32 D_800A2974;
@@ -463,7 +770,6 @@ void func_8018F280(u8 *a)
 }
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
-extern s32 D_800A2914;
 
 void func_8018F414(u8 *a)
 {
