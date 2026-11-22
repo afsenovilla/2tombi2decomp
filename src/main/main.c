@@ -7481,7 +7481,159 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaEquipmentChangeAction);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005FA84);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005FB54);
+typedef struct { u8 u0; u8 u1; u8 u2; u8 u3; u8 pad4[2]; u8 u6; u8 u7; u8 pad8[0x29]; u8 u31; } Gs808_FB54;
+extern Gs808_FB54 D_800BF808_fb54;
+extern u8 D_800BFA47;
+extern u8 D_1F80027A;
+
+void func_8005FB54(u8 *a)
+{
+    u8 *g;
+    s16 v;
+    s16 y;
+    u16 t;
+
+    D_1F80027A = 1;
+    a[0x17B] = 1;
+    switch (a[6]) {
+    case 0:
+        g = D_800BF808;
+        g[6] = 0;
+        if (D_800BFA47 != 0x80) {
+            f_QueueItemMessage(g[3], 1);
+        }
+        f_ClearTombaInteractionState(a);
+        f_ResetTombaControlState(a);
+        a[0xD] &= 0x7F;
+        if (g[2] == 2) {
+            a[0] |= 6;
+            g[1] = 1;
+        } else if (g[2] == 3) {
+            a[0] = 6;
+            g[1] = 1;
+            func_8005FA84(a);
+            break;
+        }
+        f_SetTombaAnimationIfChanged(a, 0x72, 4);
+        a[6]++;
+    case 1:
+        if (f_AdvanceActorSkeletalAnimation(a) == 1) {
+            a[6]++;
+            f_SetTombaAnimationIfChanged(a, 0x73, 2);
+        }
+        break;
+    case 2:
+        if (f_AdvanceActorSkeletalAnimation(a) == 1) {
+            if (D_800BF808_fb54.u2 == 2) {
+                D_800BF808_fb54.u1 = 0;
+                D_1F800137_104c = 0;
+                a[0] = 3;
+                *(s16 *)(a + 0x172) = 0x1E;
+                a[5] = 0;
+                a[6] = 0;
+                a[7] = 0;
+                f_SetTombaAnimationIfChanged(a, 2, 5);
+            } else {
+                a[0] &= 3;
+                a[6]++;
+            }
+            D_800BF808_fb54.u2 = 0;
+            D_800BF808_fb54.u6 = 1;
+        }
+        break;
+    case 4:
+        a[0x17A] = 1;
+        f_AdvanceActorSkeletalAnimation(a);
+        if (a[2] == 0) {
+            v = f_StepWrappedAngleToward((s16)(*(u16 *)(a + 0x140) + 0x400), *(s16 *)(a + 0x56), 0x100);
+            *(s16 *)(a + 0x56) = v;
+            if (v != ((*(s16 *)(a + 0x140) + 0x400) & 0xFFF)) {
+                break;
+            }
+        } else {
+            y = f_CalculateYawFromPositionToPoint(a + 0x2C, (s16)D_1F8000D0_fb20[1], (s16)D_1F8000D0_fb20[5]);
+            v = f_StepWrappedAngleToward(y, *(s16 *)(a + 0x56), 0x100);
+            *(s16 *)(a + 0x56) = v;
+            if (v != (y & 0xFFF)) {
+                break;
+            }
+        }
+        if (f_IsEventPresentationComplete() != 0) {
+            if (--*(s16 *)(a + 0x40) == 0) {
+                *(s16 *)(a + 0x40) = 0x14;
+                a[6]++;
+                f_SetTombaAnimationIfChanged(a, 0x72, 4);
+            }
+        }
+        break;
+    case 5:
+        a[0x17A] = 1;
+        f_AdvanceActorSkeletalAnimation(a);
+        if (--*(s16 *)(a + 0x40) == 0) {
+            *(s16 *)(a + 0x7A) = 0;
+            *(s16 *)(a + 0x7C) = 0;
+            *(s16 *)(a + 0x7E) = 0;
+            func_8006804C(a);
+            a[6]++;
+        }
+        break;
+    case 6:
+        a[0x17A] = 1;
+        f_AdvanceActorSkeletalAnimation(a);
+        if (*(s16 *)(a + 0x7E) != 0) {
+            a[6]++;
+            D_800BF808_fb54.u7 = 4;
+            D_800BF808_fb54.u31 = 1;
+            *(s16 *)(a + 0x40) = 0x14;
+            *(s16 *)(a + 0x42) = 0xC;
+        }
+        break;
+    case 7:
+        a[0x17A] = 1;
+        f_AdvanceActorSkeletalAnimation(a);
+        if (!(*(u16 *)D_1F80017C & 7)) {
+            f_PlaySoundEffect(0x38, *(s8 *)(a + 0x42), 0);
+            *(u16 *)(a + 0x42) += 2;
+            if (*(s16 *)(a + 0x42) > 0x1A) {
+                *(s16 *)(a + 0x42) = 0x1A;
+            }
+        }
+        *(u16 *)(a + 0x32) -= 10;
+        if (--*(s16 *)(a + 0x40) == 0) {
+            D_800BF808_fb54.u7 |= 0x80;
+            *(s16 *)(a + 0x40) = 0x14;
+            a[6]++;
+        }
+        break;
+    case 8:
+        a[0x17A] = 1;
+        if (--*(s16 *)(a + 0x40) == 0) {
+            D_800BF808_fb54.u7 &= 0x7F;
+            D_1F800236_18be = 5;
+            a[6]++;
+        }
+    case 9:
+        if (!(*(u16 *)D_1F80017C & 7)) {
+            f_PlaySoundEffect(0x38, *(s8 *)(a + 0x42), 0);
+            *(u16 *)(a + 0x42) += 2;
+            if (*(s16 *)(a + 0x42) > 0x1A) {
+                *(s16 *)(a + 0x42) = 0x1A;
+            }
+        }
+        a[0x17A] = 1;
+        f_AdvanceActorSkeletalAnimation(a);
+        *(u16 *)(a + 0x32) -= 10;
+        break;
+    case 10:
+        a[0x17A] = 1;
+        f_AdvanceActorSkeletalAnimation(a);
+        if (f_IsEventPresentationComplete() != 0) {
+            a[6] = 5;
+            *(s16 *)(a + 0x40) = 1;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80060064);
 
@@ -7578,7 +7730,6 @@ void func_8006228C(void *arg0) {
     }
 }
 
-extern u8 D_1F80027A;
 extern s32 D_1F80023C;
 extern u8 D_800BF88F;
 extern u16 D_801FE0E0;
