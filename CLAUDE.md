@@ -47,7 +47,7 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
 
 ## How the work is run (since 2026-11-22)
 
-- The user asked not to be asked: take the decision, say what was decided and why, and go on. Agents are opus with
+- The user asked not to be asked: take the decision, say what was decided and why, and go on. Agents run on the most capable model with
   high effort, five at a time.
 - Cycle: five hand-matching agents on disjoint scopes (main; library; a00-a03; a04-a08; a09-a0l + game/demo/opn/sop/
   crd + boot game code) -> the coordinator integrates (clean full build 29 OK, nearcopy + dupsweep over all programs,

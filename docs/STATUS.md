@@ -3,6 +3,16 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-22 (10): paused after the round-5 tools pass (where to pick up)
+
+The user stopped the cycle before a sixth round. State at the pause: **3925 / 7011 functions in C (26.9 % of the
+bytes)**, 29 / 29 byte-identical, everything pushed to master. To resume: run `bash tools/session_bootstrap.sh`, read
+AGENTS.md ("Order of work", "Parallel rounds"), and start a sixth round of five hand-matching agents on the usual
+scopes with the tools of (9): dispatch.py first (106 pending dispatchers of matched bodies: a08
+f_UpdateClosedClamshellQuestActor is 20 words off, scratch was in the session scratchpad r6/clam.c), then families,
+inlined bodies, the near misses of (8) and (9), then medium / large functions. Most bytes left: the big areas a00-a08
+(18 % of their bytes), MAIN (30 %), the medium areas (35 %).
+
 ## 2026-11-22 (9): tools after round 5
 
 One tools agent turned the "Tool work left" list of (8) into tools, each tried on real functions. +5 functions
