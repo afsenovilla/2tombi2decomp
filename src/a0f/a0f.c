@@ -241,12 +241,30 @@ s32 func_8010DA1C(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010DAC4);
-
 typedef struct { s16 x, y, z, pad; } SVec;
 extern SVec D_1F8000C0;
 extern SVec D_1F8000C8;
 extern u8 *D_1F80024C_2bfb;
+extern s16 D_1F800160_71b4;
+extern s16 D_1F800162;
+extern s16 D_1F800164_d75f;
+
+void func_8010DAC4(u8 *a)
+{
+    u8 *t = D_1F80024C_2bfb;
+    if (a[3] == 0) {
+        D_1F8000C0.y = -0xB4;
+    } else {
+        D_1F8000C0.y = -0x3C;
+    }
+    D_1F8000C0.x = 0;
+    D_1F8000C0.z = 0;
+    func_800844C0(*(u8 **)(t + 0xE4) + 0x18, &D_1F8000C0, &D_1F8000C8);
+    *(u16 *)(a + 0x2E) = *(u16 *)(*(u8 **)(t + 0xE4) + 0x2C) + D_1F8000C8.x;
+    *(u16 *)(a + 0x32) = *(u16 *)(*(u8 **)(t + 0xE4) + 0x30) + D_1F8000C8.y;
+    *(u16 *)(a + 0x36) = *(u16 *)(*(u8 **)(t + 0xE4) + 0x34) + D_1F8000C8.z;
+}
+
 
 void func_8010DB90(u8 *a)
 {
@@ -397,7 +415,22 @@ void func_80112B80(u8 *a, s32 k)
     }
 }
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80112BE8);
+s32 func_80112BE8(u8 *a)
+{
+    s16 *p0 = &D_1F800160_71b4;
+    s16 *p1 = &D_1F800162;
+    s16 *p2 = &D_1F800164_d75f;
+    s32 dx = *p0 - *(s16 *)(a + 0x2E);
+    s32 dy = *p1 - *(s16 *)(a + 0x32);
+    s32 dz = *p2 - *(s16 *)(a + 0x36);
+    s32 s = func_80083F50(-*(s16 *)(a + 0x56));
+    s32 c = func_80083E80(-*(s16 *)(a + 0x56));
+    u32 ang = func_80085690(dy, (s * dx + c * dz) >> 12) & 0xFFF;
+    if (ang - 0xB80 <= 0x100) {
+        return 6;
+    }
+    return (ang - 0xC81 < 0x280) ? 4 : 0;
+}
 
 void func_80112CB4(u8 *a)
 {
