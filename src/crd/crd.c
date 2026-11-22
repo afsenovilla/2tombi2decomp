@@ -22,7 +22,10 @@ typedef struct {
     s32 x20;
     s32 x24;
     s32 x28;
-    u8 pad2C[0x10];
+    s32 x2C;
+    s32 x30;
+    s32 x34;
+    s32 x38;
     u8 x3C;
     u8 x3D;
     u8 x3E;
@@ -45,6 +48,8 @@ typedef struct {
     s16 x54;
     s16 x56;
     s16 x58;
+    u8 x5A;
+    u8 x5B;
 } CrdMenu;
 extern CrdMenu D_800BF498;
 /* The message-box refresh every menu step does: show message `id` (text msg) unless it is up already */
@@ -81,6 +86,23 @@ extern CrdMenu D_800BF498;
             s->x1A = w;                      \
         }                                    \
     }
+/* Which of the four card events (D_800BF498.x1C..x28) fired, 1..4, or 0 */
+static inline u8 crd_card_event(void)
+{
+    if (func_80080840(D_800BF498.x1C) == 1) {
+        return 1;
+    }
+    if (func_80080840(D_800BF498.x20) == 1) {
+        return 2;
+    }
+    if (func_80080840(D_800BF498.x24) == 1) {
+        return 3;
+    }
+    if (func_80080840(D_800BF498.x28) == 1) {
+        return 4;
+    }
+    return 0;
+}
 extern u16 D_800ECF54;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern char D_8018A090[];
@@ -179,9 +201,112 @@ done:
     a->x3F = 3;
 }
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018B1A4);
+typedef struct { u8 b[0x5F4]; } CrdSaveBlk;
+extern u8 D_1F8001FF;
+extern u16 D_1F800278;
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018B478);
+void func_8018B1A4(CrdMenu *a)
+{
+    u8 *p, *b;
+    s32 i;
+    u8 sum;
+    u8 port;
+    s32 ff;
+    a->x3E = crd_card_event();
+    if (a->x3E == 0) {
+        return;
+    }
+    func_800808F0(a->x4);
+    if (a->x3E == 1 && (p = a->x14)[0x5FE] == 3) {
+        b = p;
+        sum = 0;
+        for (i = 0; i < 0x5FF; i++) {
+            sum ^= *p++;
+        }
+        if (b[0x5FF] == sum) {
+            D_1F8001FF = D_800BF870.unk0;
+            D_1F800278 = *(u16 *)((u8 *)&D_800BF870 + 0x5E6);
+            *(CrdSaveBlk *)&D_800BF870 = *(CrdSaveBlk *)a->x14;
+            a->x3F = 0;
+            a->x40 = 0;
+            return;
+        }
+    }
+    ff = 0xFF;
+    port = ff;
+    if (a->x46 != ff) {
+        port = a->x46 << 4;
+    }
+    if (a->x3E == 4 && port != ff) {
+        func_80080840(D_800BF498.x2C);
+        func_80080840(D_800BF498.x30);
+        func_80080840(D_800BF498.x34);
+        func_80080840(D_800BF498.x38);
+        func_8009BAB0(port);
+        while (1) {
+            if (func_80080840(D_800BF498.x2C) == 1) {
+                break;
+            }
+            if (func_80080840(D_800BF498.x30) == 1) {
+                break;
+            }
+            if (func_80080840(D_800BF498.x34) == 1) {
+                break;
+            }
+            if (func_80080840(D_800BF498.x38) == 1) {
+                break;
+            }
+        }
+    } else {
+        a->x5A = 0x32;
+    }
+    if (++a->x5A < 0x33) {
+        a->x3E = 0;
+        a->x51 = 0;
+        a->x2 = 0;
+        a->x3F = 2;
+        return;
+    }
+    a->x3E = 2;
+    a->x3F = 0;
+    a->x40 = 0;
+}
+
+
+void func_8018B478(CrdMenu *a)
+{
+    u8 *e;
+    if (a->x51++ < 7) {
+        return;
+    }
+    e = a->x8;
+    func_8009A420(a->x14, 0, 0x980);
+    func_8018A428(a->x14);
+    D_800BF870.pad1[0x17A] = 0;
+    *(CrdSaveBlk *)(a->x14 + 0x380) = *(CrdSaveBlk *)&D_800BF870;
+    switch (func_8018AEB8(a->x14, a->x46, e + (a->x47 * 0x3C + 4))) {
+    case 0:
+        if (a->x46 == 0xFF || ++a->x5A >= 3) {
+            func_8001CBA8(a, a->x46);
+            a->x3E = 2;
+            a->x3F = 0;
+            a->x40 = 0;
+            break;
+        }
+        a->x51 = 0;
+        a->x2 = 0;
+        break;
+    case 1:
+        a->x2 = 0;
+        a->x3F = 6;
+        break;
+    case 2:
+        a->x5A = 0;
+        a->x51 = 0;
+        a->x2 = 0;
+        break;
+    }
+}
 
 void func_8018B660(CrdMenu *a)
 {
@@ -909,7 +1034,76 @@ void func_8018F548(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018F660);
+void func_8018F660(CrdMenu *a)
+{
+    if (a->x41 == 0xFF) {
+        return;
+    }
+    switch (a->x3F) {
+    case 1:
+    case 4:
+        a->x5A = 0;
+        a->x5B = 0xF;
+    case 7:
+    case 10:
+    case 12:
+    case 16:
+        a->x51 = 0;
+        a->x40 = 2;
+        a->x3F++;
+        break;
+    case 14:
+        a->x40 = 0;
+        a->x3F++;
+        a->x3D = a->x46;
+        break;
+    case 2:
+        func_8018B020(a);
+        break;
+    case 5:
+        func_8018B478(a);
+        break;
+    case 8:
+        func_8018B660(a);
+        break;
+    case 3:
+        func_8018B1A4(a);
+        break;
+    case 6:
+        if (crd_card_event() != 0) {
+            func_800808F0(a->x4);
+            a->x3F = 7;
+        }
+        break;
+    case 9:
+        func_8018B7E4(a);
+        break;
+    case 11:
+        if (func_8009C3F4(a->x46 << 4) == 0) {
+            func_8001CBA8(a, a->x46);
+            a->x3E = 2;
+        } else {
+            a->x3E = 1;
+        }
+        a->x3F = 0;
+        a->x40 = 0;
+        break;
+    case 13:
+        func_8018BA68(a);
+        break;
+    case 17:
+        func_8018BF74(a);
+        break;
+    case 15:
+        if (a->x41 == 0) {
+            a->x3E = 1;
+        } else {
+            a->x3E = 2;
+        }
+        a->x3F = 0;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018F854);
 
