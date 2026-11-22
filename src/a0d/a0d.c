@@ -43,7 +43,18 @@ void func_8010A7B8(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_8010A830);
+extern void *D_1F800080;
+extern u8 D_1F800182_5650;
+
+void func_8010A830(u8 *a, u8 *b)
+{
+    if (func_80024BD8(a, b, *(void **)(b + 0xC0)) != 0) {
+        b[0x29] = 1;
+        a[0x164] = 3;
+        D_1F800080 = b;
+        D_1F800182_5650 = 0;
+    }
+}
 
 
 s32 func_8010A888(s32 arg0, s32 arg1) {
