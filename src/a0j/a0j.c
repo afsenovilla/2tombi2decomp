@@ -661,4 +661,25 @@ void func_8010D154(s16 a, s16 i)
     func_8001D2A8(ch, p, p + (t[i].len + 1) * 32, 0);
 }
 
-INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010D1F0);
+#define gte_ldv0(r0) __asm__ volatile("lwc2	$0, 0( %0 );" "lwc2	$1, 4( %0 )" : : "r"(r0))
+extern u8 D_800BF873;
+extern s32 D_1F800084;
+extern s32 D_1F800088;
+
+void func_8010D1F0(u8 *a)
+{
+    SV v;
+    s32 r;
+    if (D_800BF873 == 0) {
+        v.x = *(s16 *)(a + 0x2E);
+        v.y = *(s16 *)(a + 0x32);
+        v.z = *(s16 *)(a + 0x36);
+        func_800329E0(6);
+        gte_ldv0(&v);
+        if (func_800317CC(-0x20) == 0) {
+            D_1F800088 = D_1F800084;
+            r = (func_8009A450() & 0x3F) + 0x40;
+            func_8002E680(0, 0x40, r | (r << 8), 0);
+        }
+    }
+}

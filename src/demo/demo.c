@@ -62,10 +62,6 @@ void func_80106EE4(void)
 
 INCLUDE_ASM("asm/demo/nonmatchings/demo", func_80106F80);
 
-INCLUDE_ASM("asm/demo/nonmatchings/demo", func_801072F4);
-
-INCLUDE_ASM("asm/demo/nonmatchings/demo", func_80107400);
-
 typedef struct {
     s16 x, y, w, h;
 } Rect16;
@@ -89,13 +85,59 @@ typedef struct {
     u16 width;
     u16 height;
 } StHeader;
-extern u8 *D_1F800138;
 typedef struct {
     u32 unk0;
     u8 *buf;
     u32 unk8;
 } MovieDef;
 extern MovieDef D_80107718[];
+extern DecEnv D_1F800000;
+extern u8 *D_1F800138;
+extern u8 D_1F800135;
+
+void func_801072F4(void)
+{
+    Rect16 r;
+    s32 id;
+    r = D_1F800000.slice;
+    id = D_1F800000.imgid;
+    D_1F800000.imgid = 1 - id;
+    D_1F800000.slice.x += 16;
+    if (D_1F800000.slice.x < D_1F800000.rect[D_1F800000.rectid].x + D_1F800000.rect[D_1F800000.rectid].w) {
+        func_8009C800(D_1F800000.imgbuf[D_1F800000.imgid], D_1F800000.slice.w * D_1F800000.slice.h / 2);
+    } else {
+        D_1F800000.isdone = 1;
+        D_1F800000.rectid = D_1F800135;
+        D_1F800000.slice.x = D_1F800000.rect[D_1F800000.rectid].x;
+        D_1F800000.slice.y = D_1F800000.rect[D_1F800000.rectid].y;
+    }
+    func_80081218(&r, D_1F800000.imgbuf[id]);
+}
+
+void func_80107400(DecEnv *d, s16 x0, s16 y0, s16 x1, s16 y1)
+{
+    u8 *b;
+    s32 i;
+    b = D_80107718[D_1F800138[0x69]].buf;
+    d->vlcid = 0;
+    d->imgid = 0;
+    d->rect[0].x = x0;
+    d->rect[0].y = y0;
+    d->rect[1].x = x1;
+    d->rect[1].y = y1;
+    d->isdone = 0;
+    i = 1 - D_1F800135;
+    d->vlcbuf[0] = (u32 *)b;
+    d->rectid = i;
+    d->vlcbuf[1] = (u32 *)(b + 0xA000);
+    d->imgbuf[0] = (u16 *)(b + 0x14000);
+    d->imgbuf[1] = (u16 *)(b + 0x16000);
+    d->slice.x = d->rect[i].x;
+    d->slice.y = d->rect[i].y;
+    d->slice.w = 0x10;
+    d->slice.h = 0xF0;
+}
+
 
 void func_801074BC(s32 a, s32 b)
 {
