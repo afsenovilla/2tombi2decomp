@@ -282,7 +282,25 @@ void func_8011064C(void *a, u8 *b)
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80110694);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80110788);
+extern u8 *D_1F800080_ddd3;
+extern s32 D_1F800084;
+extern s32 D_1F80008C;
+
+void func_80110788(u8 *a, u8 *b) {
+    u8 v;
+
+    if (b[2] == 0x19) {
+        v = b[0xBF];
+    } else {
+        v = b[0x5E];
+    }
+    if (v == 0 && func_8002300C(a, b, M2C_FIELD(b, s16 *, 0x80) + 0x190) != 0) {
+        if (D_1F80008C < D_1F800084) {
+            D_1F800084 = D_1F80008C;
+            D_1F800080_ddd3 = b;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011080C);
 
@@ -290,7 +308,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801108D4);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80110968);
 
-extern u8 *D_1F800080_ddd3;
 
 void func_80110A18(u8 *a, u8 *b) {
     u16 t;
@@ -390,7 +407,20 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80111F94);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaQuestPickupActor);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80112784);
+extern u8 D_1F800207_9c67;
+extern u16 D_1F800160_3621;
+
+s32 func_80112784(void) {
+    GameState *g = &D_800BF870;
+
+    if ((g->pad1[0x10] & 4) || (M2C_FIELD(g, u16 *, 0x2E) & 0x200) || g->pad1[2] != 0 || g->pad1[0x18E] != 0) {
+        return 0;
+    }
+    if (D_1F800207_9c67 != 10) {
+        return 0;
+    }
+    return (u16)(D_1F800160_3621 - 0x50F0) < 0x1F0;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80112808);
 
@@ -471,7 +501,22 @@ void func_80112A50(void *arg0) {
     M2C_FIELD(arg0, s8 *, 4) = 3;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80112A8C);
+void func_80112A8C(u8 *a) {
+    switch (a[6]) {
+    case 0:
+        if (a[0x2B] != 0) {
+            func_80112B10(a);
+            a[6]++;
+        }
+        break;
+    case 1:
+        if (a[0x2B] == 0) {
+            a[6] = 0;
+        }
+        break;
+    }
+    a[0x2B] = 0;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80112B10);
 
@@ -1027,7 +1072,6 @@ s32 func_80119FF8(u8 *a) {
 }
 
 extern u8 D_800E7FE4;
-extern u16 D_1F800160_3621;
 extern u16 D_1F800162;
 
 s32 func_8011A03C(u8 *a) {
@@ -1757,7 +1801,21 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012322C);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801233A8);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012364C);
+s32 func_8012364C(u8 *a) {
+    switch (a[0x78]) {
+    case 0:
+        func_8011A43C(a, 0);
+        D_800BF9EB = 0;
+        a[0x78]++;
+        break;
+    case 1:
+        if (D_800BF9EB == 2) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaPersistentSceneryRewardActor);
 

@@ -1222,7 +1222,20 @@ void func_8011E674(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011E6EC);
+extern void *D_8012AEFC[];
+
+void func_8011E6EC(u8 *a) {
+    if (a[0x71] == 0xFF) {
+        func_80040D68(a, D_8012AEFC[a[0x5E]]);
+        if (a[0x5E] == 3) {
+            func_80041768(a, 0x13, 4);
+        } else {
+            func_80041768(a, 0xA, 4);
+        }
+        a[0x70] = 1;
+        a[5] = 2;
+    }
+}
 
 
 void func_8011E76C(void *arg0) {

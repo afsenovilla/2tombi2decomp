@@ -6,7 +6,20 @@ INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTombaTrolleyRaceActor);
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyAttachedModelTransforms);
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", func_80109BC8);
+void func_80109BC8(u8 *a) {
+    s32 n = 0;
+    s32 i;
+
+    for (i = 0; i < 7; i++) {
+        if ((a[0x2B] >> i) & 1) {
+            n++;
+        }
+    }
+    if (n != 0) {
+        func_8004D4F4(0x36, n);
+        D_800BF870.pad1[0x187] |= a[0x2B];
+    }
+}
 
 typedef struct CdMixAttr {
       u32 mask;

@@ -466,7 +466,20 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801141C8);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114290);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114320);
+void func_80114320(u8 *a, u8 *b) {
+    if (func_80024338(a, b) != 0) {
+        if (b[3] == 1) {
+            M2C_FIELD(a, s16 *, 0x156) = -0x58;
+        } else {
+            M2C_FIELD(a, s16 *, 0x156) = -0x1E;
+        }
+        M2C_FIELD(a, s16 *, 0x152) = M2C_FIELD(b, u16 *, 0x80) + M2C_FIELD(a, u16 *, 0x80) - 12;
+        b[0x5E] = 1;
+        a[0x164] = 1;
+        D_1F800080_ddd3 = b;
+        D_1F800182_5650 = 0;
+    }
+}
 
 typedef struct { u8 pad[0x60]; s32 unk60; s32 unk64; } AreaStateF58;
 extern s8 *D_800ECF58[];
@@ -780,7 +793,27 @@ void func_80117628(void *arg0) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleRareFishOrBlueBucketPickup);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnRareFishPickup);
+void f_HandleRareFishOrBlueBucketPickup();
+
+u8 *f_SpawnRareFishPickup(u8 *a) {
+    GameState *g = &D_800BF870;
+    u8 *p;
+
+    if (g->pad1[0x27D] == 0) {
+        if (g->pad1[0x14F] & 1) {
+            return NULL;
+        }
+        p = func_8007A980(0, 5, 0);
+        if (p != NULL) {
+            M2C_FIELD(p, void **, 0x1C) = f_HandleRareFishOrBlueBucketPickup;
+            M2C_FIELD(p, u8 **, 0x10) = a + 0x60;
+            p[2] = 2;
+            p[3] = 0;
+            return p;
+        }
+    }
+    return NULL;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117D7C);
 
@@ -962,7 +995,21 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011A804);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011A928);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011AB00);
+extern u8 *D_1F800214;
+
+s32 func_8011AB00(u8 *a) {
+    u8 *t = D_1F800214;
+
+    switch (a[0x78]) {
+    case 0:
+        M2C_FIELD(a, s16 *, 0x42) = func_800782B0(t + 0x2C, M2C_FIELD(a, s16 *, 0x2E), M2C_FIELD(a, s16 *, 0x36)) & 0xFFF;
+        a[0x78]++;
+        break;
+    case 1:
+        return func_80041438(t, M2C_FIELD(a, s16 *, 0x42), 0x100);
+    }
+    return 0;
+}
 
 
 s32 func_8011AB84(u8 *a) {
