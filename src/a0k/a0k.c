@@ -615,7 +615,36 @@ void func_801120BC(void *arg0) {
     M2C_FIELD(arg0, u16 *, 0x5A) = (u16) M2C_FIELD(arg0, u16 *, 0x56);
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112120);
+extern s16 D_1F800240;
+
+void func_80112120(u8 *a)
+{
+    switch (a[5]) {
+    case 0:
+        if (D_800BF871 == 4) {
+            *(s16 *)(a + 0x40) = 0xF;
+            a[5] = 1;
+            *(s16 *)(a + 0x50) = 0x400;
+            func_80072EFC(a);
+        } else {
+            a[5] = 3;
+        }
+        break;
+    case 1:
+        if (--*(s16 *)(a + 0x40) == -1) {
+            a[5]++;
+        }
+        break;
+    case 2:
+        if (func_80072F14(a) != 0) {
+            a[5]++;
+        }
+        break;
+    }
+    a[1] = 1;
+    *(s16 *)(a + 0x32) = D_1F800240 - 0x5C0;
+    func_800517F8(a);
+}
 
 void func_80112218(u8 *a)
 {
