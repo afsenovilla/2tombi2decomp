@@ -311,7 +311,50 @@ INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010A36C);
 
 INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010A4F4);
 
-INCLUDE_ASM("asm/a0g/nonmatchings/a0g", f_UpdateCourageTowerExitDoorSequence);
+extern u8 D_1F800137;
+extern u8 D_1F800236;
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+
+void f_UpdateCourageTowerExitDoorSequence(u8 *a)
+{
+    u8 *t = D_800E7E80;
+    switch (a[5]) {
+    case 0:
+        H(a, 0x40) = 0xF;
+        a[7] = 1;
+        a[5]++;
+        break;
+    case 1:
+        if (--H(a, 0x40) == -1) {
+            a[5]++;
+        }
+        break;
+    case 2:
+        if (func_80072F14(a) != 0) {
+            a[0] = 1;
+            a[5]++;
+        }
+        break;
+    case 3:
+        if (a[0x29] != 0 && t[0x29] != 0 && t[0x17B] == 0) {
+            a[5]++;
+            D_1F800137 = 2;
+            if (a[0xBF] != 0) {
+                func_80074590(0x17, 0, 0xF);
+            }
+        }
+        break;
+    case 4:
+        if (func_80072E60(a) != 0) {
+            a[5]++;
+            D_1F800236 = 1;
+            D_800BF808[0x31] = 1;
+            D_800BF808[7] = 2;
+            H(D_800BF808, 0x32) = 0x106;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0g/nonmatchings/a0g", f_UpdateCourageTowerLaughingCryingDoorSequence);
 

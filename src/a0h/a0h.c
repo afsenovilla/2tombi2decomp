@@ -378,7 +378,56 @@ void func_8010A39C(void)
     p[0x16B] = 0;
 }
 
-INCLUDE_ASM("asm/a0h/nonmatchings/a0h", f_UpdateStrengthTowerExitDoorSequence);
+extern u8 D_1F800137;
+extern u8 D_1F800236;
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+
+void f_UpdateStrengthTowerExitDoorSequence(u8 *a)
+{
+    u8 *t;
+    switch (a[5]) {
+    case 0:
+        H(a, 0x40) = 0xF;
+        a[5]++;
+        break;
+    case 1:
+        if (--H(a, 0x40) == -1) {
+            a[5]++;
+        }
+        break;
+    case 2:
+        if (func_80072F14(a) != 0) {
+            a[7] = 1;
+            a[0] = 1;
+            a[5]++;
+        }
+        break;
+    case 3:
+        if (D_800E7E80[0x2A] != a[0x2A]) {
+            a[5]++;
+        }
+        break;
+    case 4:
+        t = D_800E7E80;
+        if (t[0x2A] == a[0x2A] && t[5] == 0) {
+            a[5]++;
+            D_1F800137 = 2;
+            if (a[0xBF] != 0) {
+                func_80074590(0x17, 0, 0xF);
+            }
+        }
+        break;
+    case 5:
+        if (func_80072E60(a) != 0) {
+            a[5]++;
+            D_1F800236 = 1;
+            D_800BF808[0x31] = 1;
+            D_800BF808[7] = 2;
+            H(D_800BF808, 0x32) = 0x405;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010A574);
 
