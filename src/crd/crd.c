@@ -103,6 +103,24 @@ static inline u8 crd_card_event(void)
     }
     return 0;
 }
+typedef struct { s16 x; s16 y; u16 w; s16 h; } CrdRect;
+/* One menu label: text at the rect's right edge, then the rect widened to the text and filled (highlighted when
+ * sel) */
+static inline void crd_draw_label(u8 *str, CrdRect *r, s32 sel)
+{
+    s32 col, mode;
+    if (sel) {
+        col = 0;
+        mode = 0x40;
+    } else {
+        col = 6;
+        mode = 0x60;
+    }
+    func_80079374((s16)(r->x + r->w), r->y, col, str, 3);
+    r->w *= 2;
+    r->w += func_8009A600(str) << 3;
+    func_8005019C(r, mode, 0, 3);
+}
 extern u16 D_800ECF54;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern char D_8018A090[];
@@ -366,7 +384,6 @@ INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018C4B4);
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018C790);
 
-typedef struct { s16 x, y; u16 w; s16 h; } CrdRect;
 extern u8 *D_800A2854[];
 
 void func_8018CCCC(u8 *a)
@@ -531,7 +548,95 @@ void func_8018DD38(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018DFEC);
+extern s32 D_800A291C;
+extern s32 D_800A2920;
+extern s32 D_800A2928;
+
+void func_8018DFEC(u8 *a)
+{
+    s32 k;
+    s16 j;
+    k = a[0x3E];
+    j = k;
+    if (k == 0) {
+        return;
+    }
+    switch (j) {
+    case 1:
+        if ((a + a[0x46])[0x4E] == 0xFF) {
+            CRD_MSG(0x30, D_800A2914);
+            a[0] = 3;
+            a[2] = 0;
+            a[1] = 0;
+            a[0x3F] = 0xC;
+        } else {
+            func_8018D74C(a);
+        }
+        break;
+    case 4:
+        if (!(a[0x3C] & 1)) {
+            CRD_MSG(0x32, D_800A291C);
+            a[3] = 1;
+            a[0] = 0xE;
+        } else {
+            {
+                CrdMenu *s;
+                s32 w, w2;
+                w = 0x33;
+                s = &D_800BF498;
+                w2 = 0x32;
+                if (s->x18 != w) {
+                    func_8009A5B0(s->xC, D_800A2920);
+                    s->x18 = w;
+                }
+                if (s->x1A != w2) {
+                    func_8009A5B0(s->x10, D_800A291C);
+                    s->x1A = w2;
+                }
+            }
+            a[0x53] = 1;
+            a[0] = 4;
+        }
+        a[2] = 0;
+        a[1] = 0;
+        break;
+    case 2:
+        CRD_MSG(0x35, D_800A2928);
+        a[0x50] = 0x1E;
+        a[0x44] = 0;
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        (a + a[0x46])[0x48] = 0;
+        (a + a[0x46])[0x4E] = 0xFF;
+        a[0x46] = 0xFF;
+        a[0x47] = 0;
+        a[0x52] = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0;
+        a[3] = 0;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xF;
+        break;
+    default:
+        a[0x50] = 0;
+        a[0x44] = 0;
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        (a + a[0x46])[0x48] = 0;
+        (a + a[0x46])[0x4E] = 0xFF;
+        a[0x46] = 0xFF;
+        a[0x47] = 0;
+        a[0x52] = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0;
+        a[3] = 0;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xF;
+        break;
+    }
+}
 
 extern s32 D_800A297C;
 
@@ -1105,7 +1210,44 @@ void func_8018F660(CrdMenu *a)
     }
 }
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018F854);
+extern u8 *D_800A2904;
+extern u8 *D_800A2908;
+
+void func_8018F854(CrdMenu *a)
+{
+    u8 *e;
+    s32 dy;
+    CrdRect r;
+    e = a->x8;
+    dy = 0;
+    func_8018D418(a);
+    func_8018D26C(a);
+    switch (a->x0) {
+    case 1:
+        func_8018CCCC(a);
+        break;
+    case 6:
+    case 10:
+        func_8018CE40(a);
+        break;
+    case 7:
+    case 11:
+        func_8018C790(0x20, 0x50, 0, e + (a->x47 * 0x3C + 4));
+        dy = 0x32;
+    case 4:
+        r.x = 0x78;
+        r.y = dy + 0x78;
+        r.w = 0;
+        r.h = 0x10;
+        crd_draw_label(D_800A2904, &r, a->x53 == 0);
+        r.x = 0xB0;
+        r.y = dy + 0x78;
+        r.w = 4;
+        r.h = 0x10;
+        crd_draw_label(D_800A2908, &r, a->x53 == 1);
+        break;
+    }
+}
 
 extern u8 D_800E7AD8[];
 extern u8 D_800D34E0[];
