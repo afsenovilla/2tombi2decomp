@@ -274,7 +274,23 @@ s32 func_8010C958(u8 *a, s16 id)
 
 INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010CA1C);
 
-INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010CDCC);
+void func_8010CDCC(u8 *a)
+{
+    u8 *r;
+
+    func_80051B70(a, 0xC, 0);
+    a[0xD] |= 4;
+    (*(u8 **)(a + 0xC0))[0x3F] = 0xE0;
+    func_800517F8(a);
+    r = func_80072DDC(a, 1, 3, 0x10);
+    if (r != NULL) {
+        r[3] = 1;
+        *(void **)(r + 0x1C) = func_8010CA1C;
+        *(s16 *)(r + 0x2E) = *(s16 *)(a + 0x2E);
+        *(s16 *)(r + 0x32) = *(s16 *)(a + 0x32);
+        *(s16 *)(r + 0x36) = *(s16 *)(a + 0x36);
+    }
+}
 
 
 void func_8010CE6C(void) {

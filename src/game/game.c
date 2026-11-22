@@ -69,7 +69,29 @@ void func_80108720(void)
     D_1F800234 = 0;
 }
 
-INCLUDE_ASM("asm/game/nonmatchings/game", func_80108784);
+void func_80108784(void)
+{
+    switch (*(u16 *)(D_1F800138_5432 + 0x4A)) {
+    case 0:
+        func_8010882C();
+        break;
+    case 1:
+        func_801088D8();
+        break;
+    case 2:
+        func_80106478();
+        break;
+    case 3:
+        func_80106A24();
+        break;
+    case 4:
+        func_801089C4();
+        break;
+    case 5:
+        func_80108A60();
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/game/nonmatchings/game", func_8010882C);
 

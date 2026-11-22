@@ -151,7 +151,28 @@ INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010AE9C);
 
 INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010AF60);
 
-INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010B078);
+extern u8 D_8010C974[];
+extern u8 D_800BF80F;
+
+s32 func_8010B078(u8 *a)
+{
+    switch (a[0x78]) {
+    case 0:
+        D_800BF9B4 = 5;
+        func_8006CBD0(D_800E8008, D_8010C974);
+        *(s16 *)(a + 0x42) = 10;
+        a[0x78]++;
+        goto end;
+    case 1:
+        if (--*(s16 *)(a + 0x42) == 0) {
+            D_800BF80F = 1;
+            return 1;
+        }
+    end:
+    default:
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010B11C);
 

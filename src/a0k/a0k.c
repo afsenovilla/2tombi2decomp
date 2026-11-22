@@ -90,7 +90,14 @@ void func_8010B468(void) {
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010B470);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010B54C);
+void func_8010B54C(u8 *a, u8 *b)
+{
+    s32 d = ((*(u16 *)(b + 0x56) - *(u16 *)(a + 0x52)) << 20) >> 8;
+
+    if (*(s16 *)(b + 0x44) != 0) {
+        *(s16 *)(a + 0x52) += d / ((*(s16 *)(b + 0x15E) << 12) / (*(s16 *)(b + 0x44) >> 3));
+    }
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010B5EC);
 

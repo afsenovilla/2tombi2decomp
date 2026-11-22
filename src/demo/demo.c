@@ -14,10 +14,32 @@ INCLUDE_ASM("asm/demo/nonmatchings/demo", func_80106AC4);
 
 INCLUDE_ASM("asm/demo/nonmatchings/demo", func_80106C24);
 
-INCLUDE_ASM("asm/demo/nonmatchings/demo", func_80106E28);
-
 extern u16 D_1F80017C;
 extern u8 D_1F800136;
+
+void func_80106E28(void)
+{
+    D_1F80017C++;
+    if (D_1F800136 == 0) {
+        func_80059D28();
+        func_80069B28();
+        func_80026368();
+        func_8007A904();
+        func_80025588();
+        func_8004FE84();
+        func_80026C88();
+        func_80022A80();
+        func_8006EC44();
+        func_80050DE4();
+        func_8001CAC0();
+    }
+    if (D_1F800136 < 2) {
+        func_8003F9A8();
+    }
+    func_80077D8C();
+    func_80075A80();
+}
+
 
 void func_80106EE4(void)
 {

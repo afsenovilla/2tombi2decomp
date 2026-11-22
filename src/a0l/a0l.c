@@ -451,7 +451,18 @@ u8 *func_80111F3C(void *a, u8 b)
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111FA4);
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8011208C);
+void func_8011208C(u8 *a)
+{
+    s32 v;
+
+    *(s16 *)(a + 0x2E) = *(s16 *)(a + 0x60);
+    a[1] = 1;
+    v = abs((func_80083E80(*(s16 *)(a + 0x66)) << 4) >> 12);
+    *(s16 *)(a + 0x32) = *(s16 *)(a + 0x62) - v;
+    *(s16 *)(a + 0x36) = *(s16 *)(a + 0x64) + ((func_80083F50(*(s16 *)(a + 0x66)) * *(s16 *)(a + 0x68)) >> 12);
+    *(s16 *)(a + 0x62) += 4 + (func_8009A450() & 3);
+    *(s16 *)(a + 0x66) += 0x30;
+}
 
 
 void func_80112130(u8 *a)
