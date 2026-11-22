@@ -12138,7 +12138,36 @@ void func_80069688(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800696C4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80069858);
+extern s16 D_1F80018C_67a7;
+
+s32 func_80069858(u8 *a, s32 b, s32 c)
+{
+    if (D_800E7FEB != 0) {
+        s16 x = rcos(D_1F80018C_67a7) >> 4;
+        s32 ang = D_1F80018C_67a7;
+
+        *(s16 *)(a + 0x48) = x;
+        *(s16 *)(a + 0x4C) = -(rsin(ang) >> 4);
+    } else {
+        if (f_ResolveActorAreaPlanePosition(a) < 0) {
+            f_ApplyAreaPlaneDirectionToActor(a);
+            return 1;
+        }
+        f_ApplyAreaPlaneDirectionToActor(a);
+    }
+    if (c != 0) {
+        return 0;
+    }
+    if (b == 0) {
+        if (a[0x2B] != 0) {
+            return 0;
+        }
+    }
+    if (D_800E7FEB == 0) {
+        return func_800696C4(a, (u8)(a[2] - 2) < 2);
+    }
+    return 0;
+}
 
 extern s32 D_1F800208;
 extern s16 D_1F800200;
