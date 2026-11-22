@@ -315,40 +315,40 @@ u32 *func_80109C80(u32 *f, u32 *ot, s32 n)
                             T2_stsz1(&sz[1]);
                             T2_stsz2(&sz[2]);
                             T2_stsz3(&sz[3]);
-do {
-                            a = sz[1];
-                            if (a < sz[0]) {
-                                a = sz[0];
-                            }
-                            b = sz[3];
-                            if (b < sz[2]) {
-                                b = sz[2];
-                            }
-                            if (b < a) {
-                                b = a;
-                            }
-                            e = b;
-} while (0);
+                            do {
+                                a = sz[1];
+                                if (a < sz[0]) {
+                                    a = sz[0];
+                                }
+                                b = sz[3];
+                                if (b < sz[2]) {
+                                    b = sz[2];
+                                }
+                                if (b < a) {
+                                    b = a;
+                                }
+                                e = b;
+                            } while (0);
                             goto store;
                         case 2:
                             T2_stsz0(&sz[4]);
                             T2_stsz1(&sz[5]);
                             T2_stsz2(&sz[6]);
                             T2_stsz3(&sz[7]);
-do {
-                            a = sz[5];
-                            if (sz[4] < a) {
-                                a = sz[4];
-                            }
-                            b = sz[7];
-                            if (sz[6] < b) {
-                                b = sz[6];
-                            }
-                            if (a < b) {
-                                b = a;
-                            }
-                            e = b;
-} while (0);
+                            do {
+                                a = sz[5];
+                                if (sz[4] < a) {
+                                    a = sz[4];
+                                }
+                                b = sz[7];
+                                if (sz[6] < b) {
+                                    b = sz[6];
+                                }
+                                if (a < b) {
+                                    b = a;
+                                }
+                                e = b;
+                            } while (0);
                         store:
                             *otz = e >> 2;
                             break;
@@ -357,10 +357,10 @@ do {
                             T2_stotz(otz);
                             break;
                         }
-do {
-                        e = *otz >> 10;
-                        *otz = (*otz >> e) + (e << 9);
-} while (0);
+                        do {
+                            e = *otz >> 10;
+                            *otz = (*otz >> e) + (e << 9);
+                        } while (0);
                         if ((u32)(*otz - 4) >= 0x7FC) {
                             *otz = -1;
                         }

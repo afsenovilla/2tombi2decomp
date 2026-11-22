@@ -1441,40 +1441,40 @@ u32 *func_80112CF0(u32 *f, u32 *ot, s32 n)
                             T2_stsz1(&sz[1]);
                             T2_stsz2(&sz[2]);
                             T2_stsz3(&sz[3]);
-do {
-                            a = sz[1];
-                            if (a < sz[0]) {
-                                a = sz[0];
-                            }
-                            b = sz[3];
-                            if (b < sz[2]) {
-                                b = sz[2];
-                            }
-                            if (b < a) {
-                                b = a;
-                            }
-                            e = b;
-} while (0);
+                            do {
+                                a = sz[1];
+                                if (a < sz[0]) {
+                                    a = sz[0];
+                                }
+                                b = sz[3];
+                                if (b < sz[2]) {
+                                    b = sz[2];
+                                }
+                                if (b < a) {
+                                    b = a;
+                                }
+                                e = b;
+                            } while (0);
                             goto store;
                         case 2:
                             T2_stsz0(&sz[4]);
                             T2_stsz1(&sz[5]);
                             T2_stsz2(&sz[6]);
                             T2_stsz3(&sz[7]);
-do {
-                            a = sz[5];
-                            if (sz[4] < a) {
-                                a = sz[4];
-                            }
-                            b = sz[7];
-                            if (sz[6] < b) {
-                                b = sz[6];
-                            }
-                            if (a < b) {
-                                b = a;
-                            }
-                            e = b;
-} while (0);
+                            do {
+                                a = sz[5];
+                                if (sz[4] < a) {
+                                    a = sz[4];
+                                }
+                                b = sz[7];
+                                if (sz[6] < b) {
+                                    b = sz[6];
+                                }
+                                if (a < b) {
+                                    b = a;
+                                }
+                                e = b;
+                            } while (0);
                         store:
                             *otz = e >> 2;
                             break;
@@ -1483,10 +1483,10 @@ do {
                             T2_stotz(otz);
                             break;
                         }
-do {
-                        e = *otz >> 10;
-                        *otz = (*otz >> e) + (e << 9);
-} while (0);
+                        do {
+                            e = *otz >> 10;
+                            *otz = (*otz >> e) + (e << 9);
+                        } while (0);
                         if ((u32)(*otz - 4) >= 0x7FC) {
                             *otz = -1;
                         }
@@ -1725,70 +1725,70 @@ u32 *func_801133F4(u32 *f, u32 *ot, s32 n)
                     if ((p->x0 < 320 || p->x1 < 320 || p->x2 < 320 || p->x3 < 320) &&
                         (p->y0 < 240 || p->y1 < 240 || p->y2 < 240 || p->y3 < 240)) {
                         p->uv1 = f[3];
-mode = c >> 24;
-if (mode != 0) {
-T2_stsz0(&sz[0]);
-T2_stsz1(&sz[1]);
-T2_stsz2(&sz[2]);
-T2_stsz3(&sz[3]);
-do {
-if (mode == 1) {
-a = sz[1];
-if (a < sz[0]) {
-a = sz[0];
-}
-b = sz[3];
-if (b < sz[2]) {
-b = sz[2];
-}
-if (b < a) {
-b = a;
-}
-} else {
-a = sz[1];
-if (sz[0] < a) {
-a = sz[0];
-}
-b = sz[3];
-if (sz[2] < b) {
-b = sz[2];
-}
-if (a < b) {
-b = a;
-}
-}
-*otz = b >> 2;
-} while (0);
-} else {
-T2_avsz4();
-do {
-T2_stotz(otz);
-} while (0);
-do {
-e = *otz >> 10;
-*otz = (*otz >> e) + (e << 9);
-} while (0);
-do {
-if ((u32)(*otz - 4) >= 0x7FC) {
-*otz = -1;
-}
-} while (0);
-if (*otz >= 0) {
-do {
-o = ot + *otz;
-p->tag = *o | 0x0C000000;
-*o = (u32)p;
-} while (0);
-v = f[4];
-p->uv2 = v;
-p->uv3 = (u32)v >> 16;
-p++;
-}
-}
-}
-}
-}
-}
+                        mode = c >> 24;
+                        if (mode != 0) {
+                            T2_stsz0(&sz[0]);
+                            T2_stsz1(&sz[1]);
+                            T2_stsz2(&sz[2]);
+                            T2_stsz3(&sz[3]);
+                            do {
+                                if (mode == 1) {
+                                    a = sz[1];
+                                    if (a < sz[0]) {
+                                        a = sz[0];
+                                    }
+                                    b = sz[3];
+                                    if (b < sz[2]) {
+                                        b = sz[2];
+                                    }
+                                    if (b < a) {
+                                        b = a;
+                                    }
+                                } else {
+                                    a = sz[1];
+                                    if (sz[0] < a) {
+                                        a = sz[0];
+                                    }
+                                    b = sz[3];
+                                    if (sz[2] < b) {
+                                        b = sz[2];
+                                    }
+                                    if (a < b) {
+                                        b = a;
+                                    }
+                                }
+                                *otz = b >> 2;
+                            } while (0);
+                        } else {
+                            T2_avsz4();
+                            do {
+                                T2_stotz(otz);
+                            } while (0);
+                            do {
+                                e = *otz >> 10;
+                                *otz = (*otz >> e) + (e << 9);
+                            } while (0);
+                            do {
+                                if ((u32)(*otz - 4) >= 0x7FC) {
+                                    *otz = -1;
+                                }
+                            } while (0);
+                            if (*otz >= 0) {
+                                do {
+                                    o = ot + *otz;
+                                    p->tag = *o | 0x0C000000;
+                                    *o = (u32)p;
+                                } while (0);
+                                v = f[4];
+                                p->uv2 = v;
+                                p->uv3 = (u32)v >> 16;
+                                p++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         f += 11;
     }
     D_800BF544 = p;
