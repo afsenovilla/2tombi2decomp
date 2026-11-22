@@ -951,7 +951,58 @@ void func_80112C38(u8 *a)
     func_80029664(D_80126BD8, i, D_801268C8, D_80126948);
 }
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80112D50);
+extern u16 D_1F80017C;
+extern u8 D_8011DC64[];
+typedef struct { u8 pad[0x48]; s16 r[3]; } RotAct;
+
+void func_80112D50(u8 *a)
+{
+    u8 *p;
+    s32 k;
+    switch (a[4]) {
+    case 0:
+        *(s32 *)(a + 0x50) = 0x100;
+        *(s32 *)(a + 0x54) = 0x100;
+        *(s16 *)(a + 0x4E) = 0xF0;
+        a[1] = 1;
+        a[4] = 1;
+        *(s16 *)(a + 0x48) = 0;
+        *(s16 *)(a + 0x4A) = 0;
+        *(s16 *)(a + 0x4C) = 0;
+        *(s16 *)(a + 0x32) = -0x50;
+    case 1:
+        p = *(u8 **)(a + 0x38);
+        *(u8 **)(a + 0x34) = p;
+        if (p == NULL) {
+            *(u8 **)(a + 0x34) = D_8011DC64;
+        }
+        ((RotAct *)a)->r[0] += func_80083F50(D_1F80017C >> 7) >> 5;
+        ((RotAct *)a)->r[1] += func_80083F50(D_1F80017C >> 4) >> 7;
+        ((RotAct *)a)->r[2] += func_80083F50(D_1F80017C * 2) >> 6;
+        a[1] = 1;
+        break;
+    case 2:
+        switch (a[5]) {
+        case 0:
+            a[5] = 1;
+        case 1:
+            *(s32 *)(a + 0x50) -= 0x10;
+            if (*(s32 *)(a + 0x50) < 0) {
+                *(s32 *)(a + 0x50) = 0;
+            }
+            *(s32 *)(a + 0x54) += 0x80;
+            if (++a[6] > 16) {
+                a[4] = 3;
+            }
+            a[1] = 1;
+            break;
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 typedef struct {
     u16 type;
