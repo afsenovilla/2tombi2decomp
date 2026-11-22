@@ -869,7 +869,39 @@ void func_801127D4(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_801128E8);
+typedef struct { u8 *v[6]; } PtrTab6;
+typedef struct { u8 b[8][4]; } ByteTab8;
+extern PtrTab6 D_801091E8;
+extern ByteTab8 D_80109200;
+extern u8 D_8011DB54[];
+
+void func_801128E8(u8 *a)
+{
+    PtrTab6 p;
+    ByteTab8 t;
+    u8 *q;
+    s32 *d;
+    u8 **pp;
+    u8 (*tt)[4];
+    u8 *e;
+    q = a;
+    d = D_1F800090;
+    p = D_801091E8;
+    t = D_80109200;
+    pp = p.v;
+    tt = t.b;
+    gte_ldfcdir(0, 0, 0);
+    *d = 0;
+    if (a[7] < 12) {
+        func_80031AC4(a + 0x2C, tt, a + 0x48);
+        func_80027768(p.v[a[7] >> 1], 0, 0, 0);
+    }
+    if (q[7] < 16) {
+        e = tt[q[7] >> 1];
+        func_80031AC4(q + 0x2C, e, q + 0x48);
+        func_80027768(D_8011DB54, e[3], 0, 0);
+    }
+}
 
 extern S8 D_80126BD8[];
 extern u8 D_1F800250;
