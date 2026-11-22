@@ -2090,7 +2090,16 @@ s32 func_8013D4EC(void *arg0) {
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013D528);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013D614);
+s32 func_8013D614(u8 *p)
+{
+    s32 i = 0;
+
+    p[0xD] |= 4;
+    for (; i < p[9]; i++) {
+        (*(u8 **)(p + 0xC0 + i * 4))[0x3F] = 0xF1;
+    }
+    return 1;
+}
 
 
 s32 func_8013D65C(void *arg0) {
