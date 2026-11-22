@@ -13,6 +13,10 @@ identifiers). Names of another program (C copied from MAIN.EXE into boot) are re
 the addresses the retail bytes give (tools/nearcopy.py fix_names(); unlabelled D_ addresses get an alias line).
 Then the linked build (tools/build.py <prog> --no-split) must be OK, else the files are restored (one at a time when
 several were installed). Takes the same per-program lock as tools/install_c.py.
+K&R definitions (`s32 f(a, b) s32 a; u8 *b; {`) are functions like the others (tools/ptsrc.py items()). A scratch or
+library file that includes a base header of its own (psyq_all.h, pt/common.h) does not get common.h added; extra
+FLAGS of the scratch or of the library file being replaced (-fno-builtin, ...) are kept on every set-up tried.
+The last line of a failure is `NOT INSTALLED: <names> (<reason>)`.
 """
 import argparse, fcntl, glob, os, re, subprocess, sys, tempfile
 
@@ -51,7 +55,7 @@ def split(text):
                 decls.append(([s.split()[1].split("(")[0]], s))
             continue
         n = ptsrc.func_name(s) if s.endswith("}") else None
-        if n and not s.startswith("static"):
+        if n and not ptsrc.strip_comments(s).strip().startswith("static"):
             funcs[n] = s
         elif n:     # a static (inline) helper: a declaration of its name
             decls.append(([n], s))
@@ -90,23 +94,58 @@ def needed(body, name, decls):
     return [c for _, c in decls if c in used]
 
 
+BASE = re.compile(r'"(common|psyq_all|pt/common)\.h"')
+
+
 def content(old, name, setup, includes, decls, body):
     rest = SETUP.sub("", old)
-    rest = re.sub(r'(?m)^#include "common.h"\n', "", rest)
+    own = re.findall(r"(?m)^#include .*$", rest)      # the library file's own includes stay (once, first)
+    rest = re.sub(r"(?m)^#include .*\n", "", rest)
     rest = re.sub(r"(?m)^// (Source|Same function).*\n", "", rest).lstrip("\n")
     rest = re.sub(r'(?m)^INCLUDE_ASM\("[^"]+",\s*%s\);' % re.escape(name), lambda m: body, rest)
-    inc = includes or ['#include "common.h"']
-    if not any('"common.h"' in i for i in inc):
+    inc = []
+    for i in [x for x in own if not x.strip().endswith('"common.h"')] + includes:
+        if i not in inc:
+            inc.append(i)
+    if not any(BASE.search(i) for i in inc):     # psyq_all.h / pt/common.h bring their own base types
         inc = ['#include "common.h"'] + inc
+    elif any('"common.h"' in i for i in inc) and any(re.search(r'"(psyq_all|pt/common)\.h"', i) for i in inc):
+        inc = [i for i in inc if '"common.h"' not in i]
     d = needed(body, name, decls)
     return "\n".join(setup) + "\n" + "\n".join(inc) + "\n" + ("\n".join(d) + "\n\n" if d else "\n") + rest
 
 
-def setups(fixed, auto):
+def extra_flags(*texts):
+    """FLAGS tokens of the given files beyond the usual -O / -G / -mno-split-addresses (e.g. -fno-builtin)."""
+    import libsweep as L
+    usual = {f for v in L.VARIANTS + L.EPI_VARIANTS for f in v["flags"].split()}
+    out = []
+    for t in texts:
+        for m in re.finditer(r"(?m)^//\s*FLAGS\s+(.*)$", t[:800]):
+            for f in m.group(1).split():
+                if f.startswith("-f") and f not in usual and f not in out:
+                    out.append(f)
+    return out
+
+
+def with_flags(su, extra):
+    out, seen = [], False
+    for l in su:
+        m = re.match(r"//\s*FLAGS\s+(.*)$", l)
+        if m:
+            seen = True
+            l = "// FLAGS " + " ".join(m.group(1).split() + [f for f in extra if f not in m.group(1).split()])
+        out.append(l)
+    if not seen and extra:
+        out.insert(1, "// FLAGS -O2 -G0 " + " ".join(extra))
+    return out
+
+
+def setups(fixed, auto, extra=()):
     import libsweep as L
     if fixed and not auto:
-        return [fixed]
-    return [L.header(v).strip().split("\n") for v in L.VARIANTS + L.EPI_VARIANTS]
+        return [with_flags(fixed, extra)]
+    return [with_flags(L.header(v).strip().split("\n"), extra) for v in L.VARIANTS + L.EPI_VARIANTS]
 
 
 def build_ok(prog):
@@ -133,7 +172,7 @@ def main():
     lk = open(os.path.join(ROOT, "build", ".install_%s" % a.prog), "w")
     if not a.dry:
         fcntl.flock(lk, fcntl.LOCK_EX)
-    done = []
+    done, failed = [], []
     work = tempfile.mkdtemp(prefix="tmp_install_lib_", dir=os.path.join(ROOT, "build"))
     try:
         for name, body in funcs.items():
@@ -144,7 +183,7 @@ def main():
                 continue
             old = open(files[name]).read()
             hit = None
-            for su in setups(setup, a.auto):
+            for su in setups(setup, a.auto, extra_flags(text, old)):
                 new = content(old, name, su, includes, decls, body)
                 tmp = os.path.join(work, name + ".c")
                 open(tmp, "w").write(new)
@@ -153,10 +192,13 @@ def main():
                     break
             if not hit:
                 print("NO MATCH %s" % name)
+                failed.append(name)
                 continue
             print("match %s: %s -> %s" % (name, " | ".join(hit[0]), os.path.relpath(files[name], ROOT)))
             done.append((name, files[name], old, hit[1]))
         if a.dry or not done:
+            if failed and not a.dry:
+                print("NOT INSTALLED: %s (no set-up matches)" % " ".join(failed))
             return
         added = {k: v for k, v in new_aliases.items() if k not in L.read_aliases(a.prog)}
         if added:
@@ -168,12 +210,16 @@ def main():
         ok, log = build_ok(a.prog)
         if ok:
             print("installed %d functions: %s" % (len(done), " ".join(n for n, *_ in done)))
+            if failed:
+                print("NOT INSTALLED: %s (no set-up matches)" % " ".join(failed))
             return
         for _, f, old, _ in done:
             open(f, "w").write(old)
         if len(done) == 1:
             restore_aliases(a.prog, added)
-            sys.exit("linked build not OK, restored:\n" + log)
+            print("linked build not OK, restored:\n" + log)
+            print("NOT INSTALLED: %s (linked build not OK)" % " ".join([done[0][0]] + failed))
+            sys.exit(1)
         kept = []
         for n, f, old, new in done:
             open(f, "w").write(new)
@@ -185,6 +231,9 @@ def main():
         if not kept:
             restore_aliases(a.prog, added)
         print("installed %d functions: %s" % (len(kept), " ".join(kept)))
+        lost = [n for n, *_ in done if n not in kept] + failed
+        if lost:
+            print("NOT INSTALLED: %s (no match or linked build not OK)" % " ".join(lost))
     finally:
         subprocess.run(["rm", "-rf", work])
 

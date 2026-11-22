@@ -3,7 +3,8 @@
 compiler set-up and report how far the best one is from the retail bytes (differing words, size difference), so the
 permuter (tools/permute.py) can be pointed at the closest. Writes build/libnear_<prog>.csv.
 
-  python3 -I tools/libnear.py [--prog main] [--max-size 0x200] [-j N] [--game] [--epilogue]
+  python3 -I tools/libnear.py [--prog main] [--max-size 0x200] [-j N] [--game] [--epilogue] [--nocse | --only-nocse]
+      [--names A,B]
 
 --game: the game functions still INCLUDE_ASM in src/<prog>/<prog>.c, game compiler only (build/gamenear_<prog>.csv).
 """
@@ -65,6 +66,9 @@ def main():
     ap.add_argument("-j", type=int, default=os.cpu_count())
     ap.add_argument("--game", action="store_true", help="the game functions of src/<prog>/<prog>.c instead")
     ap.add_argument("--epilogue", action="store_true", help="also the EPILOGUE / RETURN sony set-ups")
+    ap.add_argument("--nocse", action="store_true", help="also the gcc-2.8.1-nocse set-ups")
+    ap.add_argument("--only-nocse", action="store_true", help="only the gcc-2.8.1-nocse set-ups")
+    ap.add_argument("--names", help="comma list: only these functions")
     a = ap.parse_args()
     lim = int(a.max_size, 0)
     names = []
@@ -75,6 +79,12 @@ def main():
         pend = sorted(L.pending_files(a.prog))   # a file whose INCLUDE_ASM names another function is skipped
     if a.epilogue:
         L.VARIANTS.extend(L.EPI_VARIANTS)
+    if a.only_nocse:
+        L.VARIANTS[:] = L.NOCSE_VARIANTS
+    elif a.nocse:
+        L.VARIANTS.extend(L.NOCSE_VARIANTS)
+    if a.names:
+        pend = [n for n in pend if n in a.names.split(",")]
     for n in pend:
         try:
             ad, sz = L.asm_info(a.prog, n)

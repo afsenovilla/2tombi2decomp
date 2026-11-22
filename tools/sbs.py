@@ -6,7 +6,8 @@
 
 Both sides are disassembled the same way (objdump of the raw words at address 0), so branch targets and `j` to a
 local label read as offsets from the function start. Relocated fields are masked on both sides (ours: the object's
-relocations; retail: the %hi/%lo/jal operands of the splat .s) and annotated with the symbol names, so a different
+relocations; retail: the %hi/%lo/jal operands of the splat .s and its `(0x1F80xxxx >> 16)` / `& 0xFFFF` forms)
+and annotated with the symbol names, so a different
 symbol name or address is not a difference. The two sides are aligned with difflib; marks: ' ' same, '|' changed,
 '<' only ours, '>' only retail. --all prints the equal lines too (default: differing lines with 2 lines of context).
 """
@@ -47,9 +48,13 @@ def retail_relocs(prog, name):
         if not m:
             continue
         op, args = m.group(1), m.group(2)
-        s = re.search(r"%(?:hi|lo)\(([^)]+)\)", args)
+        s = re.search(r"%(?:hi|lo|gp_rel)\(([^)]+)\)", args)
+        # splat writes a symbol-less address (scratchpad) as `(0x1F80009C >> 16)` / `(0x1F80009C & 0xFFFF)`
+        k = re.search(r"\((0x[0-9A-Fa-f]+) (?:>> 16|& 0xFFFF)\)", args)
         if s:
             out[i] = s.group(1)
+        elif k:
+            out[i] = "D_%08X" % int(k.group(1), 16)
         elif op in ("jal", "j") and not args.strip().startswith(".L"):
             out[i] = args.strip()
         i += 1

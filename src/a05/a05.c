@@ -3081,7 +3081,38 @@ void func_8012E0C8(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012E340);
+typedef struct { s16 h[7]; } E8013F238;
+extern E8013F238 D_8013F238[];
+
+void func_8012E340(u8 *a, s32 i)
+{
+    u8 **slot;
+    u8 *e = func_8007AAE8();
+
+    slot = (u8 **)(a + i * 4);
+    if ((slot[0x30] = e) != NULL) {
+        E8013F238 *tb = D_8013F238; s16 *t = tb[i].h;
+        *(s16 *)(e + 6) = t[0];
+        *(s16 *)(slot[0x30] + 0) = t[1];
+        *(s16 *)(slot[0x30] + 2) = t[2];
+        do {
+            *(s16 *)(slot[0x30] + 4) = t[3];
+        } while (0);
+        *(s16 *)(slot[0x30] + 8) = 0;
+        *(s16 *)(slot[0x30] + 0xA) = 0;
+        *(s16 *)(slot[0x30] + 0xC) = 0;
+        *(s16 *)(slot[0x30] + 0x38) = 0x1000;
+        *(s16 *)(slot[0x30] + 0x3A) = 0;
+        i++;
+        *(s16 *)(slot[0x30] + 0x3C) = 0x1000;
+        func_80051B04(slot[0x30], 0x12, i);
+        a[9] = i;
+        a[8] = i;
+        func_80074590(0x80, 0, 0);
+    } else {
+        a[4] = 3;
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012E454);
 

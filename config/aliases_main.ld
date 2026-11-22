@@ -201,6 +201,7 @@ dma_dpcr = 0x800AC614;
 _spu_tsa = 0x800AC61C;
 _spu_transMode = 0x800AC620;
 _spu_mem_mode_plus = 0x800AC62C;
+_spu_mem_mode_unitM = 0x800AC634;
 _spu_inTransfer = 0x800AC638;
 _spu_transferCallback = 0x800AC63C;
 D_800AC654 = 0x800AC654;

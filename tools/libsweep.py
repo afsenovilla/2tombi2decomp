@@ -4,11 +4,13 @@ under several compiler set-ups (Sony built its libraries with other compilers th
 first that matches the retail bytes, with the // CC / // FLAGS / // ASPSX / // AS header that made it match.
 
   python3 -I tools/libsweep.py [--prog main] [--lib libc2] [--install] [-j N] [--source m2c|t1|both] [--epilogue]
+      [--nocse | --only-nocse] [--names A,B]
 
 Candidates, in this order: psx_tomba's library C cut to the function (tools/ptsrc.py), Tombi-Decomp's matched C for
 the same function (tools/t1match.py; its __asm__ wrappers are skipped), the m2c draft (tools/decomp.py); compiler
 set-ups: VARIANTS below (gcc 2.8.1 / 2.7.2, maspsx 2.79 / 2.56 or GNU as, -O1..-O3, -mno-split-addresses,
--fno-delayed-branch; --epilogue adds the // EPILOGUE sony and // RETURN sony ones). A candidate whose D_ / func_ names carry another program's addresses (psx_tomba and
+-fno-delayed-branch; --epilogue adds the // EPILOGUE sony and // RETURN sony ones, --nocse the gcc-2.8.1-nocse
+ones, --only-nocse tries those alone). A candidate whose D_ / func_ names carry another program's addresses (psx_tomba and
 Tombi-Decomp use Tombi's) gets one `#define OLD NEW` line per name, NEW being this program's name for the address
 the bytes give. After --install the linked build of the program must still be OK, else the installs are undone
 one by one.
@@ -47,6 +49,16 @@ for _f in ("-O2 -G0 -mno-split-addresses", "-O2 -G0"):
                    {"return": "sony first"}):
             EPI_VARIANTS.append(dict({"cc": "gcc-2.8.1-psx", "flags": _f}, **_a, **_r))
     EPI_VARIANTS.append({"cc": "gcc-2.7.2-psx", "flags": _f, "as": "gnu", "epilogue": "sony"})
+# --nocse: Sony's library compiler without the post-reload CSE pass (/opt/oldgcc/gcc-2.8.1-nocse, made by
+# tools/setup_native.sh; docs/STATUS.md 2026-11-22 (6)): no `move a2,a1` for two zero arguments, no `sllv` with a
+# register holding 16, no deleted redundant moves. The usual library set-ups with it, plain and with Sony's
+# epilogue / return.
+NOCSE_VARIANTS = []
+for _f in ("-O2 -G0 -mno-split-addresses", "-O2 -G0", "-O2 -G0 -mno-split-addresses -fno-delayed-branch"):
+    for _a in ({"as": "gnu"}, {"as": "maspsx", "aspsx": "2.79"}):
+        for _r in ({}, {"return": "sony"}, {"epilogue": "sony"}, {"epilogue": "sony", "return": "sony"},
+                   {"return": "sony first"}):
+            NOCSE_VARIANTS.append(dict({"cc": "gcc-2.8.1-nocse", "flags": _f}, **_a, **_r))
 
 
 def prog_bytes(prog):
@@ -365,10 +377,19 @@ def main():
                     help="comma list of main (the MAIN.EXE file, for boot), pt (psx_tomba), t1 (Tombi-Decomp), m2c")
     ap.add_argument("-j", type=int, default=os.cpu_count())
     ap.add_argument("--epilogue", action="store_true", help="also the EPILOGUE / RETURN sony set-ups (EPI_VARIANTS)")
+    ap.add_argument("--nocse", action="store_true", help="also the gcc-2.8.1-nocse set-ups (NOCSE_VARIANTS)")
+    ap.add_argument("--only-nocse", action="store_true", help="only the gcc-2.8.1-nocse set-ups")
+    ap.add_argument("--names", help="comma list: only these functions")
     a = ap.parse_args()
     if a.epilogue:
         VARIANTS.extend(EPI_VARIANTS)
+    if a.only_nocse:
+        VARIANTS[:] = NOCSE_VARIANTS
+    elif a.nocse:
+        VARIANTS.extend(NOCSE_VARIANTS)
     files = pending_files(a.prog, a.lib)
+    if a.names:
+        files = {k: v for k, v in files.items() if k in a.names.split(",")}
     t1 = {}
     sources = tuple(a.source.split(","))
     if "t1" in sources:

@@ -3,6 +3,7 @@
 the number of words that differ from retail, until the function matches or nothing helps.
 
   python3 -I tools/hillclimb.py [--prog main] [--max-size 0x200] [--names A,B] [-j N] [--install] [--rounds 6]
+      [--setup 'CC gcc-2.8.1-nocse;AS gnu']
 
 The transforms are the hand recipes of docs/STATUS.md that can be applied blindly:
   - `x = 1;` -> `x += 1;` (a state set in `case 0`: gcc knows it is 0 and reuses the compare constant);
@@ -345,7 +346,12 @@ def main():
     ap.add_argument("-j", type=int, default=os.cpu_count())
     ap.add_argument("--rounds", type=int, default=6)
     ap.add_argument("--install", action="store_true")
+    ap.add_argument("--setup", default="", help="set-up lines for the draft, `;`-separated (tools/cc.py), e.g. "
+                    "'CC gcc-2.8.1-nocse;AS gnu' (each becomes a `// ...` line)")
     a = ap.parse_args()
+    global HEAD
+    if a.setup:
+        HEAD = "".join("// %s\n" % s.strip() for s in a.setup.split(";") if s.strip()) + HEAD
     lim = int(a.max_size, 0)
     names = a.names.split(",") if a.names else [n for n in S.pending(a.prog) if S.size_of(a.prog, n) <= lim]
     ctx = S.prog_context(a.prog)
