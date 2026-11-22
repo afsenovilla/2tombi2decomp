@@ -366,7 +366,18 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801131E0);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80113294);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801132F0);
+void func_801132F0(u8 *p)
+{
+    switch (p[5]) {
+    case 0:
+        p[5]++;
+        p[0] = 1;
+    case 1:
+        func_8007778C(p);
+        func_80077B5C(p);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80113348);
 

@@ -731,7 +731,19 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80121AD8);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80121C2C);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80122064);
+void func_8013DDD4();
+
+void func_80122064(void)
+{
+    u8 *r = func_80072DDC(0, 1, 2, 0xCE);
+
+    if (r) {
+        *(void **)(r + 0x1C) = func_8013DDD4;
+        *(s16 *)(r + 0x2E) = 0x445C;
+        *(s16 *)(r + 0x32) = -0x1529;
+        *(s16 *)(r + 0x36) = 0x1040;
+    }
+}
 
 void f_UpdateWaterTempleQuestPropActor();
 extern s16 D_801459AC[];
@@ -1097,7 +1109,21 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801293B0);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80129424);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801294B4);
+extern s32 D_800ECF80;
+extern u8 D_801486EC[];
+extern u8 D_800E7E80[];
+extern s16 D_1F800162;
+
+void func_801294B4(s16 a0)
+{
+    u8 *r = func_80072DDC(0, 0, 3, 0x10);
+
+    if (r) {
+        *(void **)(r + 0x1C) = f_UpdateWaterTempleQuestPropActor;
+        r[3] = 0x12;
+        *(s16 *)(r + 0x60) = a0;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80129508);
 
@@ -1145,7 +1171,16 @@ void func_80129760(void *arg0) {
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80129784);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801297E8);
+void func_801297E8(u8 *p)
+{
+    *(s32 *)(p + 0x3C) = D_800ECF80;
+    func_80077B38(p, D_801486EC, 5);
+    p[0xD] = 0;
+    *(s16 *)(p + 0x5C) = 0;
+    p[0xB] = 0x10;
+    *(s16 *)(p + 0x5A) = 0;
+    p[0x47] = 0;
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012983C);
 
@@ -1347,7 +1382,18 @@ s32 func_8012D320(void) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012D344);
+s32 func_8012D344(void)
+{
+    u8 *e = D_800E7E80;
+
+    if (e[0x29] == 0x81 && D_1F800162 >= -0x157C) {
+        if (*(s16 *)(e + 0x17E) & 0x8200) {
+            return 3;
+        }
+        return 2;
+    }
+    return 0;
+}
 
 void func_8012CCD4();
 
@@ -2065,7 +2111,6 @@ typedef struct {
     s16 pad8;
     s16 c;
 } S13AE38;
-extern u8 D_800E7E80[];
 
 s32 func_8013AEE0(void *a0)
 {
