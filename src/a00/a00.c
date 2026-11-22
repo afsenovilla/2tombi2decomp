@@ -1069,7 +1069,21 @@ void func_80127420(void *arg0) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80127450);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801274BC);
+extern u8 *D_1F800218;
+typedef struct { u8 pad[0xC0]; u8 *parts[1]; } AreaPartsOwner;
+
+s32 func_801274BC(u8 *a) {
+    s16 d;
+
+    d = M2C_FIELD(M2C_FIELD(a, AreaPartsOwner **, 0x10)->parts[M2C_FIELD(a, s16 *, 0x60)], s16 *, 0x2C) - M2C_FIELD(a, s16 *, 0x2E);
+    if (d >= 0x259) {
+        return 1;
+    }
+    if (d >= 0xFB) {
+        return -1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_DeliverChickItemToNest);
 
@@ -1196,7 +1210,13 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleA00InteriorSceneEffectActor);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012CE30);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_GetWindmillControllerBearing);
+s16 f_GetWindmillControllerBearing(u8 *a) {
+    u8 *t = D_1F800218;
+    s16 dx = M2C_FIELD(t, s16 *, 0x2E) - M2C_FIELD(a, s16 *, 0x2);
+    s16 dz = M2C_FIELD(t, s16 *, 0x36) - M2C_FIELD(a, s16 *, 0xA);
+
+    return func_80085690(-dz, dx);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012CEE0);
 

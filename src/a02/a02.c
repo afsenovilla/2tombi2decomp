@@ -802,7 +802,15 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80119E68);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80119F78);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011A010);
+s32 func_8011A010(u8 *a) {
+    if (a[3] == 2 && M2C_FIELD(a, s16 *, 0x62) == 0) {
+        if ((u16)(M2C_FIELD(a, u16 *, 0x60) - 0x81) < 2) {
+            return 3;
+        }
+        return 2;
+    }
+    return 2;
+}
 
 extern u8 D_800BF9EB;
 
@@ -1331,7 +1339,17 @@ void func_80122264(void *arg0) {
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801222DC);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801223B4);
+s32 func_801223B4(u8 *a) {
+    u8 *p = func_8006FB0C(a, M2C_FIELD(a, s16 *, 0x60));
+
+    PLAYER = p;
+    if (p != NULL) {
+        p[0x5E] = 2;
+        p[0x5F] |= 1;
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80122404);
 
