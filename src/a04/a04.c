@@ -1647,7 +1647,14 @@ s32 func_80135250(void *arg0, s32 arg1) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80135300);
+extern s16 D_80141E04[][4];
+
+void func_80135300(u8 *a, s32 i) {
+    M2C_FIELD(a, s16 *, 0x80) = D_80141E04[i][0];
+    M2C_FIELD(a, s16 *, 0x82) = D_80141E04[i][1];
+    M2C_FIELD(a, s16 *, 0x84) = D_80141E04[i][2];
+    M2C_FIELD(a, s16 *, 0x86) = D_80141E04[i][3];
+}
 
 extern s8 D_1F800160[];
 

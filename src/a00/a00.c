@@ -166,7 +166,24 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DB58);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DBE4);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DC74);
+void func_8010DC74(u8 *a, s32 target, s32 step) {
+    s32 v = M2C_FIELD(a, s32 *, 0x28);
+
+    if (v == target) {
+        return;
+    }
+    if (v < target) {
+        M2C_FIELD(a, s32 *, 0x28) = v + step;
+        if (target < v + step) {
+            M2C_FIELD(a, s32 *, 0x28) = target;
+        }
+    } else {
+        M2C_FIELD(a, s32 *, 0x28) = v - step;
+        if (v - step < target) {
+            M2C_FIELD(a, s32 *, 0x28) = target;
+        }
+    }
+}
 
 extern s8 D_800BF808[];
 extern u8 D_1F800137;

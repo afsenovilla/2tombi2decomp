@@ -420,7 +420,17 @@ void func_80115090(void *arg0) {
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801150EC);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80115148);
+extern s32 D_800BF844;
+#define PLAYER (*(u8 **)&D_800BF844)
+
+void func_80115148(u8 *a) {
+    if (func_80051B70(a, 0xC, 0x3E) == 0) {
+        a[0xD] = 0;
+        M2C_FIELD(a, s16 *, 0x54) = 0;
+        M2C_FIELD(a, s16 *, 0x56) = 0x898;
+        M2C_FIELD(a, s16 *, 0x58) = 0;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011518C);
 
@@ -845,7 +855,14 @@ s32 func_8011AAC0(u8 *a) {
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011AB34);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011ABC8);
+void func_8011ABC8(u8 *a) {
+    if (func_80051B70(a, 0xC, 0x33) == 0) {
+        a[0] = 2;
+        M2C_FIELD(a, s16 *, 0x54) = 0;
+        M2C_FIELD(a, s16 *, 0x56) = 0;
+        M2C_FIELD(a, s16 *, 0x58) = 0;
+    }
+}
 
 
 void func_8011AC0C(void *arg0) {
@@ -1063,7 +1080,6 @@ void func_8011EFC8(u8 *a)
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011F028);
 
-extern s32 D_800BF844;
 s32 func_8011F10C(void *arg0) {
     D_800BF844 = M2C_FIELD(arg0, s32 *, 0x14);
     return 1;
@@ -1182,7 +1198,16 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80121268);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateGranActor);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8012167C);
+s32 func_8012167C(void) {
+    u8 *p = PLAYER;
+
+    M2C_FIELD(p, s16 *, 0x58) += 0x190;
+    if (M2C_FIELD(p, s16 *, 0x58) >= 0xC00) {
+        M2C_FIELD(p, s16 *, 0x58) = 0xC00;
+        return 1;
+    }
+    return 0;
+}
 
 
 s32 func_801216C0(void *arg0) {
@@ -1253,7 +1278,19 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80122030);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80122140);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801221A8);
+s32 func_801221A8(void) {
+    u8 *p = PLAYER;
+
+    if (p != NULL) {
+        p[5] = 1;
+        M2C_FIELD(p, s16 *, 0x2E) = 0x22C4;
+        M2C_FIELD(p, s16 *, 0x32) = -0xAF0;
+        M2C_FIELD(p, s16 *, 0x60) = 0;
+        M2C_FIELD(p, s16 *, 0x36) = 0x1EBE;
+        return 1;
+    }
+    return 0;
+}
 
 
 void func_801221EC(void *arg0) {
