@@ -356,7 +356,27 @@ void func_80110788(u8 *a, u8 *b) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011080C);
+extern u8 D_800BF808_1760[];
+
+void func_8011080C(u8 *a) {
+    u8 *g = D_800BF808_1760;
+    u16 lim = M2C_FIELD(g, u16 *, 0xA);
+
+    if (g[0xF] == 2) {
+        if (M2C_FIELD(a, s16 *, 0x36) >= 0x41E7) {
+            lim += 0x28;
+        }
+    } else if (g[0xF] == 5) {
+        if (M2C_FIELD(a, s16 *, 0x2E) < 0x19DF) {
+            M2C_FIELD(a, s16 *, 0x2E) = 0x19DF;
+        }
+    }
+    if (!(a[0x145] & 1) && M2C_FIELD(a, s16 *, 0x32) >= (s16)lim - M2C_FIELD(a, s16 *, 0x62)) {
+        M2C_FIELD(a, s16 *, 0x32) = lim - M2C_FIELD(a, u16 *, 0x62);
+        func_80022C78(a);
+        a[0x29] |= 0x80;
+    }
+}
 
 s32 func_801108D4(u8 *a, u8 *b) {
     if (b[0x5E] != 0) {
@@ -518,7 +538,6 @@ s32 func_80112784(void) {
     return (u16)(D_1F800160_3621 - 0x50F0) < 0x1F0;
 }
 
-extern u8 D_800BF808_1760[];
 extern u8 D_800BF9FF;
 void f_UpdatePipeAreaQuestPickupActor();
 

@@ -1262,7 +1262,41 @@ void func_8011A1F0(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011A280);
+extern u8 D_800BF80B;
+extern u8 D_800BF901;
+
+s32 func_8011A280(u8 *a) {
+    switch (D_800BF80B) {
+    case 0x85:
+        M2C_FIELD(a, s16 *, 0x60) = 0x49;
+        break;
+    case 0x79:
+    case 0x7A:
+        if (D_800BF901 == 0xFF) {
+            M2C_FIELD(a, s16 *, 0x60) = 0x7B;
+        } else {
+            M2C_FIELD(a, s16 *, 0x60) = 0x7A;
+        }
+        break;
+    case 0x81:
+        if (D_800BF901 == 0xFF) {
+            M2C_FIELD(a, s16 *, 0x60) = 0x83;
+        } else {
+            M2C_FIELD(a, s16 *, 0x60) = D_800BF80B;
+        }
+        break;
+    case 0x82:
+        if (D_800BF901 == 0xFF) {
+            M2C_FIELD(a, s16 *, 0x60) = 0x84;
+        } else {
+            M2C_FIELD(a, s16 *, 0x60) = D_800BF80B;
+        }
+        break;
+    default:
+        return 0;
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011A348);
 
