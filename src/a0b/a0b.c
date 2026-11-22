@@ -1245,7 +1245,79 @@ void func_80114DE8(u16 *a, s16 *v)
     } while (++i < n);
 }
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80114ECC);
+extern u8 *D_8011D128[];
+extern u8 *D_8011DEBC[];
+extern u8 *D_8011F9C0[];
+extern u8 *D_80122A04[];
+extern u8 *D_80123DA0[];
+extern u8 *D_80123EE0[];
+#define EP_FRAME(a) (*(s16 *)((a) + 0x64))
+#define EP_MODEL(a) (*(u8 **)(*(u8 **)((a) + 0xC0) + 0x40))
+
+s32 func_80114ECC(u8 *a)
+{
+    switch (a[7]) {
+    case 0:
+        break;
+    case 1:
+        func_80114DE8(EP_MODEL(a), D_8011D128[EP_FRAME(a)]);
+        if (++EP_FRAME(a) >= 8) {
+            EP_FRAME(a) = 7;
+            return 1;
+        }
+        break;
+    case 2:
+        func_80114DE8(EP_MODEL(a), D_8011DEBC[EP_FRAME(a)]);
+        if (++EP_FRAME(a) >= 7) {
+            EP_FRAME(a) = 0;
+            a[7] = 0;
+            return 1;
+        }
+        break;
+    case 3:
+        func_80114DE8(EP_MODEL(a), D_8011F9C0[EP_FRAME(a)]);
+        if (++EP_FRAME(a) >= 6) {
+            EP_FRAME(a) = 5;
+            return 1;
+        }
+        break;
+    case 4:
+        func_80114DE8(EP_MODEL(a), D_8011F9C0[EP_FRAME(a)]);
+        if (++EP_FRAME(a) >= 14) {
+            EP_FRAME(a) = 13;
+            return 1;
+        }
+        break;
+    case 5:
+        func_80114DE8(EP_MODEL(a), D_80123EE0[EP_FRAME(a)]);
+        if (++EP_FRAME(a) >= 6) {
+            EP_FRAME(a) = 5;
+            return 1;
+        }
+        break;
+    case 6:
+    case 7:
+    case 8:
+        func_80114DE8(EP_MODEL(a), D_80122A04[EP_FRAME(a)]);
+        if (++EP_FRAME(a) >= 25) {
+            if (a[7] == 8) {
+                EP_FRAME(a) = 24;
+                return 1;
+            }
+            EP_FRAME(a) = 0;
+            a[7]++;
+        }
+        break;
+    case 9:
+        func_80114DE8(EP_MODEL(a), D_80123DA0[EP_FRAME(a)]);
+        if (++EP_FRAME(a) >= 10) {
+            EP_FRAME(a) = 9;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 extern SVec D_1F8000C0;
 extern LVec D_1F8000A0;
