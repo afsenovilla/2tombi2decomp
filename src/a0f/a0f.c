@@ -217,7 +217,29 @@ s32 func_8010D98C(u8 *a, s32 b, s32 c)
     return func_800495DC(a, 0, 0) > 0;
 }
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010DA1C);
+s32 func_8010DA1C(u8 *a)
+{
+    s32 r;
+    if (func_8004766C(a) < 0) {
+        func_80049760(a);
+        r = 1;
+    } else {
+        func_80049760(a);
+        if (a[0x2B] != 0) {
+            r = 0;
+        } else {
+            r = func_800495DC(a, 0, 0) > 0;
+        }
+    }
+    if (r != 0) {
+        a[0] = 2;
+        a[0x2B] = 2;
+        func_80074590(0xE, 0, 0);
+        func_80031470(2, a + 0x2C, 0, a + 0x68);
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010DAC4);
 
