@@ -946,7 +946,77 @@ void func_80026A68(ChildList2 *l)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80026AD0);
+extern u8 D_800BF818_7697;
+void f_RequestInteriorTransitionGateMode1(void);
+
+s32 func_80026AD0(u8 *a)
+{
+    u8 *g;
+
+    switch (a[5]) {
+    case 0:
+        {
+            u8 *h = D_800BF808;
+
+            if (h[0x10] != 1) {
+                return 0;
+            }
+            a[3] = h[0xF] + 1;
+        }
+        f_RequestInteriorTransitionGateMode2(a);
+        a[5]++;
+        break;
+    case 1:
+        g = D_800BF808;
+        if (g[7] != 0) {
+            return 0;
+        }
+        ((void (*)(u8 *))f_RequestInteriorTransitionGateMode1)(a);
+        f_StopVoicePlayback();
+        *(s16 *)(*(u8 **)D_1F800138 + 0x4C) = 3;
+        *(s16 *)(*(u8 **)D_1F800138 + 0x4E) = 0;
+        a[5] = 6;
+        g[0x10] = 2;
+        break;
+    case 2:
+        if (D_800BF80F_fcc6 != 0) {
+            return 0;
+        }
+        f_ReleaseInteriorTransitionControl(a);
+        a[5]++;
+        break;
+    case 3:
+        if (D_800BF818_7697 != 3) {
+            return 0;
+        }
+        f_RequestInteriorTransitionGateMode2(a);
+        a[5]++;
+        break;
+    case 4:
+        g = D_800BF808;
+        if (g[7] != 0) {
+            return 0;
+        }
+        f_RetireInteriorSceneChildren(a);
+        ((void (*)(u8 *))f_RequestInteriorTransitionGateMode1)(a);
+        *(s16 *)(*(u8 **)D_1F800138 + 0x4C) = 2;
+        *(s16 *)(*(u8 **)D_1F800138 + 0x4E) = 4;
+        g[0x10] = 4;
+        a[5]++;
+        break;
+    case 5:
+        if (D_800BF80F_fcc6 != 0) {
+            return 0;
+        }
+        a[5] = 0;
+        f_ReleaseInteriorTransitionControl(a);
+        return 0;
+    case 6:
+        a[5] = 2;
+        return 1;
+    }
+    return 0;
+}
 
 
 void func_80026C88(void)
