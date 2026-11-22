@@ -579,7 +579,32 @@ s32 func_8010B9CC(void)
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010BA24);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010BB20);
+typedef struct { u8 pad[0x5C]; u8 *p5C; } Bf808;
+extern Bf808 D_800BF808_71fd;
+extern u8 *D_800BF864;
+extern u8 D_800E807E;
+
+s32 func_8010BB20(u8 *a)
+{
+    switch (a[0x78]) {
+    case 0:
+        a[0x78]++;
+        D_800E807E = 1;
+        D_800BF808_71fd.p5C[4] = 3;
+        D_800BF808_71fd.p5C = (u8 *)func_8003116C(0xA01, a + 0x2C, 0);
+        func_80074590(0x37, -20, 0);
+        *(s16 *)(a + 0x40) = 90;
+        break;
+    case 1:
+        if (--*(s16 *)(a + 0x40) == -1) {
+            D_800E807E = 0;
+            D_800BF864[4] = 3;
+            return 1;
+        }
+        return 0;
+    }
+    return 0;
+}
 
 extern u8 *D_800BF860;
 s32 func_8010BBFC(u8 *a)

@@ -1069,7 +1069,28 @@ void func_8011369C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80113754);
+void func_80113754(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        *(s32 *)(a + 0x48) = 0;
+        *(s32 *)(a + 0x4C) = 0;
+        func_80031220(0xF05, a + 0x2C, 0);
+        func_80031220(0xF06, a + 0x2C, 0);
+        a[4] = 1;
+        a[7] = 0;
+    case 1:
+        if (++a[7] >= 30) {
+            a[4] = 2;
+        }
+        a[1] = 1;
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern RingVec D_80126B8C[];
 void func_8011382C(void) {

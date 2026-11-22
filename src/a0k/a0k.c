@@ -1130,7 +1130,51 @@ void func_801173A8(u8 *a)
     *(u16 *)(a + 0xA) = t;
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801173D4);
+typedef struct { u16 a, b; } Range;
+extern Range D_8011D888[];
+extern Range D_8011D8A0[];
+extern Range D_8011D8EC[];
+extern Range D_8011D908[];
+extern Range D_8011D94C[];
+extern u8 *D_1F80021C;
+
+void func_801173D4(s16 kind, s16 idx)
+{
+    Range *t;
+    s32 n, base;
+    u8 *p;
+    switch (kind) {
+    case 0:
+        t = D_8011D888;
+        n = 3;
+        base = 0;
+        break;
+    case 1:
+        t = D_8011D8A0;
+        n = 0x13;
+        base = 0;
+        break;
+    case 2:
+        t = D_8011D8EC;
+        n = 0x14;
+        base = 0;
+        break;
+    case 3:
+        t = D_8011D908;
+        n = 0xA;
+        base = 0;
+        break;
+    case 4:
+        t = D_8011D94C;
+        n = 0x11;
+        base = 0;
+        break;
+    default:
+        return;
+    }
+    p = D_1F80021C + t[idx].a * 32 + base * 32;
+    func_8001D2A8(n, p, p + (t[idx].b + 1) * 32, 0);
+}
 
 extern s16 D_800BED82;
 extern M2C_UNK D_8011D5D0;
