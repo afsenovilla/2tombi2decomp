@@ -150,7 +150,35 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010C1C8);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010C3C4);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", f_DispatchCircusMovingActorContacts);
+extern u8 **D_1F80013C;
+extern u8 D_1F800144;
+
+void f_DispatchCircusMovingActorContacts(u8 *a)
+{
+    u8 **l = D_1F80013C;
+    u8 *b;
+
+    D_1F800182 = D_1F800144;
+    while (D_1F800182 != 0) {
+        b = *l;
+        D_1F800182--;
+        l++;
+        if (b[0] & 1) {
+            if (b[0xC] == 9) {
+                func_8010C1C8(a, b);
+            } else if (b[2] != 8) {
+                if (b[2] == 0x54 && func_80022F04(a, b) != 0) {
+                s32 temp_s0 = (s32) (func_80083F50(D_1F80009C_baed) * (M2C_FIELD(a, s16 *, 0x80) + M2C_FIELD(b, s16 *, 0x80))) >> 0xC;
+                s32 temp_lo = func_80083E80(D_1F80009C_baed) * (M2C_FIELD(a, s16 *, 0x80) + M2C_FIELD(b, s16 *, 0x80));
+                M2C_FIELD(a, s16 *, 0x2E) = (s16) (M2C_FIELD(b, u16 *, 0x2E) + temp_s0);
+                M2C_FIELD(a, s16 *, 0x36) = (s16) (M2C_FIELD(b, u16 *, 0x36) - (temp_lo >> 0xC));
+                }
+            } else {
+                func_8010BAD0(a, b);
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_DispatchCircusActorContacts);
 
