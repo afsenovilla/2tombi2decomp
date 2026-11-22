@@ -486,7 +486,52 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveCarriedChickSurfaceContact);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80111128);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaPlaneSwitchActorContact);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+extern u16 D_1F80018E_f9ee;
+extern u16 D_1F80018C;
+extern u8 D_800BF840;
+extern u16 D_1F80008C;
+
+void f_ResolveTombaPlaneSwitchActorContact(u8 *a, u8 *b)
+{
+    s32 k;
+    s32 g;
+    s32 m;
+    s32 c;
+    s32 x, y;
+    if (func_8002300C(a, b, H(b, 0x80) * 4) == 0) {
+        return;
+    }
+    b[0x2B] = 1;
+    if (D_1F800137 == 0) {
+        m = U(a, 0x140) - 0x400;
+        g = func_80085690(-(s16)(U(b, 0x36) - U(a, 0x36)), (s16)(U(b, 0x2E) - U(a, 0x2E))) << 4;
+        if (abs((s16)(g - m * 16)) < 0x1000) {
+            D_1F80018E_f9ee = 0x4100;
+            D_1F80018C = U(a, 0x140) - 0x400;
+            D_800BF840 = 0x42;
+        } else {
+            c = U(a, 0x140) + 0x400;
+            if (abs((s16)(g - c * 16)) < 0x1000) {
+                D_1F80018C = c;
+                D_1F80018E_f9ee = 0x4200;
+                D_800BF840 = 0x43;
+            }
+        }
+    }
+    if (H(a, 0x80) + H(b, 0x80) + 60 < D_1F80008C) {
+        return;
+    }
+    b[0x2B] = 2;
+    if (H(a, 0x80) + H(b, 0x80) < D_1F80008C) {
+        return;
+    }
+    x = (func_80083F50(D_1F80009C + 0x800) * (H(a, 0x80) + H(b, 0x80))) >> 12;
+    y = (func_80083E80(D_1F80009C + 0x800) * (H(a, 0x80) + H(b, 0x80))) >> 12;
+    U(a, 0x2E) = U(b, 0x2E) + x;
+    U(a, 0x36) = U(b, 0x36) - y;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActorPairType0Contact);
 
@@ -3073,6 +3118,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80132D58);
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
+#include "gte.h"
 extern u8 D_800E7E80[];
 void f_UpdateAquaticPlantGrabMotion(u8 *a)
 {
@@ -3999,7 +4045,57 @@ void func_8013E620(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013E840);
+extern u8 D_800A0B38[];
+extern u8 D_8014BD14[];
+extern u8 D_8014BD48[];
+
+void func_8013E840(u8 *a)
+{
+    s16 sp[6];
+    s8 *s = (s8 *)(a + 0x50);
+    u8 *e;
+
+    switch (a[4]) {
+    case 0:
+        *(u8 **)(a + 0x50) = D_800A0B38;
+        *(s32 *)(a + 0x48) = 0;
+        *(s16 *)(a + 0x4C) = 0;
+        s[4] = 0;
+        a[0x29] = 0;
+        *(s16 *)(a + 4) = 1;
+    case 1:
+        *(u8 **)(a + 0x3C) = D_8014BD14 + s[4] * 4;
+        a[0x29] = D_8014BD48[s[4]];
+        if (++s[4] >= 0xC) {
+            a[4] = 2;
+        } else {
+            func_8002B278(a);
+        }
+        switch (a[5]) {
+        case 2: break;
+        case 0:
+            if (++s[4] >= 6) {
+                a[5] = 1;
+            }
+            break;
+        case 1:
+            sp[1] = *(s16 *)(a + 0x2C);
+            sp[3] = *(s16 *)(a + 0x2E) - 0x8C;
+            sp[5] = *(s16 *)(a + 0x30);
+            e = func_8003116C(8, sp, 0);
+            if (e != NULL) {
+                e[0x28] = a[0x28];
+            }
+            a[5]++;
+            break;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 typedef struct {
     s16 x, y, z, pad;
