@@ -2618,7 +2618,15 @@ s32 func_8012F634(u8 *a) {
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012F690);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012F734);
+extern u8 D_1F800207_9c67;
+extern s16 D_1F800162_a8d4;
+
+s32 func_8012F734(u8 *a)
+{
+    if ((u32)(D_1F800207_9c67 - 0xF) >= 6) return 1;
+    if (D_1F800162_a8d4 >= -10000 && a[1] == 0) return 1;
+    return 0;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012F788);
 

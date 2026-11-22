@@ -2495,7 +2495,43 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80127928);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80127C28);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80127E18);
+typedef struct { s16 p0, x, p4, y, p8, z; } HV;
+extern u8 *D_1F800214;
+extern u8 D_800BF9D3;
+extern s16 D_1F800164_d75f;
+
+//-- a
+s32 func_80127E18(u8 *a)
+{
+    HV v;
+    u8 *g = D_1F800214;
+
+    switch (a[0x78]) {
+    default:
+        return 0;
+    case 0:
+        if (*(s16 *)(a + 0x72) == 0 && D_800BF9D3 != 0) {
+            return 1;
+        }
+        v.x = *(s16 *)(g + 0x2E);
+        v.y = *(s16 *)(g + 0x32);
+        if (*(s16 *)(a + 0x72) == 0) {
+            v.z = 0x35B6;
+        } else {
+            v.z = D_1F800164_d75f;
+        }
+        func_80070F00(a, 1, &v);
+        func_800708B4(3);
+        a[0x78]++;
+        break;
+    case 1:
+        if (g[3] == 0) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80127EF8);
 
@@ -2706,7 +2742,29 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012D4E4);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012D864);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012D8E4);
+s32 func_8012D8E4(u8 *p, s32 a1, s32 step)
+{
+    s16 target = a1;
+    s16 cur = *(s16 *)(p + 0x58);
+
+    if (cur == target) {
+        return 1;
+    }
+    if (target < cur) {
+        *(s16 *)(p + 0x58) = cur - step;
+        if (target >= *(s16 *)(p + 0x58)) {
+            *(s16 *)(p + 0x58) = a1;
+            return 1;
+        }
+    } else if (cur < target) {
+        *(s16 *)(p + 0x58) = cur + step;
+        if (*(s16 *)(p + 0x58) >= target) {
+            *(s16 *)(p + 0x58) = a1;
+            return 1;
+        }
+    }
+    return 0;
+}
 
 void func_8012D954(u8 *p)
 {
@@ -3108,7 +3166,32 @@ s32 func_8013AF68(u8 *p)
     return 1;
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013AFD8);
+
+//-- a
+s32 func_8013AFD8(u8 *a)
+{
+    HV v;
+    u8 *g = D_1F800214;
+
+    switch (a[0x78]) {
+    default:
+        return 0;
+    case 0:
+        v.x = 0x34E8;
+        v.y = -0x1E46;
+        v.z = 0x7530;
+        func_80070F00(a, 1, &v);
+        func_800708B4(3);
+        a[0x78]++;
+        break;
+    case 1:
+        if (g[3] == 0) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013B074);
 
