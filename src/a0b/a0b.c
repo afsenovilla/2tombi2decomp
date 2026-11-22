@@ -1231,7 +1231,30 @@ INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80115B28);
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80115EEC);
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801163C4);
+s32 func_801163C4(u8 *a0)
+{
+    u8 *a = a0;
+    Cam *c = &D_1F8000D0;
+    s16 dx, dy, dz;
+    s32 d;
+    dx = *(u16 *)(a + 0x2E) - c->at[0].hi;
+    dy = *(u16 *)(a + 0x32) - c->at[1].hi;
+    dz = *(u16 *)(a + 0x36) - c->at[2].hi;
+    d = (u16)func_80077FB0(dx * dx + dy * dy + dz * dz);
+    a[1] = 0;
+    if (d < 0x200) {
+        return 0;
+    }
+    if (d > 0x2300) {
+        return 0;
+    }
+    if ((c->dir[0] * dx + c->dir[1] * dy + c->dir[2] * dz) / (d * 4) < 0x358) {
+        return 0;
+    }
+    a[1] = 1;
+    func_80077EBC(a);
+    return 1;
+}
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80116520);
 
