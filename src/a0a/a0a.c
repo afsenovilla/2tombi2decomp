@@ -924,7 +924,66 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010F97C);
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010FD74);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8011024C);
+#define gte_SetRotMatrix(r0) __asm__ volatile("lw	$12, 0( %0 );" "lw	$13, 4( %0 );" "ctc2	$12, $0;" "ctc2	$13, $1;" "lw	$12, 8( %0 );" "lw	$13, 12( %0 );" "lw	$14, 16( %0 );" "ctc2	$12, $2;" "ctc2	$13, $3;" "ctc2	$14, $4" : : "r"(r0) : "$12", "$13", "$14")
+#define gte_SetTransMatrix(r0) __asm__ volatile("lw	$12, 20( %0 );" "lw	$13, 24( %0 );" "ctc2	$12, $5;" "lw	$14, 28( %0 );" "ctc2	$13, $6;" "ctc2	$14, $7" : : "r"(r0) : "$12", "$13", "$14")
+extern u8 D_1F8000F8[];
+extern void *D_800ED8C8_a098;
+typedef struct {
+    u8 pad0[6];
+    u8 count;
+    u8 pad7[5];
+    u32 *tbl;
+    u16 list[1];
+} PartList;
+typedef struct { u8 a, b; } T2BytePair;
+extern s16 D_8011BF1C;
+extern s16 D_8011BF1E;
+extern T2BytePair D_8011BF20[];
+extern s16 D_8011BF14;
+extern s16 D_8011BF16;
+extern u16 D_8011BF18;
+extern s16 D_8011BF1A;
+
+void func_8011024C(PartList *a)
+{
+    u16 *p = a->list;
+    u16 *end;
+    void *ot;
+    u32 *tbl;
+    u32 *e;
+    u32 v;
+    void *r;
+    T2BytePair *q;
+    T2BytePair *base;
+    if (a->count == 0) {
+        return;
+    }
+    end = &a->list[a->count];
+    ot = D_800ED8C8_a098;
+    tbl = a->tbl;
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_SetTransMatrix(D_1F8000F8);
+    for (; p < end; p++) {
+        e = &tbl[*p];
+        v = *e;
+        r = func_8010F97C(e + 1, ot, v & 0xFF);
+        v >>= 16;
+        func_8010FD74(r, ot, v & 0xFF);
+    }
+    D_8011BF18 = (D_8011BF18 - 1) & 0x3F;
+    if (--D_8011BF1C < 0) {
+        D_8011BF1E++;
+        if (D_8011BF1E >= 6) {
+            D_8011BF1E = 0;
+        }
+        D_8011BF1C = 3;
+    }
+    base = D_8011BF20;
+    q = &base[D_8011BF1E];
+    D_8011BF14 = q->a + D_8011BF18;
+    D_8011BF1A = q->a;
+    D_8011BF16 = q->b;
+}
 
 typedef struct {
     u32 tag;
@@ -1991,7 +2050,38 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80114784);
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_801149D8);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80114B38);
+typedef struct { s16 x, y, z; } V3;
+extern V3 D_8011EC68[];
+
+void func_80114B38(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        func_801149D8(a);
+        *(s16 *)(a + 0x2E) = D_8011EC68[a[3]].x;
+        *(s16 *)(a + 0x32) = D_8011EC68[a[3]].y;
+        *(s16 *)(a + 0x36) = D_8011EC68[a[3]].z;
+        func_8004766C(a);
+        func_80048750(a);
+        *(u16 *)(a + 0x56) = D_1F8001A0;
+        if (a[3] == 0) {
+            *(u16 *)(a + 0x56) -= 0xD8;
+        } else {
+            *(u16 *)(a + 0x56) -= 0x200;
+        }
+        *(u16 *)(a + 0x32) += 0xAF;
+        func_800517F8(a);
+        break;
+    case 1:
+        func_80114784(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_80114C6C(u8 *a)
 {
@@ -2038,8 +2128,6 @@ void func_80114D50(u8 *a)
     func_80114630(a);
 }
 
-typedef struct { s16 x, y, z; } V3;
-extern V3 D_8011EC68[];
 void func_80114DB0(u8 *a)
 {
     *(s16 *)(a + 0x2E) = D_8011EC68[a[3]].x;
