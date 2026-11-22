@@ -5343,7 +5343,41 @@ void func_8003FFCC(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004022C);
+s32 f_ProbeActorTerrainAlongFacing(s32 arg0, s32 arg1, s32 arg2);
+
+void func_8004022C(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        *(s16 *)(a + 0x4A) = 0x1000;
+        a[6] = 1;
+        *(s16 *)(a + 0x50) = 0x200;
+        break;
+    case 1:
+        if (a[0x29] != 0) {
+            a[6] = 2;
+            break;
+        }
+        *(s32 *)(a + 0x30) += *(s16 *)(a + 0x4A) << 8;
+        *(u16 *)(a + 0x4A) += *(u16 *)(a + 0x50);
+        if (*(s16 *)(a + 0x4A) > 0x3000) {
+            *(s16 *)(a + 0x4A) = 0x3000;
+        }
+        f_ResolveActorAreaPlanePosition(a);
+        if (a[0x29] != 0 || f_ProbeActorTerrainAlongFacing((s32)a, 0, (s16)(*(u16 *)(a + 0x86) - *(u16 *)(a + 0x84)))) {
+            a[6]++;
+        }
+        break;
+    case 2:
+        f_SpawnEffectTemplateInstances(*(void **)(*(u8 **)(a + 0xC0) + 0x40), a + 0x2C, 0x700, 8);
+        f_PlaySoundEffect(0xC, 0, 0);
+        a[4] = 3;
+        if (a[0x5E] == 5) {
+            ((Counter48_808 *)D_800BF808)->n--;
+        }
+        break;
+    }
+}
 
 void func_80040390(u8 *a)
 {
@@ -14861,7 +14895,38 @@ s32 f_TestWarpDestinationUnlocked(s32 arg0) {
     return D_800BFE50 & (1 << arg0);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800788AC);
+extern u16 D_800F23A4;
+/* func_800794C8, inlined */
+static inline void Step_88AC(void)
+{
+    u16 *p;
+    u16 t;
+
+    if (--D_800BED8C == 0) {
+        p = D_800BED88;
+        if (p[1] == 0) {
+            p += 2;
+        }
+        D_800ECF54_4583[0] = p[0];
+        t = p[1];
+        p += 2;
+        D_800BED88 = p;
+        D_800BED8C = t;
+    }
+}
+
+void func_800788AC(void)
+{
+    D_800ECF54_4583[1] = D_800ECF54_4583[0];
+    if (D_1F80019A == 1) {
+        Step_88AC();
+    } else {
+        D_800ECF54_4583[0] = func_800524B4(0);
+    }
+    D_800E7E68 = D_800ECF54_4583[0] & ~D_800ECF54_4583[1];
+    D_800F23A4 = D_800ECF54_4583[1] & ~D_800ECF54_4583[0];
+    func_8005229C();
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80078988);
 
