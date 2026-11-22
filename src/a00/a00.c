@@ -1760,7 +1760,23 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ConfigureAquaticPlantMotion);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ClassifyAquaticPlantContact);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateAquaticPlantCollisionBounds);
+void f_UpdateAquaticPlantCollisionBounds(u8 *a) {
+    s32 k1, k2, t;
+
+    if (a[3] == 5) {
+        k1 = 0x76;
+        k2 = 0xF5;
+    } else {
+        k1 = 0x80;
+        k2 = 0x113;
+    }
+    t = (k1 * M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), u16 *, 0x38)) >> 12;
+    M2C_FIELD(a, s16 *, 0x80) = t;
+    M2C_FIELD(a, s16 *, 0x82) = t << 1;
+    t = (k2 * M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), u16 *, 0x3A)) >> 12;
+    M2C_FIELD(a, s16 *, 0x84) = t;
+    M2C_FIELD(a, s16 *, 0x86) = t << 1;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateSingleSegmentSwingMotion);
 

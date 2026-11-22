@@ -989,7 +989,21 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011BC0C);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011BE48);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011BF84);
+void func_8011BE48();
+
+u8 *func_8011BF84(u8 *a, s32 b) {
+    u8 *p = func_8007A980(1, 4, 0);
+
+    if (p != NULL) {
+        M2C_FIELD(p, void **, 0x1C) = func_8011BE48;
+        p[2] = 0x28;
+        p[3] = b;
+        M2C_FIELD(p, u8 **, 0x10) = a;
+        p[0x28] |= 0x80;
+        return p;
+    }
+    return NULL;
+}
 
 
 void func_8011BFF4(void *arg0, void *arg1, s16 arg2, s32 arg3) {

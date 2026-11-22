@@ -261,7 +261,12 @@ s32 func_801114A0(s32 arg0, s32 arg1) {
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801114C4);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80111560);
+void func_80111560(u8 *a, u8 *b) {
+    if (func_8001F054(a, b) == 2 && !(M2C_FIELD(a, u16 *, 0x17E) & 0x200)) {
+        a[0x2B] = D_1F80009C_baed >> 4;
+        func_80022D08(a, b, 1, 1);
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801115D0);
 
