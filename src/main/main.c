@@ -764,7 +764,28 @@ void func_80024CF4(void)
     D_8009D22C[D_800BF870.unk0]();
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80024D34);
+extern u8 **D_1F800158_fd3d;
+extern u8 D_1F80015E_6ff1;
+
+s32 func_80024D34(u8 *a)
+{
+    u8 **list;
+    u8 *e;
+
+    if (!(*(u16 *)(a + 0x17E) & 0x200)) {
+        list = D_1F800158_fd3d;
+        D_1F800182_5650 = D_1F80015E_6ff1;
+        while (D_1F800182_5650 != 0) {
+            e = *list;
+            D_1F800182_5650--;
+            list++;
+            if ((e[0] & 4) && e[2] == 2) {
+                func_80114320(a, e);
+            }
+        }
+    }
+    return D_1F800080;
+}
 
 extern u8 D_800E7EEF;
 extern u8 D_80017334[];
@@ -6160,7 +6181,19 @@ void f_ResetPopupDisplayEntry(PopupDisplayEntry *e)
     e->unk10 = 0xFF;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_RemoveOldestPopupDisplayEntry);
+typedef struct { s32 w[0x23]; } Popup_EE90;
+typedef struct { u8 pad[8]; s16 count; u8 padA[2]; Popup_EE90 e[1]; } PopupList_EE90;
+
+void f_RemoveOldestPopupDisplayEntry(PopupList_EE90 *m)
+{
+    s32 i;
+
+    m->count--;
+    for (i = 0; i < m->count; i++) {
+        m->e[i] = m->e[i + 1];
+    }
+    f_ResetPopupDisplayEntry((PopupDisplayEntry *)&m->e[i]);
+}
 
 // Copies one segment of an encoded message (bytes up to the 0xFA page break or the 0xFF end) and ends the copy
 // with 0xFF; returns the end of the copy.
