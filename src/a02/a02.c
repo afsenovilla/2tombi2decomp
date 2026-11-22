@@ -2032,7 +2032,24 @@ s32 func_80122A28(u8 *a) {
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80122AC4);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80122EA8);
+void func_80122EA8(u8 *a) {
+    s16 v[6];
+    s32 i;
+    s32 s, c;
+
+    i = 0;
+    M2C_FIELD(a, s16 *, 0x56) = 0;
+    do {
+        i++;
+        s = (func_80083F50(M2C_FIELD(a, s16 *, 0x56)) * 70) >> 12;
+        c = func_80083E80(M2C_FIELD(a, s16 *, 0x56));
+        M2C_FIELD(a, s16 *, 0x56) += 0x400;
+        v[1] = M2C_FIELD(a, s16 *, 0x2E) + s;
+        v[3] = M2C_FIELD(a, s16 *, 0x32);
+        v[5] = M2C_FIELD(a, s16 *, 0x36) - ((c * 70) >> 12);
+        func_8003116C(0, v, -0x5A);
+    } while (i < 4);
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80122F6C);
 
