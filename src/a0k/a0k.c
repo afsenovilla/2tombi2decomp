@@ -243,7 +243,15 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010FDD8);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010FF0C);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801100B4);
+s32 func_801100B4(u8 *a, u8 *b, s32 bit)
+{
+    u8 *q = a + 0x60;
+
+    if (b[0] == 0xFF) {
+        return -1;
+    }
+    return (*(u32 *)(q + 0x14) & (1 << bit)) == 0;
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801100E4);
 
@@ -255,10 +263,23 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_UpdateBerryNutsRetryMenu);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80110938);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80110A34);
-
 extern u8 D_1F800137;
 extern u8 D_800BF808[];
+extern u8 D_800BF871;
+void func_80112884();
+
+void func_80110A34(void)
+{
+    u8 *s;
+
+    D_1F800137 = 2;
+    s = D_800BF808;
+    s[7] = 2;
+    s[5] = 3;
+    s[0x31] = 0;
+    D_800BF871 = 5;
+}
+
 
 void func_80110A68(void)
 {
@@ -318,7 +339,6 @@ void func_80111F94(void *arg0) {
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80111FE8);
 
-extern u8 D_800BF871;
 void func_801120BC(void *arg0) {
     if ((u8) D_800BF871 < 4U) {
         M2C_FIELD(arg0, s8 *, 4) = 3;
@@ -333,7 +353,15 @@ void func_801120BC(void *arg0) {
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112120);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112218);
+void func_80112218(u8 *a)
+{
+    func_80051B70(a, 0xC, 0xA);
+    a[0] = 1;
+    *(s16 *)(a + 0x80) = 0xA0;
+    *(s16 *)(a + 0x82) = 0x140;
+    *(s16 *)(a + 0x84) = 0x190;
+    *(s16 *)(a + 0x86) = 0x190;
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112268);
 
@@ -363,9 +391,27 @@ void func_80112394(u8 *a)
     a[0x47] = 0;
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801123E4);
+void func_801123E4(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8011243C);
+    func_8004BD64(a, 0, *(s32 *)(o + 0xD8), *(s32 *)(o + 0xCC), 0);
+    a[1] = 1;
+    *(s16 *)(a + 0x32) -= 0x10;
+    *(s16 *)(a + 0x36) += 0x10;
+}
+
+s32 func_8011243C(void *a)
+{
+    u8 *r = func_80072DDC(a, 0, 3, 0x10);
+
+    if (r != NULL) {
+        *(void **)(r + 0x1C) = f_UpdateTinyMouseVillageRewardActor;
+        r[3] = 4;
+        return 1;
+    }
+    return 0;
+}
 
 extern s8 *D_800ECF58[];
 extern void *D_80017334[];
@@ -395,7 +441,17 @@ void func_801124D8(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8011254C);
+s32 func_8011254C(void *a)
+{
+    u8 *r = func_80072DDC(a, 1, 3, 0x10);
+
+    if (r != NULL) {
+        *(void **)(r + 0x1C) = f_UpdateTinyMouseVillageRewardActor;
+        r[3] = 5;
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112598);
 
@@ -447,7 +503,17 @@ void func_8011273C(u8 *a)
     *(s16 *)(a + 0x58) = 0;
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112774);
+s32 func_80112774(void *a)
+{
+    u8 *r = func_80072DDC(a, 0, 3, 0x10);
+
+    if (r != NULL) {
+        *(void **)(r + 0x1C) = f_UpdateTinyMouseVillageRewardActor;
+        r[3] = 7;
+        return 1;
+    }
+    return 0;
+}
 
 extern void *D_800ECF80;
 extern u8 D_8011FC38[];
@@ -481,7 +547,15 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112884);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112D80);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112F34);
+u8 *func_80112F34(void *a)
+{
+    u8 *r = func_80072DDC(a, 3, 3, 0x23);
+
+    if (r != NULL) {
+        *(void **)(r + 0x1C) = func_80112884;
+    }
+    return r;
+}
 
 
 void func_80112F70(void) {

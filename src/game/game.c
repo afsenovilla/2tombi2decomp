@@ -74,9 +74,31 @@ s32 func_80108D64(void) {
     return (s32) temp_v0;
 }
 
-INCLUDE_ASM("asm/game/nonmatchings/game", func_80108D80);
+extern u8 *D_1F800138_5432;
 
-INCLUDE_ASM("asm/game/nonmatchings/game", func_80108DA4);
+void func_80108D80(void)
+{
+    u8 *p = D_1F800138_5432;
+
+    *(s16 *)(p + 0x4A) = 1;
+    *(s16 *)(p + 0x4C) = 2;
+    *(s16 *)(p + 0x4E) = 3;
+}
+
+extern u8 D_1F800236;
+
+void func_80108DA4(void)
+{
+    u8 *p;
+
+    if (D_1F800236 >= 5) {
+        func_80050894(0);
+    }
+    p = D_1F800138_5432;
+    *(s16 *)(p + 0x4A) = 1;
+    *(s16 *)(p + 0x4C) = 2;
+    *(s16 *)(p + 0x4E) = 6;
+}
 
 INCLUDE_ASM("asm/game/nonmatchings/game", func_80108DF4);
 

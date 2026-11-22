@@ -30,4 +30,12 @@ INCLUDE_ASM("asm/demo/nonmatchings/demo", func_8010755C);
 
 INCLUDE_ASM("asm/demo/nonmatchings/demo", func_801075F8);
 
-INCLUDE_ASM("asm/demo/nonmatchings/demo", func_801076B0);
+void func_801076B0(s32 a)
+{
+    s32 n = 0x1C0;
+
+    do {
+        while (func_80089BAC(2, a, 0) == 0) {
+        }
+    } while (func_8008CC30(n) == 0);
+}
