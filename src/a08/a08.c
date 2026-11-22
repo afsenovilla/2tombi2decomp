@@ -295,7 +295,59 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010EA88);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010ED98);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010EF9C);
+extern u8 D_800E7E80[];
+extern u8 D_800BF808[];
+extern u8 D_800BF80F;
+/* func_8010F288, inlined */
+static inline void func_8010F288_inl(u8 *p)
+{
+    if (D_800BF808[0xE] != 0 && p[0x16B] == 8) {
+        u16 h = *(u16 *)(D_800BF808 + 0xA);
+
+        if (!(p[0x145] & 1) && !(*(s16 *)(p + 0x32) < (s16)h - *(s16 *)(p + 0x62))) {
+            *(s16 *)(p + 0x32) = h - *(s16 *)(p + 0x62);
+            func_80022C78(p);
+            p[0x29] |= 0x80;
+        }
+    } else {
+        func_8010B328(p);
+    }
+    if (D_1F800137 == 0 && D_800BF80F == 0) {
+        func_8010B104(p);
+    }
+}
+
+void func_8010EF9C(void)
+{
+    u8 *p = D_800E7E80;
+
+    func_8002288C(p);
+    switch (p[0]) {
+    case 0:
+    case 6:
+        break;
+    case 1:
+    case 3:
+    case 4:
+    case 5:
+    case 7:
+    default:
+        func_80022760(p);
+        func_8010E4CC(p);
+    case 2:
+        if (*(u32 *)(p + 0x158) < 2) {
+            func_8010E7C0(p);
+        }
+        break;
+    }
+    func_80022554();
+    func_8010EA88();
+    func_8010ED98();
+    func_8010E080();
+    func_8010E2A4();
+    func_8010E420();
+    func_8010F288_inl(p);
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010F110);
 
@@ -311,7 +363,24 @@ void func_8010F214(u8 *p)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010F288);
+
+void func_8010F288(u8 *p)
+{
+    if (D_800BF808[0xE] != 0 && p[0x16B] == 8) {
+        u16 h = *(u16 *)(D_800BF808 + 0xA);
+
+        if (!(p[0x145] & 1) && !(*(s16 *)(p + 0x32) < (s16)h - *(s16 *)(p + 0x62))) {
+            *(s16 *)(p + 0x32) = h - *(s16 *)(p + 0x62);
+            func_80022C78(p);
+            p[0x29] |= 0x80;
+        }
+    } else {
+        func_8010B328(p);
+    }
+    if (D_1F800137 == 0 && D_800BF80F == 0) {
+        func_8010B104(p);
+    }
+}
 
 void func_8010F35C(u8 *a, u8 *b)
 {
@@ -1138,7 +1207,6 @@ typedef struct {
 extern u8 D_800A1CD4[];
 extern u8 D_80144C10[];
 extern s32 D_1F800090_3460;
-extern u8 D_800BF808[];
 void func_8011B654(u8 *p)
 {
     SV v;
@@ -1473,7 +1541,6 @@ void func_8011C260(u8 *a)
     }
 }
 
-extern u8 D_800E7E80[];
 void func_8011C4BC(u8 *a)
 {
     s32 r = 0;
@@ -2930,7 +2997,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80125F6C);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", f_UpdateWaterTempleInteriorEnvironmentActor);
 
-extern u8 D_800BF80F;
 extern u8 D_8014597C[];
 void func_801267D4(u8 *a)
 {

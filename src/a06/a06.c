@@ -404,7 +404,69 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801102A4);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011065C);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801109F8);
+extern u8 D_800E7E80[];
+extern u8 **D_1F800154;
+extern u8 D_1F80015C;
+/* func_801121D0, inlined */
+static inline void func_801121D0_inl(void)
+{
+    u8 **list = D_1F800154;
+    u8 *a;
+
+    for (D_1F800183 = D_1F80015C; D_1F800183 != 0;) {
+        a = *list++;
+        D_1F800183--;
+        if (!(a[0] & 2)) {
+            switch (a[2]) {
+            case 1:
+                if (a[3] != 1) {
+                    break;
+                }
+            case 0:
+            case 4:
+                func_8010F2E8(a);
+                break;
+            }
+        }
+    }
+}
+
+void func_801109F8(void)
+{
+    u8 *p = D_800E7E80;
+
+    func_8002288C(p);
+    switch (p[0]) {
+    case 0:
+    case 6:
+        break;
+    case 1:
+    case 3:
+    case 4:
+    case 5:
+    case 7:
+    default:
+        do {
+            func_80022760(p);
+        } while (0);
+        func_8010F91C(p);
+        if (p[0] == 6) {
+            break;
+        }
+    case 2:
+        if (*(u32 *)(p + 0x158) < 2) {
+            func_8010FECC(p);
+        }
+        break;
+    }
+    func_80022554();
+    func_801102A4();
+    func_8011065C();
+    func_801121D0_inl();
+    func_8010F608();
+    func_8010F870();
+    func_8010B59C(p);
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80110B7C);
 
@@ -533,7 +595,6 @@ typedef struct {
 extern u8 D_801422B0[];
 void f_UpdateDonglinInteriorQuestObjectActor();
 extern s32 D_800BF544;
-extern u8 D_800E7E80[];
 extern s32 D_1F800184;
 void func_801112BC(u8 *a0, S11130C *a1)
 {
@@ -799,8 +860,6 @@ s32 func_8011215C(void *arg0, s8 *arg1) {
     return 1;
 }
 
-extern u8 **D_1F800154;
-extern u8 D_1F80015C;
 void func_801121D0(void) {
     u8 **list = D_1F800154;
     u8 *a;
