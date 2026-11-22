@@ -149,7 +149,26 @@ s32 func_8010C8E4(u8 *a, u8 *b) {
     return 0;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C9F8);
+void func_8010C9F8(u8 *a, u8 *b, s32 f) {
+    s16 ang;
+
+    a[0x160] = 0;
+    if (f == 0) {
+        func_80054D14(a, 0x29, 4);
+    }
+    a[7] = 0;
+    func_80076D68(a);
+    ang = M2C_FIELD(a, s16 *, 0x56) + 0x800;
+    M2C_FIELD(a, s16 *, 0x2E) = M2C_FIELD(b, s16 *, 0x2E) + ((func_80083F50(ang) * M2C_FIELD(a, s16 *, 0x152)) >> 12);
+    M2C_FIELD(a, s16 *, 0x36) = M2C_FIELD(b, s16 *, 0x36) - ((func_80083E80(ang) * M2C_FIELD(a, s16 *, 0x152)) >> 12);
+    M2C_FIELD(a, s16 *, 0x32) = M2C_FIELD(b, s16 *, 0x32) + M2C_FIELD(a, s16 *, 0x156);
+    if (b[0x5E] == 2) {
+        M2C_FIELD(a, s32 *, 0x158) = 0;
+        a[0x164] = 0;
+        M2C_FIELD(a, s16 *, 0x40) = 8;
+        func_80056D44(a, 0);
+    }
+}
 
 extern u16 D_1F8001A4;
 void func_8010CAEC(u8 *a)
