@@ -421,7 +421,90 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010D30C);
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010D5D8);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010D7D4);
+typedef struct { s16 x, y, z, pad; } AreaSVec;
+typedef struct {
+    u16 type;
+    u8 pad2[6];
+    u8 mag0;
+    u8 mag1;
+    u8 x;
+    u8 y;
+} AreaPadAnalog;
+typedef struct {
+    u8 pad[0xA];
+    s16 count;
+    u8 *entries;
+    u32 pending;
+    u32 done;
+} RewardSet;
+typedef struct {
+    s16 pad0;
+    s16 x;
+    s16 pad4;
+    s16 y;
+    s16 pad8;
+    s16 z;
+} HiPos;
+typedef struct { u8 pad0[7]; u8 unk7; u8 pad8[0x29]; u8 unk31; s16 unk32; } AreaState808_7;
+typedef struct {
+    u32 tag;
+    u32 rgbc;
+    s16 x0, y0;
+    u8 u0, v0;
+    u16 clut;
+    s16 x1, y1;
+    u8 u1, v1;
+    u16 tpage;
+    s16 x2, y2;
+    u8 u2, v2;
+    u16 pad1;
+    s16 x3, y3;
+    u8 u3, v3;
+    u16 pad2;
+} AreaPolyFT4;
+extern u32 *D_800ED8C8;
+
+AreaPolyFT4 *func_8010D7D4(AreaPolyFT4 *p, s32 x, s32 y, s32 w, s32 h, s16 c, s16 cy) {
+    u32 rgbc;
+    u16 clut;
+    s16 x0, x1;
+
+    if (c <= 0) return p; {
+        rgbc = ((c | 0x2E00) << 16) | ((c << 8) | c);
+        clut = ((cy + 0x1F0) << 6) | 0x17;
+        x0 = x - w;
+        x1 = x + w;
+        p->u0 = p->u2 = 0xB9;
+        p->u1 = p->u3 = 0xE7;
+        p->v0 = p->v1 = 0x51;
+        p->v2 = p->v3 = 0x67;
+        *(u32 *)((u8 *)p + 4) = rgbc;
+        p->tpage = 0x35;
+        p->clut = clut;
+        p->x0 = p->x2 = x0;
+        p->x1 = p->x3 = x1;
+        p->y0 = p->y1 = y - h;
+        p->y2 = p->y3 = y;
+        p->tag = D_800ED8C8[4] | 0x09000000;
+        D_800ED8C8[4] = (u32)p;
+        p++;
+        p->u0 = p->u2 = 0xB9;
+        p->u1 = p->u3 = 0xE7;
+        p->v0 = p->v1 = 0x67;
+        p->v2 = p->v3 = 0x51;
+        *(u32 *)((u8 *)p + 4) = rgbc;
+        p->tpage = 0x35;
+        p->clut = clut;
+        p->x0 = p->x2 = x0;
+        p->x1 = p->x3 = x1;
+        p->y0 = p->y1 = y;
+        p->y2 = p->y3 = y + h;
+        p->tag = D_800ED8C8[4] | 0x09000000;
+        D_800ED8C8[4] = (u32)p;
+        return p + 1;
+    }
+
+}
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010D910);
 

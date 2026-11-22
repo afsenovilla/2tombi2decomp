@@ -136,7 +136,80 @@ void func_8010A7D0(void) {
 void func_8010A7D8(void) {
 }
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010A7E0);
+typedef struct { u16 lo; u16 hi; } Fix;
+typedef struct {
+    Fix at[3];
+    Fix pos[3];
+    s16 dir[3];
+    u8 pad1E[0x2A];
+    u8 m[0x20];
+} Cam;
+typedef struct {
+    u8 kind, b1, b2, slot;
+    s16 x, y, z;
+    u8 mode, padB;
+    void *cb;
+} Spawn;
+typedef struct {
+    u8 pad[8];
+    s16 x, y, z;
+} Pos;
+typedef struct {
+    u8 pad[8];
+    s16 count;
+    u8 padA[2];
+    u8 *list[15];
+} Owner;
+extern Spawn *D_80115448[];
+extern Pos D_800BF808_76d5;
+typedef struct { u8 x, y, z; s8 t; } Spark;
+typedef struct { s16 a, b, c, d; } S8;
+typedef struct { s16 x, y, z, pad; } SV;
+typedef struct { s16 x, y, z; } V3;
+typedef struct { s16 x, y, w, h; } ClutRect;
+typedef struct { s16 m[3][3]; s16 pad; s32 t[3]; } AreaMatrix;
+typedef struct { s16 x, y, z, pad; } AreaSVec;
+typedef struct { u8 pad[0x28]; AreaMatrix m; } AreaScratchD0;
+typedef struct { s16 x, y, z, pad; } SVecL;
+typedef struct { u16 x, p0, y, p1, z, p2; } LVecL;
+typedef struct { u16 a, b; } Range;
+
+void func_8010A7E0(Owner *a, s32 sel)
+{
+    Spawn *e;
+    u8 *p;
+    a->count = 0;
+    e = D_80115448[sel];
+    while (e->kind != 0xFF) {
+        if (sel == 0 || a->count < 15) {
+            switch (e->mode) {
+            case 0:
+                break;
+            case 1:
+                D_800BF808_76d5.x = e->x;
+                D_800BF808_76d5.y = e->y;
+                D_800BF808_76d5.z = e->z;
+                break;
+            }
+            p = func_80072DDC(a, e->kind, e->b1, e->b2);
+            if (p != 0) {
+                *(s32 *)(p + 0x2C) = e->x << 16;
+                *(s32 *)(p + 0x30) = e->y << 16;
+                *(s32 *)(p + 0x34) = e->z << 16;
+                p[3] = e->slot;
+                *(s16 *)(p + 0x54) = 0;
+                *(s16 *)(p + 0x56) = 0;
+                *(s16 *)(p + 0x58) = 0;
+                *(void **)(p + 0x1C) = e->cb;
+                if (sel != 0) {
+                    a->list[a->count] = p;
+                    a->count++;
+                }
+            }
+        }
+        e++;
+    }
+}
 
 extern s32 D_800BF850;
 extern s16 D_800BED80;

@@ -367,7 +367,43 @@ INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010AF58);
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010B240);
 
-INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010B5BC);
+#define gte_SetRotMatrix(r0) __asm__ volatile("lw	$12, 0( %0 );" "lw	$13, 4( %0 );" "ctc2	$12, $0;" "ctc2	$13, $1;" "lw	$12, 8( %0 );" "lw	$13, 12( %0 );" "lw	$14, 16( %0 );" "ctc2	$12, $2;" "ctc2	$13, $3;" "ctc2	$14, $4" : : "r"(r0) : "$12", "$13", "$14")
+#define gte_SetTransMatrix(r0) __asm__ volatile("lw	$12, 20( %0 );" "lw	$13, 24( %0 );" "ctc2	$12, $5;" "lw	$14, 28( %0 );" "ctc2	$13, $6;" "ctc2	$14, $7" : : "r"(r0) : "$12", "$13", "$14")
+extern u8 D_1F8000F8[];
+extern void *D_800ED8C8;
+typedef struct {
+    u8 pad0[6];
+    u8 count;
+    u8 pad7[5];
+    u32 *tbl;
+    u16 list[1];
+} PartList;
+
+void func_8010B5BC(PartList *a)
+{
+    u16 *p = a->list;
+    u16 *end;
+    void *ot;
+    u32 *tbl;
+    u32 *e;
+    u32 v;
+    void *r;
+    if (a->count == 0) {
+        return;
+    }
+    end = &a->list[a->count];
+    ot = D_800ED8C8;
+    tbl = a->tbl;
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_SetTransMatrix(D_1F8000F8);
+    for (; p < end; p++) {
+        e = &tbl[*p];
+        v = *e;
+        r = func_8010AF58(e + 1, ot, v & 0xFF);
+        v >>= 16;
+        func_8010B240(r, ot, v & 0xFF);
+    }
+}
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010B6BC);
 

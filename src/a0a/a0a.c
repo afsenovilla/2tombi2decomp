@@ -32,7 +32,51 @@ void func_80109314(u8 *a, u8 *b)
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010944C);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80109688);
+extern u8 D_1F800253;
+#define F16(p, o) M2C_FIELD(p, s16 *, o)
+#define FU16(p, o) M2C_FIELD(p, u16 *, o)
+
+s32 func_80109688(u8 *a, u8 *b) {
+    s16 dx, dz, dy, d;
+    u16 h, r, bh, ah;
+    s32 y;
+
+    dx = F16(a, 0x2E) - F16(b, 0x2E);
+    dz = F16(a, 0x36) - F16(b, 0x36);
+    r = func_80084080(dx * dx + dz * dz);
+    if (F16(a, 0x80) + F16(b, 0x80) < r) {
+        return -1;
+    }
+    {
+        dy = FU16(a, 0x32) - FU16(b, 0x32);
+        bh = FU16(b, 0x84); ah = FU16(a, 0x84); h = bh + ah;
+        if ((u16)(dy + h) > F16(a, 0x86) + F16(b, 0x86)) {
+        fail:
+            return -1;
+        }
+        if (dy < 0) {
+            d = -h;
+        } else {
+            d = (F16(b, 0x86) - bh) + (F16(a, 0x86) - ah);
+        }
+        if (d <= 0) {
+            if (a[0x145] & 1) {
+                goto fail;
+            }
+            b[0x29] = 1;
+            M2C_FIELD(a, s32 *, 0x30) = (F16(b, 0x32) + d) << 16;
+            func_80022C78(a);
+            return 2;
+        }
+        y = F16(b, 0x32) + d;
+        D_1F800253 = 4;
+        M2C_FIELD(a, s32 *, 0x30) = y << 16;
+        if (a[0x145] == 1 && F16(a, 0x4A) < 0) {
+            F16(a, 0x4A) = 0;
+        }
+        return 3;
+    }
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_801097FC);
 
@@ -302,7 +346,51 @@ void func_8010BAD4(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010BBB4);
+void func_8010BBB4(u8 *a, u8 *b, s32 ang)
+{
+    Cam *c;
+    s32 h, d;
+    s16 t, dist, x, z;
+    if (D_800BF870.unk0 == 0xC || D_800BF870.unk0 == 0xF) {
+        return;
+    }
+    if (ang != 0) {
+        if (D_1F800246_6eef == 2) {
+            dist = 0x258;
+            if (W(a, 0x60) < 0x190) {
+                return;
+            }
+            h = 0x190;
+        } else {
+            dist = 0x3E8;
+            h = 0x320;
+        }
+        t = ang + 0x800;
+        t = U(b, 0x56) + t;
+    } else {
+        h = 0x190;
+        t = U(b, 0x56) + 0x800;
+        dist = -D_1F8000EE;
+    }
+    c = &D_1F8000D0;
+    d = c->at[1].hi + h - c->pos[1].hi;
+    if ((u16)(d + 10) >= 0x15) {
+        W(c, 4) -= (d << 16) >> 3;
+    } else {
+        c->at[1].hi = c->pos[1].hi - h;
+        a[0x66] |= 2;
+    }
+    x = U(b, 0x2E) + ((func_80083F50(t) * dist) >> 12);
+    z = U(b, 0x36) - ((func_80083E80(t) * dist) >> 12) - D_1F8000D0.at[2].hi;
+    x = x - D_1F8000D0.at[0].hi;
+    t = func_80085690(-z, x);
+    dist = func_80084080(x * x + z * z);
+    W(&D_1F8000D0, 0) += func_80083F50(t) * dist;
+    W(&D_1F8000D0, 8) -= func_80083E80(t) * dist;
+    if (dist < 0x191) {
+        a[0x66] |= 1;
+    }
+}
 
 extern u8 D_800E7E80[];
 extern void *D_8011BCB0[];
@@ -804,7 +892,90 @@ void func_80112DF4(u8 *a)
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80112F0C);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_801130A0);
+typedef struct { s16 x, y, z, pad; } AreaSVec;
+typedef struct {
+    u16 type;
+    u8 pad2[6];
+    u8 mag0;
+    u8 mag1;
+    u8 x;
+    u8 y;
+} AreaPadAnalog;
+typedef struct {
+    u8 pad[0xA];
+    s16 count;
+    u8 *entries;
+    u32 pending;
+    u32 done;
+} RewardSet;
+typedef struct {
+    s16 pad0;
+    s16 x;
+    s16 pad4;
+    s16 y;
+    s16 pad8;
+    s16 z;
+} HiPos;
+typedef struct { u8 pad0[7]; u8 unk7; u8 pad8[0x29]; u8 unk31; s16 unk32; } AreaState808_7;
+typedef struct {
+    u32 tag;
+    u32 rgbc;
+    s16 x0, y0;
+    u8 u0, v0;
+    u16 clut;
+    s16 x1, y1;
+    u8 u1, v1;
+    u16 tpage;
+    s16 x2, y2;
+    u8 u2, v2;
+    u16 pad1;
+    s16 x3, y3;
+    u8 u3, v3;
+    u16 pad2;
+} AreaPolyFT4;
+extern u32 *D_800ED8C8;
+
+AreaPolyFT4 *func_801130A0(AreaPolyFT4 *p, s32 x, s32 y, s32 w, s32 h, s16 c, s16 cy) {
+    u32 rgbc;
+    u16 clut;
+    s16 x0, x1;
+
+    if (c <= 0) return p; {
+        rgbc = ((c | 0x2E00) << 16) | ((c << 8) | c);
+        clut = ((cy + 0x1F0) << 6) | 0x17;
+        x0 = x - w;
+        x1 = x + w;
+        p->u0 = p->u2 = 0xB9;
+        p->u1 = p->u3 = 0xE7;
+        p->v0 = p->v1 = 0x51;
+        p->v2 = p->v3 = 0x67;
+        *(u32 *)((u8 *)p + 4) = rgbc;
+        p->tpage = 0x35;
+        p->clut = clut;
+        p->x0 = p->x2 = x0;
+        p->x1 = p->x3 = x1;
+        p->y0 = p->y1 = y - h;
+        p->y2 = p->y3 = y;
+        p->tag = D_800ED8C8[4] | 0x09000000;
+        D_800ED8C8[4] = (u32)p;
+        p++;
+        p->u0 = p->u2 = 0xB9;
+        p->u1 = p->u3 = 0xE7;
+        p->v0 = p->v1 = 0x67;
+        p->v2 = p->v3 = 0x51;
+        *(u32 *)((u8 *)p + 4) = rgbc;
+        p->tpage = 0x35;
+        p->clut = clut;
+        p->x0 = p->x2 = x0;
+        p->x1 = p->x3 = x1;
+        p->y0 = p->y1 = y;
+        p->y2 = p->y3 = y + h;
+        p->tag = D_800ED8C8[4] | 0x09000000;
+        D_800ED8C8[4] = (u32)p;
+        return p + 1;
+    }
+
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_801131DC);
 
@@ -1123,7 +1294,6 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80114E64);
 
 typedef struct { s16 x, y, w, h; } ClutRect;
 typedef struct { s16 m[3][3]; s16 pad; s32 t[3]; } AreaMatrix;
-typedef struct { s16 x, y, z, pad; } AreaSVec;
 extern AreaSVec D_1F8000C0_f4ad;
 typedef struct { u8 pad[0x28]; AreaMatrix m; } AreaScratchD0;
 extern AreaScratchD0 D_1F8000D0_2539;
