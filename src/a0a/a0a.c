@@ -910,7 +910,36 @@ void func_80113D4C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80113DDC);
+void func_80113DDC(u8 *a)
+{
+    u8 *p = *(u8 **)(a + 0x10);
+    s16 *q = (s16 *)(a + 0x50);
+    s16 y, z;
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        H(a, 0x50) = 0x1000;
+        H(a, 0x2C) = H(p, 0x2E);
+        y = H(a, 0x4E);
+        z = H(p, 0x36);
+        H(a, 0x2E) = y;
+        H(a, 0x30) = z;
+    case 1:
+        if (p[4] >= 2) {
+            a[4] = 3;
+            break;
+        }
+        if (*q >= -0xFFE) {
+            *q -= 0x199;
+        }
+        a[1] = 1;
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80113EA4);
 
