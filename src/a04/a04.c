@@ -1789,7 +1789,38 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", f_UpdateHolyTreeInteractionSequence);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012296C);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80122F08);
+extern u8 D_80141464[];
+
+s32 func_80122F08(u8 *p)
+{
+    s32 s = p[7];
+
+    switch (s) {
+    case 0:
+        if (!func_8002300C(D_800E7E80, p, *(s16 *)(p + 0x80) * 2 + 8)) {
+            return 0;
+        }
+        if (func_8005308C()) {
+            p[7]++;
+            func_80042354(1, 1);
+            return 0;
+        }
+        break;
+    case 1:
+        p[7] = 2;
+        func_80040CDC(p, 0, D_80141464);
+        p[0x70] = s;
+        break;
+    case 2:
+        func_80041098(p);
+        if (p[0x70] != 0xFF) {
+            return 0;
+        }
+        func_80042310();
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80123008);
 
