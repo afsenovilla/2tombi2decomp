@@ -3813,7 +3813,60 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_QueryActorTerrainSurface);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SelectTerrainSurfaceForProbeHeight);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80048D3C);
+extern u16 *D_800ECF74;
+extern u8 D_1F8001FE;
+extern u16 D_1F8001BA;
+extern u8 D_1F8001FC;
+extern u8 D_1F8001FD;
+extern u16 D_1F8001AA;
+extern u16 D_1F8001AE;
+extern u16 D_1F8001AC;
+extern u16 D_1F8001B0;
+
+void func_80048D3C(void)
+{
+    u16 *h;
+    u16 *p;
+    u16 a, b, t;
+
+    switch (D_800BF870.unk0) {
+    case 2: case 3: case 7: case 20: case 21:
+        return;
+    }
+    h = D_800ECF74;
+    D_1F8001FE = 1;
+    D_1F8001C8 = h;
+    p = h + h[1];
+    a = p[0];
+    b = p[1];
+    D_1F8001CC = p + 10;
+    D_1F8001B2 = a;
+    D_1F8001B6 = b;
+    D_1F8001B4 = p[2];
+    D_1F8001B8 = p[3];
+    D_1F8001BA = p[4];
+    D_1F8001D0 = p + p[6];
+    D_1F8001D4 = (u8 *)(p + p[7]);
+    D_1F8001D8 = p + p[8];
+    D_1F8001DC = p + p[9];
+    t = p[5];
+    D_1F8001FC = t;
+    D_1F8001FD = t >> 8;
+    if (a <= b) {
+        D_1F8001AA = a;
+        D_1F8001AE = b - a;
+    } else {
+        D_1F8001AA = b;
+        D_1F8001AE = a - b;
+    }
+    if (D_1F8001B4 <= D_1F8001B8) {
+        D_1F8001AC = D_1F8001B4;
+        D_1F8001B0 = D_1F8001B8 - D_1F8001B4;
+    } else {
+        D_1F8001AC = D_1F8001B8;
+        D_1F8001B0 = D_1F8001B4 - D_1F8001B8;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_LoadAreaPlaneDescriptor);
 
@@ -3922,7 +3975,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80049800);
 
 typedef struct { u8 on; u8 flags; u8 pad[10]; } SpuVoiceSlot_238;
 extern SpuVoiceSlot_238 D_800BE238_df3f[];
-extern u8 D_1F8001FE;
 extern u16 *D_1F8001E0;
 extern s16 D_800BED80;
 extern s32 D_800BED78;
@@ -9178,7 +9230,62 @@ void func_8007BE18(u8 a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007BF20);
+extern u8 D_800BF84A;
+extern u8 D_1F80023B_0a71;
+extern u8 D_1F80019B_e707;
+void func_8007BE18(u8 a);
+s32 f_ControlStreamedAudioTrack(s32 track);
+void func_80045558(s32 arg0, s32 arg1, s32 arg2, void *arg3);
+
+void func_8007BF20(s32 a, s32 b)
+{
+    s32 v;
+
+    switch (D_800BF84A) {
+    case 0:
+        f_StopVoicePlayback();
+        ((void (*)(s32))func_80045558)(1);
+        D_800BF808[0x42]++;
+        if (b == 0) {
+            ((s32 (*)(s32, s32))f_ControlStreamedAudioTrack)(0xC, 1);
+            break;
+        }
+        if (D_1F800137_104c == 1) {
+            break;
+        }
+        ((s32 (*)(s32, s32))f_ControlStreamedAudioTrack)(D_1F80023B_0a71, 1);
+        break;
+    case 1:
+        ((void (*)(s32))func_8007BE18)(a);
+        if (*(u16 *)(*(u8 **)D_1F800138 + 0x50) < 2) {
+            break;
+        }
+        if (b == 0) {
+            D_800BF84A = 3;
+            break;
+        }
+        D_800BF808[0x42]++;
+        f_StopVoicePlayback();
+        break;
+    case 2:
+        v = func_80045580(1);
+        goto chk;
+    case 3:
+        v = D_1F80019B_e707;
+    chk:
+        if (v != 0) {
+            D_800BF808[0x42]++;
+        }
+        break;
+    case 4:
+        ((void (*)(s32))func_8007BE18)(a);
+        if ((a != 0 || (*(u8 **)D_1F800138)[0x6B] != 7) && b == 1 && D_1F800137_104c != 1) {
+            ((s32 (*)(s32, s32))f_ControlStreamedAudioTrack)(D_1F80023B_0a71, 1);
+        }
+        D_800BF84A = 0;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C0D0);
 
