@@ -4370,7 +4370,32 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013DAFC);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013DBC0);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013DD58);
+typedef struct { s16 x, y, z, pad; } SVecDD58;
+extern SVecDD58 D_1F8000C0;
+extern u8 D_1F800000[];
+extern u8 D_1F8000D0[];
+
+void func_8013DD58(u8 *a)
+{
+    s32 i;
+    u8 *o;
+
+    for (i = 0; i < a[8]; i++) {
+        o = ((u8 **)(a + 0xC0))[i];
+        D_1F8000C0.x = *(s16 *)(o + 0x2C);
+        D_1F8000C0.y = *(s16 *)(o + 0x30);
+        D_1F8000C0.z = *(s16 *)(o + 0x34);
+        func_80084110(&D_1F8000D0[0x28], o + 0x18, D_1F800000);
+        func_80084220(&D_1F8000C0, D_1F800000 + 0x14);
+        { u8 *d = D_1F8000D0;
+        *(s32 *)(D_1F800000 + 0x14) += *(s32 *)(d + 0x3C);
+        *(s32 *)(D_1F800000 + 0x18) += *(s32 *)(d + 0x40);
+        *(s32 *)(D_1F800000 + 0x1C) += *(s32 *)(d + 0x44); }
+        func_80084660(D_1F800000);
+        func_80084690(D_1F800000);
+        func_8013DBC0(a, o);
+    }
+}
 
 void func_8013DE84(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x60) = 0xD;
