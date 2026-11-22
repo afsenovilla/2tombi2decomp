@@ -322,7 +322,22 @@ void func_8010CF3C(u8 *a)
 
 INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010CF94);
 
-INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010D094);
+void func_8010D094(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+
+    *(void **)(a + 0x3C) = D_800ECF80;
+    func_80077B38(a, D_8010D8AC, 4);
+    a[0xB] = 0x10;
+    a[0xD] = 0;
+    *(s16 *)(a + 0x5C) = 0;
+    *(s16 *)(a + 0x5A) = 0;
+    a[0x47] = 0;
+    a[8] = 0xE0;
+    *(s16 *)(a + 0x2E) = *(s16 *)(o + 0x2E);
+    *(s16 *)(a + 0x32) = *(s16 *)(o + 0x32) - 0x118;
+    *(s16 *)(a + 0x36) = *(s16 *)(o + 0x36);
+}
 
 
 void func_8010D124(void *arg0) {

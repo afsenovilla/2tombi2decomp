@@ -256,7 +256,29 @@ void func_8010F7B0(s16 *a, s16 m)
     }
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010F830);
+extern u8 D_1F800137;
+
+void func_8010F830(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+
+    switch (a[6]) {
+    case 0:
+        o[0x2B] = 1;
+        a[6]++;
+    case 1:
+        func_80076D68(a);
+        if (D_1F800137 == 0) {
+            a[0x180] = 0x14;
+            a[4] = 1;
+            a[5] = 0;
+            a[6] = 0;
+            a[7] = 0;
+            func_80054D14(a, 2, 6);
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010F8CC);
 
@@ -308,7 +330,6 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_UpdateBerryNutsRetryMenu);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80110938);
 
-extern u8 D_1F800137;
 extern u8 D_800BF808[];
 extern u8 D_800BF871;
 void func_80112884();
