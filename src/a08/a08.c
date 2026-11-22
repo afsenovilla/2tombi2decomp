@@ -1032,7 +1032,44 @@ void func_8011B654(u8 *p)
     func_80027768(D_80144C10, 0, -0xA, p[0x60]);
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011B6C0);
+// nearcopy: 6 words off, C from a05 func_80139F44
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+#include "gte.h"
+typedef struct { s32 a, b; } Pair9F44;
+typedef struct { Pair9F44 e[14]; } Tbl9F44;
+extern Tbl9F44 D_80109864;
+
+void func_8011B6C0(u8 *a)
+{
+    Tbl9F44 t = D_80109864;
+
+    switch (a[4]) {
+    case 0:
+        *(s16 *)(a + 0x4E) = func_8009A450();
+        a[4] = 1;
+        a[7] = 0xFF;
+    case 1:
+        if (++a[7] >= 0xE) {
+            a[4] = 2;
+            break;
+        }
+        {
+            Pair9F44 *e;
+            *(s32 *)(a + 0x34) = *(s32 *)(a + 0x38);
+            e = &t.e[a[7]];
+            *(s32 *)(a + 0x3C) = e->a;
+            *(s32 *)(a + 0x50) = e->b;
+        }
+        func_8002B278(a);
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_8011B7E4(u8 *p) {
     s32 *d = D_1F800090;
