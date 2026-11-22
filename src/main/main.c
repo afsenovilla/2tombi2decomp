@@ -11648,7 +11648,45 @@ void func_80066538(void *arg0) {
     f_ResolveTombaGroundTerrainContact(arg0);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800665F4);
+s32 func_800665F4(u8 *a)
+{
+    u16 k;
+    u8 *g;
+
+    if (*(s16 *)(a + 0x6A) & 0x8000) {
+        k = *(u16 *)(a + 0x6A) & 0xF00;
+        if (k == 0x100 || k == 0x200) {
+            if (*(u16 *)(a + 0x17E) & 0x100) {
+                g = (u8 *)&D_800BF870;
+                if (D_800BF870.unk0 == 0) {
+                    func_801140D0(a);
+                } else if (D_800BF870.unk0 == 6) {
+                    if (!(*(u16 *)(g + 0x5E6) & 0x40)) {
+                        a[5] = 4;
+                        a[6] = 0xB;
+                    } else {
+                        func_80110DD0(a);
+                    }
+                } else if (D_800BF870.unk0 == 8) {
+                    func_8010F110(a);
+                } else if (D_800BF870.unk0 == 0xE) {
+                    func_8010A3DC(a);
+                }
+                a[0x144] = 0;
+                *(s16 *)(a + 0x58) = 0;
+                *(s16 *)(a + 0x50) = 0;
+                a[0x145] = 0;
+                a[0x148] = 0;
+            } else {
+                a[5] = 4;
+                a[6] = 0xB;
+            }
+            return 1;
+        }
+        return 0;
+    }
+    return 0;
+}
 
 void func_8006670C(void *arg0) {
     u16 temp_v0;
