@@ -1473,4 +1473,134 @@ void func_8018FA88(u8 n)
     }
 }
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018FBCC);
+void func_8018FBCC(void)
+{
+    CrdMenu *a = &D_800BF498;
+
+    s32 k;
+    u8 j;
+    a->x3E = 0;
+    func_8018F660(a);
+    func_8018A1E8(a);
+    switch (D_800BF498.x0) {
+    case 0:
+        func_8018DC2C(a);
+        break;
+    case 1:
+        func_8018DD38(a);
+        break;
+    case 2:
+        func_8018DFEC(a);
+        break;
+    case 3:
+        k = a->x3E;
+        j = k;
+        if (k == 0) {
+            break;
+        }
+        if (j == 1) {
+            func_8018D74C(a);
+            break;
+        }
+        a->x50 = 0;
+        a->x44 = 0;
+        a->x4A[1] = 0xFC;
+        a->x4A[0] = 0xFC;
+        ((u8 *)a + a->x46)[0x48] = 0;
+        ((u8 *)a + a->x46)[0x4E] = 0xFF;
+        a->x46 = 0xFF;
+        a->x47 = 0;
+        a->sel = 0;
+        a->x54 = 0;
+        a->x56 = 0;
+        a->x3 = 0;
+        a->x2 = 0;
+        a->x1 = 0;
+        a->x0 = 0xF;
+        break;
+    case 4:
+        func_8018E2B4(a);
+        break;
+    case 5:
+        func_8018E54C(a);
+        break;
+    case 6:
+        func_8018E6BC(a);
+        break;
+    case 7:
+        func_8018E95C(a);
+        break;
+    case 8:
+        func_8018EC00(a);
+        break;
+    case 9:
+        switch (a->x1) {
+        case 0:
+            a->x50 = 0x1E;
+            a->x1++;
+        case 1:
+            if (a->x50 != 0) {
+                a->x50--;
+                if (D_800E7E68 & 0x6000) {
+                    a->x50 = 0;
+                }
+                break;
+            }
+            if (!(a->x3C & 0x80)) {
+                a->x0 = 3;
+                a->x2 = 0;
+                a->x1 = 0;
+                a->x3F = 0xC;
+                break;
+            }
+            func_8001CBA8(a, a->x46);
+            *(u16 *)(D_1F800138 + 0x50) = 5;
+            break;
+        }
+        break;
+    case 10:
+        func_8018ED94(a);
+        break;
+    case 11:
+        func_8018EFDC(a);
+        break;
+    case 12:
+        func_8018F280(a);
+        break;
+    case 13:
+        switch (a->x1) {
+        case 0:
+            a->x50 = 0x1E;
+            a->x1++;
+        case 1:
+            if (a->x50 != 0) {
+                a->x50--;
+                if (D_800E7E68 & 0x6000) {
+                    a->x50 = 0;
+                }
+                break;
+            }
+            *(u16 *)(D_1F800138 + 0x50) = 4;
+            break;
+        }
+        break;
+    case 14:
+        func_8018F414(a);
+        break;
+    case 15:
+        if (a->x50 != 0) {
+            a->x50--;
+            break;
+        }
+        if (a->x41 != 0xFF) {
+            a->x2 = 0;
+            a->x1 = 0;
+            a->x0 = a->x3;
+        }
+        break;
+    case 16:
+        func_8018F548(a);
+        break;
+    }
+    func_8018F854(a);
+}
