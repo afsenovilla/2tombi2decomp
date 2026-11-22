@@ -1565,7 +1565,19 @@ void func_8012E034(void *arg0)
   *((s8 *) (((signed char *) arg0) + 8)) = new_var;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeTownQuestRewardVisualModel);
+void f_InitializeTownQuestRewardVisualModel(u8 *a) {
+    if (func_80051B70(a, 0xC, 0x4F) == 0) {
+        switch (a[3]) {
+        case 3:
+            M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), s16 *, 0x8) = 0xB6;
+            break;
+        case 4:
+            M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), s16 *, 0x8) = -0xB6;
+            break;
+        }
+        func_800517F8(a);
+    }
+}
 
 void func_8012E0D0(void *a)
 {
