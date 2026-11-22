@@ -3427,7 +3427,34 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", f_UpdateLastEvilPigAccessActor);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012BC44);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012BF5C);
+extern u8 D_800BFA46;
+extern u8 D_80145B34[];
+
+s32 func_8012BF5C(u8 *a)
+{
+    s32 s = a[5];
+
+    switch (s) {
+    case 0:
+        func_8007778C(a);
+        if (D_800BFA46 & 0x40) {
+            func_80040D68(a, D_80145B34);
+            a[0x70] = 2;
+            a[5]++;
+        }
+        break;
+    case 1:
+        a[1] = 1;
+        func_80077E7C(a);
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[3] = 1;
+            a[5] = 0;
+        }
+        break;
+    }
+    return func_8004190C(a);
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012C018);
 
