@@ -6972,7 +6972,65 @@ void func_8006C7C4(void)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C80C);
+typedef struct CamClampY { u8 pad0[0x12]; s16 y; } CamClampY;
+extern CamClampY D_1F8000D0_8dc8;
+
+void func_8006C80C(void)
+{
+    CamClampY *c;
+
+
+    switch (D_800BF870.unk0) {
+    case 1:
+        c = &D_1F8000D0_8dc8;
+        if (c->y < -0x279C) {
+            c->y = -0x279C;
+        }
+        break;
+    case 4:
+        if (D_800BF870.pad1[0] == 7) {
+            if ((s16)D_800E7EB6 < 0x1A90) {
+                
+                if (D_1F8000D0_8dc8.y > -0x1C84) {
+                    D_1F8000D0_8dc8.y = -0x1C84;
+                } else if (D_1F8000D0_8dc8.y > -0x1964) {
+                    D_1F8000D0_8dc8.y = -0x1964;
+                }
+            }
+        } else {
+            c = &D_1F8000D0_8dc8;
+            if (c->y >= -0x19C7) {
+                c->y = -0x19C8;
+            }
+        }
+        break;
+    case 6:
+        if (D_1F800207_9c67 == 0xE) {
+            c = &D_1F8000D0_8dc8;
+            if (c->y < -0x1C20) {
+                c->y = -0x1C20;
+            }
+        } else {
+            c = &D_1F8000D0_8dc8;
+            if (c->y < -0x23F0) {
+                c->y = -0x23F0;
+            }
+        }
+        break;
+    case 10:
+        c = &D_1F8000D0_8dc8;
+        if (c->y < -0x870) {
+            c->y = -0x870;
+        }
+        break;
+    case 13:
+        c = &D_1F8000D0_8dc8;
+        if (c->y >= -0x577) {
+            c->y = -0x578;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C988);
 
