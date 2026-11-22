@@ -11719,13 +11719,93 @@ void func_80068610(void *arg0, void *arg1) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80068698);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80068A94);
+/* a05 func_80126598, inlined (rsin / rcos, angle at 0xBE) */
+static inline void Move_8A94(u8 *a)
+{
+    s32 v, x, z;
+
+    *(u16 *)(a + 0x58) += 0x200;
+    *(s32 *)(a + 0x30) += rsin(*(s16 *)(a + 0xBE)) * *(s16 *)(a + 0x44) * 0x10;
+    v = (rcos(*(s16 *)(a + 0xBE)) * *(s16 *)(a + 0x44)) >> 4;
+    x = *(s16 *)(a + 0x48) * v;
+    z = *(s16 *)(a + 0x4C) * v;
+    *(s32 *)(a + 0x2C) += x;
+    *(s32 *)(a + 0x34) += z;
+    if (!(a[0x46] & 8)) {
+        *(s16 *)(a + 0x56) = ratan2(-z, x);
+    }
+}
+
+void func_80068A94(u8 *a)
+{
+    u8 *b = a + 0x60;
+
+    if (a[0x2B] != 0) {
+        a[0] = 2;
+        a[4] = 2;
+        a[5] = 0;
+    } else if (--*(s16 *)(a + 0x40) == 0) {
+        a[0x2B] = 2;
+        a[0] = 2;
+        a[4] = 3;
+    }
+    Move_8A94(a);
+    if (func_80069858(a, 0, 0)) {
+        a[0x2B] = 2;
+        f_PlaySoundEffect(0xE, 0, 0);
+        f_SpawnImpactTransientEffect(2, a + 0x2C, 0, (u16 *)(b + 8));
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80068BE8);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80068E68);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80068FBC);
+void func_80068FBC(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        func_80068E68(a);
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            a[1] = 1;
+            if (a[3] & 0x80) {
+                f_UpdateActorUnscaledModelTransforms((s32)a);
+            } else {
+                f_UpdateActorScaledOffsetModelTransforms(a);
+            }
+            break;
+        case 1:
+            a[0] = 1;
+            a[0x2B] = 0;
+            a[5]++;
+        case 2:
+            func_80068A94(a);
+            if (a[3] & 0x80) {
+                f_UpdateActorUnscaledModelTransforms((s32)a);
+            } else {
+                f_UpdateActorScaledOffsetModelTransforms(a);
+            }
+            if (!f_TestActorVisibilityWithXYZOffset(a, 0, 0, 0)) {
+                if (--*(s16 *)(a + 0x42) == 0) {
+                    a[4] = 3;
+                    a[0x2B] = 2;
+                    a[0] = 2;
+                }
+            }
+            break;
+        }
+        break;
+    case 2:
+        func_80068BE8(a);
+        break;
+    case 3:
+        func_8007AB44(a);
+        break;
+    }
+}
 
 void func_8006914C(u8 *a)
 {
