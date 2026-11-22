@@ -238,7 +238,28 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010CAF8);
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010CBB0);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010CCD8);
+extern u8 D_8010E3FC[];
+
+s32 func_8010CCD8(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        a[6]++;
+        func_80040CDC(a, 0, D_8010E3FC);
+        a[0x70] = 1;
+        goto end;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[4] = 3;
+            func_80042310();
+            return 1;
+        }
+    end:
+    default:
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010CD68);
 
@@ -256,6 +277,23 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010D910);
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010DE2C);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010DEE0);
+void func_8010DEE0(u8 *a)
+{
+    u32 v;
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        *(u32 *)(a + 0x58) = 0;
+    case 1:
+        v = *(u32 *)(a + 0x58);
+        a[1] = 1;
+        *(u32 *)(a + 0x58) = v + ((0x1000 - v) >> 3);
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", f_UpdateEvilPigInteriorEntranceDoorActor);

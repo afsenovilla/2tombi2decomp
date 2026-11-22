@@ -201,7 +201,21 @@ s32 func_8010D968(void *a)
     return func_800495DC(a, 0, 0) > 0;
 }
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010D98C);
+s32 func_8010D98C(u8 *a, s32 b, s32 c)
+{
+    if (func_8004766C(a) < 0) {
+        func_80049760(a);
+        return 1;
+    }
+    func_80049760(a);
+    if (c != 0) {
+        return 0;
+    }
+    if (b == 0 && a[0x2B] != 0) {
+        return 0;
+    }
+    return func_800495DC(a, 0, 0) > 0;
+}
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010DA1C);
 

@@ -438,7 +438,22 @@ void func_80117720(u8 *a)
     func_80074590(0x8D, 0, 0);
 }
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80117774);
+u8 func_80117774(u8 *a)
+{
+    s16 *p = (s16 *)(a + 0x60);
+    s16 v;
+    if (a[0x5F] == 0) {
+        if (*(s16 *)(a + 0x44) >= 0) {
+            v = *(s16 *)(a + 0x80);
+        } else {
+            v = -*(s16 *)(a + 0x80);
+        }
+        if (func_80045CAC(a, v, 0, *p) != 0) {
+            a[0x5F] = a[0xBE] | 4;
+        }
+    }
+    return a[0x5F];
+}
 
 
 void func_80117800(void *arg0) {
