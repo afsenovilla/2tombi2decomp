@@ -2408,7 +2408,19 @@ s16 func_80129C44(ActorDF *a, s32 i) {
     return r;
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80129D0C);
+void func_80129D0C(u8 *a) {
+    u8 *p = M2C_FIELD(a, u8 **, 0x10);
+
+    if (p != NULL) {
+        p[4] = 2;
+        M2C_FIELD(a, u8 **, 0x10)[5] = 0;
+        M2C_FIELD(a, u8 **, 0x10) = NULL;
+    }
+    func_80119004(a);
+    func_8003116C(0x24, a + 0x2C, -10);
+    D_800BF870.pad1[0x17B] += 1 << ((a[3] & 0x7F) * 2);
+    a[4] = 3;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80129D98);
 

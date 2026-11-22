@@ -2004,7 +2004,21 @@ s32 func_80129B38(void) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80129B68);
+s32 func_80129B68(u8 *a) {
+    switch (a[0x78]) {
+    case 0:
+        func_80041718(a, 0x2E, 4);
+        M2C_FIELD(a, u8 **, 0x14)[5] = 1;
+        a[0x78]++;
+        break;
+    case 1:
+        if (M2C_FIELD(a, u8 **, 0x14)[5] == 2) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 extern void *D_800BF860;
 s32 func_80129BF4(void *arg0) {
@@ -2387,9 +2401,49 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80130730);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801309E0);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80130BA4);
+s32 func_80130BA4(u8 *a) {
+    s16 y = M2C_FIELD(a, s16 *, 0x32);
+    s32 i;
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80130C20);
+    a[0x29] = 0;
+    M2C_FIELD(a, s16 *, 0x32) = y - 0x80;
+    for (i = 0; i < 200; i++) {
+        if (f_TestCircusActorGroundContact(a) != 0) {
+            a[0x29] = 0;
+            return 1;
+        }
+        M2C_FIELD(a, s16 *, 0x32) += 0x20;
+    }
+    M2C_FIELD(a, s16 *, 0x32) = y;
+    return 0;
+}
+
+extern s16 D_1F8001C6;
+
+s32 func_80130C20(u8 *a) {
+    u16 f;
+    s16 g;
+
+    switch (a[0x78]) {
+    case 0:
+        D_800BF818_7697 = a[0x74];
+        g = M2C_FIELD(a, s16 *, 0x76);
+        f = M2C_FIELD(a, u16 *, 0x74);
+        D_1F8001C6 = g;
+        if (!(f & 1)) {
+            return 1;
+        }
+        M2C_FIELD(a, s16 *, 0x72) = 0x10;
+        a[0x78]++;
+        break;
+    case 1:
+        if (--M2C_FIELD(a, s16 *, 0x72) == 0) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 
 s32 func_80130CB0(void *a0)
@@ -2447,7 +2501,17 @@ void func_80130DD8(u8 a0)
     }
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80130E20);
+s32 func_80130E20(u8 *a, s32 b) {
+    s32 s = (func_80083F50(M2C_FIELD(a, s16 *, 0x56)) * M2C_FIELD(a, s16 *, 0x44)) >> 4;
+    s32 c = func_80083E80(M2C_FIELD(a, s16 *, 0x56)) * M2C_FIELD(a, s16 *, 0x44);
+
+    M2C_FIELD(a, s32 *, 0x2C) += s;
+    M2C_FIELD(a, s32 *, 0x34) -= c >> 4;
+    if (b != 0) {
+        return f_TestCircusActorForwardCollision(a);
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_TestCircusActorForwardCollision);
 
