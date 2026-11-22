@@ -9153,7 +9153,94 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007A464);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_AllocatePresentationActor);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveEffectEightByteStreamPayload);
+typedef struct FreeNode { u8 pad0[0x20]; struct FreeNode *prev; struct FreeNode *next; u8 pad28[0x40]; } FreeNode;
+extern FreeNode *D_800F2624_de6d;
+extern FreeNode *D_800F239C_5f1e;
+extern FreeNode *D_800FB168_adca;
+extern FreeNode *D_800F23A8;
+extern u8 D_800E7E7D;
+extern u8 D_800ED8CC;
+extern u8 D_800ED8C5;
+extern u8 D_800ED8C4;
+extern FreeNode *D_800E8098_af1b;
+extern FreeNode *D_800E80A0;
+extern FreeNode *D_800F2398;
+extern FreeNode *D_800ED8D4;
+extern FreeNode *D_800ED8D0;
+
+s32 f_ResolveEffectEightByteStreamPayload(FreeNode *a)
+{
+    FreeNode **head;
+    FreeNode **tail;
+
+    if (((u8 *)a)[0xA] != 0) {
+        head = &D_800F2624_de6d;
+        tail = &D_800F239C_5f1e;
+    } else {
+        head = &D_800FB168_adca;
+        tail = &D_800F23A8;
+    }
+    if (a->prev != NULL) {
+        a->prev->next = a->next;
+    } else {
+        *head = a->next;
+        if (a->next != NULL) {
+            a->next->prev = NULL;
+        }
+    }
+    if (a->next != NULL) {
+        a->next->prev = a->prev;
+    } else {
+        *tail = a->prev;
+        if (a->prev != NULL) {
+            a->prev->next = NULL;
+        }
+    }
+    ((u8 *)a)[0x28] &= 0x7F;
+    switch (((u8 *)a)[0x28]) {
+    case 0:
+        D_800E7E7C++;
+        a->next = D_800E8098_af1b;
+        D_800E8098_af1b = a;
+        break;
+    case 1:
+        D_800E7E7D++;
+        a->next = D_800E80A0;
+        D_800E80A0 = a;
+        f_ReleaseActorModelParts(a);
+        break;
+    case 2:
+        D_800ED8CC++;
+        a->next = D_800F2398;
+        D_800F2398 = a;
+        f_ReleaseActorModelParts(a);
+        break;
+    case 3:
+        D_800ED8C5++;
+        a->next = D_800ED8D4;
+        D_800ED8D4 = a;
+        f_ReleaseActorModelParts(a);
+        break;
+    case 4:
+        D_800ED8C4++;
+        a->next = D_800ED8D0;
+        D_800ED8D0 = a;
+        f_ReleaseActorModelParts(a);
+        break;
+    }
+    *(s32 *)((u8 *)a + 0x0) = 0;
+    *(s32 *)((u8 *)a + 0x4) = 0;
+    *(s32 *)((u8 *)a + 0x8) = 0;
+    *(s32 *)((u8 *)a + 0xC) = 0;
+    *(s32 *)((u8 *)a + 0x10) = 0;
+    *(s32 *)((u8 *)a + 0x14) = 0;
+    *(s32 *)((u8 *)a + 0x18) = 0;
+    *(s32 *)((u8 *)a + 0x38) = 0;
+    ((u8 *)a)[0x2A] = 0;
+    ((u8 *)a)[0x2B] = 0;
+    ((u8 *)a)[0x29] = 0;
+    ((u8 *)a)[0x5E] = 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007A810);
 
@@ -9553,7 +9640,67 @@ void func_8007BF20(s32 a, s32 b)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C0D0);
+s32 func_8007C0D0(u8 *a, s32 b)
+{
+    while (**(u8 **)(a + 0x14) != 0xFF) {
+        if (**(u8 **)(a + 0x14) < 0xC0) {
+            if (b == 1) {
+                func_8007D0D0(a);
+                a[5] = b;
+                *(u8 **)(a + 0x14) += 1;
+                a[0x2A] += 1;
+                return 1;
+            }
+        } else {
+            switch (**(u8 **)(a + 0x14)) {
+            case 0xC0 ... 0xD0:
+                if (b == 1) {
+                    func_8007D0D0(a);
+                    a[5] = b;
+                    *(u8 **)(a + 0x14) += 1;
+                    a[0x2A] += 1;
+                    return 1;
+                }
+                break;
+            case 0xF8 ... 0xF9:
+                switch (a[3]) {
+                case 0:
+                    *(s16 *)(a + 0x42) = 0;
+                    a[5] = 2;
+                    break;
+                case 1:
+                    *(u16 *)(a + 0x42) = 0xFFFF;
+                    a[5] = 3;
+                    break;
+                case 2:
+                    *(s16 *)(a + 0x42) = 0x3C;
+                    a[5] = 4;
+                    break;
+                case 3: case 4: case 5:
+                    *(s16 *)(a + 0x42) = 0x3C;
+                    a[5] = 5;
+                    break;
+                }
+                *(u8 **)(a + 0x14) += 1;
+                a[0x2A] += 1;
+                return 1;
+            case 0xFC:
+                if (b == 1) {
+                    *(s16 *)(a + 0x40) = 0xF;
+                    a[5] = b;
+                    *(u8 **)(a + 0x14) += 1;
+                    return 1;
+                }
+                break;
+            }
+        }
+        *(u8 **)(a + 0x14) += 1;
+        a[0x2A] += 1;
+    }
+    a[5] = 2;
+    *(u16 *)(a + 0x42) = 0xFFFF;
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C2A4);
 
