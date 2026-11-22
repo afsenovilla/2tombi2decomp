@@ -185,7 +185,49 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010BD7C);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00TombaClingOrientation1);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C290);
+/* func_8010C9F8, inlined */
+static inline void inl_8010C9F8(u8 *a, u8 *b, s32 f) {
+    s16 ang;
+
+    a[0x160] = 0;
+    if (f == 0) {
+        func_80054D14(a, 0x29, 4);
+    }
+    a[7] = 0;
+    func_80076D68(a);
+    ang = M2C_FIELD(a, s16 *, 0x56) + 0x800;
+    M2C_FIELD(a, s16 *, 0x2E) = M2C_FIELD(b, s16 *, 0x2E) + ((func_80083F50(ang) * M2C_FIELD(a, s16 *, 0x152)) >> 12);
+    M2C_FIELD(a, s16 *, 0x36) = M2C_FIELD(b, s16 *, 0x36) - ((func_80083E80(ang) * M2C_FIELD(a, s16 *, 0x152)) >> 12);
+    M2C_FIELD(a, s16 *, 0x32) = M2C_FIELD(b, s16 *, 0x32) + M2C_FIELD(a, s16 *, 0x156);
+    if (b[0x5E] == 2) {
+        M2C_FIELD(a, s32 *, 0x158) = 0;
+        a[0x164] = 0;
+        M2C_FIELD(a, s16 *, 0x40) = 8;
+        func_80056D44(a, 0);
+    }
+}
+
+void func_8010C290(u8 *a, s32 f) {
+    u8 *b = M2C_FIELD(a, u8 **, 0x158);
+
+    switch (b[0xC]) {
+    case 4:
+        switch (b[2]) {
+        case 0:
+            f_UpdateA00TombaClingOrientation1(a, b, f);
+            break;
+        case 1:
+            f_UpdateA00TombaClingOrientation0(a, b, f);
+            break;
+        }
+        break;
+    case 5:
+        if (b[2] == 2) {
+            inl_8010C9F8(a, b, f);
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010C40C);
 
@@ -3234,7 +3276,71 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801284AC);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateBlueBucketPendulumMotion);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleRareFishOrBucketSuspension);
+extern s8 D_1F800207[];
+/* func_8012894C, inlined */
+static inline s32 inl_8012894C(s32 arg0) {
+    s32 var_v0;
+    u8 temp_v1;
+    void *temp_v0;
+
+    temp_v1 = M2C_FIELD(arg0, u8 *, 5);
+    switch (temp_v1) {                              /* irregular */
+    case 0:
+        temp_v0 = M2C_FIELD(arg0, void **, 0x10);
+        if ((temp_v0 == NULL) || (M2C_FIELD(temp_v0, u8 *, 0x5E) == 2)) {
+            M2C_FIELD(arg0, s8 *, 0xB) = 0;
+            M2C_FIELD(arg0, void **, 0x10) = NULL;
+            M2C_FIELD(arg0, u8 *, 5) = (u8) (M2C_FIELD(arg0, u8 *, 5) + 1);
+        }
+        var_v0 = (u8) *((u8 *)D_1F800207) < 6U;
+        if (var_v0 != 0) {
+            func_801281B8(arg0);
+            return f_UpdateBlueBucketPendulumMotion(arg0);
+        }
+        return var_v0;
+    case 1:
+        var_v0 = func_801281B8(arg0);
+        return var_v0;
+    default:
+        return 1;
+    }
+}
+
+void f_HandleRareFishOrBucketSuspension(u8 *a) {
+    u8 *p;
+
+    switch (a[4]) {
+    case 0:
+        f_InitializeRareFishOrBucketController(a);
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            switch (a[5]) {
+            case 0:
+                p = M2C_FIELD(a, u8 **, 0x10);
+                if (p == NULL || p[0x5E] == 2) {
+                    a[0xB] = 0;
+                    M2C_FIELD(a, u8 **, 0x10) = NULL;
+                    a[5]++;
+                }
+            case 1:
+                func_801281B8(a);
+                break;
+            }
+            break;
+        case 1:
+            inl_8012894C((s32)a);
+            break;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_801288D8(s32 arg0) {
     u8 temp_v1;
@@ -3257,7 +3363,6 @@ s32 func_801288D8(s32 arg0) {
     }
 }
 
-extern s8 D_1F800207[];
 s32 func_8012894C(s32 arg0) {
     s32 var_v0;
     u8 temp_v1;
