@@ -2797,7 +2797,36 @@ s32 func_800438B4(u8 *actor)
     return 2;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800438D4);
+extern u8 D_800BF840;
+
+s32 func_800438D4(s16 op, u8 a, u8 b)
+{
+    switch (op) {
+    case -1:
+        return 3;
+    case 0:
+        if (a == b) {
+            return 3;
+        }
+        break;
+    case 1:
+        if (a <= b) {
+            return 3;
+        }
+        break;
+    case 2:
+        if (b <= a) {
+            return 3;
+        }
+        break;
+    case 3:
+        if (a & b) {
+            return 3;
+        }
+        break;
+    }
+    return 2;
+}
 
 
 void func_80043964(u8 *p)
@@ -4379,7 +4408,34 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800527C8);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_TryPrepareTombaForInteraction);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005314C);
+void func_8005314C(u8 *a)
+{
+    s32 hi = (*(s16 *)(a + 0x6A) >> 12) & 7;
+    s32 id, x, y;
+
+    switch ((*(s16 *)(a + 0x6A) >> 8) & 0xF) {
+    case 5: case 6:
+        if (hi == 0) {
+            id = 0x8A;
+            x = 0xB;
+            y = -0x32;
+            break;
+        }
+    case 0: case 3: case 4: case 8:
+        id = 3;
+        x = 0;
+        y = 0;
+        break;
+    case 10:
+        id = 0x90;
+        x = 0xB;
+        y = -0x32;
+        break;
+    default:
+        return;
+    }
+    f_PlaySoundEffect(id, x, y);
+}
 
 
 void func_800531DC(void *arg0) {
@@ -4431,7 +4487,29 @@ s32 func_800535D4(void *arg0) {
     return M2C_FIELD(arg0, u8 *, 0x176) + 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_CanTombaStartAttack);
+extern u8 D_800BF8A3;
+extern u8 D_800F2410;
+
+s32 f_CanTombaStartAttack(u8 *a, s32 b)
+{
+    if (D_800F2410 == 0) {
+        return 0;
+    }
+    switch (a[0x6C]) {
+    case 0: case 1: case 2: case 6: case 7: case 8:
+        return 1;
+    case 3: case 4:
+        return D_1F800231 < 1;
+    case 5:
+        return D_1F800231 < 2;
+    case 9:
+        if (b != 0) {
+            return 0;
+        }
+        return D_1F800251 == 0;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80053670);
 
@@ -5052,7 +5130,20 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8005B20C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005B370);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005B5E4);
+s32 func_8005B5E4(u8 *a)
+{
+    switch (a[2]) {
+    case 1: case 8: case 19: case 51:
+        return 1;
+    case 0: case 16: case 25: case 27: case 95:
+        return 2;
+    case 65:
+        return 3;
+    case 64:
+        return 4;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005B63C);
 
@@ -6124,7 +6215,30 @@ void func_8006F02C(s32 bit)
     D_800BF870.flags5C4 |= 1 << bit;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006F04C);
+void func_8006F04C(void)
+{
+    s32 i;
+    u8 *g;
+
+    if (D_800BF840 & 0x80) {
+        i = D_800BF840 & 0xF;
+        switch (i) {
+        case 0: case 1: case 6:
+            g = (u8 *)&D_800BF870 + i;
+            if (g[0x5CA] < 3) {
+                g[0x5CA]++;
+                break;
+            }
+            func_8006F00C(i);
+            break;
+        case 7: case 8:
+            func_8006F02C(i);
+            func_8006F00C(i);
+            break;
+        }
+        D_800BF840 = 0;
+    }
+}
 
 
 u8 *f_SpawnTombaMovementHintController(void)
@@ -7704,7 +7818,29 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007CDD4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007CEEC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007D0D0);
+void func_8007D0D0(u8 *a)
+{
+    switch (a[3]) {
+    case 2:
+        *(s16 *)(a + 0x40) = 1;
+        break;
+    case 3: case 4: case 5:
+        *(s16 *)(a + 0x40) = 1;
+        break;
+    case 0: case 1:
+        switch (D_800BF8A3) {
+        case 0:
+            *(s16 *)(a + 0x40) = 3;
+            return;
+        case 1:
+            *(s16 *)(a + 0x40) = 2;
+            return;
+        default:
+            *(s16 *)(a + 0x40) = 1;
+            return;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007D14C);
 
