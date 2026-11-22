@@ -1165,7 +1165,22 @@ void func_80126844(void *arg0, s32 arg1) {
     M2C_FIELD(arg0, s16 *, 0x44) = (s16) ((s32) (arg1 << 8) / (s16) M2C_FIELD(arg0, s16 *, 0x6A));
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80126880);
+void func_80126880(u8 *p, s32 a1)
+{
+    s32 n = p[0x1B] + 1;
+    s32 d;
+    s32 v;
+
+    if (n >= 0x14) {
+        n = 0x13;
+    }
+    d = 0x22;
+    d -= D_800BF85C;
+    d -= n;
+    v = (a1 << 9) / d;
+    *(s16 *)(p + 0x44) = v;
+    *(s16 *)(p + 0x4E) = -(v / d);
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80126924);
 

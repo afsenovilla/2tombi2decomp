@@ -1404,7 +1404,27 @@ block_6:
     M2C_FIELD(arg0, u8 *, 0x2B) = 0U;
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80124D70);
+extern u8 D_80142028[];
+extern u8 D_8014D798[];
+
+void func_80124D70(u8 *p)
+{
+    switch (p[6]) {
+    case 0:
+        if (p[0x29]) {
+            p[6] = 1;
+            p[7] = 1;
+        }
+        break;
+    case 1:
+        if (p[0x29] == 0) {
+            p[6] = 0;
+            p[7] = 3;
+        }
+        break;
+    }
+    func_8012462C(p);
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80124DE0);
 
@@ -1571,7 +1591,22 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012AD3C);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012B14C);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012B350);
+s32 func_8012B350(u8 *p)
+{
+    S13AE38 v;
+    u8 *r;
+
+    v.a = 0x5D2A;
+    v.b = -0x1C08;
+    v.c = 0x4122;
+    *(u8 **)(p + 0x14) = 0;
+    r = func_8003116C(0x716, &v, -0x14);
+    if (r) {
+        *(u8 **)(p + 0x14) = r;
+        r[0x28] |= 0x80;
+    }
+    return 1;
+}
 
 s32 func_8012B3C0(void)
 {
@@ -1980,7 +2015,18 @@ s32 func_8013AED8(void) {
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013AEF0);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013AF68);
+s32 func_8013AF68(u8 *p)
+{
+    s8 **t;
+
+    func_8007ADDC(p);
+    t = D_800ECF58;
+    func_800519E0(p, 0xD, (s32)t[0x3C / 4], D_80142028);
+    *(s32 *)(p + 0x3C) = (s32)t[0x80 / 4];
+    *(void **)(p + 0x7C) = D_8014D798;
+    func_80077C40(p, D_8014D798, 0);
+    return 1;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013AFD8);
 
