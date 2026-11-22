@@ -176,7 +176,30 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeA00InteriorState);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00InteriorCamera);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010CED0);
+extern s16 D_1F800160_71b4;
+
+void func_8010CED0(u8 *a) {
+    s16 x = D_1F800160_71b4;
+    s32 d;
+
+    if (x < 0x1451) {
+        M2C_FIELD(a, s32 *, 0x28) = 0;
+        M2C_FIELD(a, s16 *, 0x26) = 0;
+    } else if (x < 0x1E79) {
+        M2C_FIELD(a, s32 *, 0x28) = 0;
+        M2C_FIELD(a, s16 *, 0x26) = -800;
+    } else if (x < 0x20D1) {
+        d = x - 0x1E78;
+        M2C_FIELD(a, s16 *, 0x26) = ((d * 0x32000) / 600 >> 8) - 800;
+    } else if (x < 0x2969) {
+        M2C_FIELD(a, s16 *, 0x26) = 0;
+    } else if (x < 0x2AF9) {
+        d = x - 0x2968;
+        M2C_FIELD(a, s16 *, 0x26) = (d * 3) >> 2;
+    } else {
+        M2C_FIELD(a, s16 *, 0x26) = 300;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateFishermensTownCamera);
 
@@ -247,7 +270,6 @@ void func_8010DB58(u8 *a) {
 
 extern s16 D_800E7FFE;
 extern u8 D_800BF821;
-extern s16 D_1F800160_71b4;
 
 void func_8010DBE4(u8 *a) {
     s32 d;
@@ -1135,7 +1157,27 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80119254);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80119350);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80119454);
+void func_80119454(u8 *a) {
+    u8 *q = M2C_FIELD(a, u8 **, 0x10);
+
+    switch (a[5]) {
+    case 0:
+        a[5]++;
+        a[0] = 1;
+        M2C_FIELD(a, s16 *, 0x54) = 0xC00;
+        M2C_FIELD(a, s16 *, 0x56) = 0x200;
+        func_8004B354(a, 1);
+    case 1:
+        M2C_FIELD(a, s16 *, 0x2E) = M2C_FIELD(q, s16 *, 0x2C);
+        M2C_FIELD(a, s16 *, 0x32) = M2C_FIELD(q, s16 *, 0x30) - 0x14;
+        M2C_FIELD(a, s16 *, 0x36) = M2C_FIELD(q, s16 *, 0x34);
+        if (func_8007778C(a) != 0) {
+            func_80051844(a);
+            func_8004B374(a, 1);
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80119510);
 
