@@ -1865,7 +1865,37 @@ s32 func_80122F5C(s32 a) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122FAC);
+extern u8 D_800BF9B5;
+extern u8 D_801494FC[];
+
+s32 func_80122FAC(u8 *a) {
+    s32 one = 1;
+
+    switch (a[6]) {
+    case 0:
+        if (a[0x2B] == 3) {
+            a[6] = one;
+            func_80042354(1, 1);
+            D_800BF9B5 = one;
+        }
+        break;
+    case 1:
+        a[6] = 2;
+        func_80040CDC(a, D_8014E4EC, D_801494FC);
+        a[0x70] = 1;
+        break;
+    case 2:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            func_80042310();
+            func_80040B48(0x42);
+            D_800BF9B5 = 2;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 extern u8 D_80149564[];
 s32 func_801230A4(u8 *p) {
@@ -2589,7 +2619,6 @@ void func_8012E0D0(void *a)
     }
 }
 
-extern u8 D_800BF9B5;
 
 void func_8012E10C(u8 *a) {
     u8 *p = M2C_FIELD(a, u8 **, 0x10);
@@ -2794,7 +2823,38 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateBarrelLinkedSegmentSequence);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_TriggerBarrelLinkedSegments);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HideCollectedBarrelLinkedPickups);
+typedef struct {
+    u8 flags;
+    u8 pad;
+    s16 id;
+} PickupLink;
+extern PickupLink D_801485BC[];
+
+void f_HideCollectedBarrelLinkedPickups(AreaPartsOwner *a) {
+    PickupLink *t = D_801485BC;
+    s16 i = 2;
+    s16 k = (s8)a->pad[0x63] & 0x7F;
+    PickupLink *e;
+    u8 r;
+
+loop:
+    e = &t[k];
+    if ((e++)[1].flags & 0x80) {
+        r = func_8004D868(e->id, 1);
+    } else {
+        r = func_8004D7EC(e->id, 1);
+    }
+    if (r != 0) {
+        a->parts[i][0x3E] |= 0x10;
+    }
+    if (i == 2 && (M2C_FIELD(a, u16 *, 0x60) & 2)) {
+        i++;
+        k++;
+        if (i < 4) {
+            goto loop;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_BeginScriptedBarrelRotation);
 
@@ -4280,7 +4340,36 @@ s16 func_801460A4(void *arg0) {
     return temp_v0;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureTurnaround);
+s32 f_UpdateTownCreatureTurnaround(u8 *a) {
+    s32 r = 0;
+    u8 *q = a + 0x60;
+
+    switch (a[7]) {
+    case 0:
+        M2C_FIELD(q, u16 *, 2) &= ~4;
+        func_801402B8(a, 0x1A, 8);
+        M2C_FIELD(a, s16 *, 0x4E) = 0;
+        a[7] = 1;
+    case 1:
+        if (M2C_FIELD(M2C_FIELD(a, u8 **, 0x38), u16 *, 4) != 0) {
+            M2C_FIELD(q, u16 *, 2) ^= 1;
+            M2C_FIELD(a, s16 *, 0x56) += 0x800;
+            func_801402B8(a, 7, 0);
+            a[7] = 2;
+        }
+        break;
+    default:
+        if (a[7] >= 0x14) {
+            r = 1;
+        } else {
+            a[7]++;
+        }
+        break;
+    }
+    M2C_FIELD(a, s16 *, 0x32) += 0x10;
+    f_UpdateTownCreatureTerrainContact(a);
+    return r;
+}
 
 s32 func_801461E4(u8 *a, s32 b, u8 c) {
     u16 *f = (u16 *)(a + 0x60);
