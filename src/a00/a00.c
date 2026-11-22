@@ -2088,7 +2088,31 @@ s32 func_801274BC(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_DeliverChickItemToNest);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_FeedChicksAtNest);
+s32 f_FeedChicksAtNest(u8 *a) {
+    u8 *e;
+    u8 *g;
+
+    e = func_80072DDC(a, 0, 2, 0x14);
+    if (e != NULL) {
+        func_8004D650(0x4D, 1);
+        M2C_FIELD(e, void **, 0x1C) = func_80126264;
+        e[3] = 4;
+        g = (u8 *)&D_800BF870;
+        M2C_FIELD(e, s16 *, 0x5C) = 0;
+        if (g[0x82] == 1) {
+            M2C_FIELD(e, s16 *, 0x68) = 0;
+            g[0x82] |= 0x10;
+            e[0x5E] = g[0x183] & 4;
+        } else {
+            M2C_FIELD(e, s16 *, 0x68) = 1;
+            e[0x5E] = (g[0x183] >> 4) & 4;
+        }
+        func_8004ED94(e[0x5E] ? 0x4D : 0x4E, 0x41);
+        M2C_FIELD(a, s32 *, 0x24) = 0x1E;
+        return 1;
+    }
+    return 0;
+}
 
 void func_80126264();
 s32 f_UseNishikiWingsAtNest(u8 *a) {
@@ -2393,7 +2417,30 @@ void f_UpdateKainenHouseWobbleInverted(void *arg0) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseWobbleEffect);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012D404);
+extern s16 D_8014A260[];
+extern s16 D_8014A268[];
+
+void func_8012D404(u8 *a) {
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, D_8014A260[a[3]]) == 0) {
+            a[4]++;
+            M2C_FIELD(a, s16 *, 0x54) = D_8014A268[a[3]];
+        }
+        break;
+    case 1:
+        if (func_8007778C(a) != 0) {
+            f_UpdateKainenHouseWobbleEffect(a);
+            func_800517F8(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldFishhookScenePropActor);
 
@@ -2785,7 +2832,45 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80131840);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80131D08);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SettleDryingRackGrabHandleRotation);
+s32 f_SettleDryingRackGrabHandleRotation(AreaPartsOwner *a) {
+    s16 v = M2C_FIELD(a, s16 *, 0x44);
+    s16 ang = M2C_FIELD(a->parts[0], u16 *, 0xC);
+    ang &= 0xFFF;
+
+    if (v > 0) {
+        v -= 10;
+        if (v < 0) {
+            v = 0;
+        }
+    } else {
+        v += 10;
+        if (v > 0) {
+            v = 0;
+        }
+    }
+    if (ang > 0x800) {
+        ang += v;
+        if (ang >= 0x1000) {
+        settle:
+            if (abs(v) < 0x8C) {
+                return 1;
+            }
+        } else if (v < 0x96) {
+            v += 0x1E;
+        }
+    } else {
+        ang += v;
+        if (ang <= 0) {
+            goto settle;
+        }
+        if (v >= -0x95) {
+            v -= 0x1E;
+        }
+    }
+    M2C_FIELD(a, s16 *, 0x44) = v;
+    M2C_FIELD(a->parts[0], s16 *, 0xC) = ang;
+    return 0;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateDryingRackGrabHandle);
 
@@ -3305,7 +3390,32 @@ void func_8013A784(u8 *a) {
     M2C_FIELD(a, s32 *, 0x30) = y;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A818);
+extern s16 D_800ED098;
+
+s32 func_8013A818(AreaPartsOwner *a) {
+    s32 i;
+    u8 *g;
+
+    if (D_800ED098 < 0xD) {
+        return 1;
+    }
+    a->pad[8] = 0xD;
+    a->pad[9] = 0xD;
+    a->pad[0xB] = 0;
+    a->pad[0xD] = 0;
+    for (i = 0; i < a->pad[8]; i++) {
+        a->parts[i] = func_8007AAE8();
+        func_80051B04(a->parts[i], 0xC, i + 0x26);
+    }
+    g = (u8 *)&D_800BF870;
+    a->pad[3] = 0;
+    if (g[0x268] == 0 && g[0x49] != 0xFF) {
+        func_80118974((s32)a->parts[4]);
+    }
+    f_SpawnStarShapedCogPickup(a);
+    f_InitializeDryingRackControllerState(a);
+    return 0;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A900);
 
@@ -3488,7 +3598,6 @@ void f_UpdateMagicFlowerWateringSequence(u8 *a, s32 b) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleMagicFlowerActor);
 
-extern s16 D_800ED098;
 extern s16 D_1F8001A0;
 extern s16 D_1F8001A2_3da0;
 typedef struct {
