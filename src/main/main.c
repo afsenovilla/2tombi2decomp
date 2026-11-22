@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
+#include "psyq/inline_c.h"
 
 extern volatile u8 D_800BE0E4;
 void f_CloseCooperativeWorkerThread(s32);
@@ -48,7 +49,31 @@ void func_8001CAC0(void)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8001CBA8);
+extern u8 D_1F8000F8[];
+typedef struct Entry8w { u8 pad0[6]; u16 flags; } Entry8w;
+extern Entry8w *D_800A54A8_6044[];
+extern u8 D_800A55B0[];
+extern u8 *D_800A2B84[];
+#define gte_lddqa(r0) __asm__ volatile("ctc2 %0, $27" : : "r"(r0))
+#define gte_lddqb0() __asm__ volatile("addiu $10, $0, 0; ctc2 $10, $28" : : : "$10")
+
+void func_8001CBA8(u8 *a, u8 n)
+{
+    s32 i;
+
+    if (n == 0xFF) {
+        i = 0;
+        n = 0;
+    } else {
+        i = 1;
+    }
+    for (; i < 2; i++, n++) {
+        (a + n)[0x48] = 0;
+        (a + n)[0x4A] = 0xFC;
+        (a + n)[0x4C] = 0;
+        (a + n)[0x4E] = 0xFF;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8001CC00);
 
@@ -1313,7 +1338,139 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800288AC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80028B70);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeTransientEffectActor);
+typedef struct { void *p0; void *p4; u16 *p8; } FxDef_8E30;
+extern FxDef_8E30 D_800A20B4[];
+extern FxDef_8E30 D_8014BD54[];
+extern FxDef_8E30 D_8013882C[];
+extern FxDef_8E30 D_801389E4[];
+extern FxDef_8E30 D_8011BC4C[];
+extern FxDef_8E30 D_80143C1C[];
+extern FxDef_8E30 D_8014034C[];
+extern FxDef_8E30 D_8014C868[];
+extern FxDef_8E30 D_80132DE0[];
+extern FxDef_8E30 D_80145138[];
+extern FxDef_8E30 D_8010E578[];
+extern FxDef_8E30 D_8011EB94[];
+extern FxDef_8E30 D_8011C09C[];
+extern FxDef_8E30 D_8011DCB8[];
+extern FxDef_8E30 D_8011CBD8[];
+extern FxDef_8E30 D_8011CF0C[];
+extern FxDef_8E30 D_801208D4[];
+extern FxDef_8E30 D_8010D5D8[];
+extern FxDef_8E30 D_8010C65C[];
+extern FxDef_8E30 D_8010CACC[];
+extern FxDef_8E30 D_8010D8AC[];
+extern FxDef_8E30 D_8011FC0C[];
+extern FxDef_8E30 D_801158A0[];
+
+void f_InitializeTransientEffectActor(u8 *a, s32 id)
+{
+    FxDef_8E30 *d;
+    u16 c = id & 0xFF;
+
+    switch (id >> 8) {
+    default:
+        a[3] = c;
+        d = &D_800A20B4[id & 0xFF];
+        break;
+    case 1:
+        a[3] = c | 0x80;
+        d = &D_8014BD54[c];
+        break;
+    case 2:
+        a[3] = c | 0x80;
+        d = &D_8013882C[c];
+        break;
+    case 3:
+        a[3] = c | 0x80;
+        d = &D_801389E4[c];
+        break;
+    case 4:
+        a[3] = c | 0x80;
+        d = &D_8011BC4C[c];
+        break;
+    case 5:
+        a[3] = c | 0x80;
+        d = &D_80143C1C[c];
+        break;
+    case 6:
+        a[3] = c | 0x80;
+        d = &D_8014034C[c];
+        break;
+    case 7:
+        a[3] = c | 0x80;
+        d = &D_8014C868[c];
+        break;
+    case 8:
+        a[3] = c | 0x80;
+        d = &D_80132DE0[c];
+        break;
+    case 9:
+        a[3] = c | 0x80;
+        d = &D_80145138[c];
+        break;
+    case 10:
+        a[3] = c | 0x80;
+        d = &D_8010E578[c];
+        break;
+    case 11:
+        a[3] = c | 0x80;
+        d = &D_8011EB94[c];
+        break;
+    case 12:
+        a[3] = c | 0x80;
+        d = &D_8011C09C[c];
+        break;
+    case 13:
+        a[3] = c | 0x80;
+        d = &D_8011DCB8[c];
+        break;
+    case 14:
+        a[3] = c | 0x80;
+        d = &D_8011CBD8[c];
+        break;
+    case 15:
+        a[3] = c | 0x80;
+        d = &D_8011CF0C[c];
+        break;
+    case 16:
+        a[3] = c | 0x80;
+        d = &D_801208D4[c];
+        break;
+    case 17:
+        a[3] = c | 0x80;
+        d = &D_8010D5D8[c];
+        break;
+    case 18:
+        a[3] = c | 0x80;
+        d = &D_8010C65C[c];
+        break;
+    case 19:
+        a[3] = c | 0x80;
+        d = &D_8010CACC[c];
+        break;
+    case 20:
+        a[3] = c | 0x80;
+        d = &D_8010D8AC[c];
+        break;
+    case 21:
+        a[3] = c | 0x80;
+        d = &D_8011FC0C[c];
+        break;
+    case 22:
+        a[3] = c | 0x80;
+        d = &D_801158A0[c];
+        break;
+    }
+    a[0xB] = 0x20;
+    *(void **)(a + 0x1C) = d->p0;
+    *(void **)(a + 0x18) = d->p4;
+    if (d->p8 != NULL) {
+        *(u16 *)(a + 0x44) = d->p8[0];
+        *(u16 *)(a + 0x46) = d->p8[1];
+        *(u16 **)(a + 0x38) = d->p8 + 2;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002918C);
 
@@ -1783,7 +1940,13 @@ void f_DrawEffectPrimitiveListWithoutDepthCue(void *list)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80032918);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetEffectProjectionTransform);
+void f_SetEffectProjectionTransform(s32 dqa)
+{
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_SetTransMatrix(D_1F8000F8);
+    gte_lddqa(dqa);
+    gte_lddqb0();
+}
 
 s32 func_80032A44(s32 arg0, s32 arg1)
 {
@@ -2203,7 +2366,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800376EC);
 
 extern void *D_800174BC;
 extern void *D_800BF544;
-extern u8 D_1F8000F8[];
 extern s16 D_801003F8;
 void func_80037894(u8 *ui, s16 y, u8 c)
 {
@@ -3161,7 +3323,19 @@ void f_DrawModelPrimitiveStreamForCurrentArea(u32 *a, void *b, s32 c)
     func_800803DC(a, b);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F7A0);
+#undef gte_rtps
+#define gte_rtps() __asm__ volatile("nop; nop; .word 0x4A180001")
+
+s32 func_8003F7A0(void *v, void *sxy)
+{
+    s32 z;
+
+    gte_ldv0(v);
+    gte_rtps();
+    gte_stsxy(sxy);
+    gte_stszotz(&z);
+    return z;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F7D8);
 
@@ -5255,7 +5429,129 @@ void func_8004DD90(u8 *p)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004DE04);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004DF94);
+typedef struct { u8 pad0[9]; u8 u9; } Flags058_DF94;
+extern Flags058_DF94 D_800ED058_c3b3;
+extern s32 D_800BF880;
+extern u8 D_800BF881;
+
+void func_8004DF94(u8 *a)
+{
+    u8 *t = D_800E7E80_f78d;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        a[0xB] = 0x10;
+        a[0xD] = 0;
+        a[0x47] = 0;
+        *(s16 *)(a + 0x5A) = 0;
+        *(s16 *)(a + 0x5C) = 0;
+        break;
+    case 1:
+        switch ((s16)(*(u16 *)(a + 0x60) - 0x66)) {
+        case 3:
+            if (f_UpdateUsedItemAttachmentPresentation(a) != 0) {
+                f_ApplyTombaStatusCommand(t, 2);
+                a[4] = 2;
+            }
+            break;
+        case 0:
+            switch (a[5]) {
+            case 0:
+                    if (f_UpdateUsedItemAttachmentPresentation(a) != 0) {
+                        *(s16 *)(a + 0x42) = 0x10;
+                        a[5]++;
+                        if (D_800BF881 & 8) {
+                            f_ApplyTombaStatusCommand(t, 2);
+                        }
+                    }
+                break;
+            case 1:
+                func_8004DD90(a);
+                break;
+            }
+            D_800ED058_c3b3.u9 |= 2;
+            break;
+        case 8:
+            if (f_UpdateUsedItemAttachmentPresentation(a) != 0) {
+                if (D_800BF880 & 0x3000) {
+                    f_ApplyTombaStatusCommand(t, 5);
+                } else {
+                    f_ApplyTombaStatusCommand(t, 4);
+                }
+                a[4] = 2;
+            }
+            break;
+        case 7:
+            if (f_UpdateUsedItemAttachmentPresentation(a) != 0) {
+                if (D_800BF881 & 4) {
+                    f_ApplyTombaStatusCommand(t, 7);
+                } else {
+                    f_ApplyTombaStatusCommand(t, 6);
+                }
+                a[4] = 2;
+            }
+            break;
+        case 4:
+            if (f_UpdateUsedItemAttachmentPresentation(a) != 0) {
+                if (!(D_800BF881 & 1)) {
+                    f_ApplyTombaStatusCommand(t, 8);
+                } else {
+                    f_ApplyTombaStatusCommand(t, 9);
+                }
+                a[4] = 2;
+            }
+            break;
+        case 5:
+            if (f_UpdateUsedItemAttachmentPresentation(a) != 0) {
+                f_ApplyTombaStatusCommand(D_800E7E80_f78d, 0xA);
+                a[4] = 2;
+            }
+            break;
+        case 2:
+            switch (a[5]) {
+            case 0:
+                    if (f_UpdateUsedItemAttachmentPresentation(a) != 0) {
+                        *(s16 *)(a + 0x42) = 0x10;
+                        a[5]++;
+                        if ((D_800BF881 & 2) || (D_800BF881 & 1)) {
+                            f_ApplyTombaStatusCommand(D_800E7E80_f78d, 0xA);
+                        }
+                    }
+                break;
+            case 1:
+                func_8004DD90(a);
+                break;
+            }
+            D_800ED058_c3b3.u9 |= 2;
+            break;
+        case 1:
+            switch (a[5]) {
+            case 0:
+                    if (f_UpdateUsedItemAttachmentPresentation(a) != 0) {
+                        *(s16 *)(a + 0x42) = 0x10;
+                        a[5]++;
+                    }
+                break;
+            case 1:
+                func_8004DD90(a);
+                break;
+            }
+            D_800ED058_c3b3.u9 |= 2;
+            break;
+        }
+        a[1] = 1;
+        break;
+    case 2:
+        a[4]++;
+        D_1F800137_104c = 0;
+        D_800ED058_c3b3.u9 &= 0xFD;
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 extern u8 D_1F800207_9c67;
 extern s16 D_1F800164_d75f;
@@ -6099,10 +6395,6 @@ void func_8005245C(void)
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800524B4);
 
 void func_800527C8();
-typedef struct Entry8w { u8 pad0[6]; u16 flags; } Entry8w;
-extern Entry8w *D_800A54A8_6044[];
-extern u8 D_800A55B0[];
-extern u8 *D_800A2B84[];
 u8 *func_800525D0(void *owner, s32 slot)
 {
     u8 *a = f_AllocateActor(owner, 0x84, 3, 0);
@@ -6889,7 +7181,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_RebuildTombaAppearanceModelParts);
 
 typedef struct { u8 unk0; u8 pad1[0x1E]; u8 u1F; u8 pad20[0xE]; s16 s2E; } GsStat_82F8;
 extern GsStat_82F8 D_800BF870_82f8;
-extern u8 D_800BF881;
 extern u8 D_1F800247;
 void f_ApplyTombaStatusCommand(u8 *a, s32 cmd)
 {
@@ -11505,7 +11796,13 @@ u8 func_80078770(u8 a, u8 b)
     return D_800A4F88[a * 4 + b];
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_GetWarpSectionDisplayName);
+u8 *f_GetWarpSectionDisplayName(s32 a, s32 b)
+{
+    u8 *e = (u8 *)D_800A54A8_6044[(u8)a] + (u8)b * 8;
+    s32 k = (*(u16 *)(e + 6) & 0x600) >> 9;
+
+    return *(D_800A2B84 + (D_800A55B0[a] + k));
+}
 
 void *func_800787F8(s32 i)
 {
