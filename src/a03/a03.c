@@ -215,7 +215,40 @@ void func_801113B4(s32 arg0) {
     func_80110B00(4, arg0 + 0x3C, 0x10);
 }
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", func_801113DC);
+typedef struct {
+    s16 x, y;
+} Pair16;
+extern Pair16 D_8011BB64;
+extern u8 D_8011BB68[];
+
+void func_801113DC(u8 *a) {
+    u8 *p;
+    s16 x, y;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        x = D_8011BB64.x;
+        y = D_8011BB64.y;
+        M2C_FIELD(a, u8 **, 0x38) = NULL;
+        M2C_FIELD(a, s16 *, 0x32) = 0;
+        M2C_FIELD(a, s16 *, 0x44) = x;
+        M2C_FIELD(a, s16 *, 0x46) = y;
+    case 1:
+        p = M2C_FIELD(a, u8 **, 0x38);
+        M2C_FIELD(a, u8 **, 0x34) = p;
+        if (p == NULL) {
+            M2C_FIELD(a, u8 **, 0x38) = D_8011BB68;
+            M2C_FIELD(a, u8 **, 0x34) = D_8011BB68;
+        }
+        a[1] = 1;
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyFinishMenu);
 

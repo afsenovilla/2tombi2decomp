@@ -1533,7 +1533,22 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011D8C8);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011D9E4);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011DBA4);
+extern s16 D_800E7FFE;
+extern u16 D_1F800164_7d8c;
+
+s32 func_8011DBA4(u8 *a) {
+    s16 dx, dz;
+
+    if (D_800E7FFE & 0x8200) {
+        return 0;
+    }
+    dx = D_1F800160_3621 - M2C_FIELD(a, u16 *, 0x2E);
+    dz = D_1F800164_7d8c - M2C_FIELD(a, u16 *, 0x36);
+    if (dx * dx + dz * dz > 0x64000) {
+        return 0;
+    }
+    return (u16)(M2C_FIELD(a, u16 *, 0x32) - D_1F800162) <= M2C_FIELD(a, s16 *, 0x6E);
+}
 
 typedef struct {
     s16 x, y;
@@ -2780,7 +2795,30 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E4B4);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E5F8);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E6A0);
+void func_8012E6A0(u8 *a) {
+    u8 *p;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+    case 1:
+        M2C_FIELD(a, s16 *, 0x2E) -= 4;
+        p = M2C_FIELD(a, u8 **, 0x38);
+        M2C_FIELD(a, u8 **, 0x34) = p;
+        if (p == NULL) {
+            a[4] = 2;
+            break;
+        }
+        if (func_8002B278(a) == 0) {
+            func_80031780(a);
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E74C);
 
@@ -2788,7 +2826,30 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E868);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E974);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012EA70);
+void func_8012EA70(u8 *a) {
+    u8 *p;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+    case 1:
+        M2C_FIELD(a, s16 *, 0x2E) -= 0x12;
+        p = M2C_FIELD(a, u8 **, 0x38);
+        M2C_FIELD(a, u8 **, 0x34) = p;
+        if (p == NULL) {
+            a[4] = 2;
+            break;
+        }
+        if (func_8002B278(a) == 0) {
+            func_80031780(a);
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 
 void func_8012EB1C(u8 *a) {
