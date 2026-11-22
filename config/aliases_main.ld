@@ -256,3 +256,4 @@ _svm_rattr = 0x80105BF8;
 _svm_pg = 0x80105CDC;
 _svm_vab_used = 0x80105D18;
 D_1F80018C_c065 = 0x1F80018C;
+D_800BF808_f4d3 = 0x800BF808;

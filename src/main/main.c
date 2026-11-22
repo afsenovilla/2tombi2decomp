@@ -4853,7 +4853,120 @@ void func_800499E8(void)
     func_80052078(0);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80049A60);
+typedef struct { u8 pad0[0xA]; s16 sA; u8 padC[2]; u8 uE; u8 uF; } Gs808_9A60;
+extern Gs808_9A60 D_800BF808_f4d3;
+extern u8 D_800E7FEB;
+void func_800493E8(u8 *actor, s16 a, s16 b);
+
+void func_80049A60(u8 *a, s32 alt)
+{
+    s32 r;
+
+    switch (a[5]) {
+    case 0:
+        *(s16 *)(a + 0x4A) = -0x3000;
+        *(u16 *)(a + 0x50) = 0x200;
+        a[5]++;
+        if (alt == 0) {
+            a[0x18] = 0;
+        } else {
+            a[0x18] = 0xFF;
+            a[0x19] = 0xFF;
+            a[0x1A] = 0xFF;
+        }
+        break;
+    case 1:
+        *(s32 *)(a + 0x30) += *(s16 *)(a + 0x4A) << 8;
+        *(u16 *)(a + 0x4A) += *(u16 *)(a + 0x50);
+        if (*(s16 *)(a + 0x4A) >= 0) {
+            a[5]++;
+        } else {
+            if (*(s16 *)(a + 0x4A) >= -0x17FF) {
+                a[0] = 1;
+            }
+            f_ResolveActorAreaPlanePosition(a);
+            if (((s32 (*)(u8 *, s16, s16))func_800493E8)(a, 0, -*(u16 *)(a + 0x84)) != 0) {
+                a[0] = 1;
+                *(s16 *)(a + 0x4A) = 0;
+                a[5]++;
+            }
+        }
+        break;
+    case 2:
+        *(s32 *)(a + 0x30) += *(s16 *)(a + 0x4A) << 8;
+        if (*(s16 *)(a + 0x4A) < 0x3000) {
+            *(u16 *)(a + 0x4A) += *(u16 *)(a + 0x50);
+        }
+        if (a[0x29] != 0) {
+            *(s16 *)(a + 0x4A) = 0;
+            a[5]++;
+            break;
+        }
+        if (a[0x28] & 0x80) {
+            if (D_800E7FEB == 8) {
+                if (D_800BF808_f4d3.uE == 1 && D_800BF808_f4d3.uF == *(s16 *)(a + 0x6A)
+                    && *(s16 *)(a + 0x32) + (*(s16 *)(a + 0x86) - *(s16 *)(a + 0x84)) >= D_800BF808_f4d3.sA) {
+                    *(u16 *)(a + 0x32) = (u16)D_800BF808_f4d3.sA - (*(u16 *)(a + 0x86) - *(u16 *)(a + 0x84));
+                    goto five;
+                }
+            } else {
+                f_ResolveActorAreaPlanePosition(a);
+                if (f_ProbeActorTerrainAlongFacing(a, 0, (s16)(*(u16 *)(a + 0x86) - *(u16 *)(a + 0x84))) != 0) {
+                    a[5] = 5;
+                    *(s16 *)(a + 0x4A) = 0;
+                }
+            }
+        } else {
+            f_ResolveActorAreaPlanePosition(a);
+            r = f_ProbeActorTerrainAlongFacing(a, 0, (s16)(*(u16 *)(a + 0x86) - *(u16 *)(a + 0x84)));
+            if (r == 1) {
+                goto five;
+            }
+            if (r == 2) {
+                if (!(*(s16 *)D_1F8001A6 & 0x8000)) {
+                    goto five;
+                }
+                if (D_800BF870.unk0 == 8) {
+                    goto five;
+                }
+                if (D_800BF870.unk0 != 1 || a[2] == 0) {
+                    a[5] = 6;
+                }
+            }
+        }
+        break;
+    five:
+        a[5] = 5;
+        *(s16 *)(a + 0x4A) = 0;
+        break;
+    case 3:
+        if ((!(a[0x28] & 0x80) || (D_800BF808_f4d3.uE != 0 && D_800BF808_f4d3.uF == *(s16 *)(a + 0x6A))) && a[0x29] == 0) {
+            *(s16 *)(a + 0x4A) = 0x2000;
+            a[5]--;
+        }
+        break;
+    case 6:
+        *(s32 *)(a + 0x30) += *(s16 *)(a + 0x4A) << 8;
+        if (*(s16 *)(a + 0x4A) < 0x3000) {
+            *(u16 *)(a + 0x4A) += *(u16 *)(a + 0x50);
+        }
+        if (func_80077ACC(a, *(s16 *)(a + 0x2E), *(s16 *)(a + 0x32), *(s16 *)(a + 0x36)) == 0) {
+            a[4] = 3;
+        }
+        break;
+    }
+    if (alt == 0) {
+        if (!(*(u16 *)D_1F80017C & 0x1F)) {
+            a[0xD] |= 0x20;
+        } else {
+            a[0xD] &= 0xDF;
+        }
+    } else if (!(*(u16 *)D_1F80017C & 0x1F)) {
+        a[0xD] |= 2;
+    } else {
+        a[0xD] &= 0xFD;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_GrantPickupHealth);
 
@@ -11345,7 +11458,7 @@ s32 f_TestWrappedAngleSide(s32 a, s32 b, s32 flip)
 
 typedef struct { u8 pad0[0x2E]; u16 x; u8 pad30[2]; u16 y; u8 pad34[2]; u16 z; } ActorPos_778C;
 
-void f_TestAndQueueActorForRender(ActorPos_778C *a)
+s32 f_TestAndQueueActorForRender(ActorPos_778C *a)
 {
     s16 dx, dy, dz;
     D_1F800080 = 0;
@@ -11353,10 +11466,10 @@ void f_TestAndQueueActorForRender(ActorPos_778C *a)
     dx = a->x - D_1F8000D0_fb20[1];
     dy = a->y - D_1F8000D0_fb20[3];
     dz = a->z - D_1F8000D0_fb20[5];
-    f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+    return f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
 }
 
-void f_TestAndQueueActorForRenderMode2(ActorPos_778C *a)
+s32 f_TestAndQueueActorForRenderMode2(ActorPos_778C *a)
 {
     s16 dx, dy, dz;
     D_1F800080 = 0;
@@ -11364,10 +11477,10 @@ void f_TestAndQueueActorForRenderMode2(ActorPos_778C *a)
     dx = a->x - D_1F8000D0_fb20[1];
     dy = a->y - D_1F8000D0_fb20[3];
     dz = a->z - D_1F8000D0_fb20[5];
-    f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+    return f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
 }
 
-void func_80077870(ActorPos_778C *a)
+s32 func_80077870(ActorPos_778C *a)
 {
     s16 dx, dy, dz;
     D_1F800080 = 0;
@@ -11375,10 +11488,10 @@ void func_80077870(ActorPos_778C *a)
     dx = a->x - D_1F8000D0_fb20[1];
     dy = a->y - D_1F8000D0_fb20[3];
     dz = a->z - D_1F8000D0_fb20[5];
-    f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+    return f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
 }
 
-void f_TestAndQueueActorForRenderWithYOffset(u8 *a, s32 y)
+s32 f_TestAndQueueActorForRenderWithYOffset(u8 *a, s32 y)
 {
     s16 dx, dy, dz;
     D_1F800080 = 0;
@@ -11386,10 +11499,10 @@ void f_TestAndQueueActorForRenderWithYOffset(u8 *a, s32 y)
     dx = *(u16 *)(a + 0x2E) - D_1F8000D0_fb20[1];
     dy = *(u16 *)(a + 0x32) + y - D_1F8000D0_fb20[3];
     dz = *(u16 *)(a + 0x36) - D_1F8000D0_fb20[5];
-    f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+    return f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
 }
 
-void func_80077958(u8 *a, s32 x, s32 y)
+s32 func_80077958(u8 *a, s32 x, s32 y)
 {
     s16 dx, dy, dz;
     D_1F800080 = 0;
@@ -11397,10 +11510,10 @@ void func_80077958(u8 *a, s32 x, s32 y)
     D_1F800084_8c7c = 0;
     dy = *(u16 *)(a + 0x32) + y - D_1F8000D0_fb20[3];
     dz = *(u16 *)(a + 0x36) - D_1F8000D0_fb20[5];
-    f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+    return f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
 }
 
-void func_800779D0(u8 *a, s32 x, s32 y, s32 z)
+s32 func_800779D0(u8 *a, s32 x, s32 y, s32 z)
 {
     s16 dx, dy, dz;
     D_1F800080 = 0;
@@ -11408,10 +11521,10 @@ void func_800779D0(u8 *a, s32 x, s32 y, s32 z)
     D_1F800084_8c7c = 0;
     dy = *(u16 *)(a + 0x32) + y - D_1F8000D0_fb20[3];
     dz = *(u16 *)(a + 0x36) + z - D_1F8000D0_fb20[5];
-    f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+    return f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
 }
 
-void f_TestActorVisibilityWithXYZOffset(u8 *a, s32 x, s32 y, s32 z)
+s32 f_TestActorVisibilityWithXYZOffset(u8 *a, s32 x, s32 y, s32 z)
 {
     s16 dx, dy, dz;
     D_1F800080 = 1;
@@ -11419,10 +11532,10 @@ void f_TestActorVisibilityWithXYZOffset(u8 *a, s32 x, s32 y, s32 z)
     D_1F800084_8c7c = 0;
     dy = *(u16 *)(a + 0x32) + y - D_1F8000D0_fb20[3];
     dz = *(u16 *)(a + 0x36) + z - D_1F8000D0_fb20[5];
-    f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+    return f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
 }
 
-void func_80077ACC(void *a, s32 x, s32 y, s32 z)
+s32 func_80077ACC(void *a, s32 x, s32 y, s32 z)
 {
     s16 dx, dy, dz;
     D_1F800080 = 1;
@@ -11430,7 +11543,7 @@ void func_80077ACC(void *a, s32 x, s32 y, s32 z)
     D_1F800084_8c7c = 4;
     dy = y - D_1F8000D0_fb20[3];
     dz = z - D_1F8000D0_fb20[5];
-    f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+    return f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
 }
 
 
