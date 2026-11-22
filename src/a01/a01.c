@@ -447,7 +447,27 @@ void func_8011064C(void *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80110694);
+void func_80110694(u8 *a, u8 *b) {
+    u8 *c = FP(b, 0xC0);
+    s16 dx, dz;
+    u16 r, cy, ah;
+    s32 h, d;
+
+    dx = FU16(a, 0x2E) - FU16(c, 0x2C);
+    dz = FU16(a, 0x36) - FU16(c, 0x34);
+    r = func_80084080(dx * dx + dz * dz);
+    if (F16(a, 0x82) - F16(a, 0x80) + F16(b, 0x80) < r) {
+        return;
+    }
+    d = FU16(a, 0x32) - (cy = FU16(c, 0x30));
+    ah = FU16(a, 0x86);
+    h = FU16(b, 0x84) + (ah - FU16(a, 0x84));
+    if ((u16)(d + h) > (s16)ah + F16(b, 0x86)) {
+        return;
+    }
+    F16(a, 0x32) = cy - h;
+    a[0x29] = 1;
+}
 
 extern s32 D_1F800084;
 extern s32 D_1F80008C;

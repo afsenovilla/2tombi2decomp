@@ -675,7 +675,26 @@ s32 func_80114528(s32 arg0, s32 arg1) {
     return func_8010EC58(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC0));
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaMultipartActorContact);
+typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner;
+
+void f_ResolveTombaMultipartActorContact(u8 *a, PartsOwner *b) {
+    s32 i;
+
+    for (i = 2; i < b->pad[8] - 1; i++) {
+        if (F16(b->parts[i], 0x16) == 2) {
+            return;
+        }
+        if (i == b->pad[8] - 2 && F16(b->parts[b->pad[8] - 1], 0x16) == 0) {
+            if (func_80022E04(a, b, b->parts[i]) != 0) {
+                b->pad[0x29] = 1;
+                b->pad[0x47] = func_80077768((s16)D_1F80009C, F16(a, 0x56), 1);
+                return;
+            }
+        } else if (func_8001F650(a, b, b->parts[i]) != 0) {
+            return;
+        }
+    }
+}
 
 s32 func_80114640(s32 arg0, s32 arg1) {
     return func_8010F034(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC4));
