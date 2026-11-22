@@ -7425,9 +7425,239 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8005D530);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005DE54);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005E580);
+typedef struct { u8 pad0[0x2E]; u16 x; u8 pad30[6]; u16 z; } Pos_E580;
+extern u16 D_1F800188;
+extern u16 D_1F80018A;
+extern u16 D_1F80018C_c065;
+extern u16 D_1F800194;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005E8FC);
+void func_8005E580(u8 *a)
+{
+    s32 t;
+    s16 v;
+    s32 r;
+
+    switch (a[6]) {
+    case 0:
+        a[0x61] = 0x30;
+        f_ResetTombaControlState(a);
+        ((Pos_E580 *)a)->x = D_1F800188;
+        ((Pos_E580 *)a)->z = D_1F80018A;
+        f_SetTombaAnimationIfChanged(a, 2, 4);
+        a[6]++;
+        D_1F800194 = (D_1F80018C_c065 - 0x800) & 0xFFF;
+    case 1:
+    case 3:
+        t = D_1F800194 & 0xFFF;
+        v = f_StepWrappedAngleToward(t, *(s16 *)(a + 0x56), 0x100);
+        *(s16 *)(a + 0x56) = v;
+        if (v == t) {
+            a[6]++;
+        }
+        f_AdvanceActorSkeletalAnimation(a);
+        *(u16 *)(a + 0x32) += 8;
+        f_UpdateTombaLostGroundSupportMotion(a, 1);
+        break;
+    case 2:
+        f_ReadTombaDirectionalInput(a, 0);
+        r = func_800558B4(a);
+        if (r != 1) {
+            a[0x61] = 0;
+            a[6]++;
+            a[0x147] = a[0x14A] & 1;
+            f_ResetTombaControlState(a);
+            if (a[0x147] != 0) {
+                D_1F800194 = (*(u16 *)(a + 0x140) - 0x800) & 0xFFF;
+            } else {
+                D_1F800194 = *(u16 *)(a + 0x140);
+            }
+        } else {
+            D_800BF840 = 0x80;
+            a[0x61] = 0x31;
+            a[6] = 5;
+            a[0x147] = r;
+            a[0] |= 4;
+            f_ResetTombaControlState(a);
+        }
+        f_AdvanceActorSkeletalAnimation(a);
+        *(u16 *)(a + 0x32) += 8;
+        f_UpdateTombaLostGroundSupportMotion(a, 1);
+        break;
+    case 4:
+        a[0x61] = 0;
+        a[5] = 0;
+        a[6] = 0;
+        a[7] = 0;
+        a[0] &= 3;
+        f_AdvanceActorSkeletalAnimation(a);
+        *(u16 *)(a + 0x32) += 8;
+        f_UpdateTombaLostGroundSupportMotion(a, 1);
+        break;
+    case 5:
+        a[0x2A] = 0;
+        D_1F800207_9c67 = 0;
+        *(s16 *)(a + 0x58) = 0;
+        f_SetTombaAnimationIfChanged(a, 0x63, 0);
+        a[0x16B] = 2;
+        *(s16 *)(a + 0x4A) = -0x3000;
+        a[0x29] = 0;
+        *(s16 *)(a + 0x44) = -0xA00;
+        a[6]++;
+    case 6:
+        f_AdvanceActorSkeletalAnimation(a);
+        f_AdvanceTombaAlongMovementVector(a, 1);
+        f_UpdateTombaMovementOrientation(a);
+        f_UpdateTombaAirborneMotion(a, 0x11);
+        if (a[0x145] == 2) {
+            f_SetTombaAnimationIfChanged(a, 0x64, 6);
+        }
+        if (a[0x29] != 0) {
+            f_SetTombaAnimationIfChanged(a, 0x17, 1);
+            *(s16 *)(a + 0x44) = 0;
+            a[0x16B] = 1;
+            a[6]++;
+        }
+        break;
+    case 7:
+        if (func_80055824() != 0) {
+            a[0x61] = 0;
+            a[5] = 2;
+            a[6] = 0;
+            a[7] = 0;
+            a[0] &= 3;
+        } else if ((D_800ECF54 & 0x10) || f_AdvanceActorSkeletalAnimation(a) == 1) {
+            goto reset;
+        } else {
+            f_ReadTombaDirectionalInput(a, 0);
+            if ((D_800ECF54 & 0x10) || !(a[0x14A] & 2)) {
+            reset:
+                a[0x61] = 0;
+                a[5] = 0;
+                a[6] = 0;
+                a[7] = 0;
+                a[0] &= 3;
+                f_SetTombaAnimationIfChanged(a, 2, 3);
+            }
+        }
+        *(u16 *)(a + 0x32) += 8;
+        f_UpdateTombaLostGroundSupportMotion(a, 1);
+        break;
+    }
+}
+
+typedef struct { u8 pad0[0x2E]; u16 x; u8 pad30[6]; u16 z; } Pos_E8FC;
+
+void func_8005E8FC(u8 *a)
+{
+    s32 t;
+    s16 v;
+
+    switch (a[6]) {
+    case 0:
+        a[0x61] = 0x30;
+        f_ResetTombaControlState(a);
+        ((Pos_E8FC *)a)->x = D_1F800188;
+        ((Pos_E8FC *)a)->z = D_1F80018A;
+        f_SetTombaAnimationIfChanged(a, 2, 4);
+        a[6]++;
+        D_1F800194 = D_1F80018C_c065 & 0xFFF;
+    case 1:
+    case 3:
+        t = D_1F800194 & 0xFFF;
+        v = f_StepWrappedAngleToward(t, *(s16 *)(a + 0x56), 0x100);
+        *(s16 *)(a + 0x56) = v;
+        if (v == t) {
+            a[6]++;
+        }
+        f_AdvanceActorSkeletalAnimation(a);
+        *(u16 *)(a + 0x32) += 8;
+        f_UpdateTombaLostGroundSupportMotion(a, 1);
+        break;
+    case 2:
+        f_ReadTombaDirectionalInput(a, 0);
+        if (func_800558B4(a) != 2) {
+            a[0x61] = 0;
+            a[6]++;
+            a[0x147] = a[0x14A] & 1;
+            f_ResetTombaControlState(a);
+            if (a[0x147] != 0) {
+                D_1F800194 = (*(u16 *)(a + 0x140) - 0x800) & 0xFFF;
+            } else {
+                D_1F800194 = *(u16 *)(a + 0x140);
+            }
+        } else {
+            D_800BF840 = 0x81;
+            a[0x61] = 0x31;
+            a[6] = 5;
+            a[0x147] = 0;
+            a[0] |= 4;
+            f_ResetTombaControlState(a);
+        }
+        f_AdvanceActorSkeletalAnimation(a);
+        *(u16 *)(a + 0x32) += 8;
+        f_UpdateTombaLostGroundSupportMotion(a, 1);
+        break;
+    case 4:
+        a[0x61] = 0;
+        a[5] = 0;
+        a[6] = 0;
+        a[7] = 0;
+        a[0] &= 3;
+        f_AdvanceActorSkeletalAnimation(a);
+        *(u16 *)(a + 0x32) += 8;
+        f_UpdateTombaLostGroundSupportMotion(a, 1);
+        break;
+    case 5:
+        a[0x2A] = 0;
+        D_1F800207_9c67 = 0;
+        *(s16 *)(a + 0x58) = 0;
+        f_SetTombaAnimationIfChanged(a, 0x63, 0);
+        a[0x16B] = 2;
+        *(s16 *)(a + 0x4A) = -0x3000;
+        a[0x29] = 0;
+        *(s16 *)(a + 0x44) = 0xA00;
+        a[6]++;
+    case 6:
+        f_AdvanceActorSkeletalAnimation(a);
+        f_AdvanceTombaAlongMovementVector(a, 1);
+        f_UpdateTombaMovementOrientation(a);
+        f_UpdateTombaAirborneMotion(a, 0x11);
+        if (a[0x145] == 2) {
+            f_SetTombaAnimationIfChanged(a, 0x64, 6);
+        }
+        if (a[0x29] != 0) {
+            f_SetTombaAnimationIfChanged(a, 0x17, 1);
+            *(s16 *)(a + 0x44) = 0;
+            a[0x16B] = 1;
+            a[6]++;
+        }
+        break;
+    case 7:
+        if (func_80055824() != 0) {
+            a[0x61] = 0;
+            a[5] = 2;
+            a[6] = 0;
+            a[7] = 0;
+            a[0] &= 3;
+        } else if ((D_800ECF54 & 0x40) || f_AdvanceActorSkeletalAnimation(a) == 1) {
+            goto reset;
+        } else {
+            f_ReadTombaDirectionalInput(a, 0);
+            if ((D_800ECF54 & 0x40) || !(a[0x14A] & 2)) {
+            reset:
+                a[0x61] = 0;
+                a[5] = 0;
+                a[6] = 0;
+                a[7] = 0;
+                a[0] &= 3;
+                f_SetTombaAnimationIfChanged(a, 2, 3);
+            }
+        }
+        *(u16 *)(a + 0x32) += 8;
+        f_UpdateTombaLostGroundSupportMotion(a, 1);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005EC70);
 
