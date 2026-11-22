@@ -850,7 +850,12 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", f_UpdateWaterTempleQuestPropActor);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80128BF8);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80128C40);
+extern u16 D_1F8000E2;
+s32 func_800778E4(void *, s16);
+s32 func_80128C40(u8 *a0)
+{
+    return func_800778E4(a0, D_1F8000E2 - *(u16 *)(a0 + 0x32));
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80128C78);
 
@@ -1632,7 +1637,15 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80135230);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801352CC);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80135354);
+extern u16 D_1F8000E2;
+
+s32 func_80135354(void *a0)
+{
+    if (func_80135388(a0) == 0) {
+        return 0;
+    }
+    return func_8007778C(a0);
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80135388);
 
