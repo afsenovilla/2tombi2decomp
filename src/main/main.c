@@ -5565,7 +5565,30 @@ void func_8004BF84(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004C01C);
+void func_8004C01C(u8 *a)
+{
+    switch (a[0x5E]) {
+    case 0:
+        switch (a[5]) {
+        case 0:
+            a[5] = 1;
+            a[0] = 3;
+            *(s16 *)(a + 0x88) = -0x50;
+            *(s16 *)(a + 0x8A) = 0x14;
+            *(s16 *)(a + 0x8C) = 0;
+        case 1:
+            func_80051614(a, a + 0x88, 0, 0);
+            if ((a[1] = D_800E7E81) != 0) {
+                f_QueueClass5ActorForRender((s32)a);
+            }
+            break;
+        }
+        break;
+    case 1:
+        func_8004B788(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnAreaIndexedPersistentPickup);
 
@@ -7898,7 +7921,34 @@ void func_8005950C(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800597AC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80059C60);
+extern void *D_800A4BBC[];
+extern u8 D_800BF830;
+
+void func_80059C60(void)
+{
+    u8 *t = D_800E7E80_f78d;
+
+    if (t[0] != 0) {
+        D_1F800247++;
+        switch (t[4]) {
+        case 0:
+            f_InitializeTombaPlayerActor(t, 1);
+            if (D_1F800236_18be < 3) {
+                if (*(s16 *)(t + 0x17E) & 0x8000) {
+                    *(u16 *)(t + 0x32) += 0x46;
+                }
+                f_SetTombaAnimationIfChanged(t, 4, 0);
+            } else {
+                f_SetTombaAnimationIfChanged(t, 2, 0);
+            }
+            t[1] = 1;
+            break;
+        case 1:
+            f_AdvanceActorSkeletalAnimation(t);
+            break;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80059D28);
 
@@ -10873,7 +10923,27 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateScriptedInteractionApproach);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80071260);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800713F8);
+void func_800713F8(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        {
+            u16 **t = D_800A4BBC[D_800BF870.unk0];
+            f_InitializeActorScript(a, D_8001B860, t[D_800BF830]);
+        }
+        a[0x70] = 2;
+        a[6]++;
+        break;
+    case 1:
+        if (a[0x70] == 0xFF) {
+            f_StartCurrentScriptActorConversation();
+        }
+        break;
+    }
+    f_RunActorScriptInterpreter(a);
+    f_UpdateActorOrbitAroundAnchor(a);
+    f_AdvanceActorAnimationAndStoreCompletion(a);
+}
 
 s32 func_800714C0(u8 *a, s16 v)
 {
