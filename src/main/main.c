@@ -10255,9 +10255,271 @@ void func_800737F8(s32 arg)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800738B0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800739AC);
+typedef struct { u8 unk0; u8 u1; u8 pad2[0x1E]; s32 x; s32 y; s32 z; u8 pad2C[0x59C]; u8 u5C8; } GsSign_39AC;
+extern GsSign_39AC D_800BF870_39ac;
+extern s16 D_800A4C80[];
+extern u8 D_800E7E85;
+extern u8 D_800BF84A;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80073CD8);
+void func_800739AC(u8 *a)
+{
+    u8 *g = D_800E7E80_f78d;
+    u8 *p;
+    u16 v;
+
+
+    switch (a[4]) {
+    case 0:
+        if (f_InitializeSinglePartActorModel(a, 0xC, D_800A4C80[D_800BF870_39ac.unk0]) != 0) {
+            break;
+        }
+        a[0] = 1;
+        a[4]++;
+        if (D_800BF870_39ac.unk0 == 2 || D_800BF870_39ac.unk0 == 7 || D_800BF870_39ac.unk0 == 0x14) {
+            *(s16 *)(a + 0x80) = 0xA0;
+            *(s16 *)(a + 0x82) = 0x140;
+        } else {
+            *(s16 *)(a + 0x80) = 0x12C;
+            *(s16 *)(a + 0x82) = 0x258;
+        }
+        *(s16 *)(a + 0x84) = 0xED;
+        *(s16 *)(a + 0x86) = 0xED;
+        a[0x2B] = 0;
+        if (D_800BF870_39ac.unk0 == 5 && a[3] == 5) {
+            a[0xB] = 0xF;
+        }
+        break;
+    case 1:
+        if (f_TestAndQueueActorForRender(a) == 0) {
+            a[0x2B] = 0;
+            break;
+        }
+        switch (a[5]) {
+        case 5:
+            a[0] = 1;
+            a[5] = 0;
+        case 0:
+            if (a[0x2B] == 3) {
+                a[5]++;
+                D_800BF870_39ac.u1 = a[3];
+                f_UnlockWarpDestinationAndAreaDoor(D_800BF870_39ac.unk0, D_800BF870_39ac.u1);
+            }
+            break;
+        case 1:
+            if ((D_800BF870_39ac.unk0 == 2 || D_800BF870_39ac.unk0 == 7) && D_800E7E85 != 0x1F) {
+                a[5] = 4;
+            } else {
+                func_800737F8(a[3]);
+                if (D_800E7E68 & 0x2000) {
+                    a[5]++;
+                    f_PlaySoundEffect(0x11, 0, 0);
+                }
+            }
+            break;
+        case 2:
+            func_800738B0();
+            v = D_800E7E68;
+            if (v & 0x4000) {
+                a[5]++;
+                f_PlaySoundEffect(0x11, 0, 0);
+            } else if (v & 0x2000) {
+                a[5] = 4;
+                f_PlaySequencedMusic(1);
+            }
+            break;
+        case 3:
+            D_1F800136 = 2;
+            D_800BF84A = 0;
+            D_800BF870_39ac.x = *(s32 *)(g + 0x2C);
+            D_800BF870_39ac.y = *(s32 *)(g + 0x30);
+            D_800BF870_39ac.z = *(s32 *)(g + 0x34);
+            D_800BF870_39ac.u5C8 = g[0x2A];
+            p = *(u8 **)D_1F800138;
+            *(s16 *)(p + 0x50) = 0;
+            p[0x6B] = 8;
+            a[5]++;
+            f_SetDoubleBufferedClearColor(0, 0, 0);
+            break;
+        case 4:
+            a[0] = 2;
+            a[5]++;
+            break;
+        }
+        a[0x2B] = 0;
+        f_UpdateActorUnscaledModelTransforms(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
+
+extern s16 D_800A4C94[];
+extern u16 D_800A4CA8[];
+extern u16 D_800BFE56;
+
+void func_80073CD8(u8 *a)
+{
+    u16 id;
+    u8 *p;
+    u8 *q;
+
+    switch (a[4]) {
+    case 0:
+        if (f_InitializeSinglePartActorModel(a, 0xC, D_800A4C94[D_800BF870.unk0]) != 0) {
+            break;
+        }
+        a[0x2B] = 0;
+        *(u8 **)(a + 0x14) = NULL;
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x58) = 0;
+        a[4]++;
+        if (D_800BF870.unk0 == 2 || D_800BF870.unk0 == 7 || D_800BF870.unk0 == 0x14) {
+            a[0] = 1;
+            *(s16 *)(a + 0x80) = 0xA0;
+            *(s16 *)(a + 0x82) = 0x140;
+            *(s16 *)(a + 0x84) = 0xED;
+            *(s16 *)(a + 0x86) = 0xED;
+        } else {
+            if (D_800BF870.pad1[2] == 0) {
+                a[0] = 1;
+            }
+            *(s16 *)(a + 0x80) = 0x12C;
+            *(s16 *)(a + 0x82) = 0x258;
+            *(s16 *)(a + 0x84) = 0xCB;
+            *(s16 *)(a + 0x86) = 0xCB;
+        }
+        switch (a[3]) {
+        case 2:
+            a[8] = 0;
+            *(s16 *)(a + 0x56) = 0xC00;
+            break;
+        case 8:
+            a[0xB] = 0xF;
+            break;
+        case 12:
+        case 13:
+        case 14:
+            *(s16 *)(a + 0x56) = 0x400;
+            *(s16 *)(a + 0x80) = 0x3C;
+            *(s16 *)(a + 0x82) = 0x78;
+            *(s16 *)(a + 0x84) = 0x3E;
+            a[8] = 0;
+            *(s16 *)(a + 0x86) = 0x7C;
+            break;
+        case 17:
+            if (D_800BFE56 & 0x10) {
+                *(u16 *)(a + 0x32) += 0x64;
+            }
+            break;
+        case 20:
+            a[8] = 0;
+            break;
+        case 5:
+        case 6:
+        case 7:
+        case 29:
+        case 30:
+            *(s16 *)(a + 0x56) = 0;
+            break;
+        case 32:
+            *(s16 *)(a + 0x56) = 0x4D0;
+            break;
+        case 21:
+        case 22:
+        case 23:
+        case 24:
+            a[0] = 1;
+            break;
+        }
+        break;
+    case 1:
+        f_TestAndQueueActorForRender(a);
+        switch (a[5]) {
+        case 4:
+            a[0] = 1;
+            a[5] = 0;
+        case 0:
+            if (a[0x2B] == 3) {
+                a[5]++;
+                switch (a[3]) {
+                case 12:
+                    if (f_StartEvent(0x4E) != 0) {
+                        a[5] = 5;
+                    }
+                    break;
+                case 13:
+                    if (f_StartEvent(0x50) != 0) {
+                        a[5] = 5;
+                    }
+                    break;
+                case 14:
+                    if (f_StartEvent(0x4F) != 0) {
+                        a[5] = 5;
+                    }
+                    break;
+                }
+            }
+            break;
+        case 1:
+        case 5:
+            if (a[3] == 2) {
+                if (D_800BF870.pad1[0x96] == 0xFF) {
+                    id = 0x16;
+                    goto call;
+                }
+                if (D_800BF870.pad1[0x52] != 0) {
+                    id = 0x15;
+                    goto call;
+                }
+            }
+            id = D_800A4CA8[a[3]];
+        call:
+            if ((*(u8 **)(a + 0x14) = func_8007E110((s16)id, 0)) != NULL) {
+                a[5]++;
+            }
+            break;
+        case 6:
+            if (f_IsEventPresentationComplete() != 0) {
+                a[5] = 2;
+            }
+            break;
+        case 2:
+            if (D_800E7E68 & D_1F800174_de41) {
+                a[5]++;
+            }
+            break;
+        case 3:
+            q = *(u8 **)(a + 0x14);
+            if (q[4] < 2) {
+                q[4] = 2;
+                *(u8 **)(a + 0x14) = NULL;
+            }
+            a[0] = 2;
+            a[5]++;
+            break;
+        }
+        if (a[5] != 4 && (D_800BF870.unk0 == 2 || D_800BF870.unk0 == 7 || D_800BF870.unk0 == 0x14)) {
+            p = *(u8 **)(a + 0x14);
+            if (p != NULL && D_800E7E85 != 0x1F) {
+                p[4] = 2;
+                *(u8 **)(a + 0x14) = NULL;
+                a[0] = 1;
+                a[5] = 0;
+            }
+        }
+        a[0x2B] = 0;
+        f_UpdateActorUnscaledModelTransforms(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007413C);
 
@@ -11593,7 +11855,6 @@ void func_8007BE18(u8 a)
     }
 }
 
-extern u8 D_800BF84A;
 extern u8 D_1F80023B_0a71;
 void func_8007BE18(u8 a);
 s32 f_ControlStreamedAudioTrack(s32 track);
