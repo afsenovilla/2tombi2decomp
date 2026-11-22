@@ -1075,7 +1075,27 @@ void func_8011AD44(u8 *a) {
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011AE24);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011B030);
+void func_8011B030(u8 *a)
+{
+    s32 s = a[4];
+    switch (s) {
+    case 0:
+        func_8011AE24(a);
+        break;
+    case 1:
+        *(s16 *)(a + 0x56) = -D_1F8000F2;
+        func_800517F8(a);
+        a[1] = s;
+        func_80077EBC(a);
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_8011B0E0(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x56) = (s16) -(s16) *(u16 *)0x1F8000F2;
