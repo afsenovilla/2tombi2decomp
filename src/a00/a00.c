@@ -1233,7 +1233,29 @@ u8 *f_SpawnBlueBucketPickup(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117FAC);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801180CC);
+#define FP(p, o) M2C_FIELD(p, u8 **, o)
+
+void func_801180CC(u8 *a) {
+    u8 *p = FP(a, 0x10);
+    u8 *c;
+
+    if (*(u8 *)0x1F800207 < 5 && func_8007778C() != 0) {
+        if (a[5] == 2) {
+            u16 x = D_1F800160_71b4;
+            u16 y = D_1F800162;
+            u16 z = D_1F800164_d75f;
+            F16(a, 0x2E) = x;
+            F16(a, 0x32) = y;
+            F16(a, 0x36) = z;
+        } else {
+            F16(a, 0x2E) = FU16(p, 0) + ((F16(FP(a, 0xC0), 0x1A) * 9) >> 8);
+            F16(a, 0x32) = FU16(p, 2) + ((F16(FP(a, 0xC0), 0x20) * 9) >> 8);
+            F16(a, 0x58) = -FU16(p, 0xC);
+        }
+        func_800517F8(a);
+        func_8004B374(a, 1);
+    }
+}
 
 void func_801181BC(void *arg0, void *arg1) {
     if (M2C_FIELD(arg0, u8 *, 0x2B) == 2) {
@@ -3342,7 +3364,27 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleA00PendulumPlatformActor);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801365C4);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80136748);
+#define FP(p, o) M2C_FIELD(p, u8 **, o)
+extern u8 D_1F8000D0_b839[];
+extern u8 D_1F800000[];
+
+void func_80136748(u8 *a) {
+    u8 *c;
+    u8 *s;
+    func_8003CCA4();
+    D_1F8000C0[0] = FU16(FP(a, 0xC8), 0x2C);
+    D_1F8000C0[1] = FU16(FP(a, 0xC8), 0x30);
+    D_1F8000C0[2] = FU16(FP(a, 0xC8), 0x34) + 0x2E;
+    func_80084470(D_1F8000D0_b839 + 0x28, D_1F8000C0, D_1F800000 + 0x14);
+    s = D_1F800000;
+    c = D_1F8000D0_b839;
+    M2C_FIELD(s, s32 *, 0x14) += M2C_FIELD(c, s32 *, 0x3C);
+    M2C_FIELD(s, s32 *, 0x18) += M2C_FIELD(c, s32 *, 0x40);
+    M2C_FIELD(s, s32 *, 0x1C) += M2C_FIELD(c, s32 *, 0x44);
+    func_80084660(D_1F8000D0_b839 + 0x28);
+    func_80084690(D_1F800000);
+    func_801365C4(a, F16(a, 0xBA));
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013681C);
 
@@ -3427,7 +3469,6 @@ typedef struct {
     u8 b[0xC0];
     u8 *parts[1];
 } PartsActor;
-extern u8 D_1F800000[];
 void func_801389C8(PartsActor *a0) {
     PartsActor *a = a0;
     s32 pad[4];
