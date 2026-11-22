@@ -12140,7 +12140,41 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800696C4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80069858);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80069948);
+extern s32 D_1F800208;
+extern s16 D_1F800200;
+extern s16 D_1F800202;
+extern s16 D_1F800204;
+
+s32 func_80069948(u8 *a)
+{
+    s32 r = func_80069858(a, 0, 0);
+
+    if (r != 0) {
+        a[0] = 2;
+        a[0x2B] = 2;
+        if (r == 2) {
+            {
+                            u16 x = *(u16 *)(a + 0x2E);
+
+                            D_1F800208 = 1;
+                            D_1F800200 = x;
+                        }
+            D_1F800202 = *(u16 *)(a + 0x32);
+            D_1F800204 = *(u16 *)(a + 0x36);
+            a[0x29] = 1;
+            a[5] = r;
+            a[6] = 0;
+            a[7] = 0;
+            f_PlaySoundEffect(0xC, 0, 0);
+            f_SpawnImpactTransientEffect(1, a + 0x2C, a[0x5E], (u16 *)(a + 0x68));
+            return 2;
+        }
+        f_PlaySoundEffect(0xE, 0, 0);
+        f_SpawnImpactTransientEffect(2, a + 0x2C, a[0x5E], (u16 *)(a + 0x68));
+        return 1;
+    }
+    return 0;
+}
 
 s16 func_80069A2C(u8 *a, s16 x, s16 y, s16 z)
 {
