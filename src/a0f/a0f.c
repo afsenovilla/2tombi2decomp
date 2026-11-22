@@ -473,7 +473,35 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80114288);
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_801143C4);
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_801148E0);
+extern u8 D_1F800250;
+extern u8 D_800E7E7C;
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+
+void func_801148E0(u8 *a)
+{
+    u8 *t = D_1F80024C_2bfb;
+    u32 y;
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+    case 1:
+        if (D_1F800250 == 0) {
+            a[4] = 2;
+        }
+        H(a, 0x2C) = H(t, 0x2E);
+        H(a, 0x2E) = H(t, 0x32);
+        y = D_800E7E7C;
+        H(a, 0x30) = H(t, 0x36);
+        if (y >= 0x10) {
+            func_80031220(0x1006, a + 0x2C, 0);
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_801149AC(u8 *a)
 {
