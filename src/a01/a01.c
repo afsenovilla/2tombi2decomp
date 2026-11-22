@@ -410,11 +410,28 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaSceneController);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80111620);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80111BE0);
+typedef struct {
+    s16 x, y, w, h;
+} RectA;
+extern u8 *D_800BF544;
+extern void *D_800ED8C8_a098;
+
+void func_80111BE0(void) {
+    RectA r;
+    u8 *p;
+
+    p = D_800BF544;
+    r.x = 0x3F0;
+    r.y = 0xE5;
+    r.w = 0x10;
+    r.h = 1;
+    func_80083CE0(p, &r, 0x3F0, 0xEB);
+    func_80083C30(D_800ED8C8_a098, p);
+    D_800BF544 = (p = p + 0x18);
+}
 
 extern u8 D_800BF873;
 extern s32 D_80135314;
-extern u8 *D_800BF544;
 extern u32 *D_800ED8C8;
 
 void func_80111C58(void) {
@@ -1588,10 +1605,6 @@ u8 *func_8011DD38(void) {
     return NULL;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011DD88);
-
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011DE34);
-
 typedef struct {
     u8 pad0[0x38];
     u8 *p38;
@@ -1599,6 +1612,25 @@ typedef struct {
     s16 h60[0x34];
     u8 *pC8;
 } ActorDF;
+
+void func_8011DD88(ActorDF *a, s32 i) {
+    s32 j = i + 1;
+    s16 v;
+
+    func_8011D9E4(a, j);
+    if (a->h60[j] != 2) {
+        a->h60[i] = 0;
+    } else {
+        v = *(s16 *)(a->p38 + 4) >> 4;
+        if (v != a->h60[i]) {
+            func_80051B04(a->pC8, 0x15, v);
+            a->h60[i] = v;
+        }
+    }
+}
+
+INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011DE34);
+
 
 s16 func_8011DF24(ActorDF *a, s32 i) {
     s32 r = func_80076D68();
