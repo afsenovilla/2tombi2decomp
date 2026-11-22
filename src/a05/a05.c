@@ -112,7 +112,22 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010E604);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010E698);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010E760);
+extern s16 D_1F80009C_c31a;
+
+void func_8010E760(u8 *a, u8 *b)
+{
+    u16 f = *(u16 *)(a + 0x17E);
+
+    if (!(f & 0x200)) {
+        if (f & 0x8000) {
+            func_8001F830(a, b);
+            return;
+        }
+        if (func_80020364(a, b, 0x80) == 3) {
+            b[0x5F] = func_80077768(D_1F80009C_c31a, *(s16 *)(a + 0x140), 1) + 2;
+        }
+    }
+}
 
 extern s8 D_1F80009C[];
 void func_8010E7EC(void *arg0, void *arg1) {
@@ -2495,7 +2510,29 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012DBA0);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012DD44);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012DE08);
+//-- a
+void func_8012DE08(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        if (a[0x29] != 0) {
+            a[8] = 0;
+            *(s16 *)(a + 0x74) = 0;
+            *(s16 *)(a + 0x76) = 0;
+            a[6]++;
+        } else if (a[0x2B] != 0) {
+            *(s16 *)(a + 0x74) = 0;
+        }
+        break;
+    case 1:
+        if (a[0x29] == 0) {
+            a[8] = 0xF0;
+            *(s16 *)(a + 0x76) = 4;
+            a[6] = 0;
+        }
+        break;
+    }
+}
 
 void func_80133878();
 void func_8012DE94(u8 *a)
@@ -3149,7 +3186,21 @@ u8 *func_80132A80(void)
     return r;
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80132AC8);
+//-- a
+void func_80132AC8(u8 *a)
+{
+    u8 *g = (u8 *)&D_800BF870;
+
+    if (g[0x1A1] < 2 || g[0xBE] == 0xFF) {
+        func_80051B70(a, 0xC, 0x55);
+        a[0x5E] = 0;
+    } else {
+        func_80051B70(a, 0xC, 0x56);
+        a[0x5E] = 1;
+    }
+    a[0xD] |= 4;
+    (*(u8 **)(a + 0xC0))[0x3F] = 0xE0;
+}
 
 void func_80132B54(void *arg0) {
     M2C_FIELD(arg0, s32 *, 0x10) = 0;
@@ -3320,7 +3371,24 @@ void func_8013466C(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801347C0);
+void func_801347C0(u8 *a, u8 *b)
+{
+    a[0x2A] = b[0x2A];
+    *(V3 *)(a + 0x2C) = *(V3 *)(b + 0x2C);
+    func_8004766C(a, b);
+    func_80049760(a);
+    if (a[3] & 0x80) {
+        s16 v = D_1F8001A0;
+        *(s16 *)(a + 0x58) = 0;
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x56) = v;
+    } else {
+        *(s16 *)(a + 0x5A) = 0;
+        *(s16 *)(a + 0x58) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x54) = 0;
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8013484C);
 

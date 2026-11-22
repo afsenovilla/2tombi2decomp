@@ -2719,7 +2719,22 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80129C50);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012A2B8);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012A384);
+s32 func_8011AD34(void);
+
+void func_8012A384(u8 *a)
+{
+    if (a[0x5E] == 0) {
+        a[0x2A] = 0;
+        func_80041194(a, *(s16 *)(a + 0x86) - *(s16 *)(a + 0x84), 0, 0);
+        return;
+    }
+    func_8004766C(a);
+    func_80049760(a);
+    *(s16 *)(a + 0x60) = D_1F8001A0;
+    *(s16 *)(a + 0x62) = D_1F8001A2;
+    *(s16 *)(a + 0x56) = *(s16 *)(a + 0x60);
+    ((void (*)(void *))func_8011AD34)(a);
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012A410);
 
