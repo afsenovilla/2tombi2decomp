@@ -428,7 +428,52 @@ void func_8010A554(void *arg0) {
     func_8003315C(arg0);
 }
 
-INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_8010A5B8);
+extern u8 D_1F8000D0_b839[];
+
+void func_8010A5B8(u8 *a)
+{
+    u8 *g = D_800E7E80;
+    u8 *c;
+    s16 v[8];
+    s16 ang;
+    s32 dx, dz;
+    s16 y;
+
+    switch (a[2]) {
+    case 0:
+        *(s16 *)(a + 0x56) = 0;
+        c = D_1F8000D0_b839;
+        *(s16 *)(c + 0x1E) = -0xABE;
+        a[2]++;
+        *(s16 *)(c + 2) = 0xCE4;
+        *(s16 *)(c + 6) = -0x70C;
+        *(s16 *)(c + 0xA) = 0xE74;
+        a[0x64] |= 0x80;
+    case 1:
+        if (g[0x2A] == 8 && *(s16 *)(g + 0x32) < -0x3200 && *(s16 *)(g + 0x2E) < 0xE82) {
+            *(s16 *)(g + 0x2E) = 0xE82;
+            *(s16 *)(g + 0x36) = 0x837;
+        }
+        *(s16 *)(a + 0xA) = *(s16 *)(g + 0x2E);
+        *(s16 *)(a + 0xE) = *(s16 *)(g + 0x32) - 0xC8;
+        *(s16 *)(a + 0x12) = *(s16 *)(g + 0x36);
+        func_8006E3F4(a, a + 8);
+        v[1] = 0xCE4;
+        v[5] = 0xE74;
+        ang = func_800782B0(v, *(s16 *)(a + 0xA), *(s16 *)(a + 0x12)) + 0x800;
+        dx = (func_80083F50(ang) * 0x258) >> 12;
+        dz = func_80083E80(ang);
+        v[1] += dx;
+        v[5] -= (dz * 0x258) >> 12;
+        y = *(s16 *)(a + 0xE) + 0x280;
+        v[3] = y;
+        if (y > -0x70C) {
+            v[3] = -0x70C;
+        }
+        func_8006CEC4(D_1F8000D0_b839, v, 0xE0);
+        break;
+    }
+}
 
 extern u8 D_800BF816;
 extern s32 D_1F800184;
