@@ -3,12 +3,12 @@
 under several compiler set-ups (Sony built its libraries with other compilers than the game's) and install the
 first that matches the retail bytes, with the // CC / // FLAGS / // ASPSX / // AS header that made it match.
 
-  python3 -I tools/libsweep.py [--prog main] [--lib libc2] [--install] [-j N] [--source m2c|t1|both]
+  python3 -I tools/libsweep.py [--prog main] [--lib libc2] [--install] [-j N] [--source m2c|t1|both] [--epilogue]
 
 Candidates, in this order: psx_tomba's library C cut to the function (tools/ptsrc.py), Tombi-Decomp's matched C for
 the same function (tools/t1match.py; its __asm__ wrappers are skipped), the m2c draft (tools/decomp.py); compiler
 set-ups: VARIANTS below (gcc 2.8.1 / 2.7.2, maspsx 2.79 / 2.56 or GNU as, -O1..-O3, -mno-split-addresses,
--fno-delayed-branch). A candidate whose D_ / func_ names carry another program's addresses (psx_tomba and
+-fno-delayed-branch; --epilogue adds the // EPILOGUE sony and // RETURN sony ones). A candidate whose D_ / func_ names carry another program's addresses (psx_tomba and
 Tombi-Decomp use Tombi's) gets one `#define OLD NEW` line per name, NEW being this program's name for the address
 the bytes give. After --install the linked build of the program must still be OK, else the installs are undone
 one by one.
@@ -37,6 +37,16 @@ VARIANTS = [
     {"cc": "gcc-2.7.2-psx", "as": "gnu", "flags": "-O1 -G0"},
     {"cc": "gcc-2.7.2-psx", "as": "maspsx", "aspsx": "2.79", "flags": "-O1 -G0"},
 ]
+# --epilogue: the set-ups of docs/STATUS.md 2026-11-22 (4)-(5), Sony's epilogue (// EPILOGUE sony: most libsnd /
+# libspu / libgpu functions with a frame) and Sony's single return (// RETURN sony: leaf functions with several
+# returns; `sony first` keeps an early `return K;` after its test)
+EPI_VARIANTS = []
+for _f in ("-O2 -G0 -mno-split-addresses", "-O2 -G0"):
+    for _a in ({"as": "gnu"}, {"as": "maspsx", "aspsx": "2.79"}):
+        for _r in ({"epilogue": "sony"}, {"return": "sony"}, {"epilogue": "sony", "return": "sony"},
+                   {"return": "sony first"}):
+            EPI_VARIANTS.append(dict({"cc": "gcc-2.8.1-psx", "flags": _f}, **_a, **_r))
+    EPI_VARIANTS.append({"cc": "gcc-2.7.2-psx", "flags": _f, "as": "gnu", "epilogue": "sony"})
 
 
 def prog_bytes(prog):
@@ -161,7 +171,7 @@ def candidates(prog, name, ctx, t1src, sources=("main", "pt", "t1", "m2c")):
     if "main" in sources and prog != "main":   # the same function already matched in MAIN.EXE
         mf = glob.glob(os.path.join(ROOT, "src", "main", "psyq", "*", name + ".c"))
         if mf and "INCLUDE_ASM" not in open(mf[0]).read():
-            t = re.sub(r"(?m)^//\s*(CC|FLAGS|ASPSX|AS)\s.*\n", "", open(mf[0]).read())
+            t = re.sub(r"(?m)^//\s*(CC|FLAGS|ASPSX|AS|EPILOGUE|RETURN)\s.*\n", "", open(mf[0]).read())
             out.append(("main:" + os.path.relpath(mf[0], ROOT), t))
     if "pt" in sources:
         text, f = ptsrc.cut(name)
@@ -329,7 +339,21 @@ def note_for(kind):
 def header(v):
     h = ["// CC " + v["cc"], "// FLAGS " + v["flags"]]
     h.append("// AS gnu" if v["as"] == "gnu" else "// ASPSX " + v["aspsx"])
+    for k in ("epilogue", "return"):
+        if v.get(k) and v[k] != "none":
+            h.append("// %s %s" % (k.upper(), v[k]))
     return "\n".join(h) + "\n"
+
+
+def pending_files(prog, lib=None):
+    """name -> src/<prog>/psyq/<lib>/<name>.c of the library files whose own function is still INCLUDE_ASM (a file
+    whose INCLUDE_ASM names another function, a split-off part, is not that function's)."""
+    files = {}
+    for f in glob.glob(os.path.join(ROOT, "src", prog, "psyq", lib or "*", "*.c")):
+        n = os.path.basename(f)[:-2]
+        if re.search(r'INCLUDE_ASM\("[^"]+", %s\);' % re.escape(n), open(f).read()):
+            files[n] = f
+    return files
 
 
 def main():
@@ -340,12 +364,11 @@ def main():
     ap.add_argument("--source", default="main,pt,t1,m2c",
                     help="comma list of main (the MAIN.EXE file, for boot), pt (psx_tomba), t1 (Tombi-Decomp), m2c")
     ap.add_argument("-j", type=int, default=os.cpu_count())
+    ap.add_argument("--epilogue", action="store_true", help="also the EPILOGUE / RETURN sony set-ups (EPI_VARIANTS)")
     a = ap.parse_args()
-    files = {}
-    for f in glob.glob(os.path.join(ROOT, "src", a.prog, "psyq", a.lib or "*", "*.c")):
-        n = os.path.basename(f)[:-2]   # the file's own function still asm (a file may hold more functions)
-        if re.search(r'INCLUDE_ASM\("[^"]+", %s\);' % re.escape(n), open(f).read()):
-            files[n] = f
+    if a.epilogue:
+        VARIANTS.extend(EPI_VARIANTS)
+    files = pending_files(a.prog, a.lib)
     t1 = {}
     sources = tuple(a.source.split(","))
     if "t1" in sources:

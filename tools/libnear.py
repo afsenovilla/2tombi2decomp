@@ -3,7 +3,7 @@
 compiler set-up and report how far the best one is from the retail bytes (differing words, size difference), so the
 permuter (tools/permute.py) can be pointed at the closest. Writes build/libnear_<prog>.csv.
 
-  python3 -I tools/libnear.py [--prog main] [--max-size 0x200] [-j N] [--game]
+  python3 -I tools/libnear.py [--prog main] [--max-size 0x200] [-j N] [--game] [--epilogue]
 
 --game: the game functions still INCLUDE_ASM in src/<prog>/<prog>.c, game compiler only (build/gamenear_<prog>.csv).
 """
@@ -52,7 +52,7 @@ def one(prog, name, binary, delta):
                     continue
                 dist = distance(os.path.join(d, "a.o"), name, want)
                 if dist is not None and (best is None or dist < best[0]):
-                    best = (dist, kind, i, size)
+                    best = (dist, kind, L.header(v).strip().replace("\n", " | "), size)
     finally:
         shutil.rmtree(d, ignore_errors=True)
     return (name,) + best if best else None
@@ -64,6 +64,7 @@ def main():
     ap.add_argument("--max-size", default="0x200")
     ap.add_argument("-j", type=int, default=os.cpu_count())
     ap.add_argument("--game", action="store_true", help="the game functions of src/<prog>/<prog>.c instead")
+    ap.add_argument("--epilogue", action="store_true", help="also the EPILOGUE / RETURN sony set-ups")
     a = ap.parse_args()
     lim = int(a.max_size, 0)
     names = []
@@ -71,10 +72,14 @@ def main():
         t = open(os.path.join(ROOT, "src", a.prog, a.prog + ".c")).read()
         pend = re.findall(r'INCLUDE_ASM\("[^"]+", (\w+)\);', t)
     else:
-        pend = [os.path.basename(f)[:-2] for f in glob.glob(os.path.join(ROOT, "src", a.prog, "psyq", "*", "*.c"))
-                if "INCLUDE_ASM" in open(f).read()]
+        pend = sorted(L.pending_files(a.prog))   # a file whose INCLUDE_ASM names another function is skipped
+    if a.epilogue:
+        L.VARIANTS.extend(L.EPI_VARIANTS)
     for n in pend:
-        ad, sz = L.asm_info(a.prog, n)
+        try:
+            ad, sz = L.asm_info(a.prog, n)
+        except SystemExit:     # no asm for it
+            continue
         if sz and sz <= lim:
             names.append(n)
     global GAME

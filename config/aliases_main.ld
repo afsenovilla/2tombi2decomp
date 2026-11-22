@@ -280,6 +280,7 @@ StRingIdx1 = 0x8010270C;
 StRingIdx2 = 0x80102710;
 StRingIdx3 = 0x80102714;
 StEmu_Addr = 0x80102718;
+StEndFrame = 0x8010271C;
 StRingAddr = 0x80102728;
 StRingSize = 0x8010272C;
 cd_result_sync = 0x80102730;
