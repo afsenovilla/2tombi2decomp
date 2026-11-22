@@ -3221,7 +3221,48 @@ AreaPolyFT4 *func_80127034(AreaPolyFT4 *p, s32 x, s32 y, s32 w, s32 h, s16 c, s1
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80127170);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80127678);
+#define U32(p, o) M2C_FIELD(p, u32 *, o)
+
+void func_80127678(u8 *a) {
+    u32 v;
+
+    switch (a[4]) {
+    case 0:
+        U32(a, 0x50) = 0x303030;
+        a[1] = 1;
+        U32(a, 0x58) = 0x1000;
+        U32(a, 0x5C) = 0;
+        U32(a, 0x48) = 0;
+        U32(a, 0x4C) = 0;
+        a[4] = 1;
+        a[5] = 0;
+    case 1:
+        a[1] = 1;
+        {s32 c = a[5]; if (c == 0) {
+            if (U32(a, 0x58) != 0) {
+                U32(a, 0x58) -= 0x100;
+            } else {
+                a[5] = c + 1;
+            }
+        }}
+        if ((U32(a, 0x5C) += 0x20) >= 0xC0) {
+            U32(a, 0x5C) = 0;
+        }
+        break;
+    case 2:
+        v = U32(a, 0x58);
+        a[1] = 1;
+        if (v <= 0x1000) {
+            U32(a, 0x58) = v + 0x111;
+        } else {
+            a[4] = 3;
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 #define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
 extern s32 D_1F800090[];

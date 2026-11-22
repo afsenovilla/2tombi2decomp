@@ -668,7 +668,64 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActiveColliderStaticContacts);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActiveColliderActorContacts);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00CollisionInteractions);
+extern u8 D_1F800183;
+extern u8 **D_1F800154;
+extern u8 D_1F80015C;
+/* f_ResolveA00ActiveActorCollisionCandidates, inlined */
+static inline void inl_ResolveA00ActiveActorCollisionCandidates(void) {
+    u8 **list = D_1F800154;
+    u8 *a;
+
+    for (D_1F800183 = D_1F80015C; D_1F800183 != 0;) {
+        a = *list++;
+        D_1F800183--;
+        if (!(a[0] & 2)) {
+            switch (a[2]) {
+            case 1:
+                if (a[3] != 1) {
+                    break;
+                }
+            case 0:
+            case 4:
+            case 7:
+                f_ResolveActorAgainstA00CollisionLists(a);
+                break;
+            }
+        }
+    }
+}
+
+void f_UpdateA00CollisionInteractions(void) {
+    u8 *g = D_800E7E80;
+
+    func_8002288C(g);
+    switch (g[0]) {
+    default:
+    case 1:
+    case 3:
+    case 4:
+    case 5:
+    case 7:
+        do {
+            func_80022760(g);
+        } while (0);
+        f_ResolveTombaQuestAndSpecialContacts(g);
+    case 2:
+        if (*(u32 *)(g + 0x158) < 2) {
+            f_ResolveTombaActorContacts(g);
+        }
+    case 0:
+    case 6:
+        break;
+    }
+    func_80022554();
+    f_ResolveActiveColliderStaticContacts();
+    f_ResolveActiveColliderActorContacts();
+    inl_ResolveA00ActiveActorCollisionCandidates();
+    f_ResolveA00ActorPairContacts();
+    f_ResolveA00PlatformPairContacts();
+    f_EnforceA00TombaBoundsAndInteriorExit(g);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_FindTombaSupportActor);
 
@@ -1089,9 +1146,6 @@ void func_801151F4(u8 *a, u8 *b)
     }
 }
 
-extern u8 D_1F800183;
-extern u8 **D_1F800154;
-extern u8 D_1F80015C;
 void f_ResolveA00ActiveActorCollisionCandidates(void) {
     u8 **list = D_1F800154;
     u8 *a;
@@ -1238,7 +1292,45 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", block);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateCrabBasketRewardDrop);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80116E3C);
+typedef struct { s16 x, y, z; } SVec3T;
+extern SVec3T D_1F8000C0_4e9b;
+extern u8 D_800BF9E5_1228;
+
+void func_80116E3C(u8 *a) {
+    s32 n;
+    u8 *g;
+
+    switch (a[0x5E]) {
+    case 0:
+        block(a);
+        break;
+    case 1:
+        f_UpdateCrabBasketRewardDrop(a);
+        break;
+    case 2:
+        *(s16 *)(a + 0x54) = 0x800;
+        g = D_800E7E80;
+        n = 3;
+        if (g[0x145] == 0 || g[0x146] != 0) {
+            D_1F8000C0_4e9b.x = 6;
+            D_1F8000C0_4e9b.y = 0xA;
+            D_1F8000C0_4e9b.z = 0x1C;
+        } else {
+            n = 4;
+            D_1F8000C0_4e9b.x = 0x3C;
+            D_1F8000C0_4e9b.y = 8;
+            D_1F8000C0_4e9b.z = 0x48;
+        }
+        if (D_800BF9E5_1228 == 7) {
+            a[4] = 3;
+            break;
+        }
+        func_80051614(a, &D_1F8000C0_4e9b, n, 0);
+        a[1] = 1;
+        func_80077EFC(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleKainenHouseQuestItemActor);
 
@@ -1277,11 +1369,6 @@ void func_80117460(u8 *a) {
     }
 }
 
-typedef struct {
-    s16 x, y, z;
-} SVec3T;
-extern SVec3T D_1F8000C0_4e9b;
-extern u8 D_800BF9E5_1228;
 void func_801174D8(u8 *a) {
     s32 n;
     u8 *g;

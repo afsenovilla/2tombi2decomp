@@ -484,7 +484,62 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010FB64);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010FD5C);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801100A8);
+extern u8 D_1F800183;
+extern u8 **D_1F800154;
+extern u8 D_1F80015C;
+/* func_80110CB8, inlined */
+static inline void inl_80110CB8(void) {
+    u8 **list = D_1F800154;
+    u8 *a;
+
+    for (D_1F800183 = D_1F80015C; D_1F800183 != 0;) {
+        a = *list++;
+        D_1F800183--;
+        if (!(a[0] & 2)) {
+            switch (a[2]) {
+            case 1:
+                if (a[3] != 1) {
+                    break;
+                }
+            case 0:
+            case 4:
+                func_8010EFBC(a);
+                break;
+            }
+        }
+    }
+}
+
+void func_801100A8(void) {
+    u8 *g = D_800E7E80;
+
+    func_8002288C(g);
+    switch (g[0]) {
+    default:
+    case 1:
+    case 3:
+    case 4:
+    case 5:
+    case 7:
+        do {
+            func_80022760(g);
+        } while (0);
+        func_8010F40C(g);
+    case 2:
+        if (*(u32 *)(g + 0x158) < 2) {
+            func_8010F690(g);
+        }
+    case 0:
+    case 6:
+        break;
+    }
+    func_80022554();
+    func_8010F87C();
+    func_8010FD5C();
+    inl_80110CB8();
+    func_8010F240();
+    func_8010C928(g);
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80110214);
 
@@ -680,7 +735,6 @@ void func_80110B2C(u8 *a, u8 *b) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80110BB8);
 
-extern u8 D_1F800183;
 typedef struct {
     u8 pad0[0xC0];
     s32 xC0[1];
@@ -693,8 +747,6 @@ typedef struct {
     s16 pad8;
     s16 c;
 } S13AE38;
-extern u8 **D_1F800154;
-extern u8 D_1F80015C;
 typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner;
 typedef struct { s16 v[4]; } PartInit;
 typedef struct { s16 v[5]; } PartInit5;
