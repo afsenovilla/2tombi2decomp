@@ -834,7 +834,24 @@ void func_8011499C(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActorPairMultipartContact);
+void f_ResolveActorPairMultipartContact(u8 *a, PartsOwner *b) {
+    s32 i;
+
+    for (i = 2; i < b->pad[8] - 1; i++) {
+        if (F16(b->parts[i], 0x16) == 2) {
+            return;
+        }
+        if (i == b->pad[8] - 2 && F16(b->parts[b->pad[8] - 1], 0x16) == 0) {
+            if (func_80023D48(a, b, b->parts[i], a[2] == 3) != 0) {
+                b->pad[0x29] = 1;
+                b->pad[0x47] = func_80077768((s16)D_1F80009C, F16(a, 0x56), 1);
+                return;
+            }
+        } else if (func_80023870(a, b, b->parts[i]) != 0) {
+            return;
+        }
+    }
+}
 
 void func_80114AF4(u8 *a, u8 *b) {
     s32 r = func_80023D48(a, b, M2C_FIELD(b, u8 **, 0xC8), 0);
@@ -1807,7 +1824,44 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleFeedTheChicksController);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SelectFeedChicksNpcSpawn);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateFeedChicksNpcPresence);
+extern u8 D_800BF9F3;
+extern u8 D_800E7EAA;
+
+void f_UpdateFeedChicksNpcPresence(u8 *a) {
+    u8 x;
+
+    F16(a, 0xA) = 0;
+    x = D_800E7EAA;
+    switch (a[3]) {
+    case 0:
+        if (D_1F800160_71b4 < 0x3265) {
+            if (D_800BF9F3 & 2) {
+                F16(a, 0xA) = 1;
+            }
+        } else {
+            F16(a, 0xA) = 1;
+        }
+        break;
+    case 1:
+        if (!((u8)(x - 12) < 10)) {
+            F16(a, 0xA) = 2;
+        }
+        break;
+    case 3:
+        if (D_1F800160_71b4 < 0x34BC || !((u8)x < 18)) {
+            F16(a, 0xA) = 2;
+        }
+        break;
+    case 5:
+        if ((u8)x != 3 && ((u8)x != 10 || D_1F800160_71b4 >= 0x170D)) {
+            F16(a, 0xA) = 1;
+        }
+        break;
+    }
+    if (F16(a, 0xA) != 0) {
+        M2C_FIELD(a, s32 *, 0x10) = 0x1E;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012138C);
 
@@ -2141,7 +2195,38 @@ s32 func_801231E0(u8 *a, s32 r) {
     return r;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801232DC);
+extern u16 D_800BF830_3521;
+extern s8 D_800BF9DD_c419;
+extern s8 D_800BF9EB;
+extern u8 D_80149794[];
+
+s32 func_801232DC(u8 *a) {
+    switch (a[6]) {
+    case 0:
+        a[6] = 1;
+        func_80040CDC(a, D_8014E4EC, D_80149794);
+        a[0x70] = 1;
+        D_800BF9EB = 0;
+        break;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (D_800BF830_3521 == 0xFFFF) {
+            a[6] = 3;
+            D_800BF9DD_c419 = 1;
+            func_80042310();
+        }
+        break;
+    case 3:
+        a[6] = 0;
+        return 1;
+    }
+    return 0;
+}
 
 extern u8 D_80149854[];
 s32 func_801233DC(u8 *a) {
@@ -3220,7 +3305,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80132548);
 
 extern s8 D_1F800160[];
 extern u8 D_800BF89C;
-extern u8 D_800E7EAA;
 void func_8013259C(void *arg0) {
     u8 temp_a0;
     u8 temp_v1;
