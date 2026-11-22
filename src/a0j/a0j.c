@@ -234,7 +234,47 @@ s32 func_8010C228(void) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010C23C);
+typedef struct {
+    s16 pad0;
+    s16 x;
+    s16 pad4;
+    s16 y;
+    s16 pad8;
+    s16 z;
+} HiPos;
+extern u8 D_800E8008[];
+extern s16 D_1F800160;
+extern s16 D_1F800162;
+extern s16 D_1F800164;
+extern u8 D_1F8000D0[];
+
+s32 func_8010C23C(u8 *a)
+{
+    u8 *c = D_800E8008;
+    HiPos v;
+
+    switch (a[0x78]) {
+    case 0:
+        func_8006E1C0(a[3] | 0x80);
+        a[0x78]++;
+        goto end;
+    case 1:
+        *(s16 *)(c + 0xA) = D_1F800160;
+        *(s16 *)(c + 0xE) = D_1F800162;
+        *(s16 *)(c + 0x12) = D_1F800164;
+        func_8006E3F4(c, c + 8);
+        v.x = 0x1103;
+        v.y = -0x2203;
+        v.z = 0x1137;
+        if (func_8006CEC4(D_1F8000D0, &v, 0xE0) != 0) {
+            c[0x66] = 3;
+            return 1;
+        }
+    end:
+    default:
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010C320);
 

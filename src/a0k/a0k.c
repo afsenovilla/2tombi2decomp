@@ -42,7 +42,31 @@ void func_8010A498(void) {
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010A4A0);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010A550);
+typedef struct {
+    u8 pad[0xA];
+    s16 count;
+    u8 *entries;
+    u32 pending;
+    u32 done;
+} RewardSet;
+
+void func_8010A550(void *a, u8 *b)
+{
+    RewardSet *r = (RewardSet *)(b + 0x60);
+    u8 *e = r->entries;
+    s32 i;
+    u32 bit;
+
+    for (i = 0; i < r->count; i++, e += 0x10) {
+        bit = 1 << i;
+        if ((r->pending & bit) && func_80109F14(a, e)) {
+            r->done |= bit;
+            r->pending &= ~bit;
+            func_801100E4(b, e, 0);
+            return;
+        }
+    }
+}
 
 extern u8 **D_1F80013C;
 extern u8 D_1F800144;
