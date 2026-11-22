@@ -253,7 +253,32 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010C588);
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010C6B8);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010CAF8);
+extern u8 D_800E806E;
+
+s32 func_8010CAF8(u8 *a)
+{
+    CameraState *c;
+    switch (a[0x78]) {
+    case 0:
+        c = &g_CameraState;
+        a[0x78]++;
+        c->mode = 1;
+        c->unk6E = 0xC0;
+        c->unk70 = 0x680;
+        c->unk6C = D_801003F8 * 4;
+        c->focusX = *(s16 *)(a + 0x2E) - 0xC8;
+        c->focusY = *(s16 *)(a + 0x32) - *(s16 *)(a + 0x84) / 2;
+        c->focusZ = *(s16 *)(a + 0x36);
+        goto end;
+    case 1:
+        if (D_800E806E == 3) {
+            return 1;
+        }
+    end:
+    default:
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010CBB0);
 
