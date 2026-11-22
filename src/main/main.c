@@ -4601,7 +4601,18 @@ void func_800506B4(void) {
     D_800E809C_da0a += 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800506D0);
+void func_800506D0(void)
+{
+    u8 *p;
+
+    for (p = (u8 *)0x801FE000; p < (u8 *)0x801FE150; p += 0x70) {
+        if (*(u16 *)p == 1) {
+            if (--*(s16 *)(p + 2) == 0) {
+                *(u16 *)p = 2;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80050738);
 
