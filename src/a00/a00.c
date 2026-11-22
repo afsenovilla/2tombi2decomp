@@ -168,7 +168,32 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DBE4);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DC74);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DCB8);
+extern s8 D_800BF808[];
+extern u8 D_1F800137;
+extern s32 D_1F80009C;
+
+void func_8010DCB8(u8 *a, u8 *b) {
+    s32 t, u;
+
+    if (D_1F800137 != 0 || D_800BF808[5] != 0) {
+        return;
+    }
+    if (M2C_FIELD(a, s16 *, 0x17E) & 0x8200) {
+        if (func_8002300C(a, b, 0x20) != 0) {
+            if (!(a[0] & 4)) {
+                t = (func_80083F50(D_1F80009C + 0x800) * (M2C_FIELD(a, s16 *, 0x80) + 0x20)) >> 12;
+                u = func_80083E80(D_1F80009C + 0x800) * (M2C_FIELD(a, s16 *, 0x80) + 0x20);
+                M2C_FIELD(a, s16 *, 0x2E) = M2C_FIELD(b, s16 *, 0x2E) + t;
+                M2C_FIELD(a, s16 *, 0x36) = M2C_FIELD(b, s16 *, 0x36) - (u >> 12);
+            }
+            M2C_FIELD(a, s8 *, 0x5F) = func_80077768((s16)(*(u16 *)&D_1F80009C + 0x800), M2C_FIELD(a, s16 *, 0x140), 1) + 2;
+        }
+    } else if (func_80022F04(a, b) != 0) {
+        b[0x29] = 1;
+        D_1F800137 = 2;
+        D_800BF808[0x39] = 1;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DE0C);
 
@@ -408,7 +433,6 @@ s32 func_801150A8(s32 arg0, s32 arg1) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801150CC);
 
-extern s32 D_1F80009C;
 
 void func_801151F4(u8 *a, u8 *b)
 {
@@ -1531,7 +1555,47 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleMagicFlowerActor);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeEvilPigDoorActor);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeEvilPigDoorFromTravelState);
+void f_InitializeEvilPigDoorFromTravelState(u8 *a, s32 b) {
+    s32 i;
+    s32 found;
+
+    for (i = 0; i < D_800BF870.pad1[0x12]; i++) {
+        if ((D_800BF870.pad1[0x13 + i] & 0x7F) == M2C_FIELD(a, s16 *, 0x7E)) {
+            found = 1;
+            goto done;
+        }
+    }
+    found = 0;
+done:
+    if (found == 0) {
+        goto dead;
+    }
+    if ((D_800BF870.pad1[0x1A8] >> a[3]) & 1) {
+        a[4] = 3;
+        return;
+    }
+    if (f_InitializeEvilPigDoorActor(a, b) != 0) {
+    dead:
+        a[4] = 3;
+        return;
+    }
+    if (D_800BF870.pad1[0] == M2C_FIELD(a, s16 *, 0x7A)) {
+        M2C_FIELD(M2C_FIELD(a, u8 **, 0xC4), s16 *, 0xA) = 0x800;
+        M2C_FIELD(M2C_FIELD(a, u8 **, 0xC8), s16 *, 0xA) = 0x800;
+        a[4] = 1;
+        a[5] = 0;
+        a[0x5E] = 2;
+    } else if ((D_800BF870.pad1[0x1A6] >> a[3]) & 1) {
+        M2C_FIELD(M2C_FIELD(a, u8 **, 0xC4), s16 *, 0xA) = 0x800;
+        M2C_FIELD(M2C_FIELD(a, u8 **, 0xC8), s16 *, 0xA) = 0x800;
+        a[0] = 1;
+        a[4] = 1;
+        a[5] = 0;
+        a[0x5E] = 1;
+    } else {
+        a[5]++;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_OpenEvilPigDoor);
 
@@ -1539,7 +1603,45 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013BAB0);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013BCC8);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013C0BC);
+typedef struct { s16 x, y, w, h; } ClutRect;
+typedef struct {
+    u8 *ptr;
+    u8 *clut;
+    s16 x;
+    s16 y;
+} ClutCycle;
+extern ClutCycle D_8014ABDC[];
+extern s8 D_8014C77C[];
+
+void func_8013C0BC(s32 arg0) {
+    ClutRect r;
+    s32 i;
+    ClutCycle *e;
+    u8 *data;
+
+    if (arg0 == 0) {
+        for (i = 0; i < 1; i++) {
+            D_8014C77C[i] = 0;
+        }
+        return;
+    }
+    e = D_8014ABDC;
+    for (i = 0; i < 1; i++, e++) {
+        if (--D_8014C77C[i] <= 0) {
+            if (e->ptr[0] == 0xFF) {
+                e->ptr -= e->ptr[1];
+            }
+            data = e->clut + e->ptr[0] * 32;
+            D_8014C77C[i] = e->ptr[1];
+            r.x = e->x;
+            r.y = e->y;
+            r.w = 16;
+            r.h = 1;
+            func_80081218(&r, data);
+            e->ptr += 2;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013C1DC);
 

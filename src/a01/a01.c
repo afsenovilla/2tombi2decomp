@@ -50,7 +50,51 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010BB74);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010BCC8);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010BE94);
+extern u8 D_1F800253;
+#define F16(p, o) M2C_FIELD(p, s16 *, o)
+#define FU16(p, o) M2C_FIELD(p, u16 *, o)
+
+s32 func_8010BE94(u8 *a, u8 *b) {
+    s16 dx, dz, dy, d;
+    u16 h, r, bh, ah;
+    s32 y;
+
+    dx = F16(a, 0x2E) - F16(b, 0x2E);
+    dz = F16(a, 0x36) - F16(b, 0x36);
+    r = func_80084080(dx * dx + dz * dz);
+    if (F16(a, 0x80) + F16(b, 0x80) < r) {
+        return -1;
+    }
+    {
+        dy = FU16(a, 0x32) - FU16(b, 0x32);
+        bh = FU16(b, 0x84); ah = FU16(a, 0x84); h = bh + ah;
+        if ((u16)(dy + h) > F16(a, 0x86) + F16(b, 0x86)) {
+        fail:
+            return -1;
+        }
+        if (dy < 0) {
+            d = -h;
+        } else {
+            d = (F16(b, 0x86) - bh) + (F16(a, 0x86) - ah);
+        }
+        if (d <= 0) {
+            if (a[0x145] & 1) {
+                goto fail;
+            }
+            b[0x29] = 1;
+            M2C_FIELD(a, s32 *, 0x30) = (F16(b, 0x32) + d) << 16;
+            func_80022C78(a);
+            return 2;
+        }
+        y = F16(b, 0x32) + d;
+        D_1F800253 = 4;
+        M2C_FIELD(a, s32 *, 0x30) = y << 16;
+        if (a[0x145] == 1 && F16(a, 0x4A) < 0) {
+            F16(a, 0x4A) = 0;
+        }
+        return 3;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010C008);
 
@@ -606,7 +650,33 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateKainenActor);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011A984);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011A9C8);
+extern u8 D_8013995C[];
+extern u8 D_80135D88[];
+
+s32 func_8011A9C8(u8 *p) {
+    switch (p[6]) {
+    case 0:
+        if (p[0x2B] == 3) {
+            p[6] = 1;
+            func_80042354(1, 1);
+        }
+        break;
+    case 1:
+        p[6] = 2;
+        func_80040CDC(p, D_8013995C, D_80135D88);
+        p[0x70] = 1;
+        break;
+    case 2:
+        func_80041098(p);
+        if (p[0x70] == 0xFF) {
+            p[6] = 0;
+            func_80042310();
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011AAA4);
 
