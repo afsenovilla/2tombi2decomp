@@ -11569,7 +11569,31 @@ void func_8006625C(u8 *t)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800662D8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800663A8);
+void func_800663A8(u8 *a, s32 flag)
+{
+    if (f_TestWrappedAngleSide(*(s16 *)(a + 0x140), a[0x2B] << 4, 0)) {
+        *(s16 *)(a + 0x58) = -0x300;
+        a[0x147] = 0;
+        *(s16 *)(a + 0x44) = -0x1000;
+    } else {
+        *(s16 *)(a + 0x58) = -0x300;
+        a[0x147] = 1;
+        *(s16 *)(a + 0x44) = 0x1000;
+    }
+    a[0x149] = a[0x14A] = a[0x147] + 2;
+    if (flag == 0) {
+        f_SetTombaAnimationIfChanged(a, 0x57, 0);
+    } else {
+        f_SetTombaAnimationIfChanged(a, 0x56, 0);
+    }
+    *(s16 *)(a + 0x4A) = -0x2800;
+    a[7] = 0;
+    *(s16 *)(a + 0x40) = 0;
+    a[0x145] = 1;
+    a[0x29] = 0;
+    a[6]++;
+    f_UpdateTombaModelOrientationFromFacing(a);
+}
 
 void func_80066478(void *arg0)
 {
