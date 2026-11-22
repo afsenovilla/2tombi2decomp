@@ -9,6 +9,15 @@ for v in gcc-2.7.2-psx gcc-2.8.1-psx; do
   mkdir -p /opt/oldgcc/$v
   curl -fsSL https://github.com/decompals/old-gcc/releases/download/0.17/$v.tar.gz | tar xz -C /opt/oldgcc/$v
 done
+# gcc-2.8.1-nocse: gcc-2.8.1-psx without the post-reload CSE pass (reload_cse_regs returns at once), which Sony's
+# library compiler did not run (`// CC gcc-2.8.1-nocse`, docs/STATUS.md); one byte of cc1 patched, checked by sha1
+if [ ! -x /opt/oldgcc/gcc-2.8.1-nocse/cc1 ]; then
+  echo "1e6d934a67650c9f9d9b8e9792df19e3252ce36d  /opt/oldgcc/gcc-2.8.1-psx/cc1" | sha1sum -c --quiet
+  cp -r /opt/oldgcc/gcc-2.8.1-psx /opt/oldgcc/gcc-2.8.1-nocse.tmp
+  printf '\xc3' | dd of=/opt/oldgcc/gcc-2.8.1-nocse.tmp/cc1 bs=1 seek=$((0x13F026)) conv=notrunc status=none
+  echo "2e7a0f71ade51e18a1d05322d55b0986540b76f4  /opt/oldgcc/gcc-2.8.1-nocse.tmp/cc1" | sha1sum -c --quiet
+  mv /opt/oldgcc/gcc-2.8.1-nocse.tmp /opt/oldgcc/gcc-2.8.1-nocse
+fi
 [ -d /opt/maspsx ] || git clone -q https://github.com/mkst/maspsx.git /opt/maspsx
 command -v mipsel-linux-gnu-as >/dev/null || apt-get install -y binutils-mipsel-linux-gnu
 # PSY-Q headers used by the functions ported from psx_tomba (Sony copyright: not stored in this repo)

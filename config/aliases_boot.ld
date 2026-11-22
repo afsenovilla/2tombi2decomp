@@ -118,3 +118,4 @@ previous_frame_location = 0x8003C2E0;
 next_frameid = 0x8003C2E4;
 StFunc1 = 0x8003C2F0;
 StFunc2 = 0x8003C2F4;
+D_1F801DAA = 0x1F801DAA;
