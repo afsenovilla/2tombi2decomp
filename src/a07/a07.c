@@ -306,7 +306,44 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801129A8);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80112B1C);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80112CE8);
+// nearcopy: 9 words off, C from a0k func_8010B5EC
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+#include "gte.h"
+extern u8 D_1F8000D0[];
+extern s16 D_1F8000EE;
+extern u8 D_800BF816;
+
+void func_80112CE8(u8 *a, s16 b)
+{
+    s16 v;
+    s16 y;
+    s16 d;
+    u8 *c;
+
+    if (a[0x64] == 1) {
+        s32 ang;
+        if (D_800BF816 != 0) {
+            ang = *(s16 *)(a + 0x6E);
+        } else {
+            ang = *(s16 *)(a + 0xA);
+        }
+        v = -(func_80083E80(ang) * *(s16 *)(a + 0x6C)) >> 12;
+    } else {
+        v = (func_80083E80(*(s16 *)(a + 0xA)) * (D_1F8000EE + *(s32 *)(a + 0x58))) >> 12;
+    }
+    y = b + v;
+    *(s16 *)(a + 0xE) = y;
+    c = D_1F8000D0;
+    d = *(s16 *)(c + 6) - y;
+    if ((u16)(d + 10) >= 21) {
+        *(s32 *)(c + 4) -= d << 13;
+    } else {
+        *(s16 *)(c + 6) = y;
+        a[0x66] |= 2;
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80112DEC);
 
@@ -782,7 +819,6 @@ void func_801171EC(u8 *p)
     *(s16 *)(p + 0x36) = 0x1AC2;
 }
 
-extern u8 D_800BF816;
 void func_8011725C(void *arg0) {
     if (D_800BF816 == 0) {
         M2C_FIELD(arg0, s8 *, 4) = 3;
