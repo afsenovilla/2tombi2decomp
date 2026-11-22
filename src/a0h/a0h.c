@@ -2,7 +2,55 @@
 #include "game.h"
 #include "m2c.h"
 
-INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_801090DC);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+extern u16 D_1F80009C;
+extern u8 D_1F800137;
+extern u16 D_1F80018E;
+extern u16 D_1F80018C;
+extern u8 D_800BF840;
+extern u16 D_1F80008C;
+
+void func_801090DC(u8 *a, u8 *b)
+{
+    s32 k;
+    s32 g;
+    s32 m;
+    s32 c;
+    s32 x, y;
+    if (func_8002300C(a, b, H(b, 0x80) * 4) == 0) {
+        return;
+    }
+    k = D_1F80009C + 0x800;
+    b[0x2B] = 1;
+    if (D_1F800137 == 0) {
+        m = U(a, 0x140) - 0x400;
+        g = func_80085690(-(s16)(U(b, 0x36) - U(a, 0x36)), (s16)(U(b, 0x2E) - U(a, 0x2E))) << 4;
+        if (abs((s16)(g - m * 16)) < 0x1000) {
+            D_1F80018E = 0x4100;
+            D_1F80018C = U(a, 0x140) - 0x400;
+            D_800BF840 = 0x42;
+        } else {
+            c = U(a, 0x140) + 0x400;
+            if (abs((s16)(g - c * 16)) < 0x1000) {
+                D_1F80018C = c;
+                D_1F80018E = 0x4200;
+                D_800BF840 = 0x43;
+            }
+        }
+    }
+    if (H(a, 0x80) + H(b, 0x80) + 0x50 < D_1F80008C) {
+        return;
+    }
+    b[0x2B] = 2;
+    if (H(a, 0x80) + H(b, 0x80) < D_1F80008C) {
+        return;
+    }
+    x = (func_80083F50((s16)k) * (H(a, 0x80) + H(b, 0x80))) >> 12;
+    y = (func_80083E80((s16)k) * (H(a, 0x80) + H(b, 0x80))) >> 12;
+    U(a, 0x2E) = U(b, 0x2E) + x;
+    U(a, 0x36) = U(b, 0x36) - y;
+}
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_801092D4);
 
@@ -363,7 +411,6 @@ void func_8010A39C(void)
     p[0x16B] = 0;
 }
 
-extern u8 D_1F800137;
 extern u8 D_1F800236;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 void f_UpdateStrengthTowerExitDoorSequence(u8 *a)
