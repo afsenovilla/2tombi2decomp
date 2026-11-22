@@ -2,6 +2,7 @@
  * program knows under another name; addresses read off the retail code by tools/libsweep.py. */
 D_1F800080_ddd3 = 0x1F800080;
 D_1F800090_3460 = 0x1F800090;
+D_1F80009C_c31a = 0x1F80009C;
 D_1F800160_71b4 = 0x1F800160;
 D_1F800164_d75f = 0x1F800164;
 D_1F800182_5650 = 0x1F800182;
