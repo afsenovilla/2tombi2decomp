@@ -2583,7 +2583,27 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_HandleThirstyMinerInteraction);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011FEF8);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80120200);
+extern u16 D_1F80017C;
+
+void func_80120200(u8 *a) {
+    u8 *p = FP(a, 0x14);
+    u8 *e;
+    s16 v;
+
+    if (p != NULL && !(D_1F80017C & 0xF)) {
+        e = func_8003116C(0x204, p + 0x2C, -0xA);
+        if (e != NULL) {
+            e[0x28] |= 0x80;
+            F16(e, 0x2E) += 0x30;
+            v = func_80083F50(F16(p, 0x54)) >> 6;
+            F16(e, 0x2E) -= v + (v >> 1);
+            F16(e, 0x2E) -= (a[0xBF] >> 4) & func_8009A450();
+            v = func_80083E80(F16(p, 0x54)) >> 6;
+            F16(e, 0x30) -= v + (v >> 1);
+            F16(e, 0x30) -= a[0xBF] & func_8009A450();
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80120308);
 
@@ -3108,7 +3128,6 @@ void func_801264B4(s32 arg0) {
     func_800735F4(arg0, 0x67);
 }
 
-extern u16 D_1F80017C;
 extern u8 D_800BF916;
 void f_UpdateMythicalTowerEntranceEffect(u8 *a) {
     switch (a[0x5E]) {
