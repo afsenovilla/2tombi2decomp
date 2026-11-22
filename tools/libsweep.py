@@ -6,8 +6,12 @@ first that matches the retail bytes, with the // CC / // FLAGS / // ASPSX / // A
   python3 -I tools/libsweep.py [--prog main] [--lib libc2] [--install] [-j N] [--source m2c|t1|both]
 
 Candidates, in this order: psx_tomba's library C cut to the function (tools/ptsrc.py), Tombi-Decomp's matched C for
-the same function (tools/t1match.py; its __asm__ wrappers are skipped), the m2c draft (tools/decomp.py). After --install the linked build of
-the program must still be OK, else the installs are undone one by one.
+the same function (tools/t1match.py; its __asm__ wrappers are skipped), the m2c draft (tools/decomp.py); compiler
+set-ups: VARIANTS below (gcc 2.8.1 / 2.7.2, maspsx 2.79 / 2.56 or GNU as, -O1..-O3, -mno-split-addresses,
+-fno-delayed-branch). A candidate whose D_ / func_ names carry another program's addresses (psx_tomba and
+Tombi-Decomp use Tombi's) gets one `#define OLD NEW` line per name, NEW being this program's name for the address
+the bytes give. After --install the linked build of the program must still be OK, else the installs are undone
+one by one.
 """
 import argparse, concurrent.futures as cf, csv, glob, os, re, shutil, struct, subprocess, sys, tempfile
 
@@ -24,6 +28,14 @@ VARIANTS = [
     {"cc": "gcc-2.7.2-psx", "as": "maspsx", "aspsx": "2.79", "flags": "-O3 -G0"},
     {"cc": "gcc-2.7.2-psx", "as": "gnu", "flags": "-O3 -G0"},
     {"cc": "gcc-2.8.1-psx", "as": "maspsx", "aspsx": "2.79", "flags": "-O3 -G0"},
+    # the set-ups of docs/STATUS.md 2026-11-22 (2): most of libgpu / libcd / libspu / libc2 (no %hi hoisted out of
+    # loops), void functions with one shared exit, and libsnd / libpad / the libcd and libetc statics
+    {"cc": "gcc-2.8.1-psx", "as": "maspsx", "aspsx": "2.79", "flags": "-O2 -G0 -mno-split-addresses"},
+    {"cc": "gcc-2.8.1-psx", "as": "gnu", "flags": "-O2 -G0 -mno-split-addresses -fno-delayed-branch"},
+    {"cc": "gcc-2.8.1-psx", "as": "gnu", "flags": "-O2 -G0 -mno-split-addresses"},
+    {"cc": "gcc-2.8.1-psx", "as": "maspsx", "aspsx": "2.79", "flags": "-O2 -G0 -mno-split-addresses -fno-delayed-branch"},
+    {"cc": "gcc-2.7.2-psx", "as": "gnu", "flags": "-O1 -G0"},
+    {"cc": "gcc-2.7.2-psx", "as": "maspsx", "aspsx": "2.79", "flags": "-O1 -G0"},
 ]
 
 
@@ -189,8 +201,33 @@ def strings_to_symbols(text, ro, base):
     return "\n".join(decl) + "\n" + out
 
 
-def attempt(prog, name, ctx, t1src, binary, delta, sources=("main", "pt", "t1", "m2c")):
-    addr, size = asm_info(prog, name)
+def foreign_names(syms, known, aliases):
+    """{name: this program's name} for the symbols a candidate gives another address than this program does (a
+    psx_tomba / Tombi-Decomp D_ or func_ name carries Tombi's address)."""
+    inv = {}
+    for k, ad in list(known.items()) + list(aliases.items()):
+        if not re.search(r"_[0-9a-f]{4}$", k):      # not an install_c type alias
+            inv.setdefault(ad, k)
+    out = {}
+    for k, ad in syms.items():
+        if k.startswith("."):
+            continue
+        if known.get(k, aliases.get(k, ad)) != ad or (re.fullmatch(r"(D|func|jtbl)_[0-9A-F]{8}", k)
+                                                      and int(k[-8:], 16) != ad):
+            out[k] = inv.get(ad) or ("func_%08X" % ad if k.startswith(("func_", "f_")) else "D_%08X" % ad)
+    return out
+
+
+def with_defines(text, ren):
+    """`#define OLD NEW` lines in front of the candidate: it keeps its source's names for the reader."""
+    return "".join("#define %s %s\n" % kv for kv in sorted(ren.items())) + text
+
+
+def attempt(prog, name, ctx, t1src, binary, delta, sources=("main", "pt", "t1", "m2c"), names=None):
+    try:
+        addr, size = asm_info(prog, name)
+    except SystemExit:    # no asm file for it
+        return name, None
     if addr is None or size is None:
         return name, None
     want = binary[addr - delta: addr - delta + size]
@@ -221,6 +258,19 @@ def attempt(prog, name, ctx, t1src, binary, delta, sources=("main", "pt", "t1", 
                         if not matches(os.path.join(d, "a.o"), name, want, syms) or rodata(os.path.join(d, "a.o")).strip(b"\0"):
                             continue
                     syms.pop(".rodata", None)
+                    ren = foreign_names(syms, *names) if names else {}
+                    if ren:   # map each foreign-address name to this program's with #define and check again
+                        t2 = with_defines(text, ren)
+                        open(src, "w").write(t2)
+                        syms2 = {}
+                        try:
+                            cc.compile_c(src, os.path.join(d, "a.o"), v)
+                        except cc.CompileError:
+                            continue
+                        if not matches(os.path.join(d, "a.o"), name, want, syms2):
+                            continue
+                        syms2.pop(".rodata", None)
+                        text, syms = t2, syms2
                     return name, (kind, v, text, syms)
     finally:
         shutil.rmtree(d, ignore_errors=True)
@@ -293,8 +343,9 @@ def main():
     a = ap.parse_args()
     files = {}
     for f in glob.glob(os.path.join(ROOT, "src", a.prog, "psyq", a.lib or "*", "*.c")):
-        if "INCLUDE_ASM" in open(f).read():
-            files[os.path.basename(f)[:-2]] = f
+        n = os.path.basename(f)[:-2]   # the file's own function still asm (a file may hold more functions)
+        if re.search(r'INCLUDE_ASM\("[^"]+", %s\);' % re.escape(n), open(f).read()):
+            files[n] = f
     t1 = {}
     sources = tuple(a.source.split(","))
     if "t1" in sources:
@@ -309,9 +360,10 @@ def main():
 
     ctx = D.context()
     binary, delta = prog_bytes(a.prog)
+    names = (defined_symbols(a.prog), read_aliases(a.prog))
     with cf.ThreadPoolExecutor(a.j) as ex:
-        res = [r for r in ex.map(lambda n: attempt(a.prog, n, ctx, t1.get(n), binary, delta, sources), sorted(files))
-               if r[1]]
+        res = [r for r in ex.map(lambda n: attempt(a.prog, n, ctx, t1.get(n), binary, delta, sources, names),
+                                 sorted(files)) if r[1]]
     print("%d / %d library functions matched" % (len(res), len(files)))
     for n, (kind, v, _, _) in res:
         print("  %-32s %-4s %s" % (n, kind, header(v).replace("\n", " ")))

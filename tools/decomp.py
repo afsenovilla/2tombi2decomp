@@ -52,7 +52,8 @@ def jtbl_file(prog):
                     keep.append(l.rstrip())
             if cur:
                 keep.append(l.rstrip())
-    tmp = out + ".%d" % os.getpid()
+    import threading
+    tmp = out + ".%d.%d" % (os.getpid(), threading.get_ident())
     open(tmp, "w").write("\n".join(keep) + "\n")
     os.replace(tmp, out)
     return out
