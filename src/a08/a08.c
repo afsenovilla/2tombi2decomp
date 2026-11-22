@@ -1258,7 +1258,24 @@ void func_80129394(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x36) = 0x10ED;
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801293B0);
+extern u8 D_800BF928;
+
+void func_801293B0(u8 *p)
+{
+    if (func_80051B70(p, 0xC, 0x57) == 0) {
+        if (D_800BF928 == 0xFF) {
+            p[5] = 1;
+            *(s16 *)(p + 0x2E) = 0x40C9;
+            *(s16 *)(p + 0x32) = -0xEB8;
+            *(s16 *)(p + 0x36) = 0x10ED;
+        } else {
+            p[5] = 0;
+        }
+        *(s16 *)(p + 0x54) = 0;
+        *(s16 *)(p + 0x56) = 0;
+        *(s16 *)(p + 0x58) = 0;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80129424);
 
