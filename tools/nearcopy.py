@@ -3,6 +3,7 @@
 
   python3 -I tools/nearcopy.py [PROG ...] [--max-diff 8] [--max-frac 0.25] [--top 4] [--ratio 0.85] [-j N]
       [--names A,B] [--install] [--near] [-v]
+  python3 -I tools/nearcopy.py --lib [main boot] [--max-diff 8] [--install] [-v]
 
 For every pending function (an INCLUDE_ASM line of src/<prog>/<prog>.c; default every program) the matched C
 functions of every program are ranked by their masked words (tools/funcstats.py mask(): relocated fields and
@@ -16,7 +17,11 @@ inline helpers and declarations the body uses, transitively). When the bytes dif
 of otherwise identical instructions (constants, load/store offsets, andi/slti masks), the literals of the C are
 patched: every occurrence, or a single one, of each differing value (an offset also as an index scaled by the
 access size), up to three rounds; a one-word `move` / `li K` difference tries each use of each variable as K (or
-each literal K as each variable). A match has the symbols it references renamed to what the target program calls
+each literal K as each variable), a `li K` / folded `addiu rs,K2` difference tries each literal K as each
+`variable + K2` (or the reverse); an slti / sltiu constant also as the literal one below it (`x <= K`, a case
+bound, a min / max clamp); constants of the static inline helpers the body uses are patched with it (the helper
+copy goes with the scratch; tools/install_c.py renames it when the target's differs). --lib does the same for the
+library files between MAIN.EXE and SCUS_944.54 (whole files copied with their set-up header). A match has the symbols it references renamed to what the target program calls
 those addresses (relocations read against the retail bytes, callees too; names no program file defines, also
 another program's alias names, get an alias line in config/aliases_<prog>.ld at install time).
 
@@ -151,8 +156,8 @@ def imm_pairs(diffs):
             wi = wi - 0x10000 if wi & 0x8000 else wi
         if out.get(gi, (wi,))[0] != wi:
             return None
-        out[gi] = (wi, ACCESS.get(op, 1))
-    return [(g, w, s) for g, (w, s) in out.items()] or None
+        out[gi] = (wi, ACCESS.get(op, 1), op)
+    return [(g, w, s, op) for g, (w, s, op) in out.items()] or None
 
 
 def literal_hits(body, v):
@@ -181,14 +186,18 @@ def patches(body, pairs, limit=24):
     offset also as an index scaled by the access size). At most `limit` combinations, the all-occurrences one
     first."""
     choices = []
-    for g, w, size in pairs:
+    for g, w, size, op in pairs:
         opts = []
-        for div in ([1] + ([size] if size > 1 and g % size == 0 and w % size == 0 else [])):
-            hits = literal_hits(body, g // div)
+        alts = [(g // div, w // div) for div in ([1] + ([size] if size > 1 and g % size == 0 and w % size == 0
+                                                         else []))]
+        if op in (0xA, 0xB):    # slti / sltiu K+1: `x <= K`, `x > K`, a case bound or a min / max clamp
+            alts.append((g - 1, w - 1))
+        for gv, wv in alts:
+            hits = literal_hits(body, gv)
             if hits:
-                opts.append([(h, w // div) for h in hits])
+                opts.append([(h, wv) for h in hits])
                 if len(hits) > 1:
-                    opts += [[(h, w // div)] for h in hits]
+                    opts += [[(h, wv)] for h in hits]     # each occurrence alone (a repeated constant)
         if not opts:
             return []
         choices.append(opts)
@@ -251,6 +260,36 @@ def form_patches(body, g, w, limit=24):
     return out[:limit]
 
 
+def fold_patches(body, g, w, limit=24):
+    """C bodies for a one-word diff between `li rt,K` and `addiu rt,rs,K2` (rs a register): retail folds a
+    constant into an addition the C does not have (each literal K becomes each variable + K2), or the reverse
+    (each `variable +/- K2` becomes K)."""
+    a, b = _move_li(g), _move_li(w)
+    op_g, op_w = g >> 26, w >> 26
+    start = body.find("{") + 1
+    out = []
+
+    def addiu(x):
+        if x >> 26 != 9 or (x >> 21) & 0x1F == 0:
+            return None
+        v = x & 0xFFFF
+        return ((x >> 16) & 0x1F, v - 0x10000 if v & 0x8000 else v)
+    if a and a[0] == "li" and addiu(w) and a[1] == addiu(w)[0]:
+        k2 = addiu(w)[1]
+        for st, en in literal_hits(body, a[2]):
+            if st < start:
+                continue
+            for n in variables(body):
+                out.append(body[:st] + "(%s %s 0x%X)" % (n, "-" if k2 < 0 else "+", abs(k2)) + body[en:])
+    elif b and b[0] == "li" and addiu(g) and b[1] == addiu(g)[0]:
+        k2 = addiu(g)[1]
+        for m in re.finditer(r"\b([A-Za-z_]\w*)\s*([+-])\s*(0[xX][0-9A-Fa-f]+|\d+)\b", body[start:]):
+            v = int(m.group(3), 0) * (-1 if m.group(2) == "-" else 1)
+            if v == k2:
+                out.append(body[:start + m.start()] + lit(b[2], False) + body[start + m.end():])
+    return out[:limit]
+
+
 def build_text(includes, decls, body):
     return PRELUDE + "".join(i + "\n" for i in includes) + "\n".join(decls) + "\n\n" + body + "\n"
 
@@ -271,6 +310,13 @@ def attempt(tp, tname, cand, workdir):
     nd, sp, sname, text, decls, incs = cand
     want = tp.want(tname)
     body, ext = prepare(sp, sname, text, decls, tname)
+    # static inline helpers go with the body: their constants are patched like the function's own (an inlined
+    # copy with other constants; install_c renames a helper the target defines differently)
+    helpers = [e for e in ext if ptsrc.strip_comments(e).strip().startswith("static") and e.rstrip().endswith("}")]
+    if helpers:
+        ext = [e for e in ext if e not in helpers]
+        body = "\n\n".join(helpers) + "\n\n" + body
+    fstart = re.compile(r"(?m)^[^\n;#]*\b%s\s*\(" % re.escape(tname))
     d = tempfile.mkdtemp(dir=workdir)
     best = (10 ** 6, None, None)
     try:
@@ -307,7 +353,10 @@ def attempt(tp, tname, cand, workdir):
                 if pairs and rnd < 3:
                     nxt += patches(b, pairs)
                 elif len(diffs) == 1 and not diffs[0][3] and rnd < 3:
-                    nxt += form_patches(b, diffs[0][1], diffs[0][2])
+                    m = fstart.search(b)
+                    at = m.start() if m else 0
+                    nxt += [b[:at] + x for x in form_patches(b[at:], diffs[0][1], diffs[0][2]) +
+                            fold_patches(b[at:], diffs[0][1], diffs[0][2])]
             cur = nxt[:24]
             if not cur:
                 break
@@ -497,6 +546,93 @@ def install(prog, files, verbose):
     return done
 
 
+def lib_matched(prog):
+    """name -> text of the matched library files of a program (src/<prog>/psyq/<lib>/<name>.c without an
+    INCLUDE_ASM of their own name)."""
+    out = {}
+    for f in glob.glob(os.path.join(ROOT, "src", prog, "psyq", "*", "*.c")):
+        n = os.path.basename(f)[:-2]
+        t = open(f).read()
+        if not re.search(r'INCLUDE_ASM\("[^"]+", %s\);' % re.escape(n), t) and re.search(r"\b%s\s*\(" % n, t):
+            out[n] = (f, t)
+    return out
+
+
+def lib_copies(targets, progs, max_diff, install, verbose):
+    """--lib: each pending library file of the targets against the matched library files of the other programs
+    (MAIN.EXE <-> SCUS_944.54: the same Psy-Q objects): the same masked words (or at most max_diff differing),
+    the file copied with its set-up header, the function renamed, names fixed from the relocations
+    (fix_names), scored by ccheck; a match is written in place of the pending file (the linked build checked)."""
+    import ccheck
+    src = {}       # masked key -> [(prog, name, text)]
+    for p in progs:
+        tp = progs[p]
+        for n, (f, text) in lib_matched(p).items():
+            if n in tp.funcs:
+                src.setdefault(tp.key(n), []).append((p, n, text))
+    bylen = collections.defaultdict(list)
+    for k in src:
+        bylen[len(k)].append(k)
+    work = tempfile.mkdtemp(prefix="tmp_nearcopy_lib_", dir=os.path.join(ROOT, "build"))
+    found = []
+    try:
+        for p in targets:
+            tp = progs[p]
+            for tname, f in sorted(L.pending_files(p).items()):
+                if tname not in tp.funcs or "ASM by design" in open(f).read(400):
+                    continue
+                k = tp.key(tname)
+                if len(k) < 8:
+                    continue
+                cands = []
+                for k2 in bylen.get(len(k), ()):
+                    nd = sum(1 for x, y in zip(k, k2) if x != y)
+                    if nd <= min(max_diff, len(k) // 4):
+                        cands += [(nd, sp, sn, tx) for sp, sn, tx in src[k2] if sp != p or sn != tname]
+                best = None
+                for nd, sp, sn, tx in sorted(cands, key=lambda c: c[0])[:4]:
+                    text = re.sub(r"\b%s\b" % re.escape(sn), tname, tx)
+                    text = re.sub(r'INCLUDE_ASM\("asm/%s/' % sp, 'INCLUDE_ASM("asm/%s/' % p, text)
+                    text, ren, alias = fix_names(text, p, work)
+                    tmp = os.path.join(work, tname + ".c")
+                    open(tmp, "w").write(text)
+                    s = ccheck.score(tmp, p, tname, work)
+                    if s is not None and (best is None or s < best[0]):
+                        best = (s, sp, sn, text, alias)
+                    if s == 0:
+                        break
+                if best is None:
+                    continue
+                if best[0]:
+                    if verbose or best[0] <= 4:
+                        print("near %s %s: %d words off <- %s %s" % (p, tname, best[0], best[1], best[2]))
+                    continue
+                print("MATCH %s %s <- %s %s" % (p, tname, best[1], best[2]), flush=True)
+                found.append((p, tname, f, best[3], best[4]))
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    print("library copies matched: %d" % len(found))
+    if not install:
+        return
+    for p, tname, f, text, alias in found:
+        old = open(f).read()
+        old_al = L.read_aliases(p)
+        if alias:
+            al = dict(old_al)
+            al.update({k: v for k, v in alias.items() if k not in al})
+            L.write_aliases(p, al)
+        open(f, "w").write(text)
+        r = subprocess.run([sys.executable, "tools/build.py", p, "--no-split"], capture_output=True, text=True,
+                           cwd=ROOT)
+        if " OK " in r.stdout:
+            print("installed %s %s" % (p, tname), flush=True)
+        else:
+            open(f, "w").write(old)
+            if alias:
+                L.write_aliases(p, old_al)
+            print("NOT INSTALLED: %s %s (linked build not OK)" % (p, tname), flush=True)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("progs", nargs="*", help="target programs (default: all)")
@@ -510,9 +646,14 @@ def main():
     ap.add_argument("--near", action="store_true", help="write the closest attempt of the targets left")
     ap.add_argument("-j", type=int, default=os.cpu_count())
     ap.add_argument("-v", action="store_true")
+    ap.add_argument("--lib", action="store_true", help="library files: pending ones against the matched library "
+                    "files of the other programs (main <-> boot)")
     a = ap.parse_args()
     allp = progs_list()
     progs = {p: Prog(p) for p in allp}
+    if a.lib:
+        lp = [p for p in (a.progs or ["main", "boot"])]
+        return lib_copies(lp, {p: progs[p] for p in ("main", "boot")}, a.max_diff, a.install, a.v)
     sources = load_sources(progs)
     bylen = collections.defaultdict(list)
     for k in sources:

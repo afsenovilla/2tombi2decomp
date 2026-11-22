@@ -46,7 +46,7 @@ EPI_VARIANTS = []
 for _f in ("-O2 -G0 -mno-split-addresses", "-O2 -G0"):
     for _a in ({"as": "gnu"}, {"as": "maspsx", "aspsx": "2.79"}):
         for _r in ({"epilogue": "sony"}, {"return": "sony"}, {"epilogue": "sony", "return": "sony"},
-                   {"return": "sony first"}):
+                   {"return": "sony first"}, {"return": "sony thread"}):
             EPI_VARIANTS.append(dict({"cc": "gcc-2.8.1-psx", "flags": _f}, **_a, **_r))
     EPI_VARIANTS.append({"cc": "gcc-2.7.2-psx", "flags": _f, "as": "gnu", "epilogue": "sony"})
 # --nocse: Sony's library compiler without the post-reload CSE pass (/opt/oldgcc/gcc-2.8.1-nocse, made by
@@ -57,7 +57,7 @@ NOCSE_VARIANTS = []
 for _f in ("-O2 -G0 -mno-split-addresses", "-O2 -G0", "-O2 -G0 -mno-split-addresses -fno-delayed-branch"):
     for _a in ({"as": "gnu"}, {"as": "maspsx", "aspsx": "2.79"}):
         for _r in ({}, {"return": "sony"}, {"epilogue": "sony"}, {"epilogue": "sony", "return": "sony"},
-                   {"return": "sony first"}):
+                   {"return": "sony first"}, {"return": "sony thread"}):
             NOCSE_VARIANTS.append(dict({"cc": "gcc-2.8.1-nocse", "flags": _f}, **_a, **_r))
 
 

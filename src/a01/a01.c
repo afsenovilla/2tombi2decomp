@@ -3288,7 +3288,47 @@ void func_80126F60(u8 *a) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012702C);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80127298);
+/* func_8012749C, inlined */
+static inline void Step_7298(u8 *a) {
+    if (func_80051B70(a, 0xC, 3) == 0) {
+        a[0xB] = 0;
+        a[0xD] |= 4;
+        M2C_FIELD(a, u8 **, 0xC0)[0x3F] = 0x40;
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        a[0x5E] = 0;
+        M2C_FIELD(a, s16 *, 0x4A) = 0;
+        M2C_FIELD(a, s16 *, 0x60) = 0;
+        a[4]++;
+    }
+}
+void func_80127298(a)
+    u8 *a;
+{
+    u8 *r;
+
+    switch (a[4]) {
+    case 0:
+        Step_7298(a);
+        a[0x47] = 0;
+        r = func_80072DDC(a, 1, 4, 0x15);
+        if (r != NULL) {
+            *(void **)(r + 0x1C) = f_UpdatePipeAreaBridgeActor;
+            *(u8 **)(a + 0x3C) = r;
+        }
+        func_80126608(a);
+        func_800517F8(a);
+        break;
+    case 1:
+        func_8012702C(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_801273AC(void *arg0) {
     u8 temp_v1;

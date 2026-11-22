@@ -17,6 +17,8 @@ A C file can override it in its first lines (needed for the Psy-Q library, which
                                  shared return (tools/sonyret.py). Runs after EPILOGUE sony.
     // RETURN sony first         the same, and an early `return K;` block that gcc moved to the end goes back
                                  after its branch, as in the C (`if (bad) return -1;` in libsnd)
+    // RETURN sony thread        (also `sony first thread`) a branch to a one-insn return block (`L: j ret; li
+                                 v0,K`) goes straight to the return with that insn in its delay slot
 """
 import os, re, subprocess, sys
 
@@ -101,7 +103,8 @@ def compile_c(src, obj, override=None, defines=(), pad_to=None, asm_filter=None)
         s = sony_epilogue(s)
     if o["return"].split()[:1] == ["sony"]:
         import sonyret
-        s = sonyret.sony_return(s, o["return"] == "sony first")
+        modes = o["return"].split()[1:]       # `sony`, `sony first`, `sony thread`, `sony first thread`
+        s = sonyret.sony_return(s, "first" in modes, "thread" in modes)
     if o["as"] == "gnu":
         s = re.sub(r"(?m)^\tmove\t(\$[0-9a-z]+),(\$[0-9a-z]+)", r"\taddu\t\1,\2,$0", s)
         s = re.sub(r"(?m)^\t\.rdata$", "\t.section .rodata", s)

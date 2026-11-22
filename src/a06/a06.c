@@ -3489,7 +3489,6 @@ static inline void Check_1BE8(void)
         s[6] = 2;
     }
 }
-
 void func_80130D98(u8 *a)
 {
     u8 *s = D_800E7E80;
@@ -3620,7 +3619,6 @@ void func_80131BB4(void)
         s[6] = 2;
     }
 }
-
 
 void func_80131BE8(u8 *a)
 {

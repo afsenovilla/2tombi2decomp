@@ -2,13 +2,14 @@
 """Statement-order permuter: move the lines marked `//P` of one function around until it matches.
 
   python3 -I tools/permlines.py FILE.c FUNC [--prog main] [-j N] [--window 12] [--max-pairs 4000] [--slots]
-      [--out FILE.best.c] [--unsafe]
+      [--out FILE.best.c] [--unsafe] [--exhaustive]
 
 FILE.c is a ccheck scratch file. Mark each statement to move by ending its line with `//P` (one statement per
 line). Every round tries every single move of one marked line to another line boundary of the function body, then
 (when no single move helps) every pair of moves within --window lines of each line's place, and goes on from the
 best result while the words off (tools/ccheck.py score()) go down. --slots instead permutes the marked lines
-among their own lines (every order, at most --max-pairs). Candidates that do not compile are skipped. The best
+among their own lines (every order, at most --max-pairs); --exhaustive does every order of at most 7 marked
+lines (5040) without the cap. Candidates that do not compile are skipped. The best
 file is written (default FILE.best.c) on every improvement, so it can be stopped at any time. Orders that put a
 line before one it depends on (it reads a variable the other assigns, or the other reads / assigns a variable it
 assigns; memory through pointers is not tracked) are not tried, unless --unsafe.
@@ -125,6 +126,9 @@ def main():
     ap.add_argument("--window", type=int, default=12, help="pair moves: at most this many lines from the start")
     ap.add_argument("--max-pairs", type=int, default=4000)
     ap.add_argument("--slots", action="store_true", help="permute the marked lines among their own lines")
+    ap.add_argument("--exhaustive", action="store_true",
+                    help="every order of the marked lines in their own lines (at most 7 lines: 5040 orders), "
+                    "no --max-pairs cap")
     ap.add_argument("--out")
     ap.add_argument("--unsafe", action="store_true", help="also orders that move a line across one it depends on")
     a = ap.parse_args()
@@ -172,12 +176,15 @@ def main():
             cur = found[0]
         return found is not None
 
-    if a.slots:
+    if a.slots or a.exhaustive:
         first, last = body_range(cur, a.func)
         idx = [i for i in range(first, last + 1) if cur[i].rstrip().endswith("//P")]
+        if a.exhaustive and len(idx) > 7:
+            sys.exit("--exhaustive: %d marked lines (at most 7)" % len(idx))
         body = [cur[i] for i in idx]
         cands = []
-        for perm in itertools.islice(itertools.permutations(range(len(idx))), 1, a.max_pairs + 1):
+        cap = None if a.exhaustive else a.max_pairs + 1
+        for perm in itertools.islice(itertools.permutations(range(len(idx))), 1, cap):
             ls = list(cur)
             for slot, j in zip(idx, perm):
                 ind = cur[slot][:len(cur[slot]) - len(cur[slot].lstrip())]

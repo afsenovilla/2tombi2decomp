@@ -987,7 +987,53 @@ void f_ApplyTombaSupportedContactState(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TryApplyTombaActorDamage);
+extern u8 D_800BF839;
+/* f_ApplyTombaEnvironmentalDamage, inlined */
+static inline s32 EnvDamage_2D3C(u8 *t, s32 dmg)
+{
+    if (D_800BFE55 != 0) {
+        return 0;
+    }
+    t[0] |= 2;
+    if (*(s16 *)(t + 0x17E) < 0) {
+        dmg *= 2;
+    }
+    *(s16 *)(t + 0x16E) -= dmg;
+    if (*(s16 *)(t + 0x16E) <= 0) {
+        *(s16 *)(t + 0x16E) = 0;
+        D_800BF80D = -1;
+    }
+    D_800BF81E_6fe1 = 0;
+    return 1;
+}
+s32 f_TryApplyTombaActorDamage(u8 *t, u8 *src, s32 dmg, s32 force)
+{
+    if (*(u16 *)(t + 0x17E) & 0x200) {
+        return 0;
+    }
+    if (D_800BFE55 != 0) {
+        return 0;
+    }
+    if (t[0x144] == 2) {
+        return 0;
+    }
+    if (*(s16 *)(t + 0x16E) == 0) {
+        return 0;
+    }
+    if (D_800BF839 != 0) {
+        return 0;
+    }
+    if (D_1F800137_104c != 0) {
+        return 0;
+    }
+    if (t[0] & 2) {
+        return 0;
+    }
+    if (force == 0 && (src[0] & 2)) {
+        return 0;
+    }
+    return EnvDamage_2D3C(t, dmg);
+}
 
 s32 f_TestActorAgainstPartCylinderOverlap(u8 *a, u8 *b, u8 *p)
 {
@@ -1075,7 +1121,6 @@ void func_80023238(u8 *a, u8 *b)
     *(u16 *)(b + 0x36) = *(u16 *)(a + 0x36);
 }
 
-extern u8 D_800BF839;
 extern u8 D_800BFE55;
 extern u8 D_1F800137_104c;
 extern u8 *D_800BF844;
@@ -2912,7 +2957,38 @@ void func_80031D24(void *pos, u8 *scale, s16 *rot)
     gte_SetTransMatrix(D_1F800000);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80031F84);
+extern void (*D_800A4AA0[])(u8 *);
+void func_80031F84(void *pos, u8 *scale, s16 *rot)
+{
+    s32 v[3];
+
+    RotMatrix_gte(rot, D_1F800000);
+    f_SetIdentityMatrix(D_1F800020_edd9);
+    RotMatrixY(rot[3], D_1F800020_edd9);
+    MulMatrix(D_1F800000, D_1F800020_edd9);
+    v[0] = scale[0];
+    v[1] = scale[1];
+    v[2] = scale[2];
+    ScaleMatrix(D_1F800000, v);
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_ldclmv(D_1F800000);
+    gte_rtir();
+    gte_stclmv(D_1F800000);
+    gte_ldclmv(D_1F800002);
+    gte_rtir();
+    gte_stclmv(D_1F800002);
+    gte_ldclmv(D_1F800004);
+    gte_rtir();
+    gte_stclmv(D_1F800004);
+    gte_ldv0(pos);
+    gte_rtv0();
+    gte_stlvnl(D_1F800014);
+    D_1F800000[5] += D_1F8000D0_42d8[15];
+    D_1F800000[6] += D_1F8000D0_42d8[16];
+    D_1F800000[7] += D_1F8000D0_42d8[17];
+    gte_SetRotMatrix(D_1F800000);
+    gte_SetTransMatrix(D_1F800000);
+}
 
 void func_800321D8(void *pos, u8 *scale, s16 *rot)
 {
@@ -11767,7 +11843,6 @@ void func_8006EA7C(u8 *a)
 
 extern u8 D_800E7EAC[];
 extern s32 D_800E7EB0;
-extern void (*D_800A4AA0[])(u8 *);
 void func_8006EC44(void)
 {
     u8 *c = D_800E8008_f2dc;
@@ -13603,7 +13678,6 @@ static inline void QueueC5_703C(s32 arg0) {
         *((s16 *)D_1F80015C) = (u16) *((s16 *)D_1F80015C) + 1;
     }
 }
-
 void func_8007703C(u8 *a)
 {
     a[1] = 1;
@@ -14817,7 +14891,6 @@ static inline void Init_B0F0(void)
     }
     D_800ED098 = 0x208;
 }
-
 void func_8007B18C(void)
 {
     func_8004FB20();

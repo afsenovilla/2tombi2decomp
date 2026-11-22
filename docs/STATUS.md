@@ -3,6 +3,64 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-22 (7): tools after round 4
+
+One agent turned the round-4 "tool work left" list into tools, each tried on real functions. +14 functions: main
+f_ClassifyActorCylinderContact, func_8007B18C, func_8007703C, f_TryApplyTombaActorDamage, func_80031F84 (a nearcopy
+near miss: `scale[i]` without `* 4`), SpuMalloc (libsweep --only-nocse, psx_tomba's C); a01 func_80127298 (K&R);
+a05 func_801297EC, func_80130AFC, func_8012E340 (regswap) and its a0b copy func_801144F4; a06 func_80131BE8,
+func_80131CD4, func_80130D98.
+- **`tools/inlined.py`** (known inline bodies): every matched function's normalised instructions (nops, moves,
+  prologue / epilogue gone; relocated immediates, branch and $sp offsets masked; registers free) searched in the
+  pending functions of all programs: 674 hold a copy (cover >= 0.8; build/inlined.csv, smallest first, with the
+  register consistency and the `/* NAME, inlined */` helper src/ already has). Recipe that matched 10 of the above
+  at once or nearly: copy the matched C as `static inline` with that comment, call it where the copy is (a
+  `return 0` becomes the caller's branch); a `case` falling into the next one when retail has no `j` after it.
+  Many more candidates at cover 1.00 / r1.00 (a07 func_80125E40, a08 func_8012282C, a0f func_8010AF60, a00
+  func_80116E3C, a06 func_80124AA0, a0a func_80114B38, main func_8004A118, the f_SetEffectProjectionTransform
+  family func_80027CB4 / 80027E5C / 8002801C / 8002DBE4 / 800286CC, ...). The cylinder test (f_TestActorCylinder*)
+  is inlined in 9 pending contact functions, not ~20 (the others call SquareRoot0 / ratan2 for terrain).
+- ptsrc.items(): K&R definitions are one item; a pp line after a comment line stays a pp item (the
+  `// nearcopy: N words off` line of installed near-miss scratches had glued `#include` lines and the next type
+  into one code item: 15 game files had stray includes inside, a0j a duplicate T2PolyGT3A / T2PolyGT4A; cleaned).
+- install_c.py: static helpers behind a comment are helpers; one the target has (same text) is not repeated or
+  moves up, a different one is renamed; helpers after the scratch's declarations; K&R definitions (a needed
+  prototype is `T f();`); every failure ends `NOT INSTALLED: names (reason)`. install_lib.py: K&R, the library
+  file's own includes kept, no common.h beside psyq_all.h / pt/common.h, extra FLAGS (-fno-builtin) kept on every
+  set-up, NOT INSTALLED line.
+- nocse: libsweep / libnear `--nocse` / `--only-nocse` (NOCSE_VARIANTS: 36 set-ups), `--names`; hillclimb
+  `--setup 'CC gcc-2.8.1-nocse;AS gnu'`. libsweep --only-nocse: main SpuMalloc, boot nothing. libnear --only-nocse
+  (<= 0x180): SpuGetVoiceVolume 3 (m2c, -O2 -G0 -mno-split-addresses, AS gnu, RETURN sony: 2 left, `x - 0x8000`
+  compiles to `addu` of 0x8000 where retail has `subu`), func_80089194 3. By hand: CdControl is closest with
+  psx_tomba's `loop()` inline under gcc 2.7.2 + ASPSX (13 lines: -1 kept in s8, constant 1 in t0, normal
+  epilogue), 73 words under nocse; func_8009BE9C 3 (the second test's value in v0 in retail, v1 here: no source
+  form found). CdControlF / CdControlB / CD_init / func_8008DC00 not retried.
+- **`tools/regswap.py FILE.c F`**: greedy register-choice rewrites (declaration orders, store through a
+  temporary, reuse / fork / copy of locals, `do { } while (0)` wraps, parameter copies; pairs when no single one
+  helps). On the 21 round-4 near misses: a05 func_8012E340 matched (a wrap); the 1-5 word ones did not move.
+- nearcopy.py: each occurrence of a repeated constant alone, slti / sltiu K+1 also as literal K (case bounds,
+  clamps), `li K` vs a folded `addiu rs,K2` (variable + K2), constants inside the static helpers the body uses,
+  `--lib` (library files main <-> boot: nothing new, the copies were done). sbs.py: splat's `(0x1F80xxxx >> 16)`
+  operands are relocations (no false `|` lines). permlines.py `--exhaustive` (every order of <= 7 marked lines).
+  variants.py: `\|` in --set values, `\t`, and --cc / --flags / --as / --aspsx / --epilogue / --return.
+  families.py: a scopes column and `--by-scope` (47 of 120 families span several agent scopes). **`tools/prio.py
+  FILE.c [F]`**: pseudo priorities floor_log2(refs) * refs / live_length, block / global, calls crossed, hard
+  register, user variables named in declaration order (cc1 -dl -dg). sonyret: `// RETURN sony thread` (a branch to
+  a one-insn `j ret; li v0,K` block goes to the return with the insn in its delay slot; opt-in, also in the
+  libsweep variant lists).
+
+Near misses from this round: main func_80027CB4 2 lines (the GTE projection family of 5: retail rematerialises
+`&D_1F800080` just before `gte_stflg` with its `lui` hoisted to the top; scratch r5/main/7cb4.c),
+f_ClassifyActiveColliderPartCylinderContact 10 (d lives in a2 then s4: `ratan2(-dz, dx, d)` does not do it),
+func_8004A2A0 3 (`li a0,22` in the delay slot of the second test: the message id choice), boot/main CdControl as
+above. Scratch files: the session scratchpad r5/.
+
+Tool work left: inlined.py could write the helper + caller scratch itself (the copy's offsets / constants
+patched) and hand it to ccheck; regswap does not change types or move statements (combine with permlines);
+nearcopy `--near` hint for a missing / extra block; hillclimb transforms (u8 -> s32 switch variable, call in both
+arms with swapped branches, re-read a stored field); a Sony-compiler hypothesis for CdControl (-1 hoisted out of
+the loop, 1 in a t register: neither gcc 2.7.2 nor 2.8.1 does both).
+
 ## 2026-11-22 (6): fourth round of five agents (families first)
 
 All code in C: **3672 / 7011 functions (52.4 %, 22.9 % of the bytes)**, from 3405 (18.6 %). main +50 (GTE matrix

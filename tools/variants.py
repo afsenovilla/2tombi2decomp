@@ -2,15 +2,17 @@
 """Variant tester: several versions of one function in one file, words off for each.
 
   python3 -I tools/variants.py FILE.c FUNC [--prog main] [-j N] [--set 'k=a|b|c' ...] [--alts K=ALTS.txt ...]
-      [--write] [--sbs]
+      [--write] [--sbs] [--cc C] [--flags F] [--as gnu|maspsx] [--aspsx V] [--epilogue E] [--return R]
 
 FILE.c holds a common head (includes, externs, helpers), then the variants, each starting with a line `//--`
 (optionally `//-- a label`). Variant i is compiled as head + variant i and scored with tools/ccheck.py score()
 (0 = match). With --set, `{k}` placeholders in the file are also expanded to every combination of the given
-values (`\\n` in a value is a newline), for each variant; with --alts K=ALTS.txt, `{K}` is expanded to each block of
+values (`\\n` in a value is a newline, `\\t` a tab, `\\|` a literal `|`; a value may also hold real newlines),
+for each variant; with --alts K=ALTS.txt, `{K}` is expanded to each block of
 ALTS.txt, blocks separated by lines `@@` (multi-line statements; a placeholder on a line of its own takes the block
 as lines). --write saves the best variant as FILE.best.c; --sbs
-prints the side-by-side diff of the best one (tools/sbs.py).
+prints the side-by-side diff of the best one (tools/sbs.py). --cc / --flags / --as / --aspsx / --epilogue /
+--return override the file's set-up lines (tools/cc.py) for every variant, as tools/ccheck.py does.
 """
 import argparse, concurrent.futures as cf, itertools, os, re, subprocess, sys, tempfile
 
@@ -39,13 +41,22 @@ def main():
                     help="K=FILE: expand {K} to each alternative of FILE (alternatives separated by lines `@@`)")
     ap.add_argument("--write", action="store_true", help="save the best variant as FILE.best.c")
     ap.add_argument("--sbs", action="store_true", help="side-by-side diff of the best variant")
+    ap.add_argument("--cc")
+    ap.add_argument("--flags")
+    ap.add_argument("--as", dest="asm")
+    ap.add_argument("--aspsx")
+    ap.add_argument("--epilogue")
+    ap.add_argument("--return", dest="ret")
     a = ap.parse_args()
+    over = {k: v for k, v in (("cc", a.cc), ("aspsx", a.aspsx), ("flags", a.flags), ("as", a.asm),
+                              ("epilogue", a.epilogue), ("return", a.ret)) if v} or None
     head, vs = split(open(a.src).read())
     keys, vals = [], []     # vals: per key, [(text, label)]
     for s in a.set:
         k, v = s.split("=", 1)
         keys.append(k)
-        vals.append([(x.replace("\\n", "\n"), x) for x in v.split("|")])
+        parts = [x.replace("\\|", "|") for x in re.split(r"(?<!\\)\|", v)]
+        vals.append([(x.replace("\\n", "\n").replace("\\t", "\t"), x) for x in parts])
     for s in a.alts:      # file mode: multi-line alternatives, labelled by their number in the file
         k, f = s.split("=", 1)
         keys.append(k)
@@ -69,7 +80,7 @@ def main():
     def run(job):
         f = os.path.join(work, "v%d.c" % id(job))
         open(f, "w").write(job[1])
-        return ccheck.score(f, a.prog, a.func, work)
+        return ccheck.score(f, a.prog, a.func, work, over)
     try:
         with cf.ThreadPoolExecutor(a.j) as ex:
             res = list(ex.map(run, jobs))
@@ -87,6 +98,10 @@ def main():
         if a.sbs and s:
             f = os.path.join(work, "best.c")
             open(f, "w").write(jobs[i][1])
+            if over:    # sbs compiles with the file's own set-up lines: write the overrides into it
+                hdr = "".join("// %s %s\n" % ({"as": "AS"}.get(k, k.upper()), v) for k, v in over.items())
+                open(f, "w").write(hdr + re.sub(r"(?m)^//\s*(CC|FLAGS|ASPSX|AS|EPILOGUE|RETURN)\s.*\n", "",
+                                                jobs[i][1]))
             subprocess.run([sys.executable, "-I", os.path.join(ROOT, "tools", "sbs.py"), f, a.func, "--prog", a.prog])
     finally:
         subprocess.run(["rm", "-rf", work])

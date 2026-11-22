@@ -9,6 +9,9 @@ branches to one final `jr ra; nop` instead, as a gcc without that insn does:
      `bINVCOND a,b,$LSRn; D` when D's destination is dead on the fall-through path; a label on the `j` block (other
      branches use it) moves the block after the next unconditional jump. A branch whose delay slot holds the first
      insn of its target (gcc's reorg) gets that insn back inline after the new branch.
+  4. (`// RETURN sony thread`) a branch to a `L: j $LSRn; D` block (or `L: D` falling into / jumping to `$LSRn`),
+     D one insn whose destination is dead on the branch's fall-through path, becomes `bCOND a,b,$LSRn; D`: Sony's
+     compiler threaded jumps to the return and filled the delay slot from the target (`bnez v0,ret; li v0,1`).
 Units: labels, plain insns (reorder mode), `.set noreorder` groups (branch + delay slot), other lines.
 """
 import re
@@ -185,7 +188,64 @@ def place_in_load_delay(body, d):
     return body + [{"k": "ins", "t": d}]
 
 
-def rewrite_function(body, n, first_mode=False):
+def ret_block(units, target, lab):
+    """the insn D when label `target` starts `j lab; D`, `D; j lab; nop` or `D` then the return label itself;
+    else None."""
+    t = next((i for i, u in enumerate(units) if u["k"] == "lab" and u["name"] == target), None)
+    if t is None:
+        return None
+    j = next_unit(units, t, ("ins", "grp", "lab"))
+    while j < len(units) and units[j]["k"] == "lab":
+        if units[j]["name"] == lab:
+            return None
+        j = next_unit(units, j, ("ins", "grp", "lab"))
+    if j >= len(units):
+        return None
+    is_j, d = jump_to(units[j], lab)
+    if is_j:
+        return d if d and d != "nop" and regs(d)[0][0] not in "bj" else None
+    if units[j]["k"] != "ins" or regs(units[j]["t"])[0][0] in "bj":
+        return None
+    d = units[j]["t"]
+    k = next_unit(units, j, ("ins", "grp", "lab"))
+    while k < len(units) and units[k]["k"] == "lab":
+        if units[k]["name"] == lab:
+            return d
+        k = next_unit(units, k, ("ins", "grp", "lab"))
+    if k < len(units):
+        is_j, d2 = jump_to(units[k], lab)
+        if is_j and (d2 is None or d2 == "nop"):
+            return d
+    return None
+
+
+def thread_returns(units, lab):
+    """rule 4: branches to a one-insn return block go straight to the return label with that insn in the delay
+    slot."""
+    changed = True
+    while changed:
+        changed = False
+        for i, u in enumerate(units):
+            if u["k"] not in ("ins", "grp"):
+                continue
+            m = re.match(r"(\w+)\t(.*),(\$\w+)$", first(u))
+            if not m or m.group(1) not in INV or m.group(3) == lab:
+                continue
+            if u["k"] == "grp" and u["ins"][1] != "nop":
+                continue
+            d = ret_block(units, m.group(3), lab)
+            if not d:
+                continue
+            _, w, r = regs(d)
+            if w is None or w in regs(first(u))[2] or not dead_after(units, i, w):
+                continue
+            units[i] = {"k": "grp", "ins": ["%s\t%s,%s" % (m.group(1), m.group(2), lab), d]}
+            changed = True
+            break
+    return units
+
+
+def rewrite_function(body, n, first_mode=False, thread=False):
     units = parse(body)
     rets = [i for i, u in enumerate(units) if first(u) == "j\t$31"]
     if len(rets) < 2:
@@ -274,15 +334,17 @@ def rewrite_function(body, n, first_mode=False):
             break
     if first_mode:
         units = early_first(units, lab)
+    if thread:
+        units = thread_returns(units, lab)
     return emit(units)
 
 
-def sony_return(s, first_mode=False):
+def sony_return(s, first_mode=False, thread=False):
     """cc1 output -> one shared `jr ra; nop` per function."""
     out, pos, n = [], 0, 0
     for m in re.finditer(r"(?ms)^\t\.ent\t(\S+)\n.*?^\t\.end\t\1\n", s):
         n += 1
-        out.append(s[pos:m.start()] + rewrite_function(m.group(0), n, first_mode))
+        out.append(s[pos:m.start()] + rewrite_function(m.group(0), n, first_mode, thread))
         pos = m.end()
     out.append(s[pos:])
     return "".join(out)

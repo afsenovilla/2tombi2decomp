@@ -2583,7 +2583,6 @@ static inline void Init_97EC(void *arg0) {
     M2C_FIELD(arg0, s32 *, 0x30) = 0xCEC80000;
     M2C_FIELD(arg0, s32 *, 0x34) = 0x35E80000;
 }
-
 void func_801297EC(u8 *a)
 {
     switch (a[4]) {
@@ -3083,7 +3082,6 @@ void func_8012E0C8(u8 *a)
 
 typedef struct { s16 h[7]; } E8013F238;
 extern E8013F238 D_8013F238[];
-
 void func_8012E340(u8 *a, s32 i)
 {
     u8 **slot;
@@ -3275,7 +3273,6 @@ static inline u8 *Spawn_0AFC(void *a0, u8 a1)
     }
     return r;
 }
-
 void func_80130AFC(u8 *p)
 {
     u8 *g = (u8 *)&D_800BF870;
