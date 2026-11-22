@@ -904,7 +904,35 @@ void func_8011B9D0(u8 *a) {
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011BA90);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011BB40);
+extern u16 D_1F80017C_0fe7;
+
+void func_8011BB40(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        *(s16 *)(a + 0x4E) = 0;
+    case 1:
+        if (*(s16 *)(a + 0x4E) < 8 && (D_1F80017C_0fe7 & 1)) {
+            *(s16 *)(a + 0x4E) += 1;
+        }
+        a[1] = 1;
+        break;
+    case 2:
+        if (*(s16 *)(a + 0x4E) <= 0) {
+            goto kill;
+        }
+        if (D_1F80017C_0fe7 & 1) {
+            *(s16 *)(a + 0x4E) -= 1;
+        }
+        a[1] = 1;
+        break;
+    case 3:
+    kill:
+        func_8007A624(a);
+        break;
+    }
+}
 
 #define AREA_gte_ldv0(r0) __asm__ volatile("lwc2	$0, 0( %0 );" "lwc2	$1, 4( %0 )" : : "r"(r0))
 typedef struct { s16 x, y, z, pad; } AreaSVec;

@@ -3241,10 +3241,29 @@ s32 func_8013C968(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013C9D0);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013CB08);
-
 #define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
 extern s32 D_1F800090_81f3[];
+typedef struct { s8 x, y, z; } Byte3;
+extern Byte3 D_8010A4CC;
+extern Byte3 D_8010A4D0;
+extern u8 D_80143660[];
+extern u8 D_80143930[];
+
+void func_8013CB08(u8 *p)
+{
+    s32 *d = D_1F800090_81f3;
+    s32 i;
+
+    gte_ldfcdir(0, 0, 0);
+    *d = *(s16 *)(p + 0x54);
+    for (i = 0; i < 8; i++) {
+        func_80031D24(p + 0x2C, p + 0x50, p + 0x48);
+        func_80027768(*(s32 *)(p + 0x3C), *(u16 *)(p + 0x44), *(s16 *)(p + 0x32), p[0x29]);
+        *(s16 *)(p + 0x4E) += 0x200;
+    }
+}
+
+#define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
 
 void func_8013CB9C(u8 *p)
 {
