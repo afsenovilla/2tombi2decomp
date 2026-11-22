@@ -7,7 +7,46 @@ void f_CloseCooperativeWorkerThread(s32);
 void f_SetCdAudioMixEnabled(s32);
 s32 CdControlB(u8 com, u8 *param, u8 *result);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8001CAC0);
+extern u8 D_800ED018_eeff[];
+extern u8 *D_800F2738_2edb;
+
+void func_8001CAC0(void)
+{
+    u8 *p = D_800ED018_eeff;
+
+    switch (D_800BF870.unk0) {
+    case 0:
+        func_8011534C(p);
+        break;
+    case 4:
+        func_8013EE84(p);
+        break;
+    case 5:
+        func_80136CDC(p);
+        break;
+    case 6:
+        func_8014189C(p);
+        break;
+    case 7:
+        func_8012F6EC(p);
+        break;
+    case 10:
+        func_801140D0(p);
+        break;
+    case 11:
+        func_80113F94(p);
+        break;
+    case 13:
+        func_80116980(p);
+        break;
+    case 15:
+        func_80116560(p);
+        break;
+    case 21:
+        func_8010B918(p);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8001CBA8);
 
@@ -1868,7 +1907,36 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8003EA88);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003EBE0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawActiveWorldActors);
+void f_DrawActiveWorldActors(void)
+{
+    u8 *a = D_800F2738_2edb;
+    u8 *next;
+
+    while (a != NULL) {
+        next = *(u8 **)(a + 0x24);
+        if (a[1] != 0) {
+            switch (a[0xB]) {
+            case 0: case 15:
+                f_DrawActorModelByRenderMode(a);
+                break;
+            case 1:
+                f_DrawActorModelByRenderMode(a);
+                func_8003B704(a);
+                break;
+            case 16:
+                f_DrawActorSpritePartsWithZRotation(a);
+                if (a[2] == 1) {
+                    func_8003B704(a);
+                }
+                break;
+            case 32:
+                (*(void (**)(u8 *))(a + 0x18))(a);
+                break;
+            }
+        }
+        a = next;
+    }
+}
 
 
 void func_8003EF9C(u8 *a)
@@ -1937,7 +2005,38 @@ u8 func_8003F31C(u8 a, u8 b)
     return r;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F344);
+void func_8003F344(u8 *a, u8 *p, u8 *end)
+{
+    while (p < end) {
+        switch (p[7] & 0xFC) {
+        case 0x3C:
+            *(u16 *)(p + 0xE) = *(u16 *)(a + 0x5C);
+            p += 0x34;
+            break;
+        case 0x24:
+            *(u16 *)(p + 0xE) = *(u16 *)(a + 0x5C);
+            p += 0x20;
+            break;
+        case 0x2C:
+        case 0x34:
+            *(u16 *)(p + 0xE) = *(u16 *)(a + 0x5C);
+            p += 0x28;
+            break;
+        case 0x30:
+            p += 0x1C;
+            break;
+        case 0x38:
+            p += 0x24;
+            break;
+        case 0x20:
+            p += 0x14;
+            break;
+        case 0x28:
+            p += 0x18;
+            break;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F3F4);
 
@@ -3637,7 +3736,48 @@ s32 func_8004DBB0(void) {
     return D_800BF80A_8fc3 == 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004DBC0);
+s32 func_8004DBC0(s32 id)
+{
+    switch (id) {
+    case 0x5C:
+        return 0xBE;
+    case 0x5B:
+        return 0xBF;
+    case 0x5A:
+        return 0x103;
+    case 0x59:
+        return 0x160;
+    case 0x69:
+        return 0x138;
+    case 0x66:
+        return 0x113;
+    case 0x6E:
+        return 0x165;
+    case 0x6D:
+        return 0x164;
+    case 0x6C:
+        return 0x163;
+    case 0x6A:
+        return 0x139;
+    case 0x6B:
+        return 0x13A;
+    case 0x68:
+        return 0x114;
+    case 0x67:
+        return 0x112;
+    case 0x98:
+        return 0x166;
+    case 0xA6:
+        return 0x17D;
+    case 0xA7:
+        return 0x17C;
+    case 0x5E:
+        return 0xFE;
+    case 0x5D:
+        return 0xFF;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004DC84);
 
@@ -4625,7 +4765,39 @@ void f_ReleaseTombaInteractionTarget(u8 *t)
     t[0x164] = 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ClearTombaInteractionState);
+void f_ClearTombaInteractionState(u8 *a)
+{
+    u8 *p;
+
+    switch (a[0x78]) {
+    case 1: case 4: case 5: case 6: case 7: case 8: case 9:
+        p = *(u8 **)(a + 0x10);
+        p[0] = 2;
+        p[0x2B] = *(u16 *)(a + 0x56) >> 4;
+        p[4] = 2;
+        p[5] = 2;
+        p[6] = 0;
+        p[0x28] |= 0x80;
+        break;
+    case 2:
+        p = *(u8 **)(a + 0x10);
+        p[4] = 2;
+        p[5] = 3;
+        p[6] = 0;
+        break;
+    case 3:
+        p = *(u8 **)(a + 0x10);
+        p[0] = 2;
+        p[4] = 2;
+        p[5] = 1;
+        p[6] = 0;
+        break;
+    }
+    a[0x144] = 0;
+    a[0x78] = 0;
+    a[0x181] = 0;
+    f_ReleaseTombaInteractionTarget(a);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80053E50);
 
@@ -5124,7 +5296,49 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8005ACC8);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005AEE4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005B134);
+s32 func_8005B134(s32 unused, u8 *a)
+{
+    if (a[0xC] != 2) {
+        return -1;
+    }
+    switch (a[2]) {
+    case 3:
+        return 0;
+    case 7:
+        return 1;
+    case 16:
+        return 0x82;
+    case 0:
+        return 3;
+    case 25:
+        return 0x84;
+    case 17:
+        return 5;
+    case 41:
+        return 6;
+    case 27:
+        if (a[3] & 3) {
+            return 0x8B;
+        }
+        return 0x87;
+    case 28:
+    case 39:
+        return 8;
+    case 13:
+        return 9;
+    case 45:
+        return 0xA;
+    case 69:
+        return 0xC;
+    case 95:
+        return 0x8D;
+    case 94:
+        return 0xE;
+    case 92:
+        return 0x8F;
+    }
+    return -1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005B20C);
 
@@ -7536,7 +7750,21 @@ void func_8007A904(void)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_AllocateActorRecordByType);
+s32 f_AllocateActorRecordByType(u8 type, u8 b, s32 c)
+{
+    switch (type) {
+    case 0:
+        return f_AllocateActorFromPool0(0, b, 3, c);
+    case 1:
+        return f_AllocateActorFromPool1(0, b, 3, c);
+    case 2:
+        return f_AllocateActorFromPool2(0, b, 3, c);
+    case 3:
+        return f_AllocateActorFromPool3(0, b, 3, c);
+    case 4:
+        return f_AllocateActorFromPool4(0, b, 3, c);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007AA38);
 
