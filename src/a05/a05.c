@@ -2010,7 +2010,15 @@ void func_80139E6C(u8 *p)
     func_80027768(*(s32 *)(p + 0x3C), *(u16 *)(p + 0x44), *(s16 *)(p + 0x32), p[0x29]);
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80139ED8);
+void func_80139ED8(u8 *p)
+{
+    s32 *d = D_1F800090;
+
+    gte_ldfcdir(0, 0, 0);
+    *d = *(s32 *)(p + 0x54);
+    func_800318A0(p + 0x2C, p + 0x50, p + 0x48);
+    func_80027768(*(s32 *)(p + 0x3C), *(u16 *)(p + 0x44), *(s16 *)(p + 0x32), p[0x29]);
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80139F44);
 

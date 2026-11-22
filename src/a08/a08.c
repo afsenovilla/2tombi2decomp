@@ -463,7 +463,28 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011B510);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011B5EC);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011B654);
+typedef struct {
+    s16 a;
+    s16 b;
+    s16 c;
+    s16 d;
+} SV;
+extern u8 D_800A1CD4[];
+extern u8 D_80144C10[];
+extern s32 D_1F800090_3460;
+extern u8 D_800BF808[];
+
+void func_8011B654(u8 *p)
+{
+    SV v;
+
+    v.a = *(s16 *)(p + 0x2E);
+    v.b = *(s16 *)(p + 0x32);
+    v.c = *(s16 *)(p + 0x36);
+    func_800318A0(&v, D_800A1CD4, p + 0x54);
+    D_1F800090_3460 = 0;
+    func_80027768(D_80144C10, 0, -0xA, p[0x60]);
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011B6C0);
 
@@ -627,7 +648,22 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011F030);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", f_UpdateWaterTempleEntranceAndDoorActor);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011FC88);
+void func_8011FC88(u8 *p)
+{
+    u8 *s = D_800BF808;
+    s16 x, z;
+
+    if (s[0xE] && s[0xF] == p[3]) {
+        x = *(s16 *)(p + 0x88) + 0x163;
+        z = *(s16 *)(p + 0x8C) + 0xB2;
+    } else {
+        x = *(s16 *)(p + 0x88);
+        z = *(s16 *)(p + 0x8C);
+    }
+    *(s16 *)(p + 0x2E) = x;
+    *(s16 *)(p + 0x36) = z;
+    func_80073328(p);
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011FCF4);
 
@@ -1204,12 +1240,6 @@ void func_8012955C(void *arg0) {
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801295C4);
 
-typedef struct {
-    s16 a;
-    s16 b;
-    s16 c;
-    s16 d;
-} SV;
 
 u8 *func_8012963C(void *a0)
 {

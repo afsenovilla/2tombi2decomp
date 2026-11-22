@@ -234,7 +234,20 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80114ADC);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80114CF8);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80114F9C);
+#define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
+extern s32 D_1F800090[];
+extern u8 D_80133F20[];
+extern u8 D_80133F90[];
+
+void func_80114F9C(u8 *p)
+{
+    s32 *d = D_1F800090;
+
+    gte_ldfcdir(0, 0, 0);
+    *d = *(s32 *)(p + 0x54);
+    func_800318A0(p + 0x2C, p + 0x50, p + 0x48);
+    func_80027768(*(s32 *)(p + 0x3C), *(u16 *)(p + 0x44), *(s16 *)(p + 0x32), p[0x29]);
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80115008);
 
@@ -934,7 +947,18 @@ void func_80120EC8(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80120F38);
+void func_80120F38(u8 *p)
+{
+    if (p[0x71] == 0xFF) {
+        if (p[0x5E] == 0) {
+            func_80040D68(p, D_80133F20);
+        } else {
+            func_80040D68(p, D_80133F90);
+        }
+        p[0x70] = 1;
+        p[5] = 2;
+    }
+}
 
 
 void func_80120FA4(void *arg0) {
