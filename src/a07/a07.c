@@ -1952,7 +1952,16 @@ s32 func_80126DCC(void) {
     return (u32) ((*(u16 *)0x1F800162 + 0xCA8) & 0xFFFF) >= 0x439U;
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80126DEC);
+s32 func_80126DEC(u8 *a)
+{
+    s32 z = (-func_80083E80(*(s16 *)(a + 0x56)) * *(s16 *)(a + 0x80)) >> 12;
+    s32 x = func_80083F50(*(s16 *)(a + 0x56)) * *(s16 *)(a + 0x80);
+    AreaSVec *v = &D_1F8000C0_f4ad;
+    D_1F8000C0_f4ad.x = x >> 12;
+    v->y = *(s16 *)(a + 0x86) - *(s16 *)(a + 0x84);
+    v->z = z;
+    return func_8012EE08(a + 0x2C, v, 0) != 0;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80126E80);
 
@@ -2560,7 +2569,16 @@ s32 func_80130E20(u8 *a, s32 b) {
     return 0;
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", f_TestCircusActorForwardCollision);
+s32 f_TestCircusActorForwardCollision(u8 *a)
+{
+    s32 z = (-func_80083E80(*(s16 *)(a + 0x56)) * *(s16 *)(a + 0x80)) >> 12;
+    s32 x = func_80083F50(*(s16 *)(a + 0x56)) * *(s16 *)(a + 0x80);
+    AreaSVec *v = &D_1F8000C0_f4ad;
+    D_1F8000C0_f4ad.x = x >> 12;
+    v->y = *(s16 *)(a + 0x86) - *(s16 *)(a + 0x84);
+    v->z = z;
+    return func_8012EE08(a + 0x2C, v, 1) != 0;
+}
 
 extern s16 D_1F8000C0[];
 s32 f_TestCircusActorGroundContact(u8 *p)

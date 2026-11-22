@@ -251,7 +251,24 @@ void func_8010EF30(u8 *p)
     }
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010EFA0);
+extern s32 D_1F80008C;
+extern void *D_1F800080;
+
+void func_8010EFA0(u8 *a, u8 *b)
+{
+    if (b[0x5E] == 0 && func_80024338(a, b) != 0) {
+        s16 h;
+        b[0x2B] = (D_1F80008C + 0x800) >> 4;
+        b[0x29] = 1;
+        *(s16 *)(a + 0x156) = -0x1B;
+        h = *(s16 *)(b + 0x80) + *(s16 *)(a + 0x80);
+        a[0x164] = 1;
+        a[0x15C] = 0;
+        D_1F800080 = b;
+        D_1F800182_5650 = 0;
+        *(s16 *)(a + 0x152) = h - 0xC;
+    }
+}
 
 extern u8 **D_1F80014C;
 extern u8 D_1F800152;
@@ -333,7 +350,27 @@ void func_80111A74(void) {
     func_80051FB4();
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80111AB4);
+extern u8 D_1F8000D0[];
+
+void func_80111AB4(u8 *a)
+{
+    u8 *p = a + 0x38;
+
+    func_8006D934(a, p);
+    func_8006D950(a, p);
+    if (a[0x76] == 0) {
+        u8 *c;
+        func_8006DAD8(a);
+        func_8006DEF0(a);
+        c = D_1F8000D0;
+        if (*(s16 *)(c + 0xA) < 0x447F) {
+            *(s16 *)(c + 0xA) = 0x447E;
+        } else if (*(s16 *)(c + 0xA) >= 0x4C14) {
+            *(s16 *)(c + 0xA) = 0x4C14;
+        }
+    }
+    func_8006D02C(a);
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", f_SpawnKujaraSummitSceneActorsFromPlacementTable);
 
@@ -1198,7 +1235,20 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011E870);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011EB84);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011EC58);
+u8 func_8011EC58(u8 *a, s32 k)
+{
+    if (!(a[0x29] & 0x80)) {
+        if (k) {
+            *(s16 *)(a + 0x32) += 0x10;
+        }
+        func_8004766C(a);
+        if (func_80049250(a, 0, (s16)(*(s16 *)(a + 0x86) - *(s16 *)(a + 0x84))) != 1) {
+            return 0;
+        }
+        a[0x29] |= 0x40;
+    }
+    return a[0x29];
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011ECEC);
 
@@ -1880,7 +1930,24 @@ void func_80126880(u8 *p, s32 a1)
     *(s16 *)(p + 0x4E) = -(v / d);
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80126924);
+extern u8 D_80142108[];
+
+void func_80126924(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        a[6]++;
+        *(s16 *)(a + 0x40) = 0x5A;
+        func_80077C40(a, D_80142108, 9);
+        break;
+    case 1:
+        if (--*(s16 *)(a + 0x40) == 0) {
+            a[5] = func_80123108(a);
+            a[6] = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801269B8);
 
