@@ -1064,9 +1064,150 @@ void func_8011C974(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011CA8C);
+#define F16(p, o) M2C_FIELD(p, s16 *, o)
+#define C0(p) M2C_FIELD(p, u8 **, 0xC0)
+extern u8 D_800BF808_1760[];
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011CCE8);
+void func_8011CA8C(u8 *a)
+{
+    s16 s = F16(a, 0x76);
+    u8 *g;
+
+    switch (s) {
+    case 0:
+        if (a[0x2B] == 0) {
+            return;
+        }
+        F16(a, 0x76)++;
+        break;
+    case 1:
+        if (a[0x2B] & 0x80) {
+            F16(a, 0x48) = F16(a, 0x4C) = 0x200;
+            g = D_800BF808_1760;
+            if (M2C_FIELD(g, s32 *, 0x5C) == 0) {
+                func_8004CBD8(a, 7);
+                M2C_FIELD(g, s32 *, 0x5C) = s;
+            }
+        } else {
+            F16(a, 0x48) = F16(a, 0x4C) = 0x180;
+        }
+        F16(a, 0x52) = -8;
+        if (func_80077768(a[0x46] << 4, F16(a, 0x56), 1)) {
+            F16(a, 0x4C) = -F16(a, 0x4C);
+            F16(a, 0x52) = -F16(a, 0x52);
+        }
+        a[0x2B] = 0;
+        a[0x5F] = 1;
+        if (a[1]) {
+            func_80074590(0xF, -5, 0);
+        }
+        F16(a, 0x76)++;
+        break;
+    case 2:
+        F16(C0(a), 0xC) += F16(a, 0x4C);
+        if (F16(C0(a), 0xC) < -F16(a, 0x48) || F16(a, 0x48) < F16(C0(a), 0xC)) {
+            if (F16(a, 0x4C) > 0) {
+                F16(C0(a), 0xC) = F16(a, 0x48);
+            } else {
+                F16(C0(a), 0xC) = -F16(a, 0x48);
+            }
+            F16(a, 0x48) -= 0x18;
+            if (F16(a, 0x48) <= 0) {
+                F16(C0(a), 0xC) = 0;
+                F16(a, 0x76) = 0;
+                break;
+            }
+            if (F16(a, 0x48) <= 0xA0) {
+                a[0x5F] = 0;
+            }
+            F16(a, 0x4C) = -F16(a, 0x4C);
+            F16(a, 0x52) = -F16(a, 0x52);
+        }
+        F16(a, 0x4C) += F16(a, 0x52);
+        if (F16(a, 0x4C) > 0 && F16(a, 0x4C) < 0x60) {
+            F16(a, 0x4C) = 0x60;
+        } else if (F16(a, 0x4C) < 0) {
+            if (F16(a, 0x4C) > -0x60) {
+                F16(a, 0x4C) = -0x60;
+            }
+        }
+        break;
+    }
+    if (a[0x2B]) {
+        F16(a, 0x76) = 1;
+    }
+}
+
+void func_8011CCE8(u8 *a)
+{
+    s32 r = 0;
+    s32 t;
+    u8 *g;
+
+    switch (a[6]) {
+    case 0:
+        M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x38) += M2C_FIELD(a, u16 *, 0x4E);
+        M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A) -= M2C_FIELD(a, u16 *, 0x50);
+        if (M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A) < M2C_FIELD(a, s16 *, 0x74) - M2C_FIELD(a, s16 *, 0x40)) {
+            M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A) = M2C_FIELD(a, s16 *, 0x74) - M2C_FIELD(a, s16 *, 0x40);
+            r = 1;
+        }
+        t = r;
+        break;
+    case 1:
+        M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x38) -= M2C_FIELD(a, u16 *, 0x4E);
+        M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A) += M2C_FIELD(a, u16 *, 0x50);
+        if (M2C_FIELD(a, s16 *, 0x74) + M2C_FIELD(a, s16 *, 0x40) < M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A)) {
+            M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A) = M2C_FIELD(a, s16 *, 0x74) + M2C_FIELD(a, s16 *, 0x40);
+            r = 1;
+        }
+        t = r;
+        break;
+    default:
+        t = r;
+    }
+    if (t) {
+        M2C_FIELD(a, s16 *, 0x40) -= M2C_FIELD(a, s16 *, 0x4A);
+        if (M2C_FIELD(a, s16 *, 0x40) <= 0) {
+            M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A) = M2C_FIELD(a, s16 *, 0x74);
+            if (M2C_FIELD(a, s16 *, 0x6C) != 0) {
+                M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x38) = M2C_FIELD(a, s16 *, 0x64);
+                M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A) = M2C_FIELD(a, s16 *, 0x66);
+                a[5] = 0;
+                a[6] = 0;
+                M2C_FIELD(a, s16 *, 0x40) = 0x14;
+            } else {
+                a[5] = 4;
+            }
+            return;
+        }
+        a[6] = 1 - a[6];
+    }
+    if (M2C_FIELD(a, s16 *, 0x6C) == 0) {
+        if (a[0x5E] == 0) {
+            if (a[0x29] != 0 && a[6] == 0) {
+                g = D_800E7E80;
+                if (!(g[0x145] & 1) && g[0x164] == 0) {
+                    M2C_FIELD(g, u16 *, 0x32) += 5;
+                }
+            }
+        } else {
+            func_8011D414(a, a[0x5E]);
+            a[6] = 1;
+            M2C_FIELD(a, s16 *, 0x6C) = 1;
+        }
+    } else if ((s16)func_8011D504(a)) {
+        M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x38) = M2C_FIELD(a, s16 *, 0x64);
+        M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A) = M2C_FIELD(a, s16 *, 0x66);
+        func_8011D414(a, 0);
+        a[6] = 0;
+        M2C_FIELD(a, s16 *, 0x6C) = 0;
+    }
+    if (M2C_FIELD(a, s16 *, 0x50) > 0x20) {
+        M2C_FIELD(a, s16 *, 0x50)--;
+    }
+    func_8011D568(a);
+}
 
 
 void func_8011CF80(void *arg0) {
@@ -1140,9 +1281,62 @@ void func_8011D280(u8 *a) {
     a[4] = 3;
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011D354);
+#define F16(p, o) M2C_FIELD(p, s16 *, o)
+#define C0(p) M2C_FIELD(p, u8 **, 0xC0)
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011D414);
+void func_8011D354(u8 *a)
+{
+    switch (F16(a, 0x78)) {
+    case 1:
+        F16(C0(a), 0xC) += F16(C0(a), 0x14);
+        F16(C0(a), 0x14) -= 8;
+        if (F16(C0(a), 0x14) < -0x20) {
+            F16(a, 0x78) = 0;
+            F16(C0(a), 0xC) = 0;
+        }
+        break;
+    case 2:
+        F16(C0(a), 0xC) -= F16(C0(a), 0x14);
+        F16(C0(a), 0x14) -= 8;
+        if (F16(C0(a), 0x14) < -0x20) {
+            F16(a, 0x78) = 0;
+            F16(C0(a), 0xC) = 0;
+        }
+        break;
+    }
+    if (a[0x2B]) {
+        F16(a, 0x78) = 0;
+        F16(C0(a), 0xC) = 0;
+    }
+}
+
+void func_8011D414(u8 *a, s16 b)
+{
+    s32 v = (F16(a, 0x62) << 5) + 0x30;
+
+    F16(a, 0x4E) = v;
+    F16(a, 0x50) = v;
+    switch (b) {
+    case 0:
+        F16(a, 0x4A) = 0x10;
+        F16(a, 0x74) = F16(a, 0x66) - (F16(a, 0x66) >> 4);
+        F16(a, 0x40) = F16(a, 0x66) >> 5;
+        break;
+    case 1:
+        F16(a, 0x74) = F16(a, 0x66);
+        F16(a, 0x40) = F16(a, 0x66) >> 5;
+        F16(a, 0x40) += F16(a, 0x66) >> 6;
+        F16(a, 0x4A) = 0x20;
+        break;
+    case 2:
+        F16(a, 0x74) = F16(a, 0x66);
+        F16(a, 0x40) = F16(a, 0x66) >> 3;
+        F16(a, 0x4E) += 0x70;
+        F16(a, 0x50) += 0x70;
+        F16(a, 0x4A) = 0x40;
+        break;
+    }
+}
 
 
 s32 func_8011D504(u8 *a)
