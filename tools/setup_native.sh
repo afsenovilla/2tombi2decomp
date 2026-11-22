@@ -34,4 +34,7 @@ if [ ! -f include/pt/common.h ]; then
     mkdir -p "include/pt/$(dirname "$h")"; sed 's|#include "common.h"|#include "pt/common.h"|' "/tmp/psx_tomba/src/psyq/$h" > "include/pt/$h"
   done
 fi
+# MIT decompilations of the Psy-Q libraries, read by hand-matching of the library (AGENTS.md "Compilers")
+[ -d /opt/psyz ] || git clone -q --depth 1 https://github.com/Xeeynamo/psyz /opt/psyz || true
+[ -d /opt/psy-q-decomp ] || git clone -q --depth 1 https://github.com/sozud/psy-q-decomp /opt/psy-q-decomp || true
 echo "toolchain ready"

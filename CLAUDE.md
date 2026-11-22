@@ -1,7 +1,11 @@
 # Working on 2tombi2decomp with Claude Code
 
 Read this first in every session. The current state and the open tasks are in `docs/STATUS.md`; keep that file up to
-date as work lands (it is the hand-off between sessions).
+date as work lands (it is the hand-off between sessions). **AGENTS.md** holds the distilled method: compilers and
+set-ups, the order of work, the parallel-round workflow, the recipe catalogue and the decisions. **Always (the
+user's standing instruction): every new piece of information — a recipe, a tool, a compiler fact, a decision, a
+pitfall — goes into AGENTS.md and CLAUDE.md as well as STATUS.md, in the same commit as the work or the round's
+integration.** Agents' briefs point them at AGENTS.md.
 
 **First thing in a new cloud session:** run `bash tools/session_bootstrap.sh`, without being asked. It installs the
 packages and the PS1 toolchain, downloads and extracts the discs from the `GAME_FILES_URL_T2_*` environment variables,
@@ -40,6 +44,23 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   when asked.
 - Disk in the cloud container is small: delete builds/dumps when done (`rm -rf build asm` is always safe: the build
   regenerates them); agents in worktrees must clean up. Only the USA disc image is kept (`game/usa.img`).
+
+## How the work is run (since 2026-11-22)
+
+- The user asked not to be asked: take the decision, say what was decided and why, and go on. Agents are opus with
+  high effort, five at a time.
+- Cycle: five hand-matching agents on disjoint scopes (main; library; a00-a03; a04-a08; a09-a0l + game/demo/opn/sop/
+  crd + boot game code) -> the coordinator integrates (clean full build 29 OK, nearcopy + dupsweep over all programs,
+  STATUS / AGENTS.md / CLAUDE.md / README, push) -> one tools agent implements the round's tool ideas alone -> next
+  round. The agents' rules and the coordinator's checklist are in AGENTS.md ("Parallel rounds").
+- Never push a round before the clean full build: agents' intermediate commits have broken the link more than once
+  (an alias line committed later, a shared aliases file rewritten).
+- Compiler facts that matter: game code is gcc 2.8.1 + ASPSX 2.79 (`-O2 -G0 -funsigned-char`); the library needs the
+  set-ups in AGENTS.md ("Compilers"): gcc 2.8.1 `-mno-split-addresses` or gcc 2.7.2 with GNU as, `// EPILOGUE sony`,
+  `// RETURN sony`, and `gcc-2.8.1-nocse` (Sony's library compiler had no post-reload CSE; made by
+  tools/setup_native.sh from the stock cc1, one byte, sha1 checked).
+- Library C is adapted from psx_tomba, psyz (/opt/psyz) and psy-q-decomp (/opt/psy-q-decomp), all MIT: say so in the
+  file and in THIRD_PARTY_NOTICES.md.
 
 ## Build cheatsheet
 
