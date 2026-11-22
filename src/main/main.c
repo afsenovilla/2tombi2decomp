@@ -95,7 +95,7 @@ extern s32 D_800BE108;
 extern u8 D_800BF808[];
 extern u8 D_800A4F88[];
 extern s8 D_1F800090[];
-void f_SetActorModelResources(void *, s32, s32);
+s32 f_SetActorModelResources(void *, s32, s32);
 s32 func_8001DC40(void *, s32, s32, void *);
 void SpuSetCommonAttr(void *);
 void func_8002847C(void *, s32, s32);
@@ -740,7 +740,23 @@ void f_AddEvilPigRobePower(u8 n)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80026148);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002623C);
+s32 func_8002623C(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        a[4]++;
+        *(s16 *)(a + 0x12) = 0x2D;
+        goto end;
+    case 1:
+        if (--*(s16 *)(a + 0x12) == 0) {
+            a[0xD] &= 0xFE;
+            return 1;
+        }
+    end:
+    default:
+        return 0;
+    }
+}
 
 extern u16 D_800E7E68;
 void func_800262A8(void *arg0) {
@@ -749,9 +765,15 @@ void func_800262A8(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800262D8);
+void func_800262D8(u8 *a, void *b, void *c, s16 d)
+{
+    f_DrawPackedUiQuadFrame(b, ((void **)D_80017334)[d], *(void **)(a + 0x3C), c);
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80026320);
+void func_80026320(u8 *a, void *b, void *c, s16 d)
+{
+    f_DrawPackedUiSpriteFrame(b, ((void **)D_80017334)[d], *(void **)(a + 0x3C), c);
+}
 
 extern u8 *D_800FB168;
 extern u8 *D_800F2624_9bdb;
@@ -2871,7 +2893,19 @@ s32 func_8004162C(u8 *p)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetActorModelResources);
+s32 f_SetActorModelResources(void *p, s32 idx, s32 c)
+{
+    u8 *a = p;
+
+    if ((s16)idx < 0) {
+        *(s8 **)(a + 0x3C) = D_800ECF68;
+        *(u8 **)(a + 0x7C) = D_80017FE8;
+    } else {
+        *(s8 **)(a + 0x3C) = D_800ECF58[(s16)idx];
+        *(s32 *)(a + 0x7C) = c;
+    }
+    return 1;
+}
 
 
 void func_800416F0(u8 *actor)
@@ -3071,9 +3105,39 @@ s32 func_800420AC(u8 *p)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80042170);
+s32 func_80042170(u8 *a)
+{
+    switch (*(s16 *)(a + 0x72)) {
+    case 0:
+        if (a[0x79] != 1) {
+            break;
+        }
+        return 1;
+    case 1:
+        if ((*(u8 **)D_1F800214)[0x79] != 1) {
+            break;
+        }
+        return 1;
+    }
+    return 0;
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800421CC);
+s32 func_800421CC(u8 *a)
+{
+    switch (*(s16 *)(a + 0x72)) {
+    case 0:
+        if (D_800E806E != 3) {
+            break;
+        }
+        return 1;
+    case 1:
+        if (f_UpdateCameraTransformInterpolation(&g_CameraState) != 1) {
+            break;
+        }
+        return 1;
+    }
+    return 0;
+}
 
 extern u8 D_800BF843;
 s32 func_8004223C(void *arg0) {
@@ -3913,7 +3977,14 @@ void f_UpdatePickupBlinkRenderFlag(void *arg0, s32 arg1) {
     M2C_FIELD(arg0, u8 *, 0xD) = (u8) (M2C_FIELD(arg0, u8 *, 0xD) & 0xFD);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B3F4);
+s32 func_8004B3F4(s32 a, s32 b)
+{
+    GameState *g = &D_800BF870;
+
+    *(s32 *)((u8 *)g + 4) += b;
+    func_80071B44(a, b, 0);
+    return 1;
+}
 
 extern s8 D_800BF820;
 
