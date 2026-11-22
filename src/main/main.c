@@ -6796,7 +6796,37 @@ void func_80052720(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800527C8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TryPrepareTombaForInteraction);
+extern s16 D_1F800166_e9f9;
+extern s16 D_1F800190_19b8;
+
+u8 f_TryPrepareTombaForInteraction(void)
+{
+    u8 *t = D_800E7E80_f78d;
+
+    if (t[4] != 1) {
+        return 0;
+    }
+    if (t[5] >= 2) {
+        if (t[0x164] != 0) {
+            goto ok;
+        }
+        if ((*(u32 *)(t + 4) & 0xFFFF00) != 0x20200) {
+            goto fail;
+        }
+    }
+    if (t[0x164] == 0) {
+        f_ResetTombaControlState(t);
+    }
+ok:
+    D_1F800166_e9f9 = 0;
+    D_1F800190_19b8 = 0;
+    D_1F800230_d8aa = 1;
+    D_800BF81E_6fe1 = 0;
+    return 1;
+fail:
+    D_1F800230_d8aa = t[4];
+    return 0;
+}
 
 void func_8005314C(u8 *a)
 {
@@ -7398,7 +7428,42 @@ void f_AdvanceTombaAlongMovementVector(u8 *t, s32 noY)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaLostGroundSupportMotion);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DetachTombaFromSupport);
+extern s16 D_800A45A0[];
+extern s16 D_800A4588[];
+extern u16 D_1F800238;
+
+void f_DetachTombaFromSupport(u8 *a, s32 keep)
+{
+    a[0x181] = 0;
+    *(s16 *)(a + 0x182) = 0;
+    a[0x16A] = 0;
+    f_ClearTombaInteractionState(a);
+    a[0x178] = 0;
+    if (a[0x146] & 3) {
+        *(s16 *)(a + 0x58) = 0;
+        a[0x145] = 1;
+        a[0x29] = 0;
+        a[0x148] = 0;
+        *(s16 *)(a + 0x4A) = 0;
+        a[5] = 6;
+        a[7] = 1;
+    } else {
+        if (keep == 0) {
+            *(s16 *)(a + 0x58) = 0;
+            f_SetTombaAnimationIfChanged(a, 0x14, 0);
+        }
+        a[0x167] = 0x10;
+        a[0x146] = 0;
+        a[0x145] = 1;
+        a[0x29] = 0;
+        a[0x144] = 0;
+        a[0x148] = 0;
+        *(s16 *)(a + 0x4A) = 0;
+        a[5] = 2;
+        a[6] = 1;
+        a[7] = 1;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80056E08);
 
@@ -8364,7 +8429,35 @@ void func_8005FB54(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80060064);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80060268);
+s32 func_80060268(u8 *a)
+{
+    u16 k = D_800ECF54;
+    u8 v;
+
+    if (k & 0x10) {
+        a[0x169] |= 2;
+        goto end;
+    }
+    if (k & 0xA0) {
+        v = a[0x5F];
+        if (v != 0 && a[0x147] == (v & 1)) {
+            return 0;
+        }
+        if (a[0x147] == (a[0x14A] & 1)) {
+            if (++D_1F800238 >= 6) {
+                a[0x169] = 1;
+            }
+            a[0x169] |= 1;
+            return 1;
+        } else {
+            D_1F800238 = 0;
+            a[0x169] |= 2;
+            return 2;
+        }
+    }
+end:
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006032C);
 
