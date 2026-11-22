@@ -3,6 +3,75 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-22 (6): fourth round of five agents (families first)
+
+All code in C: **3672 / 7011 functions (52.4 %, 22.9 % of the bytes)**, from 3405 (18.6 %). main +50 (GTE matrix
+family, actor pool allocators, ~30 collision / cylinder functions with the inlined tests as `static inline`
+helpers), library +12 (and 6 RotMatrix* asm by design), a00-a03 +57, a04-a08 +64, a09-a0l + overlays +76 (the two
+9-copy GTE draw-loop families of a0a-a0j and the Evil Pig scene families); nearcopy afterwards +2 (a07). 29 / 29
+byte-identical. Starting from tools/families.py worked: most matches came with their copies.
+
+Decisions taken this round (the user asked not to be asked): the licensed-region module at the end of boot.c
+[0x80011A0C, 0x80012D2C) is 9 files in src/boot/psyq/region/ (built with the library compiler, so it counts as
+library code; not a known Psy-Q library). **gcc-2.8.1-nocse**: Sony's library compiler has no post-reload CSE pass
+(`reload_cse_regs`): the library never shows `move a2,a1` for two zero arguments, `sllv` with a register holding 16,
+`and x,v0` with v0 = 1 or the deleted redundant moves. tools/setup_native.sh makes /opt/oldgcc/gcc-2.8.1-nocse from
+the stock cc1 (one byte at file offset 0x13F026, the entry of reload_cse_regs, becomes `ret`; sha1 checked before
+and after); files ask for it with a `// CC gcc-2.8.1-nocse` line. SsUtSetReverbFeedback and region func_80012584 /
+func_80012674 match with it. Candidates with the same pattern: CdControl, CdControlF, CdControlB, CD_init (main and
+boot), func_8008DC00, func_8009BE9C (3 words), func_80089194. sync_src.py now takes K&R definitions as C items.
+
+New recipes (add to the ones below):
+- **Register priority** (gcc 2.8 local-alloc): priority = floor_log2(refs) * refs / live_length (from the `-dl` /
+  `-dg` dumps); wrapping a statement in `do { } while (0)` counts its refs more and stops sched from moving
+  increments into load-delay slots; this matched the GT4 draw loop at once. Declaration order of temporaries decides
+  the registers of mult results; store through a temporary (`y = m1 >> 8; D = y;`) fixes a lui/srl swap; reuse the
+  C variable for a derived value (`sx = -sx + 0x98;`) when retail reuses the input register; a separate temp per
+  path and one statement per product in sin/cos math.
+- **GTE draw loops**: private macros (the `.word` command without nops, packed vertex loads `lw $12; lwc2; mtc2;
+  srl $12,16; mtc2`, one `swc2` per SZ); scratchpad pointers as locals `s32 *flg = (s32 *)0x1F800000`.
+- **Inlined functions**: many contact functions inline a matched test (`addu a0,zero,zero` result then `bnez a0`):
+  write a `static inline` copy of it (main's cylinder test is inlined in ~20 more pending functions: func_8001EC3C,
+  func_8001F054, f_ClassifyTombaActorCylinderContact, f_ClassifyActiveColliderPartContact, ...).
+- **Calls**: leftover a1/a2 at a call: call with fewer arguments, or pass the extra value as a 3rd argument through a
+  K&R prototype (ratan2 keeps SquareRoot0's result in a2); the function's own unused parameter as default return;
+  `if (x == 0) f(0x62); else f(0x61);`: the arm order picks beqz/bnez; a K&R definition with narrow parameters stays
+  compatible with an existing s32 prototype.
+- **Switches**: a global stored in every case gives per-case `lui; li` with one shared `sh`; `s32 s = a[4]` (u8 adds
+  an andi), constants in the stores; explicit if/goto where gcc will not build retail's tree; `case 2: break;` for
+  `beq 1; slti 2; beqz; bnez`.
+- **Scratchpad**: base locals `s = D_1F800000;` with call arguments `D_1F8000D0 + 0x28` give retail's derived bases
+  (`addiu s0,s0,-20`); `s32 *sp = &D_1F800084;` keeps the `lui` in a saved register across calls; read values into
+  locals in the order retail loads them.
+- **Misc**: compare order sets registers (`x > sum` vs `sum < x`); `(r & 0xFF) == 0`, `(a ^ b) == 0`; lhu + sll/sra
+  means the u16 was read before an aliasing store and sign-extended after it; `u8 c = a[5]; a[5] = c + 0xFF; if
+  (c == 0)`; a local struct copy of a rodata table for a 16-byte copy loop; `__asm__ volatile("nop")` for a nop at a
+  branch target; base+offset of D_800BF870 through a struct cast; separate loop variables for nested loops; psx_tomba
+  inline helpers as static inline in libsnd; `s32 pad[2]` after a volatile local fixes 2.7.2's frame size.
+
+Near misses (words off): a04 func_8012379C 3 (6-copy family a00 a01 a04 a06 a08 a09: the `lui` of D_1F800137), a00
+func_8013BCC8 5 (6-copy 0x3F4 family: v0/v1 in `pad1[0x1A8] |= 1 << k`), a0a func_801140D0 15 (3 copies, registers
+only), a0a func_80111B68 28 (4 copies); a01 func_80116294 1, a02 func_80127678 1, a01 func_801206D8 2, a04
+func_80110A30 2, a05 func_8012E340 2 (a0b copy), demo func_80106824 2, a0a func_80113A20 2, a0c func_8011353C 2, main
+func_8003511C 2, func_80056E08 2, func_8003F3F4 / F4C4 3, func_8007AA38 3, func_80035640 3, a04 func_801351B8 3, a05
+func_801155A4 3, a0e func_8010A0C0 3, a04 func_801193D4 4 (= a06 func_801160D4), a00 func_80145CD0 4, func_80111A00 4;
+library stopIntr 1, SpuRGetAllKeysStatus 1, func_8008C260 2, func_8009BD84 2, region func_80012954 1. Scratch files
+are in the session scratchpad (r4b/<scope>/).
+
+Tool work left: install_c sometimes leaves a moved typedef in place ("conflicting types": a0j now has T2PolyGT3A /
+T2PolyGT4A beside T2PolyGT3 / T2PolyGT4, a cleanup item) and should place `static inline` helpers after the externs
+they use, parse K&R definitions, and end with a clear "NOT INSTALLED" line; install_lib.py does not parse K&R
+definitions or `#include "psyq_all.h"` + `-fno-builtin` files (installed by hand this round); a "known inline body"
+detector (a matched function's instruction sequence inside pending functions, with register renaming); a
+register-swap search (declaration orders, temporaries, renames) for 1-12 word near misses; nearcopy: try each
+occurrence of a repeated immediate, constants in static inline helpers, `li K` vs folded `addiu -K`, case values and
+min/max compares, a "block missing / extra" hint for `--near`, library files between main and boot; sbs: do not mark
+relocation-only lines; permlines exhaustive mode for <= 7 lines; variants.py: an escape for `|`, multi-line values,
+set-up overrides (--cc/--flags/--as/--epilogue/--return); nocse set-ups in libsweep / libnear / hillclimb; sonyret:
+thread a branch into a `j ret; li v0,K` block; families.py: mark families spread over several agents' scopes; a
+prio.py (pseudo priorities from the cc1 dumps); hillclimb: `do {} while (0)` wrap, variable reuse, u8 -> s32 switch
+variable, call in both arms with swapped branch order, re-read a stored field.
+
 ## 2026-11-22 (5): tools after round 3
 
 One agent turned the round-3 "tool work left" list into tools (each tested on real functions):
