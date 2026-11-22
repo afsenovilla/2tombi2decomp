@@ -1468,7 +1468,36 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RunNetBridgeCogInstallationCutscene);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldFishhookRecovery);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80129008);
+extern u8 D_8001B860[];
+extern u8 *D_80149E50[];
+extern u8 *D_80149E70;
+extern u8 D_800BF830;
+extern u8 D_800BFAD8;
+
+void func_80129008(u8 *a) {
+    switch (a[6]) {
+    case 0:
+        func_80040CDC(a, D_8001B860, D_80149E50[D_800BF830]);
+        a[0x70] = 2;
+        a[6]++;
+        break;
+    case 1:
+        if (a[0x70] == 0xFF) {
+            if (D_800BFAD8 != 0) {
+                func_80040CDC(a, D_8001B860, D_80149E70);
+                a[0x70] = 2;
+                a[0xBF] = 0xD;
+                a[6] = 1;
+            } else {
+                func_80070798();
+            }
+        }
+        break;
+    }
+    func_80041098(a);
+    func_80070E60(a);
+    func_8004190C(a);
+}
 
 s32 func_80129100(u8 *a) {
     if (((M2C_FIELD(a, u16 *, 0x72) - M2C_FIELD(a, u16 *, 0x58)) & 0xFFF) < 0x800) {
