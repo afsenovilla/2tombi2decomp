@@ -75,7 +75,24 @@ INCLUDE_ASM("asm/game/nonmatchings/game", func_8010882C);
 
 INCLUDE_ASM("asm/game/nonmatchings/game", func_801088D8);
 
-INCLUDE_ASM("asm/game/nonmatchings/game", func_801089C4);
+void func_801089C4(void)
+{
+    switch (*(u16 *)(D_1F800138_5432 + 0x4C)) {
+    case 0:
+        func_80074BC4();
+        (*(s16 *)(D_1F800138_5432 + 0x4C))++;
+        break;
+    case 1:
+        D_1F800138_5432[0x69] = 0;
+        D_1F800138_5432[0x6A] = 0;
+        D_1F800138_5432[0x6B] = 0;
+        *(s16 *)(D_1F800138_5432 + 0x4A) = 0;
+        *(s16 *)(D_1F800138_5432 + 0x4C) = 0;
+        *(s16 *)(D_1F800138_5432 + 0x4E) = 0;
+        func_80052078(1);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/game/nonmatchings/game", func_80108A60);
 

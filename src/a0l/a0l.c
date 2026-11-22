@@ -479,11 +479,92 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_801129D4);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80112AE0);
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80112BA0);
+typedef struct {
+    s16 x, y, w, h;
+} Rect16;
+typedef struct {
+    u32 *vlcbuf[2];
+    s32 vlcid;
+    u16 *imgbuf[2];
+    s32 imgid;
+    Rect16 rect[2];
+    s32 rectid;
+    Rect16 slice;
+    s32 isdone;
+} DecEnv;
+typedef struct {
+    u16 id;
+    u16 type;
+    u16 secCount;
+    u16 nSectors;
+    u32 frameCount;
+    u32 bsHeadSize;
+    u16 width;
+    u16 height;
+} StHeader;
+extern u8 *D_1F800138;
+extern u32 D_1F800250;
+typedef struct {
+    u32 unk0;
+    u8 *buf;
+    u32 unk8;
+} MovieDef;
+extern MovieDef D_8011A6AC[];
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80112C40);
+void func_80112BA0(s32 a, s32 b)
+{
+    u8 *buf = D_8011A6AC[D_1F800138[0x69]].buf;
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80112CDC);
+    func_8009C620(0);
+    func_8009C8BC(b);
+    func_80089870(buf + 0x28000, 0x20);
+    func_8008CEB0(0, 1, -1, 0, 0);
+    func_80112D98(a);
+}
+
+typedef struct {
+    u32 *vlcbuf[2];
+    s32 vlcid;
+} VlcEnv;
+
+s32 func_80112C40(VlcEnv *dec, s32 b)
+{
+    s32 cnt = 2000;
+    u32 *next;
+
+    while ((next = (u32 *)func_80112CDC(dec, b)) == NULL) {
+        if (--cnt == 0) {
+            return -1;
+        }
+    }
+    dec->vlcid = 1 - dec->vlcid;
+    func_8009CCE0(next, dec->vlcbuf[dec->vlcid]);
+    func_8008CF40(next);
+    return 0;
+}
+
+u32 *func_80112CDC(DecEnv *dec, u32 limit)
+{
+    u32 *addr;
+    StHeader *sector;
+    s32 cnt = 2000;
+    u32 n;
+
+    while (func_8008D030(&addr, &sector)) {
+        if (--cnt == 0) {
+            return 0;
+        }
+    }
+    if (sector->frameCount >= limit) {
+        *(s16 *)(D_1F800138 + 0x4E) = 7;
+    }
+    n = sector->frameCount;
+    dec->rect[0].w = dec->rect[1].w = sector->width;
+    dec->rect[0].h = dec->rect[1].h = sector->height;
+    D_1F800250 = n;
+    dec->slice.h = sector->height;
+    return addr;
+}
 
 void func_80112D98(s32 a)
 {
