@@ -45,11 +45,12 @@ Recipes the agents found (add to the ones below):
 - Near misses left by the agents (1-25 words) are listed in their reports; the most valuable: a0g func_8010C2A4
   (9 copies, 25 words), a02 func_80127034 (8 copies, 3), a09 func_8010D7D4 (8 copies, 43), main func_8007566C (1).
 
-Tool fixes to do (from the agents): hillclimb's hoist transform declares a local mid-block (invalid C89 for gcc 2.8:
-declare at the top); hillclimb should print scores as it goes and add transforms (empty case, void->s32 return,
-early-return inversion, pointer/index loops, extern <-> constant address, duplicated tails); jtbl.py should treat
-adjacent `$L` labels (same address) as equal when computing a table's shape; install_c.py should keep `#include`
-lines, accept 2-D array externs in its alias check and remove a new alias line when the link fails; dupgroups.py
+Tool fixes done after the round: hillclimb's hoist transform opens its own `{ }` block, it prints each function's
+score as it goes and tries void -> s32; jtbl.py treats adjacent `$L` labels as one address; install_c.py keeps a
+scratch file's extra `#include` lines (after the target's), accepts 2-D array externs and restores the aliases file
+when the link fails; tools/build.py takes a lock per program (build/.lock_<prog>), so two agents may build the same
+program in turn. Still to do: hillclimb transforms (empty case, early-return inversion, pointer/index loops,
+extern <-> constant address, duplicated tails); dupgroups.py
 should group immediate-only variants as dupsweep does; a ccheck side-by-side mode (objdump of ours next to retail);
 a statement-order permuter for marked lines (agents' scratch: perm.py, perm_stmts.py, variants.py).
 

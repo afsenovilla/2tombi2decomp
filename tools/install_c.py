@@ -24,10 +24,14 @@ def main():
     old = open(path).read()
     t = old
     text = open(a.src).read()
-    pre, funcs = [], []
+    pre, funcs, includes = [], [], []
     for kind, seg in ptsrc.items(text):
         s = seg.strip()
-        if not s or (kind == "pp" and s.startswith("#include")):
+        if not s:
+            continue
+        if kind == "pp" and s.startswith("#include"):
+            if s not in t and not re.search(r'"(common|game|m2c|actor)\.h"', s):
+                includes.append(s)   # e.g. psyq/inline_c.h for GTE macros: goes after the target's own includes
             continue
         n = ptsrc.func_name(s) if s.endswith("}") else None
         if n:
@@ -37,7 +41,7 @@ def main():
     # a global the target declares with another type is used here under an alias name (config/aliases_<prog>.ld)
     import hashlib, libsweep
     aliases = libsweep.read_aliases(a.prog)
-    decl_re = r"(?m)^(extern [^;(]*?\b(\w+)(?:\[[^\]]*\])?;)"
+    decl_re = r"(?m)^(extern [^;(]*?\b(\w+)(?:\[[^\]]*\])*;)"
     theirs = {m.group(2): m.group(1) for m in re.finditer(decl_re, t)}
     for i, p in enumerate(pre):
         m = re.match(decl_re, p)
@@ -51,6 +55,15 @@ def main():
         aliases[new] = int(am.group(1), 16)
         pre[i] = re.sub(r"\b%s\b" % k, new, p)
         funcs = [(n, re.sub(r"\b%s\b" % k, new, b)) for n, b in funcs]
+    ap_ = libsweep.aliases_path(a.prog)
+    old_aliases = open(ap_).read() if os.path.exists(ap_) else None
+
+    def restore_aliases():
+        if old_aliases is None:
+            if os.path.exists(ap_):
+                os.remove(ap_)
+        else:
+            open(ap_, "w").write(old_aliases)
     libsweep.write_aliases(a.prog, aliases)
     # a function that had equivalent C (tools/nonmatching.py) loses its whole NON_MATCHING block
     for n, _ in funcs:
@@ -85,11 +98,16 @@ def main():
         if n == first:
             body = "\n".join(extra + ([""] if extra else []) + [body])
         t = t.replace(lines[n][1], body)
+    if includes:   # after the target's last #include line
+        last = list(re.finditer(r"(?m)^#include .*$", t))
+        at = last[-1].end() if last else 0
+        t = t[:at] + "\n" + "\n".join(includes) + t[at:]
     open(path, "w").write(t)
     r = subprocess.run([sys.executable, "tools/build.py", a.prog, "--no-split"], capture_output=True, text=True,
                        cwd=ROOT)
     if " OK " not in r.stdout:
         open(path, "w").write(old)
+        restore_aliases()
         if len(funcs) < 2:
             sys.exit("linked build not OK, restored:\n" + r.stdout + r.stderr[-2500:])
         # one function at a time: the others may still go in (a callee prototype in the target, for instance,

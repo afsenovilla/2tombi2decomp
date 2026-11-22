@@ -64,6 +64,15 @@ def objects(ld):
 
 
 def build(prog, split, jobs, cfg="config"):
+    """Build one program; a lock per program (build/.lock_<prog>) lets parallel agents build it in turn."""
+    import fcntl
+    os.makedirs(os.path.join(ROOT, "build"), exist_ok=True)
+    with open(os.path.join(ROOT, "build", ".lock_%s%s" % (cfg.replace("/", "_"), prog)), "w") as lk:
+        fcntl.flock(lk, fcntl.LOCK_EX)
+        return _build(prog, split, jobs, cfg)
+
+
+def _build(prog, split, jobs, cfg="config"):
     y = open(os.path.join(ROOT, cfg, prog + ".yaml")).read()
     sha = re.search(r"^sha1:\s*(\w+)", y, re.M).group(1)
     ld = re.search(r"ld_script_path:\s*(\S+)", y).group(1)

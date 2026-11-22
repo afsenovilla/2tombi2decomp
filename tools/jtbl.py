@@ -68,6 +68,16 @@ def filter_asm(text, asm_dir, sym_files):
     if "$L" not in text or not tables:
         return text
     lines = text.split("\n")
+    # labels with no instruction between them are the same address: one canonical name per run
+    canon, run = {}, []
+    for l in lines:
+        m = re.match(r"(\$L\d+):\s*$", l)
+        if m:
+            run.append(m.group(1))
+            for x in run:
+                canon[x] = run[0]
+        elif l.strip() and not l.strip().startswith(("#", ".align")):
+            run = []
     # tables sit inside their function (.ent .. .end), between `.section .rodata` and `.text`
     used = set()
     res = []
@@ -96,22 +106,23 @@ def filter_asm(text, asm_dir, sym_files):
                     i = k + 1   # drop the local table
                     continue
         if re.match(r"\s*\.end\s+\w+", line) and fname and pending:
-            res = place(res, body_start, fname, pending, prog, tables, used)
+            res = place(res, body_start, fname, pending, prog, tables, used, canon)
             pending = []
         res.append(line)
         i += 1
     return "\n".join(res)
 
 
-def place(res, start, fname, pending, prog, tables, used):
+def place(res, start, fname, pending, prog, tables, used, canon):
     fa = addr_of(prog, fname)
     if fa is None:
         raise SystemExit("jtbl: no address for %s (%s)" % (fname, prog))
     cands = sorted((n for n, e in tables.items() if n not in used and e and all(fa <= x < fa + 0x8000 for x in e)),
                    key=lambda n: min(tables[n]))
     body = res[start:]
+    defined = set()   # .L<addr> names already placed (aliased labels, a label shared by two tables)
     for lab, ents, _ in pending:
-        want = shape(ents)
+        want = shape([canon.get(e, e) for e in ents])
         hit = next((n for n in cands if n not in used and len(tables[n]) == len(ents)
                     and shape(tables[n]) == want), None)
         if hit is None:
@@ -123,7 +134,8 @@ def place(res, start, fname, pending, prog, tables, used):
         for l in body:
             new.append(l)
             m = re.match(r"(\$L\d+):\s*$", l)
-            if m and m.group(1) in addrs:
+            if m and m.group(1) in addrs and addrs[m.group(1)] not in defined:
+                defined.add(addrs[m.group(1)])
                 a = ".L%08X" % addrs[m.group(1)]
                 new += ["\t.globl\t" + a, a + ":"]
         body = new

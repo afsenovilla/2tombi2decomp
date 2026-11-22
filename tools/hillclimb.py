@@ -112,8 +112,13 @@ def candidates(body, name):
         if "=" not in pre and not pre.startswith(("return", "if")):
             continue
         var = "hc_%d" % m.start()
-        line = "%s%s %s = %s;\n%s%s%s%s" % (ind, typ, var, expr, ind, pre, var, m.group(7))
+        # a block of its own: gcc 2.8 (C89) wants declarations at the top of a block
+        line = "%s{ %s %s = %s; %s%s%s }" % (ind, typ, var, expr, pre, var, m.group(7))
         out.append(body[:m.start()] + line + body[m.end():])
+    # void function -> s32 (retail leaves v0 live: an empty delay slot before the exit)
+    vm = re.search(r"(?m)^void (%s\()" % re.escape(name), body)
+    if vm:
+        out.append(body[:vm.start()] + "s32 " + body[vm.start(1):])
     return out
 
 
@@ -147,6 +152,7 @@ def climb(prog, name, ctx, rounds):
             break
     if best == 0:
         open(os.path.join(d, name + ".c"), "w").write(HEAD + body)
+    print("%-40s %4s -> %s" % (name, start, "MATCH" if best == 0 else best), flush=True)
     return name, start, best
 
 
