@@ -4,14 +4,61 @@
 
 INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_801090C4);
 
-INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_80109238);
+extern u8 **D_1F800154;
+extern u8 D_1F80015C;
+extern u8 D_1F800183;
+extern u8 D_1F800182;
+extern u8 D_1F800150;
+extern u8 **D_1F80013C;
+extern u8 D_1F800144;
+#define TOWER_SCAN_LIST(e)                                          \
+    {                                                    \
+        u8 **m;                                          \
+        u8 *o;                                           \
+        D_1F800182 = D_1F800150;                         \
+        while (D_1F800182 != 0) {                        \
+            D_1F800182--;                                \
+        }                                                \
+        m = D_1F80013C;                                  \
+        D_1F800182 = D_1F800144;                         \
+        while (D_1F800182 != 0) {                        \
+            o = *m;                                      \
+            D_1F800182--;                                \
+            m++;                                         \
+            if ((o[0] & 1) && o[2] == 8) {               \
+                func_8002423C(e, o);                     \
+            }                                            \
+        }                                                \
+    }
+
+void func_80109238(void)
+{
+    u8 **l = D_1F800154;
+    u8 *e;
+    D_1F800183 = D_1F80015C;
+    while (D_1F800183 != 0) {
+        e = *l;
+        D_1F800183--;
+        l++;
+        if (!(e[0] & 2)) {
+            switch (e[2]) {
+            case 1:
+                if (e[3] == 1) {
+                    TOWER_SCAN_LIST(e);
+                }
+                break;
+            case 0:
+            case 4:
+                TOWER_SCAN_LIST(e);
+                break;
+            }
+        }
+    }
+}
 
 extern s16 D_1F800144_138c;
 extern s16 D_1F800150_058c;
-extern u8 D_1F800182;
-extern u8 D_1F800183;
 extern u8 **D_1F800148;
-extern u8 **D_1F80013C;
 void func_8010945C(void)
 {
     u8 **q;
@@ -111,8 +158,6 @@ void func_80109B34(u8 *a)
     }
 }
 
-extern u8 D_1F800150;
-extern u8 D_1F800144;
 void func_80109BA4(u8 *a)
 {
     u8 **l;
