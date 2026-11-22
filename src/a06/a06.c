@@ -1752,7 +1752,19 @@ s32 func_8013B37C(void *arg0) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013B38C);
+extern u16 D_800BFE56;
+extern u8 D_8014CA58[];
+
+s32 func_8013B38C(void *a0)
+{
+    u8 *r = func_80072DDC(a0, 2, 3, 0x10);
+
+    if (r) {
+        *(void **)(r + 0x1C) = f_UpdateDonglinInteriorQuestObjectActor;
+        r[3] = 0xC;
+    }
+    return 1;
+}
 
 extern s8 D_800BFA20_0787;
 
@@ -1902,7 +1914,13 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8014046C);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801404DC);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801406A4);
+void func_801406A4(s32 i)
+{
+    if (D_800BFE56 & 0x40) {
+        i += 4;
+    }
+    func_80075070(D_8014CA58[i]);
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801406E8);
 

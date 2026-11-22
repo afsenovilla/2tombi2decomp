@@ -625,7 +625,17 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011FF10);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011FF9C);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80120068);
+void func_80122544();
+
+void func_80120068(void *a0)
+{
+    u8 *r = func_80072DDC(a0, 1, 4, 0x4F);
+
+    if (r) {
+        *(void **)(r + 0x1C) = func_80122544;
+        r[3] = 2;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801200AC);
 
@@ -693,7 +703,19 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80121C2C);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80122064);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801220BC);
+void f_UpdateWaterTempleQuestPropActor();
+extern s16 D_801459AC[];
+extern u8 *D_800BF844;
+
+void func_801220BC(void)
+{
+    u8 *r = func_80072DDC(0, 1, 3, 0x10);
+
+    if (r) {
+        *(void **)(r + 0x1C) = f_UpdateWaterTempleQuestPropActor;
+        r[3] = 0x11;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80122104);
 
@@ -862,7 +884,11 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80127C58);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", f_UpdateWaterTempleQuestPropActor);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80128BF8);
+void func_80128BF8(u8 *p)
+{
+    func_80051B70(p, 0xC, D_801459AC[p[3]]);
+    func_800517F8(p);
+}
 
 extern u16 D_1F8000E2;
 s32 func_800778E4(void *, s16);
@@ -875,7 +901,18 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80128C78);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80128CE4);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80128D1C);
+void f_UpdateWaterTempleQuestPropActor();
+
+u8 *func_80128D1C(void *a0)
+{
+    u8 *r = func_80072DDC(a0, 0x80, 3, 0x10);
+
+    if (r) {
+        *(void **)(r + 0x1C) = f_UpdateWaterTempleQuestPropActor;
+        r[3] = 5;
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80128D60);
 
@@ -1141,8 +1178,8 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012C3A4);
 INCLUDE_ASM("asm/a08/nonmatchings/a08", f_UpdateNishikiBirdNestActor);
 
 
-s32 func_8012C8AC(void) {
-    func_80128D1C();
+s32 func_8012C8AC(void *arg0) {
+    func_80128D1C(arg0);
     return 1;
 }
 
@@ -1215,7 +1252,14 @@ s32 func_8012D270(u8 *a)
     return 2;
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012D298);
+s32 func_8012D298(u8 *p)
+{
+    if ((*(s32 *)(p + 0x14) = func_8012D398(p)) != 0) {
+        func_8004D650(0x52, 1);
+        return 1;
+    }
+    return 0;
+}
 
 
 s32 func_8012D2DC(void *arg0) {
@@ -1976,7 +2020,19 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013C530);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013C6B4);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013C860);
+s32 func_8013C860(u8 *p)
+{
+    u8 *a = D_800BF844;
+
+    a[5] = 1;
+    a[0x5E] = 0;
+    *(s16 *)(a + 0x60) = 0;
+    a[6] = 0;
+    *(s16 *)(p + 0x48) = *(s16 *)(a + 0x2E) = 0x1A90;
+    *(s16 *)(p + 0x4A) = *(s16 *)(a + 0x32) = -0x125E;
+    *(s16 *)(p + 0x4C) = *(s16 *)(a + 0x36) = 0x2CEC;
+    return 1;
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013C8A8);
 

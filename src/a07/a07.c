@@ -1306,7 +1306,16 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80130BA4);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80130C20);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80130CB0);
+extern u8 D_1F800137;
+
+s32 func_80130CB0(void *a0)
+{
+    if (func_8007778C(a0) == 0) {
+        return 0;
+    }
+    func_8004190C(a0);
+    return D_1F800137 == 0;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_CompleteUseTheSeesawEventIfResolved);
 
@@ -1321,7 +1330,14 @@ s32 func_80130D44(void)
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80130D80);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80130DD8);
+void func_80130DD8(u8 a0)
+{
+    if (D_800E7FFE & 0x180) {
+        func_80042354(1, a0);
+    } else {
+        func_80042354(1, 2);
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80130E20);
 

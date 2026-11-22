@@ -1499,7 +1499,18 @@ void func_801329C0(void *arg0) {
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80132A1C);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80132A80);
+void func_80132418();
+
+u8 *func_80132A80(void)
+{
+    u8 *r = func_80072DDC(0, 0, 3, 0x10);
+
+    if (r) {
+        *(void **)(r + 0x1C) = func_80132418;
+        r[3] = 8;
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80132AC8);
 
