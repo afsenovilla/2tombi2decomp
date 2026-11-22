@@ -221,7 +221,13 @@ void func_801110B8(u8 *a, u8 *b) {
     }
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80111118);
+void func_80111118(u8 *a, u8 *b) {
+    if (!(M2C_FIELD(a, u16 *, 0x17E) & 0x200) && func_80022F04(a, b) != 0) {
+        a[0x2B] = D_1F80009C_baed >> 4;
+        func_80022D08(a, b, 1, 0);
+        b[0x2B] = 1;
+    }
+}
 
 void func_8011118C(u8 *a, u8 *b) {
     s32 r;

@@ -479,7 +479,22 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114BBC);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114C5C);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114CD0);
+typedef struct { u8 pad0[7]; u8 unk7; u8 pad8[6]; u8 unkE; u8 unkF; u8 pad10[0x21]; u8 unk31; s16 unk32; } AreaState808_E;
+extern AreaState808_E D_800BF808_9a69;
+extern s8 D_800BF9E5;
+extern u8 D_1F800236;
+
+void func_80114CD0(u8 *a) {
+    AreaState808_E *g = &D_800BF808_9a69;
+
+    if (g->unkE != 0 && g->unkF == 2 && M2C_FIELD(a, s16 *, 0x32) < -0xE74 && M2C_FIELD(a, s16 *, 0x36) < 0x1451) {
+        D_1F800137 = 2;
+        g->unk7 = 2;
+        g->unk31 = 1;
+        g->unk32 = 0x100;
+        D_1F800236 = 1;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114D48);
 
@@ -589,11 +604,24 @@ u8 *f_SpawnCrabBasketRewardActor(s32 a, s32 b) {
     return p;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117460);
+void func_80117460(u8 *a) {
+    if (func_80051B70(a, 1, 2) == 0) {
+        M2C_FIELD(a, s16 *, 0x80) = 0x28;
+        M2C_FIELD(a, s16 *, 0x82) = 0x50;
+        M2C_FIELD(a, s16 *, 0x84) = 0x4B;
+        M2C_FIELD(a, s16 *, 0x86) = 0x73;
+        M2C_FIELD(a, s16 *, 0x54) = 0;
+        M2C_FIELD(a, s16 *, 0x56) = 0;
+        M2C_FIELD(a, s16 *, 0x58) = 0;
+        a[0x29] = 0;
+        if (*(u8 *)&D_800BF9E5 == 4) {
+            a[0x5E] = 1;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801174D8);
 
-extern s8 D_800BF9E5;
 void func_801175A8(void *arg0) {
     if ((M2C_FIELD(arg0, u8 *, 5) == 0) && (func_80040C00(6) >= 0)) {
         func_80040B48(7);

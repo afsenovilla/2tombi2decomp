@@ -229,7 +229,23 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80111620);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80111BE0);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80111C58);
+typedef struct { s16 x, y, w, h; } ClutRect;
+extern u8 D_800BF873;
+extern u8 D_800BF816;
+extern s32 D_80135314;
+extern u8 *D_800BF544;
+extern u32 *D_800ED8C8;
+
+void func_80111C58(void) {
+    u8 buf[16];
+
+    if (D_800BF873 == 0 && D_800BF816 == 0) {
+        if (--D_80135314 < 0) {
+            func_8003116C(0x200, buf, 0);
+            D_80135314 = (func_8009A450() >> 12) + 1;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80111CCC);
 
