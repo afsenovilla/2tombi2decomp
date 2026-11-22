@@ -725,7 +725,27 @@ void func_801167C4(u8 *a, s32 ang) {
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801168A0);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80116918);
+extern u16 D_1F8000F2_1841;
+
+void func_80116918(u8 *a) {
+    u8 *t = D_800E7E80;
+    s16 v[6];
+
+    switch (a[4]) {
+    case 0:
+        M2C_FIELD(a, s16 *, 0x70) = 0x1400 - D_1F8000F2_1841;
+        a[4]++;
+        break;
+    case 1:
+        v[1] = M2C_FIELD(t, s16 *, 0x2E);
+        v[3] = M2C_FIELD(t, s16 *, 0x32) - 0x20;
+        v[5] = M2C_FIELD(t, s16 *, 0x36);
+        func_8006E3F4(a, v);
+        func_80115794(a, t, M2C_FIELD(a, s16 *, 0x70));
+        func_80115994(a, (s16)(M2C_FIELD(t, s16 *, 0x32) - 0x20));
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801169D8);
 

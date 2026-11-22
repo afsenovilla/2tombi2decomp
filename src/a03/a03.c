@@ -142,7 +142,33 @@ s32 func_8010E820(void *arg0) {
     return (u32) &D_8011B748 < (u32) M2C_FIELD(arg0, u32 *, 0x60);
 }
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010E834);
+extern s8 D_800BF808[];
+
+void func_8010E834(u8 *a) {
+    s8 *g = D_800BF808;
+    u8 *q = a + 0x60;
+    u8 b1[0x20];
+    u8 b2[8];
+
+    if (g[5] != 0) {
+        return;
+    }
+    if ((u16)(M2C_FIELD(q, u16 *, 0xE) + 0x2AA) >= 0x555) {
+        a[7] = 0;
+        g[5] = 1;
+        return;
+    }
+    if (!(q[0x12] & 1)) {
+        return;
+    }
+    if (!(M2C_FIELD(M2C_FIELD(a, u8 **, 0x60), s16 *, 6) & 0x8000)) {
+        return;
+    }
+    if (M2C_FIELD(f_SampleAirborneTrolleyTrack(M2C_FIELD(a, u8 **, 0x60), M2C_FIELD(q, s16 *, 0xA) - 0x3E8, b2, b1), s16 *, 6) & 0x8000) {
+        a[7] = 1;
+        g[5] = 1;
+    }
+}
 
 
 void func_8010E8F4(s32 arg0) {

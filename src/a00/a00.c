@@ -3348,7 +3348,36 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013EA64);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013EBA0);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013EC48);
+extern u8 D_8014BCC0[];
+extern u8 D_8014BCAC[];
+
+void func_8013EC48(u8 *a) {
+    u8 *p;
+
+    switch (a[4]) {
+    case 0:
+        M2C_FIELD(a, u8 **, 0x40) = D_8014BCC0;
+        M2C_FIELD(a, u8 **, 0x50) = D_8014BCAC;
+        M2C_FIELD(a, s32 *, 0x48) = 0;
+        M2C_FIELD(a, s16 *, 0x4C) = 0;
+        a[4] = 1;
+    case 1:
+        p = M2C_FIELD(a, u8 **, 0x40);
+        M2C_FIELD(a, u8 **, 0x3C) = p;
+        if (p == NULL) {
+            a[4] = 2;
+            break;
+        }
+        if (func_8002B278(a) == 0) {
+            func_80031744(a);
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern s8 D_1F800090[];
 
