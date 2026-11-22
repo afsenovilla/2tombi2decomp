@@ -38,7 +38,42 @@ INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018D74C);
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018DB28);
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018DC2C);
+extern u16 D_800E7E68;
+extern u8 *D_1F800138;
+
+void func_8018DC2C(u8 *a)
+{
+    u16 k;
+
+    switch (a[1]) {
+    case 0:
+        a[0x50] = 0;
+        a[1]++;
+        break;
+    case 1:
+        if (++a[0x50] >= 11) {
+            a[1]++;
+        }
+        break;
+    case 2:
+        if (a[0x4A] != 0xFC && a[0x4A] != 1 && a[0x4B] != 0xFC && a[0x4B] != 1) {
+            a[2] = 0;
+            a[1] = 0;
+            a[0] = 1;
+        }
+        break;
+    }
+    k = D_800E7E68;
+    if (k & 0x2000) {
+        if (!(a[0x3C] & 1)) {
+            *(s16 *)(D_1F800138 + 0x50) = 2;
+            return;
+        }
+        *(s16 *)(D_1F800138 + 0x50) = 3;
+    } else if (k & 0x1000) {
+        *(s16 *)(D_1F800138 + 0x50) = 3;
+    }
+}
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018DD38);
 
