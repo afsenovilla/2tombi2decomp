@@ -488,7 +488,6 @@ void func_80112A98(void *a)
 #define F16(p, o) M2C_FIELD(p, s16 *, o)
 extern s8 D_800BF80D;
 extern u8 **D_1F800154;
-
 void func_80112B5C(u8 *a) {
     u8 **l;
     u8 *e;
@@ -788,7 +787,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80115620);
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80115794);
 
 extern s16 D_1F8000EE;
-
 void func_80115994(u8 *a, s16 b)
 {
     s16 v;
@@ -1261,7 +1259,6 @@ void func_801199EC(u8 *a);
 void func_80119ADC(u8 *a);
 void func_80119BAC(u8 *a);
 void func_80119C7C(u8 *a);
-
 void func_80119880(u8 *a) {
     switch (a[4]) {
     case 0:
@@ -1467,7 +1464,6 @@ s32 func_80119DEC(u8 *a) {
 #define FP(p, o) M2C_FIELD(p, u8 **, o)
 extern u8 *D_800BF844_3cf3;
 u8 *func_8011C94C(s32 arg0, s8 arg1);
-
 s32 func_80119E68(u8 *a, s32 k, u8 *e) {
     u8 *t = D_800BF844_3cf3;
     u8 *g;
@@ -1751,7 +1747,6 @@ extern s16 D_800E7ED6;
 extern u8 *D_8012A570;
 extern s16 D_1F800164;
 extern s16 D_1F800160;
-
 void func_8011C710(u8 *a) {
     if (a[0x71] == 0xFF) {
         switch (a[0x5E]) {
@@ -1873,7 +1868,6 @@ void func_8011CB20(u8 *a) {
 extern u8 D_8012A508[];
 extern u8 D_8012A538[];
 extern u8 *D_8012A568[];
-
 void f_AdvanceStarvingCharlesDialogue(u8 *a) {
     s32 k;
 
@@ -2317,7 +2311,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80121948);
 
 void func_80121BB4(u8 *a);
 void func_80121C10(u8 *a);
-
 void func_80121AA4(u8 *a) {
     switch (a[4]) {
     case 0:
@@ -2704,7 +2697,6 @@ extern void *D_800BF544;
 #define T2_stsz1(r0) __asm__ volatile("swc2 $17, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_801246A4(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[6];
@@ -2869,7 +2861,6 @@ typedef struct {
 #define T2_stsxy3_gt4(r0)                                                                                              \
     __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz0(r0) __asm__ volatile("swc2 $16, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_8012496C(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[8];
@@ -3121,7 +3112,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80126D24);
 
 extern u8 D_80138990[];
 typedef struct { u8 pad[0x48]; s16 r[3]; } RotAct;
-
 void func_80126EA8(u8 *a)
 {
     u8 *p;
@@ -3272,7 +3262,6 @@ typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner;
 typedef struct { s16 v[4]; } PartInit;
 extern s16 D_800ED098;
 extern PartInit D_80138A08[];
-
 s32 func_801278D8(PartsOwner *a)
 {
     s32 i;

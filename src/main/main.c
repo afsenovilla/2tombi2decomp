@@ -359,7 +359,6 @@ static inline s32 TestPartCyl_2AC8(u8 *a, u8 *b, u8 *p)
     D_1F80009C = ratan2(-dz, dx);
     return 1;
 }
-
 s32 f_ResolveActorAgainstPartCylinderContact(u8 *a, u8 *b, u8 *p)
 {
     s32 c;
@@ -405,7 +404,6 @@ static inline s32 TestCyl_0B08(u8 *a, u8 *b)
     D_1F80009C = ratan2(-dz, dx, d);
     return 1;
 }
-
 s32 f_ResolveTombaRadialContactAndSide(u8 *a, u8 *b)
 {
     s32 c;
@@ -423,7 +421,6 @@ s32 f_ResolveTombaRadialContactAndSide(u8 *a, u8 *b)
     a[0x5F] = f_TestWrappedAngleSide(*(s16 *)&D_1F80009C, *(s16 *)(a + 0x140), 1) + 2;
     return 1;
 }
-
 
 s32 f_TestActorOffsetCylinderOverlap(u8 *a, u8 *b)
 {
@@ -444,7 +441,6 @@ s32 f_TestActorOffsetCylinderOverlap(u8 *a, u8 *b)
 extern u16 D_1F80018C_c065;
 extern u16 D_1F80018E;
 extern u8 D_800BF840;
-
 void f_ResolveTombaPlaneTransitionActorContact(u8 *a, u8 *b)
 {
     s16 dx;
@@ -482,7 +478,6 @@ void f_ResolveTombaPlaneTransitionActorContact(u8 *a, u8 *b)
         D_800BF840 = 0x44;
     }
 }
-
 
 void func_8001FC50(u8 *a, u8 *b)
 {
@@ -811,7 +806,6 @@ static inline s32 Test3794_2190(u8 *a, u8 *pos, u8 *r)
     }
     return (u16)((*(u16 *)(a + 0x32) - *(u16 *)(pos + 6)) + (*(u16 *)(a + 0x84) + r[5])) <= *(s16 *)(a + 0x86) + r[5] * 2;
 }
-
 void func_80022190(u8 *a, u8 *e)
 {
     u8 *m = e + 0x60;
@@ -931,7 +925,6 @@ s32 f_ApplyTombaEnvironmentalDamage(u8 *t, s32 dmg)
 }
 
 extern u8 D_800BF816;
-
 void f_ApplyTombaSupportedContactState(u8 *a)
 {
     s32 c;
@@ -982,7 +975,6 @@ s32 f_TestActorAgainstPartCylinderOverlap(u8 *a, u8 *b, u8 *p)
 }
 
 extern s32 D_1F80008C_f832;
-
 s32 f_TestActorCylinderOverlap(u8 *a, u8 *b)
 {
     s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(b + 0x2E);
@@ -1222,7 +1214,6 @@ s32 func_80023794(u8 *a, u8 *pos, u8 *r)
 }
 
 s32 f_TestWrappedAngleSide(s32 a, s32 b, s32 flip);
-
 s32 f_PushActorOutsidePartCylinder(u8 *a, u8 *b, u8 *p)
 {
     s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(p + 0x2C);
@@ -1306,7 +1297,6 @@ s32 f_SnapActorOntoCylinderTop(u8 *a, u8 *b)
 }
 
 extern s32 D_1F800088;
-
 s32 f_TestTombaSupportPointAgainstActorBounds(u8 *a, u8 *b)
 {
     s16 dx = *(u16 *)(a + 0x14C) - *(u16 *)(b + 0x2E);
@@ -1373,7 +1363,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_FindTombaSupportInteractionTarget);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80024794);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800248D0);
-
 
 void f_UpdateTombaForwardContactProbe(u8 *a)
 {
@@ -2273,7 +2262,6 @@ void func_80027E5C();
 void func_800288AC();
 void func_80031780(u8 *p);
 void func_80031708(void *arg0);
-
 void func_800292B8(u8 *a)
 {
     switch (a[4]) {
@@ -2799,7 +2787,6 @@ extern s32 D_1F800014[];
 extern s32 D_1F800020_edd9[];
 extern s32 D_1F8000D0_42d8[];
 void f_SetIdentityMatrix(s32 *m);
-
 void f_SetEffectRenderTransform(void *pos, u8 *scale, s16 *rot)
 {
     s32 v[3];
@@ -2830,7 +2817,6 @@ void f_SetEffectRenderTransform(void *pos, u8 *scale, s16 *rot)
 }
 
 void f_SetIdentityMatrix(s32 *m);
-
 void func_80031AC4(void *pos, u8 *scale, s16 *rot)
 {
     s32 v[3];
@@ -5183,7 +5169,6 @@ s32 f_AdvanceActorAnimationAndStoreCompletion(void *arg0) {
 }
 
 s32 f_ProbeActorTerrainAlongFacing(s32 arg0, s32 arg1, s32 arg2);
-
 u8 func_80041938(u8 *a, s16 x, s16 z)
 {
     s32 r;
@@ -6775,7 +6760,6 @@ typedef struct {
 } Inv_D330;
 extern Inv_D330 D_800BF870_inv;
 extern ItemDef_D330 D_800A2BE8[];
-
 void f_AddInventoryQuantity(s32 item, s32 n)
 {
     s32 i;
@@ -9967,7 +9951,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaClingVerticalMotion);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80062D8C);
 
 typedef struct { u8 pad[0x147]; u8 b147; u8 pad148[0x14]; u8 b15C; } A3098;
-
 void func_80063098(u8 *a)
 {
     *(s16 *)(a + 0x154) += 0x20;
@@ -11944,7 +11927,6 @@ extern s16 *D_800A3E80[];
 extern u8 D_800A4BB8[];
 extern s16 *D_800A3EA4[];
 u8 *f_AllocateActor(u8 *owner, u8 flags, u8 kind, u8 type);
-
 u8 *f_SpawnAreaLinkedItemPickupActor(u8 *owner, s16 id)
 {
     s16 *p = D_800A3E80[D_800BF870.unk0];
@@ -14054,7 +14036,6 @@ extern u8 D_800E7E7D;
 extern FreeNodeA_8313 *D_800E8098_a875;
 extern FreeNodeA_8313 *D_800E80A0_2bca;
 FreeNodeA_8313 *f_AllocateActorFromPool2(FreeNodeA_8313 *at, u8 kind, s32 mode, s32 list);
-
 FreeNodeA_8313 *f_AllocateActorFromPool0(FreeNodeA_8313 *at, u8 kind, s32 mode, s32 list)
 {
     FreeNodeA_8313 *a;
@@ -14201,7 +14182,6 @@ extern u8 D_800ED8C4;
 extern FreeNodeA_8313 *D_800ED8D4_34bd;
 extern FreeNodeA_8313 *D_800ED8D0_f3a6;
 extern FreeNodeA_8313 *D_800F23A0;
-
 FreeNodeA_8313 *f_AllocateActorFromPool2(FreeNodeA_8313 *at, u8 kind, s32 mode, s32 list)
 {
     FreeNodeA_8313 *a = D_800F2398_0c73;

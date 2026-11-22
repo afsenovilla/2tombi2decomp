@@ -125,7 +125,6 @@ s32 func_80109648(u8 *a, u8 *b) {
 }
 
 extern s32 D_1F800098;
-
 s32 func_801097BC(u8 *a, u8 *b, u8 *c) {
     s16 dx, dz, dy, e, f;
     u16 h, bh, ah;
@@ -896,7 +895,6 @@ extern u8 D_80118C78[];
 extern s16 D_8011AC28[];
 extern s32 D_8011BF84[];
 void func_8010DA50();
-
 void func_8011041C(u8 *a)
 {
     u8 *pl = D_800E7E80;
@@ -1410,7 +1408,6 @@ typedef struct {
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
 extern void *D_800BF544;
-
 u32 *func_80113788(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[6];
@@ -1549,7 +1546,6 @@ typedef struct {
 #define T2_stsxy3_gt4(r0)                                                                                              \
     __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz0(r0) __asm__ volatile("swc2 $16, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_80113A54(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[8];
@@ -1723,7 +1719,6 @@ void func_80113DB4(PartList *a)
 #define T2_stsz1(r0) __asm__ volatile("swc2 $17, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_80113EB4(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[3];
@@ -1840,7 +1835,6 @@ u32 *func_80113EB4(u32 *f, u32 *ot, s32 n)
 #define T2_stsxy3_gt4(r0)                                                                                              \
     __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz0(r0) __asm__ volatile("swc2 $16, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_80114158(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[4];
@@ -1978,7 +1972,6 @@ typedef struct {
 extern T2CamD0 D_1F8000D0_3bb0;
 extern s32 D_800A3F90;
 extern s32 D_800A3F94;
-
 void func_801144D4(u8 *a)
 {
     T2Pt32 v0, v1, v2;
@@ -2308,7 +2301,6 @@ extern u8 D_1F800236;
 extern s16 D_1F800240;
 typedef struct { u8 pad[0x5E6]; u16 f5E6; } GameState5E6;
 #define G ((u8 *)&D_800BF870)
-
 void func_80115A10(u8 *a)
 {
     s32 one = 1;
@@ -2478,7 +2470,6 @@ void func_80115F14(void *arg0) {
 #define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
 extern u8 D_1F800259;
 extern u8 D_800BF84C;
-
 void func_80116040(u8 *a)
 {
     u8 *b = D_1F80024C_2bfb;

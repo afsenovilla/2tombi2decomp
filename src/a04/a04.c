@@ -138,7 +138,6 @@ s32 func_8010A834(u8 *a, u8 *b) {
 }
 
 extern s32 D_1F800098;
-
 s32 func_8010A9A8(u8 *a, u8 *b, u8 *c) {
     s16 dx, dz, dy, e, f;
     u16 h, bh, ah;
@@ -206,7 +205,6 @@ extern u16 D_1F80009C_efeb;
 extern s16 D_1F80018C;
 extern s16 D_1F80018E;
 extern u16 D_1F80008C;
-
 void func_8010AC8C(u8 *a, u8 *b)
 {
     s16 ang;
@@ -320,7 +318,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8010D700);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8010DB48);
 
-
 void func_8010DEF0(u8 *a, u8 *b)
 {
     s16 ang;
@@ -385,7 +382,6 @@ static inline s32 e814_hit(u8 *a, u8 *b)
     h = U(a, 0x86);
     return (u16)((U(a, 0x32) - (U(b, 0x32) + U(b, 0x62))) + (U(b, 0x84) + (h - U(a, 0x84)))) <= (s16)h + H(b, 0x86);
 }
-
 void func_8010E814(u8 *a, u8 *b)
 {
     if (e814_hit(a, b)) {
@@ -826,7 +822,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801149B8);
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801150C4);
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void func_80115534(u8 *a, u8 *b)
 {
     u8 *p = *(u8 **)(a + 0x10);
@@ -2553,7 +2548,6 @@ extern s16 D_1F800160_71b4;
 extern s16 D_1F800162_a8d4;
 extern s16 D_1F800164_d75f;
 extern u8 D_1F80027A;
-
 void func_80123CB0(u8 *a)
 {
     switch (a[4]) {
@@ -2750,7 +2744,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012948C);
 
 typedef struct { u8 pad[0xC0]; u8 *s[8]; } A9628;
 #define SLOT9628(i) (*(u8 **)(a + 0xC0 + (i) * 4))
-
 void func_80129628(u8 *a)
 {
     s32 m[8];
@@ -3269,7 +3262,6 @@ static inline s32 fa5c_init(u8 *a)
     }
     return r;
 }
-
 void func_8012FA5C(u8 *a)
 {
     switch (a[4]) {
@@ -3352,7 +3344,6 @@ static inline s32 fdec_init(u8 *a)
     }
     return r;
 }
-
 void func_8012FDEC(u8 *a)
 {
     switch (a[4]) {
@@ -3440,7 +3431,6 @@ extern u8 D_80141CB0[];
 extern u8 D_80141D18[];
 extern u8 D_80141D30[];
 extern u8 D_80141D48[];
-
 void func_801308E8(u8 *a)
 {
     switch (a[6]) {
@@ -3520,7 +3510,6 @@ extern u16 D_800BFE56;
 extern u8 D_80141D60[];
 extern u8 D_80141D70[];
 extern u8 D_80141D90[];
-
 void func_80131248(u8 *a)
 {
     switch (a[6]) {
@@ -3597,7 +3586,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801314D4);
 extern u16 D_800BFE56;
 extern u8 D_80141DB0[];
 extern u8 D_80141DC8[];
-
 void func_80131848(u8 *a)
 {
     switch (a[6]) {
@@ -4237,7 +4225,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013C2EC);
 extern u8 D_800A0B38[];
 extern u8 D_80143BDC[];
 extern u8 D_80143C10[];
-
 void func_8013C7C8(u8 *a)
 {
     s16 sp[6];
@@ -4469,7 +4456,6 @@ typedef struct { s16 x, y, z, pad; } SVecDD58;
 extern SVecDD58 D_1F8000C0;
 extern u8 D_1F800000[];
 extern u8 D_1F8000D0[];
-
 void func_8013DD58(u8 *a)
 {
     s32 i;
@@ -4546,7 +4532,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013E64C);
 
 extern s32 D_800BF858;
 extern u8 D_1F80017C_26d2;
-
 void f_UpdateCapturedSnowFireflyMotion(u8 *a)
 {
     switch (a[5]) {
@@ -4694,7 +4679,6 @@ void func_8013EDD8(void *arg0) {
 extern u8 *D_800ECF84;
 extern s16 D_1F8000F0;
 extern s16 D_1F8000F2_a096;
-
 void func_8013EE84(u8 *a)
 {
     s32 pad;

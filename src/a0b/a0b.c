@@ -714,7 +714,6 @@ extern u8 D_801182BC[];
 extern s16 D_801197E0[];
 extern s32 D_8011A544[];
 void func_8010C778();
-
 void func_8010F144(u8 *a)
 {
     u8 *pl = D_800E7E80;
@@ -1301,7 +1300,6 @@ typedef struct {
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
 extern void *D_800BF544;
-
 u32 *func_80112A24(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[6];
@@ -1571,7 +1569,6 @@ void func_80113050(PartList *a)
 #define T2_stsz1(r0) __asm__ volatile("swc2 $17, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_80113150(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[3];
@@ -1688,7 +1685,6 @@ u32 *func_80113150(u32 *f, u32 *ot, s32 n)
 #define T2_stsxy3_gt4(r0)                                                                                              \
     __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz0(r0) __asm__ volatile("swc2 $16, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_801133F4(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[4];
@@ -1821,7 +1817,6 @@ typedef struct {
 extern T2CamD0 D_1F8000D0_3bb0;
 extern s32 D_800A3F90;
 extern s32 D_800A3F94;
-
 void func_80113770(u8 *a)
 {
     T2Pt32 v0, v1, v2;
@@ -1886,7 +1881,6 @@ typedef struct {
     u16 clut;
 } T2Sprt16;
 extern T2Sprt16 *D_800BF544_e6cf;
-
 void func_801141B0(u8 *a)
 {
     s32 w2 = a[0x10] * 2;
@@ -2179,7 +2173,6 @@ extern u8 D_1F800236;
 extern s16 D_1F800240;
 typedef struct { u8 pad[0x5E6]; u16 f5E6; } GameState5E6;
 #define G ((u8 *)&D_800BF870)
-
 void func_801154F8(u8 *a)
 {
     s32 one = 1;
@@ -2348,7 +2341,6 @@ void func_801159FC(void *arg0) {
 #define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
 extern u8 D_1F800259;
 extern u8 D_800BF84C;
-
 void func_80115B28(u8 *a)
 {
     u8 *b = D_1F80024C_2bfb;

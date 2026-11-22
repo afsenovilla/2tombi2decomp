@@ -125,7 +125,6 @@ s32 func_80109688(u8 *a, u8 *b) {
 }
 
 extern s32 D_1F800098;
-
 s32 func_801097FC(u8 *a, u8 *b, u8 *c) {
     s16 dx, dz, dy, e, f;
     u16 h, bh, ah;
@@ -829,7 +828,6 @@ extern u8 D_801193B8[];
 extern s16 D_8011AD8C[];
 extern s32 D_8011BCC8[];
 void func_8010BDD8(u8 *a);
-
 void func_8010E7A4(u8 *a)
 {
     u8 *pl = D_800E7E80;
@@ -1011,7 +1009,6 @@ typedef struct {
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
 extern void *D_800BF544;
-
 u32 *func_801103F4(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[3];
@@ -1869,7 +1866,6 @@ typedef struct {
     u16 clut;
 } T2Sprt16;
 extern T2Sprt16 *D_800BF544_e6cf;
-
 void func_801142EC(u8 *a)
 {
     s32 w2 = a[0x10] * 2;
@@ -2314,7 +2310,6 @@ extern u8 D_1F800236;
 extern s16 D_1F800240;
 typedef struct { u8 pad[0x5E6]; u16 f5E6; } GameState5E6;
 #define G ((u8 *)&D_800BF870)
-
 void f_UpdateEvilPigRobeRewardActor(u8 *a)
 {
     s32 one = 1;
@@ -2484,7 +2479,6 @@ void func_80116E9C(void *arg0) {
 #define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
 extern u8 D_1F800259;
 extern u8 D_800BF84C;
-
 void f_UpdateEvilPigCaptureApproachSequence(u8 *a)
 {
     u8 *b = D_1F80024C_2bfb;

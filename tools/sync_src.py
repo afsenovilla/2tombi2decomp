@@ -59,9 +59,9 @@ def main():
     text = re.sub(r'(?ms)^#ifdef NON_MATCHING\n(?:(?!^#endif).)*?^#else\n(INCLUDE_ASM\("[^"]+", (\w+)\);)\n#endif\n',
                   keep, text)
     # 2. split into header + items
-    # a definition starts at column 0 (not a line of a multi-line #define); static (inline) helpers are not items:
+    # a definition starts at column 0 (K&R parameter declarations allowed before its `{`) (not a line of a multi-line #define); static (inline) helpers are not items:
     # they stay with the text around them (the header, or the lines above the next C function)
-    item_re = re.compile(r'(?ms)^INCLUDE_ASM\("[^"]+", (\w+)\);\n|^((?:[^\s;{}/*][^\n;{}]*\n)??[^\s;{}#/*][^\n;{}#]*?\b(\w+)\s*\([^;{}]*\)\s*\n?\{.*?^\}\n)')
+    item_re = re.compile(r'(?ms)^INCLUDE_ASM\("[^"]+", (\w+)\);\n|^((?:[^\s;{}/*][^\n;{}]*\n)??[^\s;{}#/*][^\n;{}#]*?\b(\w+)\s*\([^;{}]*\)(?:[ \t]*\n[^\n{}()#]*;)*\s*\n?\{.*?^\}\n)')
 
     def is_static(m):
         return m.group(2) and re.match(r"(?:[^\n]*\n)??\s*static\b", m.group(2))

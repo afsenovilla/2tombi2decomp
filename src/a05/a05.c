@@ -53,7 +53,6 @@ extern u16 D_1F80009C_baed_759c;
 extern s16 D_1F80018C;
 extern s16 D_1F80018E;
 extern u16 D_1F80008C_7310;
-
 void func_8010B724(u8 *a, u8 *b)
 {
     s16 ang;
@@ -171,7 +170,6 @@ static inline s32 e814_hit(u8 *a, u8 *b)
     h = U(a, 0x86);
     return (u16)((U(a, 0x32) - (U(b, 0x32) + U(b, 0x62))) + (U(b, 0x84) + (h - U(a, 0x84)))) <= (s16)h + H(b, 0x86);
 }
-
 void func_8010C548(u8 *a, u8 *b)
 {
     if (e814_hit(a, b)) {
@@ -2779,7 +2777,6 @@ void func_8012BCE8(u8 *a, s32 b) {
 
 extern u8 D_800BF809;
 extern u8 D_8013F1B8_9a3d[];
-
 void func_8012BFA8(u8 *a)
 {
     s32 s = a[4];
@@ -2974,7 +2971,6 @@ void func_8012E024(u8 *a) {
 
 extern u8 D_800BF8E7;
 extern u8 D_800E7EEF;
-
 void func_8012E0C8(u8 *a)
 {
     s16 sp[8];
@@ -3927,7 +3923,6 @@ void func_80136CB0(u8 *a)
 extern u8 *D_800ECF84;
 extern s16 D_1F8000F0;
 extern s16 D_1F8000F2_a096;
-
 void func_80136CDC(u8 *a)
 {
     s32 pad;
@@ -4071,7 +4066,6 @@ void func_80139ED8(u8 *p)
 typedef struct { s32 a, b; } Pair9F44;
 typedef struct { Pair9F44 e[14]; } Tbl9F44;
 extern Tbl9F44 D_8010A11C;
-
 void func_80139F44(u8 *a)
 {
     Tbl9F44 t = D_8010A11C;
@@ -4195,7 +4189,6 @@ void func_8013A7B8(u8 *a)
 }
 
 extern u8 D_1F8000DC[];
-
 s32 func_8013A88C(u8 *a)
 {
     u8 *g = D_800E8008;

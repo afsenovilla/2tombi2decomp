@@ -138,7 +138,6 @@ s32 func_8010A838(u8 *a, u8 *b) {
 }
 
 extern s32 D_1F800098;
-
 s32 func_8010A9AC(u8 *a, u8 *b, u8 *c) {
     s16 dx, dz, dy, e, f;
     u16 h, bh, ah;
@@ -206,7 +205,6 @@ extern u16 D_1F80009C_efeb;
 extern s16 D_1F80018C_67a7;
 extern s16 D_1F80018E_814b;
 extern u16 D_1F80008C;
-
 void func_8010AC90(u8 *a, u8 *b)
 {
     s16 ang;
@@ -860,7 +858,6 @@ void func_80113ACC(void *arg0, void *arg1) {
 
 extern u16 D_800ECF54;
 extern u16 D_1F800172;
-
 s32 func_80113C30(u8 *a, u8 *b)
 {
     u8 *p = *(u8 **)(a + 0x10);
@@ -2052,7 +2049,6 @@ void func_8011DF04(void *arg0) {
 void func_8011E45C(void *arg0);
 extern u16 D_1F8001A0_6940;
 extern u16 D_1F8001A2_7766;
-
 void func_8011E040(u8 *a)
 {
     if (func_80051B70(a, 0xC, 0xB) == 0) {
@@ -2913,7 +2909,6 @@ extern s16 D_1F800160_71b4;
 extern s16 D_1F800162_a8d4;
 extern s16 D_1F800164_d75f;
 extern u8 D_1F80027A;
-
 void func_80127304(u8 *a)
 {
     switch (a[4]) {
@@ -2976,7 +2971,6 @@ void func_80127304(u8 *a)
 extern u8 D_800BF809;
 extern u8 D_800BF8E8;
 extern u8 D_800E7EEF;
-
 void func_80127524(u8 *a)
 {
     s16 sp[8];
@@ -3755,7 +3749,6 @@ extern u8 D_800BFAE5;
 extern u8 D_80149990[];
 extern u8 D_80149F38[];
 extern u8 D_80149F58[];
-
 s32 func_801398E4(u8 *a)
 {
     switch (a[7]) {
@@ -3804,7 +3797,6 @@ extern u8 D_800BFB29;
 extern u8 D_8014A000[];
 extern u8 D_80149FC8[];
 extern u8 D_8014A0A8[];
-
 s32 func_80139F58(u8 *a)
 {
     switch (a[7]) {
@@ -4184,7 +4176,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013D1E4);
 
 extern s16 *D_1F80028C;
 extern s16 D_1F800162;
-
 void func_8013D568(u32 *a0, void *a1)
 {
     u32 *s1;
@@ -4279,7 +4270,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013EC14);
 extern u8 D_800A0B38[];
 extern u8 D_8014C828[];
 extern u8 D_8014C85C[];
-
 void func_8013EDC0(u8 *a)
 {
     s16 sp[6];
@@ -4470,7 +4460,6 @@ void func_8013FDC0(u8 *a) {
 typedef struct { s32 a, b; } Pair9F44;
 typedef struct { Pair9F44 e[14]; } Tbl9F44;
 extern Tbl9F44 D_8010A3F0;
-
 void func_8013FE78(u8 *a)
 {
     Tbl9F44 t = D_8010A3F0;
@@ -4619,7 +4608,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801408BC);
 
 extern s32 D_800BF85C;
 extern u8 D_1F80017C_0fe7_7bca;
-
 void func_80140CCC(u8 *a)
 {
     switch (a[5]) {

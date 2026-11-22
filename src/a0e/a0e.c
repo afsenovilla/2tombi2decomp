@@ -828,7 +828,6 @@ extern u8 D_801181F8[];
 extern s16 D_80119D70[];
 extern s32 D_8011ADA8[];
 void func_8010C2DC();
-
 void func_8010ECA8(u8 *a)
 {
     u8 *pl = D_800E7E80;
@@ -963,7 +962,6 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80111FD8);
 extern u8 D_800A0B38[];
 extern u8 D_8011CE64[];
 extern u8 D_8011CE98[];
-
 void func_80112260(u8 *a)
 {
     s16 sp[6];
@@ -1602,7 +1600,6 @@ typedef struct {
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
 extern void *D_800BF544;
-
 u32 *func_80113AEC(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[6];
@@ -1744,7 +1741,6 @@ u32 *func_80113AEC(u32 *f, u32 *ot, s32 n)
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
 extern void *D_800BF544;
-
 u32 *func_80113DE0(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[8];
@@ -1868,7 +1864,6 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80114178);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80114320);
 
-
 u32 *func_80114458(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[3];
@@ -1957,7 +1952,6 @@ u32 *func_80114458(u32 *f, u32 *ot, s32 n)
     D_800BF544 = p;
     return f;
 }
-
 
 u32 *func_801146FC(u32 *f, u32 *ot, s32 n)
 {
@@ -2096,7 +2090,6 @@ typedef struct {
 extern T2CamD0 D_1F8000D0_3bb0;
 extern s32 D_800A3F90;
 extern s32 D_800A3F94;
-
 void func_80114A78(u8 *a)
 {
     T2Pt32 v0, v1, v2;
@@ -2362,7 +2355,6 @@ extern u8 D_1F800236;
 extern s16 D_1F800240;
 typedef struct { u8 pad[0x5E6]; u16 f5E6; } GameState5E6;
 #define G ((u8 *)&D_800BF870)
-
 void func_80115D20(u8 *a)
 {
     s32 one = 1;
@@ -2531,7 +2523,6 @@ void func_80116224(void *arg0) {
 #define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
 extern u8 D_1F800259;
 extern u8 D_800BF84C;
-
 void func_80116350(u8 *a)
 {
     u8 *b = D_1F80024C_2bfb;

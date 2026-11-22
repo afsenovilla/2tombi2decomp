@@ -217,7 +217,6 @@ s32 func_8010BE94(u8 *a, u8 *b) {
 }
 
 extern s32 D_1F800098;
-
 s32 func_8010C008(u8 *a, u8 *b, u8 *c) {
     s16 dx, dz, dy, e, f;
     u16 h, bh, ah;
@@ -286,7 +285,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010C498);
 
 extern u8 D_800BF808_1760[];
 extern s16 D_800BF83A;
-
 void func_8010C6EC(u8 *a) {
 
     switch (a[0x2A]) {
@@ -385,7 +383,6 @@ extern s16 D_1F800160_3621_dd1a;
 extern s16 D_1F800162_a8d4;
 extern s16 D_1F800164_7d8c_d1dc;
 extern u8 D_1F80027A;
-
 void func_8010E4B0(u8 *a, u8 *b)
 {
     s16 ang;
@@ -500,7 +497,6 @@ void func_801103C0(u8 *a, u8 *b) {
 
 #define FP(p, o) M2C_FIELD(p, u8 **, o)
 extern u8 *D_800E7FD8;
-
 void func_80110430(u8 *a, u8 *b) {
     if (b[0x47] == 2) {
         if (func_80022E04(a, b, FP(b, 0xC0)) != 0) {
@@ -1374,7 +1370,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateQuickTrolleyDescentSequence);
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80114A28);
 
 extern u8 D_800BF9FB_3655;
-
 void f_UpdatePipeAreaTrolleyCutscene(u8 *a) {
     u8 *t;
 
@@ -1940,7 +1935,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011AB80);
 
 extern u8 D_800A3CF0[];
 extern u8 D_801360FC[];
-
 void func_8011ADA0(u8 *a) {
     switch (a[5]) {
     case 0:
@@ -2051,7 +2045,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011B6B0);
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateCapperActor);
 
 extern u8 f_UpdateCapperActor[];
-
 void func_8011BDC4(u8 *a) {
     s32 k;
     u8 *e;
@@ -2611,7 +2604,6 @@ u8 *func_8011FB2C(s32 a, s32 b) {
 
 extern u8 D_800BF80E;
 extern s8 D_800BF9FA_0556;
-
 s32 func_8011FB80(u8 *a) {
     switch (a[0x78]) {
     case 0:
@@ -2641,7 +2633,6 @@ s32 func_8011FB80(u8 *a) {
 }
 
 u8 *func_8012C2B4(void);
-
 s32 func_8011FC88(u8 *a) {
     switch (a[0x78]) {
     case 0:
@@ -2674,7 +2665,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_HandleThirstyMinerInteraction);
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011FEF8);
 
 extern u16 D_1F80017C;
-
 void func_80120200(u8 *a) {
     u8 *p = FP(a, 0x14);
     u8 *e;
@@ -3132,7 +3122,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801256EC);
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaEntranceAndDoorActor);
 
 extern s8 D_800BF81F;
-
 void func_80126140(u8 *a) {
     u8 *e = D_800E7E80;
     s32 k = a[5];
@@ -3609,7 +3598,6 @@ u8 *func_8012C2B4(void) {
 #define FPV(p, o) (*(u8 * volatile *)((u8 *)(p) + (o)))
 #define F32(p, o) M2C_FIELD(p, s32 *, o)
 extern u8 D_800BF9FA;
-
 void func_8012C304(u8 *a) {
     u8 *e;
 
@@ -3762,7 +3750,6 @@ void func_8012C600(u8 *a, s32 b) {
 
 extern u8 D_800BF809;
 extern u8 D_80137A1C_e4a1[];
-
 void func_8012C8C0(u8 *a)
 {
     s32 s = a[4];
@@ -4351,7 +4338,6 @@ void func_8012EC08(u8 *p) {
 typedef struct { s32 a, b; } PairEC;
 typedef struct { PairEC p[14]; } TblEC;
 extern TblEC D_80109E00;
-
 void func_8012EC78(u8 *a) {
     TblEC t = D_80109E00;
 

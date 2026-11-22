@@ -56,7 +56,6 @@ extern s16 D_1F800160_71b4;
 extern s16 D_1F800162;
 extern s16 D_1F800164_d75f;
 extern u8 D_1F80027A;
-
 void func_8010B42C(u8 *a, u8 *b)
 {
     u8 *p = *(u8 **)(a + 0x10);
@@ -153,7 +152,6 @@ void func_8010C740(void) {
 }
 
 #define F16(p, o) M2C_FIELD(p, s16 *, o)
-
 void func_8010C780(u8 *a) {
     s32 k;
 
@@ -556,7 +554,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaOrientedPlatformContact);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80110CA0);
 
 extern u8 **D_1F800158;
-
 s32 func_80110DE8(u8 *a) {
     s8 r;
     u8 **l;
@@ -602,7 +599,6 @@ extern u16 D_1F80018E_f9ee;
 extern u16 D_1F80018C;
 extern u8 D_800BF840;
 extern u16 D_1F80008C;
-
 void f_ResolveTombaPlaneSwitchActorContact(u8 *a, u8 *b)
 {
     s32 k;
@@ -786,7 +782,6 @@ s32 func_80114528(s32 arg0, s32 arg1) {
 }
 
 typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner;
-
 void f_ResolveTombaMultipartActorContact(u8 *a, PartsOwner *b) {
     s32 i;
 
@@ -1439,7 +1434,6 @@ u8 *f_SpawnBlueBucketPickup(u8 *a) {
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117FAC);
 
 #define FP(p, o) M2C_FIELD(p, u8 **, o)
-
 void func_801180CC(u8 *a) {
     u8 *p = FP(a, 0x10);
     u8 *c;
@@ -1574,7 +1568,6 @@ void func_80119160(void *arg0, s32 arg1, void *arg2) {
 }
 
 extern u8 D_801485F0[];
-
 void func_80119254(u8 *a) {
     u8 *p = FP(a, 0x10);
     u16 t;
@@ -1603,7 +1596,6 @@ void func_80119254(u8 *a) {
 }
 
 extern s16 D_1F8000C0[];
-
 void func_80119350(u8 *a) {
     u8 *p = FP(a, 0x10);
     s32 t;
@@ -1950,7 +1942,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_TryStartFeedChicksActorTombaReaction);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AdvanceFeedChicksActorMotion);
 
 extern u8 *D_80149460[];
-
 s32 func_801205EC(u8 *a) {
     u8 *t;
     s16 r;
@@ -2003,7 +1994,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SelectFeedChicksNpcSpawn);
 
 extern u8 D_800BF9F3;
 extern u8 D_800E7EAA;
-
 void f_UpdateFeedChicksNpcPresence(u8 *a) {
     u8 x;
 
@@ -2339,7 +2329,6 @@ extern u8 D_800BF8F6;
 extern s32 D_800ECFCC;
 extern u8 D_8014C02C[];
 extern u8 D_1F800207_9c67;
-
 s32 func_801231E0(u8 *a, s32 r) {
     switch (a[7]) {
     case 0:
@@ -2375,7 +2364,6 @@ extern u16 D_800BF830_3521;
 extern s8 D_800BF9DD_c419;
 extern s8 D_800BF9EB;
 extern u8 D_80149794[];
-
 s32 func_801232DC(u8 *a) {
     switch (a[6]) {
     case 0:
@@ -3845,7 +3833,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleA00PendulumPlatformActor);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801365C4);
 
 #define FP(p, o) M2C_FIELD(p, u8 **, o)
-
 void func_80136748(u8 *a) {
     u8 *c;
     u8 *s;
@@ -4696,7 +4683,6 @@ void func_8013E620(u8 *a) {
 extern u8 D_800A0B38[];
 extern u8 D_8014BD14[];
 extern u8 D_8014BD48[];
-
 void func_8013E840(u8 *a)
 {
     s16 sp[6];
@@ -4959,7 +4945,6 @@ extern void *D_800BF544;
 #define T2_stsz1(r0) __asm__ volatile("swc2 $17, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *f_DrawTownCreatureGt3Batch(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[6];
@@ -5141,7 +5126,6 @@ typedef struct {
 #define T2_stsxy3_gt4(r0)                                                                                              \
     __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz0(r0) __asm__ volatile("swc2 $16, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *f_DrawTownCreatureGt4Batch(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[8];

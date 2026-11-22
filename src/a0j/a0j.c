@@ -492,7 +492,6 @@ typedef struct {
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
 extern void *D_800BF544;
-
 u32 *func_8010A3AC(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[6];
@@ -640,7 +639,6 @@ typedef struct {
 #define T2_stsxy3_gt4(r0)                                                                                              \
     __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz0(r0) __asm__ volatile("swc2 $16, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_8010A69C(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[8];
@@ -831,7 +829,6 @@ typedef struct {
 #define T2_stsz1(r0) __asm__ volatile("swc2 $17, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_8010AB20(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[3];
@@ -963,7 +960,6 @@ typedef struct {
 #define T2_stsxy3_gt4(r0)                                                                                              \
     __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz0(r0) __asm__ volatile("swc2 $16, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_8010ADC4(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[4];
@@ -1096,7 +1092,6 @@ typedef struct {
 extern T2CamD0 D_1F8000D0_3bb0;
 extern s32 D_800A3F90;
 extern s32 D_800A3F94;
-
 void func_8010B140(u8 *a)
 {
     T2SVec v0, v1, v2;

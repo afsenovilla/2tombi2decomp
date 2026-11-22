@@ -105,7 +105,6 @@ extern u16 D_1F80009C_efeb;
 extern s16 D_1F80018C;
 extern s16 D_1F80018E;
 extern u16 D_1F80008C_7310;
-
 void func_8010A9A8(u8 *a, u8 *b)
 {
     s16 ang;
@@ -468,7 +467,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80112BCC);
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern u16 D_800ECF54;
 extern u16 D_1F800172;
-
 s32 func_80112F84(u8 *a, u8 *b)
 {
     u8 *p = *(u8 **)(a + 0x10);
@@ -893,7 +891,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80117E84);
 extern u8 D_800A0B38[];
 extern u8 D_801450DC[];
 extern u8 D_80145110[];
-
 void func_80118374(u8 *a)
 {
     s16 sp[6];
@@ -1090,7 +1087,6 @@ void func_8011B654(u8 *p)
 typedef struct { s32 a, b; } Pair9F44;
 typedef struct { Pair9F44 e[14]; } Tbl9F44;
 extern Tbl9F44 D_80109864;
-
 void func_8011B6C0(u8 *a)
 {
     Tbl9F44 t = D_80109864;
@@ -1526,7 +1522,6 @@ void func_8011C754(void *arg0) {
 
 extern u16 D_1F8001A0_b0de_1f9a;
 extern u16 D_1F8001A2_7766;
-
 void func_8011C890(u8 *a)
 {
     if (func_80051B70(a, 0xC, 0x67) == 0) {
@@ -1759,7 +1754,6 @@ void func_8011FD74(void *arg0) {
 #include "gte.h"
 extern u8 D_800E7E80[];
 extern s8 D_800BF81F;
-
 void func_8011FDD0(u8 *a) {
     u8 *e = D_800E7E80;
     s32 k = a[5];
@@ -1948,7 +1942,6 @@ void func_80120338(u8 *a, s32 b) {
 extern u8 D_800ECF58[];
 extern u8 D_800BF809;
 extern u8 D_80145400_5c5f[];
-
 void func_801205F8(u8 *a)
 {
     s32 s = a[4];
@@ -2703,7 +2696,6 @@ extern u8 D_801457C8[];
 extern s16 D_1F800160_71b4;
 extern s16 D_1F800162_a8d4;
 extern s16 D_1F800164_d75f;
-
 void func_801258BC(u8 *a)
 {
     switch (a[4]) {
@@ -2770,7 +2762,6 @@ void func_801258BC(u8 *a)
 
 extern u8 D_800BF8EA;
 extern u8 D_800E7EEF;
-
 void func_80125B10(u8 *a)
 {
     s16 sp[8];
@@ -3534,7 +3525,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012A7CC);
 extern s16 D_1F800164_6889_91dd;
 extern s16 D_1F800160_d288_1b66;
 extern s16 *D_1F80028C;
-
 void func_8012A9DC(u32 *a0, void *a1)
 {
     u32 *s1;
@@ -3626,7 +3616,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012BC44);
 
 extern u8 D_800BFA46;
 extern u8 D_80145B34[];
-
 s32 func_8012BF5C(u8 *a)
 {
     s32 s = a[5];
@@ -3660,7 +3649,6 @@ s32 func_8012BF5C(u8 *a)
 #include "gte.h"
 extern u8 D_800A3CF0[];
 extern u8 D_80145B24[];
-
 void func_8012C018(u8 *a) {
     switch (a[5]) {
     case 0:
@@ -4358,7 +4346,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80132488);
 extern u8 D_800E7E80[];
 extern u8 D_800BF81E;
 extern s32 D_1F80023C;
-
 s32 func_80132564(u8 *a)
 {
     u8 *t = D_800E7E80;
@@ -4395,7 +4382,6 @@ s32 func_80132564(u8 *a)
 #include "m2c.h"
 #include "gte.h"
 extern u8 D_800E7E80[];
-
 s32 func_8013263C(u8 *a)
 {
     u8 *t = D_800E7E80;
@@ -5556,7 +5542,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80140314);
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern u16 D_800E7E68;
 extern s32 D_800A2914;
-
 void func_80140608(u8 *a)
 {
     CrdMenu *s;
@@ -5598,7 +5583,6 @@ void func_80140608(u8 *a)
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern s32 D_800A2914;
-
 void func_80140730(u8 *a)
 {
     CrdMenu *s;
@@ -5657,7 +5641,6 @@ void func_80140C00(u8 *p, u8 a1)
 
 extern u8 D_800E8008[];
 extern u8 D_1F8000DC[];
-
 s32 func_80140C4C(u8 *a)
 {
     u8 *g = D_800E8008;
