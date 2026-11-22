@@ -92,6 +92,7 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", f_SpawnEvilPigDoorActorsFromPlacementTab
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010A060);
 
+
 void func_8010A188(u8 *a)
 {
     switch (a[4]) {
@@ -215,6 +216,7 @@ s32 func_8010B974(void)
     return 1;
 }
 
+
 s32 func_8010B9CC(void)
 {
     CameraState *c = &g_CameraState;
@@ -253,6 +255,7 @@ s32 func_8010BBFC(u8 *a)
         return 0;
     }
 }
+
 
 s32 func_8010BC9C(u8 *a)
 {
@@ -368,6 +371,7 @@ void func_8010DE2C(u8 *a)
         break;
     }
 }
+
 
 void func_8010DEE0(u8 *a)
 {

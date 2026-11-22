@@ -79,9 +79,11 @@ s32 func_8010BAFC(s32 arg0, s32 arg1) {
     return func_80109AA0(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC0));
 }
 
+
 s32 func_8010BB20(s32 arg0, s32 arg1) {
     return func_8001F650(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC0));
 }
+
 
 void func_8010BB44(u8 *a, u8 *b)
 {
@@ -118,6 +120,7 @@ void func_8010BC00(u8 *a, void *b)
         func_80022D08(a, b, 1, 0);
     }
 }
+
 
 void func_8010BC58(void *a, void *b)
 {
@@ -193,6 +196,7 @@ void func_8010CC28(void *arg0) {
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010CCCC);
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010CDA4);
+
 
 void func_8010CE90(u8 *a, void *b)
 {
@@ -306,6 +310,7 @@ INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8011353C);
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_801135E0);
 
+
 void func_801136D8(u8 *a)
 {
     switch (a[4]) {
@@ -337,6 +342,7 @@ INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80113DB4);
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80113EB4);
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80114158);
+
 
 void func_8011448C(u32 *p, void *b)
 {

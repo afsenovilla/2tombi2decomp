@@ -64,6 +64,7 @@ void func_80108624(void)
     }
 }
 
+
 s32 func_801086E0(void) {
     void *temp_v0;
 
@@ -98,6 +99,7 @@ void func_80108720(void)
     D_1F800234 = 0;
 }
 
+
 void func_80108784(void)
 {
     switch (*(u16 *)(D_1F800138_5432 + 0x4A)) {
@@ -121,6 +123,7 @@ void func_80108784(void)
         break;
     }
 }
+
 
 void func_8010882C(void)
 {
@@ -179,6 +182,7 @@ void func_801088D8(void)
     }
 }
 
+
 void func_801089C4(void)
 {
     switch (*(u16 *)(D_1F800138_5432 + 0x4C)) {
@@ -197,6 +201,7 @@ void func_801089C4(void)
         break;
     }
 }
+
 
 void func_80108A60(void)
 {
@@ -236,6 +241,7 @@ INCLUDE_ASM("asm/game/nonmatchings/game", func_80108BE4);
 
 INCLUDE_ASM("asm/game/nonmatchings/game", func_80108CAC);
 
+
 s32 func_80108D64(void) {
     void *temp_v0;
 
@@ -270,6 +276,7 @@ void func_80108DA4(void)
     *(s16 *)(p + 0x4E) = 6;
 }
 
+
 void func_80108DF4(void)
 {
     u8 *p;
@@ -286,6 +293,7 @@ void func_80108DF4(void)
     p[0x6B] = 0;
 }
 
+
 void func_80108E58(void)
 {
     u8 c = D_1F800138_5432[0x6B] * 8;
@@ -293,6 +301,7 @@ void func_80108E58(void)
     func_8007E9C8((c << 16) | (c << 8) | c, 0, 4);
     D_1F800138_5432[0x6B]--;
 }
+
 
 void func_80108EBC(void)
 {

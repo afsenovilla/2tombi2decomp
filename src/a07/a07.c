@@ -200,6 +200,7 @@ void func_801134E8(u8 *a0, u8 *a1)
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80113550);
 
+
 void func_80113644(void)
 {
     CameraState *c = &g_CameraState;
@@ -290,6 +291,7 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80116A0C);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80116B88);
 
+
 void func_80117048(void *arg0) {
     if (D_800BFA2C != 0) {
         M2C_FIELD(arg0, s8 *, 6) = 0xA;
@@ -319,6 +321,7 @@ u8 *func_8011718C(void *a0)
     r[0x28] |= 0x80;
     return r;
 }
+
 
 void func_801171EC(u8 *p)
 {
@@ -360,6 +363,7 @@ void func_80117294(u8 *p)
         break;
     }
 }
+
 
 void func_801172F0(void *a)
 {
@@ -420,6 +424,7 @@ void func_801173EC(u8 *p)
     p[8] = 0xF0;
 }
 
+
 u8 *func_80117444(void *a0)
 {
     u8 *r = func_80072DDC(a0, 0, 3, 0x10);
@@ -472,6 +477,7 @@ u8 *func_801175B8(void *a)
     }
     return r;
 }
+
 
 void func_801175FC(u8 *p)
 {
@@ -529,6 +535,7 @@ void func_80118270(void *arg0) {
     M2C_FIELD(temp_v1, s16 *, 4) = -0xC80;
     D_800BF864 = arg0;
 }
+
 
 u8 *func_80118294(void *a0)
 {
@@ -708,6 +715,7 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011BD6C);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011C02C);
 
+
 void func_8011C2D0(u8 *a0)
 {
     u8 *r = func_80072DDC(a0, 1, 3, 0x10);
@@ -812,6 +820,7 @@ void func_8011E310(u8 *p)
     }
 }
 
+
 void func_8011E36C(u8 *p)
 {
     if (p[0x71] == 0xFF) {
@@ -852,6 +861,7 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011E900);
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011EB04);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011EDB8);
+
 
 s32 func_8011EE70(u8 *p)
 {
@@ -970,6 +980,7 @@ void func_80120EC8(void *arg0) {
         M2C_FIELD(arg0, s8 *, 5) = 1;
     }
 }
+
 
 void func_80120F38(u8 *p)
 {
@@ -1194,6 +1205,7 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80125604);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801258E4);
 
+
 s32 func_80125AE0(u8 *p)
 {
     func_80041718(p, 0x28, 8);
@@ -1208,6 +1220,7 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80125BAC);
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80125CA0);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80125D68);
+
 
 void func_80125DD8(u8 *p, s32 a1)
 {
@@ -1254,6 +1267,7 @@ s32 func_80126DCC(void) {
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80126DEC);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80126E80);
+
 
 s32 func_80126F1C(u8 *p)
 {
@@ -1314,6 +1328,7 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80128798);
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80128980);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80128BAC);
+
 
 s32 func_80128DA0(u8 *p)
 {
@@ -1392,6 +1407,7 @@ s32 func_80129ED8(void *arg0) {
     return 1;
 }
 
+
 s32 func_80129EE8(void)
 {
     u8 *a = D_800BF844;
@@ -1437,6 +1453,7 @@ s32 func_8012A90C(void *arg0) {
     return 2;
 }
 
+
 s32 func_8012A930(u8 *p)
 {
     u8 *g = (u8 *)&D_800BF870;
@@ -1462,6 +1479,7 @@ s32 func_8012A9DC(void)
     func_8004ED94(0x5D, 0x41);
     return 2;
 }
+
 
 s32 func_8012AA28(u8 *p)
 {
@@ -1523,6 +1541,7 @@ s32 func_8012AB44(void *arg0) {
     return M2C_FIELD(arg0, u8 *, 0xBF) == M2C_FIELD(arg0, s16 *, 0x72);
 }
 
+
 s32 func_8012AB5C(void)
 {
     u8 *g = (u8 *)&D_800BF870;
@@ -1559,6 +1578,7 @@ u8 *func_8012B3FC(void *a0)
     return r;
 }
 
+
 u8 *func_8012B44C(void)
 {
     u8 *r = func_80072DDC(0, 1, 5, 3);
@@ -1575,6 +1595,7 @@ u8 *func_8012B44C(void)
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusThrownQuestObject);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusClosetKeyActor);
+
 
 u8 *func_8012C104(void *a0, u8 a1)
 {
@@ -1595,6 +1616,7 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012C16C);
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012C340);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012C60C);
+
 
 u8 *func_8012C770(void *a0, u8 a1)
 {
@@ -1686,6 +1708,7 @@ s32 func_80130CB0(void *a0)
     return D_1F800137 == 0;
 }
 
+
 s32 f_CompleteUseTheSeesawEventIfResolved(void)
 {
     s32 a = D_800E7FFE & 0x180;
@@ -1698,6 +1721,7 @@ s32 f_CompleteUseTheSeesawEventIfResolved(void)
     return 0;
 }
 
+
 s32 func_80130D44(void)
 {
     if (D_800E7FFE & 0x180) {
@@ -1706,6 +1730,7 @@ s32 func_80130D44(void)
     }
     return 0;
 }
+
 
 void func_80130D80(u8 a0)
 {
@@ -1718,6 +1743,7 @@ void func_80130D80(u8 a0)
         func_80042354(1, 2);
     }
 }
+
 
 void func_80130DD8(u8 a0)
 {

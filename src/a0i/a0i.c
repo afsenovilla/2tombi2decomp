@@ -145,6 +145,7 @@ INCLUDE_ASM("asm/a0i/nonmatchings/a0i", f_UpdateWisdomTowerExitDoorSequence);
 
 INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_8010A9C0);
 
+
 s32 func_8010ACA0(u8 *a, s16 id)
 {
     u8 *o;
@@ -216,6 +217,7 @@ INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_8010BA40);
 INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_8010BB40);
 
 INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_8010BDE4);
+
 
 void func_8010C118(u32 *p, void *b)
 {

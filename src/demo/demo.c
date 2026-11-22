@@ -150,6 +150,7 @@ u32 *func_801075F8(DecEnv *dec, u32 limit)
     return addr;
 }
 
+
 void func_801076B0(s32 a)
 {
     s32 n = 0x1C0;

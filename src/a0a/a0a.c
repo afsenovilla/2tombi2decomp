@@ -5,6 +5,7 @@
 extern u8 D_1F800246_6eef;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 
+
 void func_80109314(u8 *a, u8 *b)
 {
     s16 dx, dz;
@@ -48,6 +49,7 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010A234);
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010A3D8);
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010A554);
+
 
 void func_8010A788(void *a, u8 *b)
 {
@@ -128,6 +130,7 @@ s32 func_8010B3DC(s32 arg0, s32 arg1) {
     }
     return var_a3;
 }
+
 
 s32 func_8010B42C(u8 *a)
 {
@@ -563,6 +566,7 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_801103F4);
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80110698);
 
+
 void func_801109CC(u32 *p, void *b)
 {
     u32 lo = *p;
@@ -939,6 +943,7 @@ void func_80113C70(u8 *a)
     }
 }
 
+
 void func_80113D4C(u8 *a)
 {
     switch (a[4]) {
@@ -960,6 +965,7 @@ void func_80113D4C(u8 *a)
         break;
     }
 }
+
 
 void func_80113DDC(u8 *a)
 {
@@ -1020,6 +1026,7 @@ void func_80113EA4(u8 *a)
     func_80027768(D_8011D6DC, 0, -0x14, 0);
 }
 
+
 void func_80113F84(u8 *a)
 {
     switch (a[4]) {
@@ -1041,6 +1048,7 @@ void func_80113F84(u8 *a)
         break;
     }
 }
+
 
 void func_80114020(u8 *a)
 {
@@ -1077,6 +1085,7 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_801149D8);
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80114B38);
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80114C6C);
+
 
 void func_80114D50(u8 *a)
 {
@@ -1395,6 +1404,7 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80118158);
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_801185FC);
 
+
 u8 func_80118754(u8 *a)
 {
     s16 ang;
@@ -1413,6 +1423,7 @@ u8 func_80118754(u8 *a)
     a[0x29] = r & 1;
     return a[0x29];
 }
+
 
 s32 func_801187E8(u8 *a)
 {

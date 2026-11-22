@@ -288,6 +288,7 @@ void func_801106C8(void *arg0) {
     M2C_FIELD(arg0, s8 *, 0x2B) = 0;
 }
 
+
 void func_80110740(void *arg0) {
     M2C_FIELD(arg0, M2C_UNK **, 0x1C) = &f_UpdateEarthEvilPigSplitActor;
     M2C_FIELD(arg0, s8 *, 2) = 0x40;
@@ -345,6 +346,7 @@ INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_801123A4);
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_801124E0);
 
+
 void func_801129FC(void)
 {
     u32 i;
@@ -353,6 +355,7 @@ void func_801129FC(void)
     }
     func_80111418();
 }
+
 
 void func_80112A58(u8 *a)
 {
@@ -378,6 +381,7 @@ void func_80112A58(u8 *a)
     }
 }
 
+
 void func_80112B1C(u8 *a)
 {
     switch (a[4]) {
@@ -402,6 +406,7 @@ void func_80112B1C(u8 *a)
 }
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80112BC4);
+
 
 void func_80112D34(u8 *a)
 {
@@ -434,6 +439,7 @@ INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80113628);
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80113748);
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_801139EC);
+
 
 void func_80113D20(u32 *p, void *b)
 {

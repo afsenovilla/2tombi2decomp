@@ -187,6 +187,7 @@ INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010B08C);
 
 INCLUDE_ASM("asm/a0g/nonmatchings/a0g", f_UpdateCourageTowerInteriorEntranceActor);
 
+
 s32 func_8010B91C(u8 *a, s16 id)
 {
     u8 *o;
@@ -254,6 +255,7 @@ INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010C2A4);
 INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010C3A4);
 
 INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010C664);
+
 
 void func_8010C9B4(u32 *p, void *b)
 {

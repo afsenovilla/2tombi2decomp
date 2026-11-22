@@ -4,6 +4,7 @@
 
 extern u16 D_800BF812;
 
+
 void func_80109208(u8 *a)
 {
     u16 limit = D_800BF812;
@@ -179,6 +180,7 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010AD40);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010B0B8);
 
+
 void func_8010B1B8(u32 *p, void *b)
 {
     u32 lo = *p;
@@ -239,6 +241,7 @@ void f_ResetEndingIllustrationState(void) {
     D_8011A6D0 = 0;
 }
 
+
 void func_8010D058(s32 i, s32 b, s32 c, s32 d, s32 e)
 {
     u8 *m = D_800BF544;
@@ -264,6 +267,7 @@ s32 func_8010D474(void *arg0) {
     return 1;
 }
 
+
 void func_8010D490(u8 *a)
 {
     u8 *s;
@@ -279,6 +283,7 @@ void func_8010D490(u8 *a)
     }
     f_UpdateEndingContinuePrompt(a);
 }
+
 
 void func_8010D504(u8 *a)
 {
@@ -332,6 +337,7 @@ s32 func_8010DFB4(void *arg0) {
     return 1;
 }
 
+
 s32 func_8010DFC4(u8 *a)
 {
     if (D_800BF841 != 0) {
@@ -344,6 +350,7 @@ s32 func_8010DFC4(u8 *a)
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010DFEC);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010E3D4);
+
 
 void func_8010E438(s32 a)
 {
@@ -375,10 +382,12 @@ void func_8010E45C(u8 *a)
     *(s16 *)(a + 0x56) = *(s16 *)(o + 0x56);
 }
 
+
 s32 func_8010E51C(void *arg0) {
     D_800BF850 = (s32) M2C_FIELD(arg0, s16 *, 0x72);
     return 1;
 }
+
 
 void func_8010E530(u8 *a)
 {
@@ -439,6 +448,7 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", f_UpdateEndingCompletionBranchScript);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010E8B8);
 
+
 s32 func_8010EB90(u8 *a)
 {
     u8 *r = func_80072DDC(a, 0, 3, 0x10);
@@ -467,6 +477,7 @@ s32 func_8010EBF0(void *arg0) {
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010EC30);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010EF28);
+
 
 void func_8010F250(u8 *a)
 {
@@ -544,6 +555,7 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_801115A4);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111744);
 
+
 void func_80111BF4(void *a)
 {
     func_80051B70(a, 0xC, 0x5);
@@ -554,6 +566,7 @@ void func_80111BF4(void *a)
 void func_80111C28(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
+
 
 void func_80111C34(u8 *a)
 {
@@ -590,6 +603,7 @@ void func_80111CFC(u8 *a)
     *(s16 *)(a + 0x32) = *(s16 *)(o + 0x32) + D_1F8000A0.vy;
     *(s16 *)(a + 0x36) = *(s16 *)(o + 0x36) + D_1F8000A0.vz;
 }
+
 
 void func_80111DB0(void *a)
 {
@@ -649,6 +663,7 @@ void func_80111EB0(u8 *a)
     *(s16 *)(a + 0x36) = 0x960;
 }
 
+
 u8 *func_80111F3C(void *a, u8 b)
 {
     u8 *r = func_80072DDC(0, 0, 3, 0x10);
@@ -663,6 +678,7 @@ u8 *func_80111F3C(void *a, u8 b)
 }
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111FA4);
+
 
 void func_8011208C(u8 *a)
 {
@@ -767,6 +783,7 @@ s32 func_80112C40(VlcEnv *dec, s32 b)
     return 0;
 }
 
+
 u32 *func_80112CDC(DecEnv *dec, u32 limit)
 {
     u32 *addr;
@@ -789,6 +806,7 @@ u32 *func_80112CDC(DecEnv *dec, u32 limit)
     dec->slice.h = sector->height;
     return addr;
 }
+
 
 void func_80112D98(s32 a)
 {

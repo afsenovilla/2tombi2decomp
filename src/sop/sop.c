@@ -257,6 +257,7 @@ INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010B588);
 
 INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010B798);
 
+
 s32 func_8010B8AC(u8 *a)
 {
     switch (a[0x78]) {
@@ -323,6 +324,7 @@ void func_8010BC8C(void *arg0) {
     }
 }
 
+
 u8 *func_8010BDB8(void *a)
 {
     u8 *r = func_80072DDC(a, 0, 3, 0x1E);
@@ -333,6 +335,7 @@ u8 *func_8010BDB8(void *a)
     }
     return r;
 }
+
 
 void func_8010BE04(u8 *a)
 {
@@ -350,6 +353,7 @@ void func_8010BE04(u8 *a)
     *(s16 *)(a + 0x32) = *(s16 *)(*(u8 **)(o + 0xDC) + 0x30) + 0x14;
     *(s16 *)(a + 0x36) = *(s16 *)(*(u8 **)(o + 0xDC) + 0x34) - 0x50;
 }
+
 
 void func_8010BEAC(u8 *a)
 {

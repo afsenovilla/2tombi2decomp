@@ -85,6 +85,7 @@ void func_800117D0(DecEnv *dec)
     dec->isdone = 0;
 }
 
+
 u32 *func_80011864(DecEnv *dec)
 {
     u32 *addr;
@@ -104,6 +105,7 @@ u32 *func_80011864(DecEnv *dec)
     dec->slice.h = sector->height;
     return addr;
 }
+
 
 void func_80011904(u8 *pos)
 {
@@ -158,6 +160,7 @@ INCLUDE_ASM("asm/boot/nonmatchings/boot", func_80012674);
 INCLUDE_ASM("asm/boot/nonmatchings/boot", func_800127E0);
 
 INCLUDE_ASM("asm/boot/nonmatchings/boot", func_80012954);
+
 
 u32 func_80012B08(u8 *p)
 {

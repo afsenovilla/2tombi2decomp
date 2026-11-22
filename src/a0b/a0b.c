@@ -291,6 +291,7 @@ INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801127BC);
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80112880);
 
+
 void func_80112974(u8 *a)
 {
     switch (a[4]) {
@@ -358,6 +359,7 @@ void func_80113050(PartList *a)
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80113150);
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801133F4);
+
 
 void func_80113728(u32 *p, void *b)
 {
@@ -526,6 +528,7 @@ void func_80117720(u8 *a)
     func_80074590(0x8D, 0, 0);
 }
 
+
 u8 func_80117774(u8 *a)
 {
     s16 *p = (s16 *)(a + 0x60);
@@ -601,6 +604,7 @@ u8 func_801180E8(u8 *a)
     }
     return a[0x29];
 }
+
 
 s32 func_801181AC(u8 *a)
 {

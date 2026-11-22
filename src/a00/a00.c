@@ -115,6 +115,7 @@ void func_8010C87C(void) {
     func_8010A7F8();
 }
 
+
 void func_8010C89C(void *a, void *b)
 {
     func_80056B48(a, 1);
@@ -195,6 +196,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DAB0);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DB58);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DBE4);
+
 
 void func_8010DC74(u8 *a, s32 target, s32 step) {
     s32 v = M2C_FIELD(a, s32 *, 0x28);
@@ -451,6 +453,7 @@ s32 func_80114640(s32 arg0, s32 arg1) {
     return func_8010F034(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC4));
 }
 
+
 void func_80114664(u8 *a, u8 *b) {
 
     b[0x29] = 0;
@@ -577,6 +580,7 @@ void func_80114F54(s32 arg0, void *arg1) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114F94);
 
+
 s32 func_80115084(s32 arg0, s32 arg1) {
     return func_8001F650(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC0));
 }
@@ -651,6 +655,7 @@ u8 *f_SpawnCrabBasketRewardActor(s32 a, s32 b) {
     return p;
 }
 
+
 void func_80117460(u8 *a) {
     if (func_80051B70(a, 1, 2) == 0) {
         M2C_FIELD(a, s16 *, 0x80) = 0x28;
@@ -668,6 +673,7 @@ void func_80117460(u8 *a) {
 }
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801174D8);
+
 
 void func_801175A8(void *arg0) {
     if ((M2C_FIELD(arg0, u8 *, 5) == 0) && (func_80040C00(6) >= 0)) {
@@ -736,6 +742,7 @@ void func_801181BC(void *arg0, void *arg1) {
     M2C_FIELD(arg1, s16 *, 0x14) = -0x2000;
 }
 
+
 void func_801181E0(u8 *a, u8 *b) {
     if (a[0x2B] == 2) {
         if (M2C_FIELD(b, s16 *, 0xE) < 0x800) {
@@ -756,6 +763,7 @@ void func_801181E0(u8 *a, u8 *b) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleBeachQuestPickup);
 
+
 u8 *func_8011884C(s32 a, s32 b) {
     u8 *p = func_80072DDC(a, 0, 5, 3);
 
@@ -768,6 +776,7 @@ u8 *func_8011884C(s32 a, s32 b) {
     return p;
 }
 
+
 void func_801188A0(u8 *a) {
     a[4] = 3;
     func_8004D4C4(0x78, 1);
@@ -776,6 +785,7 @@ void func_801188A0(u8 *a) {
     D_800BF870.pad1[0x179] &= ~(1 << (M2C_FIELD(a, s16 *, 0x60) + 4));
     func_80040C00(0x4E);
 }
+
 
 u8 *f_SpawnGoldFishhookPickup(s32 a, s32 b) {
     u8 *p = func_80072DDC(a, 0, 5, 3);
@@ -788,6 +798,7 @@ u8 *f_SpawnGoldFishhookPickup(s32 a, s32 b) {
     M2C_FIELD(p, void **, 0x1C) = f_HandleBeachQuestPickup;
     return p;
 }
+
 
 u8 *func_80118974(s32 a) {
     u8 *p = func_80072DDC(a, 0, 5, 3);
@@ -870,6 +881,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011A928);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011AB00);
 
+
 s32 func_8011AB84(u8 *a) {
     switch (a[0x78]) {
     case 0:
@@ -887,6 +899,7 @@ s32 func_8011AB84(u8 *a) {
     }
 }
 
+
 s32 func_8011ABF0(u8 *a) {
     switch (a[0x78]) {
     case 0:
@@ -903,6 +916,7 @@ s32 func_8011ABF0(u8 *a) {
         return 0;
     }
 }
+
 
 s32 func_8011AC5C(u8 *a) {
     s32 i;
@@ -981,6 +995,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleKainenNpcActor);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011D82C);
 
+
 s32 func_8011D8AC(u8 *a) {
     AreaStateF58 *g = (AreaStateF58 *)D_800ECF58;
     s32 t;
@@ -1040,6 +1055,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateFeedChicksNpcPresence);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012138C);
 
+
 s16 func_801214AC(u8 *a, s16 k) {
     s32 m = k << 5;
 
@@ -1065,6 +1081,7 @@ s32 f_AdvanceFeedChicksActorTurn(u8 *a) {
     }
     return 0;
 }
+
 
 s32 func_80121574(void) {
     s32 r = func_8009A450() & 0xF;
@@ -1140,6 +1157,7 @@ void func_8012185C(void *arg0) {
     }
 }
 
+
 void f_SpawnFeedChicksNpc(u8 *a) {
     u8 *p = func_80072DDC((s32)a, 3, 2, 7);
 
@@ -1155,6 +1173,7 @@ void f_SpawnFeedChicksNpc(u8 *a) {
         }
     }
 }
+
 
 void func_80121918(s32 a, s32 b, s32 c) {
     u8 *p = func_80072DDC(a, 3, 2, 7);
@@ -1191,6 +1210,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122D58);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122DF0);
 
+
 s32 func_80122F0C(s32 a) {
     u8 *p = func_80072DDC(a, 0, 3, 16);
 
@@ -1201,6 +1221,7 @@ s32 func_80122F0C(s32 a) {
     M2C_FIELD(p, void **, 0x1C) = f_HandleTownQuestRewardVisualActor;
     return 1;
 }
+
 
 s32 func_80122F5C(s32 a) {
     u8 *p = func_80072DDC(a, 0, 3, 16);
@@ -1272,6 +1293,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80125E0C);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_EnsureCarriedChickActor);
 
+
 void func_80125FE0(u8 *a) {
     s16 v = M2C_FIELD(M2C_FIELD(M2C_FIELD(a, u8 **, 0x10), u8 **, 0xC4), s16 *, 0x8);
 
@@ -1319,6 +1341,7 @@ void f_UpdateCarriedChickMotion(void *arg0) {
     M2C_FIELD(arg0, u16 *, 0x54) = (u16) ((M2C_FIELD(arg0, u16 *, 0x54) + ((s32) ((u16) M2C_FIELD(arg0, s16 *, 0x44) << 0x10) >> 0x14)) & 0xFFF);
 }
 
+
 void func_801261FC(u8 *a) {
     a[4] = 1;
     if (func_80077768(D_800E7ED6, M2C_FIELD(a, s16 *, 0x56), 0) != 0) {
@@ -1355,6 +1378,7 @@ void func_80127420(void *arg0) {
         M2C_FIELD(arg0, s8 *, 5) = 1;
     }
 }
+
 
 void func_80127450(u8 *a) {
     switch (M2C_FIELD(a, s16 *, 0x64)) {
@@ -1499,6 +1523,7 @@ void func_80129008(u8 *a) {
     func_8004190C(a);
 }
 
+
 s32 func_80129100(u8 *a) {
     if (((M2C_FIELD(a, u16 *, 0x72) - M2C_FIELD(a, u16 *, 0x58)) & 0xFFF) < 0x800) {
         M2C_FIELD(a, s16 *, 0x58) += 0x3C;
@@ -1550,6 +1575,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00InteriorTransitionActor);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleA00InteriorSceneEffectActor);
 
+
 u8 *func_8012CE30(u8 *a, s32 b, s32 i) {
     u8 *p = func_8003116C(D_8014A240[i], b, -0x64);
 
@@ -1561,6 +1587,7 @@ u8 *func_8012CE30(u8 *a, s32 b, s32 i) {
     return NULL;
 }
 
+
 s16 f_GetWindmillControllerBearing(u8 *a) {
     u8 *t = D_1F800218;
     s16 dx = M2C_FIELD(t, s16 *, 0x2E) - M2C_FIELD(a, s16 *, 0x2);
@@ -1568,6 +1595,7 @@ s16 f_GetWindmillControllerBearing(u8 *a) {
 
     return func_80085690(-dz, dx);
 }
+
 
 void func_8012CEE0(u8 *a) {
     if (a[0x5F] == 0) {
@@ -1671,6 +1699,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleTownQuestRewardVisualActor);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012DE34);
 
+
 u8 *func_8012DF08(s32 a) {
     u8 *p = func_80072DDC(a, 128, 3, 16);
 
@@ -1705,6 +1734,7 @@ void func_8012E034(void *arg0)
   *((s8 *) (((signed char *) arg0) + 8)) = new_var;
 }
 
+
 void f_InitializeTownQuestRewardVisualModel(u8 *a) {
     if (func_80051B70(a, 0xC, 0x4F) == 0) {
         switch (a[3]) {
@@ -1718,6 +1748,7 @@ void f_InitializeTownQuestRewardVisualModel(u8 *a) {
         func_800517F8(a);
     }
 }
+
 
 void func_8012E0D0(void *a)
 {
@@ -1896,6 +1927,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SyncAquaticPlantLinkedState);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnAquaticPlantActors);
 
+
 void func_80133500(u8 *a)
 {
     if (a[0x29] == 0) {
@@ -1911,6 +1943,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateAquaticPlantRotationKick);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ConfigureAquaticPlantMotion);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ClassifyAquaticPlantContact);
+
 
 void f_UpdateAquaticPlantCollisionBounds(u8 *a) {
     s32 k1, k2, t;
@@ -1955,6 +1988,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80134FD8);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateRopeSwingInteraction);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80135D64);
+
 
 u8 *func_801360F4(s32 a, u8 b) {
     u8 *p = func_8007A980(2, 4, 0);
@@ -2049,6 +2083,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleFishermensTownEntranceActor);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleCurvedSupportContactActor);
 
+
 u8 *func_80139838(s32 a, u8 b) {
     u8 *p = func_8007A980(1, 4, 0);
 
@@ -2090,6 +2125,7 @@ u8 *func_8013A730(s32 a) {
     return p;
 }
 
+
 void func_8013A784(u8 *a) {
     s32 lim;
     s32 y;
@@ -2112,6 +2148,7 @@ void func_8013A784(u8 *a) {
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A818);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A900);
+
 
 u8 *func_8013AC34(s32 a, u8 b) {
     u8 *p = func_8007A980(2, 4, 0);
@@ -2217,6 +2254,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateMagicFlowerWateringSequence);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleMagicFlowerActor);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeEvilPigDoorActor);
+
 
 void f_InitializeEvilPigDoorFromTravelState(u8 *a, s32 b) {
     s32 i;
@@ -2419,9 +2457,11 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_CollectVisibleA00GridCellsForCamera);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_CollectA00GridCellsInsideTriangle);
 
+
 s32 f_TestA00GridCellMask(s32 x, s32 y) {
     return D_8014C804_6a3a[y * 52 + x] & (D_8014C800 << 4);
 }
+
 
 s32 f_GetA00GridCellValue(s32 x, s32 y) {
     return D_8014C804_6a3a[y * 52 + x];
@@ -2505,6 +2545,7 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateCrabBasketCarrierSequence);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateLinkedTownCreatureActor);
 
+
 s32 func_80145C78(s32 k, u8 *b) {
     if (k < 4) {
         return M2C_FIELD(b, s16 *, 0xA) >= 0x125C;
@@ -2558,6 +2599,7 @@ s16 func_801460A4(void *arg0) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureTurnaround);
 
+
 s32 func_801461E4(u8 *a, s32 b, u8 c) {
     u16 *f = (u16 *)(a + 0x60);
     s32 r = 0;
@@ -2578,9 +2620,11 @@ s32 func_801461E4(u8 *a, s32 b, u8 c) {
     return r;
 }
 
+
 s32 func_80146288(s16 *v, u32 r) {
     return (u32)func_80078240(D_1F800160_71b4 - v[0], D_1F800162 - v[1], D_1F800164_d75f - v[2]) < r;
 }
+
 
 u8 *func_801462E4(s32 a, s32 b) {
     u8 *p = func_80072DDC(0, 3, 2, 3);
@@ -2597,6 +2641,7 @@ u8 *func_801462E4(s32 a, s32 b) {
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80146348);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801463EC);
+
 
 void func_80146478(u32 *p, void *b)
 {

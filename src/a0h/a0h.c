@@ -231,6 +231,7 @@ INCLUDE_ASM("asm/a0h/nonmatchings/a0h", f_UpdateStrengthTowerExitDoorSequence);
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010A574);
 
+
 s32 func_8010A854(u8 *a, s16 id)
 {
     u8 *o;
@@ -302,6 +303,7 @@ INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010B5BC);
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010B6BC);
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010B960);
+
 
 void func_8010BC94(u32 *p, void *b)
 {
