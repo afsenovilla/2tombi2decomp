@@ -1018,13 +1018,112 @@ void func_80026510(void)
     f_SetStreamedAudioVolumeTarget(-1);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002655C);
+extern u8 D_800BF80F_fcc6;
+extern u8 D_800ED06D;
+void func_800264BC(void);
+
+void func_8002655C(u8 *a)
+{
+    u8 *g;
+    u8 c;
+    u8 v;
+    s32 one;
+
+    switch (a[4]) {
+    case 0:
+        a[4]++;
+        f_SetStreamedAudioVolumeTarget(-1);
+        f_SetStreamedAudioVolumeTarget(0x47FF);
+        switch (D_1F800236_18be) {
+        case 5:
+        case 6:
+            *(s16 *)(a + 8) = 0x7F;
+            *(s16 *)(a + 0xA) = 2;
+            a[3] = 1;
+            break;
+        case 7:
+        case 8:
+            D_1F800236_18be = 0;
+        case 0:
+            *(s16 *)(a + 8) = 0x1F;
+            *(s16 *)(a + 0xA) = 8;
+            a[3] = 0;
+            break;
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 9:
+            D_1F800236_18be = 0;
+            *(s16 *)(a + 8) = 0x1F;
+            *(s16 *)(a + 0xA) = 8;
+            a[3] = 1;
+            break;
+        }
+        f_DrawFullscreenOverlay(0xFFFFFF, a[3], 4);
+        func_80050970();
+        break;
+    case 1:
+        c = *(s16 *)(a + 0xA) * *(s16 *)(a + 8);
+        f_DrawFullscreenOverlay((c << 16) | (c << 8) | c, a[3], 4);
+        if (--*(s16 *)(a + 8) == 0) {
+            a[4]++;
+            D_800BF80F_fcc6 = 0;
+        }
+        break;
+    case 2:
+        g = D_800BF808;
+        if (g[0x41] == 0 && D_800ED06D == 0) {
+            if (g[7] == 2) {
+                func_80026470();
+                *(s16 *)(a + 8) = 0x1F;
+                *(s16 *)(a + 0xA) = 8;
+                a[3] = 0;
+                a[4]++;
+            } else if (g[7] == 4) {
+                func_80026470();
+                *(s16 *)(a + 8) = 0x1F;
+                *(s16 *)(a + 0xA) = 8;
+                a[3] = 1;
+                a[4]++;
+            }
+        }
+        break;
+    case 3:
+        c = -(*(s16 *)(a + 8) * 8);
+        f_DrawFullscreenOverlay((c << 16) | (c << 8) | c, a[3], 4);
+        g = D_800BF808;
+        if (!(g[7] & 0x80)) {
+            (*(s16 *)(a + 8))--;
+        }
+        if (*(s16 *)(a + 8) == 0) {
+            a[4]++;
+            g[7] = 0;
+            func_80026510();
+        }
+        break;
+    case 4:
+        f_DrawFullscreenOverlay(0xFFFFFF, a[3], 4);
+        v = D_800BF80F_fcc6;
+        one = 1;
+        if (v != 0) {
+            if (v == one) {
+                a[3] = 0;
+            } else if (v == 3) {
+                a[3] = one;
+            }
+            ((void (*)(s32))func_800264BC)(one);
+            a[4] = 1;
+            *(s16 *)(a + 8) = 0x1F;
+            *(s16 *)(a + 0xA) = 8;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80026864);
 
-extern u8 D_800ED06D;
 extern u8 D_800BF849;
-extern u8 D_800BF80F_fcc6;
 extern u8 D_1F800137_104c;
 extern s8 *D_800ECF58[];
 extern s8 D_1F800214[];
