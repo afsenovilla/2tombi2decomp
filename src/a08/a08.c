@@ -2639,7 +2639,84 @@ void func_8012579C(s32 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801258BC);
+// nearcopy: 26 words off, C from a04 func_80123CB0
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+#include "gte.h"
+#include "gte.h"
+extern s8 D_800BF80D;
+extern u8 D_800BF8F5;
+extern u8 D_800E7E80_d97c;
+extern u8 D_801457A8[];
+extern u8 D_801457C8[];
+extern s16 D_1F800160_71b4;
+extern s16 D_1F800162_a8d4;
+extern s16 D_1F800164_d75f;
+
+void func_801258BC(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        switch (a[5]) {
+        case 0:
+            func_8012579C(0);
+            a[0xBF] = 0xB0;
+            *(s16 *)(a + 0x7E) = 0x18;
+            *(s16 *)(a + 0x7C) = 0x400;
+            *(s16 *)(a + 0x7A) = 0xC;
+            *(s16 *)(a + 0x78) = 0x1B;
+            *(s16 *)(a + 0x54) = 0;
+            *(s16 *)(a + 0x58) = 0;
+            a[5]++;
+        case 1:
+            func_80124DEC(a, D_801457A8);
+            break;
+        case 2:
+            if (D_800BF8F5 == 0xFF && D_1F800137 == 0) {
+                a[5] = 3;
+            }
+            break;
+        case 3:
+            if (func_80078240(D_1F800160_71b4 - *(s16 *)(a + 0x2E), D_1F800162_a8d4 - *(s16 *)(a + 0x32), D_1F800164_d75f - *(s16 *)(a + 0x36)) <= 1000
+                && D_1F80027A == 0 && D_800E7E80_d97c != 6 && D_800BF80D == 0) {
+                a[4] = 1;
+                a[5] = 0;
+                a[0x5E] = 0;
+            }
+            break;
+        }
+        break;
+    case 1:
+        if (func_8007778C(a) != 0) {
+            func_8012579C(1);
+            func_80051844(a);
+        }
+        switch (a[0x5E]) {
+        case 0:
+            func_80124F48(a);
+            a[0x29] = 0;
+            break;
+        case 1:
+            func_80125190(a);
+            a[0x29] = 0;
+            break;
+        case 2:
+            func_801253A8(a, D_801457C8);
+            a[0x29] = 0;
+            break;
+        default:
+            a[0x29] = 0;
+            break;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u8 D_800BF8EA;
 extern u8 D_800E7EEF;
@@ -2722,7 +2799,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80125F6C);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", f_UpdateWaterTempleInteriorEnvironmentActor);
 
-extern u8 D_800BF8F5;
 extern u8 D_800BF80F;
 extern u8 D_8014597C[];
 void func_801267D4(u8 *a)
