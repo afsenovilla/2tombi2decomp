@@ -2579,27 +2579,15 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8002A834);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002AB5C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002AE0C);
-
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B278);
-
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B3A4);
-
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B7B0);
-
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B8F4);
-
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002BAFC);
-
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002BC9C);
-
 extern s32 D_1F800000[];
 extern s16 D_1F800002[];
 extern s16 D_1F800004[];
 extern s32 D_1F800014[];
 extern s32 D_1F8000D0_42d8[];
 extern u8 D_800A203C[];
-extern u8 D_8009F05C[];
+extern u8 D_8009FAE8[];
+extern u8 D_800A1CCC[];
+extern s8 D_1F800094[];
 /* f_SetEffectRenderTransform, inlined */
 static inline void SetRT_C138(void *pos, u8 *scale, s16 *rot)
 {
@@ -2629,6 +2617,54 @@ static inline void SetRT_C138(void *pos, u8 *scale, s16 *rot)
     gte_SetRotMatrix(D_1F800000);
     gte_SetTransMatrix(D_1F800000);
 }
+
+void func_8002AE0C(u8 *a, s32 s, s32 mode)
+{
+    s32 *z = (s32 *)D_1F800090;
+    u8 *sc = (u8 *)D_1F800094;
+    s16 pos[4];
+    s32 k;
+    u8 m;
+
+    gte_ldfcdir(0, 0, 0);
+    sc[1] = 0x10;
+    if (mode == 0) {
+        pos[0] = *(u16 *)(a + 0x2E);
+        pos[1] = *(u16 *)(a + 0x32) + *(u16 *)(a + 0x86) - *(u16 *)(a + 0x84);
+        pos[2] = *(u16 *)(a + 0x36);
+        sc[2] = sc[0] = s >> 3;
+        SetRT_C138(pos, sc, (s16 *)(a + 0x54));
+    } else {
+        sc[0] = sc[2] = s >> 3;
+        SetRT_C138(a, sc, (s16 *)D_800A1CCC);
+    }
+    m = D_800BF870.unk0;
+    if (m == 1 || m == 2) {
+        *z = 0x800;
+        k = -10;
+    } else if (m == 7) {
+        *z = 0x400;
+        k = -3;
+    } else {
+        *z = 0;
+        k = -10;
+    }
+    f_DrawPackedGouraudQuadStream(D_8009FAE8, 0, k, 0);
+}
+
+INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B278);
+
+INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B3A4);
+
+INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B7B0);
+
+INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B8F4);
+
+INCLUDE_ASM("asm/main/nonmatchings/main", func_8002BAFC);
+
+INCLUDE_ASM("asm/main/nonmatchings/main", func_8002BC9C);
+
+extern u8 D_8009F05C[];
 
 void func_8002C138(u8 *a)
 {
@@ -5030,7 +5066,6 @@ void func_8003FB84(void) {
 
 extern s8 D_1F80008C[];
 extern s8 D_1F800090[];
-extern s8 D_1F800094[];
 extern s8 D_1F800098[];
 extern s8 D_800A3B0C;
 void func_8003FB94(void) {
