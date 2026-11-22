@@ -788,10 +788,6 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_801122B4);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80112660);
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_801129D4);
-
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80112AE0);
-
 typedef struct {
     s16 x, y, w, h;
 } Rect16;
@@ -805,6 +801,30 @@ typedef struct {
     Rect16 slice;
     s32 isdone;
 } DecEnv;
+extern DecEnv D_1F800000;
+extern u8 D_1F800135;
+
+void func_801129D4(void)
+{
+    Rect16 r;
+    s32 id;
+    r = D_1F800000.slice;
+    id = D_1F800000.imgid;
+    D_1F800000.imgid = 1 - id;
+    D_1F800000.slice.x += 16;
+    if (D_1F800000.slice.x < D_1F800000.rect[D_1F800000.rectid].x + D_1F800000.rect[D_1F800000.rectid].w) {
+        func_8009C800(D_1F800000.imgbuf[D_1F800000.imgid], D_1F800000.slice.w * D_1F800000.slice.h / 2);
+    } else {
+        D_1F800000.isdone = 1;
+        D_1F800000.rectid = D_1F800135;
+        D_1F800000.slice.x = D_1F800000.rect[D_1F800000.rectid].x;
+        D_1F800000.slice.y = D_1F800000.rect[D_1F800000.rectid].y;
+    }
+    func_80081218(&r, D_1F800000.imgbuf[id]);
+}
+
+INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80112AE0);
+
 typedef struct {
     u16 id;
     u16 type;

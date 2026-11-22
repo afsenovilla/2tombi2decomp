@@ -266,7 +266,62 @@ done:
     }
 }
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", f_UpdateEvilPigGateOpeningSequence);
+extern u8 D_800BF841;
+extern u8 D_800E806E;
+extern u16 D_1F8000D6;
+
+void f_UpdateEvilPigGateOpeningSequence(u8 *a) {
+    u8 *t;
+
+    switch (a[5]) {
+    case 0:
+        D_1F800137 = 2;
+        D_800BF841 = 1;
+        func_8006E1C0(8);
+        func_8006CBA8(a + 0x2C);
+        D_1F8000D6 = FU16(a, 0x32);
+        a[5]++;
+        break;
+    case 1:
+        if ((D_800E806E & 3) == 3) {
+            t = D_800E7E80;
+            a[5]++;
+            a[0x46] = func_80077768((s16)func_80085690(-(s16)(FU16(a, 0x36) - FU16(t, 0x36)), (s16)(FU16(a, 0x2E) - FU16(t, 0x2E))), F16(a, 0x60), 0);
+            func_80074590(0x17, -0x12, 0x1E);
+        }
+        break;
+    case 2:
+        if (a[0x46] == 0) {
+            F16(M2C_FIELD(a, u8 **, 0xC4), 0xA) -= 0x40;
+            F16(M2C_FIELD(a, u8 **, 0xC8), 0xA) += 0x40;
+            if (F16(M2C_FIELD(a, u8 **, 0xC4), 0xA) < -0x7FF) {
+                a[5]++;
+            }
+        } else {
+            F16(M2C_FIELD(a, u8 **, 0xC4), 0xA) += 0x40;
+            F16(M2C_FIELD(a, u8 **, 0xC8), 0xA) -= 0x40;
+            if (F16(M2C_FIELD(a, u8 **, 0xC4), 0xA) >= 0x800) {
+                a[5]++;
+            }
+        }
+        break;
+    case 3:
+        F16(a, 0x40) = 30;
+        a[5]++;
+        break;
+    case 4:
+        if (--F16(a, 0x40) == 0) {
+            D_1F800137 = 0;
+            D_800BF841 = 0;
+            func_8006E1E4();
+            D_800BF870.pad1[0x1A6] |= 1 << a[3];
+            a[0x5E] = 1;
+            a[0] = 1;
+            a[5] = 0;
+        }
+        break;
+    }
+}
 
 extern u8 D_1F800236;
 extern u8 D_800BF808_1760[];
@@ -368,7 +423,6 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010B4C8);
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010B664);
 
 extern s16 D_801003F8;
-extern u8 D_800E806E;
 
 s32 func_8010B8B4(u8 *a)
 {

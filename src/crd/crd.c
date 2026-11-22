@@ -149,7 +149,53 @@ INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018B1A4);
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018B478);
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018B660);
+void func_8018B660(CrdMenu *a)
+{
+    char name[0x20];
+    s32 ok;
+    s32 i;
+    u8 *dst;
+    u8 *e;
+    s32 k;
+    char *n;
+    ok = 0;
+    if (a->x51++ < 7) {
+        return;
+    }
+    e = a->x8;
+    if (a->x46 != 0xFF) {
+        k = a->x47 * 0x3C;
+        func_8009B0C0(name, D_8018A090, a->x46 << 4, D_8018A0A0, (e + k)[4]);
+        n = name;
+        dst = a->x14;
+        for (i = 0; i < 7; i++) {
+            a->x4 = func_800808B0(n, 0x8001);
+            if (a->x4 != -1) {
+                if (func_800808C0(a->x4, 0x380, 0) != -1) {
+                    func_80080840(D_800BF498.x1C);
+                    func_80080840(D_800BF498.x20);
+                    func_80080840(D_800BF498.x24);
+                    func_80080840(D_800BF498.x28);
+                    func_800808D0(a->x4, dst, 0x600);
+                    ok = 1;
+                    goto done;
+                }
+                func_800808F0(a->x4);
+            }
+        }
+        ok = 0;
+    }
+done:
+    if (ok == 0) {
+        func_8001CBA8(a, a->x46);
+        a->x3E = 2;
+        a->x3F = 0;
+        a->x40 = 0;
+        return;
+    }
+    a->x2 = 0;
+    a->x3F = 9;
+}
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018B7E4);
 
@@ -237,7 +283,57 @@ INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018DFEC);
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018E2B4);
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018E54C);
+extern s32 D_800A2924;
+extern s32 D_800A2980;
+#define CRD_MSG(id, msg)                     \
+    {                                        \
+        CrdMenu *s;                          \
+        s32 w, m;                            \
+        w = id;                              \
+        s = &D_800BF498;                     \
+        m = -1;                              \
+        if (s->x18 != w) {                   \
+            func_8009A5B0(s->xC, msg);       \
+            s->x18 = w;                      \
+        }                                    \
+        if (s->x1A != m) {                   \
+            *s->x10 = 0;                     \
+            s->x1A = m;                      \
+        }                                    \
+    }
+
+void func_8018E54C(u8 *a)
+{
+    s32 k;
+    u8 j;
+    k = a[0x3E];
+    j = k;
+    if (k == 0) {
+    } else if (j == 1) {
+        CRD_MSG(0x34, D_800A2924);
+        a[0] = 0x10;
+        a[2] = 0;
+        a[1] = 0;
+        a[0x3F] = 0xE;
+    } else {
+        CRD_MSG(0x4B, D_800A2980);
+        a[0x50] = 0x1E;
+        a[0x44] = 0;
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        (a + a[0x46])[0x48] = 0;
+        (a + a[0x46])[0x4E] = 0xFF;
+        a[0x46] = 0xFF;
+        a[0x47] = 0;
+        a[0x52] = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0;
+        a[3] = 0;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xF;
+    }
+}
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018E6BC);
 
@@ -294,7 +390,49 @@ void func_8018F414(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018F548);
+void func_8018F548(u8 *a)
+{
+    CrdMenu *s;
+    s32 w, m;
+    s32 k;
+    u8 j;
+    k = a[0x3E];
+    j = k;
+    if (k == 0) {
+    } else if (j == 1) {
+        w = 0x30;
+        s = &D_800BF498;
+        m = -1;
+        if (s->x18 != w) {
+            func_8009A5B0(s->xC, D_800A2914);
+            s->x18 = w;
+        }
+        if (s->x1A != m) {
+            *s->x10 = 0;
+            s->x1A = m;
+        }
+        a[0] = 2;
+        a[2] = 0;
+        a[1] = 0;
+        a[0x3F] = 0x10;
+    } else {
+        a[0x50] = 0;
+        a[0x44] = 0;
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        (a + a[0x46])[0x48] = 0;
+        (a + a[0x46])[0x4E] = 0xFF;
+        a[0x46] = 0xFF;
+        a[0x47] = 0;
+        a[0x52] = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0;
+        a[3] = 0;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xF;
+    }
+}
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018F660);
 
