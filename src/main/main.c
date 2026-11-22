@@ -10021,7 +10021,38 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006FC34);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnAreaLinkedWeaponPickupActor);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnLinkedItemPickupActor);
+extern u8 D_800A4BB8[];
+void func_80070018(u8 *a);
+
+u8 *f_SpawnLinkedItemPickupActor(u8 *owner, s16 id)
+{
+    s32 i;
+    u8 *e;
+
+    i = 0;
+    do {
+        e = f_AllocateActor(owner, D_800A4BB8[i], 3, 4);
+        if (e != NULL) {
+            goto found;
+        }
+        i++;
+    } while (i < 3);
+    return NULL;
+found:
+    *(void **)(e + 0x1C) = func_80070018;
+    *(u8 **)(e + 0x10) = owner;
+    *(s16 *)(e + 0x68) = id;
+    e[0x28] |= 0x80;
+    if (D_800BF816 == 0) {
+        e[0xBE] = 0;
+    } else {
+        e[0xBE] = 1;
+    }
+    e[0x5F] = 1;
+    *(s16 *)(e + 0x74) = 0;
+    e[4] = 2;
+    return e;
+}
 
 
 s32 func_8006FFE8(void)
