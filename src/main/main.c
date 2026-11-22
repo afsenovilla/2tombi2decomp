@@ -344,11 +344,51 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8001F054);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ClassifyTombaActorCylinderContact);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveActorAgainstPartCylinderContact);
+extern s8 D_1F800182[];
+extern s32 D_1F80009C;
+/* f_TestActorAgainstPartCylinderBounds, inlined */
+static inline s32 TestPartCyl_2AC8(u8 *a, u8 *b, u8 *p)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(p + 0x2C);
+    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(p + 0x34);
+    s32 d = SquareRoot0(dx * dx + dz * dz);
+
+    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) || (u16)((*(u16 *)(a + 0x32) - *(u16 *)(p + 0x30)) + (*(u16 *)(a + 0x84) + *(u16 *)(b + 0x84))) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+        return 0;
+    }
+    D_1F80009C = ratan2(-dz, dx);
+    return 1;
+}
+
+s32 f_ResolveActorAgainstPartCylinderContact(u8 *a, u8 *b, u8 *p)
+{
+    s32 c;
+    s32 t;
+    s32 side;
+
+    if (!TestPartCyl_2AC8(a, b, p)) {
+        return 0;
+    }
+    if (!(a[0] & 4)) {
+        c = (rcos(D_1F80009C) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80))) >> 12;
+        t = rsin(D_1F80009C) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80));
+        *(u16 *)(a + 0x2E) = *(u16 *)(p + 0x2C) + c;
+        *(u16 *)(a + 0x36) = *(u16 *)(p + 0x34) - (t >> 12);
+    }
+    a[0x60] = 1;
+    side = f_TestWrappedAngleSide(*(s16 *)&D_1F80009C, *(s16 *)(a + 0x140), 1) + 2;
+    a[0x5F] = side;
+    if (a[0x164] != 0) {
+        return 2;
+    }
+    if (!(a[0x149] & 4) && a[0x147] == (side & 1)) {
+        *(s16 *)(a + 0x44) = 0;
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaRadialContactAndSide);
 
-extern s32 D_1F80009C;
 
 s32 f_TestActorOffsetCylinderOverlap(u8 *a, u8 *b)
 {
@@ -490,21 +530,6 @@ s32 func_80020B08(u8 *a, u8 *b)
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ClassifyActorCylinderContact);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ClassifyActiveColliderPartCylinderContact);
-
-extern s8 D_1F800182[];
-/* f_TestActorAgainstPartCylinderBounds, inlined */
-static inline s32 TestPartCyl_2AC8(u8 *a, u8 *b, u8 *p)
-{
-    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(p + 0x2C);
-    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(p + 0x34);
-    s32 d = SquareRoot0(dx * dx + dz * dz);
-
-    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) || (u16)((*(u16 *)(a + 0x32) - *(u16 *)(p + 0x30)) + (*(u16 *)(a + 0x84) + *(u16 *)(b + 0x84))) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
-        return 0;
-    }
-    D_1F80009C = ratan2(-dz, dx);
-    return 1;
-}
 
 s32 f_ResolveActiveColliderPartContact(u8 *a, u8 *b, u8 *p, s32 k)
 {
@@ -1180,7 +1205,32 @@ s32 func_80023794(u8 *a, u8 *pos, u8 *r)
     return (u16)((*(u16 *)(a + 0x32) - *(u16 *)(pos + 6)) + (*(u16 *)(a + 0x84) + r[5])) <= *(s16 *)(a + 0x86) + r[5] * 2;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_PushActorOutsidePartCylinder);
+s32 f_TestWrappedAngleSide(s32 a, s32 b, s32 flip);
+
+s32 f_PushActorOutsidePartCylinder(u8 *a, u8 *b, u8 *p)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(p + 0x2C);
+    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(p + 0x34);
+    s32 d = SquareRoot0(dx * dx + dz * dz);
+    s32 c;
+    s32 t;
+
+    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80)) {
+        return 0;
+    }
+    if ((u16)((*(u16 *)(a + 0x32) - *(u16 *)(p + 0x30)) + (*(u16 *)(b + 0x84) + (*(u16 *)(a + 0x86) - *(u16 *)(a + 0x84)))) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+        return 0;
+    }
+    D_1F80009C = ratan2(-dz, dx);
+    if (a[0xC] == 2) {
+        a[0x5F] = f_TestWrappedAngleSide(*(s16 *)&D_1F80009C, *(s16 *)(a + 0x60), 1) + 2;
+    }
+    c = (rcos(D_1F80009C) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80))) >> 12;
+    t = rsin(D_1F80009C) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80));
+    *(u16 *)(a + 0x2E) = *(u16 *)(p + 0x2C) + c;
+    *(u16 *)(a + 0x36) = *(u16 *)(p + 0x34) - (t >> 12);
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveActorPairCylinderContactClass);
 
