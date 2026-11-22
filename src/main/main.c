@@ -14349,7 +14349,33 @@ void func_800737F8(s32 arg)
     func_8005019C(&r, 7, 1, 0);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800738B0);
+void f_DrawTallMenuText(s16 x, s32 y, s16 c, s32 d, s32 e);
+
+void func_800738B0(void)
+{
+    s16 r[4];
+    s32 *tab;
+    s32 n;
+    s32 x;
+
+    f_DrawPauseMenuButtonIcon(0x4000, 0xBC, 0x58, 0);
+    f_DrawPauseMenuButtonIcon(0x2000, 0xBC, 0x6C, 0);
+    tab = (s32 *)D_800A2854;
+    n = func_80073750((u8 *)tab[3]);
+    x = 0xA0 - n * 4;
+    r[0] = x;
+    r[1] = 0x3C;
+    r[2] = n * 8;
+    r[3] = 0x3C;
+    f_DrawTallMenuText(x, 0x3C, 0, tab[3], 0);
+    f_DrawTallMenuText(0x80, 0x50, 0, tab[4], 0);
+    f_DrawTallMenuText(0x80, 0x64, 0, tab[5], 0);
+    if (r[0] > 0x78) {
+        r[0] = 0x78;
+        r[2] = 0x50;
+    }
+    func_8005019C(r, 7, 1, 1);
+}
 
 typedef struct { u8 unk0; u8 u1; u8 pad2[0x1E]; s32 x; s32 y; s32 z; u8 pad2C[0x59C]; u8 u5C8; } GsSign_39AC;
 extern GsSign_39AC D_800BF870_39ac;
