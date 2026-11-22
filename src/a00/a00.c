@@ -594,7 +594,21 @@ void func_8011479C(s32 arg0, M2C_UNK arg1) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801147EC);
+void func_801147EC(u8 *a, u8 *b) {
+    u16 t, u;
+
+    if (func_80024BD8(a, b, M2C_FIELD(b, u8 **, 0xC4)) != 0 && a[0x147] == 0) {
+        if (M2C_FIELD(M2C_FIELD(b, u8 **, 0xC4), s32 *, 0x2C) - M2C_FIELD(b, s16 *, 0x80) >= M2C_FIELD(a, s16 *, 0x2E)) {
+            M2C_FIELD(a, s16 *, 0x156) = 20;
+            t = M2C_FIELD(b, u16 *, 0x80);
+            u = M2C_FIELD(a, u16 *, 0x80);
+            a[0x164] = 2;
+            D_1F800080_ddd3 = b;
+            D_1F800182_5650 = 0;
+            M2C_FIELD(a, s16 *, 0x152) = -(t + u);
+        }
+    }
+}
 
 extern void *D_1F800080;
 
@@ -1663,7 +1677,26 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RestoreFedChicksFromProgress);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateNestChickQuestState);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnNestChickFromParent);
+void func_80126264();
+
+s32 f_SpawnNestChickFromParent(u8 *a) {
+    u8 *p = func_80072DDC(a, 0, 2, 0x14);
+
+    if (p != NULL) {
+        M2C_FIELD(p, void **, 0x1C) = func_80126264;
+        p[3] = a[3];
+        if (M2C_FIELD(a, u16 *, 0x7A) & 0x40) {
+            M2C_FIELD(p, s16 *, 0x5C) = 0x343F;
+            p[0x5E] = 4;
+        } else {
+            M2C_FIELD(p, s16 *, 0x5C) = 0x347F;
+            p[0x5E] = 0;
+        }
+        M2C_FIELD(p, s16 *, 0x60) = (M2C_FIELD(a, u16 *, 0x7A) >> 4) & 3;
+        return 1;
+    }
+    return 0;
+}
 
 
 void func_80127420(void *arg0) {
@@ -2489,7 +2522,25 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ConfigureSegmentedTownActorMorph);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801386A0);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnSegmentedTownActor);
+void func_80136D9C();
+
+void f_SpawnSegmentedTownActor(u8 *a) {
+    u8 *p = func_80072DDC(a, 3, 4, 0xA);
+
+    if (p != NULL) {
+        M2C_FIELD(p, void **, 0x1C) = func_80136D9C;
+        M2C_FIELD(p, s16 *, 0x2E) = M2C_FIELD(a, s16 *, 0x2E);
+        M2C_FIELD(p, s16 *, 0x32) = M2C_FIELD(a, s16 *, 0x32);
+        M2C_FIELD(p, s16 *, 0x36) = M2C_FIELD(a, s16 *, 0x36);
+        if (a[3] != 0) {
+            p[3] = a[3];
+        } else if (D_800BF89C == 2) {
+            p[3] = 3;
+        } else {
+            p[3] = 0;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801389C8);
 
