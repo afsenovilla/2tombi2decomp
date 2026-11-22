@@ -2748,7 +2748,33 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80129168);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012948C);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80129628);
+typedef struct { u8 pad[0xC0]; u8 *s[8]; } A9628;
+#define SLOT9628(i) (*(u8 **)(a + 0xC0 + (i) * 4))
+
+void func_80129628(u8 *a)
+{
+    s32 m[8];
+    s32 i;
+
+
+    func_800518FC(a);
+    for (i = 0; i < a[9]; i++) {
+        if (i >= a[8]) {
+            break;
+        }
+        func_80051794(m);
+        func_800847F0(SLOT9628(i) + 8, m);
+        if (*(s16 *)(SLOT9628(i) + 6) == -1) {
+            func_80084110(a + 0x98, m, SLOT9628(i) + 0x18);
+        } else {
+            func_80084110((((A9628 *)a)->s[*(s16 *)(SLOT9628(i) + 6)]) + 0x18, m, SLOT9628(i) + 0x18);
+        }
+    }
+    for (i = 0; i < a[8]; i++) {
+        func_800517BC(m, *(s16 *)(SLOT9628(i) + 0x38), *(s16 *)(SLOT9628(i) + 0x3A), *(s16 *)(SLOT9628(i) + 0x3C));
+        func_80084250(SLOT9628(i) + 0x18, m);
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80129744);
 
