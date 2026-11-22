@@ -92,7 +92,26 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", f_SpawnEvilPigDoorActorsFromPlacementTab
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010A060);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010A188);
+void func_8010A188(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        f_SpawnEvilPigDoorActorsFromPlacementTable(a, 0);
+        func_8010A060(0);
+        func_800752B4(0);
+        func_80075D24(0x1FFF);
+        break;
+    case 1:
+        func_8010A060(1);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007ADD0();
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010A228);
 

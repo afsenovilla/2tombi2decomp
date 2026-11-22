@@ -869,7 +869,27 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80113DDC);
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80113EA4);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80113F84);
+void func_80113F84(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        *(s32 *)(a + 0x48) = 0;
+        *(s32 *)(a + 0x4C) = 0;
+        a[4] = 1;
+        a[7] = 0xFF;
+    case 1:
+        if (++a[7] >= 8) {
+            a[4] = 2;
+        } else {
+            a[1] = 1;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_80114020(u8 *a)
 {

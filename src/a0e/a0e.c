@@ -527,7 +527,23 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80117960);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80117ADC);
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80117BE0);
+u8 func_80117BE0(u8 *a)
+{
+    s16 *p = (s16 *)(a + 0x60);
+    s16 v;
+    if (a[0x5F] == 0) {
+        if (*(s16 *)(a + 0x44) >= 0) {
+            v = *(s16 *)(a + 0x80);
+        } else {
+            v = -*(s16 *)(a + 0x80);
+        }
+        if (func_800468AC(a, v, 0, *p) != 0) {
+            a[0x5F] = a[0xBE] | 1;
+            p[2] = 0;
+        }
+    }
+    return a[0x5F];
+}
 
 
 u8 func_80117C78(void *arg0) {
