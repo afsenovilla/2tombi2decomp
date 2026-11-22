@@ -2344,7 +2344,88 @@ void func_8013AF18(PosedActor *a, s32 b, s32 c) {
     a->pose = b;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateMagicFlowerWateringSequence);
+extern u8 D_8001B7B0[];
+void D_8004C930();
+
+void f_UpdateMagicFlowerWateringSequence(u8 *a, s32 b) {
+    u16 v;
+    u8 *p;
+
+    switch (a[5]) {
+    case 0:
+        if (a[0x29] == 1) {
+            a[5]++;
+            func_8013AF18(a, 0, b);
+            func_80077C40(a, D_8001B7B0, 0);
+            D_800BF870.pad1[0x1A2] |= 1 << a[3];
+            func_8004ED94(0x5B, 0x41);
+        }
+        break;
+    case 1:
+        if (a[0x29] == 2) {
+            F16(a, 0x50) = 0;
+            a[5]++;
+            func_8003116C(8, a + 0x2C, -0x20);
+        }
+        break;
+    case 2:
+        v = (F16(a, 0x50) + 0x100) & 0xFFF;
+        F16(a, 0x50) = v;
+        if (v == 0) {
+            F16(a, 0xBA) = 0x1000;
+            a[5]++;
+            break;
+        }
+        if (v == 0xC00) {
+            p = func_80072DDC(a, 0, 5, 4);
+            if (p != NULL) {
+                M2C_FIELD(p, void **, 0x1C) = D_8004C930;
+                F16(p, 0x2E) = F16(a, 0x2E);
+                F16(p, 0x32) = F16(a, 0x32) - 0x78;
+                F16(p, 0x36) = F16(a, 0x36);
+                p[3] = 0xC;
+            }
+            M2C_FIELD(a, u8 **, 0x10) = p;
+        }
+        F16(a, 0xBA) += (func_80083E80(F16(a, 0x50)) << 8) >> 12;
+        break;
+    case 3:
+        if (M2C_FIELD(a, u8 **, 0x10)[4] == 3) {
+            D_1F800137 = 0;
+            a[5]++;
+        }
+        break;
+    case 4:
+        if (a[0x29] == 1) {
+            F16(a, 0x52) = 0;
+            F16(a, 0x44) = 0x200;
+            a[5]++;
+        }
+        break;
+    case 5:
+        F16(a, 0x52) = (F16(a, 0x52) + 0x200) & 0xFFF;
+        F16(a, 0x58) = (func_80083E80(F16(a, 0x52)) * F16(a, 0x44)) >> 12;
+        if (F16(a, 0x52) == 0) {
+            a[5]++;
+            F16(a, 0x44) -= 0x80;
+            func_8003116C(8, a + 0x2C, -0x20);
+        }
+        break;
+    case 6:
+        F16(a, 0x52) = (F16(a, 0x52) + 0x200) & 0xFFF;
+        F16(a, 0x58) = (func_80083E80(F16(a, 0x52)) * F16(a, 0x44)) >> 12;
+        if (F16(a, 0x52) == 0) {
+            a[5]++;
+        }
+        break;
+    case 7:
+        if (a[0x29] == 2) {
+            D_1F800137 = 0;
+            a[5] = 4;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleMagicFlowerActor);
 
