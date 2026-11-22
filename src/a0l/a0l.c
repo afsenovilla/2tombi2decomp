@@ -262,7 +262,30 @@ void func_8010E438(s32 a)
     func_80041718(a, 1, 0);
 }
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010E45C);
+typedef struct {
+    s16 vx, vy, vz, pad;
+} SVec;
+typedef struct {
+    s32 vx, vy, vz, pad;
+} LVec;
+extern SVec D_1F8000C0;
+extern LVec D_1F8000A0;
+extern u8 *D_1F800248;
+
+void func_8010E45C(u8 *a)
+{
+    u8 *o;
+
+    D_1F8000C0.vx = -0x55;
+    D_1F8000C0.vy = -0x7E;
+    D_1F8000C0.vz = 0x1F;
+    func_80084470(D_1F800248 + 0x98, &D_1F8000C0, &D_1F8000A0);
+    o = D_1F800248;
+    *(s16 *)(a + 0x2E) = *(s16 *)(o + 0x2E) + D_1F8000A0.vx;
+    *(s16 *)(a + 0x32) = *(s16 *)(o + 0x32) + D_1F8000A0.vy;
+    *(s16 *)(a + 0x36) = *(s16 *)(o + 0x36) + D_1F8000A0.vz;
+    *(s16 *)(a + 0x56) = *(s16 *)(o + 0x56);
+}
 
 extern s32 D_800BF850;
 s32 func_8010E51C(void *arg0) {
@@ -401,7 +424,20 @@ void func_80111C28(void *arg0) {
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111C34);
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111CFC);
+
+void func_80111CFC(u8 *a)
+{
+    u8 *o;
+
+    D_1F8000C0.vx = *(s16 *)(a + 0x4E);
+    D_1F8000C0.vy = *(s16 *)(a + 0x50);
+    D_1F8000C0.vz = *(s16 *)(a + 0x52);
+    func_80084470(D_1F800248 + 0x98, &D_1F8000C0, &D_1F8000A0);
+    o = D_1F800248;
+    *(s16 *)(a + 0x2E) = *(s16 *)(o + 0x2E) + D_1F8000A0.vx;
+    *(s16 *)(a + 0x32) = *(s16 *)(o + 0x32) + D_1F8000A0.vy;
+    *(s16 *)(a + 0x36) = *(s16 *)(o + 0x36) + D_1F8000A0.vz;
+}
 
 void func_80111DB0(void *a)
 {

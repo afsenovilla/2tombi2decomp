@@ -387,7 +387,33 @@ void f_IncrementBerryNutsScore(void *a)
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_SpawnTinyMouseVillageActorsFromPlacementTable);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80110C80);
+extern u8 D_800BF8F9;
+
+void func_80110C80(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        if (D_800BF871 < 4) {
+            f_SpawnTinyMouseVillageActorsFromPlacementTable(a, 0);
+        } else {
+            f_SpawnTinyMouseVillageActorsFromPlacementTable(a, 1);
+        }
+        func_800752B4(0);
+        func_80075D24(0x1FFF);
+        break;
+    case 1:
+        if (D_800BF8F9 != 0xFF) {
+            func_80040C00(0x45);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007ADD0();
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_UpdateTinyMouseVillageInteriorDoorSequence);
 
@@ -426,7 +452,31 @@ void func_80111E70(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80111EE4);
+extern u8 D_800BF841_2c52;
+
+void func_80111EE4(u8 *a)
+{
+    switch (a[5]) {
+    case 0:
+        if ((*(u8 **)(a + 0x14) = (u8 *)func_8007E038(0x33, 3)) != NULL) {
+            a[5]++;
+            D_800BF841_2c52 = 0;
+            func_80074BF8(0xC);
+            func_8004FB20();
+        }
+        break;
+    case 1:
+        if (D_800BF80F != 0) {
+            a[5] = 2;
+            (*(u8 **)(a + 0x14))[4] = 3;
+        }
+        break;
+    case 2:
+        break;
+    }
+    func_800517F8(a);
+    a[1] = 1;
+}
 
 
 void func_80111F94(void *arg0) {
