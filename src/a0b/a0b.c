@@ -262,7 +262,30 @@ INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801120AC);
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801121E8);
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80112704);
+#define P(p, o) (*(void **)((u8 *)(p) + (o)))
+
+void func_80112704(u8 *a)
+{
+    s16 v;
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        v = (func_8009A450() & 0x1FF) + 0x180;
+        *(s16 *)(a + 0x4A) = v;
+        *(s16 *)(a + 0x48) = v;
+    case 1:
+        if ((P(a, 0x34) = P(a, 0x38)) == 0) {
+            a[4] = 2;
+        } else if (func_8002B278(a) == 0) {
+            func_80031780(a);
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801127BC);
 

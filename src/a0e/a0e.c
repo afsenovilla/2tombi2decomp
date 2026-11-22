@@ -306,13 +306,56 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80113078);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80113594);
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8011369C);
+extern u8 D_8011CE48[];
+extern u8 D_8011CE30[];
+#define P(p, o) (*(void **)((u8 *)(p) + (o)))
+
+void func_8011369C(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        P(a, 0x40) = D_8011CE48;
+        P(a, 0x50) = D_8011CE30;
+        a[4] = 1;
+    case 1:
+        if ((P(a, 0x3C) = P(a, 0x40)) == 0) {
+            a[4] = 2;
+        } else if (func_8002B278(a) == 0) {
+            func_80031744(a);
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80113754);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8011382C);
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_801138FC);
+void func_801138FC(u8 *a)
+{
+    s16 *v = (s16 *)(a + 0x50);
+    switch (a[4]) {
+    case 0:
+        *(s16 *)(a + 0x50) = 0x32;
+        a[4] = 1;
+        v[1] = 0xA;
+    case 1:
+        func_8002B278(a);
+        v[0] += v[1];
+        if (v[0] >= 0x1F5) {
+            a[4] = 2;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern M2C_UNK D_80126C0C;
 extern M2C_UNK D_80126E0C;

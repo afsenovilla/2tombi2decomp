@@ -854,7 +854,35 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80113904);
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80113A20);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80113AC0);
+extern u8 D_8011C114[];
+#define P(p, o) (*(void **)((u8 *)(p) + (o)))
+
+void func_80113AC0(u8 *a)
+{
+    u8 c;
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        a[7] = 0x28;
+    case 1:
+        if ((P(a, 0x34) = P(a, 0x38)) == 0) {
+            P(a, 0x34) = P(a, 0x38) = D_8011C114;
+        }
+        *(s16 *)(a + 0x2E) -= 0x82;
+        c = a[7];
+        a[7] = c + 0xFF;
+        if (c == 0) {
+            a[4] = 2;
+        } else {
+            a[1] = 1;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80113B78);
 
