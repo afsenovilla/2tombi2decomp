@@ -289,7 +289,38 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010CA30);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", f_UpdateEndingIllustrationPanels);
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010CF6C);
+extern u16 D_1F800160_3621;
+extern u16 D_1F800162;
+extern u16 D_1F800164_7d8c;
+
+void func_8010CF6C(u8 *a0)
+{
+    u8 *a = a0;
+    u16 x, y, z;
+    switch (a[4]) {
+    case 0:
+        *(s32 *)(a + 0x50) = 0;
+        a[4] = 1;
+    case 1:
+        x = D_1F800160_3621;
+        y = D_1F800162;
+        z = D_1F800164_7d8c;
+        *(u16 *)(a + 0x2C) = x;
+        *(u16 *)(a + 0x2E) = y;
+        *(u16 *)(a + 0x30) = z;
+        *(s32 *)(a + 0x50) -= 10;
+        if (D_800BFA55 < 4) {
+            a[1] = 1;
+        } else {
+            a[4] = 3;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern s32 D_8011A6C4;
 extern s32 D_8011A6C8;
@@ -893,8 +924,6 @@ void func_801129D4(void)
     func_80081218(&r, D_1F800000.imgbuf[id]);
 }
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80112AE0);
-
 typedef struct {
     u16 id;
     u16 type;
@@ -905,14 +934,39 @@ typedef struct {
     u16 width;
     u16 height;
 } StHeader;
-extern u8 *D_1F800138;
-extern u32 D_1F800250;
 typedef struct {
     u32 unk0;
     u8 *buf;
     u32 unk8;
 } MovieDef;
 extern MovieDef D_8011A6AC[];
+extern u8 *D_1F800138;
+
+void func_80112AE0(DecEnv *d, s16 x0, s16 y0, s16 x1, s16 y1)
+{
+    u8 *b;
+    s32 i;
+    b = D_8011A6AC[D_1F800138[0x69]].buf;
+    d->vlcid = 0;
+    d->imgid = 0;
+    d->rect[0].x = x0;
+    d->rect[0].y = y0;
+    d->rect[1].x = x1;
+    d->rect[1].y = y1;
+    d->isdone = 0;
+    i = 1 - D_1F800135;
+    d->vlcbuf[0] = (u32 *)b;
+    d->rectid = i;
+    d->vlcbuf[1] = (u32 *)(b + 0x12000);
+    d->imgbuf[0] = (u16 *)(b + 0x24000);
+    d->imgbuf[1] = (u16 *)(b + 0x26000);
+    d->slice.x = d->rect[i].x;
+    d->slice.y = d->rect[i].y;
+    d->slice.w = 0x10;
+    d->slice.h = 0xF0;
+}
+
+extern u32 D_1F800250;
 void func_80112BA0(s32 a, s32 b)
 {
     u8 *buf = D_8011A6AC[D_1F800138[0x69]].buf;
