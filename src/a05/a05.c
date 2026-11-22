@@ -155,7 +155,39 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010BFAC);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010C410);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010C548);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+static inline s32 e814_hit(u8 *a, u8 *b)
+{
+    s16 dx = U(a, 0x2E) - (U(b, 0x2E) + U(b, 0x60));
+    s16 dz = U(a, 0x36) - (U(b, 0x36) + U(b, 0x64));
+
+    u16 d = func_80084080(dx * dx + dz * dz);
+    u16 h;
+
+    if (H(a, 0x80) + H(b, 0x80) < d) {
+        return 0;
+    }
+    h = U(a, 0x86);
+    return (u16)((U(a, 0x32) - (U(b, 0x32) + U(b, 0x62))) + (U(b, 0x84) + (h - U(a, 0x84)))) <= (s16)h + H(b, 0x86);
+}
+
+void func_8010C548(u8 *a, u8 *b)
+{
+    if (e814_hit(a, b)) {
+        s16 ang;
+        s32 t, u;
+        if (b[0x5F] == 0) {
+            ang = U(a, 0x60);
+        } else {
+            ang = U(a, 0x60) + 0x800;
+        }
+        t = (func_80083F50(ang) * (H(a, 0x80) + H(b, 0x80))) >> 12;
+        u = func_80083E80(ang) * (H(a, 0x80) + H(b, 0x80));
+        H(a, 0x2E) = t + (U(b, 0x2E) + U(b, 0x60));
+        { s32 w = u >> 12; H(a, 0x36) = (U(b, 0x36) + U(b, 0x64)) - w; }
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010C6E0);
 
