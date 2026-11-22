@@ -121,7 +121,7 @@ def climb(prog, name, ctx, rounds):
     _, draft = draft_of(prog, name, ctx)
     if draft is None:
         return name, None, None
-    d = os.path.join(ROOT, "build", "hillclimb")
+    d = os.path.join(ROOT, "build", "hillclimb", prog)
     os.makedirs(d, exist_ok=True)
     test = os.path.join(d, name + ".try.c")
 
@@ -185,7 +185,7 @@ def main():
     if a.install and won:
         for n in won:
             r = subprocess.run([sys.executable, "-I", os.path.join(ROOT, "tools", "install_c.py"),
-                                os.path.join(ROOT, "build", "hillclimb", n + ".c"), "--prog", a.prog],
+                                os.path.join(ROOT, "build", "hillclimb", a.prog, n + ".c"), "--prog", a.prog],
                                capture_output=True, text=True, cwd=ROOT)
             print("  %s: %s" % (n, (r.stdout + r.stderr).strip().splitlines()[-1:]))
 
