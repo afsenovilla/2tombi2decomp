@@ -3490,7 +3490,47 @@ s32 func_8012BF5C(u8 *a)
     return func_8004190C(a);
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012C018);
+// nearcopy: 5 words off, C from a01 func_8011ADA0
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+#include "gte.h"
+extern u8 D_800A3CF0[];
+extern u8 D_80145B24[];
+
+void func_8012C018(u8 *a) {
+    switch (a[5]) {
+    case 0:
+        func_8007778C(a);
+        if (a[0x2B] == 3) {
+            func_80042354(1, 3);
+            func_80040D68(a, D_800A3CF0);
+            a[0x70] = 2;
+            a[6] = 0;
+            a[5] = 1;
+        }
+        break;
+    case 1:
+        a[1] = 1;
+        func_80077E7C(a);
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            switch (a[6]) {
+            case 0:
+                a[0x7A] = 0x13;
+                func_80040D68(a, D_80145B24);
+                a[0x70] = 2;
+                a[6] = 1;
+                break;
+            case 1:
+                a[5] = 0;
+                break;
+            }
+        }
+        break;
+    }
+    func_8004190C(a);
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012C118);
 
@@ -4147,9 +4187,82 @@ s32 func_80132468(void)
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80132488);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80132564);
+// nearcopy: 14 words off, C from a07 func_80121C64
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+#include "gte.h"
+extern u8 D_800E7E80[];
+extern u8 D_800BF81E;
+extern s32 D_1F80023C;
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013263C);
+s32 func_80132564(u8 *a)
+{
+    u8 *t = D_800E7E80;
+
+    switch (a[0x78]) {
+    case 0:
+        if (!(*(u16 *)(t + 0x17E) & 0x180)) {
+            return 1;
+        }
+        D_800BF81E = 0;
+        t[4] = 4;
+        t[5] = 0x21;
+        t[6] = 0;
+        t[7] = 0;
+        D_1F80023C = *(s32 *)(t + 4);
+        func_8004ED0C(t[0x6F], 3);
+        t[0x6F] = 0;
+        t[5] = 0x3A;
+        t[6] = 0;
+        a[0x78]++;
+        break;
+    case 1:
+        if (t[5] == 0x21) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
+
+// nearcopy: 6 words off, C from a07 func_80121C64
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+#include "gte.h"
+extern u8 D_800E7E80[];
+
+s32 func_8013263C(u8 *a)
+{
+    u8 *t = D_800E7E80;
+
+    switch (a[0x78]) {
+    case 0:
+        D_800BF81E = 0;
+        t[4] = 4;
+        t[5] = 0x21;
+        t[6] = 0;
+        t[7] = 0;
+        D_1F80023C = *(s32 *)(t + 4);
+        if (t[0x6F] == 0) {
+            func_8004ED0C(0x11, 0);
+        } else {
+            func_8004EDDC(t[0x6F], 0x11);
+        }
+        t[0x6F] = 0x11;
+        t[5] = 0x3A;
+        t[6] = 0;
+        a[0x78]++;
+        break;
+    case 1:
+        if (t[5] == 0x21) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 s32 func_8013271C(void *arg0) {
     if (M2C_FIELD(arg0, s16 *, 0x72) != 0) {
