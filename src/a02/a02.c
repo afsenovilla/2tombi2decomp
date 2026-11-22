@@ -1363,7 +1363,27 @@ s32 func_8011C9A0(u8 *a) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011C9C8);
+extern u8 D_80139240_0000[];
+extern u8 D_8012A3C0[];
+
+void func_8011C9C8(u8 *a) {
+    GameState *g;
+
+    func_80051B04(M2C_FIELD(a, u8 **, 0xD0), 0x13, 0x10);
+    func_80051B04(M2C_FIELD(a, u8 **, 0xDC), 0x13, 0x11);
+    func_80040CDC(a, D_80139240_0000, D_8012A3C0);
+    func_80041718(a, 0x2D, 0);
+    M2C_FIELD(a, s16 *, 0x56) = 0xA00;
+    func_80126C18(a);
+    g = &D_800BF870;
+    if (g->pad1[0xAB] == 0) {
+        a[0x5E] = 0;
+    } else if (g->pad1[0x28C] == 0) {
+        a[0x5E] = 1;
+    } else {
+        a[0x5E] = 2;
+    }
+}
 
 
 void func_8011CA78(void *arg0) {
