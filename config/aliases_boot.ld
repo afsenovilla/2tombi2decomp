@@ -1,5 +1,7 @@
 /* Names used by library C taken from other projects (psx_tomba, Tombi-Decomp) for addresses this
  * program knows under another name; addresses read off the retail code by tools/libsweep.py. */
+D_800101F0 = 0x800101F0;
+D_80010288 = 0x80010288;
 checkRECT = 0x800132B0;
 get_cs = 0x8001451C;
 get_ce = 0x800145B4;
@@ -23,6 +25,7 @@ _interruptMasks = 0x800254AC;
 gpu = 0x8002550C;
 GPU_printf = 0x80025510;
 GEnv = 0x80025514;
+move_image = 0x800255AC;
 D_80025650 = 0x80025650;
 D_80025654 = 0x80025654;
 intr_table_ptr = 0x80026774;
@@ -32,6 +35,7 @@ CD_cbsync = 0x800268D0;
 CD_cbready = 0x800268D4;
 CD_status = 0x800268DC;
 CD_status1 = 0x800268E0;
+D_800268F0 = 0x800268F0;
 CD_comstr = 0x800268F4;
 CD_intstr = 0x80026974;
 cd_reg0 = 0x80026B94;
@@ -45,6 +49,8 @@ cd_dpcr = 0x80026BCC;
 cd_d3_madr = 0x80026BD0;
 cd_d3_bcr = 0x80026BD4;
 cd_d3_chcr = 0x80026BD8;
+D_80026C48 = 0x80026C48;
+D_80026C54 = 0x80026C54;
 _spu_EVdma = 0x80026D10;
 _spu_trans_mode = 0x80026D18;
 _spu_isCalled = 0x80026D78;
