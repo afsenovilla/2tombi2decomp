@@ -2281,7 +2281,22 @@ void func_8012950C(void) {
     func_801284F0();
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012952C);
+void func_8012952C(u8 *a)
+{
+    u8 *g = D_800BF808;
+
+    if (g[0xE] != 0 && g[0xF] == a[3]) {
+        *(s16 *)(a + 0x2E) = *(s16 *)(a + 0x88) - 0x26D;
+        *(s16 *)(a + 0x32) = *(s16 *)(a + 0x8A);
+        *(s16 *)(a + 0x36) = *(s16 *)(a + 0x8C) + 0x394;
+    } else {
+        *(s16 *)(a + 0x2E) = *(s16 *)(a + 0x88);
+        *(s16 *)(a + 0x32) = *(s16 *)(a + 0x8A);
+        *(s16 *)(a + 0x36) = *(s16 *)(a + 0x8C);
+    }
+    func_80073328(a);
+    func_800735F4(a, 0x58);
+}
 
 void func_801295C4(s32 arg0) {
     func_801284F0();
