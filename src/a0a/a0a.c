@@ -1358,7 +1358,31 @@ void func_80115FF4(u8 *a)
     func_80051300(a);
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_801160C4);
+void func_801160C4(u8 *a) {
+    s32 n;
+    s32 x;
+
+    if (a[0x47] == 2) {
+        return;
+    }
+    if (a[0x2B] != 0) {
+        n = (u16)(M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), u16 *, 0x3A) / 320);
+        if (n == 0) {
+            n = 1;
+        } else if (n >= 5) {
+            n = 4;
+        }
+        M2C_FIELD(a, s16 *, 0x7C) = 0;
+        M2C_FIELD(a, s16 *, 0x7E) = n * 8;
+        func_80074590(0x8D, 0, 0);
+        return;
+    }
+    x = (M2C_FIELD(a, u16 *, 0x7C) + 0x1E0) & 0xFFF;
+    M2C_FIELD(a, s16 *, 0x7C) = x;
+    if (x < 0x1E0 && M2C_FIELD(a, s16 *, 0x7E) != 0) {
+        M2C_FIELD(a, s16 *, 0x7E) -= 8;
+    }
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80116194);
 
