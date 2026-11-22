@@ -3851,7 +3851,30 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013CF00);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013D1E4);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013D568);
+extern s16 *D_1F80028C;
+extern s16 D_1F800162;
+
+void func_8013D568(u32 *a0, void *a1)
+{
+    u32 *s1;
+    s32 s0;
+    u32 w;
+    s16 *o;
+
+    s1 = a0;
+    a0 += 4;
+
+    if (D_800BF873) {
+        o = (s16 *)D_1F80028C;
+        { s32 x = o[0x17]; s32 y = o[0x19]; s32 z = o[0x1B]; s0 = func_80078240(x - D_1F800160_71b4, y - D_1F800162, z - D_1F800164_d75f) << 1; }
+        gte_ldfcdir(0, 0, 0);
+        w = *s1;
+        func_8013C5B4(func_8013C0D8(a0, a1, w & 0xFFFF, s0), a1, w >> 16, s0);
+    } else {
+        w = *s1;
+        func_8013D1E4(func_8013CF00(a0, a1, w & 0xFFFF), a1, w >> 16);
+    }
+}
 
 typedef struct {
     u8 x[8];

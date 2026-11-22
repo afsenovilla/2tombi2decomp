@@ -2049,7 +2049,21 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80125BAC);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80125CA0);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80125D68);
+s32 func_80125D68(void)
+{
+    u8 *t = D_800E7E80;
+    s16 d, e;
+
+    if (t[5] != 2) {
+        return 0;
+    }
+    d = *(u16 *)(t + 0x2E) - 0x231C;
+    if ((u16)(*(u16 *)(t + 0x80) + d) > *(s16 *)(t + 0x82) + 0x708) {
+        return 0;
+    }
+    e = *(u16 *)(t + 0x36) - 0x22FB;
+    return *(s16 *)(t + 0x82) + 0xD48 >= (u16)(*(u16 *)(t + 0x80) + e);
+}
 
 void func_80125DD8(u8 *p, s32 a1)
 {
@@ -2562,7 +2576,29 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012DBB4);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012DE60);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012E1A0);
+extern s16 *D_1F80028C;
+
+void func_8012E1A0(u32 *a0, void *a1)
+{
+    u32 *s1;
+    s32 s0;
+    u32 w;
+    s16 *o;
+
+    s1 = a0;
+    a0 += 4;
+
+    if (D_800BF873) {
+        o = (s16 *)D_1F80028C;
+        { s32 x = o[0x17]; s32 y = o[0x19]; s32 z = o[0x1B]; s0 = func_80078240(x - D_1F800160, y - D_1F800162, z - D_1F800164) << 1; }
+        gte_ldfcdir(0, 0, 0);
+        w = *s1;
+        func_8012D2B4(func_8012CDF4(a0, a1, w & 0xFFFF, s0), a1, w >> 16, s0);
+    } else {
+        w = *s1;
+        f_UpdateCircusLockerNpcActor(func_801311D0(a0, a1, w & 0xFFFF), a1, w >> 16);
+    }
+}
 
 typedef struct {
     u8 x[8];

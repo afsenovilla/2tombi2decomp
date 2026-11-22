@@ -3131,7 +3131,31 @@ void func_8012A638(RECT16 *a) {
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012A7CC);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012A9DC);
+extern s16 D_1F800164_6889_91dd;
+extern s16 D_1F800160_d288_1b66;
+extern s16 *D_1F80028C;
+
+void func_8012A9DC(u32 *a0, void *a1)
+{
+    u32 *s1;
+    s32 s0;
+    u32 w;
+    s16 *o;
+
+    s1 = a0;
+    a0 += 4;
+
+    if (D_800BF873) {
+        o = (s16 *)D_1F80028C;
+        { s32 x = o[0x17]; s32 y = o[0x19]; s32 z = o[0x1B]; s0 = func_80078240(x - D_1F800160_d288_1b66, y - D_1F800162, z - D_1F800164_6889_91dd) << 1; }
+        gte_ldfcdir(0, 0, 0);
+        w = *s1;
+        func_8012A06C(func_80129BAC(a0, a1, w & 0xFFFF, s0), a1, w >> 16, s0);
+    } else {
+        w = *s1;
+        f_UpdateWaterTempleRaftNpcActor(func_80140FBC(a0, a1, w & 0xFFFF), a1, w >> 16);
+    }
+}
 
 extern S8 D_80145A70[];
 void func_8012AADC(void)
