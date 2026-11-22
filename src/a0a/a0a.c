@@ -943,7 +943,111 @@ u32 *func_801103F4(u32 *f, u32 *ot, s32 n)
     return f;
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80110698);
+u32 *func_80110698(u32 *f, u32 *ot, s32 n)
+{
+    s32 sz[4];
+    s32 *otz = (s32 *)0x1F800004;
+    T2PolyGT4 *p = D_800BF544;
+    s32 *flg = (s32 *)0x1F800000;
+    u32 c;
+    u32 mode;
+    s32 b, a, v, e;
+    u32 *o;
+
+    while (n-- != 0) {
+        T2_ldv3p(f);
+        c = f[0];
+        p->rgb0 = c & 0xFFF0F0F0;
+        T2_rtpt();
+        p->rgb1 = (c << 4) & 0xF0F0F0;
+        c = f[1];
+        T2_stflg(flg);
+        if (*flg >= 0) {
+            T2_nclip();
+            p->uv0 = f[2];
+            T2_stopz(flg);
+            if (*flg > 0) {
+                T2_stsxy3_gt4(p);
+                T2_ldv1p(f);
+                p->rgb2 = c & 0xF0F0F0;
+                T2_rtps();
+                p->rgb3 = (c << 4) & 0xF0F0F0;
+                p->uv1 = f[3];
+                T2_stflg(flg);
+                if (*flg >= 0) {
+                    T2_stsxy(&p->x3);
+                    if ((p->x0 < 320 || p->x1 < 320 || p->x2 < 320 || p->x3 < 320) &&
+                        (p->y0 < 240 || p->y1 < 240 || p->y2 < 240 || p->y3 < 240)) {
+                        p->uv1 = f[3];
+mode = c >> 24;
+if (mode != 0) {
+T2_stsz0(&sz[0]);
+T2_stsz1(&sz[1]);
+T2_stsz2(&sz[2]);
+T2_stsz3(&sz[3]);
+do {
+if (mode == 1) {
+a = sz[1];
+if (a < sz[0]) {
+a = sz[0];
+}
+b = sz[3];
+if (b < sz[2]) {
+b = sz[2];
+}
+if (b < a) {
+b = a;
+}
+} else {
+a = sz[1];
+if (sz[0] < a) {
+a = sz[0];
+}
+b = sz[3];
+if (sz[2] < b) {
+b = sz[2];
+}
+if (a < b) {
+b = a;
+}
+}
+*otz = b >> 2;
+} while (0);
+} else {
+T2_avsz4();
+do {
+T2_stotz(otz);
+} while (0);
+do {
+e = *otz >> 10;
+*otz = (*otz >> e) + (e << 9);
+} while (0);
+do {
+if ((u32)(*otz - 4) >= 0x7FC) {
+*otz = -1;
+}
+} while (0);
+if (*otz >= 0) {
+do {
+o = ot + *otz;
+p->tag = *o | 0x0C000000;
+*o = (u32)p;
+} while (0);
+v = f[4];
+p->uv2 = v;
+p->uv3 = (u32)v >> 16;
+p++;
+}
+}
+}
+}
+}
+}
+        f += 11;
+    }
+    D_800BF544 = p;
+    return f;
+}
 
 void func_801109CC(u32 *p, void *b)
 {
