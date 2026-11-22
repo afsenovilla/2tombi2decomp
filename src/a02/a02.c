@@ -484,9 +484,39 @@ void func_80112A98(void *a)
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80112B5C);
-
+#define F16(p, o) M2C_FIELD(p, s16 *, o)
+extern s8 D_800BF80D;
 extern u8 **D_1F800154;
+
+void func_80112B5C(u8 *a) {
+    u8 **l;
+    u8 *e;
+
+    if (F16(a, 0x16E) != 0 && D_800BF80D == 0 && !(M2C_FIELD(a, u16 *, 0x17E) & 0x200)) {
+        l = D_1F800154;
+        D_1F800182 = *(u8 *)0x1F80015C;
+        while (D_1F800182 != 0) {
+            e = *l;
+            D_1F800182--;
+            l++;
+            if (e[0] == 1) {
+                switch (e[2]) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                    func_80022060(a, e);
+                    break;
+                case 5:
+                    func_80111D24(a, e);
+                    break;
+                }
+            }
+        }
+    }
+}
+
 extern u8 D_1F80015C;
 extern u8 D_1F800183;
 void func_80112C58(void) {
@@ -1699,7 +1729,37 @@ void func_8011CB20(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", f_AdvanceStarvingCharlesDialogue);
+extern u8 D_800BFAFD;
+extern u8 D_8012A508[];
+extern u8 D_8012A538[];
+extern u8 *D_8012A568[];
+
+void f_AdvanceStarvingCharlesDialogue(u8 *a) {
+    s32 k;
+
+    if (a[0x71] == 0xFF) {
+        switch (k = a[6]) {
+        case 0:
+            if (D_800BFAFD != 0) {
+                func_80040D68(a, D_8012A508);
+                a[6]++;
+                break;
+            }
+        case 1:
+            func_80040D68(a, D_8012A568[a[0x5E]]);
+            a[5] = 2;
+            a[6] = 0;
+            break;
+        case 2:
+            func_80040D68(a, D_8012A538);
+            a[5] = 3;
+            a[6] = 0;
+            a[0x5E] = k;
+            break;
+        }
+        a[0x70] = 1;
+    }
+}
 
 void func_8011CCD0(void *arg0) {
     if (M2C_FIELD(arg0, u8 *, 0x71) == 0xFF) {

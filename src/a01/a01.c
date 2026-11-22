@@ -2844,7 +2844,35 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801256EC);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaEntranceAndDoorActor);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80126140);
+extern s8 D_800BF81F;
+
+void func_80126140(u8 *a) {
+    u8 *e = D_800E7E80;
+    s32 k = a[5];
+
+    switch (k) {
+    case 0:
+        if (e[0x2A] == a[0x2A] && e[5] == 0) {
+            a[5] = 1;
+            D_1F800137 = 2;
+        }
+        break;
+    case 1:
+        a[5] = 2;
+        a[0x29] = k;
+        D_800BF81F = (k - a[0x5F]) * 16;
+    case 2:
+        if (func_80073328(a, e) != 0) {
+            a[5]++;
+        }
+        break;
+    case 3:
+        if (e[0x2A] != a[0x2A]) {
+            a[5] = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012623C);
 
