@@ -294,7 +294,31 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010D7D4);
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010D910);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010DE2C);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+
+void func_8010DE2C(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        H(a, 0x4E) = 0;
+    case 1:
+        a[1] = 1;
+        if (H(a, 0x4E) < 0x1D6) {
+            H(a, 0x4E) += (0x1F4 - H(a, 0x4E)) >> 2;
+        } else {
+            H(a, 0x4E) += 6;
+        }
+        if (H(a, 0x4E) >= 0x3E8) {
+            a[4] = 2;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_8010DEE0(u8 *a)
 {

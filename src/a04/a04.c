@@ -242,7 +242,18 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80111710);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801117C0);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80111828);
+extern s16 D_1F80009C_c31a;
+extern u16 D_800BFE56;
+typedef struct { u8 pad[0x48]; s32 unk48; } AreaState808;
+extern AreaState808 D_800BF808;
+
+s32 func_80111828(u8 *a, s32 b) {
+    if (func_80023A04(a, b, 3) < 0) {
+        return 0;
+    }
+    a[0x5F] = func_80077768(D_1F80009C_c31a, M2C_FIELD(a, s16 *, 0x60), 1) + 2;
+    return 1;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011187C);
 
@@ -1062,7 +1073,13 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011FBD4);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", f_UpdateKujaraRanchPlacementRewardActor);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80120188);
+void func_80120188(u8 *a) {
+    if (D_800BFE56 & 0x10) {
+        M2C_FIELD(a, s16 *, 0x32) += 0x5A;
+    }
+    func_8003FBC4(a);
+    D_800BF808.unk48++;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801201E0);
 

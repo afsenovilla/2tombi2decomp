@@ -941,7 +941,23 @@ void func_80114D50(u8 *a)
     func_80114630(a);
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80114DB0);
+typedef struct { s16 x, y, z; } V3;
+extern V3 D_8011EC68[];
+
+void func_80114DB0(u8 *a)
+{
+    *(s16 *)(a + 0x2E) = D_8011EC68[a[3]].x;
+    *(s16 *)(a + 0x32) = D_8011EC68[a[3]].y;
+    *(s16 *)(a + 0x36) = D_8011EC68[a[3]].z;
+    func_8004766C(a);
+    func_80048750(a);
+    *(u16 *)(a + 0x56) = D_1F8001A0;
+    if (a[3] == 0) {
+        *(u16 *)(a + 0x56) -= 0xD8;
+    } else {
+        *(u16 *)(a + 0x56) -= 0x200;
+    }
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80114E64);
 

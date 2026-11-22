@@ -832,7 +832,16 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012138C);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801214AC);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AdvanceFeedChicksActorTurn);
+extern s16 D_8014A240[];
+
+s32 f_AdvanceFeedChicksActorTurn(u8 *a) {
+    M2C_FIELD(a, s16 *, 0x56) += M2C_FIELD(a, s16 *, 0x50);
+    if ((M2C_FIELD(a, s16 *, 0x50) > 0 && M2C_FIELD(a, s16 *, 0x56) >= M2C_FIELD(a, s16 *, 0x66)) ||
+        (M2C_FIELD(a, s16 *, 0x50) < 0 && M2C_FIELD(a, s16 *, 0x56) <= M2C_FIELD(a, s16 *, 0x66))) {
+        return 1;
+    }
+    return 0;
+}
 
 s32 func_80121574(void) {
     s32 r = func_8009A450() & 0xF;
@@ -1208,7 +1217,16 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00InteriorTransitionActor);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleA00InteriorSceneEffectActor);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012CE30);
+u8 *func_8012CE30(u8 *a, s32 b, s32 i) {
+    u8 *p = func_8003116C(D_8014A240[i], b, -0x64);
+
+    if (p != NULL) {
+        M2C_FIELD(p, u8 **, 0x10) = a;
+        p[0x28] |= 0x80;
+        return p;
+    }
+    return NULL;
+}
 
 s16 f_GetWindmillControllerBearing(u8 *a) {
     u8 *t = D_1F800218;
@@ -2103,7 +2121,18 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateCrabBasketCarrierSequence);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateLinkedTownCreatureActor);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80145C78);
+s32 func_80145C78(s32 k, u8 *b) {
+    if (k < 4) {
+        return M2C_FIELD(b, s16 *, 0xA) >= 0x125C;
+    }
+    if (k == 7) {
+        return M2C_FIELD(b, s16 *, 0xA) >= 0x125C;
+    }
+    if ((u32)(k - 4) < 8) {
+        return 1;
+    }
+    return 2;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80145CD0);
 

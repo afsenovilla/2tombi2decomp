@@ -260,7 +260,27 @@ void func_8010DC48(void *arg0) {
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010DC78);
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", f_SpawnLastEvilPigCopiedWeaponProjectile);
+extern void *D_8011A9F8[];
+
+void f_SpawnLastEvilPigCopiedWeaponProjectile(u8 *a, s32 b, s32 c)
+{
+    u8 *p = func_8007A980(3, 2, 0);
+    u8 t;
+    if (p != 0) {
+        *(s16 *)(p + 0x2E) = *(s16 *)(a + 0x2E);
+        *(s16 *)(p + 0x32) = *(s16 *)(a + 0x32);
+        *(s16 *)(p + 0x36) = *(s16 *)(a + 0x36);
+        p[0x46] = b;
+        *(s16 *)(p + 0x54) = 0;
+        *(s16 *)(p + 0x58) = 0;
+        *(s16 *)(p + 0x56) = *(s16 *)(a + 0x56);
+        *(void **)(p + 0x1C) = D_8011A9F8[c];
+        t = a[0x2A];
+        p[2] = 0xD3;
+        p[3] = c;
+        p[0x2A] = t;
+    }
+}
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010DDE4);
 
