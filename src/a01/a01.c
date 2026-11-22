@@ -2640,7 +2640,34 @@ s32 func_8011FB80(u8 *a) {
     return 0;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011FC88);
+u8 *func_8012C2B4(void);
+
+s32 func_8011FC88(u8 *a) {
+    switch (a[0x78]) {
+    case 0:
+        func_800440E4(D_800E7E80, 0x72, 4);
+        ((void (*)(u8 *))func_8012C2B4)(a);
+        a[0x78]++;
+        break;
+    case 1:
+        if (D_800BF80E != 0) {
+            func_800440E4(D_800E7E80, 0x73, 4);
+            a[0x78]++;
+        }
+        break;
+    case 2:
+        if (D_800BF80E != 0) {
+            func_800440E4(D_800E7E80, 2, 4);
+            D_800BF9FA_0556 = 0x18;
+            func_80074810(0x96, 0);
+            return 1;
+        }
+        break;
+    default:
+        return 0;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_HandleThirstyMinerInteraction);
 
