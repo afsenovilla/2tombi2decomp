@@ -2267,7 +2267,36 @@ void func_80027E5C(a)
     *(s32 *)(a + 0x38) = f_DrawProjectedSpriteDefinitionStream(d, (*(u16 *)(a + 0x46) << 16) | *(u16 *)(a + 0x44));
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002801C);
+void func_8002801C(u8 *a)
+{
+    s32 *flag = &D_1F800080;
+    s32 *otz = (s32 *)D_1F800084;
+    s32 *o2 = &D_1F800088;
+    s32 *z = (s32 *)D_1F800090;
+    s32 d = *(s32 *)(a + 0x34);
+
+    if (d == 0) {
+        return;
+    }
+    SetProj_7CB4(6);
+    gte_ldv0_2C(a);
+    if (ProjZ(a)) {
+        func_80031780(a);
+        return;
+    }
+    {
+        s32 x;
+        s32 y;
+        s32 h = *(s16 *)(a + 0x4A);
+
+        x = (*otz >> 8) * h;
+        y = *(s16 *)(a + 0x48);
+        *z = 0;
+        *o2 = x;
+        *otz = (*otz >> 8) * y;
+    }
+    *(s32 *)(a + 0x38) = f_DrawProjectedSpriteDefinitionStream(d, (*(u16 *)(a + 0x46) << 16) | *(u16 *)(a + 0x44));
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800281EC);
 
@@ -2564,7 +2593,65 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8002BAFC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002BC9C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002C138);
+extern s32 D_1F800000[];
+extern s16 D_1F800002[];
+extern s16 D_1F800004[];
+extern s32 D_1F800014[];
+extern s32 D_1F8000D0_42d8[];
+extern u8 D_800A203C[];
+extern u8 D_8009F05C[];
+/* f_SetEffectRenderTransform, inlined */
+static inline void SetRT_C138(void *pos, u8 *scale, s16 *rot)
+{
+    s32 v[3];
+
+    RotMatrix_gte(rot, D_1F800000);
+    v[0] = scale[0] * 4;
+    v[1] = scale[1] * 4;
+    v[2] = scale[2] * 4;
+    ScaleMatrix(D_1F800000, v);
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_ldclmv(D_1F800000);
+    gte_rtir();
+    gte_stclmv(D_1F800000);
+    gte_ldclmv(D_1F800002);
+    gte_rtir();
+    gte_stclmv(D_1F800002);
+    gte_ldclmv(D_1F800004);
+    gte_rtir();
+    gte_stclmv(D_1F800004);
+    gte_ldv0(pos);
+    gte_rtv0();
+    gte_stlvnl(D_1F800014);
+    D_1F800000[5] += D_1F8000D0_42d8[15];
+    D_1F800000[6] += D_1F8000D0_42d8[16];
+    D_1F800000[7] += D_1F8000D0_42d8[17];
+    gte_SetRotMatrix(D_1F800000);
+    gte_SetTransMatrix(D_1F800000);
+}
+
+void func_8002C138(u8 *a)
+{
+    s16 rot[4];
+    s16 pos[4];
+    u8 *sc;
+    s16 r = 0;
+
+    sc = D_800A203C + (*(s16 *)(a + 0x60) >> 1) * 5;
+    rot[0] = 0;
+    rot[1] = *(u16 *)(a + 0x56);
+    if (*(u16 *)(a + 0x60) & 1) {
+        r = 0xAA;
+    }
+    rot[2] = r;
+    pos[0] = *(u16 *)(a + 0x2E);
+    pos[1] = *(u16 *)(a + 0x32);
+    pos[2] = *(u16 *)(a + 0x36);
+    gte_ldfcdir(0, 0, 0);
+    *(s32 *)D_1F800090 = 0;
+    SetRT_C138(pos, sc, rot);
+    f_DrawPackedGouraudQuadStream(D_8009F05C, sc[3], -10, sc[4]);
+}
 
 extern u8 D_800A0700[];
 extern u8 D_800A06DC[];
@@ -2791,7 +2878,39 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8002F8DC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002FC40);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002FDD0);
+extern u8 D_8009F3E0[];
+typedef struct { u8 b[4]; } B4_FDD0;
+extern B4_FDD0 D_800102EC;
+
+void func_8002FDD0(u8 *a)
+{
+    s16 pos[4];
+    B4_FDD0 sc;
+    s32 y = *(s16 *)(a + 0x50);
+    s16 *p = (s16 *)(a + 0x50);
+    s32 k;
+    s32 i;
+
+    sc = D_800102EC;
+    if (y < 0) {
+        y = 0;
+    }
+    k = p[1];
+    pos[0] = *(u16 *)(a + 0x2C);
+    pos[2] = *(u16 *)(a + 0x30);
+    pos[1] = *(u16 *)(a + 0x2E) - y * 10;
+    gte_ldfcdir(0x1E0, 0x3C0, 0x640);
+    {
+        s32 c = 0x1000;
+
+        *(s32 *)D_1F800090 = c;
+    }
+    for (i = 0; i < 4; i++) {
+        SetRT_C138(pos, sc.b, (s16 *)(a + 0x48));
+        f_DrawPackedGouraudQuadStream(D_8009F3E0, 0, *(s16 *)(a + 0x32), k);
+        *(u16 *)(a + 0x4A) += 0x400;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800300D8);
 
@@ -2992,12 +3111,7 @@ void func_80031780(u8 *p)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ProjectEffectPointToScreenAndDepth);
 
-extern s32 D_1F800000[];
-extern s16 D_1F800002[];
-extern s16 D_1F800004[];
-extern s32 D_1F800014[];
 extern s32 D_1F800020_edd9[];
-extern s32 D_1F8000D0_42d8[];
 void f_SetIdentityMatrix(s32 *m);
 void f_SetEffectRenderTransform(void *pos, u8 *scale, s16 *rot)
 {
@@ -11576,7 +11690,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C328);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C478);
 
-extern M2C_UNK func_8002C138;
+void func_8002C138();
 void func_8006C59C(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x44) = 0x1000;
     M2C_FIELD(arg0, s16 *, 0x80) = 0x3C;
