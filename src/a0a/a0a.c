@@ -593,7 +593,71 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80112384);
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8011253C);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80112764);
+typedef struct { u8 x, y, z; s8 t; } Spark;
+
+void func_80112764(u8 *a)
+{
+    Spark *sp = (Spark *)(a + 0x50);
+    Spark *e;
+    s32 i;
+    switch (a[4]) {
+    case 0:
+        for (i = 0; i < 10; i++) {
+            sp[i].x = func_8009A450();
+            sp[i].y = func_8009A450();
+            sp[i].z = 0;
+            sp[i].t = func_8009A450() & 0xF;
+        }
+        a[4] = 1;
+        H(a, 0x48) = 0;
+        H(a, 0x4E) = 0;
+        a[5] = 0;
+        a[6] = 0xE;
+        a[7] = 0;
+    case 1:
+        if (H(a, 0x48) < 0x400) {
+            H(a, 0x4E) += 0x199;
+            a[5] += 10;
+            a[6] += 10;
+            H(a, 0x48) += 0x66;
+        } else {
+            H(a, 0x48) += 0x28;
+        }
+        if (H(a, 0x48) >= 0x800) {
+            H(a, 0x48) = 0;
+        }
+        if (++a[5] >= 0x1C) {
+            a[5] = 0;
+        }
+        if (++a[6] >= 0x1C) {
+            a[6] = 0;
+        }
+        if ((s8)(a[7] += 4) < 0) {
+            a[4] = 2;
+            break;
+        }
+        for (i = 0; i < 10; i++) {
+            if (sp[i].t > 0) {
+                sp[i].t += 10;
+                if (sp[i].t >= 0x48) {
+                    if (H(a, 0x48) < 0x400) {
+                        sp[i].t = func_8009A450() & 0xF;
+                        sp[i].x = func_8009A450();
+                        sp[i].y = func_8009A450();
+                    } else {
+                        sp[i].t = -1;
+                    }
+                }
+            }
+        }
+        a[1] = 1;
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 #define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
 #define gte_ldv0m(p) __asm__ volatile("lwc2	$0, %0;" "lwc2	$1, %1" : : "m"(((s32 *)(p))[0]), "m"(((s32 *)(p))[1]))
