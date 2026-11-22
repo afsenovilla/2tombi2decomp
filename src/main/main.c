@@ -2599,7 +2599,93 @@ void f_DrawClass5ActorRenderQueue(void)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawPresentationActorList);
+void f_DrawPresentationActorList(void)
+{
+    u8 *a;
+    u8 *next;
+    s16 *t;
+    u8 prim[0x28];
+    s16 v[16];
+
+    a = D_800F2624_9bdb;
+    while (a != NULL) {
+        next = *(u8 **)(a + 0x24);
+        if (a[1] != 0) {
+            switch (a[0xB]) {
+            case 0:
+            case 15:
+                f_DrawActorModelByRenderMode(a);
+                break;
+            case 1:
+                func_8003F174(a, 0);
+                break;
+            case 2:
+                func_8003EF9C(a);
+                break;
+            case 4:
+                func_80039F4C(a);
+                break;
+            case 3:
+                func_8012A43C(a);
+                break;
+            case 5:
+                func_801295B4(a);
+                break;
+            case 6:
+                func_80129114(a);
+                break;
+            case 7:
+                func_8013DD58(a);
+                break;
+            case 8:
+                func_800726D4(a);
+                break;
+            case 16:
+                f_DrawActorSpritePartsWithZRotation(a);
+                break;
+            case 17:
+                f_DrawActorSpritePartsWithScaleAndZRotation(a);
+                break;
+            case 18:
+                func_8003C5F8(a);
+                break;
+            case 19:
+                func_8003C788(a);
+                break;
+            case 20:
+                if (D_800BF870.unk0 == 4) {
+                    func_8011BE5C(a);
+                    break;
+                }
+                t = *(s16 **)(a + 0x38);
+                if (t != NULL) {
+                    f_ApplyActorSpriteUvOrientation(prim, *(u8 * volatile *)(a + 0x3C) + *(s16 *)(*(u8 * volatile *)(a + 0x3C) + (*t << 2) + 2), 0);
+                    prim[7] = 0x2D;
+                    v[0] = *(s16 *)(a + 0x60);
+                    v[1] = *(s16 *)(a + 0x62);
+                    v[2] = *(s16 *)(a + 0x64);
+                    v[4] = *(s16 *)(a + 0x66);
+                    v[5] = *(s16 *)(a + 0x68);
+                    v[6] = *(s16 *)(a + 0x6A);
+                    v[8] = *(s16 *)(a + 0x6C);
+                    v[9] = *(s16 *)(a + 0x6E);
+                    v[10] = *(s16 *)(a + 0x70);
+                    v[12] = *(s16 *)(a + 0x72);
+                    v[13] = *(s16 *)(a + 0x74);
+                    v[14] = *(s16 *)(a + 0x76);
+                    SetRotMatrix(D_1F8000F8);
+                    SetTransMatrix(D_1F8000F8);
+                    f_ProjectAndQueueFourVertexPrimitive(prim, v, 0x10);
+                }
+                break;
+            case 32:
+                (*(void (**)(u8 *))(a + 0x18))(a);
+                break;
+            }
+        }
+        a = next;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawActorSpritePartsWithZRotation);
 
@@ -6772,7 +6858,105 @@ void func_80058F24(void *arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80058F5C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005950C);
+extern u8 D_1F800232;
+extern u16 D_1F800166_b02d;
+extern u16 D_1F800190_b2e0;
+extern u8 D_1F80019B_e707;
+extern u8 D_800BF89C;
+
+void func_8005950C(u8 *a)
+{
+    u16 s68;
+    u16 s54;
+    u16 m;
+    u8 st;
+
+    switch (a[4]) {
+    case 0:
+        f_InitializeTombaPlayerActor(a, 0);
+        break;
+    case 1:
+        s68 = D_800E7E68;
+        s54 = D_800ECF54;
+        if (D_1F800230_d8aa != 0) {
+            m = ~D_1F800174_de41;
+            D_800ECF54 = s54 & m;
+            D_800E7E68 = s68 & m;
+        }
+        if (D_800BF80F_fcc6 != 0 || D_1F800137_104c != 0) {
+            D_800E7E68 = 0;
+            D_800ECF54 = 0;
+        }
+        func_80055C9C(a, *(s16 *)(a + 0x140));
+        func_80058918(a);
+        if (a[0x146] == 0) {
+            D_1F800232 = 1;
+        }
+        func_800597AC(a);
+        func_80053FDC(a, 0);
+        D_800E7E68 = s68;
+        D_800ECF54 = s54;
+        break;
+    case 2:
+        a[0x17B] = 1;
+        func_80067CA4(a);
+        func_800597AC(a);
+        break;
+    case 4:
+        s68 = D_800E7E68;
+        s54 = D_800ECF54;
+        a[0xD] &= 0x7F;
+        if (D_1F800137_104c == 0) {
+            D_800E7E68 = 0;
+            D_800ECF54 = 0;
+        } else {
+            D_800E7E68 = D_1F800166_b02d;
+            D_800ECF54 = D_1F800190_b2e0;
+        }
+        func_80055C9C(a, *(s16 *)(a + 0x140));
+        func_80058F5C(a);
+        func_800597AC(a);
+        func_80053E50(a);
+        D_800E7E68 = s68;
+        D_800ECF54 = s54;
+        break;
+    case 5:
+        func_8018BD30(a);
+        func_800597AC(a);
+        break;
+    case 6:
+        func_8018BE40(a);
+        func_800597AC(a);
+        break;
+    case 7:
+        st = a[5];
+        switch (st) {
+        case 0:
+            f_StopVoicePlayback();
+            a[5]++;
+            break;
+        case 1:
+            if (func_80045580(1) != 0) {
+                a[5]++;
+            }
+            break;
+        case 2:
+            if (D_1F80019B_e707 != 0) {
+                D_800BF89C = 4;
+                f_EndScriptedInteractionAudio();
+                a[4] = 1;
+                a[5] = 0;
+                a[6] = 0;
+                a[7] = 0;
+                *(s16 *)(*(u8 **)D_1F800138 + 0x4C) = 2;
+                *(s16 *)(*(u8 **)D_1F800138 + 0x4E) = 1;
+            }
+            break;
+        }
+        f_AdvanceActorSkeletalAnimation(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800597AC);
 
@@ -7088,7 +7272,6 @@ void func_8006228C(void *arg0) {
 }
 
 extern u8 D_1F80027A;
-extern u8 D_1F80019B_e707;
 extern s32 D_1F80023C;
 extern u8 D_800BF88F;
 extern u16 D_801FE0E0;
@@ -7294,7 +7477,97 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800645E0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006483C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80064BA0);
+void func_80064BA0(u8 *a)
+{
+    u8 *s;
+    volatile s32 r;
+
+    switch (a[6]) {
+    case 0:
+        *(s16 *)(a + 0x6A) = 0;
+        f_SetTombaAnimationIfChanged(a, 0x1A, 0);
+        a[0x169] = 0x18;
+        a[7] = 0;
+        a[0x168] = 1;
+        a[6]++;
+        if ((*(u32 *)(a + 0x17C) & 0x04400200) == 0x200) {
+            a[0x164] = 0;
+            *(u8 **)(a + 0x158) = NULL;
+            *(s16 *)(a + 0x32) = *(u16 *)(a + 0x14E) + *(u16 *)(a + 0x64);
+            f_DetachTombaFromSupport(a, 0);
+            break;
+        }
+    case 1:
+        s = *(u8 **)(a + 0x158);
+        if (s == (u8 *)1) {
+            r = func_800634A8(a);
+        } else {
+            switch (D_800BF870.unk0) {
+            case 0:
+                r = func_8010B600(a);
+                break;
+            case 1:
+                r = func_8010AC3C(a);
+                break;
+            case 4:
+                r = func_801161EC(a);
+                break;
+            case 6:
+                r = func_80114784(a);
+                break;
+            case 8:
+                r = func_801136C4(a);
+                break;
+            case 10:
+                r = func_8010B42C(a);
+                break;
+            case 12:
+                r = func_8010CDA4(a);
+                break;
+            }
+        }
+        if (r & 0x40) {
+            if (s != (u8 *)1) {
+                s[0x29] = 0;
+            }
+            a[0x164] = 0;
+            *(u8 **)(a + 0x158) = NULL;
+            f_DetachTombaFromSupport(a, 0);
+        } else if (r & (D_1F800172_5cdb | 0x10)) {
+            if (s != (u8 *)1) {
+                s[0x29] = 0;
+            }
+            a[7] = 0;
+            a[6]++;
+        }
+        break;
+    case 2:
+        func_8006483C(a, 0);
+        if (a[0x29] != 0) {
+            *(s16 *)(a + 0x4A) = 0;
+            *(u16 *)(a + 0x50) = 0;
+            a[0x144] = 0;
+            *(u8 **)(a + 0x158) = NULL;
+            a[0x164] = 0;
+            a[7] = 0;
+            *(s16 *)(a + 0x44) = 0;
+            a[0x145] = 0;
+            func_8005314C(a);
+            a[5] = 2;
+            a[6] = 2;
+            f_SetTombaAnimationIfChanged(a, 0x17, 1);
+        } else if (*(s16 *)(a + 0x4A) > 0x2800) {
+            *(s16 *)(a + 0x44) = 0;
+            *(u8 **)(a + 0x158) = NULL;
+            a[0x164] = 0;
+            *(u16 *)(a + 0x50) = *(u16 *)(a + 0x4A);
+            f_DetachTombaFromSupport(a, 0);
+            *(s16 *)(a + 0x4A) = *(u16 *)(a + 0x50);
+        }
+        f_UpdateTombaModelOrientationFromFacing(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80064E48);
 
@@ -8016,7 +8289,96 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006BDF0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006BE88);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C0C4);
+typedef struct { u8 pad[0x30]; s32 y; } ActorY_C0C4;
+extern ActorY_C0C4 D_800E7E80_1c87;
+extern s8 D_800E807E;
+
+void func_8006C0C4(u8 *a)
+{
+    u8 *g = D_800E7E80_f78d;
+    u32 s;
+    s32 n7;
+
+    switch (a[6]) {
+    case 0:
+        func_8006BDF0(a, 0);
+        a[6]++;
+        break;
+    case 1:
+        a[6]++;
+        if (a[0x5E] == 0) {
+            f_PlaySoundEffect(0xB, -2, 0);
+            *(u16 *)(a + 0x40) = 4;
+        } else {
+            f_PlaySoundEffect(0xB, -4, 0);
+            *(u16 *)(a + 0x40) = 2;
+        }
+        break;
+    case 2:
+        n7 = 7;
+        if (--*(s16 *)(a + 0x40) == 0) {
+            *(s16 *)(a + 0x80) = 0x64;
+            *(s16 *)(a + 0x82) = 0xC8;
+            *(s16 *)(a + 0x84) = 0xA0;
+            *(s16 *)(a + 0x86) = 0x104;
+            a[0] = 1;
+            a[6]++;
+            if (a[0x5E] == 0) {
+                *(u16 *)(a + 0x40) = 8;
+            } else {
+                *(u16 *)(a + 0x40) = n7;
+            }
+            *(u16 *)(a + 0x42) = 3;
+            func_8006BD20(a);
+        }
+        break;
+    case 3:
+        if (a[0x2B] == 1) {
+            if (--*(s16 *)(a + 0x42) == 0) {
+                *(u16 *)(a + 0x42) = 3;
+                a[0x2B] = 0;
+            }
+        }
+        func_8006BE88(a);
+        s = a[0x2B];
+        if (s >= 2) {
+            if (s == 2) {
+                g[0x79] = s;
+            }
+            *(u16 *)(a + 0x40) = 10;
+            *(u16 *)(a + 0x42) = 0x155;
+            a[6]++;
+        } else if (--*(s16 *)(a + 0x40) == 0) {
+            D_800E807E = 0;
+            a[0] = 2;
+            a[4] = 3;
+            if (g[0x146] & 1) {
+                g[0x79] = 0;
+            }
+        }
+        break;
+    case 4:
+        if (*(s16 *)(a + 0x42) < 0x800) {
+            D_800E7E80_1c87.y -= rsin(*(s16 *)(a + 0x42)) << 8;
+            *(u16 *)(a + 0x42) += 0x155;
+        }
+        if (--*(s16 *)(a + 0x40) == 0) {
+            D_800E807E = 0;
+            a[0] = 2;
+            a[4] = 3;
+            if (g[0x146] & 1) {
+                g[0x79] = 0;
+            }
+        }
+        break;
+    }
+    if (g[0x146] == 0) {
+        D_800E807E = 0;
+        a[0] = 2;
+        a[0x2B] = 2;
+        a[4] = 2;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C328);
 
@@ -8452,7 +8814,6 @@ void f_UpdateCameraFollowTomba(void)
     f_RebuildCameraViewTransform(c);
 }
 
-extern u8 D_800BF89C;
 
 void func_8006EA7C(u8 *a)
 {
@@ -8621,7 +8982,97 @@ s32 func_8006FFE8(void)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80070018);
+void func_80070018(u8 *a)
+{
+    u8 *p;
+    s32 r;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        break;
+    case 1:
+        if (a[0xBE] != 0 && D_800BF816 == 0) {
+            a[4] = 2;
+            break;
+        }
+        p = *(u8 **)(a + 0x10);
+        switch (a[5]) {
+        case 0:
+            func_800702C0(a);
+            break;
+        case 1:
+            func_80070650(a);
+            break;
+        }
+        if (a[1] = p[1]) {
+            if (a[0x5F] & 0x80) {
+                f_AdvanceActorTimedFrameSequence(a);
+            } else {
+                f_UpdateActorUnscaledModelTransforms(a);
+            }
+        }
+        break;
+    case 2:
+        if (*(s16 *)(a + 0x74) != 0) {
+            (*(s16 *)(a + 0x74))--;
+            p = *(u8 **)(a + 0x10);
+            if (a[1] = p[1]) {
+                if (a[0x5F] & 0x80) {
+                    f_AdvanceActorTimedFrameSequence(a);
+                } else {
+                    f_UpdateActorUnscaledModelTransforms(a);
+                }
+            }
+        } else if (a[0x5F] & 1) {
+            if (a[0x5F] & 2) {
+                switch (a[3]) {
+                case 0:
+                    r = f_GrantPickupHealth(a, 1);
+                    break;
+                case 1:
+                    r = f_GrantPickupHealth(a, 2);
+                    break;
+                case 4:
+                    r = func_8004B3F4((s32)a, 100);
+                    break;
+                case 5:
+                    r = func_8004B3F4((s32)a, 200);
+                    break;
+                case 6:
+                    r = func_8004B3F4((s32)a, 500);
+                    break;
+                case 7:
+                    r = func_8004B3F4((s32)a, 1000);
+                    break;
+                case 11:
+                    r = func_8004B3F4((s32)a, 100000);
+                    break;
+                case 15:
+                    r = func_8004A118(a);
+                    break;
+                case 16:
+                    r = func_8004A2A0(a);
+                    break;
+                case 17:
+                    r = func_8004B428(a);
+                    break;
+                }
+                if (r != 0) {
+                    a[4] = 3;
+                }
+            } else if (f_GrantNonGemPickupReward(a) != 0) {
+                a[4] = 3;
+            }
+        } else {
+            a[4] = 3;
+        }
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800702C0);
 
