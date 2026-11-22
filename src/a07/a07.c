@@ -1565,7 +1565,20 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80130E20);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_TestCircusActorForwardCollision);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", f_TestCircusActorGroundContact);
+extern s16 D_1F8000C0[];
+
+s32 f_TestCircusActorGroundContact(u8 *p)
+{
+    if (p[0x29] == 0) {
+        D_1F8000C0[0] = 0;
+        D_1F8000C0[1] = *(u16 *)(p + 0x86) - *(u16 *)(p + 0x84);
+        D_1F8000C0[2] = 0;
+        if (func_8012F1BC(p + 0x2C, D_1F8000C0, 0) > 0) {
+            p[0x29] = 1;
+        }
+    }
+    return p[0x29];
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80130FB8);
 

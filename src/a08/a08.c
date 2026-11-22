@@ -1235,7 +1235,18 @@ void func_80129760(void *arg0) {
     func_800517F8();
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80129784);
+u8 *func_80129784(void *a0)
+{
+    u8 *r = func_80072DDC(0, 0, 3, 0x10);
+
+    if (r) {
+        *(void **)(r + 0x1C) = f_UpdateWaterTempleQuestPropActor;
+        *(void **)(r + 0x10) = a0;
+        r[3] = 0x16;
+        r[0x28] |= 0x80;
+    }
+    return r;
+}
 
 void func_801297E8(u8 *p)
 {
@@ -2304,7 +2315,22 @@ void func_8013CB14(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013CB70);
+void func_8013CB70(u8 *p)
+{
+    u8 *g;
+
+    if (p[0x71] == 0xFF) {
+        switch (p[0x5E]) {
+        case 0:
+            g = (u8 *)&D_800BF870;
+            g[0xCD] |= 0x40;
+        case 2:
+            p[0x5E]++;
+            break;
+        }
+        p[5] = 0;
+    }
+}
 
 extern u8 D_800BFB59;
 
