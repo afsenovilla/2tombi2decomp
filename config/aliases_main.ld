@@ -312,5 +312,6 @@ StFunc1 = 0x80104B78;
 StFunc2 = 0x80104B7C;
 _svm_rattr = 0x80105BF8;
 _svm_pg = 0x80105CDC;
+D_80105CF6 = 0x80105CF6;
 _svm_vab_used = 0x80105D18;
 D_8010980C = 0x8010980C;
