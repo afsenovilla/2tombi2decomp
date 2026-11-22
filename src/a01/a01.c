@@ -3458,7 +3458,6 @@ static inline s32 inl_80122C08(u8 *a) {
     }
     return r;
 }
-
 void func_80121BAC(u8 *a)
 {
     u8 b;

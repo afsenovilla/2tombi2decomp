@@ -8,7 +8,8 @@ Pipeline: tools/cc.py (the file's // CC, // FLAGS, // ASPSX, // AS headers; defa
 Each defined function is looked up by name in config/symbol_addrs_<prog>.txt or as func_XXXXXXXX, and compared word by
 word with the retail file; relocated fields (jal target, %hi/%lo) are compared only where the object has no relocation.
 The length must also be the retail one (asm/<prog>/nonmatchings `nonmatching NAME, SIZE`).
-Prints OK / DIFF per function (with -v the differing words); --func NAME limits the check. --sbs prints a
+Prints OK / DIFF per function (with -v the differing words; `order only` when the function has retail's
+instructions in another order: tools/prio.py --sched shows the scheduler priorities); --func NAME limits the check. --sbs prints a
 side-by-side diff of every DIFF function, ours next to retail (tools/sbs.py; --sbs-all with the equal lines too).
 """
 import argparse, os, re, struct, subprocess, sys, tempfile
@@ -162,7 +163,21 @@ def main():
             diffs.append((-1, size, want_size))
         ok = not diffs
         bad += not ok
-        print("%s %s %08X (%d bytes)%s" % ("OK  " if ok else "DIFF", name, addr, size, "" if ok else ", %d words differ" % len(diffs)))
+        order = ""
+        if diffs and (want_size is None or want_size == size):
+            # the same instructions in another order (relocated fields masked): the schedulers' choice
+            wd = lambda b, i: struct.unpack("<I", b[i:i + 4])[0]
+            rtop = {wd(got, i) >> 16 for i in range(0, size, 4) if off + i in rel}
+            rjal = any(wd(got, i) >> 26 == 3 for i in range(0, size, 4) if off + i in rel)
+            mk = lambda w, r: (w >> 26, "R") if (r or rjal) and w >> 26 == 3 else \
+                (w >> 16, "R") if r or (w >> 16) in rtop else (w, "")
+            ours_w = sorted(mk(wd(got, i), off + i in rel) for i in range(0, size, 4))
+            want_w = sorted(mk(wd(want, i), False) for i in range(0, size, 4))
+            if ours_w == want_w:
+                order = " (order only: the same instructions; tools/prio.py %s %s --sched)" % (
+                    os.path.relpath(a.src, ROOT) if a.src.startswith(ROOT) else a.src, name)
+        print("%s %s %08X (%d bytes)%s%s" % ("OK  " if ok else "DIFF", name, addr, size,
+                                           "" if ok else ", %d words differ" % len(diffs), order))
         if a.v:
             for i, g, w in diffs:
                 if i < 0:

@@ -74,6 +74,45 @@ def type_names(s):
     return out
 
 
+BUILTIN_TYPES = {"void", "char", "short", "int", "long", "float", "double", "signed", "unsigned", "const",
+                 "volatile", "register", "struct", "union", "enum", "static", "extern", "inline"}
+_HEADER_TYPES = None
+
+
+def known_types(text):
+    """typedef names of the text and of include/*.h (and include/psyq/*.h)."""
+    global _HEADER_TYPES
+    if _HEADER_TYPES is None:
+        _HEADER_TYPES = set()
+        import glob
+        for h in glob.glob(os.path.join(ROOT, "include", "*.h")) + glob.glob(os.path.join(ROOT, "include", "psyq",
+                                                                                          "*.h")):
+            for kind, seg in ptsrc.items(ptsrc.strip_comments(open(h, errors="replace").read())):
+                _HEADER_TYPES |= {n for k, n in type_names(seg) if k == "type"}
+    out = set(_HEADER_TYPES)
+    for kind, seg in ptsrc.items(ptsrc.strip_comments(text)):
+        out |= {n for k, n in type_names(seg) if k == "type"}
+    return out
+
+
+def unknown_types(decl, known, ret=False):
+    """the type names of a parameter list (or of a return type with ret) that are neither C keywords nor typedefs
+    in `known` (a `struct X` tag is always fine)."""
+    out = []
+    parts = [decl] if ret else [x for x in decl.split(",")]
+    for part in parts:
+        tagged = bool(re.search(r"\b(struct|union|enum)\s+\w+", part))
+        part = re.sub(r"\b(struct|union|enum)\s+\w+", " ", part)
+        part = re.sub(r"\(\s*\*\s*\w*\s*\)\s*\([^()]*\)", " ", part)      # a function-pointer parameter
+        ws = re.findall(r"[A-Za-z_]\w*", part)
+        if not ret and (len(ws) > 1 or tagged and ws) and not part.rstrip().endswith("*"):
+            ws = ws[:-1]                                     # the parameter's own name
+        for w in ws:
+            if w not in BUILTIN_TYPES and w not in known and w != "...":
+                out.append(w)
+    return out
+
+
 def proto(p):
     """(name, parameter count or None for variadic / unknown) of a prototype line, or None."""
     m = re.match(r"[\w \*]+?\b(\w+)\s*\(([^;{}]*)\)\s*;$", p.strip())
@@ -188,8 +227,20 @@ def install(a):
         if adr is None:
             fail("%s is declared differently in %s and has no address; rename it by hand" % (k, path),
                  [n for n, _ in funcs])
-        new = "%s_%s" % (k, hashlib.sha1(p.encode()).hexdigest()[:4])
-        aliases[new] = adr
+        # an alias of that address the target already declares the scratch's way is used as is; otherwise a new
+        # one, and the target's other names for the address are listed (one of them may be meant)
+        same = [n for n, v in aliases.items() if v == adr and n != k and n in theirs]
+        fit = [n for n in same if norm(re.sub(r"\b%s\b" % n, k, theirs[n])) == norm(m.group(1))]
+        if fit:
+            new = fit[0]
+            print("extern %s clashes with the target's `%s`: using its alias %s (%s)" % (k, theirs[k], new,
+                                                                                          theirs[new]))
+        else:
+            new = "%s_%s" % (k, hashlib.sha1(p.encode()).hexdigest()[:4])
+            aliases[new] = adr
+            print("extern %s clashes with the target's `%s`: new alias %s%s" % (
+                k, theirs[k], new, "; the target's other names for %08X: %s" % (adr, ", ".join(
+                    "%s (%s)" % (n, theirs[n]) for n in same)) if same else ""))
         pre[i] = re.sub(r"\b%s\b" % k, new, p)
         funcs = [(n, re.sub(r"\b%s\b" % k, new, b)) for n, b in funcs]
     ap_ = libsweep.aliases_path(a.prog)
@@ -296,6 +347,22 @@ def install(a):
             return True     # (written as the definition's own header below)
         return any(re.search(r"\b%s\b(?!\s*\()" % pr[0], b) for _, b in funcs)
     extra = [p for p in pre if wanted(p)]
+    # a kept prototype naming a type nobody defines (an m2c guess, a type of another program's file) would not
+    # compile: it becomes `T f();` (or `s32 f();` when the return type is the unknown one)
+    known = known_types(t + "\n" + "\n".join(q for q in pre if q))
+    for i, p in enumerate(extra):
+        pr = proto(p)
+        if not pr:
+            continue
+        um = re.match(r"\s*(.*?)\b%s\s*\((.*)\)\s*;\s*$" % re.escape(pr[0]), p, re.S)
+        if not um:
+            continue
+        bad = [w for w in unknown_types(um.group(2), known)]
+        rbad = unknown_types(um.group(1), known, ret=True)
+        if bad or rbad:
+            new = "%s %s();" % ("s32" if rbad else um.group(1).strip(), pr[0])
+            print("prototype %s: unknown type %s, declared K&R: %s" % (p.strip(), ", ".join(bad + rbad), new))
+            extra[i] = new
     for i, p in enumerate(extra):   # a kept prototype takes the target's definition header: same types for sure
         pr = proto(p)
         if pr and pr[0] in later:
@@ -343,6 +410,24 @@ def install(a):
         if n == first:
             body = "\n".join(extra + ([""] if extra else []) + [body])
         t = t.replace(lines[n][1], body)
+    # a prototype the target already has for an installed function (`void f(void);` for one used as a value)
+    # with other parameters than the definition: conflicting types; it becomes the definition's header (K&R
+    # `T f();` when a call passes fewer arguments)
+    for n, body in funcs:
+        hd = heads(body, re.escape(n))
+        if not hd:
+            continue
+        want = proto_of(hd[0][1])
+        fm = re.match(r"[^(]*?\b%s\s*\(([^)]*)\)" % re.escape(n), want)
+        k = (params(fm.group(1)) or 0) if fm else 0
+        if k and any(c < k for c in calls(t, n)):
+            want = re.sub(r"\(([^()]*)\)\s*;\s*$", "();", want)
+        for m in list(re.finditer(r"(?m)^(?:extern\s+)?[A-Za-z_][\w \*]*?\b%s\s*\([^;{}()]*\)\s*;[ \t]*$"
+                                  % re.escape(n), t)):
+            if norm(m.group(0)) != norm(want) and not re.search(r"\(\s*\)\s*;", m.group(0)):
+                t = t.replace(m.group(0), want, 1)
+                print("prototype of %s in the target made the definition's: %s -> %s" % (n, m.group(0).strip(),
+                                                                                         want))
     if includes:   # after the target's last #include line
         last = list(re.finditer(r"(?m)^#include .*$", t))
         at = last[-1].end() if last else 0

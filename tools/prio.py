@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Register allocation priorities of one scratch function, from cc1's local / global allocation dumps.
 
-  python3 -I tools/prio.py FILE.c [FUNC] [--prog P] [--cc C] [--flags F] [--all]
+  python3 -I tools/prio.py FILE.c [FUNC] [--prog P] [--cc C] [--flags F] [--all] [--sched]
 
 Compiles FILE.c as tools/cc.py would (its // CC / // FLAGS lines, or the overrides) with `-dl -dg` and prints, per
 pseudo register of FUNC (default: the last function of the file): the uses (refs), the live length in insns,
@@ -18,6 +18,8 @@ opcodes / immediates, register operands paired over the equal runs; `s1 (s2 x3)`
 pseudos whose register differs are listed with the priority they would need: local-alloc / global-alloc hand
 the free registers out in priority order (a call-crossing pseudo takes the first free saved register, s0 up), so
 a pseudo retail keeps in a lower saved register than ours needs a priority above the pseudo that got that one.
+--sched (for order-only differences, tools/ccheck.py says when a function has retail's instructions in another
+order): the insns in output order with the block and priority each scheduling pass gave them.
 
 docs/STATUS.md "Register priority": wrapping a statement in `do { } while (0)` counts its refs more; the order of
 declarations and a copy into a new variable change refs / live lengths (tools/regswap.py tries those).
@@ -114,6 +116,42 @@ def retail_regs(src, func, prog, over):
     return cnt
 
 
+def print_sched(func, sched, asm):
+    """the function's assembler lines in output order (cc1 -dp: each with its insn uid) next to the priority and
+    the basic block the first (sched) and second (sched2) scheduling passes gave that insn. Within a block the list
+    scheduler issues the ready insn of highest priority first (critical path length; ties: the potential hazard,
+    then the original order): an insn retail issues earlier needs a longer dependent chain after it, or its
+    source statement written earlier."""
+    pri = []
+    for dump in sched:
+        txt = dump.get(func, "")
+        p, blk = {}, None
+        for l in txt.split("\n"):
+            m = re.match(r";;\s+-- basic block number (\d+)", l)
+            if m:
+                blk = int(m.group(1))
+            m = re.match(r";; insn\[\s*(\d+)\]: priority =\s*(-?\d+), ref_count =\s*(\d+)", l)
+            if m:
+                p[int(m.group(1))] = (blk, int(m.group(2)))
+        pri.append(p)
+    m = re.search(r"(?ms)^%s:\n(.*?)^\s*\.end\s+%s" % (re.escape(func), re.escape(func)), asm)
+    if not m:
+        print("(no assembler output for %s)" % func)
+        return
+    print("%s: insns in output order, scheduler priorities (block:priority, sched / sched2):" % func)
+    for l in m.group(1).split("\n"):
+        mm = re.match(r"\s*(.*?)\s*#\s*(\d+)\s+(\S+)\s*$", l)
+        if not mm or mm.group(1).startswith("."):
+            continue
+        uid = int(mm.group(2))
+        cols = []
+        for p in pri:
+            b_p = p.get(uid)
+            cols.append("%s:%s" % (b_p[0], b_p[1] if b_p[1] < 1 << 30 else "jump") if b_p else "-")
+        ins = re.sub(r"\s+#.*$", "", mm.group(1)).replace("\t", " ")
+        print("  %5d %-10s %-10s %-34s %s" % (uid, cols[0], cols[1], ins[:34], mm.group(3)))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("src")
@@ -122,6 +160,9 @@ def main():
     ap.add_argument("--flags")
     ap.add_argument("--all", action="store_true", help="also the insns that set each pseudo")
     ap.add_argument("--prog", default="main", help="the program whose retail bytes give the `retail` column")
+    ap.add_argument("--sched", action="store_true",
+                    help="also the function's insns in output order with the priorities the two schedulers gave "
+                         "them (-dS -dR -dp): for order-only differences")
     a = ap.parse_args()
     over = {k: v for k, v in (("cc", a.cc), ("flags", a.flags)) if v}
     o = cc.options(a.src, over)
@@ -132,14 +173,21 @@ def main():
         subprocess.run([gcc + "/cpp", "-undef", "-D__GNUC__=2", "-DMIPSEL", "-D_LANGUAGE_C", "-I" + inc,
                         "-I" + inc + "/psyq", os.path.abspath(a.src), d + "/x.i"], check=True)
         r = subprocess.run([gcc + "/cc1", "-quiet", "-w", "-funsigned-char"] + o["flags"].split() +
-                           ["-dl", "-dg", "x.i", "-o", "x.s"], cwd=d, capture_output=True, text=True)
+                           ["-dl", "-dg"] + (["-dS", "-dR", "-dp"] if a.sched else []) + ["x.i", "-o", "x.s"],
+                           cwd=d, capture_output=True, text=True)
         if r.returncode:
             sys.exit("cc1 failed:\n" + r.stderr[-2000:])
         lreg = sections(open(d + "/x.i.lreg").read())
         greg = sections(open(d + "/x.i.greg").read())
+        if a.sched:
+            sched = [sections(open(d + "/x.i." + s).read()) if os.path.exists(d + "/x.i." + s) else {}
+                     for s in ("sched", "sched2")]
+            asm = open(d + "/x.s").read()
     finally:
         shutil.rmtree(d, ignore_errors=True)
     func = a.func or list(lreg)[-1]
+    if a.sched:
+        print_sched(func, sched, asm)
     if func not in lreg:
         sys.exit("no %s in the dumps (functions: %s)" % (func, " ".join(lreg)))
     lt, gt = lreg[func], greg.get(func, "")

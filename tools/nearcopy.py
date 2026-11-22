@@ -435,7 +435,12 @@ def fix_names(text, prog, workdir=None):
             ad = syms_.get(name) or (int(name[5:], 16) if re.fullmatch(r"func_[0-9A-F]{8}", name) else None)
             if ad is None or sizes.get(name) != size:
                 continue
-            got = L.reloc_symbols(obj, name, binary[ad - delta: ad - delta + size], otext, off)
+            conf = {}
+            got = L.reloc_symbols(obj, name, binary[ad - delta: ad - delta + size], otext, off, conf)
+            for s_, ads in sorted(conf.items()):
+                print("fix_names: %s: %s gets %d addresses from the retail relocations (%s): one C name for two "
+                      "retail symbols (e.g. &buf[k] for the next symbol, or a struct base + offset); not renamed"
+                      % (name, s_, len(ads), ", ".join("%08X" % x for x in sorted(ads))))
             for s_, at in (got or {}).items():
                 if s_.startswith(".") or s_ == name:
                     continue
@@ -446,6 +451,8 @@ def fix_names(text, prog, workdir=None):
                 else:
                     new = nb.get(at) or ("func_%08X" % at if s_.startswith(("func_", "f_")) else "D_%08X" % at)
                     if ren.get(s_, new) != new:
+                        print("fix_names: %s is %s in one function and %s in %s: not renamed (two addresses for one "
+                              "name; split it in two externs)" % (s_, ren[s_], new, name))
                         continue     # two addresses for one name: leave it to the build check
                     ren[s_] = new
                 if new not in known and not re.fullmatch(r"func_[0-9A-F]{8}", new):

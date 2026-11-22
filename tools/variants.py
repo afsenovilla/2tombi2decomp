@@ -7,7 +7,8 @@
 FILE.c holds a common head (includes, externs, helpers), then the variants, each starting with a line `//--`
 (optionally `//-- a label`). Variant i is compiled as head + variant i and scored with tools/ccheck.py score()
 (0 = match). With --set, `{k}` placeholders in the file are also expanded to every combination of the given
-values (`\\n` in a value is a newline, `\\t` a tab, `\\|` a literal `|`; a value may also hold real newlines),
+values (`\\n` in a value is a newline, `\\t` a tab, `\\|` a literal `|`, `\\&` a literal `&`, a backslash before
+any other punctuation that character; a value may also hold real newlines),
 for each variant; with --alts K=ALTS.txt, `{K}` is expanded to each block of
 ALTS.txt, blocks separated by lines `@@` (multi-line statements; a placeholder on a line of its own takes the block
 as lines). --write saves the best variant as FILE.best.c; --sbs
@@ -19,6 +20,12 @@ import argparse, concurrent.futures as cf, itertools, os, re, subprocess, sys, t
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 import ccheck
+
+
+def unescape(x):
+    """a --set value: `\\n` newline, `\\t` tab, and a backslash before any other punctuation the character itself
+    (`\\|` a literal `|`, `\\&` a literal `&` the shell would not pass otherwise, `\\\\` a backslash)."""
+    return re.sub(r"\\(n|t|[^\w\s])", lambda m: {"n": "\n", "t": "\t"}.get(m.group(1), m.group(1)), x)
 
 
 def split(text):
@@ -55,8 +62,8 @@ def main():
     for s in a.set:
         k, v = s.split("=", 1)
         keys.append(k)
-        parts = [x.replace("\\|", "|") for x in re.split(r"(?<!\\)\|", v)]
-        vals.append([(x.replace("\\n", "\n").replace("\\t", "\t"), x) for x in parts])
+        parts = re.split(r"(?<!\\)\|", v)
+        vals.append([(unescape(x), x) for x in parts])
     for s in a.alts:      # file mode: multi-line alternatives, labelled by their number in the file
         k, f = s.split("=", 1)
         keys.append(k)

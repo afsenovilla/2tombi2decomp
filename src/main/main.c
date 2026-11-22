@@ -8788,7 +8788,6 @@ void func_800506D0(void)
 extern u8 D_800EA0BC[];
 extern s16 D_800E7E70;
 extern s16 D_800E7E72;
-
 void func_80050738(void)
 {
     u8 *d0 = D_800EA0BC;

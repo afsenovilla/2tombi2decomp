@@ -36,8 +36,10 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
   `__asm__ volatile("");` before the closing brace (or `goto end; ... end: __asm__ volatile(""); return r;`)
   reproduces Sony's single exit where RETURN sony is not enough (merged arm tails, early return branching to the exit
   with `move v0,zero` in the delay slot, restores after the last stores).
-- Library C sources to adapt (MIT): psx_tomba (/tmp/psx_tomba), psyz (/opt/psyz/decomp/src, Psy-Q 4.0),
-  psy-q-decomp (/opt/psy-q-decomp/src, `-DVERSION=40`). Mark each file `// Source: ...`; keep THIRD_PARTY_NOTICES.md
+- Library C sources to adapt (MIT): psx_tomba (/tmp/psx_tomba), psyz (/opt/psyz/decomp/src, Psy-Q 4.0, with the
+  4.0 SDK headers in /opt/psyz_inc/og made by setup_native.sh), psy-q-decomp (/opt/psy-q-decomp/src,
+  `-DVERSION=40`); `tools/pzsweep.py --install` compiles their files whole and finds any pending function of the
+  same bytes, named or not (`-DPERMUTER` keeps their INCLUDE_ASM out). Mark each file `// Source: ...`; keep THIRD_PARTY_NOTICES.md
   current. 4.0 differs from 4.4 in places (libsnd `_svm_voice` is 0x38 bytes in 4.4; SeqStruct `l_count`, `unk21..23`,
   `vab_id` are signed char; `_SsSndStop` has no SsUtReverbOff; the full list is in STATUS 2026-11-22 (8)).
 - Jump tables: a C `switch` keeps the retail table (tools/jtbl.py rewrites %hi/%lo and bare `$Lnn` operands).
@@ -49,9 +51,11 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
 
 1. **Families**: `python3 -I tools/families.py --by-scope`: pending functions with exact copies in several programs.
    Match one, then `python3 -I tools/nearcopy.py <progs> --install` fills the copies.
-2. **Inlined bodies**: `python3 -I tools/inlined.py <progs>` (build/inlined.csv): pending functions that contain a
-   matched function inlined. Copy the matched C as a `static inline` helper (`/* NAME, inlined */`) and call it.
-   Big dispatchers are usually a switch over several such handlers.
+2. **Inlined bodies**: `python3 -I tools/inlined.py <progs>` (build/inlined_<progs>.csv): pending functions that
+   contain a matched function inlined. Copy the matched C as a `static inline` helper (`/* NAME, inlined */`) and
+   call it. Big dispatchers are usually a switch over several such handlers: `python3 -I tools/dispatch.py --list
+   <progs>`, then `tools/dispatch.py PROG NAME` writes the scratch (helpers + m2c caller skeleton with the helper
+   calls in place; read its notes on shared tails), fix types and the cases, ccheck, install.
 3. **Near misses** listed in STATUS (1-12 words off), with the tools below.
 4. **Medium and large functions** (0x200+ bytes): the small ones are mostly done; bytes are what is left.
 5. After each batch: nearcopy over your programs (copies of your new C); list copies in other scopes for the
@@ -60,14 +64,18 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
 ## The loop for one function
 
 - Draft: `python3 -I tools/decomp.py NAME` (m2c, jump tables included). m2c invents constant arguments for calls
-  whose register is not set on that path, and leaves "uninitialised" locals that are really incoming parameters.
+  whose register is not set on that path (decomp.py flags them after the draft: `/* decomp.py: F at ADDR: a2 not
+  written on every path ... */`), and leaves "uninitialised" locals that are really incoming parameters.
 - Check: `python3 -I tools/ccheck.py FILE.c --prog P --func NAME [-v] [--sbs] [--no-protos]`. `--sbs` is the
   side-by-side diff (read it, do not guess from word counts). ccheck masks relocations: only the linked build proves
   two globals are not swapped. `--no-protos` compiles as install_c will (it drops scratch prototypes).
 - Search: `tools/variants.py` (several `//--` variants, `--set`, `--alts K=FILE`), `tools/permlines.py` (lines marked
   `//P`; `--exhaustive` for up to 7 lines; check that a result does not use a variable before it is set),
-  `tools/regswap.py` (register-choice rewrites, incl. `do { } while (0)` wraps), `tools/prio.py` (pseudo
-  priorities and registers from the cc1 dumps), `tools/hillclimb.py`, `tools/permute.py` (decomp-permuter),
+  `tools/regswap.py` (register-choice rewrites: declaration order, `do { } while (0)` wraps, parameter copies,
+  loads before stores, early constants, cast <-> `MEMBER_AT` member, volatile, duplicated tails, ternaries, per-path
+  locals), `tools/prio.py --prog P` (pseudo priorities and registers from the cc1 dumps next to retail's register;
+  `--sched` the scheduler priorities when ccheck says `order only`), `tools/hillclimb.py`, `tools/permute.py`
+  (decomp-permuter),
   `tools/magicdiv.py` (divisor of a magic-number division). Hand work from a draft beats hillclimb (about 5 minutes
   per function against hours of search); give up on a function after about 10 minutes without progress.
 - Install: `python3 -I tools/install_c.py FILE.c --prog P` (game C) or `tools/install_lib.py FILE.c --prog P`
@@ -92,7 +100,8 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
 
 ## Recipe catalogue (gcc 2.8.1 -O2; the dated details are in STATUS)
 
-**Aliasing and load / store order** (gcc 2.8 MEM_IN_STRUCT_P)
+**Aliasing and load / store order** (gcc 2.8 MEM_IN_STRUCT_P; `MEMBER_AT(T, p, o)` of include/common.h is the
+struct-member form of a cast access, regswap `member` toggles every one)
 - A scalar global is assumed not to alias a struct-field or array access at a varying address. Retail reloads a
   global after a store: access it as an array element / struct field. Retail hoists a global load above a pointer
   store: make that store a struct field, e.g. `#define S16F(p, o) (((struct { u8 pad[o]; s16 v; } *)(p))->v)`.
@@ -152,6 +161,11 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
   `move`: write that body out. Scratchpad pointers and loads can be locals of a parameterless inline helper, with
   the same dead pointer locals declared in the callers.
 
+- Dispatchers (dispatch.py): write every case in full with its helper call; where retail shares a tail between a
+  case and a helper (a branch into the middle of the copy), the same code written out again is merged back by gcc
+  (a00 f_HandleTownQuestRewardVisualActor matched at the first compile that way).
+- `if (--S16F(a, 0x40) == 0)` (an s16 field) tests with `sll 16`; the u16 field gives `andi 0xFFFF`.
+
 **Calls and prototypes**
 - install_c drops scratch prototypes: cast arguments (`(s16)`), give callees their real return types (a void
   prototype for a value-returning callee changes scheduling; a pointer return type changes delay-slot filling).
@@ -191,7 +205,15 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
 - A static inline helper must be defined before its first use, or gcc emits it as a function.
 - nearcopy refuses or mis-patches some copies (a repeated immediate, constants in helpers, callee names that differ
   per overlay): patch by hand and check the alias lines.
-- inlined.py writes build/inlined.csv for the programs given: two agents running it overwrite each other's file.
+- inlined.py writes build/inlined_<progs>.csv for a scope (build/inlined.csv only for a run over all programs).
+- dispatch.py skeletons lose the code at a label inside an inlined span that other code jumps to (gcc cross-jumped
+  a tail, or a case enters the copy): the header lists those labels; write that code out in full from the plain
+  decomp.py draft (gcc merges the identical tails again).
+- regswap `pathsplit` / `fork` / `copy` rename locals: check a result for a variable used before it is set (an
+  uninitialised read can happen to get the right register).
+- install_c: a prototype the target has for a function used as a value (`void f(void);`) is rewritten to the
+  installed definition's header (conflicting types otherwise; a02 func_8010CFAC); a prototype from a definition
+  further down is K&R when some call passes fewer arguments.
 
 ## Decisions (with dates in STATUS)
 

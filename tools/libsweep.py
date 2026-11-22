@@ -76,10 +76,12 @@ def asm_info(prog, name):
     return (int(a.group(1), 16) if a else None), (int(m.group(1), 16) if m else None)
 
 
-def reloc_symbols(obj, name, want, text, off):
+def reloc_symbols(obj, name, want, text, off, conflicts=None):
     """{symbol: address} the retail bytes give the function's relocations (jal targets, %hi/%lo pairs), or None when
-    one symbol would need two addresses. The object's own immediates are the addends (MIPS REL)."""
+    one symbol would need two addresses (with a `conflicts` dict: {symbol: set of addresses} of those, every one
+    collected). The object's own immediates are the addends (MIPS REL)."""
     out = {}
+    bad = {}
     rel = []
     for l in subprocess.run(["mipsel-linux-gnu-objdump", "-r", "-j", ".text", obj], capture_output=True,
                             text=True).stdout.splitlines():
@@ -109,8 +111,14 @@ def reloc_symbols(obj, name, want, text, off):
             continue
         val &= 0xFFFFFFFF
         if out.get(sym, val) != val:
-            return None
+            if conflicts is None:
+                return None
+            bad.setdefault(sym, {out[sym]}).add(val)
+            continue
         out[sym] = val
+    if bad:
+        conflicts.update(bad)
+        return None
     return out
 
 

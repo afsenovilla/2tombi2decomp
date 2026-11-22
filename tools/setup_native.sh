@@ -37,4 +37,17 @@ fi
 # MIT decompilations of the Psy-Q libraries, read by hand-matching of the library (AGENTS.md "Compilers")
 [ -d /opt/psyz ] || git clone -q --depth 1 https://github.com/Xeeynamo/psyz /opt/psyz || true
 [ -d /opt/psy-q-decomp ] || git clone -q --depth 1 https://github.com/sozud/psy-q-decomp /opt/psy-q-decomp || true
+# psyz's sources include the Psy-Q 4.0 SDK headers as include/og/ (its Makefile makes them from psyq400.tar.gz):
+# the same headers, lower-case names, in /opt/psyz_inc/og for tools/pzsweep.py (never copied into the repo)
+if [ -d /opt/psyz ] && [ ! -f /opt/psyz_inc/og/libgpu.h ]; then
+  t=$(mktemp -d)
+  if curl -fsSL --retry 3 -o $t/psyq400.tar.gz https://github.com/psyqz/psyz/releases/download/requirements/psyq400.tar.gz \
+      && (cd $t && cp /opt/psyz/decomp/sdk/psyq400.tar.gz.sha256 . && sha256sum -c --quiet psyq400.tar.gz.sha256); then
+    tar xzf $t/psyq400.tar.gz -C $t INCLUDE
+    mkdir -p /opt/psyz_inc/og/sys
+    for f in $t/INCLUDE/*.H; do tr -d '\r' < "$f" > "/opt/psyz_inc/og/$(basename "$f" | tr A-Z a-z)"; done
+    for f in $t/INCLUDE/SYS/*.H; do tr -d '\r' < "$f" > "/opt/psyz_inc/og/sys/$(basename "$f" | tr A-Z a-z)"; done
+  fi
+  rm -rf $t
+fi
 echo "toolchain ready"

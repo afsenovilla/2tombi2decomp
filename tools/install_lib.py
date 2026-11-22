@@ -28,6 +28,9 @@ SETUP = re.compile(r"^//\s*(CC|FLAGS|ASPSX|AS|EPILOGUE|RETURN)\s+.*$", re.M)
 IDENT = re.compile(r"[A-Za-z_]\w*")
 
 
+KW = ("extern", "const", "volatile", "static", "unsigned", "signed", "struct", "union", "typedef", "enum")
+
+
 def split(text):
     """(set-up lines, #include lines, [(names, decl text)], {func: text}) of a scratch file."""
     setup = [m.group(0) for m in SETUP.finditer(text[:800])]
@@ -60,8 +63,9 @@ def split(text):
         elif n:     # a static (inline) helper: a declaration of its name
             decls.append(([n], s))
         else:
-            fp = re.findall(r"\(\s*\*\s*([A-Za-z_]\w*)\s*\)", s)
             body = re.sub(r"\{.*\}", " ", s, flags=re.S)
+            # a function pointer declared at file scope (not a function-pointer field inside a struct's braces)
+            fp = re.findall(r"\(\s*\*\s*([A-Za-z_]\w*)\s*\)", body)
             if fp:
                 names = fp[:1]
             elif re.search(r"\w\s*\(", body) and not s.startswith("typedef"):
@@ -70,7 +74,13 @@ def split(text):
                 b = re.sub(r"\[[^\]]*\]|=.*", " ", body, flags=re.S)
                 ids = [x for x in IDENT.findall(b) if x not in ("extern", "const", "volatile", "static", "unsigned",
                                                               "signed", "struct", "union", "typedef", "enum")]
-                names = ids[-1:] + re.findall(r",\s*\**\s*([A-Za-z_]\w*)", b)
+                # every declarator of `extern T *a, *b;` (the last identifier of each comma-separated part)
+                names = []
+                for part in b.split(","):
+                    pid = [x for x in IDENT.findall(part) if x not in KW]
+                    if pid:
+                        names.append(pid[-1])
+                names = names or ids[-1:]
                 if s.startswith(("struct", "union", "enum")) or re.match(r"typedef\s+(struct|union|enum)\s+\w+", s):
                     m = re.match(r"(?:typedef\s+)?(?:struct|union|enum)\s+(\w+)", s)
                     if m:

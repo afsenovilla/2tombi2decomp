@@ -3777,7 +3777,6 @@ static inline void inl_8012E1E4(u8 *a) {
         break;
     }
 }
-
 void f_HandleTownQuestRewardVisualActor(u8 *a)
 {
     u8 *p;

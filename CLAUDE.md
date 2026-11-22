@@ -100,11 +100,21 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   sequence, copies x size (build/families.csv; `--by-scope` per agent scope, mixed families apart): the hand-work
   targets where one match gives several.
 - `python3 -I tools/inlined.py [PROG ...] [--from P,...] [--min-cover 0.8]`: pending functions that contain an
-  inlined copy of matched C (registers renamed, prologue / epilogue dropped; build/inlined.csv): copy the matched C
-  as a `static inline` helper headed `/* NAME, inlined */` and call it (install_c.py dedupes / renames helpers).
-- `python3 -I tools/regswap.py FILE.c F --prog P`: greedy register-choice rewrites of a near miss (declaration
-  orders, store through a temporary, reuse / fork / copy of locals, `do { } while (0)` wraps, parameter copies).
-  `python3 -I tools/prio.py FILE.c [F]`: gcc 2.8's pseudo priorities and hard registers from the cc1 dumps.
+  inlined copy of matched C (registers renamed, prologue / epilogue dropped; build/inlined.csv for all programs,
+  build/inlined_<progs>.csv for a scope; `{op:K->K2}`: constants that differ in the copy): copy the matched C as a
+  `static inline` helper headed `/* NAME, inlined */` and call it (install_c.py dedupes / renames helpers).
+- `python3 -I tools/dispatch.py --list [PROGS]` / `tools/dispatch.py PROG NAME`: a pending function holding several
+  matched bodies (inlined.py) -> build/dispatch/<prog>/<name>.c, the bodies as `static inline` helpers + an m2c
+  caller skeleton with each inlined span replaced by the helper call (read its header notes: shared tails), ccheck'd.
+- `python3 -I tools/regswap.py FILE.c F --prog P [--skip K,...]`: greedy register-choice rewrites of a near miss
+  (declaration orders, store through a temporary, reuse / fork / copy / per-path split of locals, `do { } while (0)`
+  wraps, parameter copies, loads before the previous store, constants as early locals, cast <-> `MEMBER_AT`
+  struct member, volatile re-reads, goto -> duplicated tail, ternary <-> if / else).
+  `python3 -I tools/prio.py FILE.c [F] --prog P [--sched]`: gcc 2.8's pseudo priorities and hard registers from the
+  cc1 dumps next to retail's register for each (what priority a pseudo would need); `--sched` the scheduler
+  priorities per insn (ccheck says `order only` when only the order differs).
+- `python3 -I tools/pzsweep.py [--prog main,boot] [--install]`: psyz / psy-q-decomp files compiled whole under the
+  library set-ups, every function compared with every pending library function of the same size (any name).
   `tools/permlines.py ... --exhaustive`: every order of at most 7 marked lines. `tools/nearcopy.py --lib`: library
   files between main and boot.
   `tools/magicdiv.py MULT --shift S [--unsigned]`: the divisor behind a magic-number multiply.

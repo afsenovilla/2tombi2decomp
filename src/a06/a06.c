@@ -2826,7 +2826,6 @@ block_6:
     M2C_FIELD(arg0, u8 *, 0x29) = 0U;
     M2C_FIELD(arg0, u8 *, 0x2B) = 0U;
 }
-
 void func_80124AA0(u8 *a0)
 {
     u8 *a = a0;

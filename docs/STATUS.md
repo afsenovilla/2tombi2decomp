@@ -3,6 +3,79 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-22 (9): tools after round 5
+
+One tools agent turned the "Tool work left" list of (8) into tools, each tried on real functions. +5 functions
+(**3925 / 7011, 26.9 % of the bytes**; 29 / 29 byte-identical): a00 f_HandleTownQuestRewardVisualActor (0x430, 4 inline helpers, from a dispatch.py draft at the
+first try), a01 func_80121BAC (0x3A8, 4 helpers, one `s16` decrement), main func_80050738 (regswap member toggle),
+a06 func_80124AA0 (regswap parameter copy; install_c needed the K&R fix below), a02 func_8010CFAC (the a07 copy: it
+failed to link because a02.c had `void func_8010CFAC(void);` for its use as a value; install_c now rewrites such a
+prototype to the definition's header).
+
+Done:
+- **`tools/dispatch.py`**: `--list [PROGS]`: pending functions in which inlined.py finds 2+ matched bodies at
+  places that do not overlap (106 now; most covered first). `PROG NAME ...`: build/dispatch/<prog>/<name>.c, a ready
+  install_c scratch: each body as a `static inline` helper headed `/* NAME, inlined */` (the target's own helper
+  when it has one; declarations transitively; symbols of another program's body renamed through the aligned
+  `%hi` / `jal` operands; a differing constant patched when its literal is unique) and the caller skeleton: m2c
+  (`--valid-syntax`) on the pending asm with every inlined span replaced by `jal helper` (parameters moved from the
+  saved register the copy keeps them in, the result moved where the copy leaves it, conditional exits kept as
+  `beqz $v0`), so the draft reads `inl_X(arg0);` per case. Header notes: register maps, spans, exits that make the
+  helper value-returning, and **labels inside a span reached from outside** (a tail gcc cross-jumped with other
+  code, or a case entering the copy: that path is missing from the skeleton; write it out in full). Then ccheck.
+  Matched 2 of 4 tried at once or after one fix; a08 f_UpdateClosedClamshellQuestActor 20 words (registers: a in
+  s2 instead of s1; prio.py says `m` outranks `a`), f_UpdateWaterTempleQuestItemPickupActor drafted (outer cases
+  fall into the next one: needs hand work), a04 func_8013E910 / a05 func_80114CC8 compile (118 / 109 off).
+- **inlined.py**: `search()` reusable (dispatch.py uses it), csv `build/inlined_<progs>.csv` for a scope run
+  (build/inlined.csv only for all programs: no overwriting between agents), a `consts` column / `{op:K->K2}` in the
+  listing: immediates that differ between the body and its copy at the same place (patch the helper or pass the
+  value as a parameter).
+- **regswap.py** new rewrites: `temp` (each parameter copied, after or before the declarations, and all at once),
+  `load` (a read moved into a local before the previous store, or to the top when it only uses parameters and
+  globals), `const` (a literal as an early s32 / u8 / s16 local, one use or all, or set just before its use),
+  `member` (`*(T *)(p + o)` / `M2C_FIELD(p, T *, o)` <-> `MEMBER_AT(T, p, o)`, now in include/common.h, and file
+  macros of that form back to casts), `volatile` (one read as `*(volatile T *)&(e)`), `goto` (a goto replaced by a
+  copy of its tail), `ternary` (<-> if / else), `pathsplit` (a local renamed to the end of its if arm / case, only
+  when its value does not flow out); `--skip`, `--max-cands`. On 20 near misses of (8): 2 matches (main
+  func_80050738 5 -> 0 member, a06 func_80124AA0 4 -> 0 temp), a05 func_8010B5E8 8 -> 3 (member), a06 func_8010B59C
+  10 -> 7 (const), main func_80035424 46 -> 15 (load + const); the 1-3 word ones did not move.
+- **prio.py** `--prog P`: a `retail` column (the register retail uses where ours uses each hard register, the
+  instruction lists aligned) and, for every pseudo in another register, which pseudo holds the wanted one and with
+  what priority (raise ours above it, or the choice is a tie / conflict). `--sched`: the function's insns in output
+  order (cc1 -dp uids) with the block and priority sched / sched2 gave them. **ccheck.py** says `order only` when a
+  DIFF function has retail's instructions in another order (relocated fields masked) and points to `--sched`.
+- **`tools/pzsweep.py`**: psyz (/opt/psyz/decomp/src + the Psy-Q 4.0 SDK headers /opt/psyz_inc/og, which
+  setup_native.sh now makes from psyz's psyq400.tar.gz, sha256 checked) and psy-q-decomp (`-DVERSION=40`) as
+  sources: every file of a library the project has, preprocessed whole (`-DPERMUTER` drops its INCLUDE_ASM), compiled
+  under 26 set-ups (`--all-variants`: 72), every function compared (masked) with every pending library function of
+  main / boot of the same size whatever its name; a match is cut standalone (pzcut logic: types, inline helpers,
+  prototypes, externs, strings -> D_ symbols), checked alone, written to build/pzsweep/<prog>/ with its set-up and
+  `// Source:` line, `--install`ed with install_lib. Full run (main + boot, 1136 files, ~4 min with -j 3): no new
+  match (round 5 took them); near misses listed (asm-by-design files and functions under 0x20 bytes left out):
+  only Snd_SetPlayMode 8. 28 psy-q-decomp libsnd files do not compile (conflicting prototypes in the sources
+  themselves), listed by the run.
+- **install_c.py**: a clashing extern uses an alias of that address the target already declares the same way
+  (else a new hashed alias, listing the target's other names for the address); a prototype taken from a definition
+  further down stays K&R (`T f();`) when a call passes fewer arguments; a target prototype of an installed function
+  with other parameters becomes the definition's header; kept prototypes naming a type nobody defines become K&R.
+  **install_lib.py split()**: a struct with function-pointer fields is named by its tag / typedef, `extern T *a, *b;`
+  declares both names. **nearcopy.fix_names** prints a symbol that gets two addresses (in one function, from the
+  relocations, or between functions) instead of skipping it silently (libsweep.reloc_symbols(conflicts=)).
+- Smaller: variants.py `--set` values take `\&` (and a backslash before any punctuation) as the literal character;
+  decomp.py prints `/* decomp.py: F at ADDR: a2 not written on every path to the call ... */` for calls whose m2c
+  arguments include registers no path writes since the entry or the previous call (a guessed argument, or a
+  parameter passed through).
+
+Near misses after this round (scratch in the session scratchpad r6/rs/): a05 func_8010B5E8 3
+(func_8010B5E8.regswap.c), a06 func_8010B59C 7, main func_80035424 15, a08 f_UpdateClosedClamshellQuestActor 20
+(r6/clam.c, clam.regswap.c), plus the unchanged ones of (8).
+
+Tool work left: dispatch.py could write the cross-jumped tails itself (the code at a shared label inside a span,
+from the plain m2c draft) and the outer-case fallthroughs; regswap on the 1-3 word near misses found nothing
+(they need statement moves or types: combine with permlines / hillclimb); prio.py --sched does not map insns to
+the retail words (the `-dp` uids are per cc1 insn, maspsx expands some); pzsweep near misses of libsnd / libpress
+(func_8008C260 6 from DecDCTReset, Snd_SetPlayMode 8) by hand with the 4.0 -> 4.4 list.
+
 ## 2026-11-22 (8): fifth round of five agents
 
 All code in C: **3920 / 7011 functions (55.9 %, 26.8 % of the bytes)**, from 3686 (23.1 %). main +38 (the GTE
