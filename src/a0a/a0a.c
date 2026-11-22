@@ -2,7 +2,32 @@
 #include "game.h"
 #include "m2c.h"
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80109314);
+extern u8 D_1F800246_6eef;
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+
+void func_80109314(u8 *a, u8 *b)
+{
+    s16 dx, dz;
+    if (a[0] == 4 && a[0x2B] == 0) {
+        if (func_80077768(H(a, 0x56), (s16)func_800782B0(a + 0x2C, H(b, 0x2E), H(b, 0x36)), 0) != 0) {
+            dx = H(a, 0x2E) - H(b, 0x2E);
+            dz = H(a, 0x36) - H(b, 0x36);
+            if (func_80084080(dx * dx + dz * dz) > 0x100) {
+                a[0x2B] = 1;
+                D_1F800246_6eef = 0;
+            }
+        } else if (func_800240FC(a, b) != 0) {
+            if (((*(u16 *)(*(u8 **)(b + 0xC0) + 8) + 0x100) & 0xFFF) <= 0x200U) {
+                b[0x29] = 1;
+                a[0] = 0xA;
+                a[4] = 2;
+                a[6] = 2;
+                a[5] = 3;
+                D_1F800246_6eef = 3;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010944C);
 
@@ -270,7 +295,43 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", f_UpdateEvilPigRelocationAttack);
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", f_UpdateEvilPigRushAttack);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010D748);
+extern u8 D_800BF809;
+extern s16 D_1F800160_71b4;
+extern s16 D_1F800164_d75f;
+
+void func_8010D748(u8 *a)
+{
+    s32 s;
+    if (D_800BF809 != 0) {
+        return;
+    }
+    switch (s = a[6]) {
+    case 0:
+        func_80041768(a, 0xB, 4);
+        func_80074590(0x8A, 0, 0);
+        *(s16 *)(a + 0x40) = 0x5A;
+        a[6]++;
+        break;
+    case 1:
+        if (*(s16 *)(a + 0x40) < 0x1E && func_8010BFA8(a) != 0) {
+            a[0] = 2;
+            func_80041768(a, 3, 4);
+            f_SelectNextEvilPigAttack(a);
+            a[5] = s;
+            a[6] = s;
+            a[7] = 0;
+            break;
+        }
+        if (--*(s16 *)(a + 0x40) == 0) {
+            func_80041768(a, 0, 0xA);
+            a[5] = 0;
+            a[6] = 0;
+            *(s16 *)(a + 0x64) = 0;
+        }
+        *(s16 *)(a + 0x56) = func_800776F8((s16)func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f), *(s16 *)(a + 0x56), 0x80);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", f_UpdateEvilPigHitAndCaptureState);
 
@@ -386,7 +447,39 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80112AA4);
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80112C50);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80112DF4);
+typedef struct { s16 a, b, c, d; } S8;
+extern S8 D_80127984[];
+extern s32 D_801278D4[];
+extern u8 D_80127954[];
+
+void func_80112DF4(u8 *a)
+{
+    s32 i;
+    s32 c, g, b;
+    for (i = 0; i < 0x20; i++) {
+        c = ((0x20 - i) * a[5]) / 32 + 1;
+        g = c - (c >> 4);
+        b = c - (c >> 3);
+        if (D_80127984[i].d == 0) {
+            D_801278D4[i] = 0;
+            if (i != 0) {
+                D_801278D4[i - 1] = 0;
+            }
+            if (i != 0x1F) {
+                D_801278D4[i + 1] = 0;
+            }
+            break;
+        }
+        if (i < 2) {
+            D_801278D4[i] = 0;
+            D_80127954[i] = 0x10;
+        } else {
+            D_801278D4[i] = (b << 16) | (g << 8) | c;
+            D_80127954[i] = 0x21 - i;
+        }
+    }
+    func_80029664(D_80127984, i, D_801278D4, D_80127954);
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80112F0C);
 
@@ -507,11 +600,74 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", f_UpdateEvilPigCaptureDeformation);
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80116634);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80116874);
+typedef struct { u16 lo; u16 hi; } Fix;
+typedef struct { s16 x, y, z, pad; } SVec;
+typedef struct { u16 x, p0, y, p1, z, p2; } LVec;
+typedef struct {
+    Fix at[3];
+    Fix pos[3];
+    s16 dir[3];
+    u8 pad1E[0x2A];
+    u8 m[0x20];
+} Cam;
+extern Cam D_1F8000D0;
+extern SVec D_1F8000C0;
+extern LVec D_1F8000A0;
+extern void *D_80127120[];
+
+s32 func_80116874(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        a[6]++;
+        D_1F8000C0.x = 0;
+        D_1F8000C0.y = -0x690;
+        D_1F8000C0.z = 0x3E8;
+        func_80084470(D_1F8000D0.m, &D_1F8000C0, &D_1F8000A0);
+        *(u16 *)(a + 0x2E) = D_1F8000D0.pos[0].hi + D_1F8000A0.x;
+        *(u16 *)(a + 0x32) = D_1F8000D0.pos[1].hi + D_1F8000A0.y;
+        *(u16 *)(a + 0x36) = D_1F8000D0.pos[2].hi + D_1F8000A0.z;
+        func_80040CDC(a, 0, D_80127120[D_800BF870.unk0 - 10]);
+        a[0x70] = 1;
+        goto end;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            return 1;
+        }
+    end:
+    default:
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", f_UpdateEvilPigRobeRewardActor);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", f_MoveEvilPigCaptureActorTowardBoss);
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+
+s32 f_MoveEvilPigCaptureActorTowardBoss(u8 *a, u8 *b)
+{
+    s16 dy, m, dx, dz, ang;
+    u16 by;
+    s32 ret;
+    s32 sx, sz, t;
+    dy = H(a, 0x32) - H(b, 0x32);
+    m = ((dy >= 0) ? dy : -dy) - 0x30;
+    if (m < 0) m = 0;
+    if (dy >= 0) H(b, 0x32) += m; else H(b, 0x32) -= m;
+    dx = H(a, 0x2E) - H(b, 0x2E);
+    dz = H(a, 0x36) - H(b, 0x36);
+    ret = 1;
+    if (func_80084080(dx * dx + dz * dz) >= 0x40) {
+        ang = func_80085690(-dz, dx);
+        sx = (func_80083F50(ang) * 0x30) >> 12;
+        sz = func_80083E80(ang);
+        H(b, 0x2E) += sx;
+        H(b, 0x36) += -(sz * 0x30) >> 12;
+        ret = 0;
+    }
+    return ret;
+}
 
 extern s8 D_1F800160[];
 extern s8 D_1F800164[];

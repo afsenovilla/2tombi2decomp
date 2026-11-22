@@ -88,7 +88,46 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010AD9C);
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010AFB4);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010B3A8);
+typedef struct { s16 x, y, w, h; } RECT16;
+typedef struct {
+    u8 *seq;
+    u8 *data;
+    s16 x, y;
+} TexAnim;
+extern TexAnim D_8010E260[];
+extern s8 D_8010E608[];
+
+void func_8010B3A8(s32 run)
+{
+    RECT16 r;
+    s32 i;
+    u8 *p;
+    u8 *d;
+    TexAnim *e;
+    if (run == 0) {
+        for (i = 0; i < 1; i++) {
+            D_8010E608[i] = 0;
+        }
+        return;
+    }
+    e = D_8010E260;
+    for (i = 0; i < 1; i++, e++) {
+        if (--D_8010E608[i] <= 0) {
+            if (e->seq[0] == 0xFF) {
+                e->seq -= e->seq[1];
+            }
+            p = e->seq;
+            d = e->data + p[0] * 32;
+            D_8010E608[i] = p[1];
+            r.x = e->x;
+            r.y = e->y;
+            r.w = 0x10;
+            r.h = 1;
+            func_80081218(&r, d);
+            e->seq += 2;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010B4C8);
 
@@ -96,17 +135,70 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010B664);
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010B8B4);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010B974);
+extern s16 D_801003F8;
+extern u8 D_800E7EAC[];
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010B9CC);
+s32 func_8010B974(void)
+{
+    CameraState *c = &g_CameraState;
+    c->mode = 2;
+    c->unk6E = 0x80;
+    c->unk70 = 0x400;
+    c->unk6C = D_801003F8 * 5;
+    func_8006CBA8(D_800E7EAC);
+    return 1;
+}
+
+s32 func_8010B9CC(void)
+{
+    CameraState *c = &g_CameraState;
+    c->mode = 1;
+    c->unk6E = 0x80;
+    c->unk70 = 0x400;
+    c->unk6C = D_801003F8 * 7;
+    func_8006CBA8(D_800E7EAC);
+    return 1;
+}
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010BA24);
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010BB20);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010BBFC);
+extern u8 *D_800BF860;
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010BC9C);
+s32 func_8010BBFC(u8 *a)
+{
+    u8 *s = D_800BF860;
+    switch (a[0x78]) {
+    case 0:
+        if (*(s16 *)(s + 0x30) > *(s16 *)(a + 0x36)) {
+            a[0x78]++;
+            s[4] = 2;
+            func_80074590(0x37, 0x16, 0);
+        }
+        goto step;
+    case 1:
+        if (s[4] == 3) {
+            return 1;
+        }
+    step:
+        *(s16 *)(s + 0x30) += 0x20;
+    default:
+        return 0;
+    }
+}
+
+s32 func_8010BC9C(u8 *a)
+{
+    s16 *p = *(s16 **)(a + 0xC4);
+    if (p[5] == 0) {
+        func_80074590(0x18, -0xC, 0);
+        return 1;
+    }
+    p[5] -= 0x40;
+    (*(s16 **)(a + 0xC8))[5] += 0x40;
+    return 0;
+}
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", f_StartOrWaitForIndexedEvilPigPlateEvent);
 
