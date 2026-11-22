@@ -1408,7 +1408,33 @@ void func_8011CA78(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011CB20);
+extern u8 D_800A3CD0[];
+
+void func_8011CB20(u8 *a) {
+    s32 k = a[0x2B];
+    u8 *g;
+    u8 *p;
+
+    switch (k) {
+    case 2:
+        g = D_800BF808_1760;
+        if ((*(u32 *)D_800BF808_1760 & 0xFFFF0000) != 0x85010000) {
+            return;
+        }
+        p = func_8006FB0C(a, g[3]);
+        M2C_FIELD(g, u8 **, 0x3C) = p;
+        if (p != NULL) {
+            p[0x5E] = 0;
+        }
+        a[6] = k;
+    case 3:
+        func_80042354(1, 3);
+        func_80040D68(a, D_800A3CD0);
+        a[0x70] = 1;
+        a[5] = 1;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", f_AdvanceStarvingCharlesDialogue);
 
