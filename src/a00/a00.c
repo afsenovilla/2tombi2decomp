@@ -506,7 +506,23 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleKainenHouseQuestItemActor);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117228);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnCrabBasketRewardActor);
+void f_HandleBeachQuestPickup();
+void f_HandleTownQuestRewardVisualActor();
+void func_80117228();
+void f_HandleFeedChicksSceneActor();
+void f_HandleTownCreatureActor();
+
+u8 *f_SpawnCrabBasketRewardActor(s32 a, s32 b) {
+    u8 *p = func_80072DDC(a, 129, 5, 1);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    p[0x3] = 1;
+    p[0x5E] = b;
+    M2C_FIELD(p, void **, 0x1C) = func_80117228;
+    return p;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117460);
 
@@ -567,13 +583,42 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801181E0);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleBeachQuestPickup);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011884C);
+u8 *func_8011884C(s32 a, s32 b) {
+    u8 *p = func_80072DDC(a, 0, 5, 3);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    p[0x3] = 2;
+    M2C_FIELD(p, s16 *, 0x60) = b;
+    M2C_FIELD(p, void **, 0x1C) = f_HandleBeachQuestPickup;
+    return p;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801188A0);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnGoldFishhookPickup);
+u8 *f_SpawnGoldFishhookPickup(s32 a, s32 b) {
+    u8 *p = func_80072DDC(a, 0, 5, 3);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80118974);
+    if (p == NULL) {
+        return NULL;
+    }
+    p[0x3] = 1;
+    p[0x5E] = b;
+    M2C_FIELD(p, void **, 0x1C) = f_HandleBeachQuestPickup;
+    return p;
+}
+
+u8 *func_80118974(s32 a) {
+    u8 *p = func_80072DDC(a, 0, 5, 3);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    p[0x3] = 0;
+    M2C_FIELD(p, void **, 0x1C) = f_HandleBeachQuestPickup;
+    return p;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801189B8);
 
@@ -776,7 +821,16 @@ void func_8012185C(void *arg0) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnFeedChicksNpc);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121918);
+void func_80121918(s32 a, s32 b, s32 c) {
+    u8 *p = func_80072DDC(a, 3, 2, 7);
+
+    if (p != NULL) {
+        M2C_FIELD(p, void **, 0x1C) = f_HandleFeedChicksSceneActor;
+        p[0x3] = 6;
+        M2C_FIELD(p, s16 *, 0x68) = b;
+        p[0x5E] = c;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121978);
 
@@ -802,9 +856,27 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122D58);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122DF0);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122F0C);
+s32 func_80122F0C(s32 a) {
+    u8 *p = func_80072DDC(a, 0, 3, 16);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122F5C);
+    if (p == NULL) {
+        return 0;
+    }
+    p[0x3] = 6;
+    M2C_FIELD(p, void **, 0x1C) = f_HandleTownQuestRewardVisualActor;
+    return 1;
+}
+
+s32 func_80122F5C(s32 a) {
+    u8 *p = func_80072DDC(a, 0, 3, 16);
+
+    if (p == NULL) {
+        return 0;
+    }
+    p[0x3] = 7;
+    M2C_FIELD(p, void **, 0x1C) = f_HandleTownQuestRewardVisualActor;
+    return 1;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122FAC);
 
@@ -1157,7 +1229,16 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleTownQuestRewardVisualActor);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012DE34);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012DF08);
+u8 *func_8012DF08(s32 a) {
+    u8 *p = func_80072DDC(a, 128, 3, 16);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    p[0x3] = 2;
+    M2C_FIELD(p, void **, 0x1C) = f_HandleTownQuestRewardVisualActor;
+    return p;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012DF50);
 
@@ -1935,7 +2016,17 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801461E4);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80146288);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801462E4);
+u8 *func_801462E4(s32 a, s32 b) {
+    u8 *p = func_80072DDC(0, 3, 2, 3);
+
+    if (p != NULL) {
+        M2C_FIELD(p, void **, 0x1C) = f_HandleTownCreatureActor;
+        p[0x3] = b;
+        M2C_FIELD(p, s32 *, 0x10) = 0;
+        M2C_FIELD(p, s32 *, 0x14) = a;
+    }
+    return p;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80146348);
 

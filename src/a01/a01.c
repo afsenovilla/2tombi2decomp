@@ -261,11 +261,46 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80112784);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80112808);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801128B8);
+void func_80113B40();
+void f_UpdatePipeAreaQuestPickupActor();
+void f_UpdatePipeAreaScenePropActor();
+void func_8012B464();
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80112904);
+u8 *func_801128B8(s32 a, s32 b) {
+    u8 *p = func_80072DDC(a, 1, 5, 3);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80112948);
+    if (p == NULL) {
+        return NULL;
+    }
+    p[0x3] = b;
+    M2C_FIELD(p, void **, 0x1C) = f_UpdatePipeAreaQuestPickupActor;
+    return p;
+}
+
+u8 *func_80112904(s32 a) {
+    u8 *p = func_80072DDC(a, 1, 5, 3);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    p[0x3] = 0;
+    M2C_FIELD(p, void **, 0x1C) = f_UpdatePipeAreaQuestPickupActor;
+    return p;
+}
+
+void f_UpdatePipeAreaScenePropActor();
+void f_UpdatePipeAreaQuestPickupActor();
+
+u8 *func_80112948(s32 a0) {
+    u8 *p = func_80072DDC(a0, 0, 5, 3);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    p[3] = 2;
+    M2C_FIELD(p, void **, 0x1C) = f_UpdatePipeAreaQuestPickupActor;
+    return p;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80112990);
 
@@ -450,7 +485,15 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80113B40);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80113CB4);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80113D04);
+u8 *func_80113D04(s32 a) {
+    u8 *p = func_80072DDC(a, 0, 3, 15);
+
+    if (p != NULL) {
+        M2C_FIELD(p, void **, 0x1C) = func_80113B40;
+        p[0x3] = 0;
+    }
+    return p;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80113D44);
 
@@ -523,7 +566,15 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80115EC0);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80115F08);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80115F70);
+u8 *func_80115F70(s32 a0) {
+    u8 *p = func_80072DDC(a0, 2, 4, 0x12);
+
+    if (p != NULL) {
+        M2C_FIELD(p, void **, 0x1C) = f_UpdatePipeAreaScenePropActor;
+        p[3] = 7;
+    }
+    return p;
+}
 
 void func_80115FB4(u8 *a)
 {
@@ -535,7 +586,16 @@ void func_80115FB4(u8 *a)
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80115FEC);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801160A4);
+u8 *func_801160A4(s32 a, s32 b) {
+    u8 *p = func_80072DDC(a, 0, 3, 16);
+
+    if (p != NULL) {
+        M2C_FIELD(p, void **, 0x1C) = f_UpdatePipeAreaScenePropActor;
+        p[0x3] = 9;
+        p[0x5E] = b;
+    }
+    return p;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801160F8);
 
@@ -648,7 +708,15 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011A4AC);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateKainenActor);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011A984);
+s32 func_8011A984(s32 a0) {
+    u8 *p = func_80072DDC(a0, 1, 3, 0x10);
+
+    if (p != NULL) {
+        M2C_FIELD(p, void **, 0x1C) = f_UpdatePipeAreaScenePropActor;
+        p[3] = 8;
+    }
+    return 1;
+}
 
 extern u8 D_8013995C[];
 extern u8 D_80135D88[];
@@ -1333,7 +1401,21 @@ void func_8012B610(void *arg0) {
     M2C_FIELD(arg0, s32 *, 0x34) = 0x3F160000;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012B654);
+u8 *func_8012B654(s32 a, s32 b) {
+    u8 *p = func_80072DDC(0, 1, 4, 31);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    M2C_FIELD(p, void **, 0x1C) = func_8012B464;
+    p[0x3] = b;
+    M2C_FIELD(p, s16 *, 0x58) = 0;
+    M2C_FIELD(p, s16 *, 0x56) = 0;
+    M2C_FIELD(p, s16 *, 0x54) = 0;
+    M2C_FIELD(p, s32 *, 0x10) = a;
+    p[0x28] = (p[0x28] | 0x80);
+    return p;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012B6CC);
 
