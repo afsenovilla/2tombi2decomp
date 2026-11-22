@@ -592,13 +592,119 @@ void func_8011545C(u8 *a, u8 *b) {
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80115618);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80115A2C);
+typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner;
+typedef struct { s16 v[4]; } PartInit;
+extern s16 D_800ED098;
+extern PartInit D_80133030[];
+extern u8 D_800BF8DC;
+
+void func_80115A2C(PartsOwner *a)
+{
+    s32 i;
+    u8 *q;
+    s32 k;
+
+    a->pad[8] = 3;
+    k = 3;
+    if (D_800ED098 < k) {
+        a->pad[4] = k;
+        return;
+    }
+    a->pad[9] = k;
+    a->pad[0xD] = 0;
+    a->pad[0xB] = 0;
+    *(s16 *)(a->pad + 0x54) = 0;
+    *(s16 *)(a->pad + 0x56) = 0;
+    *(s16 *)(a->pad + 0x58) = 0;
+    for (i = 0; i < a->pad[8]; i++) {
+        q = func_8007AAE8();
+        a->parts[i] = q;
+        *(s16 *)(q + 6) = D_80133030[i].v[0];
+        *(s16 *)(a->parts[i] + 0) = D_80133030[i].v[1];
+        *(s16 *)(a->parts[i] + 2) = D_80133030[i].v[2];
+        *(s16 *)(a->parts[i] + 4) = D_80133030[i].v[3];
+        *(s16 *)(a->parts[i] + 8) = 0;
+        *(s16 *)(a->parts[i] + 0xA) = 0;
+        *(s16 *)(a->parts[i] + 0xC) = 0;
+        func_80051B04(a->parts[i], 0xC, i + 0x20);
+    }
+    a->pad[0x2B] = 0;
+    if (D_800BF8DC == 0xFF) {
+        a->pad[4] = 3;
+        return;
+    }
+    *(s16 *)(a->pad + 0x4E) = *(s16 *)(a->pad + 0x2E);
+    *(s16 *)(a->pad + 0x50) = *(s16 *)(a->pad + 0x32);
+    *(s16 *)(a->pad + 0x52) = *(s16 *)(a->pad + 0x36);
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateClownStatueDestructionSequence);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80116538);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80116634);
+void func_80116538(PartsOwner *a)
+{
+    s32 i;
+    u8 *q;
+
+    s32 k;
+    a->pad[8] = 3;
+    k = 3;
+    if (D_800ED098 < k) {
+        a->pad[4] = k;
+        return;
+    }
+    a->pad[9] = 3;
+    a->pad[0xD] = 4;
+    a->pad[0xBF] = 0;
+    for (i = 0; i < a->pad[8]; i++) {
+        q = func_8007AAE8();
+        a->parts[i] = q;
+        *(s16 *)(q + 6) = -1;
+        *(s16 *)(a->parts[i] + 0) = 0;
+        *(s16 *)(a->parts[i] + 2) = 0;
+        *(s16 *)(a->parts[i] + 4) = 0;
+        *(s16 *)(a->parts[i] + 8) = 0;
+        *(s16 *)(a->parts[i] + 0xA) = 0;
+        *(s16 *)(a->parts[i] + 0xC) = 0;
+        func_80051B04(a->parts[i], 0xC, i + 0x33);
+        a->parts[i][0x3F] = 0;
+    }
+}
+
+extern PartInit D_80133048[];
+
+void func_80116634(PartsOwner *a)
+{
+    s32 i;
+    u8 *q;
+    PartInit *t;
+
+    a->pad[8] = 2;
+    if (D_800ED098 < a->pad[8]) {
+        a->pad[4] = 3;
+        return;
+    }
+    a->pad[9] = 2;
+    a->pad[0xD] = 0;
+    a->pad[0xB] = 0;
+    *(s16 *)(a->pad + 0x54) = 0;
+    *(s16 *)(a->pad + 0x56) = 0;
+    *(s16 *)(a->pad + 0x58) = 0;
+    for (i = 0; i < a->pad[8]; i++) {
+        q = func_8007AAE8();
+        a->parts[i] = q;
+        *(s16 *)(q + 6) = D_80133048[i].v[0];
+        *(s16 *)(a->parts[i] + 0) = D_80133048[i].v[1];
+        *(s16 *)(a->parts[i] + 2) = D_80133048[i].v[2];
+        *(s16 *)(a->parts[i] + 4) = D_80133048[i].v[3];
+        *(s16 *)(a->parts[i] + 8) = 0;
+        *(s16 *)(a->parts[i] + 0xA) = 0;
+        *(s16 *)(a->parts[i] + 0xC) = 0;
+        func_80051B04(a->parts[i], 0xC, i + 0x25);
+    }
+    *(s16 *)(a->parts[1] + 0xC) = 0x1000;
+    a->pad[0x2B] = 0;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80116764);
 

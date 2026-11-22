@@ -1453,7 +1453,31 @@ void func_8011CF80(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011D0A4);
+extern u8 D_800BF9CC;
+void func_8011CF80();
+void func_80138140();
+
+s32 func_8011D0A4(u8 *a)
+{
+    u8 *p;
+
+    if (D_800BF9CC & 0x40) {
+        return 0;
+    }
+    {
+        p = func_80072DDC(a, 1, 4, 3);
+        if (p != NULL) {
+            p[3] = 6;
+            *(void **)(p + 0x1C) = func_8011CF80;
+            p[0x2A] = a[0x2A];
+            *(s16 *)(p + 0x2E) = *(s16 *)(a + 0x2E);
+            *(s16 *)(p + 0x32) = *(s16 *)(a + 0x32);
+            *(s16 *)(p + 0x36) = *(s16 *)(a + 0x36);
+            return 1;
+        }
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011D13C);
 
@@ -1712,7 +1736,22 @@ void func_80120188(u8 *a) {
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801201E0);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80120260);
+void func_80120260(u8 *a, s32 b)
+{
+    u8 *p = func_80072DDC(0, 2, 2, 0x30);
+
+    if (p != NULL) {
+        *(void **)(p + 0x1C) = func_80138140;
+        p[3] = b;
+        if (b == 2) {
+            p[0x28] |= 0x80;
+        }
+        *(u8 **)(p + 0x10) = a;
+    }
+    *(s16 *)(p + 0x2E) = *(s16 *)(a + 0x2E);
+    *(s16 *)(p + 0x32) = *(s16 *)(a + 0x32);
+    *(s16 *)(p + 0x36) = *(s16 *)(a + 0x36);
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801202F8);
 
