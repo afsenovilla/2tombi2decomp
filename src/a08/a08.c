@@ -100,7 +100,18 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010EF9C);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010F110);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010F214);
+extern u16 D_800BF812;
+
+void func_8010F214(u8 *p)
+{
+    u16 h = D_800BF812;
+
+    if (!(p[0x145] & 1) && !(*(s16 *)(p + 0x32) < (s16)h - *(s16 *)(p + 0x62))) {
+        *(s16 *)(p + 0x32) = h - *(s16 *)(p + 0x62);
+        func_80022C78(p);
+        p[0x29] |= 0x80;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010F288);
 
@@ -874,7 +885,23 @@ s32 func_801238A0(void *arg0) {
     return 0;
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801238D0);
+void f_UpdateWaterTempleMechanismActor();
+extern u8 D_800BF809;
+
+u8 *func_801238D0(void *a0, u8 a1)
+{
+    u8 *r = func_8007A980(1, 4, 0);
+
+    if (r == 0) {
+        return 0;
+    }
+    r[2] = 0x54;
+    r[3] = a1;
+    *(void **)(r + 0x1C) = f_UpdateWaterTempleMechanismActor;
+    *(void **)(r + 0x10) = a0;
+    r[0x28] |= 0x80;
+    return r;
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80123940);
 
@@ -1205,7 +1232,19 @@ void func_801292F4(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80129300);
+void func_80129300(u8 *p)
+{
+    if (func_80051B70(p, 0xC, 0x58) == 0) {
+        p[0xD] |= 4;
+        (*(u8 **)(p + 0xC0))[0x3F] = 0x1E;
+        p[0] = 1;
+        *(s16 *)(p + 0x80) = 0x78;
+        *(s16 *)(p + 0x82) = 0xF0;
+        *(s16 *)(p + 0x84) = 0x1C0;
+        *(s16 *)(p + 0x86) = 0x1C0;
+        func_800517F8(p);
+    }
+}
 
 
 void func_80129374(void) {
@@ -1782,7 +1821,25 @@ void func_80130644(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801306A4);
+void func_801306A4(u8 *p)
+{
+    u8 *q;
+
+    if (p[0x71] == 0xFF) {
+        q = *(u8 **)(p + 0x14);
+        switch (p[0x5E]) {
+        case 2:
+            p[0] = 9;
+        case 0:
+            p[0x5E]++;
+        case 1:
+            q[0x5E] = 0;
+            D_800BF809 = 0;
+            break;
+        }
+        p[5] = 0;
+    }
+}
 
 extern u8 D_800BFAD7;
 
