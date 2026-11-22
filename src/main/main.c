@@ -2891,7 +2891,31 @@ void func_8002DBE4(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002DD88);
+void func_8002DD88(u8 *a)
+{
+    s32 *flag = &D_1F800080;
+    s32 *otz = (s32 *)D_1F800084;
+    s32 *o2 = &D_1F800088;
+    s32 *sxy = (s32 *)D_1F80008C;
+    s32 *z = (s32 *)D_1F800090;
+    s32 d = *(s32 *)(a + 0x34);
+
+    SetProj_7CB4(6);
+    gte_ldv0_2C(a);
+    if (ProjZ(a) == 0) {
+        u32 x, y;
+        u16 hi;
+
+        gte_ldfcdir(0, 0, 0);
+        x = *otz * *(u32 *)(a + 0x58);
+        y = *otz * *(u32 *)(a + 0x54);
+        *z = *(s32 *)(a + 0x50);
+        *o2 = x >> 8;
+        hi = *(u16 *)(a + 0x46);
+        *otz = y >> 8;
+        *(s32 *)(a + 0x38) = f_DrawProjectedSpriteDefinitionStream(d, (hi << 16) | *(u16 *)(a + 0x44));
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002DF68);
 
