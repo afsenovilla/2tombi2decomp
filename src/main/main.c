@@ -461,7 +461,18 @@ void func_80021F34(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_RetireActorOnTombaContact);
+extern u8 D_1F80027A;
+extern s8 D_800BF81E;
+void f_RetireActorOnTombaContact(u8 *a, u8 *b)
+{
+    if (D_1F80027A == 0 && TestCyl_0B08(a, b)) {
+        b[0] = 2;
+        b[4] = 2;
+        b[5] = 0;
+        b[6] = 0;
+        D_800BF81E = 0;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80022190);
 
