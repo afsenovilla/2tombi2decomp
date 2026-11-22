@@ -3,6 +3,73 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-22 (4): third round of five agents
+
+All code in C: **3396 / 7011 functions (48.4 %, 18.2 % of the bytes)**, from 3034 (15.2 %). main +51, library +51
+(34 main, 17 boot; Phase 1 now 76.3 % / 38.5 % B), a00-a03 +60, a04-a08 +118, a09-a0l + overlays +82. nearcopy and
+dupsweep over all programs afterwards found nothing more (the agents ran nearcopy inside their scopes). 29 / 29
+byte-identical. New in tools/cc.py: `// EPILOGUE sony` (the library's epilogue: nothing in the `j $31` delay slot,
+`lw ra; addiu sp; jr ra; nop`; most libsnd / libspu / libgpu functions with a frame want gcc 2.8.1
+`-O2 -G0 -mno-split-addresses`, `// AS gnu` and this line), and the jump-table filter now runs on the `AS gnu` path.
+
+New recipes (add to the ones below):
+- **Switch state machines**: `default: return 0;` as the first case (or no default at all) gives retail's
+  `beqz; beq 1 (v0=0 in delay); j epilogue`; `a[4]++` instead of `a[4] = K` when K is the case value + 1 (gcc reuses
+  the register of the next compare constant); two cases with the default value: `case 0: case 1:`.
+- **Bool returns**: make `return 1` the shared exit (a break to a final `return 1`, or nested ifs with it innermost)
+  with early `return 0`s: `li v0,1` in a delay slot instead of slt/xori. `u8 one = 1` keeps `return 1` its own `li`.
+  An early `return -1` placed before the body: `if (ok) { ...; return 0; } return -1;` or `goto err`. `if (i >= n)
+  return X;` first, else gcc puts the short return block first.
+- **Loads first**: read scalar globals / scratchpad values into locals at the top (`s32 v = D_1F80009C;`) when retail
+  loads them before a run of field stores (matched ~8 functions); volatile scratchpad accesses keep source order.
+- **Globals**: scratchpad as extern symbols (D_1F80xxxx), not `*(T *)0x1F80xxxx` (`lui at` vs a shared %hi); a
+  struct-typed scratchpad extern (`extern SVec3T D_1F8000C0;`) for `sh %lo(sym)` then `addiu base; sh 2(base)`; one
+  field through the symbol and the others through `v = &G;` for the same pattern; `&D_80140D38[0x40]` instead of the
+  next symbol re-emits the `lui`; a second buffer symbol declared as its own extern, not `&buf[10]`.
+- **Registers**: a separate C variable per path when retail shares a register between paths; reusing a variable
+  (`p = f(p, k);`) moves it to a lower s-register; `u16 c = id & 0xFF;` stored plus `id & 0xFF` as the index splits
+  registers like retail; a u8 flag passed on: `s32 f`, test `!(f & 0xFF)`, pass `(u8)f`; s16 (not u16) locals for
+  truncated constants (`li -1024`); `g = f() << 4` instead of `* 16`; constants in saved registers around a loop as
+  locals assigned at the top of the loop body; values left in a1/a2 at a call: pass them as extra arguments to a K&R
+  or cast callee.
+- **Loops**: `D[i].lo` inside the loop (the reduced pointer is set up after the other initialisations); for retail's
+  pointer at the last stored field: `s16 *d` stepped `d += 18`, positive indexes, `if (n == 0) return; i = 0; do
+  {...} while (++i < n);`; empty countdown loops are real code.
+- **Primitives**: addPrim / setaddr / setlen with the bitfield tag `struct { unsigned addr:24; unsigned len:8; }`
+  reproduces the `& 0xFF000000 | & 0xFFFFFF` sequences (MAIN candidates: pending asm with `lui 0xff00`, e.g.
+  func_8003EA88, 8003E264, 8003E894, 8003E030, 8003EBE0, 8006D654, 8003E448, 8002E680); `TERM_PRIM` with a local
+  pointer.
+- **GTE**: include/psyq/inline_c.h has placeholder command words; the real ones are rtps 0x4A180001, rtpt
+  0x4A280030, nclip 0x4B400006, avsz4 0x4B68002E (redefine per file for now); use the offset macros `gte_ldv3c` /
+  `gte_stsxy3_g3`; DQA/DQB loads need custom asm (`ctc2 %0,$27`).
+- **Library**: libsnd's parameter copies come from a `static inline` helper shared by SsSeqSetVol / SsSepSetVol /
+  _SsSndSetVol; `ch` as s32 fixes the `addu` order of `programs[ch]`; printf keeps fmt on the stack with `char **pf
+  = &fmt;`; GPU queue indices `_qin` / `_qout` are volatile s32; magicdiv found 129 (SsUtGetVVol) and 504 (StFreeRing).
+- **Misc**: builtin `abs()` gives `bgez/negu`; an unused `s32 pad[2]` declared first fixes a frame size; m2c locals
+  set only in some cases are often incoming parameters; permlines.py matched about ten 2-7 word near misses (check
+  that its order does not use a variable before it is set).
+
+Near misses (words off): main func_80041938 1, func_80063098 1, func_8003511C 2, func_80056E08 2, func_8003F3F4 /
+func_8003F4C4 3, func_8007AA38 3, func_8006DF88 4, f_NewGameSetDefaultValues 4, func_80059ED8 5, func_80050A80 5;
+a00 func_80111A00 4 (4 copies), f_BeginScriptedBarrelRotation 5, a01 func_801205E4 7, a02 func_8011F028 9;
+a07 func_80125D68 2, a04 func_80110A30 2, func_801351B8 3, a05 func_801155A4 3, a06 func_8011C974 3, func_8013D568 4,
+a05 func_8011105C 5, a08 func_8012E61C 5; demo func_80106824 2, a0a func_80113A20 2, a0c func_8011353C 2, a0c
+func_80117AC8 3, a0e func_8010A0C0 3, boot func_80011654 5; library func_80089194 2, SsUtSetReverbFeedback 2,
+_SsVmSeqKeyOff 3, CdInit 5, _dws 6, SpuGetVoiceVolume 6, _SsContPanpot 7. Match only with `register ... asm("v0")`
+(not installed): a0b func_8010BE38, main func_80035528 / func_800355B4. boot func_80011A0C matches with gcc 2.7.2 +
+AS gnu: it looks like a library module in boot.c and needs its own file.
+
+Tool work left (from the agents): a "Sony return" rewrite for leaf functions (retail branches to one final
+`jr ra; nop` where gcc 2.8.1 emits separate returns: memmove, strcmp, SsSetReservedVoice, SsUtSetDetVVol, StFreeRing);
+libsweep.header() and an install tool for library files that write `// EPILOGUE`; libnear.py skipping files whose
+INCLUDE_ASM names another function; install_c: skip an identical typedef defined further down, rename / report a
+clashing one, keep prototypes of functions defined later, warn about too-few-argument callers; ccheck option to drop
+prototypes as install_c does; nearcopy: write needed alias lines instead of refusing other programs' alias names,
+map callee names through relocations, patch `move`/`li` form changes; permlines must not move a statement above
+the assignment of a variable it reads; variants.py file mode (alternatives split on `@@`); a "families" report
+(pending functions of all programs grouped by masked opcodes, copies x size); hillclimb transforms (default case
+first, `= K` -> `++`, nested bool returns, scratchpad constant -> extern, early return); a fixed GTE command header.
+
 ## 2026-11-22 (3): the round-2 prototypes as tools
 
 One agent turned the hand-matching agents' scratch scripts into tools (each tested on real functions):

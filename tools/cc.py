@@ -92,7 +92,7 @@ def compile_c(src, obj, override=None, defines=(), pad_to=None, asm_filter=None)
     if o["as"] == "gnu":
         s = re.sub(r"(?m)^\tmove\t(\$[0-9a-z]+),(\$[0-9a-z]+)", r"\taddu\t\1,\2,$0", s)
         s = re.sub(r"(?m)^\t\.rdata$", "\t.section .rodata", s)
-        open(base + ".mas.s", "w").write(s)
+        open(base + ".mas.s", "w").write(asm_filter(s) if asm_filter else s)   # jump tables (tools/jtbl.py) too
 
         def assemble():
             _run(AS + ["-O2", "-I" + inc, base + ".mas.s", "-o", obj])
