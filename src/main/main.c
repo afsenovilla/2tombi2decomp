@@ -4824,7 +4824,114 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004FD30);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004FE84);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004FFB4);
+void func_8004FFB4(s16 *r, u32 kind, u8 flags, s32 ot)
+{
+    u8 *p = D_800BF544;
+    u8 u1, u0, v0;
+    u32 *o;
+
+    D_800BF544 = p + 0x28;
+    p[7] = 0x2C;
+    if (flags & 0x80) {
+        p[7] = 0x2E;
+    }
+    if (flags & 0x40) {
+        *(u16 *)(p + 0xE) = (((flags & 0x1F) + 0x1F0) << 6) | 0x3F;
+    } else {
+        *(u16 *)(p + 0xE) = (((flags & 0x1F) + 0x1F0) << 6) | 0x3E;
+    }
+    if (flags & 0x20) {
+        p[6] = 0x40;
+        p[5] = 0x40;
+        p[4] = 0x40;
+    } else {
+        p[7] |= 1;
+    }
+    *(u16 *)(p + 0x16) = 0x5F;
+    *(s16 *)(p + 0x8) = r[0];
+    *(s16 *)(p + 0xA) = r[1];
+    *(s16 *)(p + 0x10) = r[0] + r[2];
+    *(s16 *)(p + 0x12) = r[1];
+    *(s16 *)(p + 0x18) = r[0];
+    *(s16 *)(p + 0x1A) = r[1] + r[3];
+    *(s16 *)(p + 0x20) = r[0] + r[2];
+    *(s16 *)(p + 0x22) = r[1] + r[3];
+    switch (kind) {
+    case 0:
+        u0 = 0xC0;
+        v0 = 0x88;
+        u1 = 0xC8;
+        p[0xD] = v0;
+        p[0x15] = v0;
+        v0 = 0x90;
+        p[0xC] = u0;
+        p[0x14] = u1;
+        p[0x1C] = u0;
+        p[0x1D] = v0;
+        p[0x24] = u1;
+        p[0x25] = v0;
+        break;
+    case 1:
+        u0 = 0xF0;
+        v0 = 0x88;
+        u1 = 0xF8;
+        p[0xD] = v0;
+        p[0x15] = v0;
+        v0 = 0x90;
+        p[0xC] = u0;
+        p[0x14] = u1;
+        p[0x1C] = u0;
+        p[0x1D] = v0;
+        p[0x24] = u1;
+        p[0x25] = v0;
+        break;
+    case 2:
+        u0 = 0xD0;
+        v0 = 0x89;
+        u1 = 0xD8;
+        p[0xD] = v0;
+        p[0x15] = v0;
+        v0 = 0x8F;
+        p[0xC] = u0;
+        p[0x14] = u1;
+        p[0x1C] = u0;
+        p[0x1D] = v0;
+        p[0x24] = u1;
+        p[0x25] = v0;
+        break;
+    case 3:
+        u0 = 0xE0;
+        v0 = 0x89;
+        u1 = 0xE8;
+        p[0xD] = v0;
+        p[0x15] = v0;
+        v0 = 0x8F;
+        p[0xC] = u0;
+        p[0x14] = u1;
+        p[0x1C] = u0;
+        p[0x1D] = v0;
+        p[0x24] = u1;
+        p[0x25] = v0;
+        break;
+    case 4:
+        u0 = 0xD8;
+        v0 = 0x88;
+        u1 = 0xDF;
+        p[0xD] = v0;
+        p[0x15] = v0;
+        v0 = 0x8F;
+        p[0xC] = u0;
+        p[0x14] = u1;
+        p[0x1C] = u0;
+        p[0x1D] = v0;
+        p[0x24] = u1;
+        p[0x25] = v0;
+        break;
+    }
+    o = D_800ED8C8 + ot;
+    *(u32 *)p = *o | 0x09000000;
+    *o = (u32)p;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005019C);
 
