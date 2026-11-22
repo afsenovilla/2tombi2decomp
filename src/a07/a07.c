@@ -96,9 +96,42 @@ void func_8010B944(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010BAD0);
-
 extern u16 D_1F80008C;
+
+void func_8010BAD0(u8 *a, u8 *b)
+{
+    s16 ang;
+
+    if (*(u16 *)(a + 0x17E) & 0x200) {
+        return;
+    }
+    if (func_8002300C(a, b, *(s16 *)(b + 0x80) + 0x96) == 0) {
+        return;
+    }
+    ang = *(u16 *)&D_1F80009C_baed & 0xFFF;
+    if (!(*(s16 *)(a + 0x17E) & 0x8000) && D_1F80018E == 0 && D_1F800137 == 0 && !(b[0] & 2)) {
+        if (abs((s16)((ang - *(u16 *)(a + 0x56)) << 4)) < 0x2001 && (a[5] != 0x1F || b == *(u8 **)(a + 0x10))) {
+            D_1F80018E = 0x1400;
+            D_1F800184 = b;
+            D_800BF840 = 0x4B;
+        }
+    }
+    if (b[0] & 2) {
+        if (D_1F80008C <= *(s16 *)(b + 0x80)) {
+            b[0x29] = 1;
+        }
+    } else if (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) >= D_1F80008C) {
+        s32 temp_s0;
+        s32 temp_lo;
+
+        ang += 0x800;
+        temp_s0 = (s32) (func_80083F50(ang) * (M2C_FIELD(a, s16 *, 0x80) + M2C_FIELD(b, s16 *, 0x80))) >> 0xC;
+        temp_lo = func_80083E80(ang) * (M2C_FIELD(a, s16 *, 0x80) + M2C_FIELD(b, s16 *, 0x80));
+        M2C_FIELD(a, s16 *, 0x2E) = (s16) (M2C_FIELD(b, u16 *, 0x2E) + temp_s0);
+        M2C_FIELD(a, s16 *, 0x36) = (s16) (M2C_FIELD(b, u16 *, 0x36) - (temp_lo >> 0xC));
+    }
+}
+
 extern u8 D_800BF808[];
 
 void func_8010BC9C(u8 *a, u8 *b)
@@ -690,7 +723,49 @@ void func_8010E728(u8 *a)
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010E864);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010EEB8);
+void func_8010EEB8(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        *(s16 *)(a + 0x40) = 0x11;
+        *(s16 *)(a + 0x44) = 0x1000;
+        a[6]++;
+        func_80054D14(a, 4, 0);
+    case 1: {
+        s32 x = (func_80083F50(*(s16 *)(a + 0x56)) * *(s16 *)(a + 0x44)) >> 4;
+        s32 z = func_80083E80(*(s16 *)(a + 0x56)) * *(s16 *)(a + 0x44);
+
+        *(s32 *)(a + 0x2C) += x;
+        *(s32 *)(a + 0x34) -= z >> 4;
+        func_80076D68(a);
+        if (*(s16 *)(a + 0x40) % 7 == 0) {
+            func_80074590(0, 5, 0);
+        }
+        if (--*(s16 *)(a + 0x40) == 0) {
+            a[6]++;
+        }
+        break;
+    }
+    case 2:
+        a[5] = 0;
+        a[6] = 0;
+        a[7] = 0;
+        func_80054D14(a, 2, 6);
+        if (D_1F800137 == 1) {
+            D_800BF80E = 1;
+        }
+        break;
+    case 5:
+        *(s16 *)(a + 0x40) = 0x11;
+        *(s16 *)(a + 0x44) = 0x800;
+        a[6] = 1;
+        func_80054D14(a, 4, 0);
+        break;
+    default:
+        return;
+    }
+    a[0x29] = 0x81;
+}
 
 void func_8010F08C(u8 *a)
 {
