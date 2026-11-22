@@ -1,3 +1,7 @@
+// CC gcc-2.7.2-psx
+// FLAGS -O2 -G0
+// ASPSX 2.79
 #include "common.h"
+s32 strncmp(char *, char *, s32);
 
-INCLUDE_ASM("asm/boot/nonmatchings/psyq/libcd/func_8001B054", func_8001B054);
+s32 func_8001B054(char *a, char *b) { return strncmp(a, b, 12) == 0; }

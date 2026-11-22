@@ -1,5 +1,8 @@
+// CC gcc-2.8.1-psx
+// FLAGS -O2 -G0
+// ASPSX 2.79
 #include "common.h"
 
-INCLUDE_ASM("asm/boot/nonmatchings/psyq/libetc/func_80018708", func_80018708);
+void func_80018708(s32 *p, s32 n) { s32 i; for (i = n - 1; i != -1; i--) *p++ = 0; }
 
 INCLUDE_ASM("asm/boot/nonmatchings/psyq/libetc/func_80018708", func_8001872C);
