@@ -7404,7 +7404,81 @@ draw:
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_FillEquippedBucketFromSource);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004BB38);
+/* func_8004BEF4, inlined */
+static inline void Init_BB38(u8 *a)
+{
+    s32 r;
+    u16 k = *(u16 *)(a + 0x5C);
+
+    if (k == 0) {
+        r = f_InitializeSinglePartActorModel(a, 1, 0);
+    } else if (k == 1) {
+        r = f_InitializeSinglePartActorModel(a, 1, 1);
+    } else {
+        r = f_InitializeSinglePartActorModel(a, 1, 0x17);
+    }
+    if (r == 0) {
+        *(s16 *)(a + 0x80) = 0x46;
+        *(s16 *)(a + 0x82) = 0x8C;
+        *(s16 *)(a + 0x84) = 0x64;
+        *(s16 *)(a + 0x86) = 0x64;
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x58) = 0;
+        a[0x29] = 0;
+    }
+}
+
+void func_8004BB38(u8 *a)
+{
+    u8 v;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        if (a[3] != 0) {
+            break;
+        }
+        Init_BB38(a);
+        break;
+    case 1:
+        if (a[3] != 0) {
+            break;
+        }
+        switch (a[0x5E]) {
+        case 0:
+            switch (a[5]) {
+            case 0:
+                a[0] = 3;
+                *(s16 *)(a + 0x88) = -0x50;
+                a[5] = 1;
+                *(s16 *)(a + 0x8A) = 0x14;
+                *(s16 *)(a + 0x8C) = 0;
+            case 1:
+                func_80051614(a, a + 0x88, 0, 0);
+                v = D_800E7E81;
+                a[1] = v;
+                if (v != 0) {
+                    f_QueueClass5ActorForRender((s32)a);
+                }
+                break;
+            }
+            break;
+        case 1:
+            func_8004B788(a);
+            break;
+        }
+        break;
+    case 2:
+        if (a[3] == 0) {
+            f_FillEquippedBucketFromSource(a);
+        }
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 u8 *f_SpawnBackEquipmentProxyActor(void *owner, u8 item, s16 clut)
 {
