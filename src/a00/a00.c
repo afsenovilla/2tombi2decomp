@@ -819,7 +819,21 @@ void func_8012185C(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnFeedChicksNpc);
+void f_SpawnFeedChicksNpc(u8 *a) {
+    u8 *p = func_80072DDC((s32)a, 3, 2, 7);
+
+    if (p != NULL) {
+        M2C_FIELD(p, void **, 0x1C) = f_HandleFeedChicksSceneActor;
+        p[3] = a[3];
+        M2C_FIELD(p, s16 *, 0x6C) = M2C_FIELD(a, s16 *, 0x8);
+        M2C_FIELD(a, u8 **, 0xC) = p;
+        if (a[3] == 3) {
+            M2C_FIELD(a, s32 *, 0x10) = 0x1E;
+        } else {
+            M2C_FIELD(a, s32 *, 0x10) = 0x546;
+        }
+    }
+}
 
 void func_80121918(s32 a, s32 b, s32 c) {
     u8 *p = func_80072DDC(a, 3, 2, 7);

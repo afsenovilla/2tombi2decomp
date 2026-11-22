@@ -362,7 +362,21 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80112CB8);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80112DA0);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80112DD8);
+u8 *func_80112DD8(u8 *a) {
+    u8 t;
+    u8 *p = func_80072DDC(a, 0, 5, 3);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    t = a[3];
+    M2C_FIELD(p, void **, 0x1C) = f_UpdatePipeAreaQuestPickupActor;
+    p[0x3] = (t & 1) + 6;
+    M2C_FIELD(p, s16 *, 0x2E) = M2C_FIELD(a, u16 *, 0x2E);
+    M2C_FIELD(p, s16 *, 0x32) = M2C_FIELD(a, u16 *, 0x32);
+    M2C_FIELD(p, s16 *, 0x36) = M2C_FIELD(a, u16 *, 0x36);
+    return p;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80112E58);
 
@@ -483,7 +497,19 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801139D4);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80113B40);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80113CB4);
+void func_801139D4();
+void f_UpdatePipeAreaBridgeActor();
+
+u8 *func_80113CB4(u8 *a) {
+    u8 *p = func_80072DDC((s32)a, 0, 3, 0xF);
+
+    if (p != NULL) {
+        M2C_FIELD(p, void **, 0x1C) = func_801139D4;
+        p[3] = 0;
+    }
+    M2C_FIELD(a, u8 **, 0x14) = p;
+    return p;
+}
 
 u8 *func_80113D04(s32 a) {
     u8 *p = func_80072DDC(a, 0, 3, 15);
@@ -772,7 +798,22 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011BDC4);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011BED0);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011C06C);
+void func_8011BED0();
+
+void func_8011C06C(u8 *a) {
+    u8 *p = func_80072DDC((s32)a, 0, 3, 0x13);
+
+    if (p != NULL) {
+        M2C_FIELD(p, void **, 0x1C) = func_8011BED0;
+        p[3] = 0;
+        M2C_FIELD(p, s16 *, 0x60) = a[3];
+        M2C_FIELD(p, s16 *, 0x2E) = M2C_FIELD(a, s16 *, 0x2E);
+        M2C_FIELD(p, s16 *, 0x32) = M2C_FIELD(a, s16 *, 0x32);
+        M2C_FIELD(p, s16 *, 0x36) = M2C_FIELD(a, s16 *, 0x36);
+        p[0x5E] = 0;
+        M2C_FIELD(a, u8 **, 0x14) = p;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011C0E8);
 
@@ -1288,7 +1329,17 @@ void func_801273AC(void *arg0) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012749C);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012750C);
+void func_8012750C(u8 *a) {
+    u8 *p;
+
+    a[0x47] = 0;
+    p = func_80072DDC((s32)a, 1, 4, 0x15);
+    if (p != NULL) {
+        M2C_FIELD(p, void **, 0x1C) = f_UpdatePipeAreaBridgeActor;
+        M2C_FIELD(a, u8 **, 0x3C) = p;
+    }
+    func_80126608(a);
+}
 
 
 void func_80127560(void *arg0) {

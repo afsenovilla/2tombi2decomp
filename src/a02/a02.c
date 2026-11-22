@@ -799,7 +799,23 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateLetsMakeAPotSequence);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011A8D4);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011AAC0);
+void func_8011A8D4();
+
+s32 func_8011AAC0(u8 *a) {
+    u8 t;
+    u8 *p = func_80072DDC(0, 129, 4, 36);
+
+    if (p == NULL) {
+        return 0;
+    }
+    M2C_FIELD(p, s16 *, 0x2E) = 3540;
+    M2C_FIELD(p, s16 *, 0x32) = -2090;
+    M2C_FIELD(p, s16 *, 0x36) = 6050;
+    t = a[0x5E];
+    M2C_FIELD(p, void **, 0x1C) = func_8011A8D4;
+    p[0x3] = t;
+    return 1;
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011AB34);
 

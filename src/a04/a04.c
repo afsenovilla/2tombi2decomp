@@ -501,7 +501,23 @@ void func_80118FA0(void *arg0) {
     M2C_FIELD(arg0, s8 *, 4) = 3;
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80119004);
+void f_UpdateKujaraQuestPickupActor();
+
+u8 *func_80119004(u8 *a) {
+    u8 t;
+    u8 *p = func_80072DDC(a, 0, 5, 3);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    t = a[3];
+    M2C_FIELD(p, void **, 0x1C) = f_UpdateKujaraQuestPickupActor;
+    p[0x3] = t & 3;
+    M2C_FIELD(p, s16 *, 0x2E) = M2C_FIELD(a, u16 *, 0x2E);
+    M2C_FIELD(p, s16 *, 0x32) = M2C_FIELD(a, u16 *, 0x32);
+    M2C_FIELD(p, s16 *, 0x36) = M2C_FIELD(a, u16 *, 0x36);
+    return p;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80119080);
 
@@ -711,11 +727,34 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011B958);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011BB48);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011BDFC);
+void func_8011B958();
+void func_8011BB48();
+
+u8 *func_8011BDFC(u8 *a, s32 b) {
+    u8 *p = func_80072DDC(0, 0, 3, 0x18);
+
+    if (p != NULL) {
+    M2C_FIELD(p, void **, 0x1C) = func_8011B958;
+    p[3] = b;
+    M2C_FIELD(p, u8 **, 0x10) = a;
+        return p;
+    }
+    return NULL;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011BE5C);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011BF00);
+u8 *func_8011BF00(u8 *a, s32 b) {
+    u8 *p = func_80072DDC(0, 0, 3, 0x18);
+
+    if (p != NULL) {
+    M2C_FIELD(p, void **, 0x1C) = func_8011BB48;
+    p[3] = b;
+    M2C_FIELD(p, u8 **, 0x10) = a;
+        return p;
+    }
+    return NULL;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011BF60);
 
