@@ -498,7 +498,7 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_SpawnPipeAreaSceneActorsFromPlacementT
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
-#include "psyq/inline_c.h"
+#include "gte.h"
 extern ClutCycle D_801352CC[];
 extern s8 D_80138FD0[];
 void func_801112C0(s32 arg0) {

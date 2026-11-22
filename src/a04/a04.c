@@ -1,7 +1,7 @@
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
-#include "psyq/inline_c.h"
+#include "gte.h"
 
 extern s8 D_800BF808_c1f7[];
 extern u8 D_1F800137_104c;

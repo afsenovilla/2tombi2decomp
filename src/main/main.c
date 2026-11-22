@@ -1,7 +1,7 @@
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
-#include "psyq/inline_c.h"
+#include "gte.h"
 
 extern volatile u8 D_800BE0E4;
 void f_CloseCooperativeWorkerThread(s32);
@@ -3625,8 +3625,6 @@ void f_DrawModelPrimitiveStreamForCurrentArea(u32 *a, void *b, s32 c)
     func_800803DC(a, b);
 }
 
-#undef gte_rtps
-#define gte_rtps() __asm__ volatile("nop; nop; .word 0x4A180001")
 s32 func_8003F7A0(void *v, void *sxy)
 {
     s32 z;

@@ -1,7 +1,7 @@
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
-#include "psyq/inline_c.h"
+#include "gte.h"
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801095C8);
 

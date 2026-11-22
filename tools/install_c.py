@@ -128,6 +128,7 @@ def install(a):
         if not s:
             continue
         if kind == "pp" and s.startswith("#include"):
+            s = s.replace('"psyq/inline_c.h"', '"gte.h"')     # the real GTE command words (include/gte.h)
             if s not in t and not re.search(r'"(common|game|m2c|actor)\.h"', s):
                 includes.append(s)   # e.g. psyq/inline_c.h for GTE macros: goes after the target's own includes
             continue
