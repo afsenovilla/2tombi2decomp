@@ -296,11 +296,38 @@ void func_80111FC8(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80112018);
+s32 func_80112018(void *arg0, s8 *arg1) {
+    if (func_80022F04(arg0, arg1) == 0) {
+        return 0;
+    }
+    if (func_8001DC9C(arg0, arg1, 0, 2) & 0x80) {
+        M2C_FIELD(arg0, s8 *, 0x2B) = 2;
+    }
+    *((s8 *)D_1F800182) = 0;
+    return 1;
+}
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80112084);
+s32 func_80112084(void *arg0, s8 *arg1) {
+    if (func_80022F04(arg0, arg1) == 0) {
+        return 0;
+    }
+    if (func_8001DC9C(arg0, arg1, 0, 1) & 0x80) {
+        M2C_FIELD(arg0, s8 *, 0x2B) = 2;
+    }
+    *((s8 *)D_1F800182) = 0;
+    return 1;
+}
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801120F0);
+s32 func_801120F0(void *arg0, s8 *arg1) {
+    if (func_80022F04(arg0, arg1) == 0) {
+        return 0;
+    }
+    if (func_8001DC9C(arg0, arg1, 0, 0x801) & 0x80) {
+        M2C_FIELD(arg0, s8 *, 0x2B) = 2;
+    }
+    *((s8 *)D_1F800182) = 0;
+    return 1;
+}
 
 extern s8 D_1F800182[];
 

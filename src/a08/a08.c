@@ -1503,7 +1503,52 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013404C);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801345B4);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80134814);
+typedef struct {
+    u8 pad0[0x4E];
+    s16 x4E;
+    u8 pad50[6];
+    s16 x56;
+    u8 pad58[0x14];
+    s16 x6C;
+    s16 x6E;
+    u8 pad70[0x4E];
+    u8 xBE;
+} T4814;
+
+s32 func_80134814(T4814 *a)
+{
+    switch (a->x6E) {
+    case 0:
+        if (a->xBE) {
+            a->x4E = -0x80;
+            a->x6C = a->x56 - 0x800;
+        } else {
+            a->x4E = 0x80;
+            a->x6C = a->x56 + 0x800;
+        }
+        a->x6E++;
+    case 1:
+        a->x56 += a->x4E;
+        if (a->xBE) {
+            if (a->x6C < a->x56) {
+                break;
+            }
+            a->x56 = a->x6C;
+            a->x6E = -1;
+            a->xBE ^= 1;
+            return 1;
+        } else {
+            if (a->x56 < a->x6C) {
+                break;
+            }
+            a->x56 = a->x6C;
+            a->x6E = -1;
+            a->xBE ^= 1;
+            return 1;
+        }
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80134904);
 
