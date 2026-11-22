@@ -990,7 +990,27 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011BDB8);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseSceneActor);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011C090);
+void func_8011C090(u8 *a) {
+    GameState *g;
+    u8 v;
+
+    if (D_800BF80D == 0) {
+        g = &D_800BF870;
+        v = g->pad1[0x172];
+        func_8004ED94((v & 1) + ((v >> 1) & 1) + ((v >> 2) & 1) + 0x26, 0x42);
+        func_8004B0D8(a);
+        func_8004D4F4(0x2A, 1);
+        v = g->pad1[0x172] |= 1 << a[3];
+        if ((v & 3) == 3) {
+            g->pad1[0x174] = 7;
+        }
+        if ((v & 7) == 7) {
+            func_80040C00(7);
+            func_80040B48(8);
+        }
+    }
+    a[4] = 3;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldenCrabAndWindmillActor);
 
@@ -2924,7 +2944,19 @@ s32 func_80145DD4(s32 arg0, s32 arg1) {
     return (u32) (((arg1 - func_800782B0(arg0 + 0x2C, *((s16 *)D_1F800160), *((s16 *)D_1F800164))) + 0x400) & 0xFFF) >= 0x801U;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80145E20);
+s32 func_80145E20(u8 *a) {
+    u8 *q = a + 0x60;
+    s32 h = M2C_FIELD(a, u16 *, 0x60);
+    s8 r;
+
+    r = (u32)((h - func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f) + 0x400) & 0xFFF) > 0x800;
+    if (r) {
+        M2C_FIELD(q, u16 *, 2) |= 1;
+    } else {
+        M2C_FIELD(q, u16 *, 2) &= 0xFFFE;
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80145EA4);
 
