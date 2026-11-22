@@ -4820,6 +4820,12 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8003E894);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003EA88);
 
+extern u32 *D_800BF544_5fe3;
+typedef struct { unsigned addr : 24; unsigned len : 8; } PTag_F264;
+typedef struct { PTag_F264 tag; u32 code[2]; } DrMode_F264;
+#define setaddr_(p, _addr) (((PTag_F264 *)(p))->addr = (u32)(_addr))
+#define getaddr_(p) (u32)(((PTag_F264 *)(p))->addr)
+#define addPrim_(ot, p) setaddr_(p, getaddr_(ot)), setaddr_(ot, p)
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003EBE0);
 
 void f_DrawActiveWorldActors(void)
@@ -4907,12 +4913,6 @@ void func_8003F07C(u8 *a, s32 b)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F174);
 
-extern u32 *D_800BF544_5fe3;
-typedef struct { unsigned addr : 24; unsigned len : 8; } PTag_F264;
-typedef struct { PTag_F264 tag; u32 code[2]; } DrMode_F264;
-#define setaddr_(p, _addr) (((PTag_F264 *)(p))->addr = (u32)(_addr))
-#define getaddr_(p) (u32)(((PTag_F264 *)(p))->addr)
-#define addPrim_(ot, p) setaddr_(p, getaddr_(ot)), setaddr_(ot, p)
 void func_8003F264(void)
 {
     DrMode_F264 *p;
@@ -6988,7 +6988,189 @@ s32 func_8004A2A0(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_GrantNonGemPickupReward);
+extern u8 D_800BFB24;
+extern u8 D_800BFB26;
+extern u8 D_800BFB28;
+void f_AddItemWithMessage(s32 item, s32 n);
+void f_AddItemWithoutMessage(s32 item, s32 n);
+void f_RemoveItemWithoutMessage(s32 item, s32 count);
+void f_QueueResourceMessage(s16 id, u8 arg);
+
+s32 f_GrantNonGemPickupReward(u8 *a)
+{
+    s32 it;
+    u8 *h;
+    s32 ev;
+    s32 m;
+    u8 *e;
+
+    if (D_800E7FEE == 0) {
+        return 0;
+    }
+    switch (*(s16 *)(a + 0x68)) {
+    case 1:
+        it = *(s16 *)(a + 0x68);
+        f_AddItemWithMessage(it, 1);
+        ev = 0x1E;
+        goto set_ev;
+    case 4:
+        f_StartEvent(9);
+    case 2:
+    case 3:
+    case 5:
+    case 7:
+    case 8:
+    case 9:
+        it = *(s16 *)(a + 0x68);
+        f_AddItemWithMessage(it, 1);
+        D_800BF88C = it;
+        D_800E7EEC = it;
+        break;
+    case 6:
+        it = *(s16 *)(a + 0x68);
+        f_AddItemWithMessage(it, 1);
+        ev = 0xF;
+    set_ev:
+        D_800BF88C = it;
+        D_800E7EEC = it;
+        f_UpdateEvent(ev);
+        break;
+    case 0xB:
+        f_AddItemWithMessage(0xB, 1);
+        {
+            u8 *tt = (u8 *)D_800E7E80;
+            u8 vv = 1;
+            u8 *gg = (u8 *)&D_800BF870;
+            gg[0x1D] = vv;
+            tt[0x6D] = vv;
+            func_80067DA8(tt);
+            gg[0x15F]++;
+        }
+        break;
+    case 0xC:
+        f_AddItemWithMessage(0xC, 1);
+        {
+            u8 *tt = (u8 *)D_800E7E80;
+            u8 vv = 2;
+            u8 *gg = (u8 *)&D_800BF870;
+            gg[0x1D] = vv;
+            tt[0x6D] = vv;
+            func_80067DA8(tt);
+            gg[0x15F]++;
+        }
+        break;
+    case 0x89:
+        f_AddItemWithoutMessage(0x60, 2);
+        f_QueueItemMessage(0x89, 2);
+        break;
+    case 0x57:
+        f_AddItemWithoutMessage(0x4D, 2);
+        f_QueueItemMessage(0x57, 2);
+        f_StartEvent(0x3E);
+        break;
+    case 0x8A:
+        f_AddItemWithoutMessage(0x7C, 3);
+        f_QueueItemMessage(0x8A, 2);
+        goto ev50;
+    case 0x70:
+        if (D_800BFB24 == 0) {
+            f_AddItemWithoutMessage(0x70, 1);
+            m = 0x10;
+        } else {
+            f_AddItemWithoutMessage(0x6F, 1);
+            f_RemoveItemWithoutMessage(0x70, 1);
+            m = 0x11;
+        }
+        goto msg;
+    case 0x72:
+        if (D_800BFB26 == 0) {
+            f_AddItemWithoutMessage(0x72, 1);
+            m = 0x12;
+        } else {
+            f_AddItemWithoutMessage(0x71, 1);
+            f_RemoveItemWithoutMessage(0x72, 1);
+            m = 0x13;
+        }
+        goto msg;
+    case 0x74:
+        if (D_800BFB28 == 0) {
+            f_AddItemWithoutMessage(0x74, 1);
+            m = 0x14;
+        } else {
+            f_AddItemWithoutMessage(0x73, 1);
+            f_RemoveItemWithoutMessage(0x74, 1);
+            m = 0x15;
+        }
+    msg:
+        f_QueueResourceMessage(m, 0x41);
+        break;
+    case 0x2F:
+        f_AddItemWithMessage(*(s16 *)(a + 0x68), 1);
+        f_StartEvent(0x18);
+        break;
+    case 0x47:
+        f_AddItemWithMessage(*(s16 *)(a + 0x68), 1);
+        f_StartEvent(0x4D);
+        break;
+    case 0x6A:
+        f_AddItemWithMessage(*(s16 *)(a + 0x68), 1);
+        f_UpdateEvent(0x58);
+        break;
+    case 0x6B:
+        f_AddItemWithMessage(*(s16 *)(a + 0x68), 1);
+        f_UpdateEvent(0x59);
+        break;
+    case 0x7C:
+        f_AddItemWithMessage(*(s16 *)(a + 0x68), 1);
+    ev50:
+        f_StartEvent(0x50);
+        break;
+    case 0xA6:
+        f_AddItemWithMessage(*(s16 *)(a + 0x68), 1);
+        func_80114F24(a);
+        break;
+    case 0xA0:
+    case 0xA1:
+    case 0xA2:
+    case 0xA3:
+        func_80115AEC(a);
+        break;
+    case 0x91:
+        h = (u8 *)&D_800BF870;
+        if (h[0xD] == 8) {
+            h[0xD] = h[0xC];
+        }
+        h[0xC] = 0x10;
+        {
+            u8 *p = (u8 *)D_800E7E80;
+            s16 x = h[0xD];
+
+            *(s16 *)(p + 0x16E) = x;
+            *(s16 *)(p + 0x170) = x;
+        }
+        f_QueueResourceMessage(0xF, 0x41);
+        e = (u8 *)f_SpawnTransientEffect(0x711, 0);
+        if (e != NULL) {
+            e[0x28] |= 0x80;
+        }
+        break;
+    case 0x96:
+    case 0x97:
+    case 0x99:
+    case 0x9A:
+        {
+            u8 *k = (u8 *)&D_800BF870;
+
+            *(s32 *)(k + 4) += 100000;
+        }
+        func_80071B44((s32)a, 100000, 0);
+    default:
+        f_AddItemWithMessage(*(s16 *)(a + 0x68), 1);
+        break;
+    }
+    Despawn_A2A0((s32)a);
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeSpriteGroundPickupFromRewardSelector);
 
