@@ -165,7 +165,38 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80113394);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80113470);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801134E8);
+typedef struct {
+    s16 a;
+    s16 b;
+    s16 c;
+    s16 d;
+} SV;
+extern u8 D_800BFA2D;
+extern u8 *D_800BF860_c64f;
+extern u8 D_800BFA2C;
+void f_UpdateCircusClosetKeyActor();
+
+void func_801134E8(u8 *a0, u8 *a1)
+{
+    s32 neg = 0;
+    s16 d = *(u16 *)(a1 + 0x36) - 0x2968;
+    s16 m = d;
+
+    if (d < 0) {
+        neg = 1;
+        m = -d;
+    }
+    m = m / 4;
+    if (m > 0x300) {
+        m = 0x300;
+    }
+    if (!neg) {
+        m = 0x800 - m;
+    } else {
+        m = m + 0x800;
+    }
+    *(s16 *)(a0 + 0x52) = m;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80113550);
 
@@ -246,7 +277,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80116A0C);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80116B88);
 
-extern u8 D_800BFA2C;
 void func_80117048(void *arg0) {
     if (D_800BFA2C != 0) {
         M2C_FIELD(arg0, s8 *, 6) = 0xA;
@@ -745,7 +775,23 @@ void func_8011E310(u8 *p)
     }
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011E36C);
+void func_8011E36C(u8 *p)
+{
+    if (p[0x71] == 0xFF) {
+        switch (p[0x5E]) {
+        case 0:
+            p[0x5E]++;
+            D_800BFA2D = 1;
+            break;
+        case 2:
+            p[4] = 3;
+            return;
+        }
+        p[5] = 0;
+        p[6] = 0;
+        *(s16 *)(p + 0x40) = 0x1E;
+    }
+}
 
 extern u8 D_800BFB05;
 
@@ -1115,7 +1161,21 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80125CA0);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80125D68);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80125DD8);
+void func_80125DD8(u8 *p, s32 a1)
+{
+    SV v;
+
+    if ((u16)(*(u16 *)(p + 0x36) - 0x2560) < 0x87F) {
+        if (a1) {
+            v.a = *(s16 *)(p + 0x2E);
+        } else {
+            v.a = 0x25B2;
+        }
+        v.b = -0xA00;
+        v.c = *(s16 *)(p + 0x36);
+        func_8002AE0C(&v, 0x60, 1);
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80125E40);
 
@@ -1147,7 +1207,23 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80126DEC);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80126E80);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80126F1C);
+s32 func_80126F1C(u8 *p)
+{
+    switch (p[0x78]) {
+    case 0:
+        D_800BF860_c64f = p;
+        D_800BFA2C = 0xF;
+        p[0x78]++;
+        goto end;
+    case 1:
+        if (D_800BFA2C == 0x11) {
+            return 1;
+        }
+    end:
+    default:
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80126F84);
 
@@ -1434,7 +1510,19 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusThrownQuestObject);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusClosetKeyActor);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012C104);
+u8 *func_8012C104(void *a0, u8 a1)
+{
+    u8 *r = func_80072DDC(a0, 1, 5, 5);
+
+    if (r == 0) {
+        return 0;
+    }
+    r[3] = a1;
+    *(void **)(r + 0x1C) = f_UpdateCircusClosetKeyActor;
+    *(void **)(r + 0x10) = a0;
+    r[0x28] |= 0x80;
+    return r;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012C16C);
 
