@@ -1098,9 +1098,35 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80123A60);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80123AC4);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80123BB8);
+extern u16 D_1F800160;
+extern u16 D_1F800164;
+extern u8 D_800E7E80[];
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80123BE8);
+s32 func_80123BB8(u8 *p)
+{
+    u16 x;
+    u16 z;
+
+    *(s16 *)(p + 0x58) = -0x200;
+    x = D_1F800160;
+    z = D_1F800164;
+    *(s16 *)(p + 0x2E) = x + 0x90;
+    *(s16 *)(p + 0x36) = z + 0x90;
+    return 1;
+}
+
+extern u8 D_800BFA1F;
+
+s32 func_80123BE8(u8 *p)
+{
+    u16 x = D_1F800160;
+    u16 z = D_1F800164;
+
+    *(s16 *)(p + 0x58) = 0;
+    *(s16 *)(p + 0x2E) = x + 0xC4;
+    *(s16 *)(p + 0x36) = z + 0xC4;
+    return 1;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80123C14);
 
@@ -1298,7 +1324,13 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012B14C);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012B350);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012B3C0);
+s32 func_8012B3C0(void)
+{
+    if ((D_800BFA1F & 0xF) == 0xF) {
+        return 3;
+    }
+    return 2;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", f_UpdatePotatoBugEatsLeavesActor);
 
@@ -1425,7 +1457,19 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80130D98);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80130F1C);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80131650);
+s32 func_80131650(u8 *p)
+{
+    u8 *q = *(u8 **)(p + 0x10);
+
+    if (q != 0) {
+        q[6] = 0;
+        q[5] = 0;
+        q[4] = 3;
+        *(u8 **)(p + 0x10) = 0;
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80131680);
 
@@ -1454,7 +1498,14 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80131A18);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80131B10);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80131BB4);
+void func_80131BB4(void)
+{
+    u8 *s = D_800E7E80;
+
+    if (s[5] == 0x18 && s[0] == 6) {
+        s[6] = 2;
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80131BE8);
 
