@@ -33,7 +33,62 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010AEC4);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010B068);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010B2D0);
+typedef struct {
+    u16 type;
+    u8 pad2[6];
+    u8 mag0;
+    u8 mag1;
+    u8 x;
+    u8 y;
+} AreaPadAnalog;
+extern AreaPadAnalog D_800ECF48;
+extern u16 D_800ECF54;
+
+void func_8010B2D0(u8 *a) {
+    AreaPadAnalog *p = &D_800ECF48;
+    u8 m;
+
+    if (p->y + p->x != 0 && p->type == 7) {
+        m = p->mag1;
+        if (m < p->mag0) {
+            m = p->mag0;
+        }
+        a[0x14B] = m;
+        a[0x147] = ((u32)func_80085690((s8)p->y, (s8)p->x) & 0xFFF) >> 5;
+        return;
+    }
+    switch (D_800ECF54 & 0xF0) {
+    case 0x20:
+        a[0x147] = 0;
+        break;
+    case 0x80:
+        a[0x147] = 0x40;
+        break;
+    case 0x10:
+        a[0x147] = 0x60;
+        break;
+    case 0x40:
+        a[0x147] = 0x20;
+        break;
+    case 0x30:
+        a[0x147] = 0x70;
+        break;
+    case 0x60:
+        a[0x147] = 0x10;
+        break;
+    case 0x90:
+        a[0x147] = 0x50;
+        break;
+    case 0xC0:
+        a[0x147] = 0x30;
+        break;
+    default:
+        a[0x147] |= 0x80;
+        a[0x14B] = 0;
+        return;
+    }
+    a[0x14B] = 3;
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010B458);
 
@@ -77,7 +132,60 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010ED88);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010F01C);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010F63C);
+extern u16 D_800E7E68;
+extern u8 D_800BF80F;
+extern u8 D_1F800137;
+extern u16 D_1F800166;
+extern u16 D_1F800190;
+
+void func_8010F63C(u8 *a) {
+    u16 held;
+    u16 pad;
+
+    switch (a[4]) {
+    case 0:
+        func_80058648(a, 0);
+        break;
+    case 1:
+        held = D_800E7E68;
+        pad = D_800ECF54;
+        if (D_800BF80F != 0 || D_1F800137 != 0) {
+            D_800E7E68 = 0;
+            D_800ECF54 = 0;
+            if (D_800ECF48.type == 7) {
+                D_800ECF48.x = 0;
+                D_800ECF48.y = 0;
+            }
+        }
+        func_8010ED88(a);
+        func_800597AC(a);
+        D_800E7E68 = held;
+        D_800ECF54 = pad;
+        break;
+    case 2:
+    case 3:
+        break;
+    case 4:
+        held = D_800E7E68;
+        pad = D_800ECF54;
+        if (D_1F800137 == 0) {
+            D_800E7E68 = 0;
+            D_800ECF54 = 0;
+        } else {
+            D_800E7E68 = D_1F800166;
+            D_800ECF54 = D_1F800190;
+        }
+        if (D_800ECF48.type == 7) {
+            D_800ECF48.x = 0;
+            D_800ECF48.y = 0;
+        }
+        func_8010F01C(a);
+        func_800597AC(a);
+        D_800E7E68 = held;
+        D_800ECF54 = pad;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010F798);
 
