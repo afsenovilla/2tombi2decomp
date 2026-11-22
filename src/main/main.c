@@ -10533,7 +10533,32 @@ void f_ApplyInteriorEntranceDoorMirroredYaw(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x56) = (s16) (M2C_FIELD(arg0, u16 *, 0x5A) - M2C_FIELD(arg0, u16 *, 0x50));
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_CloseInteriorEntranceDoor);
+s32 f_CloseInteriorEntranceDoor(u8 *a)
+{
+    s32 r = 0;
+
+    switch (a[0x46]) {
+    case 0:
+        *(s16 *)(a + 0x50) += 0x40;
+        if (*(s16 *)(a + 0x50) > 0) {
+            *(s16 *)(a + 0x50) = 0;
+            r = 1;
+        }
+        break;
+    case 1:
+        *(s16 *)(a + 0x50) -= 0x40;
+        if (*(s16 *)(a + 0x50) < 0) {
+            *(s16 *)(a + 0x50) = 0;
+            r = 1;
+        }
+        break;
+    }
+    if (r != 0 && a[0xBF] != 0) {
+        f_PlaySoundEffect(0x18, 0, 0xF);
+    }
+    *(u16 *)(a + 0x56) = *(u16 *)(a + 0x5A) - *(u16 *)(a + 0x50);
+    return r;
+}
 
 
 void f_InitializeInteriorDoorPartOpenYaw(void *arg0, void *arg1) {
@@ -10577,9 +10602,59 @@ s32 f_OpenInteriorDoorPart(u8 *p, u8 *d)
     return r;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_CloseInteriorDoorPart);
+s32 f_CloseInteriorDoorPart(u8 *a, u8 *p)
+{
+    s32 r = 0;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_CloseMirroredInteriorDoorPart);
+    switch (a[0x46]) {
+    case 0:
+        *(s16 *)(p + 0x12) += 0x40;
+        if (*(s16 *)(p + 0x12) > 0) {
+            *(s16 *)(p + 0x12) = 0;
+            r = 1;
+        }
+        break;
+    case 1:
+        *(s16 *)(p + 0x12) -= 0x40;
+        if (*(s16 *)(p + 0x12) < 0) {
+            *(s16 *)(p + 0x12) = 0;
+            r = 1;
+        }
+        break;
+    }
+    if (r != 0 && a[0xBF] != 0) {
+        f_PlaySoundEffect(0x18, 0, 0xF);
+    }
+    *(u16 *)(p + 0xA) = *(u16 *)(p + 0xE) - *(u16 *)(p + 0x12);
+    return r;
+}
+
+s32 f_CloseMirroredInteriorDoorPart(u8 *a, u8 *p)
+{
+    s32 r = 0;
+
+    switch (a[0x46]) {
+    case 0:
+        *(s16 *)(p + 0x12) += 0x40;
+        if (*(s16 *)(p + 0x12) > 0) {
+            *(s16 *)(p + 0x12) = 0;
+            r = 1;
+        }
+        break;
+    case 1:
+        *(s16 *)(p + 0x12) -= 0x40;
+        if (*(s16 *)(p + 0x12) < 0) {
+            *(s16 *)(p + 0x12) = 0;
+            r = 1;
+        }
+        break;
+    }
+    if (r != 0 && a[0xBF] != 0) {
+        f_PlaySoundEffect(0x18, 0, 0xF);
+    }
+    *(u16 *)(p + 0xA) = *(u16 *)(p + 0xE) + *(u16 *)(p + 0x12);
+    return r;
+}
 
 
 void f_PrepareInteriorTransition(u8 *door)
