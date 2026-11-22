@@ -430,7 +430,60 @@ void func_80110B2C(u8 *a, u8 *b) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80110BB8);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80110CB8);
+extern u8 D_1F800183;
+typedef struct {
+    u8 pad0[0xC0];
+    s32 xC0[1];
+} S11130C;
+typedef struct {
+    s16 pad0;
+    s16 a;
+    s16 pad4;
+    s16 b;
+    s16 pad8;
+    s16 c;
+} S13AE38;
+extern u8 **D_1F800154;
+extern u8 D_1F80015C;
+typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner;
+typedef struct { s16 v[4]; } PartInit;
+typedef struct { s16 v[5]; } PartInit5;
+typedef struct { u8 pad[0x48]; s32 unk48; } AreaState808;
+typedef struct { s16 x, y, z; } AreaVec3s;
+typedef struct { s16 x, y, z, pad; } AreaSVec;
+typedef struct { s16 m[3][3]; s16 pad; s32 t[3]; } AreaMatrix;
+typedef struct { u8 pad[0x28]; AreaMatrix m; } AreaScratchD0;
+typedef struct { s16 x0; s16 id; u8 k; u8 p5; s16 v6; s16 v8; } Entry10;
+typedef struct {
+    s16 x, y, w, h;
+} RECT16;
+typedef struct {
+    u8 x[8];
+} S8;
+typedef struct {
+    u8 b[6][4];
+} FlickerTbl;
+void func_80110CB8(void) {
+    u8 **list = D_1F800154;
+    u8 *a;
+
+    for (D_1F800183 = D_1F80015C; D_1F800183 != 0;) {
+        a = *list++;
+        D_1F800183--;
+        if (!(a[0] & 2)) {
+            switch (a[2]) {
+            case 1:
+                if (a[3] != 1) {
+                    break;
+                }
+            case 0:
+            case 4:
+                func_8010EFBC(a);
+                break;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_SpawnPipeAreaSceneActorsFromPlacementTable);
 
@@ -1370,9 +1423,6 @@ s32 func_8011A9C8(u8 *p) {
 }
 
 extern u8 D_80135F24[];
-typedef struct { s16 m[3][3]; s16 pad; s32 t[3]; } AreaMatrix;
-typedef struct { s16 x, y, z, pad; } AreaSVec;
-typedef struct { u8 pad[0x28]; AreaMatrix m; } AreaScratchD0;
 s32 func_8011AAA4(u8 *p) {
     switch (p[6]) {
     case 0:
@@ -3120,9 +3170,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801316A8);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80131BB0);
 
-typedef struct {
-    s16 x, y, w, h;
-} RECT16;
 void func_801321C4(RECT16 *a) {
     RECT16 r;
     u16 buf[16];

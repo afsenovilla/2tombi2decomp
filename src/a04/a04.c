@@ -1918,7 +1918,83 @@ s32 func_80122F08(u8 *p)
     return 0;
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80123008);
+typedef union {
+    u8 b[0xC0];
+    s16 h[0x60];
+} ActorH;
+extern s16 D_1F8001A0;
+extern s16 D_1F8001A2;
+typedef struct {
+    u8 b[0x56];
+    s16 h56;
+    u8 pad58[8];
+    s16 h60;
+    s16 h62;
+    u8 pad64[0x5C];
+    u8 *parts[3];
+} DoorActor;
+typedef struct {
+    u8 b[6][4];
+} FlickerTbl;
+typedef struct {
+    s16 x, y, z, pad;
+} SVec4;
+typedef struct {
+    u8 pad0[6];
+    u8 count;
+    u8 pad7[5];
+    u32 *tbl;
+    u16 list[1];
+} PartList;
+s32 func_80123008(DoorActor *a, s16 *d) {
+    s32 i;
+    s32 n;
+    s16 x, y;
+
+    a->b[8] = 3;
+    if (D_800ED098 < 3) {
+        return 1;
+    }
+    n = 3;
+    a->b[9] = n;
+    a->b[0xD] = 4;
+    M2C_FIELD(a->b, s16 *, 0x80) = 0x80;
+    M2C_FIELD(a->b, s16 *, 0x82) = 0x100;
+    M2C_FIELD(a->b, s16 *, 0x84) = 0xDC;
+    M2C_FIELD(a->b, s16 *, 0x86) = 0x1C2;
+    a->b[0xB] = 0;
+    M2C_FIELD(a->b, s16 *, 0xB8) = 0x1000;
+    M2C_FIELD(a->b, s16 *, 0xBA) = 0x1000;
+    M2C_FIELD(a->b, s16 *, 0xBC) = 0x1000;
+    for (i = 0; i < a->b[8]; i++) {
+        a->parts[i] = func_8007AAE8();
+        M2C_FIELD(a->parts[i], s16 *, 6) = *d++;
+        M2C_FIELD(a->parts[i], s16 *, 0) = *d++;
+        M2C_FIELD(a->parts[i], s16 *, 2) = *d++;
+        M2C_FIELD(a->parts[i], s16 *, 4) = *d++;
+        M2C_FIELD(a->parts[i], s16 *, 8) = 0;
+        M2C_FIELD(a->parts[i], s16 *, 0xA) = 0;
+        M2C_FIELD(a->parts[i], s16 *, 0xC) = 0;
+        M2C_FIELD(a->parts[i], s16 *, 0x38) = 0x1000;
+        M2C_FIELD(a->parts[i], s16 *, 0x3A) = 0x1000;
+        M2C_FIELD(a->parts[i], s16 *, 0x3C) = 0x1000;
+        func_80051B04(a->parts[i], 0xC, *d++);
+    }
+    a->parts[0][0x3F] = 0x20;
+    a->parts[1][0x3F] = 0xF0;
+    a->parts[2][0x3F] = 0xF0;
+    a->b[0x29] = 0;
+    a->b[0x2B] = 0;
+    func_8004766C(a->b);
+    func_80048750(a->b);
+    x = D_1F8001A0;
+    y = D_1F8001A2;
+    a->h60 = x;
+    a->h62 = y;
+    a->h56 = x;
+    M2C_FIELD(a->parts[0], s16 *, 0xA) = M2C_FIELD(a->b, s16 *, 0x7C);
+    return 0;
+}
 
 void func_801231E0(u8 *a, s32 b) {
     s32 i;
@@ -2292,10 +2368,12 @@ void func_80129A88(s32 arg0)
   return 2;
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80129AA8);
-
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80129B54);
-
+typedef struct {
+    s16 x, y, w, h;
+} RectA;
+typedef struct { s16 m[3][3]; s16 pad; s32 t[3]; } AreaMatrix;
+typedef struct { s16 x, y, z, pad; } AreaSVec;
+typedef struct { u8 pad[0x28]; AreaMatrix m; } AreaScratchD0;
 typedef struct {
     u8 pad0[0x38];
     u8 *p38;
@@ -2303,6 +2381,27 @@ typedef struct {
     s16 h60[0x34];
     u8 *pC8;
 } ActorDF;
+typedef struct {
+    s16 x, y, w, h;
+} RECT16;
+void func_80129AA8(ActorDF *a, s32 i) {
+    s32 j = i + 1;
+    s16 v;
+
+    func_80129744(a, j);
+    if (a->h60[j] != 2) {
+        a->h60[i] = 0;
+    } else {
+        v = *(s16 *)(a->p38 + 4) >> 4;
+        if (v != a->h60[i]) {
+            func_80051B04(a->pC8, 0x23, v);
+            a->h60[i] = v;
+        }
+    }
+}
+
+INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80129B54);
+
 s16 func_80129C44(ActorDF *a, s32 i) {
     s32 r = func_80076D68();
     s32 j = i + 1;
@@ -3174,7 +3273,6 @@ void func_8013CC08(void *arg0) {
 }
 
 #define AREA_gte_ldv0(r0) __asm__ volatile("lwc2	$0, 0( %0 );" "lwc2	$1, 4( %0 )" : : "r"(r0))
-typedef struct { s16 x, y, z, pad; } AreaSVec;
 extern u8 D_8014296C[];
 extern s32 D_80142968;
 extern s32 D_1F800084;
@@ -3208,8 +3306,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013CCDC);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013CD78);
 
-typedef struct { s16 m[3][3]; s16 pad; s32 t[3]; } AreaMatrix;
-typedef struct { u8 pad[0x28]; AreaMatrix m; } AreaScratchD0;
 void func_8013CE14(u8 *a) {
     switch (a[4]) {
     case 0:

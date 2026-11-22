@@ -215,7 +215,84 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", f_UpdateEvilPigInteriorEntranceDoorSeque
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010A5D8);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", f_InitializeEvilPigGateModel);
+typedef union {
+    u8 b[0xC0];
+    s16 h[0x60];
+} ActorH;
+extern s16 D_800ED098;
+extern s16 D_1F8001A0;
+extern s16 D_1F8001A2;
+typedef struct {
+    u8 b[0x56];
+    s16 h56;
+    u8 pad58[8];
+    s16 h60;
+    s16 h62;
+    u8 pad64[0x5C];
+    u8 *parts[3];
+} DoorActor;
+typedef struct {
+    u8 b[6][4];
+} FlickerTbl;
+typedef struct {
+    s16 x, y, z, pad;
+} SVec4;
+typedef struct {
+    u8 pad0[6];
+    u8 count;
+    u8 pad7[5];
+    u32 *tbl;
+    u16 list[1];
+} PartList;
+s32 f_InitializeEvilPigGateModel(DoorActor *a, s16 *d) {
+    s32 i;
+    s32 n;
+    s16 x, y;
+
+    a->b[8] = 3;
+    if (D_800ED098 < 3) {
+        return 1;
+    }
+    n = 3;
+    a->b[9] = n;
+    a->b[0xD] = 4;
+    M2C_FIELD(a->b, s16 *, 0x80) = 0x80;
+    M2C_FIELD(a->b, s16 *, 0x82) = 0x100;
+    M2C_FIELD(a->b, s16 *, 0x84) = 0xDC;
+    M2C_FIELD(a->b, s16 *, 0x86) = 0x1C2;
+    a->b[0xB] = 0;
+    M2C_FIELD(a->b, s16 *, 0xB8) = 0x1000;
+    M2C_FIELD(a->b, s16 *, 0xBA) = 0x1000;
+    M2C_FIELD(a->b, s16 *, 0xBC) = 0x1000;
+    for (i = 0; i < a->b[8]; i++) {
+        a->parts[i] = func_8007AAE8();
+        M2C_FIELD(a->parts[i], s16 *, 6) = *d++;
+        M2C_FIELD(a->parts[i], s16 *, 0) = *d++;
+        M2C_FIELD(a->parts[i], s16 *, 2) = *d++;
+        M2C_FIELD(a->parts[i], s16 *, 4) = *d++;
+        M2C_FIELD(a->parts[i], s16 *, 8) = 0;
+        M2C_FIELD(a->parts[i], s16 *, 0xA) = 0;
+        M2C_FIELD(a->parts[i], s16 *, 0xC) = 0;
+        M2C_FIELD(a->parts[i], s16 *, 0x38) = 0x1000;
+        M2C_FIELD(a->parts[i], s16 *, 0x3A) = 0x1000;
+        M2C_FIELD(a->parts[i], s16 *, 0x3C) = 0x1000;
+        func_80051B04(a->parts[i], 0xC, *d++);
+    }
+    a->parts[0][0x3F] = 0x20;
+    a->parts[1][0x3F] = 0xF0;
+    a->parts[2][0x3F] = 0xF0;
+    a->b[0x29] = 0;
+    a->b[0x2B] = 0;
+    func_8004766C(a->b);
+    func_80048750(a->b);
+    x = D_1F8001A0;
+    y = D_1F8001A2;
+    a->h60 = x;
+    a->h62 = y;
+    a->h56 = x;
+    M2C_FIELD(a->parts[0], s16 *, 0xA) = M2C_FIELD(a->b, s16 *, 0x7C);
+    return 0;
+}
 
 void f_ConfigureEvilPigGateForCurrentArea(u8 *a, s32 b) {
     s32 i;

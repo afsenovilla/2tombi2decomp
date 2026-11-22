@@ -3,6 +3,91 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-22 (2): second round of five agents
+
+All code in C: **3028 / 7011 functions (43.2 %, 15.2 % of the bytes)**, from 2296 (8.8 %). Agents per scope: main
++40 (jump-table switches, render-queue wrappers), Psy-Q library +214 (Phase 1 now 70.2 % / 31.3 % B: ~170 in C, 44
+marked asm by design), a00-a03 +147, a04-a08 +162 (~60 of them variants of C matched elsewhere), a09-a0l + overlays
+~+163 (53 by hand, crd 35 -> 55 % of its bytes; ~110 copies by a fuzzy copier); then dupsweep +6 and the fuzzy
+copier over all programs +2. 29 / 29 byte-identical. sync_src.py now leaves `static inline` helpers and multi-line
+`#define` bodies alone (crd.c has the CRD menu helpers at the top: a static inline must be defined before its first
+use, else gcc emits it as a function).
+
+Psy-Q library: three compiler set-ups libsweep.py never tries (each match uses `// FLAGS` / `// AS` lines):
+1. gcc 2.8.1 `-O2 -G0 -mno-split-addresses`, ASPSX 2.79: most of libgpu, libcd, libspu, libc2 (without the flag gcc
+   hoists `lui %hi` out of loops);
+2. the same plus `-fno-delayed-branch` with `// AS gnu`: void functions ending `lw ra; addiu sp; jr ra; nop` and
+   functions jumping to one shared exit;
+3. gcc 2.7.2 with `// AS gnu`: most of libsnd, libpad, the libcd/libetc statics (`-O1` once, `_padSetVsyncParam`).
+Neither is exactly Sony's: 2.7.2 adds a spurious 8/16-byte frame to some loops with a return inside; 2.8.1 turns
+jumps to the epilogue into returns. psx_tomba candidates with Tombi's `D_` addresses are kept by mapping each name
+with `#define OLD NEW`; pending statics are tried against every psx_tomba function of the same library (found
+`_otc`, `_reset`, `get_tw`, `_spu_write`, `startIntr`); MAIN <-> boot C is ported by aligning relocations. Tomba 2's
+libsnd score struct is 0xB0 bytes, not psx_tomba's SeqStruct (read_pos +0, play +0x14, channel +0x17, rpn +0x18,
+vab_id s8 +0x26, panpot[16] +0x27, programs[16] +0x37, lvol/rvol +0x58, vol u16[16] +0x60, total +0x88,
+delta_value +0x90, flags +0x98). libc2 strings are `s8`. Hardware state: a volatile struct through a local pointer.
+
+New recipes (add to the ones below):
+- **Constants and CSE**: `n = 3; a[9] = n;` stops gcc reusing an older register holding 3; `s32 k = 3;` used across a
+  call keeps it in a saved register; `one = 1; if (x == one)` puts the constant where retail has it; comparing with
+  the field just stored (`if (D < a->pad[8])`) re-materialises the constant like retail.
+- **Store / load order**: gcc 2.8 does not move a store through a plain pointer cast (`*(u32 *)((u8 *)p + 4) = v;`)
+  across a scalar global load, but moves a struct-field store; a store written after the copy of a field stays below
+  its load (anti-dependence); write the statement whose value retail loads first earlier in source. Brute-forcing
+  the order of a few marked statements (single moves, then pairs) found many matches in seconds.
+- **Field reads**: a union of arrays (`union { u8 b[N]; s16 h[N/2]; }`) lets CSE keep a field across stores to other
+  fields (M2C_FIELD casts force reloads); `*(T * volatile *)(a + 0x3C)` reloads a pointer twice like retail; reading a
+  just-stored byte back (`f(p, p[0x7B])`) gives `andi` of the stored register; `x * 32` keeps `lh` where `x << 5`
+  gives `lhu`; `*(s32 *)(p + 0x34) >> 16` gives `lh 0x36`.
+- **addu operand order**: `a->arr[i]` / `T *t = D; e = &t[i];` puts the base first (base loaded before the index
+  arithmetic); `(u16 *)(idx * 2 + (s32)tbl)` or a precomputed `k = i * 0x3C; (e + k)[4]` puts it second.
+- **Registers**: an unexplained `addu a3,a1,zero` is a narrower second variable (`s32 k = load; u8 j = k;`, test zero
+  on k, the cases on j); s-registers swapped between a parameter and a pointer: copy the parameter to a local
+  (`u8 *a = a0;`); a u8 parameter kept in its own register: declare it s32 and write `port &= 0xFF`; switch result in
+  a stack slot: `volatile s32 r`; `abs()` on an s32 avoids re-extension.
+- **Control flow**: inlined helpers with early returns: `r = 0; goto done;` per exit (one `move v0,zero` / `move
+  a0,zero` per exit); a bool copied to v0 at a switch join: `t = r; break;` in every case plus `default: t = r;`;
+  `if (p != NULL) { ...; return p; } return NULL;` keeps v0 and gives the spawners' bnez layout; ternaries that store
+  in both arms need an if/else; a constant store retail keeps in two blocks: write it (and the calls) in both
+  branches; gotos to shared stores for a multi-exit tail; a goto loop (`loop: ... if (++i < n) goto loop;`) has
+  nothing hoisted and no strength reduction; `while (c) {}` instead of `do {} while (c)` re-materialises the `lui`
+  in the exit test; retry loop `do { e = alloc(); if (e) goto found; i++; } while (i < 3);`; `switch (x) { case 0:
+  x++; ...}` folds `x + 1` to 1, `if (x == 0)` does not; one `&&` condition keeps one basic block so a call reuses
+  the incoming a0/a1; `case 0: default:` for a table whose entry 0 is the default label.
+- **Calls**: a call where retail leaves the switch-compare register in a0 is called with no arguments; call result
+  tested in v0: `if ((*(T *)(a + off) = f()) != NULL)`; store to a global first and pass the global for a late
+  `andi a1`; install_c drops prototypes, so cast arguments that need s16 conversions.
+- **Globals**: a struct-typed extern alias for a global that needs base+offset in some cases only;
+  `*(s32 *)0x1F80009C` instead of the extern when the `lui` placement differs; locals sit at increasing stack offsets
+  in declaration order (give arrays their real sizes); register saves before local array stores: aggregate
+  initializer `s16 ids[2] = {..}`; repeated tails (message boxes, card events): a macro or static inline helper.
+- **Misc**: GTE commands as `__asm__ volatile (".word 0x4A780010")` (dpcs) with `mtc2`/`swc2`; constant divisions:
+  brute-force the magic number to find the divisor (2300, 597, 600); branch-free `sltiu` where retail branches: give
+  the inline helper a `u8` return type.
+
+Near misses (words off; the agents' scratch files are in the session scratchpad only, not in the repo): main
+func_8004DF94 1, f_InitializeTransientEffectActor 1, func_8003511C 2, func_80035528 / func_800355B4 4 (match with
+`register ... asm("a2")`, not installed), func_8003F3F4 / func_8003F4C4 3, func_80059ED8 5, func_8007C940 2;
+a00 func_8012E7EC 1, a01 func_8012E5F8 2, a00 func_80111A00 4 (4 copies), a01 func_80111CCC 4, a00 func_8012E678 7,
+a01 func_80112B10 7, a03 f_UpdateTrolleyRetryMenu 11 (3 copies), a01 func_80119C4C 11 (= a00 func_80145EA4);
+a04 func_8013CCDC / func_8013CD78 / a06 func_8014013C 7, a07 func_8011DF48 5, a05 func_8011105C 5, a06 func_8013D568
+4; demo func_80106824 2, game func_80107E20 7, a0g f_PlayCourageTowerStreamedAudioSegment 8 (3 copies), crd
+func_8018D26C 14; library _SsSndReplay 1, _SsContResetAll 1, memmove 1, SsUtSetReverbFeedback 2, func_8008C260 2
+(main and boot), strcmp 2 (2.7.2 frame only), SpuFree 2; rcos and func_8008831C match alone but fail the link.
+
+Tool fixes to do next (the agents' prototypes): install_c.py must hold the program lock over the whole read-modify-
+write of config/aliases_<prog>.ld and merge lines (concurrent agents lost each other's alias lines; one commit did
+not link), insert an extern that the file declares only further down, auto-rename alias-suffixed type clashes, keep
+a scratch file's `static inline` helpers, optionally build in an isolated worktree of HEAD; ptsrc.items() must strip
+comments (an apostrophe in a comment breaks parsing); dupsweep.py must carry `#define` macros and prototypes with
+the copied C (copies failed to compile silently), try several sources per masked key and patch differing load/store
+offsets as well as immediates; a near-copy finder (matched C anywhere whose masked words are within ~25 % of a
+pending function, then rename overlay-local symbols from the relocations); libsweep.py: the three set-ups above and
+`#define` renames; decomp.py: pass the rodata .s to m2c (jump-table functions fail without it); a side-by-side diff
+(`ccheck.py --sbs`); a `//P` statement-order permuter; a variant tester (several `//--` variants in one file); a
+magic-number division solver; hillclimb transforms: narrow-type copy variable, constant into a local, do/while <->
+while, volatile reload, struct-ify a store.
+
 ## 2026-11-22: five parallel hand-matching agents
 
 All code in C: **2296 / 7011 functions (32.7 %, 8.8 % of the bytes)**, from 1543 (4.8 %). Five agents worked at

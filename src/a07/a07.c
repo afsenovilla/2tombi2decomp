@@ -369,7 +369,26 @@ void func_80113644(void)
     c->unk6E = 0x100;
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80113660);
+extern u16 D_1F8000F2;
+void func_80113660(u8 *a) {
+    u8 *t = D_800E7E80;
+    s16 v[6];
+
+    switch (a[4]) {
+    case 0:
+        M2C_FIELD(a, s16 *, 0x52) = 0x1400 - D_1F8000F2;
+        a[4]++;
+        break;
+    case 1:
+        v[1] = M2C_FIELD(t, s16 *, 0x2E);
+        v[3] = M2C_FIELD(t, s16 *, 0x32) - 0x80;
+        v[5] = M2C_FIELD(t, s16 *, 0x36);
+        func_8006E3F4(a, v);
+        func_80112B1C(a, t, M2C_FIELD(a, s16 *, 0x52));
+        func_80112CE8(a, (s16)(M2C_FIELD(t, s16 *, 0x32) - 0x80));
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusInteriorSceneTransition);
 

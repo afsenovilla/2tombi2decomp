@@ -11419,7 +11419,16 @@ void f_QueueClass5ActorForRender(s32 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80077F3C);
+s32 func_80077F3C(ActorPos_778C *a)
+{
+    s16 dx, dy, dz;
+    D_1F800080 = 0;
+    D_1F800084_8c7c = 0x3;
+    dx = a->x - D_1F8000D0_fb20[1];
+    dy = a->y - D_1F8000D0_fb20[3];
+    dz = a->z - D_1F8000D0_fb20[5];
+    return f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_IntegerSquareRootRounded);
 
