@@ -1274,7 +1274,15 @@ s32 func_80122D4C(u8 *a) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80122D70);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80122E3C);
+extern u8 D_800E7E80[];
+
+s32 func_80122E3C(u8 *a) {
+    u8 *g = D_800E7E80;
+    s16 dz = M2C_FIELD(g, s16 *, 0x36) - M2C_FIELD(a, s16 *, 0x36);
+    s16 dx = M2C_FIELD(g, s16 *, 0x2E) - M2C_FIELD(a, s16 *, 0x2E);
+
+    return func_80077768((s16)func_80085690(-dz, dx), M2C_FIELD(a, s16 *, 0x60), 0);
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80122EA8);
 

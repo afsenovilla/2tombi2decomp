@@ -446,7 +446,15 @@ void func_80115F8C(void) {
     }
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80115FE0);
+extern u16 D_1F80017C_0fe7;
+
+void func_80115FE0(u8 *a, s32 b) {
+    func_80054D14(a, 0x3D, 0);
+    func_80062A30(a, b, 0x85);
+    if (!(D_1F80017C_0fe7 & 3)) {
+        func_80074590(0x27, -3, -0x46);
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011604C);
 

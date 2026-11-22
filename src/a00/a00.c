@@ -629,7 +629,24 @@ void func_80117E5C(void *arg0) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117E98);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnBlueBucketPickup);
+extern u8 D_800BF9DC;
+void f_HandleRareFishOrBlueBucketPickup();
+
+u8 *f_SpawnBlueBucketPickup(u8 *a) {
+    u8 *p;
+
+    if (!(D_800BF9DC & 1)) {
+        p = func_8007A980(1, 5, 0);
+        if (p != NULL) {
+            M2C_FIELD(p, void **, 0x1C) = f_HandleRareFishOrBlueBucketPickup;
+            M2C_FIELD(p, u8 **, 0x10) = a + 0x60;
+            p[2] = 2;
+            p[3] = 1;
+            return p;
+        }
+    }
+    return NULL;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117FAC);
 
