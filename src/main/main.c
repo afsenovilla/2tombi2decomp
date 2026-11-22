@@ -2034,14 +2034,43 @@ void func_80031780(u8 *p)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ProjectEffectPointToScreenAndDepth);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetEffectRenderTransform);
-
 extern s32 D_1F800000[];
 extern s16 D_1F800002[];
 extern s16 D_1F800004[];
 extern s32 D_1F800014[];
 extern s32 D_1F800020_edd9[];
 extern s32 D_1F8000D0_42d8[];
+void f_SetIdentityMatrix(s32 *m);
+
+void f_SetEffectRenderTransform(void *pos, u8 *scale, s16 *rot)
+{
+    s32 v[3];
+
+    RotMatrix_gte(rot, D_1F800000);
+    v[0] = scale[0] * 4;
+    v[1] = scale[1] * 4;
+    v[2] = scale[2] * 4;
+    ScaleMatrix(D_1F800000, v);
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_ldclmv(D_1F800000);
+    gte_rtir();
+    gte_stclmv(D_1F800000);
+    gte_ldclmv(D_1F800002);
+    gte_rtir();
+    gte_stclmv(D_1F800002);
+    gte_ldclmv(D_1F800004);
+    gte_rtir();
+    gte_stclmv(D_1F800004);
+    gte_ldv0(pos);
+    gte_rtv0();
+    gte_stlvnl(D_1F800014);
+    D_1F800000[5] += D_1F8000D0_42d8[15];
+    D_1F800000[6] += D_1F8000D0_42d8[16];
+    D_1F800000[7] += D_1F8000D0_42d8[17];
+    gte_SetRotMatrix(D_1F800000);
+    gte_SetTransMatrix(D_1F800000);
+}
+
 void f_SetIdentityMatrix(s32 *m);
 
 void func_80031AC4(void *pos, u8 *scale, s16 *rot)
@@ -2110,7 +2139,34 @@ void func_80031D24(void *pos, u8 *scale, s16 *rot)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80031F84);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800321D8);
+void func_800321D8(void *pos, u8 *scale, s16 *rot)
+{
+    s32 v[3];
+
+    RotMatrixZYX(rot, D_1F800000);
+    v[0] = scale[0] * 4;
+    v[1] = scale[1] * 4;
+    v[2] = scale[2] * 4;
+    ScaleMatrix(D_1F800000, v);
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_ldclmv(D_1F800000);
+    gte_rtir();
+    gte_stclmv(D_1F800000);
+    gte_ldclmv(D_1F800002);
+    gte_rtir();
+    gte_stclmv(D_1F800002);
+    gte_ldclmv(D_1F800004);
+    gte_rtir();
+    gte_stclmv(D_1F800004);
+    gte_ldv0(pos);
+    gte_rtv0();
+    gte_stlvnl(D_1F800014);
+    D_1F800000[5] += D_1F8000D0_42d8[15];
+    D_1F800000[6] += D_1F8000D0_42d8[16];
+    D_1F800000[7] += D_1F8000D0_42d8[17];
+    gte_SetRotMatrix(D_1F800000);
+    gte_SetTransMatrix(D_1F800000);
+}
 
 void func_800323FC(void *pos, u8 *scale, s16 *rot)
 {
@@ -12973,15 +13029,376 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_NewGameSetDefaultValues);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800798F8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_AllocateActorFromPool0);
+typedef struct FreeNodeA_8313 { u8 kind0; u8 pad1[9]; u8 uA; u8 padB; u8 uC; u8 padD[0x13]; struct FreeNodeA_8313 *prev; struct FreeNodeA_8313 *next; } FreeNodeA_8313;
+extern u8 D_800ED8CC;
+extern FreeNodeA_8313 *D_800F2398_0c73;
+extern FreeNodeA_8313 *D_800F239C_ee60;
+extern FreeNodeA_8313 *D_800F23A0_43a0;
+extern FreeNodeA_8313 *D_800F23A8_14aa;
+extern FreeNodeA_8313 *D_800F2624_cee9;
+extern FreeNodeA_8313 *D_800F2738_e681;
+extern FreeNodeA_8313 *D_800FB168_2285;
+extern u8 D_800E7E7D;
+extern FreeNodeA_8313 *D_800E8098_a875;
+extern FreeNodeA_8313 *D_800E80A0_2bca;
+FreeNodeA_8313 *f_AllocateActorFromPool2(FreeNodeA_8313 *at, u8 kind, s32 mode, s32 list);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_AllocateActorFromPool1);
+FreeNodeA_8313 *f_AllocateActorFromPool0(FreeNodeA_8313 *at, u8 kind, s32 mode, s32 list)
+{
+    FreeNodeA_8313 *a;
+    FreeNodeA_8313 **head;
+    FreeNodeA_8313 **tail;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_AllocateActorFromPool2);
+    if (D_800E7E7C >= 3) {
+        a = D_800E8098_a875;
+        D_800E7E7C--;
+        D_800E8098_a875 = a->next;
+        switch (list) {
+        case 0:
+        default:
+            head = &D_800FB168_2285;
+            tail = &D_800F23A8_14aa;
+            break;
+        case 1:
+            head = &D_800F2624_cee9;
+            tail = &D_800F239C_ee60;
+            break;
+        case 2:
+            head = &D_800F2738_e681;
+            tail = &D_800F23A0_43a0;
+            break;
+        }
+        switch (mode) {
+        case 0:
+            if (at->prev != NULL) {
+                a->prev = at->prev;
+                a->next = at;
+                at->prev->next = a;
+                at->prev = a;
+                break;
+            }
+        case 1:
+            a->prev = NULL;
+            a->next = *head;
+            if (*head == NULL) {
+                *tail = a;
+            } else {
+                (*head)->prev = a;
+            }
+            *head = a;
+            break;
+        case 2:
+            if (at->next != NULL) {
+                a->prev = at;
+                a->next = at->next;
+                at->next->prev = a;
+                at->next = a;
+                break;
+            }
+        case 3:
+            a->prev = *tail;
+            a->next = NULL;
+            if (*tail == NULL) {
+                *head = a;
+            } else {
+                (*tail)->next = a;
+            }
+            *tail = a;
+            break;
+        }
+        a->uA = list;
+        a->kind0 = 2;
+        a->uC = kind;
+        return a;
+    }
+    return NULL;
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_AllocateActorFromPool3);
+FreeNodeA_8313 *f_AllocateActorFromPool1(FreeNodeA_8313 *at, u8 kind, s32 mode, s32 list)
+{
+    FreeNodeA_8313 *a = D_800E80A0_2bca;
+    FreeNodeA_8313 **head;
+    FreeNodeA_8313 **tail;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_AllocateActorFromPool4);
+    if (a != NULL) {
+        D_800E7E7D--;
+        D_800E80A0_2bca = a->next;
+        switch (list) {
+        case 0:
+        default:
+            head = &D_800FB168_2285;
+            tail = &D_800F23A8_14aa;
+            break;
+        case 1:
+            head = &D_800F2624_cee9;
+            tail = &D_800F239C_ee60;
+            break;
+        case 2:
+            head = &D_800F2738_e681;
+            tail = &D_800F23A0_43a0;
+            break;
+        }
+        switch (mode) {
+        case 0:
+            if (at->prev != NULL) {
+                a->prev = at->prev;
+                a->next = at;
+                at->prev->next = a;
+                at->prev = a;
+                break;
+            }
+        case 1:
+            a->prev = NULL;
+            a->next = *head;
+            if (*head == NULL) {
+                *tail = a;
+            } else {
+                (*head)->prev = a;
+            }
+            *head = a;
+            break;
+        case 2:
+            if (at->next != NULL) {
+                a->prev = at;
+                a->next = at->next;
+                at->next->prev = a;
+                at->next = a;
+                break;
+            }
+        case 3:
+            a->prev = *tail;
+            a->next = NULL;
+            if (*tail == NULL) {
+                *head = a;
+            } else {
+                (*tail)->next = a;
+            }
+            *tail = a;
+            break;
+        }
+        a->uA = list;
+        a->kind0 = 2;
+        a->uC = kind;
+        return a;
+    }
+    return f_AllocateActorFromPool2(at, kind, mode, list);
+}
+
+extern u8 D_800ED8C5;
+extern u8 D_800ED8C4;
+extern FreeNodeA_8313 *D_800ED8D4_34bd;
+extern FreeNodeA_8313 *D_800ED8D0_f3a6;
+extern FreeNodeA_8313 *D_800F23A0;
+
+FreeNodeA_8313 *f_AllocateActorFromPool2(FreeNodeA_8313 *at, u8 kind, s32 mode, s32 list)
+{
+    FreeNodeA_8313 *a = D_800F2398_0c73;
+    FreeNodeA_8313 **head;
+    FreeNodeA_8313 **tail;
+
+    if (a != NULL) {
+        D_800ED8CC--;
+        D_800F2398_0c73 = a->next;
+        switch (list) {
+        case 0:
+        default:
+            head = &D_800FB168_2285;
+            tail = &D_800F23A8_14aa;
+            break;
+        case 1:
+            head = &D_800F2624_cee9;
+            tail = &D_800F239C_ee60;
+            break;
+        case 2:
+            head = &D_800F2738_e681;
+            tail = &D_800F23A0;
+            break;
+        }
+        switch (mode) {
+        case 0:
+            if (at->prev != NULL) {
+                a->prev = at->prev;
+                a->next = at;
+                at->prev->next = a;
+                at->prev = a;
+                break;
+            }
+        case 1:
+            a->prev = NULL;
+            a->next = *head;
+            if (*head == NULL) {
+                *tail = a;
+            } else {
+                (*head)->prev = a;
+            }
+            *head = a;
+            break;
+        case 2:
+            if (at->next != NULL) {
+                a->prev = at;
+                a->next = at->next;
+                at->next->prev = a;
+                at->next = a;
+                break;
+            }
+        case 3:
+            a->prev = *tail;
+            a->next = NULL;
+            if (*tail == NULL) {
+                *head = a;
+            } else {
+                (*tail)->next = a;
+            }
+            *tail = a;
+            break;
+        }
+        a->uA = list;
+        a->kind0 = 2;
+        a->uC = kind;
+        return a;
+    }
+    return NULL;
+}
+
+FreeNodeA_8313 *f_AllocateActorFromPool3(FreeNodeA_8313 *at, u8 kind, s32 mode, s32 list)
+{
+    FreeNodeA_8313 *a = D_800ED8D4_34bd;
+    FreeNodeA_8313 **head;
+    FreeNodeA_8313 **tail;
+
+    if (a != NULL) {
+        D_800ED8C5--;
+        D_800ED8D4_34bd = a->next;
+        switch (list) {
+        case 0:
+        default:
+            head = &D_800FB168_2285;
+            tail = &D_800F23A8_14aa;
+            break;
+        case 1:
+            head = &D_800F2624_cee9;
+            tail = &D_800F239C_ee60;
+            break;
+        case 2:
+            head = &D_800F2738_e681;
+            tail = &D_800F23A0;
+            break;
+        }
+        switch (mode) {
+        case 0:
+            if (at->prev != NULL) {
+                a->prev = at->prev;
+                a->next = at;
+                at->prev->next = a;
+                at->prev = a;
+                break;
+            }
+        case 1:
+            a->prev = NULL;
+            a->next = *head;
+            if (*head == NULL) {
+                *tail = a;
+            } else {
+                (*head)->prev = a;
+            }
+            *head = a;
+            break;
+        case 2:
+            if (at->next != NULL) {
+                a->prev = at;
+                a->next = at->next;
+                at->next->prev = a;
+                at->next = a;
+                break;
+            }
+        case 3:
+            a->prev = *tail;
+            a->next = NULL;
+            if (*tail == NULL) {
+                *head = a;
+            } else {
+                (*tail)->next = a;
+            }
+            *tail = a;
+            break;
+        }
+        a->uA = list;
+        a->kind0 = 2;
+        a->uC = kind;
+        return a;
+    }
+    return NULL;
+}
+
+FreeNodeA_8313 *f_AllocateActorFromPool4(FreeNodeA_8313 *at, u8 kind, s32 mode, s32 list)
+{
+    FreeNodeA_8313 *a = D_800ED8D0_f3a6;
+    FreeNodeA_8313 **head;
+    FreeNodeA_8313 **tail;
+
+    if (a != NULL) {
+        D_800ED8C4--;
+        D_800ED8D0_f3a6 = a->next;
+        switch (list) {
+        case 0:
+        default:
+            head = &D_800FB168_2285;
+            tail = &D_800F23A8_14aa;
+            break;
+        case 1:
+            head = &D_800F2624_cee9;
+            tail = &D_800F239C_ee60;
+            break;
+        case 2:
+            head = &D_800F2738_e681;
+            tail = &D_800F23A0;
+            break;
+        }
+        switch (mode) {
+        case 0:
+            if (at->prev != NULL) {
+                a->prev = at->prev;
+                a->next = at;
+                at->prev->next = a;
+                at->prev = a;
+                break;
+            }
+        case 1:
+            a->prev = NULL;
+            a->next = *head;
+            if (*head == NULL) {
+                *tail = a;
+            } else {
+                (*head)->prev = a;
+            }
+            *head = a;
+            break;
+        case 2:
+            if (at->next != NULL) {
+                a->prev = at;
+                a->next = at->next;
+                at->next->prev = a;
+                at->next = a;
+                break;
+            }
+        case 3:
+            a->prev = *tail;
+            a->next = NULL;
+            if (*tail == NULL) {
+                *head = a;
+            } else {
+                (*tail)->next = a;
+            }
+            *tail = a;
+            break;
+        }
+        a->uA = list;
+        a->kind0 = 2;
+        a->uC = kind;
+        return a;
+    }
+    return NULL;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007A464);
 
@@ -13021,10 +13438,6 @@ extern FreeNode *D_800F2624_de6d;
 extern FreeNode *D_800F239C_5f1e;
 extern FreeNode *D_800FB168_adca;
 extern FreeNode *D_800F23A8;
-extern u8 D_800E7E7D;
-extern u8 D_800ED8CC;
-extern u8 D_800ED8C5;
-extern u8 D_800ED8C4;
 extern FreeNode *D_800E8098_af1b;
 extern FreeNode *D_800E80A0;
 extern FreeNode *D_800F2398;
