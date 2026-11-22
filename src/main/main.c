@@ -1051,9 +1051,103 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8002BC9C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002C138);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002C3EC);
+extern u8 D_800A0700[];
+extern u8 D_800A06DC[];
+extern u8 D_800A06B8[];
+extern u8 D_800A0694[];
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002C548);
+void func_8002C3EC(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        *(u16 *)(a + 0x4C) += rand();
+        *(s32 *)(a + 4) = 1;
+        *(s32 *)(a + 0x50) = 0x101010;
+        *(s32 *)(a + 0x58) = 0;
+    case 1:
+        if (a[7] > 0x10) {
+            a[4] = 2;
+            break;
+        }
+        *(s32 *)(a + 0x34) = *(s32 *)(a + 0x38);
+        switch (a[7]) {
+        case 0:
+            *(u8 **)(a + 0x54) = D_800A0700;
+            break;
+        case 1:
+            *(u8 **)(a + 0x54) = D_800A06DC;
+            break;
+        case 2:
+            *(u8 **)(a + 0x54) = D_800A06B8;
+            break;
+        case 3:
+            *(u8 **)(a + 0x54) = D_800A0694;
+            break;
+        case 4:
+            *(s32 *)(a + 0x58) = 1;
+            break;
+        case 5:
+            *(s32 *)(a + 0x58) = 2;
+            break;
+        default:
+            *(u8 **)(a + 0x54) = NULL;
+            break;
+        }
+        func_8002B278(a);
+        a[7]++;
+        break;
+    case 2: case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
+
+void func_8002C548(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        *(u16 *)(a + 0x4C) += rand();
+        *(s32 *)(a + 4) = 1;
+        *(s32 *)(a + 0x50) = 0x101010;
+        *(s32 *)(a + 0x58) = 0;
+    case 1:
+        if (a[7] > 0x10) {
+            a[4] = 2;
+            break;
+        }
+        *(s32 *)(a + 0x34) = *(s32 *)(a + 0x38);
+        switch (a[7]) {
+        case 0:
+            *(u8 **)(a + 0x54) = D_800A0700;
+            *(s32 *)(a + 0x58) = 3;
+            break;
+        case 1:
+            *(u8 **)(a + 0x54) = D_800A06DC;
+            break;
+        case 2:
+            *(u8 **)(a + 0x54) = D_800A06B8;
+            break;
+        case 3:
+            *(u8 **)(a + 0x54) = D_800A0694;
+            break;
+        case 4:
+            *(s32 *)(a + 0x58) = 4;
+            break;
+        case 5:
+            *(s32 *)(a + 0x58) = 5;
+            break;
+        default:
+            *(u8 **)(a + 0x54) = NULL;
+            break;
+        }
+        func_8002B278(a);
+        a[7]++;
+        break;
+    case 2: case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002C6AC);
 
@@ -1932,7 +2026,60 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawClass2And9ActorRenderQueue);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawClass4ActorRenderQueue);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawClass5ActorRenderQueue);
+extern s8 D_1F80028C[];
+extern u8 D_1F800136;
+extern s8 D_1F80015E[];
+extern s8 D_1F800158[];
+
+void f_DrawClass5ActorRenderQueue(void)
+{
+    s32 n;
+    u8 **list;
+    u8 *e;
+    u16 cnt;
+    void *old;
+
+    if (D_1F800136 == 0) {
+        cnt = *(u16 *)D_1F80015C;
+        *(u16 *)D_1F80015C = 0;
+        old = *(void **)D_1F800154;
+        *(void **)D_1F800154 = &D_800F2738_2edb;
+        *(u16 *)D_1F80015E = cnt;
+        *(void **)D_1F800158 = old;
+    }
+    n = *(s16 *)D_1F80015E;
+    list = *(u8 ***)D_1F800158;
+    while (n != 0) {
+        e = *list++;
+        n--;
+        if (e[1] != 0) {
+            switch (e[0xB]) {
+            case 0: case 15:
+                f_DrawActorModelByRenderMode(e);
+                break;
+            case 16:
+                f_DrawActorSpritePartsWithZRotation(e);
+                break;
+            case 17:
+                f_DrawActorSpritePartsWithScaleAndZRotation(e);
+                break;
+            case 18:
+                func_8003C5F8(e);
+                break;
+            case 19:
+                func_8003C788(e);
+                break;
+            case 31:
+                if (D_800BF870.unk0 == 20) {
+                    func_8010FC70(e);
+                } else {
+                    func_8004CC88(e);
+                }
+                break;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawPresentationActorList);
 
@@ -1946,7 +2093,45 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8003C788);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawActorSpriteParts);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawActorModelByRenderMode);
+void f_DrawActorModelByRenderMode(u8 *a)
+{
+    void *old;
+    void *end;
+    s32 flag;
+
+    flag = a[0xB] == 0xF;
+    *(u8 **)D_1F80028C = a;
+    switch (a[0xD] & 0xB) {
+    case 0: case 4:
+        f_BuildActorModelPartPrimitives(a, flag);
+        break;
+    case 2:
+        old = D_800BF544;
+        f_BuildActorModelPartPrimitives(a, flag);
+        func_8003D584(a, old, D_800BF544);
+        break;
+    case 8:
+        old = D_800BF544;
+        f_BuildActorModelPartPrimitives(a, flag);
+        func_8003F344(a, old, D_800BF544);
+        break;
+    case 1:
+        old = D_800BF544;
+        f_BuildActorModelPartPrimitives(a, flag);
+        end = D_800BF544;
+        if (a[0x1B] != 0) {
+            func_8003F3F4(a, old, end);
+        } else {
+            func_8003F4C4(a, old, end);
+        }
+        break;
+    case 3:
+        old = D_800BF544;
+        f_BuildActorModelPartPrimitives(a, flag);
+        func_8003F594(a, old, D_800BF544);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_BuildActorModelPartPrimitives);
 
@@ -2146,7 +2331,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F4C4);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F594);
 
 extern u8 D_1F800234_8e95;
-extern u8 D_1F800136;
 
 void f_DrawModelPrimitiveStreamForCurrentArea(u32 *a, void *b, s32 c)
 {
@@ -7017,7 +7201,52 @@ s32 func_800714C0(u8 *a, s16 v)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007156C);
+void func_8007156C(u8 *a)
+{
+    switch (a[3]) {
+    case 0:
+        if (a[0x79] == 1) {
+            f_SetActorAnimationIfChanged(a, 0, 4);
+        }
+        f_UpdateActorOrbitAroundAnchor(a);
+        break;
+    case 1:
+        break;
+    case 2:
+        if (func_800714C0(a, 0)) {
+            a[3] = 3;
+        }
+        break;
+    case 3:
+        if (f_UpdateScriptedInteractionApproach(a, 1)) {
+            a[3] = 0;
+        }
+        break;
+    case 4:
+        D_800BF843 = 3;
+        switch (a[6]) {
+        case 0:
+            f_SetScriptActorInteractionOffset(a, 0, 0);
+            a[6]++;
+            break;
+        case 1:
+            f_UpdateScriptedInteractionApproach(a, 0);
+            f_UpdateActorOrbitAroundAnchor(a);
+            break;
+        }
+        break;
+    case 5:
+        if (f_UpdateScriptedInteractionApproach(a, 0)) {
+            a[3] = 0;
+        } else {
+            D_800BF843 = 3;
+        }
+        f_UpdateActorOrbitAroundAnchor(a);
+        break;
+    }
+    f_RunActorScriptInterpreter(a);
+    f_AdvanceActorAnimationAndStoreCompletion(a);
+}
 
 
 void func_800716B4(u8 *a)
