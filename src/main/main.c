@@ -2047,7 +2047,28 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80033450);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80033560);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80033630);
+void func_80033630(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        *(s32 *)(a + 0x48) = 0;
+        *(s16 *)(a + 0x4C) = 0;
+        a[4] = 1;
+        a[5] = 0xFF;
+        *(u16 *)(a + 0x2E) += 0x78;
+    case 1:
+        if (++a[5] >= 6) {
+            a[4] = 2;
+        } else {
+            a[1] = 1;
+        }
+        break;
+    case 2:
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800336DC);
 
@@ -3442,7 +3463,15 @@ void func_8003FAA4(u8 *a)
     func_8002AE0C(a, v, 0);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003FAE8);
+void func_8003FAE8(s16 z, s16 stp)
+{
+    DrMode_F264 *p = (DrMode_F264 *)D_800BF544_5fe3;
+
+    SetDrawStp(p, stp);
+    addPrim_(&D_800ED8C8[z], p);
+    p++;
+    D_800BF544_5fe3 = (u32 *)p;
+}
 
 extern s8 D_1F80008C[];
 void func_8003FB84(void) {
@@ -3684,7 +3713,26 @@ s32 f_GetEventAPReward(s32 event, s32 low)
     return D_800A3B38[v];
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80040AA4);
+void func_8003AD48(void);
+void func_800727D4(u8 *a, s16 x, u8 kind);
+extern u8 D_800E8008_f2dc[];
+
+u8 *func_80040AA4(s32 x, s32 kind)
+{
+    u8 *a = (u8 *)f_AllocateActorRecordByType(4, 3, 1);
+
+    if (a != NULL) {
+        *(void **)(a + 0x1C) = func_8003AD48;
+        a[2] = 0xB;
+        a[3] = kind;
+        *(s16 *)(a + 0x60) = x;
+        a[0x28] |= 0x80;
+        D_800BF808[0x41]++;
+        ((void (*)(u8 *, s32, s32))func_800727D4)(a, x, kind);
+        return a;
+    }
+    return NULL;
+}
 
 typedef struct { s32 w[8]; } PopupReq32;
 extern s16 D_800E7FEE;
@@ -4301,7 +4349,36 @@ s32 func_80042BAC(u16 *p)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80042BDC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80042D28);
+s32 func_80042D28(u8 *a)
+{
+    u8 *g = D_800E8008_f2dc;
+
+    switch (a[0x78]) {
+    case 0:
+        switch (*(s16 *)(a + 0x72)) {
+        case -1:
+        off:
+            g[0x76] = 0;
+            return 1;
+        case 0:
+            g[0x76] = 1;
+            return 1;
+        default:
+            g[0x76] = 1;
+            a[0x78]++;
+            break;
+        }
+        break;
+    case 1:
+        if (--*(s16 *)(a + 0x72) < 0) {
+            goto off;
+        }
+        break;
+    default:
+        break;
+    }
+    return 0;
+}
 
 s32 func_80042DCC(void *arg0) {
     M2C_FIELD(arg0, u8 *, 0xD) = (u8) (M2C_FIELD(arg0, u8 *, 0xD) | 2);
@@ -5377,7 +5454,33 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D0D4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D19C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D298);
+typedef struct { u8 pad[0x13]; u8 n; u8 ids[1]; } List_D298;
+
+void func_8004D298(s32 k)
+{
+    s32 id;
+    s32 i;
+
+    if (k == 0) {
+        id = 0x17;
+    } else if (k == 1) {
+        id = 0x18;
+    } else if (k == 2) {
+        id = 0x19;
+    } else if (k == 3) {
+        id = 0x1A;
+    } else if (k == 4) {
+        id = 0x1B;
+    } else {
+        id = 0x1C;
+    }
+    for (i = 0; i < ((List_D298 *)&D_800BF870)->n; i++) {
+        if (((List_D298 *)&D_800BF870)->ids[i] == id) {
+            ((List_D298 *)&D_800BF870)->ids[i] |= 0x80;
+            return;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_AddInventoryQuantity);
 
@@ -9921,7 +10024,6 @@ void func_8006EA7C(u8 *a)
     }
 }
 
-extern u8 D_800E8008_f2dc[];
 extern u8 D_800E7EAC[];
 extern s32 D_800E7EB0;
 extern void (*D_800A4AA0[])(u8 *);
