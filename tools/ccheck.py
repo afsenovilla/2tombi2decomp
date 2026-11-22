@@ -2,7 +2,7 @@
 """Compile a C file and compare each function in it with the retail bytes (fast check, no link).
 
   python3 -I tools/ccheck.py src/main/foo.c [--prog main] [--cc gcc-2.7.2-psx] [--aspsx 2.56] [--flags "-O2 -G0"]
-      [--as gnu] [--epilogue sony] [--return sony] [-v] [--func NAME] [--all] [--sbs [--sbs-all]]
+      [--as gnu] [--epilogue sony] [--return sony] [--no-protos] [-v] [--func NAME] [--all] [--sbs [--sbs-all]]
 
 Pipeline: tools/cc.py (the file's // CC, // FLAGS, // ASPSX, // AS headers; default the game's gcc 2.8.1 + ASPSX 2.79).
 Each defined function is looked up by name in config/symbol_addrs_<prog>.txt or as func_XXXXXXXX, and compared word by
@@ -111,6 +111,9 @@ def main():
     ap.add_argument("--as", dest="asm", help="override // AS (maspsx or gnu)")
     ap.add_argument("--epilogue", help="override // EPILOGUE (sony, or none)")
     ap.add_argument("--return", dest="ret", help="override // RETURN (sony, or none)")
+    ap.add_argument("--no-protos", action="store_true",
+                    help="drop the prototypes as tools/install_c.py does (kept: functions used as values or defined "
+                         "in the scratch or in src/<prog>/<prog>.c)")
     ap.add_argument("-v", action="store_true")
     ap.add_argument("--all", action="store_true", help="also check the INCLUDE_ASM functions (sanity test)")
     ap.add_argument("--func", action="append", help="check only these functions (repeatable)")
@@ -122,6 +125,14 @@ def main():
     sizes = retail_sizes(a.prog)
     d = tempfile.mkdtemp()
     a.src = os.path.abspath(a.src)
+    if a.no_protos:    # the scratch as tools/install_c.py would install it: prototypes dropped
+        import install_c
+        tp = os.path.join(ROOT, "src", a.prog, a.prog + ".c")
+        keep = set(re.findall(r"(?m)^[\w][\w \*]*?\b(\w+)\s*\([^;{}]*\)\s*\{", open(tp).read())) \
+            if os.path.exists(tp) else set()
+        src2 = os.path.join(d, "noprotos_" + os.path.basename(a.src))
+        open(src2, "w").write(install_c.drop_prototypes(open(a.src).read(), keep))
+        a.src = src2
     text, funcs, rel = compile_c(a.src, a, d)
     bad = 0
     asm_included = {n[:-len(".NON_MATCHING")] for n, _, _ in funcs if n.endswith(".NON_MATCHING")}
