@@ -2322,7 +2322,54 @@ void func_8003A5E4(u8 *a, u8 *b)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003A790);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003A9A0);
+typedef struct ActorY36 { u8 pad0[0x36]; s16 y; } ActorY36;
+
+void func_8003A9A0(u8 *a)
+{
+    s32 i;
+
+    switch (a[5]) {
+    case 0:
+        for (i = 0; i < a[8]; i++) {
+            func_8003A290(a, ((PartOwner *)a)->parts[i]);
+        }
+        ((ActorY36 *)a)->y -= 0x10;
+        if (((ActorY36 *)a)->y < D_801003F8 + 8) {
+            ((ActorY36 *)a)->y = D_801003F8 + 8;
+            a[0x5E] = 1;
+        }
+        break;
+    case 1:
+        *(s16 *)(a + 0x40) = 0x28;
+        a[5]++;
+        for (i = 0; i < a[8]; i++) {
+            ((PartOwner *)a)->parts[i][0x3E] = 0;
+        }
+    case 2:
+        if (--*(s16 *)(a + 0x40) == -1) {
+            for (i = 0; i < a[8]; i++) {
+                ((PartOwner *)a)->parts[i][0x3E] = 0;
+            }
+            func_80040AA4(*(s16 *)(a + 0x60), 2);
+            D_800ED058_93c7[0x14]++;
+            a[5]++;
+        } else {
+            for (i = 0; i < a[8]; i++) {
+                func_8003A3E8(a, ((PartOwner *)a)->parts[i]);
+            }
+        }
+        break;
+    case 3: case 4:
+        a[5]++;
+    case 5:
+        a[0x5E] = 2;
+        for (i = 0; i < a[8]; i++) {
+            func_8003A470(a, ((PartOwner *)a)->parts[i]);
+        }
+        *(s16 *)(a + 0x36) -= 4;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003ABE4);
 
