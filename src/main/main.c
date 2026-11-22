@@ -12063,7 +12063,37 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_AllocateActorFromPool4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007A464);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_AllocatePresentationActor);
+typedef struct FreeNodeA { u8 kind0; u8 pad1[9]; u8 uA; u8 padB; u8 uC; u8 padD[0x13]; struct FreeNodeA *prev; struct FreeNodeA *next; } FreeNodeA_A5A8;
+extern FreeNodeA_A5A8 *D_800E8098_a5a8;
+extern FreeNodeA_A5A8 *D_800F239C_a5a8;
+extern FreeNodeA_A5A8 *D_800F2624_a5a8;
+
+FreeNodeA_A5A8 *f_AllocatePresentationActor(u8 kind)
+{
+    FreeNodeA_A5A8 *a = D_800E8098_a5a8;
+    FreeNodeA_A5A8 *next;
+    FreeNodeA_A5A8 **tail;
+
+    if (a != NULL) {
+        next = a->next;
+        a->next = NULL;
+        D_800E7E7C--;
+        D_800E8098_a5a8 = next;
+        tail = &D_800F239C_a5a8;
+        a->prev = *tail;
+        if (*tail == NULL) {
+            D_800F2624_a5a8 = a;
+        } else {
+            (*tail)->next = a;
+        }
+        *tail = a;
+        a->uA = 1;
+        a->kind0 = 2;
+        a->uC = kind;
+        return a;
+    }
+    return NULL;
+}
 
 typedef struct FreeNode { u8 pad0[0x20]; struct FreeNode *prev; struct FreeNode *next; u8 pad28[0x40]; } FreeNode;
 extern FreeNode *D_800F2624_de6d;
