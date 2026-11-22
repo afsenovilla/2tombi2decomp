@@ -142,7 +142,20 @@ void func_8010BCFC(s32 arg0, void *arg1) {
     }
 }
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010BD2C);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+
+void func_8010BD2C(u8 *a, u8 *b, u8 *c)
+{
+    s16 dx, dz;
+    dx = H(a, 0x2E) - H(c, 0x2C);
+    dz = H(a, 0x36) - H(c, 0x34);
+    if ((u16)func_80084080(dx * dx + dz * dz) <= H(a, 0x80) + H(b, 0x80)) {
+        if ((u16)(U(a, 0x32) - U(c, 0x30) + (U(b, 0x84) + U(a, 0x86) - U(a, 0x84))) <= H(a, 0x86) + H(b, 0x86)) {
+            a[0x29] = 1;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010BE10);
 

@@ -829,7 +829,31 @@ void func_80113724(void) {
     }
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80113768);
+extern s32 D_1F800090_3460;
+
+void func_80113768(u8 *a)
+{
+    u8 *b = a;
+    void *m = *(void **)(a + 0x34);
+    s32 *p = D_1F800084;
+    s32 k, x, y;
+    if (m != 0) {
+        func_800329E0(6);
+        gte_ldv0m(b + 0x2C);
+        if (func_800317CC(*(s16 *)(a + 0x32)) != 0) {
+            func_80031780(a);
+        } else {
+            k = *p >> 8;
+            x = k * *(s16 *)(b + 0x4A);
+            y = k * *(s16 *)(b + 0x48);
+            D_1F800088 = x;
+            *p = y;
+            D_1F800090_3460 = b[7] << 5;
+            gte_ldfcdir(0, 0, 0);
+            *(void **)(b + 0x38) = func_800328BC(b, m);
+        }
+    }
+}
 
 extern u8 D_8011E870[];
 
@@ -889,7 +913,6 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80113B78);
 #define gte_ldv0(r0) __asm__ volatile("lwc2	$0, 0( %0 );" "lwc2	$1, 4( %0 )" : : "r"(r0))
 typedef struct { s16 x, y, z, pad; } SV;
 extern s32 D_1F800084_8c7c;
-extern s32 D_1F800090_3460;
 extern void *D_8011C08C[];
 
 void func_80113C70(u8 *a)
