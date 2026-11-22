@@ -477,7 +477,38 @@ s32 f_ApplyTombaEnvironmentalDamage(u8 *t, s32 dmg)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ApplyTombaSupportedContactState);
+extern u8 D_800BF816;
+
+void f_ApplyTombaSupportedContactState(u8 *a)
+{
+    s32 c;
+    s32 d;
+    u16 k;
+
+    a[0x29] = 1;
+    a[0x145] = 0;
+    *(s16 *)(a + 0x4A) = 0;
+    *(s16 *)(a + 0x50) = 0;
+    a[0x148] = 0;
+    if (a[0x78] == 0 && D_800BF816 == 0) {
+        if (*(s16 *)(a + 0x17E) >= 0) {
+            c = 0x8C;
+            k = *(u16 *)(a + 0x84);
+            if (*(s16 *)(a + 0x84) == c) {
+                return;
+            }
+            d = *(u16 *)(a + 0x32) - 0x8C;
+        } else {
+            c = 0x46;
+            k = *(u16 *)(a + 0x84);
+            if (*(s16 *)(a + 0x84) == c) {
+                return;
+            }
+            d = *(u16 *)(a + 0x32) - 0x46;
+        }
+        *(u16 *)(a + 0x32) = k + d;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_TryApplyTombaActorDamage);
 
@@ -746,7 +777,30 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80024794);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800248D0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaForwardContactProbe);
+extern s32 D_1F800088;
+
+void f_UpdateTombaForwardContactProbe(u8 *a)
+{
+    s16 r;
+    s32 p;
+
+    if (a[0x147] != 0) {
+        *(u16 *)(a + 0x56) = (*(u16 *)(a + 0x140) - 0x800) & 0xFFF;
+    } else {
+        *(u16 *)(a + 0x56) = *(u16 *)(a + 0x140);
+    }
+    if (*(s16 *)(a + 0x17E) >= 0) {
+        r = *(u16 *)(a + 0x66) - 0x1E;
+        D_1F800088 = 0x28;
+    } else {
+        r = *(u16 *)(a + 0x66) - 0xA;
+        D_1F800088 = 0x14;
+    }
+    *(s16 *)(a + 0x14C) = *(u16 *)(a + 0x2E) + ((rcos(*(s16 *)(a + 0x56)) * r) >> 12);
+    p = rsin(*(s16 *)(a + 0x56)) * r;
+    *(s16 *)(a + 0x14E) = *(u16 *)(a + 0x32) - *(u16 *)(a + 0x68);
+    *(s16 *)(a + 0x150) = *(u16 *)(a + 0x36) - (p >> 12);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_TestTombaSupportPointAgainstPartBounds);
 
@@ -2742,7 +2796,6 @@ extern u8 D_800A2854[];
 typedef struct { u8 pad[0xA4]; void *a; void *pad2; void *b; } MenuText_854;
 extern u8 *D_800BF544_37fb;
 extern u32 *D_800ED8C8;
-extern u8 D_800BF816;
 typedef struct { s32 x, y, z; } Vec3i_F08;
 typedef struct { u8 pad[0x1C]; Vec3i_F08 v; } ConvTarget_F08;
 s32 f_GetPauseMenuEquipmentGroupRange(s32 g, s32 *start)
