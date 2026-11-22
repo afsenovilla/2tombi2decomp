@@ -32,7 +32,26 @@ INCLUDE_ASM("asm/boot/nonmatchings/boot", func_80011864);
 
 INCLUDE_ASM("asm/boot/nonmatchings/boot", func_80011904);
 
-INCLUDE_ASM("asm/boot/nonmatchings/boot", func_80011974);
+typedef struct {
+    u32 mode;
+    void *crect;
+    u32 *caddr;
+    void *prect;
+    u32 *paddr;
+} TimImage;
+
+void func_80011974(u32 *addr)
+{
+    TimImage t;
+
+    OpenTIM(addr);
+    ReadTIM(&t);
+    LoadImage(t.prect, t.paddr);
+    if (t.mode & 8) {
+        LoadImage(t.crect, t.caddr);
+    }
+    DrawSync(0);
+}
 
 extern M2C_UNK D_800253A4;
 void func_800119D8(void) {
