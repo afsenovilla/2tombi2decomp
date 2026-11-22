@@ -8514,7 +8514,23 @@ void func_80079464(s32 demo)
     D_800BED88_191b = (u8 *)0x80157000 + (demo << 10);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800794C8);
+void func_800794C8(void)
+{
+    u16 *p;
+    u16 t;
+
+    if (--D_800BED8C == 0) {
+        p = D_800BED88;
+        if (p[1] == 0) {
+            p += 2;
+        }
+        D_800ECF54_4583[0] = p[0];
+        t = p[1];
+        p += 2;
+        D_800BED88 = p;
+        D_800BED8C = t;
+    }
+}
 
 
 s32 func_80079528(u8 *arg0) {
@@ -9010,9 +9026,33 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawPackedUiQuadFrame);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawPackedUiSpriteFrame);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawUiQuadResource);
+void f_DrawUiQuadResource(s16 x, s16 y, s32 c, s32 idx)
+{
+    struct { u8 b0; u8 b1; s16 h2; } q;
+    struct { s16 x, y; s32 z; } r;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawUiSpriteResource);
+    r.x = x;
+    q.b1 = c;
+    q.b0 = 0;
+    q.h2 = 0;
+    r.y = y;
+    r.z = 0;
+    f_DrawPackedUiQuadFrame(&r, ((void **)D_80017334)[(s16)idx], D_800ECF58[0], &q);
+}
+
+void f_DrawUiSpriteResource(void *res, s16 x, s16 y, u8 c, s16 idx)
+{
+    struct { u8 b0; u8 b1; s16 h2; } q;
+    struct { s16 x, y; s32 z; } r;
+
+    r.y = y;
+    q.b1 = c;
+    q.b0 = 0;
+    q.h2 = 0;
+    r.x = x;
+    r.z = 0;
+    f_DrawPackedUiSpriteFrame(&r, ((void **)D_80017334)[idx], res, &q);
+}
 
 
 void f_DrawMenuSelectionCursor(s16 x, s16 y, s32 c)
