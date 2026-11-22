@@ -3479,7 +3479,35 @@ s32 func_8003F7A0(void *v, void *sxy)
     return z;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F7D8);
+#define gte_rtpt_b() __asm__ volatile("nop; nop; .word 0x4A280030")
+#define gte_nclip_b() __asm__ volatile("nop; nop; .word 0x4B400006")
+#define gte_avsz4_b() __asm__ volatile("nop; nop; .word 0x4B68002E")
+#define gte_rtps_b2() __asm__ volatile("nop; nop; .word 0x4A180001")
+
+s32 func_8003F7D8(u8 *p, u8 *v, s32 *flag)
+{
+    s32 otz;
+
+    gte_ldv3c(v);
+    gte_rtpt_b();
+    gte_stflg(flag);
+    if (*flag < 0) {
+        return -1;
+    }
+    gte_stsxy3_g3(p);
+    gte_nclip_b();
+    gte_stopz(flag);
+    gte_ldv0(v + 0x18);
+    gte_rtps_b2();
+    gte_stflg(flag);
+    if (*flag < 0) {
+        return -1;
+    }
+    gte_stsxy(p + 0x20);
+    gte_avsz4_b();
+    gte_stotz(&otz);
+    return otz;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F898);
 
@@ -9917,7 +9945,19 @@ s32 f_ApproachCameraPositionVertical(void *unused, u8 *t)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006DAD8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006DC38);
+typedef struct { s32 x; s32 y; s32 z; s16 pad; s16 bx; s16 pad10[3]; s16 bz; } Cam_DC38;
+extern Cam_DC38 D_1F8000D0_6683;
+
+void func_8006DC38(u8 *a)
+{
+    s32 r = (rcos(*(s16 *)(a + 0x6E)) * *(s16 *)(a + 0x6C)) >> 12;
+    s32 x = D_1F8000D0_6683.bx + ((rcos(*(s16 *)(a + 0x70)) * r) >> 12);
+    s32 z = (rsin(*(s16 *)(a + 0x70)) * r) >> 12;
+
+    D_1F8000D0_6683.x = x << 16;
+    D_1F8000D0_6683.z = (D_1F8000D0_6683.bz - z) << 16;
+    a[0x66] |= 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006DCF4);
 
@@ -13066,7 +13106,28 @@ void func_8007D0D0(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007D14C);
+void func_8007D14C(u8 *a)
+{
+    *(u8 **)(a + 0x10) = *(u8 **)(a + 0x14);
+    if (**(u8 **)(a + 0x14) == 0xFF) {
+        a[5] = 0;
+    } else {
+        switch (func_8007C0D0(a, 1)) {
+        case 0:
+            a[5] = 0;
+            break;
+        case 1:
+            a[0x46] |= 1;
+            break;
+        case 2:
+            a[0x46] |= 0x81;
+            break;
+        }
+    }
+    if (a[5] != 0) {
+        a[5] = 1;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007D208);
 
