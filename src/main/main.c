@@ -522,7 +522,97 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaActorImpactResponse);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaConfiguredActorContact);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaType8ActorContact);
+extern u8 D_800BF816;
+s32 f_TestWrappedAngleSide(s32 a, s32 b, s32 flip);
+/* f_ApplyTombaSupportedContactState, inlined */
+static inline void Supported_05B4(u8 *a)
+{
+    s32 c;
+    s32 d;
+    u16 k;
+
+    a[0x29] = 1;
+    a[0x145] = 0;
+    *(s16 *)(a + 0x4A) = 0;
+    *(s16 *)(a + 0x50) = 0;
+    a[0x148] = 0;
+    if (a[0x78] == 0 && D_800BF816 == 0) {
+        if (*(s16 *)(a + 0x17E) >= 0) {
+            c = 0x8C;
+            k = *(u16 *)(a + 0x84);
+            if (*(s16 *)(a + 0x84) == c) {
+                return;
+            }
+            d = *(u16 *)(a + 0x32) - 0x8C;
+        } else {
+            c = 0x46;
+            k = *(u16 *)(a + 0x84);
+            if (*(s16 *)(a + 0x84) == c) {
+                return;
+            }
+            d = *(u16 *)(a + 0x32) - 0x46;
+        }
+        *(u16 *)(a + 0x32) = k + d;
+    }
+}
+
+void f_ResolveTombaType8ActorContact(u8 *a, u8 *b)
+{
+    s32 c;
+    s32 x;
+    s32 t;
+
+    if (b[0] == 5) {
+        if (!(*(u16 *)(a + 0x17E) & 0x200) && a[0x78] == 0) {
+            f_ResolveTombaRadialContactAndSide(a, b);
+        }
+        return;
+    }
+    if (*(s16 *)(a + 0x17E) & 0x8000) {
+        func_8001EC3C(a, b);
+        return;
+    }
+    c = f_ClassifyTombaActorCylinderContact(a, b, 0);
+    if (c < 0) {
+        return;
+    }
+    if (b[0] == 1) {
+        if (a[0x144] == 1 && c < 2) {
+            f_StartActorImpactOrTombaRebound(b, -0x7FFE, 3, 0x1E);
+            return;
+        }
+        if (*(u16 *)(a + 0x17E) & 0x200) {
+            return;
+        }
+        if (!(c & 1)) {
+            if (!(a[0] & 4)) {
+                x = (rcos(D_1F80009C) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80))) >> 12;
+                t = rsin(D_1F80009C) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80));
+                *(u16 *)(a + 0x2E) = *(u16 *)(b + 0x2E) + x;
+                *(u16 *)(a + 0x36) = *(u16 *)(b + 0x36) - (t >> 12);
+            }
+            a[0x60] = 1;
+            a[0x5F] = f_TestWrappedAngleSide(*(s16 *)&D_1F80009C, *(s16 *)(a + 0x140), 1) + 2;
+            return;
+        }
+        if (c != 1) {
+            return;
+        }
+        if (a[0x145] & 1) {
+            return;
+        }
+        *(u16 *)(a + 0x32) = *(u16 *)(b + 0x32) - (*(u16 *)(a + 0x84) + *(u16 *)(b + 0x84));
+        Supported_05B4(a);
+        return;
+    }
+    if (*(u16 *)(a + 0x17E) & 0x200) {
+        return;
+    }
+    if (a[0x145] & 1) {
+        return;
+    }
+    b[0x29] = 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ArmTombaFacingInteraction44);
 
@@ -955,7 +1045,6 @@ s32 f_ApplyTombaEnvironmentalDamage(u8 *t, s32 dmg)
     return 1;
 }
 
-extern u8 D_800BF816;
 void f_ApplyTombaSupportedContactState(u8 *a)
 {
     s32 c;
