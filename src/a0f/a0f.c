@@ -295,7 +295,23 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_801123F0);
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8011290C);
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80112B80);
+extern s16 D_1F800264;
+
+void func_80112B80(u8 *a, s32 k)
+{
+    if (k == 0) {
+        k = 9;
+    } else {
+        if (k == 3) {
+            k = a[3] - 3;
+        }
+        k += 0x12;
+    }
+    if (D_1F800264 != k) {
+        D_1F800264 = k;
+        func_80051B04(*(void **)(a + 0xE4), 0x12, k);
+    }
+}
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80112BE8);
 

@@ -139,7 +139,38 @@ void func_8010BCB8(void) {
 void func_8010BCC0(void) {
 }
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010BCC8);
+typedef struct { u16 lo; u16 hi; } Fix;
+typedef struct {
+    Fix at[3];
+    Fix pos[3];
+    s16 dir[3];
+    u8 pad1E[0x2A];
+    u8 m[0x20];
+} Cam;
+extern Cam D_1F8000D0;
+extern u8 D_800E7E80[];
+extern s32 D_800BF850;
+
+void func_8010BCC8(u8 *a)
+{
+    u8 *pl = D_800E7E80;
+    Cam *c;
+    if (D_800BF850 != 0x80) {
+        return;
+    }
+    if (pl[0x2A] >= 7) {
+        if (pl[0x2A] < 0x13) {
+            return;
+        }
+    }
+    {
+        c = &D_1F8000D0;
+        if ((s16)c->at[0].hi < 0x3138) {
+            c->at[0].hi = 0x3138;
+            a[0x66] |= 1;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010BD38);
 
