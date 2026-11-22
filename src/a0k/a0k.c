@@ -136,7 +136,22 @@ void func_8010B460(void) {
 void func_8010B468(void) {
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010B470);
+extern u8 D_800E7E80[];
+extern u8 D_1F8000D0[];
+
+void func_8010B470(u8 *a, s16 ang)
+{
+    u8 *t = D_800E7E80;
+    u8 *c;
+    s16 r;
+    s16 x;
+
+    r = -(func_80083F50(*(s16 *)(a + 0xA)) * (*(s16 *)((c = D_1F8000D0) + 0x1E) + *(s32 *)(a + 0x58))) >> 12;
+    x = *(s16 *)(t + 0x2E) + ((func_80083F50(ang) * r) >> 12);
+    *(s16 *)(c + 0xA) = *(s16 *)(t + 0x36) - ((func_80083E80(ang) * r) >> 12);
+    *(s16 *)(c + 0x2) = x;
+    a[0x66] |= 1;
+}
 
 void func_8010B54C(u8 *a, u8 *b)
 {
@@ -148,7 +163,6 @@ void func_8010B54C(u8 *a, u8 *b)
 }
 
 extern s16 D_1F8000EE;
-extern u8 D_1F8000D0[];
 
 void func_8010B5EC(u8 *a, s16 b)
 {
@@ -932,7 +946,6 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801147D0);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_UpdateTinyMouseVillageNpcActor);
 
-extern u8 D_800E7E80[];
 
 s32 func_80114EAC(u8 *a)
 {
