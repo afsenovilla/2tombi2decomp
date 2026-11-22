@@ -1129,7 +1129,42 @@ void func_801264B4(s32 arg0) {
     func_800735F4(arg0, 0x67);
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateMythicalTowerEntranceEffect);
+extern u16 D_1F80017C;
+extern u8 D_800BF916;
+
+void f_UpdateMythicalTowerEntranceEffect(u8 *a) {
+    switch (a[0x5E]) {
+    case 0:
+        switch (a[5]) {
+        case 0:
+            if (D_800BF916 == 1) {
+                a[5] = 1;
+                func_800313A0(0x20A, a + 0x2C, -0x20, a + 0x54);
+                func_80074590(0xD, -0x1D, 0);
+            }
+            break;
+        case 1:
+            if (D_800BF916 >= 2) {
+                a[0x5E] = 1;
+                a[5] = 0;
+            }
+            if (!(D_1F80017C & 0xF)) {
+                func_80074590(0xD, -0x1D, 0);
+            }
+            break;
+        }
+        a[1] = 0;
+        break;
+    case 1:
+        f_UpdateMythicalTowerEntranceTransition(a);
+        func_800735F4(a, 0x6A);
+        break;
+    case 2:
+        func_80124CF8(a);
+        func_800735F4(a, 0x6A);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80126608);
 
@@ -1358,8 +1393,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E974);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012EA70);
 
-extern u16 D_1F80017C;
-extern u8 D_800BF916;
 
 void func_8012EB1C(u8 *a) {
     switch (a[4]) {

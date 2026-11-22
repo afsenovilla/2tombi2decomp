@@ -1935,7 +1935,37 @@ void func_8013CC08(void *arg0) {
     M2C_FIELD(arg0, M2C_UNK **, 0x1C) = &D_80032918;
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013CC28);
+#define AREA_gte_ldv0(r0) __asm__ volatile("lwc2	$0, 0( %0 );" "lwc2	$1, 4( %0 )" : : "r"(r0))
+typedef struct { s16 x, y, z, pad; } AreaSVec;
+extern u8 D_8014296C[];
+extern s32 D_80142968;
+extern s32 D_1F800084;
+extern s32 D_1F800088;
+extern s32 D_1F800090;
+
+void func_8013CC28(u8 *a) {
+    AreaSVec v;
+    u8 *p;
+    s32 r, k;
+
+    p = M2C_FIELD(a, u8 **, 0x78);
+    if (p == NULL) {
+        p = D_8014296C;
+    }
+    func_800329E0(6);
+    v.x = M2C_FIELD(a, s16 *, 0x2E);
+    v.y = M2C_FIELD(a, s16 *, 0x32);
+    v.z = M2C_FIELD(a, s16 *, 0x36);
+    AREA_gte_ldv0(&v);
+    if (func_800317CC(-10) == 0) {
+        D_1F800088 = D_1F800084;
+        r = func_8009A450();
+        k = D_80142968;
+        r &= 0x7FF;
+        D_1F800090 = r;
+        M2C_FIELD(a, u8 **, 0x78) = func_80027A4C(p, k);
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013CCDC);
 

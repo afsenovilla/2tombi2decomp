@@ -257,7 +257,35 @@ loop_1:
     goto loop_1;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011040C);
+#define F16(p, o) M2C_FIELD(p, s16 *, o)
+#define FU16(p, o) M2C_FIELD(p, u16 *, o)
+extern s32 D_1F800088;
+extern u8 *D_1F800084;
+
+s32 func_8011040C(u8 *a, u8 *b, u8 *c) {
+    s16 rad, ox, oz, dx, dz;
+    u16 r, ah, ay;
+    s32 h;
+
+    rad = (func_80083E80(F16(c, 0xC)) * 110) >> 12;
+    ox = (func_80083E80(F16(b, 0x56)) * rad) >> 12;
+    oz = (func_80083F50(F16(b, 0x56)) * rad) >> 12;
+    dx = FU16(a, 0x14C) - (FU16(c, 0x2C) - oz);
+    dz = FU16(a, 0x150) - (FU16(c, 0x34) + ox);
+    r = func_80084080(dx * dx + dz * dz);
+    if (F16(b, 0x80) + D_1F800088 < r) {
+        return 0;
+    }
+    h = ((func_80083F50(F16(c, 0xC)) * 110) >> 12) + FU16(c, 0x30);
+    ay = FU16(a, 0x14E);
+    ah = FU16(a, 0x68);
+    if ((u16)(ay - h + (FU16(b, 0x84) + ah)) > F16(b, 0x86) + ((s16)ah << 1)) {
+        return 0;
+    }
+    F16(a, 0x156) = 110;
+    D_1F800084 = c;
+    return 1;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaOrientedPlatformContact);
 
