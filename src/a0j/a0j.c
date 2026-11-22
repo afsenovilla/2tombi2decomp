@@ -537,9 +537,105 @@ s32 func_8010B98C(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010BAD8);
+extern u8 D_8010D904[];
+extern u8 D_8010D50C[];
+extern u8 D_8010D70C[];
+extern u8 D_8010D5AC[];
 
-INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010BC8C);
+s32 func_8010BAD8(u8 *a)
+{
+    u8 *g;
+    s32 ok;
+    switch (a[6]) {
+    case 0:
+        if (a[0x2B] != 3) {
+            return 0;
+        }
+        a[6] = 1;
+        func_80042354(1, 2);
+        func_80040CDC(a, D_8010D904, D_8010D50C);
+        a[0x70] = 1;
+        break;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] != 0xFF) {
+            return 0;
+        }
+        a[6]++;
+        g = (u8 *)&D_800BF870;
+        ok = g[0x246] && g[0x249] && g[0x24C] && g[0x2DF] && g[0x2E0] && g[0x27B];
+        if (ok) {
+            func_80040CDC(a, D_8010D904, D_8010D70C);
+            a[0xBF] = 1;
+        } else {
+            func_80040CDC(a, D_8010D904, D_8010D5AC);
+            a[0xBF] = 0;
+        }
+        a[0x70] = 1;
+        break;
+    case 2:
+        func_80041098(a);
+        if (a[0x70] != 0xFF) {
+            return 0;
+        }
+        a[6] = 0;
+        func_80042310();
+        if (a[0xBF] != 0) {
+            return 2;
+        }
+        return 1;
+    }
+    return 0;
+}
+
+extern u8 D_8010D624[];
+extern u8 D_8010D694[];
+
+s32 func_8010BC8C(u8 *a)
+{
+    u8 *g;
+    s32 ok;
+    switch (a[6]) {
+    case 0:
+        if (a[0x2B] != 3) {
+            return 0;
+        }
+        a[6] = 1;
+        func_80042354(1, 2);
+        func_80040CDC(a, D_8010D904, D_8010D624);
+        a[0x70] = 1;
+        break;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] != 0xFF) {
+            return 0;
+        }
+        a[6]++;
+        g = (u8 *)&D_800BF870;
+        ok = g[0x246] && g[0x249] && g[0x24C] && g[0x2DF] && g[0x2E0] && g[0x27B];
+        if (ok) {
+            func_80040CDC(a, D_8010D904, D_8010D70C);
+            a[0xBF] = 1;
+        } else {
+            func_80040CDC(a, D_8010D904, D_8010D694);
+            a[0xBF] = 0;
+        }
+        a[0x70] = 1;
+        break;
+    case 2:
+        func_80041098(a);
+        if (a[0x70] != 0xFF) {
+            return 0;
+        }
+        a[6] = 0;
+        func_80042310();
+        if (a[0xBF] != 0) {
+            return 2;
+        }
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a0j/nonmatchings/a0j", f_UpdateGoldenTowerPigElderActor);
 
@@ -596,7 +692,6 @@ s32 func_8010C23C(u8 *a)
     }
 }
 
-extern u8 D_8010D904[];
 extern u8 D_8010D5F4[];
 
 s32 func_8010C320(u8 *a)

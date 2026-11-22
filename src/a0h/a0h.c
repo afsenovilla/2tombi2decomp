@@ -70,7 +70,51 @@ void func_8010963C(void)
     }
 }
 
-INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_801096E8);
+extern u8 *D_800F2738;
+
+void func_801096E8(void)
+{
+    u8 *a;
+    u8 **p;
+    u8 *b;
+    s32 r;
+    if (D_1F800150_058c == 0) {
+        return;
+    }
+    for (a = D_800F2738; a != NULL; a = *(u8 **)(a + 0x24)) {
+        if ((a[0] & 1) && a[0x2B] == 0) {
+            p = D_1F800148;
+            D_1F800182_5650 = *(u8 *)&D_1F800150_058c;
+            while (D_1F800182_5650 != 0) {
+                b = *p;
+                D_1F800182_5650--;
+                p++;
+                if (b[0] & 1) {
+                    switch (b[2]) {
+                    case 12:
+                        func_80023618(a, b);
+                        break;
+                    case 18:
+                        func_800216B4(a, b, 0);
+                    case 32:
+                        if (func_80022F04(a, b) != 0) {
+                            if (a[2] == 3 || a[2] == 9) {
+                                r = func_8001DC9C(a, b, 0, 0);
+                            } else {
+                                r = func_8001E860(a, b, 0, 0);
+                                b[0x2B] = 1;
+                            }
+                            if (!(r & 0x80)) {
+                                D_1F800182_5650 = 0;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", f_DispatchStrengthTowerTombaContacts);
 
@@ -200,7 +244,6 @@ void func_80109FAC(u8 *a0)
     }
 }
 
-extern u8 *D_800F2738;
 
 void func_8010A0AC(void)
 {

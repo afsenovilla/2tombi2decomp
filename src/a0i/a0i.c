@@ -4,7 +4,59 @@
 
 INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_801090F0);
 
-INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_801092E8);
+extern s16 D_1F800150_058c;
+extern u8 D_1F800182;
+extern u8 **D_1F800148;
+extern u8 D_1F800182;
+extern u8 D_1F800182;
+extern u8 D_1F800182;
+extern u8 D_1F800182;
+extern u8 D_1F800182;
+extern u8 *D_800F2738;
+
+void func_801092E8(void)
+{
+    u8 *a;
+    u8 **p;
+    u8 *b;
+    s32 r;
+    if (D_1F800150_058c == 0) {
+        return;
+    }
+    for (a = D_800F2738; a != NULL; a = *(u8 **)(a + 0x24)) {
+        if ((a[0] & 1) && a[0x2B] == 0) {
+            p = D_1F800148;
+            D_1F800182 = *(u8 *)&D_1F800150_058c;
+            while (D_1F800182 != 0) {
+                b = *p;
+                D_1F800182--;
+                p++;
+                if (b[0] & 1) {
+                    switch (b[2]) {
+                    case 12:
+                        func_80023618(a, b);
+                        break;
+                    case 18:
+                        func_800216B4(a, b, 0);
+                    case 32:
+                        if (func_80022F04(a, b) != 0) {
+                            if (a[2] == 3 || a[2] == 9) {
+                                r = func_8001DC9C(a, b, 0, 0);
+                            } else {
+                                r = func_8001E860(a, b, 0, 0);
+                                b[0x2B] = 1;
+                            }
+                            if (!(r & 0x80)) {
+                                D_1F800182 = 0;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_8010949C);
 
@@ -44,7 +96,6 @@ void func_80109B38(u8 *a)
 
 extern u8 **D_1F80013C;
 extern u8 D_1F800144;
-extern u8 D_1F800182;
 
 void func_80109BA8(void *a)
 {
@@ -67,7 +118,6 @@ void func_80109BA8(void *a)
 }
 
 extern u8 D_1F800150;
-extern u8 **D_1F800148;
 
 void func_80109C6C(u8 *a0)
 {
@@ -102,7 +152,6 @@ void func_80109C6C(u8 *a0)
 }
 
 extern s16 D_1F800144_138c;
-extern u8 *D_800F2738;
 
 void func_80109D6C(void)
 {
@@ -149,7 +198,6 @@ void func_80109E6C(u8 *a)
 }
 
 extern u8 D_1F800152;
-extern u8 D_1F800182;
 extern s32 D_1F800080;
 
 s32 func_80109F44(void)
