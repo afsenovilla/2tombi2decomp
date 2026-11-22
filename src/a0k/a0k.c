@@ -767,7 +767,24 @@ void func_80113338(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_SpawnBerryNutsScorePopup);
+void func_80113338();
+
+void f_SpawnBerryNutsScorePopup(u8 *p, s32 n)
+{
+    u8 *r;
+
+    if (n % 10 == 0) {
+        r = func_80072DDC(0, 0, 3, 0x2A);
+        if (r != NULL) {
+            *(void **)(r + 0x1C) = func_80113338;
+            *(s16 *)(r + 0x5C) = 0x7C7E;
+            *(s16 *)(r + 0xE) = func_80079634(n, r + 0x44);
+            *(s16 *)(r + 0x54) = *(s16 *)(p + 2);
+            *(s16 *)(r + 0x56) = *(s16 *)(p + 6);
+            *(s16 *)(r + 0x58) = *(s16 *)(p + 0xA);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80113488);
 

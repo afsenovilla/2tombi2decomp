@@ -147,12 +147,36 @@ u8 *func_8010AE30(void *a)
     return r;
 }
 
-INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010AE9C);
+extern u8 D_8010C968[];
+extern u8 D_800BF80F;
+
+s32 func_8010AE9C(u8 *a)
+{
+    switch (a[0x78]) {
+    case 0:
+        D_800BF9B4 = 2;
+        func_8006CBD0(D_800E8008, D_8010C968);
+        a[0x78]++;
+        goto end;
+    case 1:
+        *(s16 *)(a + 0x2E) = 0x104B;
+        *(s16 *)(a + 0x36) = 0x4AB5;
+        *(s16 *)(a + 0x56) = 0x400;
+        func_8010BDB8(a);
+        a[0x78]++;
+        goto end;
+    case 2:
+        D_800BF80F = 1;
+        return 1;
+    end:
+    default:
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010AF60);
 
 extern u8 D_8010C974[];
-extern u8 D_800BF80F;
 
 s32 func_8010B078(u8 *a)
 {

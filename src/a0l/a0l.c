@@ -41,7 +41,30 @@ s32 func_801092D8(void) {
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_801092E8);
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_801094B8);
+typedef struct {
+    s16 pad;
+    s16 x, y, z;
+} PartPos;
+extern u8 D_800BFA58_9b2e;
+extern PartPos D_801178E0[];
+
+void func_801094B8(u8 *a)
+{
+    s32 k = 0x27;
+    s32 i;
+    PartPos *t;
+    u8 **pp;
+
+    if (D_800BFA58_9b2e == 0) {
+        k = 0x26;
+    }
+    for (i = 0; i < a[9]; i++) {
+        func_80051B04(((u8 **)(a + 0xC0))[i], k, i);
+        *(s16 *)(((u8 **)(a + 0xC0))[i] + 0) = D_801178E0[i].x;
+        *(s16 *)(((u8 **)(a + 0xC0))[i] + 2) = D_801178E0[i].y;
+        *(s16 *)(((u8 **)(a + 0xC0))[i] + 4) = D_801178E0[i].z;
+    }
+}
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", f_UpdateEndingIllustrationTransition);
 
@@ -450,7 +473,32 @@ void func_80111DE4(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111DF0);
+
+void func_80111DF0(u8 *a)
+{
+    u8 *s;
+    s32 n;
+
+    if (a[5] == 0) {
+        a[5] = 1;
+        s = D_800BF808;
+        if (*(s32 *)(s + 0x54) != 0) {
+            n = *(s32 *)(s + 0x50) * 100 + *(s32 *)(s + 0x54);
+        } else {
+            n = *(s32 *)(s + 0x50);
+        }
+        *(s16 *)(a + 0xE) = func_80079634(n, a + 0x44);
+        *(s16 *)(a + 0x54) = *(s16 *)(a + 0x2E);
+        *(s16 *)(a + 0x56) = *(s16 *)(a + 0x32);
+        *(s16 *)(a + 0x58) = *(s16 *)(a + 0x36);
+    }
+    if (D_800BFA58_9b2e != 0) {
+        a[4] = 1;
+        a[5] = 0;
+    } else {
+        a[4] = 0;
+    }
+}
 
 extern void *D_800ECF80;
 extern u8 D_8011A6D4[];
