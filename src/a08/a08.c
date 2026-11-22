@@ -769,7 +769,17 @@ void func_80122938(void *arg0) {
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80122998);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80122C70);
+void func_80122998();
+
+void func_80122C70(u8 *a0)
+{
+    u8 *r = func_80072DDC(a0, 1, 4, 0x53);
+
+    if (r) {
+        *(void **)(r + 0x1C) = func_80122998;
+        r[3] = a0[3];
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80122CC0);
 
@@ -1032,7 +1042,17 @@ void func_801290DC(void *arg0) {
     M2C_FIELD(arg0, s32 *, 0x10) = func_8003116C(0x90B, arg0 + 0x2C, -0x20);
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801291BC);
+u8 *func_801291BC(void *a0)
+{
+    u8 *r = func_80072DDC(a0, 1, 3, 0x10);
+
+    if (r) {
+        *(void **)(r + 0x1C) = f_UpdateWaterTempleQuestPropActor;
+        r[3] = 0xB;
+        r[0x28] |= 0x80;
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012920C);
 

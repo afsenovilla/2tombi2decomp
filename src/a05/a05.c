@@ -261,7 +261,17 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80112020);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801121AC);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801124AC);
+extern u8 D_800BF9CA;
+extern char D_801097F0[];
+
+void func_801124AC(void *unused)
+{
+    char buf[0x20];
+    s32 n = D_800BF9CA + 1;
+
+    func_8009B0C0(buf, D_801097F0, n);
+    func_80079374(0x80, 0x70, 0, buf, 4);
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801124FC);
 
@@ -294,7 +304,20 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80112778);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateKujaraSummitQuestPickupActor);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80112CD8);
+void f_UpdateKujaraSummitQuestPickupActor();
+
+u8 *func_80112CD8(void *a0, s32 a1)
+{
+    u8 *r = func_80072DDC(a0, 0x80, 5, 3);
+
+    if (r == 0) {
+        return 0;
+    }
+    r[3] = 0;
+    r[0x5E] = a1;
+    *(void **)(r + 0x1C) = f_UpdateKujaraSummitQuestPickupActor;
+    return r;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80112D28);
 

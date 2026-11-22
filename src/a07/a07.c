@@ -1258,7 +1258,20 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateEarthPigBagRewardPresentation);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012B1B4);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012B3FC);
+void func_8012B1B4();
+
+u8 *func_8012B3FC(void *a0)
+{
+    u8 *r = func_80072DDC(a0, 0, 5, 3);
+
+    if (r == 0) {
+        return 0;
+    }
+    r[3] = 0;
+    *(void **)(r + 0x1C) = func_8012B1B4;
+    *(void **)(r + 0x10) = a0;
+    return r;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012B44C);
 
