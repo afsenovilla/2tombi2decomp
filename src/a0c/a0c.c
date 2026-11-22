@@ -1474,7 +1474,11 @@ INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8011796C);
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80117AC8);
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80117B84);
+s32 func_80117B84(u8 *a) {
+    u16 z = D_1F800164_7d8c;
+    u16 x = D_1F800160_3621;
+    return func_80077768((s16)-func_80085690((s16)(z - *(u16 *)(a + 0x36)), (s16)(x - *(u16 *)(a + 0x2E))), *(s16 *)(a + 0x56), 0) != 0;
+}
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80117BF4);
 

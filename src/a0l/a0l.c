@@ -401,7 +401,23 @@ s32 func_8010DFC4(u8 *a)
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010DFEC);
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010E3D4);
+extern u8 D_8011AF2C[];
+extern s32 D_800ECFD8;
+extern u8 D_8011A738[];
+extern s32 D_800ECF90;
+
+s32 func_8010E3D4(u8 *p)
+{
+    if (!(*(s16 *)(p + 0x72) & 0x8000)) {
+        *(s32 *)(p + 0x3C) = D_800ECFD8;
+        *(void **)(p + 0x7C) = D_8011AF2C;
+    } else {
+        *(s32 *)(p + 0x3C) = D_800ECF90;
+        *(void **)(p + 0x7C) = D_8011A738;
+    }
+    func_80041718(p, *(u16 *)(p + 0x72) & 0xFFF, 0);
+    return 1;
+}
 
 void func_8010E438(s32 a)
 {
@@ -570,7 +586,38 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8011039C);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80110548);
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_801106A8);
+extern Range D_8011A5BC[];
+extern Range D_8011A5D4[];
+extern Range D_8011A640[];
+extern u8 *D_1F80021C;
+
+void func_801106A8(s16 kind, s16 idx)
+{
+    Range *t;
+    s32 n, base;
+    u8 *p;
+    switch (kind) {
+    case 0:
+        t = D_8011A5BC;
+        n = 3;
+        base = 0;
+        break;
+    case 1:
+        t = D_8011A5D4;
+        n = 0x1F;
+        base = 843;
+        break;
+    case 2:
+        t = D_8011A640;
+        n = 18;
+        base = 1083;
+        break;
+    default:
+        return;
+    }
+    p = D_1F80021C + t[idx].a * 32 + base * 32;
+    func_8001D2A8(n, p, p + (t[idx].b + 1) * 32, 0);
+}
 
 extern s16 D_800A4F7E;
 extern M2C_UNK D_801179E0;

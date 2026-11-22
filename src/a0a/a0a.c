@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
+typedef struct { s16 x, y, w, h; } ClutRect;
 
 extern u8 D_1F800246_6eef;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
@@ -302,7 +303,52 @@ void func_8010B834(Owner *a, s32 sel)
     }
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010B9AC);
+// nearcopy: 4 words off, C from a07 func_80113C20
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+typedef struct {
+    u8 *ptr;
+    u8 *clut;
+    s16 x;
+    s16 y;
+} ClutCycle;
+extern ClutCycle D_8011937C[];
+extern s8 D_801278CC[];
+extern u8 D_800BF873;
+
+void func_8010B9AC(s32 arg0) {
+    ClutRect r;
+    s32 i;
+    ClutCycle *e;
+    u8 *data;
+
+    if (arg0 == 0) {
+        s8 *p;
+        i = 4;
+        p = &D_801278CC[i];
+        do {
+            *p-- = 0;
+        } while (--i >= 0);
+        return;
+    }
+    e = D_8011937C;
+    for (i = 0; i < 5; i++, e++) {
+        if (--D_801278CC[i] <= 0) {
+            if (e->ptr[0] == 0xFF) {
+                e->ptr -= e->ptr[1];
+            }
+            data = e->clut + e->ptr[0] * 32;
+            D_801278CC[i] = e->ptr[1];
+            r.x = e->x;
+            r.y = e->y;
+            r.w = 16;
+            r.h = 1;
+            func_80081218(&r, data);
+            e->ptr += 2;
+        }
+    }
+}
 
 void func_8010BAD4(void *arg0) {
     u8 temp_v1;
@@ -1254,7 +1300,6 @@ void func_80114DB0(u8 *a)
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80114E64);
 
-typedef struct { s16 x, y, w, h; } ClutRect;
 typedef struct { s16 m[3][3]; s16 pad; s32 t[3]; } AreaMatrix;
 extern AreaSVec D_1F8000C0_f4ad;
 typedef struct { u8 pad[0x28]; AreaMatrix m; } AreaScratchD0;

@@ -186,7 +186,46 @@ void func_80109E54(void)
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", f_SpawnEvilPigDoorActorsFromPlacementTable);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010A060);
+// nearcopy: 5 words off, C from a07 func_80113C20
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+extern ClutCycle D_8010E0DC[];
+extern s8 D_8010E5FC[];
+extern u8 D_800BF873;
+
+void func_8010A060(s32 arg0) {
+    ClutRect r;
+    s32 i;
+    ClutCycle *e;
+    u8 *data;
+
+    if (arg0 == 0) {
+        s8 *p;
+        i = 8;
+        p = &D_8010E5FC[i];
+        do {
+            *p-- = 0;
+        } while (--i >= 0);
+        return;
+    }
+    e = D_8010E0DC;
+    for (i = 0; i < 9; i++, e++) {
+        if (--D_8010E5FC[i] <= 0) {
+            if (e->ptr[0] == 0xFF) {
+                e->ptr -= e->ptr[1];
+            }
+            data = e->clut + e->ptr[0] * 32;
+            D_8010E5FC[i] = e->ptr[1];
+            r.x = e->x;
+            r.y = e->y;
+            r.w = 16;
+            r.h = 1;
+            func_80081218(&r, data);
+            e->ptr += 2;
+        }
+    }
+}
 
 void func_8010A188(u8 *a)
 {

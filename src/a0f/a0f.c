@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
+typedef struct { s16 x, y, w, h; } ClutRect;
 
 extern u8 D_1F800246_6eef;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
@@ -566,7 +567,52 @@ void func_8010DDE4(Owner *a, s32 sel)
     }
 }
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010DF5C);
+// nearcopy: 5 words off, C from a07 func_80113C20
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+typedef struct {
+    u8 *ptr;
+    u8 *clut;
+    s16 x;
+    s16 y;
+} ClutCycle;
+extern ClutCycle D_8011AE60[];
+extern s8 D_801297A8[];
+extern u8 D_800BF873;
+
+void func_8010DF5C(s32 arg0) {
+    ClutRect r;
+    s32 i;
+    ClutCycle *e;
+    u8 *data;
+
+    if (arg0 == 0) {
+        s8 *p;
+        i = 11;
+        p = &D_801297A8[i];
+        do {
+            *p-- = 0;
+        } while (--i >= 0);
+        return;
+    }
+    e = D_8011AE60;
+    for (i = 0; i < 12; i++, e++) {
+        if (--D_801297A8[i] <= 0) {
+            if (e->ptr[0] == 0xFF) {
+                e->ptr -= e->ptr[1];
+            }
+            data = e->clut + e->ptr[0] * 32;
+            D_801297A8[i] = e->ptr[1];
+            r.x = e->x;
+            r.y = e->y;
+            r.w = 16;
+            r.h = 1;
+            func_80081218(&r, data);
+            e->ptr += 2;
+        }
+    }
+}
 
 void func_8010E084(void *arg0) {
     u8 temp_v1;
@@ -760,7 +806,6 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010EDF8);
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010F48C);
 
 extern u8 D_800BF809;
-typedef struct { s16 x, y, w, h; } ClutRect;
 typedef struct { s16 m[3][3]; s16 pad; s32 t[3]; } AreaMatrix;
 typedef struct { s16 x, y, z, pad; } AreaSVec;
 typedef struct { u8 pad[0x28]; AreaMatrix m; } AreaScratchD0;
@@ -1651,7 +1696,38 @@ s32 func_8011A328(void *arg0) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8011A35C);
+extern Range D_8012971C[];
+extern Range D_80129734[];
+extern Range D_8012976C[];
+extern u8 *D_1F80021C;
+
+void func_8011A35C(s16 kind, s16 idx)
+{
+    Range *t;
+    s32 n, base;
+    u8 *p;
+    switch (kind) {
+    case 0:
+        t = D_8012971C;
+        n = 3;
+        base = 0;
+        break;
+    case 1:
+        t = D_80129734;
+        n = 0x1F;
+        base = 0x1C8;
+        break;
+    case 3:
+        t = D_8012976C;
+        n = 10;
+        base = 951;
+        break;
+    default:
+        return;
+    }
+    p = D_1F80021C + t[idx].a * 32 + base * 32;
+    func_8001D2A8(n, p, p + (t[idx].b + 1) * 32, 0);
+}
 
 extern s16 D_800BED82;
 extern M2C_UNK D_80129134;
