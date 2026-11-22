@@ -388,7 +388,30 @@ void func_80113608(void) {
     func_801114B8();
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80113628);
+void func_80113628(u8 *a, u8 *b)
+{
+    void *r;
+
+    a[0x78] = 0;
+    r = func_80112970(a, b, 0x90);
+    if (r != 0) {
+        a[0x78] = 3;
+        *(void **)(a + 0x10) = r;
+        return;
+    }
+    b[4] = 2;
+    b[5] = 2;
+    b[6] = 0;
+    func_80054D14(a, 0x26, 0);
+    a[0x145] = 1;
+    a[7] = 1;
+    a[6] = 7;
+    a[0x29] = 0;
+    a[0x144] = 0;
+    a[0x148] = 0;
+    *(s16 *)(a + 0x4A) = 0;
+    *(s16 *)(a + 0x58) = 0x20;
+}
 
 s32 func_801136C4(u8 *a)
 {
@@ -1024,7 +1047,25 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011BCC8);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011BD98);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011BF0C);
+void func_8011BF0C(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+    case 1:
+        *(s16 *)(a + 0x2C) = *(s16 *)(o + 0x2E);
+        *(s16 *)(a + 0x2E) = *(s16 *)(o + 0x32);
+        *(s16 *)(a + 0x30) = *(s16 *)(o + 0x36);
+        func_80031220(0x914, a + 0x2C, -0x1E);
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011BFA8);
 
@@ -1827,7 +1868,32 @@ u8 *func_801238D0(void *a0, u8 a1)
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80123940);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80123A48);
+typedef struct { s16 x, y, z, pad; } SVec3;
+extern SVec3 D_1F8000C0;
+extern s32 D_800E7F5C;
+
+void func_80123A48(u8 *a)
+{
+    u8 *t;
+    SVec3 *v;
+    a[1] = 1;
+    func_80077EBC(a);
+    switch (a[5]) {
+    case 0:
+        t = D_800E7E80;
+        func_8004BD64(a, 0, *(s32 *)(t + 0xDC), *(s32 *)(t + 0xD0), 0);
+        break;
+    case 1:
+        D_1F8000C0.x = 0;
+        v = &D_1F8000C0;
+        v->y = 0;
+        v->z = 0;
+        func_8004BD64(a, 1, D_800E7F5C, 0, v);
+        break;
+    case 2:
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80123AE4);
 
