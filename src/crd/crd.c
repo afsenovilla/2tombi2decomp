@@ -47,6 +47,23 @@ typedef struct {
     s16 x58;
 } CrdMenu;
 extern CrdMenu D_800BF498;
+/* The message-box refresh every menu step does: show message `id` (text msg) unless it is up already */
+#define CRD_MSG(id, msg)                     \
+    {                                        \
+        CrdMenu *s;                          \
+        s32 w, m;                            \
+        w = id;                              \
+        s = &D_800BF498;                     \
+        m = -1;                              \
+        if (s->x18 != w) {                   \
+            func_8009A5B0(s->xC, msg);       \
+            s->x18 = w;                      \
+        }                                    \
+        if (s->x1A != m) {                   \
+            *s->x10 = 0;                     \
+            s->x1A = m;                      \
+        }                                    \
+    }
 extern u16 D_800ECF54;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern char D_8018A090[];
@@ -207,7 +224,45 @@ INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018C4B4);
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018C790);
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018CCCC);
+typedef struct { s16 x, y; u16 w; s16 h; } CrdRect;
+extern u8 *D_800A2854[];
+
+void func_8018CCCC(u8 *a)
+{
+    s16 ids[2] = { 0x2E, 0x2F };
+    CrdRect r;
+    s32 i, col, mode;
+    u8 *str;
+    if (*(u8 *)D_800BF498.xC != 0) {
+        return;
+    }
+    r.h = 0x10;
+    r.w = 0;
+    r.y = 0x64;
+    for (i = 0; i < 2; i++) {
+        if ((a + i)[0x4A] >= 3) {
+            continue;
+        }
+        str = D_800A2854[ids[i]];
+        r.x = 0x50 - func_8009A600(str) * 4;
+        if (i != 0) {
+            r.x += 0xA0;
+        }
+        r.y = 0x64;
+        r.w = 0;
+        if (a[0x44] == i + 1) {
+            col = 0;
+            mode = 0x40;
+        } else {
+            col = 6;
+            mode = 0x60;
+        }
+        func_80079374((s16)(r.x + r.w), r.y, col, str, 3);
+        r.w *= 2;
+        r.w += func_8009A600(str) << 3;
+        func_8005019C(&r, mode, 0, 3);
+    }
+}
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018CE40);
 
@@ -285,22 +340,6 @@ INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018E2B4);
 
 extern s32 D_800A2924;
 extern s32 D_800A2980;
-#define CRD_MSG(id, msg)                     \
-    {                                        \
-        CrdMenu *s;                          \
-        s32 w, m;                            \
-        w = id;                              \
-        s = &D_800BF498;                     \
-        m = -1;                              \
-        if (s->x18 != w) {                   \
-            func_8009A5B0(s->xC, msg);       \
-            s->x18 = w;                      \
-        }                                    \
-        if (s->x1A != m) {                   \
-            *s->x10 = 0;                     \
-            s->x1A = m;                      \
-        }                                    \
-    }
 
 void func_8018E54C(u8 *a)
 {
@@ -339,13 +378,89 @@ INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018E6BC);
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018E95C);
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018EC00);
+extern s32 D_800A2948;
+extern s32 D_800A2944;
+
+void func_8018EC00(u8 *a)
+{
+    u8 *e;
+    s32 k;
+    s32 one;
+    if (a[0x3E] == 0) {
+        return;
+    }
+    e = *(u8 **)(a + 8);
+    one = 1;
+    if (a[0x3E] == one) {
+        CRD_MSG(0x3D, D_800A2948);
+        k = a[0x47] * 0x3C;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 9;
+        (a + a[0x46])[0x48] = (e + k)[4];
+    } else {
+        CRD_MSG(0x3C, D_800A2944);
+        a[0x50] = 0x1E;
+        a[0x44] = 0;
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        (a + a[0x46])[0x48] = 0;
+        (a + a[0x46])[0x4E] = 0xFF;
+        a[0x46] = 0xFF;
+        a[0x47] = 0;
+        a[0x52] = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0;
+        a[3] = 0;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xF;
+    }
+}
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018ED94);
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018EFDC);
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018F280);
+extern s32 D_800A2978;
+extern s32 D_800A2974;
+
+void func_8018F280(u8 *a)
+{
+    u8 *e;
+    s32 k;
+    s32 one;
+    if (a[0x3E] == 0) {
+        return;
+    }
+    e = *(u8 **)(a + 8);
+    one = 1;
+    if (a[0x3E] == one) {
+        CRD_MSG(0x49, D_800A2978);
+        k = a[0x47] * 0x3C;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xD;
+        (a + a[0x46])[0x48] = (e + k)[4];
+    } else {
+        CRD_MSG(0x48, D_800A2974);
+        a[0x50] = 0x1E;
+        a[0x44] = 0;
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        (a + a[0x46])[0x48] = 0;
+        (a + a[0x46])[0x4E] = 0xFF;
+        a[0x46] = 0xFF;
+        a[0x47] = 0;
+        a[0x52] = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0;
+        a[3] = 0;
+        a[2] = 0;
+        a[1] = 0;
+        a[0] = 0xF;
+    }
+}
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern s32 D_800A2914;
