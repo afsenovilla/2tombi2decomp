@@ -2447,7 +2447,71 @@ void f_DrawActorModelByRenderMode(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_BuildActorModelPartPrimitives);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawCurrentAreaEnvironment);
+void f_DrawCurrentAreaEnvironment(void *a)
+{
+    switch (D_800BF870.unk0) {
+    case 0:
+        func_801401B8(a);
+        break;
+    case 1:
+        func_80132358(a);
+        break;
+    case 2:
+        func_80124CB8(a);
+        break;
+    case 4:
+        func_801185F0(a);
+        break;
+    case 5:
+        func_8013606C(a);
+        break;
+    case 6:
+        func_8013CD34(a);
+        break;
+    case 7:
+        func_8012DA14(a);
+        break;
+    case 8:
+        func_8012A7CC(a);
+        break;
+    case 10:
+        func_8011024C(a);
+        break;
+    case 11:
+        func_80113050(a);
+        break;
+    case 12:
+        func_80113DB4(a);
+        break;
+    case 13:
+        func_80113628(a);
+        break;
+    case 14:
+        func_80114320(a);
+        break;
+    case 15:
+        func_80115364(a);
+        break;
+    case 16:
+        func_8010C2A4(a);
+        break;
+    case 17:
+        func_8010B5BC(a);
+        break;
+    case 18:
+        func_8010BA40(a);
+        break;
+    case 19:
+        func_8010AA20(a);
+        break;
+    case 20:
+        func_80115F1C(a);
+        break;
+    case 21:
+        func_8010B0B8(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawTemplateEffectSlot);
 
