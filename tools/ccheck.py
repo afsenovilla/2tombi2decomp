@@ -2,13 +2,14 @@
 """Compile a C file and compare each function in it with the retail bytes (fast check, no link).
 
   python3 -I tools/ccheck.py src/main/foo.c [--prog main] [--cc gcc-2.7.2-psx] [--aspsx 2.56] [--flags "-O2 -G0"]
-      [--as gnu] [-v] [--func NAME] [--all]
+      [--as gnu] [-v] [--func NAME] [--all] [--sbs [--sbs-all]]
 
 Pipeline: tools/cc.py (the file's // CC, // FLAGS, // ASPSX, // AS headers; default the game's gcc 2.8.1 + ASPSX 2.79).
 Each defined function is looked up by name in config/symbol_addrs_<prog>.txt or as func_XXXXXXXX, and compared word by
 word with the retail file; relocated fields (jal target, %hi/%lo) are compared only where the object has no relocation.
 The length must also be the retail one (asm/<prog>/nonmatchings `nonmatching NAME, SIZE`).
-Prints OK / DIFF per function (with -v the differing words); --func NAME limits the check.
+Prints OK / DIFF per function (with -v the differing words); --func NAME limits the check. --sbs prints a
+side-by-side diff of every DIFF function, ours next to retail (tools/sbs.py; --sbs-all with the equal lines too).
 """
 import argparse, os, re, struct, subprocess, sys, tempfile
 
@@ -77,6 +78,8 @@ def main():
     ap.add_argument("-v", action="store_true")
     ap.add_argument("--all", action="store_true", help="also check the INCLUDE_ASM functions (sanity test)")
     ap.add_argument("--func", action="append", help="check only these functions (repeatable)")
+    ap.add_argument("--sbs", action="store_true", help="side-by-side diff of each DIFF function (tools/sbs.py)")
+    ap.add_argument("--sbs-all", action="store_true", help="with --sbs: print the equal lines too")
     a, rest = ap.parse_known_args()
     a.cflags = rest
     binary, delta, syms = prog_info(a.prog)
@@ -119,6 +122,10 @@ def main():
                     print("    size: got 0x%X bytes, retail 0x%X" % (g, w))
                 else:
                     print("    +%03X got %08X want %08X" % (i, g, w))
+        if a.sbs and not ok:
+            import sbs
+            n = want_size or size
+            print(sbs.render(d + "/a.o", name, binary[addr - delta: addr - delta + n], a.prog, addr, a.sbs_all))
     subprocess.run(["rm", "-rf", d])
     sys.exit(1 if bad else 0)
 
