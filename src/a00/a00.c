@@ -1662,7 +1662,31 @@ s32 func_80122F5C(s32 a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122FAC);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801230A4);
+extern u8 D_80149564[];
+
+s32 func_801230A4(u8 *p) {
+    switch (p[6]) {
+    case 0:
+        if (p[0x2B] == 3) {
+            p[6] = 1;
+            func_80042354(1, 1);
+        }
+        break;
+    case 1:
+        p[6] = 2;
+        func_80040CDC(p, D_8014E4EC, D_80149564);
+        p[0x70] = 1;
+        break;
+    case 2:
+        func_80041098(p);
+        if (p[0x70] == 0xFF) {
+            func_80042310();
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 s32 func_80123180(s32 arg0) {
     M2C_FIELD(arg0, s32 *, 0x14) = f_SpawnGoldFishhookPickup(arg0, 1);

@@ -289,6 +289,77 @@ def apply_renames(text, ren):
     return pat.sub(lambda m: ren[m.group(1)], text)
 
 
+def name_addrs(prog):
+    """name -> address of every name the program's link knows (symbol files, aliases, linker-wide names)."""
+    out = {}
+    for f in [os.path.join(ROOT, "config", "undefined_syms.ld"), os.path.join(ROOT, "config", "scratchpad.ld"),
+              os.path.join(ROOT, "config", "symbol_addrs_%s.txt" % prog),
+              os.path.join(ROOT, "build", "undefined_syms_auto.%s.txt" % prog),
+              os.path.join(ROOT, "build", "undefined_funcs_auto.%s.txt" % prog), L.aliases_path(prog)]:
+        if os.path.exists(f):
+            for l in open(f):
+                m = re.match(r"\s*(\w+)\s*=\s*0x([0-9A-Fa-f]+)", l)
+                if m:
+                    out.setdefault(m.group(1), int(m.group(2), 16))
+    return out
+
+
+def fix_names(text, prog, workdir=None):
+    """Rename the symbols a scratch file's functions reference to the program's names for the addresses the
+    retail bytes give them (the relocations read against retail): names from another program, or a splat name
+    of another address. -> (new text, {old: new}, {alias name: address} for names no file of the program
+    defines). Functions that do not compile or have no retail address are left alone."""
+    import ccheck
+    binary, delta, syms_ = ccheck.prog_info(prog)
+    sizes = ccheck.retail_sizes(prog)
+    known = name_addrs(prog)
+    nb = DS.names_by_addr(prog)
+    d = tempfile.mkdtemp(dir=workdir or os.path.join(ROOT, "build"))
+    ren, alias = {}, {}
+    try:
+        src = os.path.join(d, "x.c")
+        open(src, "w").write(text)
+        try:
+            cc.compile_c(src, os.path.join(d, "a.o"))
+        except cc.CompileError:
+            return text, {}, {}
+        obj = os.path.join(d, "a.o")
+        subprocess.run(["mipsel-linux-gnu-objcopy", "-O", "binary", "-j", ".text", obj, d + "/t.bin"], check=True)
+        otext = open(d + "/t.bin", "rb").read()
+        defined = None
+        for l in subprocess.run(["mipsel-linux-gnu-nm", "-S", "--defined-only", obj], capture_output=True,
+                                text=True).stdout.splitlines():
+            p = l.split()
+            if len(p) != 4 or p[2] not in "Tt":
+                continue
+            name, off, size = p[3], int(p[0], 16), int(p[1], 16)
+            ad = syms_.get(name) or (int(name[5:], 16) if re.fullmatch(r"func_[0-9A-F]{8}", name) else None)
+            if ad is None or sizes.get(name) != size:
+                continue
+            got = L.reloc_symbols(obj, name, binary[ad - delta: ad - delta + size], otext, off)
+            for s_, at in (got or {}).items():
+                if s_.startswith(".") or s_ == name:
+                    continue
+                emb = re.fullmatch(r"(?:D|func|jtbl)_([0-9A-F]{8})(?:_\w+)?", s_)
+                have = known.get(s_, int(emb.group(1), 16) if emb and s_ not in known else None)
+                if have == at:
+                    new = s_
+                else:
+                    new = nb.get(at) or ("func_%08X" % at if s_.startswith(("func_", "f_")) else "D_%08X" % at)
+                    if ren.get(s_, new) != new:
+                        continue     # two addresses for one name: leave it to the build check
+                    ren[s_] = new
+                if new not in known and re.fullmatch(r"D_[0-9A-F]{8}", new):
+                    if defined is None:
+                        defined = defined_names(prog)
+                    if new not in defined:
+                        alias[new] = at   # inside a table or past a label: no file defines the name
+        ren = {k: v for k, v in ren.items() if k != v}
+        return apply_renames(text, ren), ren, alias
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
+
+
 def load_sources(progs):
     """masked key -> list of (prog, name, text, decls, includes) of the matched C functions of every program."""
     out = collections.defaultdict(list)

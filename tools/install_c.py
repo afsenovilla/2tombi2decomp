@@ -6,7 +6,9 @@
 Each function replaces its INCLUDE_ASM line; the file's other top-level lines (types, externs, prototypes; not the
 #include lines) go just before the first installed function, skipping lines already present in the target. Then the
 linked build must be OK (tools/build.py <prog> --no-split), else the target is restored. Types that several programs
-need belong in include/*.h instead.
+need belong in include/*.h instead. Symbols the file names after another program (C copied from an overlay) are
+first renamed to this program's names for the addresses the retail bytes give them (tools/nearcopy.py
+fix_names(); a D_ address no file labels gets an alias line).
 """
 import argparse, os, re, subprocess, sys
 
@@ -37,6 +39,11 @@ def install(a):
     old = open(path).read()
     t = old
     text = open(a.src).read()
+    # names another program uses for these addresses -> this program's (relocations read against retail)
+    import nearcopy
+    text, ren, new_aliases = nearcopy.fix_names(text, a.prog)
+    if ren:
+        print("renamed from the relocations: " + ", ".join("%s -> %s" % kv for kv in sorted(ren.items())))
     pre, funcs, includes = [], [], []
     for kind, seg in ptsrc.items(text):
         s = seg.strip()
@@ -54,6 +61,7 @@ def install(a):
     # a global the target declares with another type is used here under an alias name (config/aliases_<prog>.ld)
     import hashlib, libsweep
     aliases = libsweep.read_aliases(a.prog)
+    aliases.update({k: v for k, v in new_aliases.items() if k not in aliases})
     decl_re = r"(?m)^(extern [^;(]*?\b(\w+)(?:\[[^\]]*\])*;)"
     theirs = {m.group(2): m.group(1) for m in re.finditer(decl_re, t)}
     for i, p in enumerate(pre):

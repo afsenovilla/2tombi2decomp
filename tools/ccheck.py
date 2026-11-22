@@ -67,6 +67,39 @@ def retail_sizes(prog):
     return out
 
 
+_INFO = {}
+
+
+def score(src, prog, name, workdir=None, override=None):
+    """Words off of function `name` compiled from src against retail (0: match; None: it does not compile or is
+    not in the object). Equal sizes: the differing words (relocated fields masked); other sizes: the lines that
+    differ in a difflib alignment of the masked words plus the size difference. For the search tools
+    (permlines.py, variants.py); thread-safe, one temporary directory per call."""
+    import cc
+    if prog not in _INFO:
+        _INFO[prog] = prog_info(prog) + (retail_sizes(prog),)
+    binary, delta, syms, sizes = _INFO[prog]
+    addr = syms.get(name) or (int(name[5:], 16) if re.fullmatch(r"func_[0-9A-Fa-f]{8}", name) else None)
+    if addr is None or name not in sizes:
+        raise SystemExit("no address / size for %s in %s" % (name, prog))
+    want = binary[addr - delta: addr - delta + sizes[name]]
+    d = tempfile.mkdtemp(dir=workdir or os.path.join(ROOT, "build"))
+    try:
+        cc.compile_c(src, d + "/a.o", override)
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import nearcopy
+        diffs, ours, size = nearcopy.compare(d + "/a.o", name, want)
+        if diffs is None:
+            return None
+        if size == len(want):
+            return len(diffs)
+        return nearcopy.aligned_off(ours, want) + abs(size - len(want)) // 4
+    except cc.CompileError:
+        return None
+    finally:
+        subprocess.run(["rm", "-rf", d])
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("src")
