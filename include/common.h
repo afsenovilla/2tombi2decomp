@@ -34,4 +34,8 @@ typedef signed short s16;
 typedef unsigned int u32;
 typedef signed int s32;
 
+/* The field of type T at byte offset o of p as a struct member (gcc 2.8: a non-QImode struct-member access never
+ * aliases a fixed scalar global, a `*(T *)(p + o)` cast access may; AGENTS.md "Aliasing"). */
+#define MEMBER_AT(T, p, o) (((struct { u8 pad[o]; T v; } *)(p))->v)
+
 #endif

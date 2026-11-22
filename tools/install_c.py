@@ -301,8 +301,19 @@ def install(a):
         if pr and pr[0] in later:
             hd = heads(t[at:] + "\n" + "\n".join(b for _, b in funcs), re.escape(pr[0]))
             if hd and norm(proto_of(hd[0][1])) != norm(p):
-                print("prototype of %s from its definition: %s" % (pr[0], proto_of(hd[0][1])))
-                extra[i] = proto_of(hd[0][1])
+                full = proto_of(hd[0][1])
+                fm = re.match(r"[^(]*?\b%s\s*\(([^)]*)\)" % re.escape(pr[0]), full)
+                k = (params(fm.group(1)) or 0) if fm else 0
+                few = [c for c in calls(t, pr[0]) + [c for _, b in funcs for c in calls(b, pr[0])] if c < k]
+                if few:
+                    # a call with fewer arguments (an m2c draft, a pass-through dropped) would not compile
+                    # against the full prototype: keep the K&R declaration with the definition's return type
+                    full = re.sub(r"\(([^()]*)\)\s*;\s*$", "();", full)
+                    print("prototype of %s from its definition, K&R (calls with %s argument(s)): %s" % (
+                        pr[0], "/".join(map(str, sorted(set(few)))), full))
+                else:
+                    print("prototype of %s from its definition: %s" % (pr[0], full))
+                extra[i] = full
     # a prototype or a definition with N parameters makes a call with fewer arguments an error: say where
     sigs = {}
     for p in extra:

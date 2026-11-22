@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Register allocation priorities of one scratch function, from cc1's local / global allocation dumps.
 
-  python3 -I tools/prio.py FILE.c [FUNC] [--cc C] [--flags F] [--all]
+  python3 -I tools/prio.py FILE.c [FUNC] [--prog P] [--cc C] [--flags F] [--all]
 
 Compiles FILE.c as tools/cc.py would (its // CC / // FLAGS lines, or the overrides) with `-dl -dg` and prints, per
 pseudo register of FUNC (default: the last function of the file): the uses (refs), the live length in insns,
@@ -11,6 +11,13 @@ allocation order; a pseudo crossing calls wants a saved register), and the hard 
 (`reg/v`) are named after the function's parameters and locals in declaration order (a guess: gcc numbers them in
 that order; a variable without a register of its own, or an optimised-out one, shifts the names: check against
 the insns with --all, which also prints the insns that set each pseudo). Highest priority first.
+
+With the function's retail bytes (--prog, default main; any function with an address), the `retail` column gives
+the register retail uses where ours uses that hard register (the compiled and retail instruction lists aligned on
+opcodes / immediates, register operands paired over the equal runs; `s1 (s2 x3)` when they disagree), and the
+pseudos whose register differs are listed with the priority they would need: local-alloc / global-alloc hand
+the free registers out in priority order (a call-crossing pseudo takes the first free saved register, s0 up), so
+a pseudo retail keeps in a lower saved register than ours needs a priority above the pseudo that got that one.
 
 docs/STATUS.md "Register priority": wrapping a statement in `do { } while (0)` counts its refs more; the order of
 declarations and a copy into a new variable change refs / live lengths (tools/regswap.py tries those).
@@ -62,6 +69,51 @@ def var_names(src, func):
     return names
 
 
+def retail_regs(src, func, prog, over):
+    """{our hard register number: Counter of retail register numbers} over the aligned instructions of func, or
+    None when it has no retail bytes."""
+    import collections, difflib, struct
+    import ccheck, inlined, nearcopy
+    try:
+        binary, delta, syms = ccheck.prog_info(prog)
+    except Exception:
+        return None
+    sizes = ccheck.retail_sizes(prog)
+    addr = syms.get(func) or (int(func[5:], 16) if re.fullmatch(r"func_[0-9A-Fa-f]{8}", func) else None)
+    if addr is None or func not in sizes:
+        return None
+    want = binary[addr - delta: addr - delta + sizes[func]]
+    d = tempfile.mkdtemp(prefix="tmp_prio_", dir=os.path.join(ROOT, "build"))
+    try:
+        cc.compile_c(src, d + "/a.o", over)
+        diffs, ours, size = nearcopy.compare(d + "/a.o", func, want)
+    except cc.CompileError:
+        return None
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
+    if diffs is None:
+        return None
+
+    def dec(b):
+        out = []
+        for (w,) in struct.iter_unpack("<I", b[:len(b) // 4 * 4]):
+            k, rg = inlined.regs(w)
+            op = w >> 26
+            if 1 <= op <= 7 or op in (2, 3):
+                k = k[:2] if op == 1 else (op,)
+            out.append((k, rg))
+        return out
+    a, b = dec(ours), dec(want)
+    sm = difflib.SequenceMatcher(None, [x[0] for x in a], [x[0] for x in b], autojunk=False)
+    cnt = collections.defaultdict(collections.Counter)
+    for i, j, n in sm.get_matching_blocks():
+        for k in range(n):
+            for x, y in zip(a[i + k][1], b[j + k][1]):
+                if x or y:
+                    cnt[x][y] += 1
+    return cnt
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("src")
@@ -69,6 +121,7 @@ def main():
     ap.add_argument("--cc")
     ap.add_argument("--flags")
     ap.add_argument("--all", action="store_true", help="also the insns that set each pseudo")
+    ap.add_argument("--prog", default="main", help="the program whose retail bytes give the `retail` column")
     a = ap.parse_args()
     over = {k: v for k, v in (("cc", a.cc), ("flags", a.flags)) if v}
     o = cc.options(a.src, over)
@@ -105,17 +158,47 @@ def main():
         rows.append((n, refs, live, m.group(4), int(m.group(5) or 0), pr, l))
     uservars = sorted({int(x) for x in re.findall(r"\(reg/v:\w+ (\d+)\)", lt)})
     names = dict(zip(uservars, var_names(a.src, func)))
-    print("%s: %d pseudos (%s, %s)" % (func, len(rows), o["cc"], o["flags"]))
-    print("%6s %-12s %5s %5s %-8s %6s %8s  %s" % ("pseudo", "variable?", "refs", "live", "scope", "calls",
-                                                  "priority", "hard reg"))
-    for n, refs, live, blk, calls, pr, l in sorted(rows, key=lambda r: -r[5]):
+    rr = retail_regs(a.src, func, a.prog, over)
+    print("%s: %d pseudos (%s, %s)%s" % (func, len(rows), o["cc"], o["flags"],
+                                        "" if rr is not None else " (no retail bytes for the retail column)"))
+    print("%6s %-12s %5s %5s %-8s %6s %8s  %-8s %s" % ("pseudo", "variable?", "refs", "live", "scope", "calls",
+                                                       "priority", "hard reg", "retail" if rr is not None else ""))
+    wrong = []
+    ranked = sorted(rows, key=lambda r: -r[5])
+    for n, refs, live, blk, calls, pr, l in ranked:
         h = disp.get(n)
-        print("%6d %-12s %5d %5d %-8s %6d %8.3f  %s" % (n, names.get(n, ""), refs, live,
-                                                      "block %s" % blk if blk is not None else "global", calls, pr,
-                                                      HARD.get(h, "-" if h is None else str(h))))
+        col = ""
+        if rr is not None and h is not None and h in rr:
+            c = rr[h].most_common()
+            col = HARD.get(c[0][0], str(c[0][0])) + ("" if len(c) == 1 else " (" + ", ".join(
+                "%s x%d" % (HARD.get(r, str(r)), k) for r, k in c[1:3]) + ")")
+            if c[0][0] != h:
+                wrong.append((n, h, c[0][0], pr, calls))
+        print("%6d %-12s %5d %5d %-8s %6d %8.3f  %-8s %s" % (n, names.get(n, ""), refs, live,
+                                                           "block %s" % blk if blk is not None else "global", calls,
+                                                           pr, HARD.get(h, "-" if h is None else str(h)), col))
         if a.all:
             for im in re.finditer(r"\(insn \d+ \d+ \d+ \(set \(reg[/\w]*:\w+ %d\)\s*(.*?)\)\n" % n, lt):
                 print("         = %s" % " ".join(im.group(1).split())[:100])
+    if wrong:
+        print("register differences (ours -> retail) and what would give retail's choice:")
+        byhard = {}
+        for n, refs, live, blk, calls, pr, l in rows:
+            if disp.get(n) is not None:
+                byhard.setdefault(disp[n], []).append((pr, n))
+        for n, h, want, pr, calls in wrong:
+            other = sorted(byhard.get(want, []), reverse=True)
+            hint = ""
+            if other:
+                op, on = other[0]
+                hint = "; %s is held by pseudo %d%s (priority %.3f): %s" % (
+                    HARD.get(want, want), on, " (%s)" % names[on] if on in names else "", op,
+                    "raise %d above it (more refs: a do { } while (0) wrap, a shorter live range: a copy into a new "
+                    "local) or lower that one" % n if op >= pr else
+                    "it already ranks below: the choice comes from conflicts / ties (declaration order, a copy of "
+                    "a parameter)")
+            print("  pseudo %d%s: %s -> %s%s" % (n, " (%s)" % names[n] if n in names else "", HARD.get(h, h),
+                                                 HARD.get(want, want), hint))
 
 
 if __name__ == "__main__":

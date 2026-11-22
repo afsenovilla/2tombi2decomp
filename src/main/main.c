@@ -8785,7 +8785,38 @@ void func_800506D0(void)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80050738);
+extern u8 D_800EA0BC[];
+extern s16 D_800E7E70;
+extern s16 D_800E7E72;
+
+void func_80050738(void)
+{
+    u8 *d0 = D_800EA0BC;
+    u8 *d1 = d0 + 0x2070;
+    u8 *s0;
+    u8 *s1;
+
+    SetDefDrawEnv(d0, 0, 0, 0x140, 0xF0);
+    SetDefDrawEnv(d1, 0, 0x100, 0x140, 0xF0);
+    SetDefDispEnv(d0 - 0x14, 0, 0x100, 0x140, 0xF0);
+    SetDefDispEnv(d0 + 0x205C, 0, 0, 0x140, 0xF0);
+    s0 = d0 - 0xC;
+    s1 = d0 + 0x2064;
+    MEMBER_AT(s16, s0, 4) = 0x100;
+    MEMBER_AT(s16, s0, 6) = 0xE0;
+    MEMBER_AT(s16, s1, 4) = 0x100;
+    MEMBER_AT(s16, s1, 6) = 0xE0;
+    d0[0x19] = 0;
+    d0[0x1A] = 0;
+    d0[0x1B] = 0;
+    d1[0x19] = 0;
+    d1[0x1A] = 0;
+    d1[0x1B] = 0;
+    MEMBER_AT(s16, s0, 0) = D_800E7E70;
+    MEMBER_AT(s16, s0, 2) = D_800E7E72;
+    MEMBER_AT(s16, s1, 0) = D_800E7E70;
+    MEMBER_AT(s16, s1, 2) = D_800E7E72;
+}
 
 extern u16 D_1F800170;
 extern u16 D_1F800174_de41;
@@ -8838,8 +8869,6 @@ void func_80050970(void) {
     func_800508A8();
 }
 
-extern s16 D_800E7E70;
-extern s16 D_800E7E72;
 extern s16 D_801003F8;
 void func_800509B4(void) {
     D_800E7E70 = 0;
