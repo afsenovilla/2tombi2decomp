@@ -584,7 +584,18 @@ void f_ResolveTombaType12ActorContact(void) {
     func_8001EC3C();
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TestActorAgainstPartCylinderBounds);
+s32 f_TestActorAgainstPartCylinderBounds(u8 *a, u8 *b, u8 *p)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(p + 0x2C);
+    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(p + 0x34);
+    s32 d = SquareRoot0(dx * dx + dz * dz);
+
+    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) || (u16)((*(u16 *)(a + 0x32) - *(u16 *)(p + 0x30)) + (*(u16 *)(a + 0x84) + *(u16 *)(b + 0x84))) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+        return 0;
+    }
+    D_1F80009C = ratan2(-dz, dx);
+    return 1;
+}
 
 extern u16 D_800A4A6C[];
 extern u16 D_800E7FFE;
@@ -787,9 +798,47 @@ void func_8002421C(void *a, void *b)
     f_ResolveActorPairCylinderContactClass(a, b, 1);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SnapActorOntoCylinderTop);
+s32 f_SnapActorOntoCylinderTop(u8 *a, u8 *b)
+{
+    s16 dx;
+    s16 dz;
+    s32 d;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TestTombaSupportPointAgainstActorBounds);
+    if (*(s16 *)(a + 0x4A) >= 0) {
+        dx = *(u16 *)(a + 0x2E) - *(u16 *)(b + 0x2E);
+        dz = *(u16 *)(a + 0x36) - *(u16 *)(b + 0x36);
+        d = SquareRoot0(dx * dx + dz * dz);
+        if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80)
+            || (u16)((*(u16 *)(a + 0x32) - *(u16 *)(b + 0x32)) + ((*(u16 *)(b + 0x84) + *(u16 *)(a + 0x86)) - *(u16 *)(a + 0x84))) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+            return -1;
+        }
+        *(u16 *)(a + 0x32) = *(u16 *)(b + 0x32) - ((*(u16 *)(b + 0x84) + *(u16 *)(a + 0x86)) - *(u16 *)(a + 0x84));
+        a[0x29] = 1;
+        return 2;
+    }
+    return -1;
+}
+
+extern s32 D_1F800088;
+
+s32 f_TestTombaSupportPointAgainstActorBounds(u8 *a, u8 *b)
+{
+    s16 dx = *(u16 *)(a + 0x14C) - *(u16 *)(b + 0x2E);
+    s16 dz = *(u16 *)(a + 0x150) - *(u16 *)(b + 0x36);
+    s32 d = SquareRoot0(dx * dx + dz * dz);
+
+    if ((u16)d > *(s16 *)(b + 0x80) + D_1F800088
+        || (u16)((*(u16 *)(a + 0x14E) - *(u16 *)(b + 0x32)) + (*(u16 *)(b + 0x84) + *(u16 *)(a + 0x68))) > *(s16 *)(b + 0x86) + *(s16 *)(a + 0x68) * 2) {
+        return 0;
+    }
+    D_1F80008C_f832 = ratan2(-dz, dx);
+    {
+        u16 y = *(u16 *)(a + 0x32) - *(u16 *)(b + 0x32);
+        D_1F800084_8c7c = 0;
+        *(u16 *)(a + 0x156) = y;
+    }
+    return 1;
+}
 
 extern s8 D_1F800084[];
 extern s8 D_1F8001A0[];
@@ -839,7 +888,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80024794);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800248D0);
 
-extern s32 D_1F800088;
 
 void f_UpdateTombaForwardContactProbe(u8 *a)
 {
@@ -864,7 +912,24 @@ void f_UpdateTombaForwardContactProbe(u8 *a)
     *(s16 *)(a + 0x150) = *(u16 *)(a + 0x36) - (p >> 12);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TestTombaSupportPointAgainstPartBounds);
+s32 f_TestTombaSupportPointAgainstPartBounds(u8 *a, u8 *b, u8 *p)
+{
+    s16 dx = *(u16 *)(a + 0x14C) - *(u16 *)(p + 0x2C);
+    s16 dz = *(u16 *)(a + 0x150) - *(u16 *)(p + 0x34);
+    s32 d = SquareRoot0(dx * dx + dz * dz);
+
+    if ((u16)d > *(s16 *)(b + 0x80) + D_1F800088
+        || (u16)((*(u16 *)(a + 0x14E) - *(u16 *)(p + 0x30)) + (*(u16 *)(b + 0x84) + *(u16 *)(a + 0x68))) > *(s16 *)(b + 0x86) + *(s16 *)(a + 0x68) * 2) {
+        return 0;
+    }
+    D_1F80008C_f832 = ratan2(-dz, dx);
+    {
+        u16 y = *(u16 *)(a + 0x32) - *(u16 *)(p + 0x30);
+        D_1F800084_8c7c = (s32)p;
+        *(u16 *)(a + 0x156) = y;
+    }
+    return 1;
+}
 
 extern s8 D_1F800214[];
 extern void (*D_8009D22C[])(void);
