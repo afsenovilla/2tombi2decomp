@@ -531,7 +531,34 @@ void func_80022A80(void)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80022AC8);
+/* f_TestActorAgainstPartCylinderBounds, inlined */
+static inline s32 TestPartCyl_2AC8(u8 *a, u8 *b, u8 *p)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(p + 0x2C);
+    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(p + 0x34);
+    s32 d = SquareRoot0(dx * dx + dz * dz);
+
+    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) || (u16)((*(u16 *)(a + 0x32) - *(u16 *)(p + 0x30)) + (*(u16 *)(a + 0x84) + *(u16 *)(b + 0x84))) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+        return 0;
+    }
+    D_1F80009C = ratan2(-dz, dx);
+    return 1;
+}
+
+s32 func_80022AC8(u8 *a, u8 *b, u8 *p, s32 k)
+{
+    s32 r;
+
+    if (!TestPartCyl_2AC8(a, b, p)) {
+        return 0;
+    }
+    r = f_ApplyActiveColliderImpactResponse(a, b, p, k);
+    b[0x2B] = 1;
+    if (!(r & 0x80)) {
+        *(u8 *)D_1F800182 = 0;
+    }
+    return 1;
+}
 
 extern u8 D_800BFE55;
 extern u8 D_800BF81E_6fe1;
