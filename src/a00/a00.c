@@ -831,7 +831,34 @@ void func_80114F54(s32 arg0, void *arg1) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114F94);
+extern u8 *D_1F800184_6cc7;
+extern s16 D_1F80018E;
+
+void func_80114F94(u8 *a, u8 *b) {
+    b[0x29] = 0;
+    if (a[0x16B] != 0) {
+        if (D_1F800184_6cc7 == b) {
+            f_ResolveTombaSelectedCompoundContact(a, b, M2C_FIELD(b, u8 **, 0xC4));
+        }
+        return;
+    }
+    switch (func_80111E18(a, b, M2C_FIELD(b, u8 **, 0xC8))) {
+    case 2:
+        b[0x29] = 1;
+        if (D_1F80018E != 0) {
+            D_1F80018E = 0x10;
+        }
+        break;
+    case 0:
+        if ((M2C_FIELD(b, u16 *, 0x60) & 2) && func_80111E18(a, b, M2C_FIELD(b, u8 **, 0xCC)) == 2) {
+            b[0x29] = 0x81;
+            if (D_1F80018E != 0) {
+                D_1F80018E = 0x20;
+            }
+        }
+        break;
+    }
+}
 
 s32 func_80115084(s32 arg0, s32 arg1) {
     return func_8001F650(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC0));
