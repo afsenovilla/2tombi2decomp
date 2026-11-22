@@ -1039,7 +1039,17 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80125E0C);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_EnsureCarriedChickActor);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80125FE0);
+void func_80125FE0(u8 *a) {
+    s16 v = M2C_FIELD(M2C_FIELD(M2C_FIELD(a, u8 **, 0x10), u8 **, 0xC4), s16 *, 0x8);
+
+    if (v > 0x800) {
+        v |= 0xF000;
+    }
+    M2C_FIELD(a, s16 *, 0x54) = v >> 1;
+    if (a[0x2B] != 0) {
+        func_80125C4C(a);
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateCarriedChickCollision);
 
@@ -1206,7 +1216,18 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldFishhookRecovery);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80129008);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80129100);
+s32 func_80129100(u8 *a) {
+    if (((M2C_FIELD(a, u16 *, 0x72) - M2C_FIELD(a, u16 *, 0x58)) & 0xFFF) < 0x800) {
+        M2C_FIELD(a, s16 *, 0x58) += 0x3C;
+    } else {
+        M2C_FIELD(a, s16 *, 0x58) -= 0x3C;
+    }
+    if (((M2C_FIELD(a, s16 *, 0x72) - M2C_FIELD(a, s16 *, 0x58)) & 0xFFF) < 0x3C) {
+        M2C_FIELD(a, s16 *, 0x58) = M2C_FIELD(a, s16 *, 0x72);
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseRotatingEffect);
 

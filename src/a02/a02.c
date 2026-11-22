@@ -1401,7 +1401,16 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8012396C);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80123BB8);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80123CD8);
+extern s32 D_8012C914[];
+
+void func_80123CD8(u8 *a) {
+    if (a[0x71] == 0xFF) {
+        func_80040D68(a, D_8012C914[a[0x5E]]);
+        a[0x70] = 1;
+        a[5] = 2;
+        a[6] = 0;
+    }
+}
 
 
 void func_80123D38(void *arg0) {
