@@ -1626,7 +1626,79 @@ void f_CopyEvilPigCaptureDeformationVertices(u16 *a, s16 *v)
     } while (++i < n);
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", f_UpdateEvilPigCaptureDeformation);
+extern u8 *D_8011FC8C[];
+extern u8 *D_80120A20[];
+extern u8 *D_80122524[];
+extern u8 *D_80125568[];
+extern u8 *D_80126904[];
+extern u8 *D_80126A44[];
+#define EP_FRAME(a) (*(s16 *)((a) + 0x64))
+#define EP_MODEL(a) (*(u8 **)(*(u8 **)((a) + 0xC0) + 0x40))
+
+s32 f_UpdateEvilPigCaptureDeformation(u8 *a)
+{
+    switch (a[7]) {
+    case 0:
+        break;
+    case 1:
+        f_CopyEvilPigCaptureDeformationVertices(EP_MODEL(a), D_8011FC8C[EP_FRAME(a)]);
+        if (++EP_FRAME(a) >= 8) {
+            EP_FRAME(a) = 7;
+            return 1;
+        }
+        break;
+    case 2:
+        f_CopyEvilPigCaptureDeformationVertices(EP_MODEL(a), D_80120A20[EP_FRAME(a)]);
+        if (++EP_FRAME(a) >= 7) {
+            EP_FRAME(a) = 0;
+            a[7] = 0;
+            return 1;
+        }
+        break;
+    case 3:
+        f_CopyEvilPigCaptureDeformationVertices(EP_MODEL(a), D_80122524[EP_FRAME(a)]);
+        if (++EP_FRAME(a) >= 6) {
+            EP_FRAME(a) = 5;
+            return 1;
+        }
+        break;
+    case 4:
+        f_CopyEvilPigCaptureDeformationVertices(EP_MODEL(a), D_80122524[EP_FRAME(a)]);
+        if (++EP_FRAME(a) >= 14) {
+            EP_FRAME(a) = 13;
+            return 1;
+        }
+        break;
+    case 5:
+        f_CopyEvilPigCaptureDeformationVertices(EP_MODEL(a), D_80126A44[EP_FRAME(a)]);
+        if (++EP_FRAME(a) >= 6) {
+            EP_FRAME(a) = 5;
+            return 1;
+        }
+        break;
+    case 6:
+    case 7:
+    case 8:
+        f_CopyEvilPigCaptureDeformationVertices(EP_MODEL(a), D_80125568[EP_FRAME(a)]);
+        if (++EP_FRAME(a) >= 25) {
+            if (a[7] == 8) {
+                EP_FRAME(a) = 24;
+                return 1;
+            }
+            EP_FRAME(a) = 0;
+            a[7]++;
+        }
+        break;
+    case 9:
+        f_CopyEvilPigCaptureDeformationVertices(EP_MODEL(a), D_80126904[EP_FRAME(a)]);
+        if (++EP_FRAME(a) >= 10) {
+            EP_FRAME(a) = 9;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 typedef struct { s16 x, y, z, pad; } SVec;
 typedef struct { u16 x, p0, y, p1, z, p2; } LVec;
