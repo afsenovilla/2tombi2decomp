@@ -176,7 +176,76 @@ INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_8010AD64);
 
 INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_8010B06C);
 
-INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_8010B17C);
+typedef struct { u16 lo; u16 hi; } Fix;
+typedef struct {
+    Fix at[3];
+    Fix pos[3];
+    s16 dir[3];
+    u8 pad1E[0x2A];
+    u8 m[0x20];
+} Cam;
+typedef struct {
+    u8 kind, b1, b2, slot;
+    s16 x, y, z;
+    u8 mode, padB;
+    void *cb;
+} Spawn;
+typedef struct {
+    u8 pad[8];
+    s16 x, y, z;
+} Pos;
+typedef struct {
+    u8 pad[8];
+    s16 count;
+    u8 padA[2];
+    u8 *list[15];
+} Owner;
+extern Spawn *D_8010CA7C[];
+extern Pos D_800BF808_76d5;
+typedef struct { u8 x, y, z; s8 t; } Spark;
+typedef struct { s16 a, b, c, d; } S8;
+typedef struct { s16 x, y, z, pad; } SV;
+typedef struct { s16 x, y, z; } V3;
+typedef struct { s16 x, y, z, pad; } SVec;
+typedef struct { u16 x, p0, y, p1, z, p2; } LVec;
+typedef struct { u16 a, b; } Range;
+
+void func_8010B17C(Owner *a, s32 sel)
+{
+    Spawn *e;
+    u8 *p;
+    a->count = 0;
+    e = D_8010CA7C[sel];
+    while (e->kind != 0xFF) {
+        if (sel == 0 || a->count < 15) {
+            switch (e->mode) {
+            case 0:
+                break;
+            case 1:
+                D_800BF808_76d5.x = e->x;
+                D_800BF808_76d5.y = e->y;
+                D_800BF808_76d5.z = e->z;
+                break;
+            }
+            p = func_80072DDC(a, e->kind, e->b1, e->b2);
+            if (p != 0) {
+                *(s32 *)(p + 0x2C) = e->x << 16;
+                *(s32 *)(p + 0x30) = e->y << 16;
+                *(s32 *)(p + 0x34) = e->z << 16;
+                p[3] = e->slot;
+                *(s16 *)(p + 0x54) = 0;
+                *(s16 *)(p + 0x56) = 0;
+                *(s16 *)(p + 0x58) = 0;
+                *(void **)(p + 0x1C) = e->cb;
+                if (sel != 0) {
+                    a->list[a->count] = p;
+                    a->count++;
+                }
+            }
+        }
+        e++;
+    }
+}
 
 extern u8 D_800BF918;
 void func_8010B2F4(void *arg0) {

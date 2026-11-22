@@ -222,7 +222,76 @@ void func_8010D5E4(void) {
 void func_8010D5EC(void) {
 }
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010D5F4);
+typedef struct { u16 lo; u16 hi; } Fix;
+typedef struct {
+    Fix at[3];
+    Fix pos[3];
+    s16 dir[3];
+    u8 pad1E[0x2A];
+    u8 m[0x20];
+} Cam;
+typedef struct {
+    u8 kind, b1, b2, slot;
+    s16 x, y, z;
+    u8 mode, padB;
+    void *cb;
+} Spawn;
+typedef struct {
+    u8 pad[8];
+    s16 x, y, z;
+} Pos;
+typedef struct {
+    u8 pad[8];
+    s16 count;
+    u8 padA[2];
+    u8 *list[15];
+} Owner;
+extern Spawn *D_80118C70[];
+extern Pos D_800BF808_76d5;
+typedef struct { u8 x, y, z; s8 t; } Spark;
+typedef struct { s16 a, b, c, d; } S8;
+typedef struct { s16 x, y, z, pad; } SV;
+typedef struct { s16 x, y, z; } V3;
+typedef struct { s16 x, y, z, pad; } SVec;
+typedef struct { u16 x, p0, y, p1, z, p2; } LVec;
+typedef struct { u16 a, b; } Range;
+
+void func_8010D5F4(Owner *a, s32 sel)
+{
+    Spawn *e;
+    u8 *p;
+    a->count = 0;
+    e = D_80118C70[sel];
+    while (e->kind != 0xFF) {
+        if (sel == 0 || a->count < 15) {
+            switch (e->mode) {
+            case 0:
+                break;
+            case 1:
+                D_800BF808_76d5.x = e->x;
+                D_800BF808_76d5.y = e->y;
+                D_800BF808_76d5.z = e->z;
+                break;
+            }
+            p = func_80072DDC(a, e->kind, e->b1, e->b2);
+            if (p != 0) {
+                *(s32 *)(p + 0x2C) = e->x << 16;
+                *(s32 *)(p + 0x30) = e->y << 16;
+                *(s32 *)(p + 0x34) = e->z << 16;
+                p[3] = e->slot;
+                *(s16 *)(p + 0x54) = 0;
+                *(s16 *)(p + 0x56) = 0;
+                *(s16 *)(p + 0x58) = 0;
+                *(void **)(p + 0x1C) = e->cb;
+                if (sel != 0) {
+                    a->list[a->count] = p;
+                    a->count++;
+                }
+            }
+        }
+        e++;
+    }
+}
 
 
 void func_8010D76C(void *arg0) {
@@ -298,7 +367,38 @@ INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_801128E8);
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80112A94);
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80112C38);
+extern S8 D_80126BD8[];
+extern s32 D_801268C8[];
+extern u8 D_80126948[];
+
+void func_80112C38(u8 *a)
+{
+    s32 i;
+    s32 c, g, b;
+    for (i = 0; i < 0x20; i++) {
+        c = ((0x20 - i) * a[5]) / 32 + 1;
+        g = c - (c >> 4);
+        b = c - (c >> 3);
+        if (D_80126BD8[i].d == 0) {
+            D_801268C8[i] = 0;
+            if (i != 0) {
+                D_801268C8[i - 1] = 0;
+            }
+            if (i != 0x1F) {
+                D_801268C8[i + 1] = 0;
+            }
+            break;
+        }
+        if (i < 2) {
+            D_801268C8[i] = 0;
+            D_80126948[i] = 0x10;
+        } else {
+            D_801268C8[i] = (b << 16) | (g << 8) | c;
+            D_80126948[i] = 0x21 - i;
+        }
+    }
+    func_80029664(D_80126BD8, i, D_801268C8, D_80126948);
+}
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80112D50);
 
@@ -447,7 +547,36 @@ INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_801153E4);
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_801156AC);
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_801158EC);
+extern Cam D_1F8000D0;
+extern SVec D_1F8000C0;
+extern LVec D_1F8000A0;
+extern void *D_80126100[];
+
+s32 func_801158EC(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        a[6]++;
+        D_1F8000C0.x = 0;
+        D_1F8000C0.y = -0x690;
+        D_1F8000C0.z = 0x3E8;
+        func_80084470(D_1F8000D0.m, &D_1F8000C0, &D_1F8000A0);
+        *(u16 *)(a + 0x2E) = D_1F8000D0.pos[0].hi + D_1F8000A0.x;
+        *(u16 *)(a + 0x32) = D_1F8000D0.pos[1].hi + D_1F8000A0.y;
+        *(u16 *)(a + 0x36) = D_1F8000D0.pos[2].hi + D_1F8000A0.z;
+        func_80040CDC(a, 0, D_80126100[D_800BF870.unk0 - 10]);
+        a[0x70] = 1;
+        goto end;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            return 1;
+        }
+    end:
+    default:
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80115A10);
 
@@ -557,7 +686,44 @@ void func_8011711C(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x36) = (s16) (0x12C0 - ((s32) (func_80083E80(M2C_FIELD(arg0, s16 *, 0x76)) * 0x4B0) >> 0xC));
 }
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80117194);
+extern Range D_801267C8[];
+extern Range D_801267E0[];
+extern Range D_80126800[];
+extern Range D_80126838[];
+extern u8 *D_1F80021C;
+
+void func_80117194(s16 kind, s16 idx)
+{
+    Range *t;
+    s32 n, base;
+    u8 *p;
+    switch (kind) {
+    case 0:
+        t = D_801267C8;
+        n = 3;
+        base = 0;
+        break;
+    case 1:
+        t = D_801267E0;
+        n = 0x1E;
+        base = 0x1C5;
+        break;
+    case 2:
+        t = D_80126800;
+        n = 0x1F;
+        base = 0x1C8;
+        break;
+    case 3:
+        t = D_80126838;
+        n = 9;
+        base = 0x272;
+        break;
+    default:
+        return;
+    }
+    p = D_1F80021C + t[idx].a * 32 + base * 32;
+    func_8001D2A8(n, p, p + (t[idx].b + 1) * 32, 0);
+}
 
 extern s16 D_800BED82;
 extern M2C_UNK D_801261E0;

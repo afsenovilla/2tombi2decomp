@@ -2,7 +2,46 @@
 #include "game.h"
 #include "m2c.h"
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8010A514);
+extern s8 D_800BF808_c1f7[];
+extern u8 D_1F800137_104c;
+extern s32 D_1F80009C_baed;
+typedef struct { u8 pad[0x60]; s32 unk60; s32 unk64; } AreaStateF58;
+typedef struct { u8 pad0[7]; u8 unk7; u8 pad8[6]; u8 unkE; u8 unkF; u8 pad10[0x21]; u8 unk31; s16 unk32; } AreaState808_E;
+typedef struct { u8 pad[0xC0]; u8 *parts[1]; } AreaPartsOwner;
+typedef struct { s16 unk0; s16 x, y, z; } PartPose;
+typedef struct { u8 pad[0x5E]; u8 pose; u8 pad2[0xC0 - 0x5F]; s16 *parts[3]; } PosedActor;
+typedef struct { s16 x, y, w, h; } ClutRect;
+typedef struct {
+    u8 *ptr;
+    u8 *clut;
+    s16 x;
+    s16 y;
+} ClutCycle;
+typedef struct { s16 x, y, z, pad; } RingVec;
+typedef struct { s16 pos; s16 vel; } RiseMotion;
+
+void func_8010A514(u8 *a, u8 *b) {
+    s32 t, u;
+
+    if (D_1F800137_104c != 0 || D_800BF808_c1f7[5] != 0) {
+        return;
+    }
+    if (M2C_FIELD(a, s16 *, 0x17E) & 0x8200) {
+        if (func_8002300C(a, b, 0x20) != 0) {
+            if (!(a[0] & 4)) {
+                t = (func_80083F50(D_1F80009C_baed + 0x800) * (M2C_FIELD(a, s16 *, 0x80) + 0x20)) >> 12;
+                u = func_80083E80(D_1F80009C_baed + 0x800) * (M2C_FIELD(a, s16 *, 0x80) + 0x20);
+                M2C_FIELD(a, s16 *, 0x2E) = M2C_FIELD(b, s16 *, 0x2E) + t;
+                M2C_FIELD(a, s16 *, 0x36) = M2C_FIELD(b, s16 *, 0x36) - (u >> 12);
+            }
+            M2C_FIELD(a, s8 *, 0x5F) = func_80077768((s16)(*(u16 *)&D_1F80009C_baed + 0x800), M2C_FIELD(a, s16 *, 0x140), 1) + 2;
+        }
+    } else if (func_80022F04(a, b) != 0) {
+        b[0x29] = 1;
+        D_1F800137_104c = 2;
+        D_800BF808_c1f7[0x39] = 1;
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8010A668);
 
@@ -155,7 +194,6 @@ void func_80110950(u8 *a, u8 *b) {
     }
 }
 
-extern s32 D_1F80009C_baed;
 
 void func_801109B0(u8 *a, u8 *b)
 {
@@ -1421,7 +1459,48 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80122F08);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80123008);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801231E0);
+
+void func_801231E0(u8 *a, s32 b) {
+    s32 i;
+    s32 found;
+
+    for (i = 0; i < D_800BF870.pad1[0x12]; i++) {
+        if ((D_800BF870.pad1[0x13 + i] & 0x7F) == M2C_FIELD(a, s16 *, 0x7E)) {
+            found = 1;
+            goto done;
+        }
+    }
+    found = 0;
+done:
+    if (found == 0) {
+        goto dead;
+    }
+    if ((D_800BF870.pad1[0x1A8] >> a[3]) & 1) {
+        a[4] = 3;
+        return;
+    }
+    if (func_80123008(a, b) != 0) {
+    dead:
+        a[4] = 3;
+        return;
+    }
+    if (D_800BF870.pad1[0] == M2C_FIELD(a, s16 *, 0x7A)) {
+        M2C_FIELD(M2C_FIELD(a, u8 **, 0xC4), s16 *, 0xA) = 0x800;
+        M2C_FIELD(M2C_FIELD(a, u8 **, 0xC8), s16 *, 0xA) = 0x800;
+        a[4] = 1;
+        a[5] = 0;
+        a[0x5E] = 2;
+    } else if ((D_800BF870.pad1[0x1A6] >> a[3]) & 1) {
+        M2C_FIELD(M2C_FIELD(a, u8 **, 0xC4), s16 *, 0xA) = 0x800;
+        M2C_FIELD(M2C_FIELD(a, u8 **, 0xC8), s16 *, 0xA) = 0x800;
+        a[0] = 1;
+        a[4] = 1;
+        a[5] = 0;
+        a[0x5E] = 1;
+    } else {
+        a[5]++;
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012333C);
 
@@ -1429,7 +1508,38 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80123584);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012379C);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80123B90);
+extern ClutCycle D_80141584[];
+extern s8 D_801442D0[];
+
+void func_80123B90(s32 arg0) {
+    ClutRect r;
+    s32 i;
+    ClutCycle *e;
+    u8 *data;
+
+    if (arg0 == 0) {
+        for (i = 0; i < 1; i++) {
+            D_801442D0[i] = 0;
+        }
+        return;
+    }
+    e = D_80141584;
+    for (i = 0; i < 1; i++, e++) {
+        if (--D_801442D0[i] <= 0) {
+            if (e->ptr[0] == 0xFF) {
+                e->ptr -= e->ptr[1];
+            }
+            data = e->clut + e->ptr[0] * 32;
+            D_801442D0[i] = e->ptr[1];
+            r.x = e->x;
+            r.y = e->y;
+            r.w = 16;
+            r.h = 1;
+            func_80081218(&r, data);
+            e->ptr += 2;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80123CB0);
 
@@ -2411,13 +2521,81 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013CCDC);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013CD78);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013CE14);
+extern u8 D_800BF917;
+typedef struct { s16 m[3][3]; s16 pad; s32 t[3]; } AreaMatrix;
+typedef struct { u8 pad[0x28]; AreaMatrix m; } AreaScratchD0;
+
+void func_8013CE14(u8 *a) {
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        M2C_FIELD(a, s32 *, 0x50) = 0;
+        M2C_FIELD(a, s16 *, 0x4E) = 0;
+        M2C_FIELD(a, s16 *, 0x32) = -50;
+    case 1:
+        if (D_1F80017C_0fe7 & 1) {
+            if (++M2C_FIELD(a, s16 *, 0x4E) == 25) {
+                D_800BF917 = 2;
+                a[4] = 2;
+            }
+        }
+        a[1] = 1;
+        break;
+    case 2:
+        M2C_FIELD(a, u32 *, 0x50) += 0xCC;
+        if (M2C_FIELD(a, u32 *, 0x50) >= 0x1000) {
+            a[4] = 3;
+        }
+        a[1] = 1;
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013CF00);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013CF70);
+extern RingVec D_801442E0[];
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013D040);
+void func_8013CF70(void) {
+    s32 i;
+    s32 ang;
+    RingVec *p;
+
+    p = D_801442E0;
+    for (i = 0; i < 15; i++, p++) {
+        ang = (i << 12) / 15;
+        p->x = func_80083F50(ang) >> 4;
+        p->y = 0;
+        p->z = func_80083E80(ang) >> 4;
+    }
+    p->x = D_801442E0[0].x;
+    p->y = D_801442E0[0].y;
+    p->z = D_801442E0[0].z;
+}
+
+void func_8013D040(u8 *a) {
+    RiseMotion *m = (RiseMotion *)(a + 0x50);
+
+    switch (a[4]) {
+    case 0:
+        m->pos = 20;
+        a[4] = 1;
+        m->vel = 10;
+    case 1:
+        func_8002B278(a);
+        m->pos += m->vel;
+        if (m->pos > 0xC8) {
+            a[4] = 2;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013D0F8);
 

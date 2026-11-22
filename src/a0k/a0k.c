@@ -218,7 +218,64 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010BD54);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010BEF8);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010C160);
+typedef struct { s16 x, y, z, pad; } AreaSVec;
+typedef struct {
+    u16 type;
+    u8 pad2[6];
+    u8 mag0;
+    u8 mag1;
+    u8 x;
+    u8 y;
+} AreaPadAnalog;
+extern AreaPadAnalog D_800ECF48;
+extern u16 D_800ECF54;
+typedef struct { u8 pad0[7]; u8 unk7; u8 pad8[0x29]; u8 unk31; s16 unk32; } AreaState808_7;
+
+void func_8010C160(u8 *a) {
+    AreaPadAnalog *p = &D_800ECF48;
+    u8 m;
+
+    if (p->y + p->x != 0 && p->type == 7) {
+        m = p->mag1;
+        if (m < p->mag0) {
+            m = p->mag0;
+        }
+        a[0x14B] = m;
+        a[0x147] = ((u32)func_80085690((s8)p->y, (s8)p->x) & 0xFFF) >> 5;
+        return;
+    }
+    switch (D_800ECF54 & 0xF0) {
+    case 0x20:
+        a[0x147] = 0;
+        break;
+    case 0x80:
+        a[0x147] = 0x40;
+        break;
+    case 0x10:
+        a[0x147] = 0x60;
+        break;
+    case 0x40:
+        a[0x147] = 0x20;
+        break;
+    case 0x30:
+        a[0x147] = 0x70;
+        break;
+    case 0x60:
+        a[0x147] = 0x10;
+        break;
+    case 0x90:
+        a[0x147] = 0x50;
+        break;
+    case 0xC0:
+        a[0x147] = 0x30;
+        break;
+    default:
+        a[0x147] |= 0x80;
+        a[0x14B] = 0;
+        return;
+    }
+    a[0x14B] = 3;
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010C2E8);
 
@@ -336,7 +393,59 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010EF80);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010F544);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010F654);
+extern u16 D_800E7E68;
+extern u8 D_1F800137;
+extern u16 D_1F800166;
+extern u16 D_1F800190;
+
+void func_8010F654(u8 *a) {
+    u16 held;
+    u16 pad;
+
+    switch (a[4]) {
+    case 0:
+        func_80058648(a, 0);
+        break;
+    case 1:
+        held = D_800E7E68;
+        pad = D_800ECF54;
+        if (D_800BF80F != 0 || D_1F800137 != 0) {
+            D_800E7E68 = 0;
+            D_800ECF54 = 0;
+            if (D_800ECF48.type == 7) {
+                D_800ECF48.x = 0;
+                D_800ECF48.y = 0;
+            }
+        }
+        func_8010ED6C(a);
+        func_800597AC(a);
+        D_800E7E68 = held;
+        D_800ECF54 = pad;
+        break;
+    case 2:
+    case 3:
+        break;
+    case 4:
+        held = D_800E7E68;
+        pad = D_800ECF54;
+        if (D_1F800137 == 0) {
+            D_800E7E68 = 0;
+            D_800ECF54 = 0;
+        } else {
+            D_800E7E68 = D_1F800166;
+            D_800ECF54 = D_1F800190;
+        }
+        if (D_800ECF48.type == 7) {
+            D_800ECF48.x = 0;
+            D_800ECF48.y = 0;
+        }
+        func_8010EF80(a);
+        func_800597AC(a);
+        D_800E7E68 = held;
+        D_800ECF54 = pad;
+        break;
+    }
+}
 
 
 void func_8010F7B0(s16 *a, s16 m)
@@ -353,7 +462,6 @@ void func_8010F7B0(s16 *a, s16 m)
     }
 }
 
-extern u8 D_1F800137;
 
 void func_8010F830(u8 *a)
 {

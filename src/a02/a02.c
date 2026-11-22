@@ -226,7 +226,44 @@ void func_8010F8DC(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010F948);
+typedef struct {
+    u8 pad[0xA];
+    s16 count;
+    u8 *entries;
+    u32 pending;
+    u32 done;
+} RewardSet;
+extern u8 D_1F800137;
+typedef struct {
+    s16 pad0;
+    s16 x;
+    s16 pad4;
+    s16 y;
+    s16 pad8;
+    s16 z;
+} HiPos;
+
+void func_8010F948(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+
+    switch (a[6]) {
+    case 0:
+        o[0x2B] = 1;
+        a[6]++;
+    case 1:
+        func_80076D68(a);
+        if (D_1F800137 == 0) {
+            a[0x180] = 0x14;
+            a[4] = 1;
+            a[5] = 0;
+            a[6] = 0;
+            a[7] = 0;
+            func_80054D14(a, 2, 6);
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010F9E4);
 
