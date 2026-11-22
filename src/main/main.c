@@ -150,7 +150,90 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_StartStreamedAudioRange);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_StartStreamedAudioTrack);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8001D41C);
+typedef struct { u8 unk0; u8 pad1[0x5DD]; u8 u5DE; } GsArea_D41C;
+extern GsArea_D41C D_800BF870_d41c;
+extern s32 D_1F80021C;
+
+void func_8001D41C(s16 id, s16 x)
+{
+    if (id == -1) {
+        f_StopVoicePlayback();
+        return;
+    }
+    if (id == -2) {
+        f_StartStreamedAudioRange(0, D_1F80021C, D_1F80021C + 1, 0);
+        return;
+    }
+    if (D_800BF870_d41c.u5DE == 1) {
+        D_800BE0E4 = 2;
+        return;
+    }
+    switch (D_800BF870_d41c.unk0) {
+    case 0:
+        func_801464C0(id, x);
+        break;
+    case 1:
+        func_801342C8(id, x);
+        break;
+    case 2:
+        func_8012816C(id, x);
+        break;
+    case 4:
+        func_8013E3D4(id, x);
+        break;
+    case 5:
+        func_8013AA50(id, x);
+        break;
+    case 6:
+        func_801404DC(id, x);
+        break;
+    case 7:
+        func_80130FB8(id, x);
+        break;
+    case 8:
+        func_8013D670(id, x);
+        break;
+    case 9:
+        func_8010DF68(id, x);
+        break;
+    case 10:
+        func_80118D40(id, x);
+        break;
+    case 11:
+        func_801178A0(id, x);
+        break;
+    case 12:
+        func_80117194(id, x);
+        break;
+    case 13:
+        func_80116EE0(id, x);
+        break;
+    case 14:
+        func_801173C4(id, x);
+        break;
+    case 15:
+        func_8011A35C(id, x);
+        break;
+    case 16:
+        func_8010D248(id, x);
+        break;
+    case 17:
+        func_8010C528(id, x);
+        break;
+    case 18:
+        func_8010C9AC(id, x);
+        break;
+    case 19:
+        func_8010D154(id, x);
+        break;
+    case 20:
+        func_801173D4(id, x);
+        break;
+    case 21:
+        func_801106A8(id, x);
+        break;
+    }
+}
 
 extern u8 *D_800BF544_37fb;
 extern u32 *D_800ED8C8;
@@ -8973,7 +9056,117 @@ void func_8006EA7C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006EC44);
+extern u8 D_800E8008_f2dc[];
+extern u8 D_800E7EAC[];
+extern s32 D_800E7EB0;
+extern void (*D_800A4AA0[])(u8 *);
+
+void func_8006EC44(void)
+{
+    u8 *c = D_800E8008_f2dc;
+
+    switch (c[0]) {
+    case 0:
+        c[0] = 1;
+        func_8006EA7C(c);
+        break;
+    case 1:
+        if (c[1] != 0) {
+            if (c[1] != c[0]) {
+                break;
+            }
+        } else {
+            c[1] = c[0];
+            c[2] = 0;
+            c[3] = 0;
+        }
+        c[0x66] = 0;
+        switch (c[0x64] & 0x3F) {
+        case 0:
+            switch (D_800BF870.unk0) {
+            case 2:
+                func_80115F58(c);
+                break;
+            case 7:
+                func_80112DEC(c);
+                break;
+            case 20:
+                func_8010AD0C(c);
+                break;
+            default:
+                if (!(c[0x64] & 0x80)) {
+                    func_8006E0F0(c);
+                    func_8006E464(c);
+                }
+                D_800A4AA0[D_800BF870.unk0](c);
+                break;
+            }
+            break;
+        case 1:
+            switch (D_800BF870.unk0) {
+            case 2:
+                func_80116918(c);
+                break;
+            case 7:
+                func_80113660(c);
+                break;
+            case 20:
+                func_8010B2F0(c);
+                break;
+            default:
+                func_8006E228(c, c + 0x38);
+                break;
+            }
+            break;
+        case 2:
+            func_8006E294(c, c + 0x38);
+            break;
+        case 3:
+            func_8006E360(c, c + 0x38);
+            break;
+        case 4:
+            func_8006E2FC(c, c + 0x38);
+            break;
+        case 5:
+            f_SnapCameraPositionAndRebuildView(c, D_800E7EAC);
+            break;
+        case 6:
+            c[0x64] = 0;
+            *(s32 *)(c + 0xC) = D_800E7EB0;
+            break;
+        case 8:
+            f_ApproachCameraPositionAndRebuildView(c, c + 0x38);
+            break;
+        case 9:
+            func_8018B924(c);
+            break;
+        case 10:
+            func_8010D89C(c);
+            break;
+        case 11:
+        case 12:
+            c[0x64] = 0;
+            c[2] = 0;
+            c[3] = 0;
+            break;
+        case 13:
+            c[0x64] = 6;
+            break;
+        case 7:
+        case 14:
+            f_SnapCameraPositionAndRebuildView(c, c + 0x38);
+            break;
+        case 15:
+            f_ApproachCameraPositionAndRebuildView(c, D_800E7EAC);
+            break;
+        case 17:
+            func_80111AB4(c);
+            break;
+        }
+        func_8006C988(c);
+        break;
+    }
+}
 
 typedef struct { u8 b[4]; } Bytes4_058;
 extern Bytes4_058 D_80010058;
