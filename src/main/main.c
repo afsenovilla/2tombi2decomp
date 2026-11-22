@@ -1434,7 +1434,86 @@ block_10:
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_FindTombaSupportInteractionTarget);
+extern s8 D_1F800137[];
+extern void (*D_8009D22C[])(void);
+extern u8 **D_1F800158_fd3d;
+extern u8 D_1F80015E_6ff1;
+/* f_UpdateTombaForwardContactProbe, inlined */
+static inline void FwdProbe_4448(u8 *a)
+{
+    s16 r;
+    s32 p;
+
+    if (a[0x147] != 0) {
+        *(u16 *)(a + 0x56) = (*(u16 *)(a + 0x140) - 0x800) & 0xFFF;
+    } else {
+        *(u16 *)(a + 0x56) = *(u16 *)(a + 0x140);
+    }
+    if (*(s16 *)(a + 0x17E) >= 0) {
+        r = *(u16 *)(a + 0x66) - 0x1E;
+        D_1F800088 = 0x28;
+    } else {
+        r = *(u16 *)(a + 0x66) - 0xA;
+        D_1F800088 = 0x14;
+    }
+    *(s16 *)(a + 0x14C) = *(u16 *)(a + 0x2E) + ((rcos(*(s16 *)(a + 0x56)) * r) >> 12);
+    p = rsin(*(s16 *)(a + 0x56)) * r;
+    *(s16 *)(a + 0x14E) = *(u16 *)(a + 0x32) - *(u16 *)(a + 0x68);
+    *(s16 *)(a + 0x150) = *(u16 *)(a + 0x36) - (p >> 12);
+}
+/* func_80024D34, inlined */
+static inline s32 Scan_4448(u8 *a)
+{
+    u8 **list;
+    u8 *e;
+
+    if (!(*(u16 *)(a + 0x17E) & 0x200)) {
+        list = D_1F800158_fd3d;
+        D_1F800182_5650 = D_1F80015E_6ff1;
+        while (D_1F800182_5650 != 0) {
+            e = *list;
+            D_1F800182_5650--;
+            list++;
+            if ((e[0] & 4) && e[2] == 2) {
+                func_80114320(a, e);
+            }
+        }
+    }
+    return D_1F800080;
+}
+
+s32 f_FindTombaSupportInteractionTarget(u8 *a, s32 flag)
+{
+    s32 r;
+
+    if (a[0x16B] != 0) {
+        return 0;
+    }
+    if ((u8)D_1F800137[0] != 0) {
+        return 0;
+    }
+    if (flag == 0 && a[0x144] >= 2) {
+        return 0;
+    }
+    D_1F800080 = 0;
+    D_1F800088 = 0;
+    FwdProbe_4448(a);
+    if (D_800BF870.unk0 == 0) {
+        r = Scan_4448(a);
+        if (r != 0) {
+            return r;
+        }
+    }
+    r = ((s32 (*)(u8 *))D_8009D22C[D_800BF870.unk0])(a);
+    if (r != 0) {
+        return r;
+    }
+    r = func_80024448((s32)a);
+    if (r != 0) {
+        return r;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80024794);
 
@@ -1483,7 +1562,6 @@ s32 f_TestTombaSupportPointAgainstPartBounds(u8 *a, u8 *b, u8 *p)
 }
 
 extern s8 D_1F800214[];
-extern void (*D_8009D22C[])(void);
 extern s32 D_800A3EC8;
 typedef struct Range8b { s32 sector; s32 size; } Range8b;
 extern Range8b D_800BE118_9ace[];
@@ -1494,8 +1572,6 @@ void func_80024CF4(void)
     D_8009D22C[D_800BF870.unk0]();
 }
 
-extern u8 **D_1F800158_fd3d;
-extern u8 D_1F80015E_6ff1;
 s32 func_80024D34(u8 *a)
 {
     u8 **list;
@@ -1894,7 +1970,6 @@ void f_RequestInteriorTransitionGateMode1(void) {
     D_800BF80F = 1;
 }
 
-extern s8 D_1F800137[];
 void f_ReleaseInteriorTransitionControl(void *arg0) {
     if (M2C_FIELD(arg0, u8 *, 1) != 0) {
         M2C_FIELD(arg0, u8 *, 1) = 0U;
