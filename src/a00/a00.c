@@ -1547,7 +1547,29 @@ void func_8013AEEC(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013AF18);
+typedef struct { s16 unk0; s16 x, y, z; } PartPose;
+extern PartPose D_8014AABC[3];
+extern PartPose D_8014AAD4[3];
+typedef struct { u8 pad[0x5E]; u8 pose; u8 pad2[0xC0 - 0x5F]; s16 *parts[3]; } PosedActor;
+
+void func_8013AF18(PosedActor *a, s32 b, s32 c) {
+    s32 i;
+
+    for (i = 0; i < 3; i++) {
+        if (b == 0) {
+            func_80051B04(a->parts[i], c, i);
+            a->parts[i][0] = D_8014AABC[i].x;
+            a->parts[i][1] = D_8014AABC[i].y;
+            a->parts[i][2] = D_8014AABC[i].z;
+        } else {
+            func_80051B04(a->parts[i], c, i + 3);
+            a->parts[i][0] = D_8014AAD4[i].x;
+            a->parts[i][1] = D_8014AAD4[i].y;
+            a->parts[i][2] = D_8014AAD4[i].z;
+        }
+    }
+    a->pose = b;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateMagicFlowerWateringSequence);
 
@@ -1693,9 +1715,49 @@ void func_8013ED08(void *arg0) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013ED54);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013EDD0);
+typedef struct { s16 x, y, z, pad; } RingVec;
+extern RingVec D_8014C780[];
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013EEA0);
+void func_8013EDD0(void) {
+    s32 i;
+    s32 ang;
+    RingVec *p;
+
+    p = D_8014C780;
+    for (i = 0; i < 15; i++, p++) {
+        ang = (i << 12) / 15;
+        p->x = func_80083F50(ang) >> 4;
+        p->y = 0;
+        p->z = func_80083E80(ang) >> 4;
+    }
+    p->x = D_8014C780[0].x;
+    p->y = D_8014C780[0].y;
+    p->z = D_8014C780[0].z;
+}
+
+typedef struct { s16 pos; s16 vel; } RiseMotion;
+
+void func_8013EEA0(u8 *a) {
+    RiseMotion *m = (RiseMotion *)(a + 0x50);
+
+    switch (a[4]) {
+    case 0:
+        m->pos = 20;
+        a[4] = 1;
+        m->vel = 10;
+    case 1:
+        func_8002B278(a);
+        m->pos += m->vel;
+        if (m->pos > 0xC8) {
+            a[4] = 2;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern s32 D_1F800090_3460;
 

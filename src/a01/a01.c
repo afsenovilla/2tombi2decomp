@@ -1227,7 +1227,26 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80128864);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80128B08);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80129114);
+typedef struct { s16 m[3][3]; s16 pad; s32 t[3]; } AreaMatrix;
+typedef struct { s16 x, y, z, pad; } AreaSVec;
+extern AreaSVec D_1F8000C0;
+typedef struct { u8 pad[0x28]; AreaMatrix m; } AreaScratchD0;
+extern AreaScratchD0 D_1F8000D0;
+extern AreaMatrix D_1F800000;
+
+void func_80129114(u8 *a) {
+    D_1F8000C0.x = M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), s16 *, 0x2C);
+    D_1F8000C0.y = M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), s16 *, 0x30);
+    D_1F8000C0.z = M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), s16 *, 0x34);
+    func_80084110(&D_1F8000D0.m, M2C_FIELD(a, u8 **, 0xC0) + 0x18, &D_1F800000);
+    func_80084220(&D_1F8000C0, D_1F800000.t);
+    D_1F800000.t[0] += D_1F8000D0.m.t[0];
+    D_1F800000.t[1] += D_1F8000D0.m.t[1];
+    D_1F800000.t[2] += D_1F8000D0.m.t[2];
+    func_80084660(&D_1F800000);
+    func_80084690(&D_1F800000);
+    func_80128B08(a);
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801291F4);
 
