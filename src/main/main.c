@@ -4516,7 +4516,29 @@ s32 f_AdvanceActorAnimationAndStoreCompletion(void *arg0) {
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80041938);
+s32 f_ProbeActorTerrainAlongFacing(s32 arg0, s32 arg1, s32 arg2);
+
+u8 func_80041938(u8 *a, s16 x, s16 z)
+{
+    s32 r;
+    u8 t;
+
+    if (a[0x29] == 0) {
+        r = f_ProbeActorTerrainAlongFacing((s32)a, x, z);
+        a[0x29] = r;
+        if ((r & 0xFF) == 0) {
+            return r;
+        }
+        t = r & 1;
+        a[0x29] = t;
+        if (t != 0) {
+            a[0x29] = t | 0x80;
+            f_ApplyTerrainProfileOrientationToActor(a);
+            *(u16 *)(a + 0x62) = *(u16 *)0x1F8001A2;
+        }
+    }
+    return a[0x29];
+}
 
 s32 func_800419C4(u8 *a, s16 b, s16 c)
 {
@@ -9173,7 +9195,26 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaClingVerticalMotion);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80062D8C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80063098);
+typedef struct { u8 pad[0x147]; u8 b147; u8 pad148[0x14]; u8 b15C; } A3098;
+
+void func_80063098(u8 *a)
+{
+    *(s16 *)(a + 0x154) += 0x20;
+    if (*(s16 *)(a + 0x154) > 0x200) {
+        *(s16 *)(a + 0x154) = 0x200;
+    }
+    *(u16 *)(a + 0x42) += *(u16 *)(a + 0x154);
+    if ((a[0x147] ^ a[0x15C]) == 0) {
+        *(u16 *)(a + 0x56) -= *(u16 *)(a + 0x154);
+    } else {
+        *(u16 *)(a + 0x56) += *(u16 *)(a + 0x154);
+    }
+    if (*(s16 *)(a + 0x42) > 0x400) {
+        f_PlaySoundEffect(0x1B, 0, 0);
+        D_800BF840 = 0x88;
+        a[7]++;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80063158);
 
