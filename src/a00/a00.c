@@ -421,7 +421,14 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActorPairMultipartContact);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114AF4);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114B8C);
+extern u8 *D_8014C804_6a3a;
+extern u16 D_8014C800;
+
+void func_80114B8C(u8 *a, u8 *b) {
+    if (func_80023870(a, b, M2C_FIELD(b, u8 **, 0xC0)) != 0) {
+        D_1F800182_5650 = 0;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114BBC);
 
@@ -794,7 +801,17 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801214AC);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AdvanceFeedChicksActorTurn);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121574);
+s32 func_80121574(void) {
+    s32 r = func_8009A450() & 0xF;
+
+    if (r < 5) {
+        return 0x5A;
+    }
+    if (r < 11) {
+        return 0x96;
+    }
+    return 0xD2;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_CheckFeedChicksActorRoutePointDistance);
 
@@ -1901,9 +1918,13 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_CollectVisibleA00GridCellsForCamera);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_CollectA00GridCellsInsideTriangle);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_TestA00GridCellMask);
+s32 f_TestA00GridCellMask(s32 x, s32 y) {
+    return D_8014C804_6a3a[y * 52 + x] & (D_8014C800 << 4);
+}
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_GetA00GridCellValue);
+s32 f_GetA00GridCellValue(s32 x, s32 y) {
+    return D_8014C804_6a3a[y * 52 + x];
+}
 
 extern s8 *D_800ECF58[];
 extern s8 *D_8014C804;
