@@ -439,7 +439,25 @@ s32 func_8011B344(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011B398);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011B4A8);
+#define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
+extern s32 D_1F800090[];
+void f_UpdateWaterTempleQuestPropActor();
+
+void func_8011B4A8(u8 *p)
+{
+    u8 buf[0x30];
+    s32 *d;
+    s32 v, a, b;
+
+    func_800318A0(p + 0x2C, p + 0x50, p + 0x48);
+    d = D_1F800090;
+    gte_ldfcdir(0, 0, 0);
+    v = *(s32 *)(p + 0x54);
+    a = *(s32 *)(p + 0x3C);
+    b = *(s16 *)(p + 0x32);
+    *d = v;
+    func_80027768(a, 0, b, p[0x29]);
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011B510);
 
@@ -2210,7 +2228,19 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013A9F8);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013AE4C);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013AE78);
+s32 func_8013AE78(void *a0)
+{
+    u8 *r = func_80072DDC(a0, 2, 3, 0x10);
+
+    if (r != 0) {
+        *(void **)(r + 0x1C) = f_UpdateWaterTempleQuestPropActor;
+        r[3] = 0x1A;
+        r[0x28] |= 0x80;
+        func_8004D604(0x50, 1);
+        return 1;
+    }
+    return 0;
+}
 
 typedef struct {
     s16 pad0;
