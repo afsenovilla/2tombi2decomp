@@ -1288,7 +1288,16 @@ void func_801224E8(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80122558);
+extern void *D_801346CC[];
+
+void func_80122558(u8 *a)
+{
+    if (a[0x71] == 0xFF) {
+        func_80040D68(a, D_801346CC[a[0x5E]]);
+        a[0x70] = 1;
+        a[5] = 2;
+    }
+}
 
 extern u8 D_800BFB48;
 
@@ -1632,7 +1641,16 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateIceCandyAndTinyPigRewardSequence
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012A7A4);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012A894);
+extern void *D_80136154[];
+
+void func_8012A894(u8 *a)
+{
+    if (a[0x71] == 0xFF) {
+        func_80040D68(a, D_80136154[a[0x5E]]);
+        a[0x70] = 1;
+        a[5] = 2;
+    }
+}
 
 
 void func_8012A8F0(void *arg0) {
@@ -1848,7 +1866,22 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012DE60);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012E1A0);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012E2A0);
+typedef struct {
+    u8 x[8];
+} S8;
+extern u8 D_800BF873;
+extern S8 D_80136248[];
+
+void func_8012E2A0(void)
+{
+    u32 i;
+
+    if (D_800BF873) {
+        for (i = 0; i < 5; i++) {
+            func_8012D880(&D_80136248[i]);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012E2F4);
 
