@@ -423,7 +423,27 @@ u8 *func_80112948(s32 a0) {
     return p;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80112990);
+extern s32 D_800ECF80;
+extern u8 D_80139294_2487[];
+
+void func_80112990(u8 *a) {
+    a[0xB] = 0x11;
+    M2C_FIELD(a, s16 *, 0x7A) = 0x1C00;
+    M2C_FIELD(a, s16 *, 0x7C) = 0x1C00;
+    M2C_FIELD(a, s16 *, 0x7E) = 0x1C00;
+    M2C_FIELD(a, s16 *, 0x5A) = 0;
+    a[0x47] = 0;
+    M2C_FIELD(a, s16 *, 0x5C) = 0;
+    a[0xD] = 0;
+    M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+    func_80077B38(a, D_80139294_2487, 4);
+    a[0] = 1;
+    M2C_FIELD(a, s16 *, 0x80) = 0x20;
+    M2C_FIELD(a, s16 *, 0x82) = 0x40;
+    M2C_FIELD(a, s16 *, 0x84) = 0x20;
+    M2C_FIELD(a, s16 *, 0x86) = 0x40;
+    func_8004B354(a, 0);
+}
 
 
 void func_80112A20(s32 arg0) {
@@ -531,7 +551,6 @@ void func_80112EFC(void *arg0) {
 }
 
 extern u8 D_800BF871;
-extern s32 D_800ECF80;
 extern M2C_UNK D_80139294;
 void func_80112F6C(void *arg0) {
     if (D_800BF871 != 0x1A) {
@@ -644,7 +663,68 @@ void func_80113490(u8 *a) {
     a[0x29] = 0;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80113554);
+extern u8 D_800BF818;
+extern u8 D_800BF808_1760[];
+
+void func_80113554(u8 *a, u8 *b) {
+    u8 *t;
+
+    switch (a[5]) {
+    case 0:
+        a[5]++;
+        F16(b, 0xE) = F16(b, 0xA);
+        func_80072FE0(a);
+        a[0x5E] = 1;
+        break;
+    case 1:
+        if (D_800BF818 == 2) {
+            F16(a, 0x40) = 0;
+            a[5]++;
+        }
+        break;
+    case 2:
+        if (++F16(a, 0x40) >= 0x19 && func_80073194(a) != 0) {
+            a[0x5E] = 0;
+            a[5]++;
+        }
+        break;
+    case 3:
+        t = D_800BF808_1760;
+        if (t[0x10] == 3) {
+            a[0x5E] = 1;
+            a[5]++;
+        } else if (t[0x10] == 7) {
+            t[0x10] = 0;
+            a[5] = 6;
+            func_80074590(0x17, 0, 0);
+            a[0x5E] = 1;
+        }
+        break;
+    case 4:
+        if (func_8007302C(a) != 0) {
+            a[5]++;
+        }
+        break;
+    case 6:
+        if (func_8007302C(a) != 0) {
+            F16(a, 0x40) = 0x18;
+            a[5]++;
+        }
+        break;
+    case 7:
+        if (--F16(a, 0x40) == 0) {
+            a[5]++;
+        }
+        break;
+    case 8:
+        if (func_800730C8(a) != 0) {
+            a[5] = 3;
+            func_80074590(0x18, 0, 0);
+            D_800BF818 = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80113710);
 
@@ -1555,7 +1635,28 @@ void func_80122B44(void *arg0, M2C_UNK arg1) {
     M2C_FIELD(arg0, s16 *, 0xE) = 0;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80122B78);
+s32 func_80122B78(u8 *a) {
+    u8 *p = M2C_FIELD(a, u8 **, 0x10);
+    s32 r = 0;
+    s16 h;
+
+    if (p != NULL) {
+        h = M2C_FIELD(p, s32 *, 0x34) >> 16;
+        h += 0x10;
+        if (h > 0x200) {
+            h = 0x200;
+            r = 1;
+        }
+        M2C_FIELD(a, s16 *, 0x72) = (0xA0 - h) / 2;
+        M2C_FIELD(a, s16 *, 0x6A) = h;
+        M2C_FIELD(p, s32 *, 0x34) = (h << 16) + 0x100;
+    } else {
+        r = 1;
+        M2C_FIELD(a, s16 *, 0x72) = -0xB0;
+        M2C_FIELD(a, s16 *, 0x6A) = 0x200;
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80122C08);
 
@@ -1855,7 +1956,29 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaBridgeRevealCamera);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaBridgeActor);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80127DC4);
+extern u8 D_800BF80F;
+extern s8 D_800E807E;
+
+s32 func_80127DC4(u8 *a) {
+    switch (a[7]) {
+    case 0:
+        a[7]++;
+        a[0xBF] = 2;
+        M2C_FIELD(a, s16 *, 0x42) = 8;
+        D_800E807E = 1;
+        if (D_800BF80F == 0) {
+            func_80074590(0x84, 0, 0);
+        }
+    case 1:
+        M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), s16 *, 2) = ((D_1F80017C & 3) - 2) * 12;
+        if (--M2C_FIELD(a, s16 *, 0x42) == 0) {
+            D_800E807E = 0;
+            return 1;
+        }
+        return 0;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaMudballSurpriseCarrierActor);
 
@@ -2225,7 +2348,6 @@ void func_8012CE5C(u8 *a) {
     }
 }
 
-extern u8 D_800BF808_1760[];
 extern u8 D_1F800236;
 
 void func_8012D0A4(u8 *a) {

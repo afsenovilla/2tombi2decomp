@@ -2653,7 +2653,46 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013E08C);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013E424);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013E620);
+#define W(p, o) M2C_FIELD(p, u32 *, o)
+typedef struct {
+    u8 b[6][4];
+} FlickerTbl;
+extern FlickerTbl D_8010A070;
+
+void func_8013E620(u8 *a) {
+    FlickerTbl t = D_8010A070;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        W(a, 0x60) = 0x100;
+        W(a, 0x64) = 0x200;
+        W(a, 0x68) = 0x200;
+        W(a, 0x6C) = 0x100;
+        M2C_FIELD(a, s16 *, 0x32) = -200;
+    case 1:
+    case 2:
+        W(a, 0x60) -= W(a, 0x60) >> 2;
+        W(a, 0x64) -= W(a, 0x64) >> 2;
+        W(a, 0x68) -= W(a, 0x68) >> 2;
+        W(a, 0x6C) -= W(a, 0x6C) >> 2;
+        if (W(a, 0x6C) < 9) {
+            a[4] = 3;
+        }
+        if (++a[7] >= 6) {
+            a[7] = 0;
+        }
+        W(a, 0x50) = (W(a, 0x60) * t.b[a[7]][0]) >> 4;
+        W(a, 0x54) = (W(a, 0x64) * t.b[a[7]][1]) >> 4;
+        W(a, 0x58) = (W(a, 0x68) * t.b[a[7]][2]) >> 4;
+        W(a, 0x5C) = (W(a, 0x6C) * t.b[a[7]][3]) >> 4;
+        a[1] = 1;
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013E840);
 
