@@ -643,7 +643,26 @@ void f_ResolveActiveColliderOffsetActorContact(void *arg0, void *arg1) {
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002369C);
+extern u8 D_1F800182_5650;
+
+void func_8002369C(u8 *a, u8 *b)
+{
+    if (f_ClassifyActorCylinderContact(a, b) >= 0) {
+        a[0x2B] = 2;
+        b[0x2B] = 2;
+        if (!(D_800E7FFE & 0x200) && *(u8 **)(a + 0x10) == NULL) {
+            *(u8 **)(a + 0x10) = b;
+            a[0x2B] = 2;
+            *(u16 *)(b + 0x2E) = *(u16 *)(a + 0x2E);
+            *(u16 *)(b + 0x32) = *(u16 *)(a + 0x32);
+            *(u16 *)(b + 0x36) = *(u16 *)(a + 0x36);
+        }
+        b[0x46] = a[0x46] & 1;
+        f_PlaySoundEffect(0x2F, 0, 0);
+        f_SpawnImpactTransientEffect(2, a + 0x2C, a[0x5E], a + 0x68);
+        D_1F800182_5650 = 0;
+    }
+}
 
 void func_80023764(s32 arg0, void *arg1) {
     if (f_ResolveTombaRadialContactAndSide() != 0) {
@@ -1938,7 +1957,31 @@ void f_DrawEffectPrimitiveListWithoutDepthCue(void *list)
     func_8002847C(list, 0, 0);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80032918);
+void func_80032918(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        a[6] = 0x10;
+        *(s32 *)(a + 0x34) = *(s32 *)(a + 0x38);
+        a[4] = 1;
+        if (a[3] == 0x37) {
+            *(u16 *)(a + 0x44) += 0x40;
+        }
+    case 1:
+        if ((*(s32 *)(a + 0x34) = *(s32 *)(a + 0x38)) == 0) {
+            a[4] = 2;
+            break;
+        }
+        if (func_8002B278(a) == 0) {
+            func_80031780(a);
+        }
+        break;
+    case 2:
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 void f_SetEffectProjectionTransform(s32 dqa)
 {
@@ -5700,7 +5743,26 @@ void func_8004D8B0(void)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D8D8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateUsedItemAttachmentPresentation);
+typedef struct { s16 vx, vy, vz, pad; } SVec_9DD0;
+extern SVec_9DD0 D_1F8000C0_18ff;
+extern SVec_9DD0 D_1F8000C8_65f7;
+
+s32 f_UpdateUsedItemAttachmentPresentation(u8 *a)
+{
+    u8 *o;
+
+    D_1F8000C0_18ff.vx = 0x14;
+    *(s16 *)((u8 *)&D_1F8000C0_18ff + 2) = 0;
+    o = D_800E7F50;
+    *(s16 *)((u8 *)&D_1F8000C0_18ff + 4) = 0x32;
+    ApplyMatrixSV(o + 0x18, &D_1F8000C0_18ff, &D_1F8000C8_65f7);
+    *(u16 *)(a + 0x2E) = D_1F8000C8_65f7.vx + *(u16 *)(o + 0x2C);
+    *(u16 *)(a + 0x32) = D_1F8000C8_65f7.vy + *(u16 *)(o + 0x30);
+    *(u16 *)(a + 0x36) = D_1F8000C8_65f7.vz + *(u16 *)(o + 0x34);
+    f_TestAndQueueActorForRender(a);
+    f_AdvanceActorTimedFrameSequence(a);
+    return D_800BF80A_8fc3 == 0;
+}
 
 s32 func_8004DBB0(void) {
     return D_800BF80A_8fc3 == 0;
