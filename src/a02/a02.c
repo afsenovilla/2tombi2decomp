@@ -1670,7 +1670,40 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateFreedCharlesSequence);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011C52C);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011C710);
+extern u8 D_800A3E58[];
+extern u8 D_800BFAFD;
+extern s16 D_800E7ED6;
+extern u8 *D_8012A570;
+extern s16 D_1F800164;
+extern s16 D_1F800160;
+
+void func_8011C710(u8 *a) {
+    if (a[0x71] == 0xFF) {
+        switch (a[0x5E]) {
+        case 0:
+            if (D_800BFAFD != 0) {
+                a[0] = 2;
+                a[0x5E] = 2;
+                func_80040D68(a, D_8012A570);
+            } else {
+                a[0x5E] = 1;
+                func_80040D68(a, D_800A3E58);
+            }
+            a[0x70] = 1;
+            break;
+        case 1:
+            a[5] = 0;
+            break;
+        case 2:
+            a[4] = 3;
+            break;
+        }
+    }
+    if (a[0x5E] == 2) {
+        s32 r = func_80085690(D_1F800164 - F16(a, 0x36), F16(a, 0x2E) - D_1F800160);
+        D_800E7ED6 = r & 0xFFF;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011C810);
 
@@ -1761,7 +1794,6 @@ void func_8011CB20(u8 *a) {
     }
 }
 
-extern u8 D_800BFAFD;
 extern u8 D_8012A508[];
 extern u8 D_8012A538[];
 extern u8 *D_8012A568[];
