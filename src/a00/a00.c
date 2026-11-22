@@ -859,7 +859,36 @@ void func_801151F4(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveA00ActiveActorCollisionCandidates);
+// nearcopy: 7 words off, C from a01 func_80110CB8
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+extern u8 D_1F800183;
+extern u8 **D_1F800154;
+extern u8 D_1F80015C;
+
+void f_ResolveA00ActiveActorCollisionCandidates(void) {
+    u8 **list = D_1F800154;
+    u8 *a;
+
+    for (D_1F800183 = D_1F80015C; D_1F800183 != 0;) {
+        a = *list++;
+        D_1F800183--;
+        if (!(a[0] & 2)) {
+            switch (a[2]) {
+            case 1:
+                if (a[3] != 1) {
+                    break;
+                }
+            case 0:
+            case 4:
+            case 7:
+                f_ResolveActorAgainstA00CollisionLists(a);
+                break;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011534C);
 
@@ -867,7 +896,54 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80115598);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801158E0);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80115B88);
+typedef struct { s16 x, y, w, h; } ClutRect;
+typedef struct {
+    u8 *ptr;
+    u8 *clut;
+    s16 x;
+    s16 y;
+} ClutCycle;
+
+// nearcopy: 5 words off, C from a07 func_80113C20
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+extern ClutCycle D_80147D84[];
+extern s8 D_8014C4F0[];
+extern u8 D_800BF873;
+
+void func_80115B88(s32 arg0) {
+    ClutRect r;
+    s32 i;
+    ClutCycle *e;
+    u8 *data;
+
+    if (arg0 == 0) {
+        s8 *p;
+        i = 11;
+        p = &D_8014C4F0[i];
+        do {
+            *p-- = 0;
+        } while (--i >= 0);
+        return;
+    }
+    e = D_80147D84;
+    for (i = 0; i < 12; i++, e++) {
+        if (--D_8014C4F0[i] <= 0) {
+            if (e->ptr[0] == 0xFF) {
+                e->ptr -= e->ptr[1];
+            }
+            data = e->clut + e->ptr[0] * 32;
+            D_8014C4F0[i] = e->ptr[1];
+            r.x = e->x;
+            r.y = e->y;
+            r.w = 16;
+            r.h = 1;
+            func_80081218(&r, data);
+            e->ptr += 2;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnFishermensTownActorsFromPlacementTable);
 
@@ -2330,11 +2406,44 @@ u8 *func_8012E5CC(u8 *a, s16 *b, s16 *c) {
     return p;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E678);
+void func_8012E678(u8 *a) {
+    s32 r = func_8009A450() & 3;
+    a[0x3] = r;
+
+    a[0xB] = 0x12;
+    a[0x8] = 0xC4;
+    M2C_FIELD(a, s16 *, 0x40) = 0x5A;
+    a[0xD] = 0;
+    M2C_FIELD(a, s16 *, 0x5C) = 0;
+    M2C_FIELD(a, s16 *, 0x5A) = 0;
+    M2C_FIELD(a, s16 *, 0x60) = 1;
+    a[0x4]++;
+    func_8012E7EC(a);
+    M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+    func_80077B38(a, D_8014C808, r + 0x12);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E70C);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E7EC);
+void func_8012E7EC(u8 *a) {
+    s16 r = func_8009A450();
+
+    if (r & 1) {
+        M2C_FIELD(a, s16 *, 0x44) = 0x800;
+    } else {
+        M2C_FIELD(a, s16 *, 0x44) = -0x800;
+    }
+    if (r & 2) {
+        M2C_FIELD(a, s16 *, 0x4E) = 0x180;
+    } else {
+        M2C_FIELD(a, s16 *, 0x54) = 0;
+        M2C_FIELD(a, s16 *, 0x4E) = 0;
+    }
+    M2C_FIELD(a, s16 *, 0x4A) = (r & 0x700) + 0x1000;
+    M2C_FIELD(a, s16 *, 0x50) = (r & 0x30) - 0x100;
+    M2C_FIELD(a, s16 *, 0x60) = -0x400 - (r & 0x70);
+    M2C_FIELD(a, s16 *, 0x44) += r & 0x300;
+}
 
 s32 func_8012E87C(void *arg0) {
     u16 temp_v1;
@@ -2499,13 +2608,120 @@ block_13:
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013272C);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80132954);
+// nearcopy: 8 words off, C from a04 func_8011C974
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+extern s8 D_1F80017C[];
+typedef struct { s16 x, y, z; } AreaVec3s;
+extern AreaVec3s D_8014A684[];
+
+void func_80132954(u8 *a) {
+    s16 i;
+
+    switch (a[6]) {
+    case 0:
+        if (--M2C_FIELD(a, s16 *, 0x40) <= 0) {
+            a[6]++;
+        }
+        break;
+    case 1:
+        if (!(*(u16 *)D_1F80017C & 0xF)) {
+            M2C_FIELD(a, s16 *, 0xB8) = D_8014A684[M2C_FIELD(a, s16 *, 0x7A)].x;
+            M2C_FIELD(a, s16 *, 0xBA) = D_8014A684[M2C_FIELD(a, s16 *, 0x7A)].y;
+            M2C_FIELD(a, s16 *, 0xBC) = D_8014A684[M2C_FIELD(a, s16 *, 0x7A)].z;
+            M2C_FIELD(a, s16 *, 0x7A) = (M2C_FIELD(a, s16 *, 0x7A) + 1) & 7;
+        }
+        break;
+    }
+    if ((s16)f_SyncAquaticPlantLinkedState(a) == 0 && (s16)f_ClassifyAquaticPlantContact(a) == 1) {
+        f_ConfigureAquaticPlantMotion(a, 0);
+        a[5] = 3;
+        a[6] = 0;
+        M2C_FIELD(a, s16 *, 0x6C) = 0;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateAquaticPlantHitWobble);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80132D58);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateAquaticPlantGrabMotion);
+// nearcopy: 9 words off, C from a04 func_8011CCE8
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+extern u8 D_800E7E80[];
+
+void f_UpdateAquaticPlantGrabMotion(u8 *a)
+{
+    s32 r = 0;
+    s32 t;
+    u8 *g;
+
+    switch (a[6]) {
+    case 0:
+        M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x38) += M2C_FIELD(a, u16 *, 0x4E);
+        M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A) -= M2C_FIELD(a, u16 *, 0x50);
+        if (M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A) < M2C_FIELD(a, s16 *, 0x74) - M2C_FIELD(a, s16 *, 0x40)) {
+            M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A) = M2C_FIELD(a, s16 *, 0x74) - M2C_FIELD(a, s16 *, 0x40);
+            r = 1;
+        }
+        t = r;
+        break;
+    case 1:
+        M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x38) -= M2C_FIELD(a, u16 *, 0x4E);
+        M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A) += M2C_FIELD(a, u16 *, 0x50);
+        if (M2C_FIELD(a, s16 *, 0x74) + M2C_FIELD(a, s16 *, 0x40) < M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A)) {
+            M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A) = M2C_FIELD(a, s16 *, 0x74) + M2C_FIELD(a, s16 *, 0x40);
+            r = 1;
+        }
+        t = r;
+        break;
+    default:
+        t = r;
+    }
+    if (t) {
+        M2C_FIELD(a, s16 *, 0x40) -= M2C_FIELD(a, s16 *, 0x4A);
+        if (M2C_FIELD(a, s16 *, 0x40) <= 0) {
+            M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A) = M2C_FIELD(a, s16 *, 0x74);
+            if (M2C_FIELD(a, s16 *, 0x68) == 1 || M2C_FIELD(a, s16 *, 0x6C) != 0) {
+                M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x38) = M2C_FIELD(a, s16 *, 0x64);
+                M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A) = M2C_FIELD(a, s16 *, 0x66);
+                a[5] = 0;
+                a[6] = 0;
+                M2C_FIELD(a, s16 *, 0x40) = 0x14;
+            } else {
+                a[5] = 4;
+            }
+            return;
+        }
+        a[6] = 1 - a[6];
+    }
+    if (M2C_FIELD(a, s16 *, 0x6C) == 0) {
+        if (a[0x5E] == 0) {
+            if (a[0x29] != 0 && a[6] == 0) {
+                g = D_800E7E80;
+                if (!(g[0x145] & 1) && g[0x164] == 0) {
+                    M2C_FIELD(g, u16 *, 0x32) += 5;
+                }
+            }
+        } else {
+            f_ConfigureAquaticPlantMotion(a, a[0x5E]);
+            a[6] = 1;
+            M2C_FIELD(a, s16 *, 0x6C) = 1;
+        }
+    } else if ((s16)f_ClassifyAquaticPlantContact(a)) {
+        M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x38) = M2C_FIELD(a, s16 *, 0x64);
+        M2C_FIELD(*(u8 **)(a + 0xC0), u16 *, 0x3A) = M2C_FIELD(a, s16 *, 0x66);
+        f_ConfigureAquaticPlantMotion(a, 0);
+        a[6] = 0;
+        M2C_FIELD(a, s16 *, 0x6C) = 0;
+    }
+    if (M2C_FIELD(a, s16 *, 0x50) > 0x20) {
+        M2C_FIELD(a, s16 *, 0x50)--;
+    }
+    f_UpdateAquaticPlantCollisionBounds(a);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80133184);
 
@@ -3221,13 +3437,6 @@ void func_8013BAB0(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013BCC8);
 
-typedef struct { s16 x, y, w, h; } ClutRect;
-typedef struct {
-    u8 *ptr;
-    u8 *clut;
-    s16 x;
-    s16 y;
-} ClutCycle;
 extern ClutCycle D_8014ABDC[];
 extern s8 D_8014C77C[];
 void func_8013C0BC(s32 arg0) {

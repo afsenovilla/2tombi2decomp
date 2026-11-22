@@ -487,7 +487,53 @@ void func_80110CB8(void) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_SpawnPipeAreaSceneActorsFromPlacementTable);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801112C0);
+// nearcopy: 12 words off, C from a07 func_80113C20
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+extern ClutCycle D_801352CC[];
+extern s8 D_80138FD0[];
+
+void func_801112C0(s32 arg0) {
+    ClutRect r;
+    s32 i;
+    ClutCycle *e;
+    u8 *data;
+    u8 *g = (u8 *)&D_800BF870;
+
+    if (*(u16 *)(g + 0x5E6) & 2) {
+        return;
+    }
+
+    if (arg0 == 0) {
+        s8 *p;
+        i = 5;
+        p = &D_80138FD0[i];
+        do {
+            *p-- = 0;
+        } while (--i >= 0);
+        return;
+    }
+    if (g[3]) {
+        return;
+    }
+    e = D_801352CC;
+    for (i = 0; i < 6; i++, e++) {
+        if (--D_80138FD0[i] <= 0) {
+            if (e->ptr[0] == 0xFF) {
+                e->ptr -= e->ptr[1];
+            }
+            data = e->clut + e->ptr[0] * 32;
+            D_80138FD0[i] = e->ptr[1];
+            r.x = e->x;
+            r.y = e->y;
+            r.w = 16;
+            r.h = 1;
+            func_80081218(&r, data);
+            e->ptr += 2;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaSceneController);
 
@@ -526,7 +572,33 @@ void func_80111C58(void) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80111CCC);
+typedef struct {
+    s16 lo, hi;
+} Range16;
+extern Range16 D_80135BA0[];
+extern u8 D_1F800207_9c67;
+
+s32 func_80111CCC(s32 x) {
+    u8 v;
+    s32 k;
+    s32 i;
+
+    k = -1;
+    v = D_1F800207_9c67;
+    for (i = 0; i < 6; i++) {
+        if (v >= D_80135BA0[i].lo && v <= D_80135BA0[i].hi) {
+            k = i;
+            break;
+        }
+    }
+    if (k < 0) {
+        return 0;
+    }
+    if (x >= D_80135BA0[k].lo && x <= D_80135BA0[k].hi) {
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80111D74);
 
@@ -560,7 +632,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80111F94);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaQuestPickupActor);
 
-extern u8 D_1F800207_9c67;
 extern u16 D_1F800160_3621;
 s32 func_80112784(void) {
     GameState *g = &D_800BF870;
@@ -687,7 +758,25 @@ void func_80112A8C(u8 *a) {
     a[0x2B] = 0;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80112B10);
+void func_80112B10(u8 *a) {
+    switch (M2C_FIELD(a, s16 *, 0x68)) {
+    case 0x7C:
+        M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+        func_80077B38(a, D_80139294_2487, 7);
+        M2C_FIELD(a, s16 *, 0x68) = 0x7D;
+        a[3] = 4;
+        D_800BF9FF = 4;
+        break;
+    case 0x7D:
+        M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+        func_80077B38(a, D_80139294_2487, 8);
+        a[0xD] = 1;
+        M2C_FIELD(a, s16 *, 0x68) = 0x7E;
+        a[3] = 5;
+        D_800BF9FF = 5;
+        break;
+    }
+}
 
 extern M2C_UNK D_80135628;
 void func_80112BB8(void *arg0) {
@@ -3011,7 +3100,32 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E370);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E4B4);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E5F8);
+#define AREA_gte_ldv0(r0) __asm__ volatile("lwc2	$0, 0( %0 );" "lwc2	$1, 4( %0 )" : : "r"(r0))
+typedef struct {
+    s16 x, y, z, pad;
+} SVecE;
+extern s32 D_1F800088;
+extern s32 D_1F800090_3460;
+
+void func_8012E5F8(u8 *a) {
+    SVecE v;
+    s32 t;
+    u8 *q = a;
+
+    func_800329E0(6);
+    v.x = M2C_FIELD(a, s16 *, 0x2E);
+    v.y = M2C_FIELD(a, s16 *, 0x32);
+    v.z = M2C_FIELD(a, s16 *, 0x36);
+    AREA_gte_ldv0(&v);
+    if (func_800317CC(0) != 0) {
+        func_80031780(a);
+    } else {
+        t = *(volatile s32 *)&D_1F800084;
+        *(volatile s32 *)&D_1F800090_3460 = 0;
+        D_1F800088 = t;
+        M2C_FIELD(q, s32 *, 0x64) = func_80027A4C(M2C_FIELD(q, s32 *, 0x60), M2C_FIELD(q, s32 *, 0x70));
+    }
+}
 
 void func_8012E6A0(u8 *a) {
     u8 *p;
