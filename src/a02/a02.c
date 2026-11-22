@@ -479,9 +479,151 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80111FB4);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80112140);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801122A4);
-
+#define F16(p, o) M2C_FIELD(p, s16 *, o)
 extern s8 D_800BF808_c1f7[];
+extern u8 D_800BF808_1760[];
+extern u16 D_800BFE56;
+typedef struct {
+    s16 v[4];
+} Box8;
+extern Box8 D_801287E8[];
+extern s8 D_800BF80D;
+extern u8 **D_1F800154;
+extern u8 D_1F80015C;
+extern u8 D_1F800183;
+extern u8 **D_1F80013C;
+extern u8 D_1F800144;
+extern u8 D_1F800182;
+extern u8 D_800E7E80[];
+/* func_80112654, inlined */
+static inline void inl_80112654(u8 *a) {
+    s8 *g;
+
+    if (a[0x17B] == 0) {
+        g = D_800BF808_c1f7;
+        if (g[5] == 0 && ((u8 *)g)[0x31] == 0 && M2C_FIELD(a, s16 *, 0x2E) > 0x2710 && M2C_FIELD(a, s16 *, 0x36) < 0xAF0) {
+            D_1F800236 = 1;
+            D_1F800137 = 2;
+            g[7] = 2;
+            g[0x31] = 1;
+            M2C_FIELD(g, s16 *, 0x32) = 0x102;
+        }
+    }
+}
+/* func_80112738, inlined */
+static inline void inl_80112738(u8 *a) {
+    u8 *g = D_800BF808_1760;
+    s32 i;
+    s32 r;
+    Box8 *p;
+
+    if (g[0xE] != 0 && g[0xF] == 7 && !(D_800BFE56 & 4)) {
+        p = D_801287E8;
+        for (i = 0; i < 2; i++, p++) {
+            r = func_8010FAB0(a, p);
+            if (r != 0 && !(a[0] & 4) && a[5] < 2) {
+                a[0] = 7;
+                a[0x2B] = (r - 1) << 6;
+                a[5] = 7;
+                a[6] = 0;
+                a[7] = 0;
+            }
+        }
+    }
+}
+/* func_80112A98, inlined */
+static inline void inl_80112A98(void *a)
+{
+    u8 **l = D_1F80013C;
+    u8 *e;
+
+    D_1F800182 = D_1F800144;
+    while (D_1F800182 != 0) {
+        e = *l;
+        D_1F800182--;
+        l++;
+        if (e[0] & 1) {
+            if (e[0xC] == 9) {
+                func_801106F0(a, e);
+            } else if (e[2] == 8) {
+                func_80110370(a, e);
+            }
+        }
+    }
+}
+/* func_80112B5C, inlined */
+static inline void inl_80112B5C(u8 *a) {
+    u8 **l;
+    u8 *e;
+
+    if (F16(a, 0x16E) != 0 && D_800BF80D == 0 && !(M2C_FIELD(a, u16 *, 0x17E) & 0x200)) {
+        l = D_1F800154;
+        D_1F800182 = *(u8 *)0x1F80015C;
+        while (D_1F800182 != 0) {
+            e = *l;
+            D_1F800182--;
+            l++;
+            if (e[0] == 1) {
+                switch (e[2]) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                    func_80022060(a, e);
+                    break;
+                case 5:
+                    func_80111D24(a, e);
+                    break;
+                }
+            }
+        }
+    }
+}
+/* func_80112C58, inlined */
+static inline void inl_80112C58(void) {
+    u8 **list = D_1F800154;
+    u8 *a;
+
+    for (D_1F800183 = D_1F80015C; D_1F800183 != 0;) {
+        a = *list++;
+        D_1F800183--;
+        if (!(a[0] & 2)) {
+            switch (a[2]) {
+            case 0:
+            case 4:
+            case 5:
+                func_80112140(a);
+                break;
+            }
+        }
+    }
+}
+
+void func_801122A4(void) {
+    u8 *g = D_800E7E80;
+
+    func_8002288C(g);
+    switch (g[0]) {
+    case 1:
+    case 3:
+    case 4:
+    case 5:
+    case 7:
+        inl_80112B5C(g);
+        inl_80112A98(g);
+        func_80111974(g);
+        inl_80112738(g);
+        break;
+    case 0:
+    case 2:
+    case 6:
+        break;
+    }
+    inl_80112C58();
+    inl_80112654(g);
+}
+
 void func_80112654(u8 *a) {
     s8 *g;
 
@@ -509,12 +651,6 @@ void func_801126DC(u8 *a) {
     }
 }
 
-extern u8 D_800BF808_1760[];
-extern u16 D_800BFE56;
-typedef struct {
-    s16 v[4];
-} Box8;
-extern Box8 D_801287E8[];
 void func_80112738(u8 *a) {
     u8 *g = D_800BF808_1760;
     s32 i;
@@ -570,9 +706,6 @@ void func_80112864(u8 *a, u8 *b) {
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80112958);
 
-extern u8 **D_1F80013C;
-extern u8 D_1F800144;
-extern u8 D_1F800182;
 void func_80112A98(void *a)
 {
     u8 **l = D_1F80013C;
@@ -594,8 +727,6 @@ void func_80112A98(void *a)
 }
 
 #define F16(p, o) M2C_FIELD(p, s16 *, o)
-extern s8 D_800BF80D;
-extern u8 **D_1F800154;
 void func_80112B5C(u8 *a) {
     u8 **l;
     u8 *e;
@@ -625,8 +756,6 @@ void func_80112B5C(u8 *a) {
     }
 }
 
-extern u8 D_1F80015C;
-extern u8 D_1F800183;
 void func_80112C58(void) {
     u8 **list = D_1F800154;
     u8 *a;
@@ -1000,7 +1129,6 @@ void func_801167A8(void)
     c->unk6E = 0xA0;
 }
 
-extern u8 D_800E7E80[];
 void func_801167C4(u8 *a, s32 ang) {
     u8 *t = D_800E7E80;
     u8 *sc;
