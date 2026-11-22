@@ -24,7 +24,26 @@ void func_800116CC(s32 arg0, M2C_UNK arg1) {
     func_80011904(arg0);
 }
 
-INCLUDE_ASM("asm/boot/nonmatchings/boot", func_8001174C);
+typedef struct {
+    u32 *vlcbuf[2];
+    s32 vlcid;
+} DecEnvHead;
+
+s32 func_8001174C(DecEnvHead *dec)
+{
+    s32 cnt = 2000;
+    u32 *next;
+
+    while ((next = (u32 *)func_80011864(dec)) == NULL) {
+        if (--cnt == 0) {
+            return -1;
+        }
+    }
+    dec->vlcid = dec->vlcid ? 0 : 1;
+    DecDCTvlc(next, dec->vlcbuf[dec->vlcid]);
+    StFreeRing(next);
+    return 0;
+}
 
 INCLUDE_ASM("asm/boot/nonmatchings/boot", func_800117D0);
 

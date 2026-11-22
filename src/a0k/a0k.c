@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
+#include "psyq/inline_c.h"
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801095C8);
 
@@ -241,7 +242,19 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010F544);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010F654);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010F7B0);
+void func_8010F7B0(s16 *a, s16 m)
+{
+    if (a[1] < m + 0x16A8) {
+        a[1] = m + 0x16A8;
+    } else if (0x6658 - m < a[1]) {
+        a[1] = 0x6658 - m;
+    }
+    if (a[5] < m + 0x16A8) {
+        a[5] = m + 0x16A8;
+    } else if (0x6658 - m < a[5]) {
+        a[5] = 0x6658 - m;
+    }
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010F830);
 
@@ -643,11 +656,38 @@ u8 *func_80112F34(void *a)
 void func_80112F70(void) {
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112F78);
+void func_80112F78(u8 *a)
+{
+    s16 v[6];
+
+    v[1] = (*(s32 *)(*(u8 **)(a + 0xE8) + 0x2C) + *(s32 *)(*(u8 **)(a + 0xF8) + 0x2C)) / 2;
+    v[3] = *(s16 *)(a + 0x32) + *(s16 *)(a + 0x84);
+    v[5] = (*(s32 *)(*(u8 **)(a + 0xE8) + 0x34) + *(s32 *)(*(u8 **)(a + 0xF8) + 0x34)) / 2;
+    func_8003116C(0x35, v, -0x5A);
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80112FF8);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80113338);
+void func_80113338(u8 *a)
+{
+    s32 s = a[4];
+
+    switch (s) {
+    case 0:
+        a[4] = 1;
+        *(s16 *)(a + 0x40) = 0x20;
+        break;
+    case 1:
+        func_80112FF8(a);
+        a[1] = s;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_SpawnBerryNutsScorePopup);
 
@@ -707,7 +747,22 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80116708);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80116AE8);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80116B14);
+void func_80116B14(u32 *a, s32 b)
+{
+    u8 pad[0x20];
+    u32 w;
+    u32 *q;
+
+    if (D_800BF871 < 4) {
+        func_800803DC();
+    } else {
+        q = a;
+        a += 4;
+        gte_ldfcdir(0, 0, 0);
+        w = *q;
+        func_80116708(func_801163E0(a, b, w & 0xFFFF), b, w >> 16);
+    }
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80116B9C);
 

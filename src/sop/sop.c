@@ -18,9 +18,53 @@ void func_80109750(void) {
     func_80044E84(0x8018A000, 0x1F8000);
 }
 
-INCLUDE_ASM("asm/sop/nonmatchings/sop", func_801097E4);
+extern u8 D_800E8008[];
 
-INCLUDE_ASM("asm/sop/nonmatchings/sop", func_80109860);
+void func_801097E4(void)
+{
+    u8 *c = D_800E8008;
+
+    switch (c[0]) {
+    case 0:
+        c[0] = 1;
+        c[0x64] = 0;
+        break;
+    case 1:
+        switch (c[0x64]) {
+        case 0:
+            func_8006E3B0(c, c + 0x38);
+            break;
+        case 1:
+            c[0x64] = 0;
+            break;
+        }
+        break;
+    }
+}
+
+typedef struct {
+    s16 x, y, z;
+    s16 pad;
+    void *fn;
+} SpawnDef;
+extern SpawnDef D_8010C98C[];
+
+void func_80109860(void)
+{
+    s32 i;
+    u8 *r;
+    SpawnDef *d;
+
+    d = D_8010C98C;
+    for (i = 0; i < 3; i++) {
+        r = func_8007A980(3, 3, 1);
+        *(s16 *)(r + 0x2E) = d->x;
+        *(s16 *)(r + 0x32) = d->y;
+        *(s16 *)(r + 0x36) = d->z;
+        *(void **)(r + 0x1C) = d->fn;
+        d++;
+    }
+}
 
 extern u8 D_800BF9B4;
 extern M2C_UNK D_800ED018;
