@@ -205,7 +205,23 @@ void func_8010EDA8(void *arg0, void *arg1) {
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010EE08);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010EF30);
+extern u8 D_800E7E80[];
+void f_UpdateReturnedKujaraActor();
+extern u8 D_1F800207_9c67;
+void f_UpdateKujaraSummitMechanismActor();
+
+void func_8010EF30(u8 *p)
+{
+    u8 *e;
+
+    if (func_800240FC(p)) {
+        e = D_800E7E80;
+        if ((e[0x78] == 0 || p != *(u8 **)(e + 0x10)) && p[4] < 3) {
+            p[0] = 2;
+            p[4] = 3;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010EFA0);
 
@@ -891,7 +907,19 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011F374);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateReturnedKujaraActor);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011FB18);
+u8 *func_8011FB18(void *a0, u8 a1)
+{
+    u8 *r = func_8007A980(3, 2, 0);
+
+    if (r) {
+        r[2] = 0x2E;
+        r[3] = a1;
+        *(void **)(r + 0x1C) = f_UpdateReturnedKujaraActor;
+        *(void **)(r + 0x10) = a0;
+        r[0x28] |= 0x80;
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011FB88);
 
@@ -1363,7 +1391,21 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012ABFC);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012AEFC);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012B118);
+s32 func_8012B118(u8 *p)
+{
+    s32 v = D_1F800207_9c67;
+
+    if (v < 4 && v != 0) {
+        if (p[0x2A] < 4) {
+            func_8010E5C4(p);
+            return 1;
+        }
+    } else if (p[0x2A] == D_1F800207_9c67) {
+        func_8010E5C4(p);
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012B188);
 
@@ -1567,7 +1609,18 @@ void func_80130D20(void *arg0) {
     func_80077B5C();
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80130D44);
+u8 *func_80130D44(void *a0, s32 a1)
+{
+    u8 *r = func_80072DDC(0, 0, 3, 0x10);
+
+    if (r) {
+        *(void **)(r + 0x1C) = f_UpdateKujaraSummitMechanismActor;
+        r[3] = a1 + 0xD;
+        *(void **)(r + 0x10) = a0;
+        r[0x28] |= 0x80;
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80130DB4);
 
