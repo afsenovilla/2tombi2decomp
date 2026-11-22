@@ -12368,7 +12368,36 @@ void func_8006B0D8(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006B124);
+void func_8006B124(u8 *a, s32 flag)
+{
+    u8 *m = a + 0x60;
+
+    switch ((a[0x46] >> 1) & 3) {
+    case 0:
+    case 1:
+        *(s16 *)(m + 0xA) = 0;
+        break;
+    case 2:
+        *(s16 *)(m + 0xA) = 0xE40;
+        break;
+    case 3:
+        *(s16 *)(m + 0xA) = 0xC20;
+        break;
+    }
+    a[0x46] &= 7;
+    f_PlaySoundEffect(0x22, 0, 0);
+    func_80069634(a);
+    func_8006B020(a, 0);
+    if (flag == 0) {
+        ((u8 *(*)())f_SpawnLinkedActorTrailEffect)(a, a[2] - 1);
+    }
+    {
+        u16 r = *(u16 *)(m + 8);
+
+        *(s16 *)(a + 0x42) = 2;
+        *(u16 *)(a + 0x56) = r;
+    }
+}
 
 void func_8006B1FC(u8 *a)
 {
