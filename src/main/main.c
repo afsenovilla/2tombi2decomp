@@ -6153,7 +6153,31 @@ void f_AddItemWithoutMessage(s32 item, s32 n) {
     f_AddInventoryQuantity(item, n);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_CompactInventoryAfterRemoval);
+void f_CompactInventoryAfterRemoval(s32 item)
+{
+    s32 i;
+    s32 o;
+
+    if (D_800BF870_inv.counts[item] == 0) {
+        o = D_800BF870_inv.order[item];
+        D_800BF870_inv.order[item] = 0;
+        if (D_800A2BE8[item].kind == 0) {
+            D_800BF870_inv.n32--;
+            for (i = 0; i < 0x100; i++) {
+                if (D_800A2BE8[i].kind == 0 && o < D_800BF870_inv.order[i]) {
+                    D_800BF870_inv.order[i]--;
+                }
+            }
+        } else {
+            D_800BF870_inv.n31--;
+            for (i = 0; i < 0x100; i++) {
+                if (D_800A2BE8[i].kind != 0 && o < D_800BF870_inv.order[i]) {
+                    D_800BF870_inv.order[i]--;
+                }
+            }
+        }
+    }
+}
 
 void f_RemoveItemWithMessage(s32 item, s32 count)
 {
@@ -6743,7 +6767,45 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004F6D0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ForcePromotePopupRequest);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_QueuePopupMessage);
+typedef struct { u16 *src; u16 entries[12]; u8 kind; u8 pad[3]; } PopReq_FA44;
+typedef struct { u8 pad[0xA]; s16 n; u8 pad2[0x1A4]; PopReq_FA44 req[8]; } PopBank_FA44;
+void f_ForcePromotePopupRequest(PopBank_FA44 *b);
+void f_ResetPopupRequest(PopupRequest *req);
+
+/* K&R definition: the narrow s16 / u8 parameters keep retail's register choice while matching the (u8 *, s32, s32) prototype above. */
+void f_QueuePopupMessage(text, mode, kind)
+    u8 *text;
+    s16 mode;
+    u8 kind;
+{
+    u16 *msg = (u16 *)text;
+    PopBank_FA44 *b = (PopBank_FA44 *)&D_800BF548;
+    PopReq_FA44 *r;
+    u16 *d;
+    u16 c;
+
+    if (b->n >= 8) {
+        f_ForcePromotePopupRequest(b);
+    }
+    r = &b->req[b->n];
+    f_ResetPopupRequest((PopupRequest *)r);
+    if (mode == -1) {
+        r->src = msg;
+    } else {
+        u16 *s = msg;
+        c = *msg;
+        d = r->entries;
+        while (c != 0xFFFE) {
+            s++;
+            *d = c;
+            c = *s;
+            d++;
+        }
+        *d = 0xFFFE;
+    }
+    r->kind = kind;
+    b->n++;
+}
 
 void func_8004FB20(void) {
     memset(&D_800BF548, 0, 0x2BC);
