@@ -1358,7 +1358,37 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E974);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012EA70);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012EB1C);
+extern u16 D_1F80017C;
+extern u8 D_800BF916;
+
+void func_8012EB1C(u8 *a) {
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        M2C_FIELD(a, s32 *, 0x50) = 0;
+        M2C_FIELD(a, s16 *, 0x4E) = 0;
+        M2C_FIELD(a, s16 *, 0x32) = -50;
+    case 1:
+        if (D_1F80017C & 1) {
+            if (++M2C_FIELD(a, s16 *, 0x4E) == 25) {
+                D_800BF916 = 2;
+                a[4] = 2;
+            }
+        }
+        a[1] = 1;
+        break;
+    case 2:
+        M2C_FIELD(a, u32 *, 0x50) += 0xCC;
+        if (M2C_FIELD(a, u32 *, 0x50) >= 0x1000) {
+            a[4] = 3;
+        }
+        a[1] = 1;
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012EC08);
 
