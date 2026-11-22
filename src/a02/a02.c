@@ -1298,7 +1298,29 @@ s32 func_8011A280(u8 *a) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011A348);
+void func_8011A348(u8 *a) {
+    GameState *g;
+
+    if (M2C_FIELD(a, s16 *, 0x40) != 0) {
+        if ((s16)func_80119694(a, M2C_FIELD(a, s16 *, 0x2E), M2C_FIELD(a, s16 *, 0x36)) != 0) {
+            g = &D_800BF870;
+            if (g->pad1[0x19A] == 0) {
+                g->pad1[0x19A]++;
+                a[5] = 1;
+                M2C_FIELD(a, s16 *, 0x40) = 0;
+                a[6] = 0;
+                a[0x5E] = 5;
+            } else {
+                a[5] = 0;
+                a[6] = 3;
+            }
+        }
+    } else if ((s16)func_80119694(a, M2C_FIELD(a, s16 *, 0x2E), (s16)(M2C_FIELD(a, s16 *, 0x36) - 0x1C2)) != 0) {
+        D_800BF870.pad1[0x19A]++;
+        a[5] = 0;
+        a[6] = 3;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateLetsMakeAPotSequence);
 

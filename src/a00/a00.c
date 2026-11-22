@@ -1754,7 +1754,28 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801231E0);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801232DC);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801233DC);
+extern u8 D_80149854[];
+
+s32 func_801233DC(u8 *a) {
+    switch (a[6]) {
+    case 0:
+        a[6] = 1;
+        func_80040CDC(a, D_8014E4EC, D_80149854);
+        a[0x70] = 1;
+        break;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[6]++;
+            func_80042310();
+        }
+        break;
+    case 2:
+        a[6] = 0;
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801234A4);
 
