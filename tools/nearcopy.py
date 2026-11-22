@@ -15,9 +15,10 @@ The --top best distinct texts are compiled in place of the target (renamed, with
 inline helpers and declarations the body uses, transitively). When the bytes differ only in the 16-bit immediates
 of otherwise identical instructions (constants, load/store offsets, andi/slti masks), the literals of the C are
 patched: every occurrence, or a single one, of each differing value (an offset also as an index scaled by the
-access size), up to three rounds. A match has the symbols it references renamed to what the target program calls
-those addresses (relocations read against the retail bytes; names no program file defines get an alias line in
-config/aliases_<prog>.ld at install time).
+access size), up to three rounds; a one-word `move` / `li K` difference tries each use of each variable as K (or
+each literal K as each variable). A match has the symbols it references renamed to what the target program calls
+those addresses (relocations read against the retail bytes, callees too; names no program file defines, also
+another program's alias names, get an alias line in config/aliases_<prog>.ld at install time).
 
 Matches go to build/nearcopy/<prog>/<name>.c (install_c.py scratch files); --install installs them with
 tools/install_c.py (linked build checked; files with clashing declarations go in separate batches). --near also
@@ -203,6 +204,53 @@ def patches(body, pairs, limit=24):
     return out
 
 
+def _move_li(word):
+    """('move', rd) / ('li', rt, value) / None for one instruction word."""
+    op = word >> 26
+    if op == 0 and word & 0x3F in (0x21, 0x25) and (word >> 16) & 0x1F == 0:
+        return ("move", (word >> 11) & 0x1F)
+    if op in (9, 0xD) and (word >> 21) & 0x1F == 0:
+        v = word & 0xFFFF
+        if op == 9 and v & 0x8000:
+            v -= 0x10000
+        return ("li", (word >> 16) & 0x1F, v)
+    return None
+
+
+def variables(body):
+    """parameter and local variable names of a function definition."""
+    head = body[:body.find("{")]
+    names = re.findall(r"(\w+)\s*(?:\[[^\]]*\])?\s*[,)]", head[head.find("(") + 1:] + ")")
+    names += re.findall(r"(?m)^\s+(?:(?:const|volatile|register|unsigned|signed|struct \w+|\w+)\s+)+\**\s*(\w+)\s*[;=\[]",
+                        body[body.find("{"):])
+    return [n for n in dict.fromkeys(names) if n not in ptsrc.KEYWORDS and n != "void"]
+
+
+def form_patches(body, g, w, limit=24):
+    """C bodies for a one-word diff where the code has `move` and retail `li K` (a variable there is the constant
+    K in the target: each use of each variable replaced by K, one at a time) or the reverse (each literal K
+    replaced by each variable)."""
+    a, b = _move_li(g), _move_li(w)
+    if not a or not b or a[0] == b[0] or a[1] != b[1]:
+        return []
+    start = body.find("{") + 1
+    names = variables(body)
+    out = []
+    if a[0] == "move":
+        for n in names:
+            for m in re.finditer(r"(?<![\w.>])\b%s\b(?!\s*(?:[-+*/%%&|^]|<<|>>)?=[^=])(?!\s*\+\+|\s*--)" % n,
+                                 body[start:]):
+                at = start + m.start()
+                out.append(body[:at] + lit(b[2], False) + body[at + len(n):])
+    else:
+        for st, en in literal_hits(body, a[2]):
+            if st < start:
+                continue
+            for n in names:
+                out.append(body[:st] + n + body[en:])
+    return out[:limit]
+
+
 def build_text(includes, decls, body):
     return PRELUDE + "".join(i + "\n" for i in includes) + "\n".join(decls) + "\n\n" + body + "\n"
 
@@ -258,6 +306,8 @@ def attempt(tp, tname, cand, workdir):
                 pairs = imm_pairs(diffs)
                 if pairs and rnd < 3:
                     nxt += patches(b, pairs)
+                elif len(diffs) == 1 and not diffs[0][3] and rnd < 3:
+                    nxt += form_patches(b, diffs[0][1], diffs[0][2])
             cur = nxt[:24]
             if not cur:
                 break
@@ -349,11 +399,13 @@ def fix_names(text, prog, workdir=None):
                     if ren.get(s_, new) != new:
                         continue     # two addresses for one name: leave it to the build check
                     ren[s_] = new
-                if new not in known and re.fullmatch(r"D_[0-9A-F]{8}", new):
+                if new not in known and not re.fullmatch(r"func_[0-9A-F]{8}", new):
                     if defined is None:
                         defined = defined_names(prog)
                     if new not in defined:
-                        alias[new] = at   # inside a table or past a label: no file defines the name
+                        # inside a table or past a label, or a name another program aliases (an install_c type
+                        # alias D_xxxxxxxx_hash, a library name): no file of this program defines it
+                        alias[new] = at
         ren = {k: v for k, v in ren.items() if k != v}
         return apply_renames(text, ren), ren, alias
     finally:

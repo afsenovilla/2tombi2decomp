@@ -149,10 +149,11 @@ def install(a):
             continue
         k = m.group(2)
         am = re.fullmatch(r"(?:D|func)_([0-9A-F]{8})", k)
-        if not am:
-            sys.exit("%s is declared differently in %s; rename it by hand" % (k, path))
+        adr = int(am.group(1), 16) if am else nearcopy.name_addrs(a.prog).get(k)
+        if adr is None:
+            sys.exit("%s is declared differently in %s and has no address; rename it by hand" % (k, path))
         new = "%s_%s" % (k, hashlib.sha1(p.encode()).hexdigest()[:4])
-        aliases[new] = int(am.group(1), 16)
+        aliases[new] = adr
         pre[i] = re.sub(r"\b%s\b" % k, new, p)
         funcs = [(n, re.sub(r"\b%s\b" % k, new, b)) for n, b in funcs]
     ap_ = libsweep.aliases_path(a.prog)
@@ -234,9 +235,17 @@ def install(a):
         # ... unless a function is used as a value (its address taken), which needs a declaration, or the target
         # defines it further down (a call before the definition would declare it `int f()`: conflicting types)
         if pr[0] in later and not re.search(r"(?m)^[\w][\w \*]*?\b%s\s*\([^;{}]*\)\s*\{" % pr[0], before):
-            return True
+            return True     # (written as the definition's own header below)
         return any(re.search(r"\b%s\b(?!\s*\()" % pr[0], b) for _, b in funcs)
     extra = [p for p in pre if wanted(p)]
+    for i, p in enumerate(extra):   # a kept prototype takes the target's definition header: same types for sure
+        pr = proto(p)
+        if pr and pr[0] in later:
+            m = re.search(r"(?m)^([\w][\w \*]*?\b%s\s*\([^;{}]*\))\s*\{" % re.escape(pr[0]),
+                          t[at:] + "\n" + "\n".join(b for _, b in funcs))
+            if m and norm(m.group(1) + ";") != norm(p):
+                print("prototype of %s from its definition: %s;" % (pr[0], " ".join(m.group(1).split())))
+                extra[i] = " ".join(m.group(1).split()) + ";"
     # a prototype or a definition with N parameters makes a call with fewer arguments an error: say where
     sigs = {}
     for p in extra:
