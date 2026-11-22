@@ -3808,7 +3808,7 @@ s32 f_GetEventAPReward(s32 event, s32 low)
 }
 
 void func_8003AD48(void);
-void func_800727D4(u8 *a, s16 x, u8 kind);
+u8 *func_800727D4(void *owner, s32 ev, s32 kind);
 extern u8 D_800E8008_f2dc[];
 
 u8 *func_80040AA4(s32 x, s32 kind)
@@ -8953,7 +8953,31 @@ void func_800658E4(u8 *t)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80065990);
+void func_80065990(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        D_800BF80E_58ec = 0;
+        a[6]++;
+    case 1:
+        if (f_AdvanceActorSkeletalAnimation(a) == 1) {
+            f_SetTombaAnimationIfChanged(a, 2, 4);
+            D_800BF80E_58ec = 1;
+        }
+        if (D_1F800184 == 1) {
+            goto stop;
+        }
+        if (D_1F800184 == 2) {
+            f_UpdateTombaMovementOrientation(a);
+        stop:
+            *(s16 *)(a + 0x50) = 0;
+            *(s16 *)(a + 0x4A) = 0;
+            break;
+        }
+        f_UpdateTombaTransitionTerrainContact(a, 1);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80065A54);
 
@@ -9402,7 +9426,29 @@ void func_8006918C(u8 *a, s32 check)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006923C);
+void func_8006923C(u8 *a)
+{
+    u8 *p = a + 0x60;
+
+    switch ((a[0x46] >> 1) & 3) {
+    case 0:
+    case 1:
+        *(s16 *)(p + 0xA) = 0;
+        break;
+    case 2:
+        *(s16 *)(p + 0xA) = 0xE80;
+        break;
+    case 3:
+        *(s16 *)(p + 0xA) = 0xC00;
+        break;
+    }
+    *(s16 *)(a + 0x40) = 1;
+    *(s16 *)(a + 0x44) = 0x6E;
+    a[0x46] &= 7;
+    f_PlaySoundEffect(0x22, 0, 0);
+    func_8006B020(a, 2);
+    *(u16 *)(a + 0x56) = *(u16 *)(p + 8);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80069300);
 
@@ -10992,7 +11038,27 @@ void func_8007263C(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800726D4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800727D4);
+u8 f_FormatIntegerText(s32 v, char *out);
+void func_80072898(void);
+
+u8 *func_800727D4(void *owner, s32 ev, s32 kind)
+{
+    s32 ap = f_GetEventAPReward(ev, kind);
+    u8 *a;
+
+    if (ap == 0 || (a = (u8 *)f_AllocateActorRecordByType(0, 3, 1)) == NULL) {
+        return NULL;
+    }
+    *(void **)(a + 0x1C) = func_80072898;
+    a[2] = 0x1D;
+    a[3] = kind;
+    *(s16 *)(a + 0x60) = ev;
+    *(void **)(a + 0x10) = owner;
+    a[0x28] |= 0x80;
+    *(s16 *)(a + 0xE) = ((s16 (*)(s32, u8 *))f_FormatIntegerText)(ap, a + 0x44);
+    *(s16 *)(a + 0x5C) = 0x7C7E;
+    return a;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80072898);
 
