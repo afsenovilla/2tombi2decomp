@@ -3850,7 +3850,24 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80134CEC);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80134E44);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80134F68);
+void func_80134F68(u8 *a)
+{
+    if (func_80135158(a) != -1) {
+        func_80135574(a, 0x14, 0xC8);
+        switch (a[6]) {
+        case 0:
+            func_80135630(a, 2, 4);
+            a[6]++;
+            break;
+        case 1:
+            if (--*(s16 *)(a + 0x40) == 0) {
+                a[5] = 0xA;
+                a[6] = 1;
+            }
+            break;
+        }
+    }
+}
 
 void func_8013500C(void *arg0) {
     u16 temp_v0;

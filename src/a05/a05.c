@@ -263,7 +263,27 @@ void func_8010EC7C(s32 arg0, u8 *arg1) {
     }
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010ED00);
+extern s32 D_1F80009C_baed;
+
+void func_8010ED00(u8 *a, u8 *b)
+{
+    if (func_8002313C(a, b, *(void **)(b + 0xC0)) != 0) {
+        if (*(s16 *)(b + 0x62) == 0) {
+            func_8001DC9C(a, b, 0, 5);
+            D_1F800182_5650 = 0;
+        } else {
+            s32 v;
+            func_8001E860(a, b, *(void **)(b + 0xC0), 0x400);
+            v = D_1F80009C_baed;
+            b[0x2B] = 1;
+            b[0x46] = v >> 4;
+            if (a[0x5E] != 0) {
+                b[0x2B] = 0x81;
+            }
+            D_1F800182_5650 = 0;
+        }
+    }
+}
 
 void func_8010EDA8(void *arg0, void *arg1) {
     if (func_800240FC() != 0) {
@@ -378,7 +398,26 @@ s32 func_80110F78(s32 arg0, s32 arg1) {
     return 0;
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80110FB4);
+void func_80110FB4(u8 *a)
+{
+    if (a[0x2A] == 1 && a[0x29] != 0 && *(s16 *)(a + 0x36) < 0x1DB1) {
+        if ((*(s16 *)(a + 0x44) -= 0xE0) < -0x1400) {
+            *(s16 *)(a + 0x44) = -0x1400;
+        }
+    } else {
+        s16 v = *(s16 *)(a + 0x44);
+        s32 k = abs(v) - 0xE0;
+        s16 m = k;
+        if ((s16)k <= 0) {
+            m = 0;
+        }
+        if (v >= 0) {
+            *(s16 *)(a + 0x44) = m;
+        } else {
+            *(s16 *)(a + 0x44) = -m;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011105C);
 
@@ -3763,7 +3802,27 @@ void func_8013A3F8(u8 *p)
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8013A460);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8013A548);
+typedef struct { u8 b[4]; } B4;
+extern B4 D_8010A2A4;
+extern void *D_800ED8C8;
+
+void func_8013A548(u8 *a)
+{
+    u8 *p = a + 0x50;
+    B4 v = D_8010A2A4;
+    s32 i = 0;
+
+    do {
+        func_800318A0(p, &v, a + 0x48);
+        if (i & 1) {
+            func_8003F698(*(void **)(a + 0x34), D_800ED8C8, 0);
+        } else {
+            func_8003F698(*(void **)(a + 0x3C), D_800ED8C8, 0);
+        }
+        i++;
+        p += 0x10;
+    } while (i < 3);
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8013A5F0);
 

@@ -3097,7 +3097,28 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", f_UpdateForestGhostAndRockCrabActor);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012F694);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012F79C);
+extern u8 D_8014D97C[];
+extern s16 D_1F800160_71b4;
+
+void func_8012F79C(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        a[6]++;
+        func_80077C40(a, D_8014D97C, 3);
+        func_80074590(0x95, 0, 0);
+        break;
+    case 1:
+        break;
+    case 2:
+        if (D_1F800160_71b4 < 0x4930) {
+            u8 *t = D_800E7E80;
+            *(s16 *)(t + 0x2E) = 0x4930;
+            *(s16 *)(t + 0x36) = 0x27B0;
+        }
+        break;
+    }
+}
 
 void func_8012F844(u8 *a)
 {
