@@ -1344,7 +1344,80 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8002F230);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002F36C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002F514);
+extern u8 D_800E7E7C;
+
+void func_8002F514(s32 kind, s32 owner)
+{
+    u8 *e;
+    u8 *t;
+    s16 pos[3];
+    s16 *pp;
+
+    switch (kind) {
+    case 2:
+        e = NULL;
+        func_80023528(owner);
+        break;
+    case 3:
+        if (D_800E7E7C < 7 || (t = f_AllocateActorRecordByType(0, 6, 1)) == NULL) {
+            e = NULL;
+        } else {
+            *(s16 *)(t + 0x32) = -0xC8;
+            f_InitializeTransientEffectActor(t, 0x32);
+            e = t;
+        }
+        break;
+    case 4:
+        if (D_800E7E7C < 7 || (t = f_AllocateActorRecordByType(0, 6, 1)) == NULL) {
+            e = NULL;
+        } else {
+            *(s16 *)(t + 0x32) = -0xC8;
+            f_InitializeTransientEffectActor(t, 0x33);
+            e = t;
+        }
+        break;
+    case 1:
+        if (D_800E7E7C < 7 || (t = f_AllocateActorRecordByType(0, 6, 1)) == NULL) {
+            e = NULL;
+        } else {
+            *(s16 *)(t + 0x32) = -0xC8;
+            f_InitializeTransientEffectActor(t, 0x2A);
+            e = t;
+        }
+        break;
+    case 5:
+        if (D_800E7E7C < 7 || (t = f_AllocateActorRecordByType(0, 6, 1)) == NULL) {
+            e = NULL;
+        } else {
+            *(s16 *)(t + 0x32) = -0xC8;
+            f_InitializeTransientEffectActor(t, 0x31);
+            e = t;
+        }
+        break;
+    case 6:
+    default:
+        pos[0] = D_1F800160;
+        pos[1] = D_1F800162 - 0xC8;
+        pos[2] = D_1F800164;
+        pp = pos;
+        if (D_800E7E7C < 7 || (t = f_AllocateActorRecordByType(0, 6, 1)) == NULL) {
+            e = NULL;
+        } else {
+            if (pp != NULL) {
+                *(u16 *)(t + 0x2C) = pp[0];
+                *(u16 *)(t + 0x2E) = pp[1];
+                *(u16 *)(t + 0x30) = pp[2];
+            }
+            *(s16 *)(t + 0x32) = -0xC8;
+            f_InitializeTransientEffectActor(t, 0x36);
+            e = t;
+        }
+        break;
+    }
+    if (owner != 0 && e != NULL) {
+        *(s32 *)(e + 0x10) = owner;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002F738);
 
@@ -1364,7 +1437,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80030A3C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80030D68);
 
-extern u8 D_800E7E7C;
 
 s32 f_SpawnTransientEffect(s32 arg0, s32 arg1) {
     s32 temp_v0;
