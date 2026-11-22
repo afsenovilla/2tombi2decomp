@@ -457,7 +457,20 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114D48);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114DF4);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114E74);
+extern s16 D_1F800160_71b4;
+extern s16 D_1F800162;
+extern s16 D_1F800164_d75f;
+
+void func_80114E74(u8 *a, u8 *b) {
+    if (a[0x164] != 5 || a[0x147] != b[0x47]) {
+        if (func_80022F04(a, b) != 0) {
+            b[0] = 2;
+            b[4] = 2;
+            b[5] = 0;
+            b[6] = 0;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114ED4);
 
@@ -603,7 +616,23 @@ void func_801181BC(void *arg0, void *arg1) {
     M2C_FIELD(arg1, s16 *, 0x14) = -0x2000;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801181E0);
+void func_801181E0(u8 *a, u8 *b) {
+    if (a[0x2B] == 2) {
+        if (M2C_FIELD(b, s16 *, 0xE) < 0x800) {
+            M2C_FIELD(b, s16 *, 0xE) -= 0x1000;
+        } else {
+            M2C_FIELD(b, s16 *, 0xE) = -M2C_FIELD(b, s16 *, 0xE);
+        }
+        M2C_FIELD(b, s16 *, 0x14) = 0xC00;
+    } else {
+        if (M2C_FIELD(b, s16 *, 0xE) < -0x7FF) {
+            M2C_FIELD(b, s16 *, 0xE) = -M2C_FIELD(b, s16 *, 0xE);
+        } else {
+            M2C_FIELD(b, s16 *, 0xE) += 0x1000;
+        }
+        M2C_FIELD(b, s16 *, 0x14) = -0xC00;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleBeachQuestPickup);
 
@@ -2176,7 +2205,9 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureTurnaround);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801461E4);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80146288);
+s32 func_80146288(s16 *v, u32 r) {
+    return (u32)func_80078240(D_1F800160_71b4 - v[0], D_1F800162 - v[1], D_1F800164_d75f - v[2]) < r;
+}
 
 u8 *func_801462E4(s32 a, s32 b) {
     u8 *p = func_80072DDC(0, 3, 2, 3);

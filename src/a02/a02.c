@@ -243,7 +243,19 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801122A4);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80112654);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801126DC);
+typedef struct { u8 pad0[7]; u8 unk7; u8 pad8[0x29]; u8 unk31; s16 unk32; } AreaState808_7;
+extern AreaState808_7 D_800BF808;
+extern u8 D_1F800236;
+
+void func_801126DC(u8 *a) {
+    if (M2C_FIELD(a, s16 *, 0x2E) > 0x2710 && M2C_FIELD(a, s16 *, 0x36) < 0xAF0) {
+        D_1F800236 = 1;
+        D_1F800137 = 2;
+        D_800BF808.unk7 = 2;
+        D_800BF808.unk31 = 1;
+        D_800BF808.unk32 = 0x102;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80112738);
 
