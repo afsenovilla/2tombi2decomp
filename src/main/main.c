@@ -1319,7 +1319,28 @@ u8 *func_80026D08(u8 *out, u16 *hdr, u8 *prims, s32 i)
     return NULL;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80026DD8);
+u8 *func_80026DD8(u8 *out, u16 *hdr, u8 *prims, s32 i)
+{
+    u8 *p;
+
+    if (i >= hdr[1]) {
+        return prims + hdr[1] * 0x2C;
+    }
+    p = (u8 *)(i * 0x2C + (s32)prims);
+    out[0x33] = (p[3] & 2) | 0x24;
+    out[0x34] = p[8];
+    out[0x35] = p[9];
+    out[0x38] = p[0xC];
+    out[0x39] = p[0xD];
+    out[0x3C] = p[0x10];
+    out[0x3D] = p[0x11];
+    *(u16 *)(out + 0x3A) = *(u16 *)(p + 0xE);
+    *(u16 *)(out + 0x36) = *(u16 *)(p + 0xA);
+    out[0x30] = p[0];
+    out[0x31] = p[1];
+    out[0x32] = p[2];
+    return NULL;
+}
 
 u8 *func_80026EB8(u8 *out, u16 *hdr, u8 *prims, s32 i)
 {
