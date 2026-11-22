@@ -1797,7 +1797,13 @@ void func_80126598(void *arg0, s32 arg1) {
     }
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80126664);
+s32 func_80126664(u8 *a, u8 *b)
+{
+    s16 dx = *(s16 *)(a + 0x2E) - *(s16 *)(b + 0x2E);
+    s16 dz = *(s16 *)(a + 0x36) - *(s16 *)(b + 0x36);
+    s16 dy = *(s16 *)(a + 0x32) - *(s16 *)(b + 0x32);
+    return func_80084080(dx * dx + dz * dz + dy * dy);
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801266E8);
 
