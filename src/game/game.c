@@ -148,7 +148,36 @@ void func_8010882C(void)
     }
 }
 
-INCLUDE_ASM("asm/game/nonmatchings/game", func_801088D8);
+extern u8 D_800452C0[];
+extern u8 D_80108F60[];
+
+void func_801088D8(void)
+{
+    switch (*(u16 *)(D_1F800138_5432 + 0x4C)) {
+    case 0:
+        func_8005245C();
+        func_80044BD4(D_800452C0, D_800BF870.unk0, 0, 2);
+    case 1:
+        D_1F800234 = 0;
+        *(s16 *)(D_1F800138_5432 + 0x4C) = D_80108F60[D_800BF870.unk0];
+        break;
+    case 2:
+        func_80106B98();
+        break;
+    case 3:
+        func_801070B4();
+        break;
+    case 4:
+        func_80107230();
+        break;
+    case 5:
+        func_8010766C();
+        break;
+    case 6:
+        func_80107790();
+        break;
+    }
+}
 
 void func_801089C4(void)
 {
