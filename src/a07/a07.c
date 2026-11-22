@@ -51,9 +51,62 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010CA60);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_DispatchCircusSupportContacts);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010CD8C);
-
 extern u8 D_800BF808[];
+extern u8 D_800E7E80[];
+extern u8 **D_1F800154;
+extern u8 D_1F80015C;
+extern u8 D_1F800183;
+/* func_8010D004, inlined */
+static inline void func_8010D004_inl(void) {
+    u8 **list = D_1F800154;
+    u8 *a;
+
+    for (D_1F800183 = D_1F80015C; D_1F800183 != 0;) {
+        a = *list++;
+        D_1F800183--;
+        if (!(a[0] & 2)) {
+            switch (a[2]) {
+            case 0:
+            case 4:
+            case 5:
+                f_DispatchCircusSupportContacts(a);
+                break;
+            }
+        }
+    }
+}
+/* func_8010CEDC, inlined */
+static inline void func_8010CEDC_inl(u8 *p)
+{
+    if (p[0x17B] == 0 && (s8)D_800BF808[5] == 0 && D_800BF808[0x31] == 0) {
+        func_8010A7FC(p);
+    }
+}
+
+void func_8010CD8C(void)
+{
+    u8 *p = D_800E7E80;
+
+    func_8002288C(p);
+    switch (p[0]) {
+    case 1:
+    case 3:
+    case 4:
+    case 5:
+    case 7:
+        f_DispatchCircusActorContactCleanup(p);
+        f_DispatchCircusMovingActorContacts(p);
+        f_DispatchCircusActorContacts(p);
+        break;
+    case 0:
+    case 2:
+    case 6:
+        break;
+    }
+    func_8010D004_inl();
+    func_8010CEDC_inl(p);
+}
+
 void func_80118184();
 void func_8010CEDC(u8 *p)
 {
@@ -97,9 +150,6 @@ typedef struct {
     u8 y;
 } AreaPadAnalog;
 typedef struct { u8 pad0[7]; u8 unk7; u8 pad8[0x29]; u8 unk31; s16 unk32; } AreaState808_7;
-extern u8 **D_1F800154;
-extern u8 D_1F80015C;
-extern u8 D_1F800183;
 void func_8010D004(void) {
     u8 **list = D_1F800154;
     u8 *a;
@@ -341,7 +391,6 @@ void func_80112CE8(u8 *a, s16 b)
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80112DEC);
 
-extern u8 D_800E7E80[];
 extern u8 D_1F8000D0[];
 void func_80113394(u8 *a, s32 ang) {
     u8 *t = D_800E7E80;
@@ -2201,7 +2250,29 @@ void func_80125DD8(u8 *p, s32 a1)
     }
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80125E40);
+/* func_80126DEC, inlined */
+static inline s32 func_80126DEC_inl(u8 *a)
+{
+    s32 z = (-func_80083E80(*(s16 *)(a + 0x56)) * *(s16 *)(a + 0x80)) >> 12;
+    s32 x = func_80083F50(*(s16 *)(a + 0x56)) * *(s16 *)(a + 0x80);
+    AreaSVec *v = &D_1F8000C0_f4ad;
+    D_1F8000C0_f4ad.x = x >> 12;
+    v->y = *(s16 *)(a + 0x86) - *(s16 *)(a + 0x84);
+    v->z = z;
+    return func_8012EE08(a + 0x2C, v, 0) != 0;
+}
+
+s32 func_80125E40(u8 *a, s32 f)
+{
+    s32 x = (func_80083F50(*(s16 *)(a + 0x56)) * *(s16 *)(a + 0x44)) >> 4;
+    s32 z = func_80083E80(*(s16 *)(a + 0x56)) * *(s16 *)(a + 0x44);
+    *(s32 *)(a + 0x2C) += x;
+    *(s32 *)(a + 0x34) -= z >> 4;
+    if (f == 0) {
+        return 0;
+    }
+    return func_80126DEC_inl(a);
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80125F40);
 
