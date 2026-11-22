@@ -4068,7 +4068,41 @@ void func_80139ED8(u8 *p)
     func_80027768(*(s32 *)(p + 0x3C), *(u16 *)(p + 0x44), *(s16 *)(p + 0x32), p[0x29]);
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80139F44);
+typedef struct { s32 a, b; } Pair9F44;
+typedef struct { Pair9F44 e[14]; } Tbl9F44;
+extern Tbl9F44 D_8010A11C;
+
+void func_80139F44(u8 *a)
+{
+    Tbl9F44 t = D_8010A11C;
+
+    switch (a[4]) {
+    case 0:
+        *(s16 *)(a + 0x4E) = func_8009A450();
+        a[4] = 1;
+        a[7] = 0xFF;
+    case 1:
+        if (++a[7] >= 0xE) {
+            a[4] = 2;
+            break;
+        }
+        {
+            Pair9F44 *e;
+            *(s32 *)(a + 0x34) = *(s32 *)(a + 0x38);
+            e = &t.e[a[7]];
+            *(s32 *)(a + 0x3C) = e->a;
+            *(s32 *)(a + 0x50) = e->b;
+        }
+        if (func_8002B278(a) == 0) {
+            func_80031780(a);
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_8013A078(u8 *p) {
     s32 *d = D_1F800090;
