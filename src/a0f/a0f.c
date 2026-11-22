@@ -224,7 +224,57 @@ s32 func_80109AEC(u8 *a, u8 *b, u8 *c) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80109C64);
+extern u8 D_1F800182;
+
+void func_80109C64(u8 *a, u8 *b, u8 *c) {
+    u8 *q = a + 0x60;
+    s32 r;
+    s32 s1;
+    u16 x;
+    u16 z;
+    u16 y;
+    s16 dx;
+    s16 dz;
+    s32 t;
+    s32 u;
+
+    r = (func_80083E80(F16(c, 0xC)) * 0x6E) >> 12;
+    s1 = (func_80083E80(F16(b, 0x56)) * (s16)r) >> 12;
+    x = FU16(c, 0x2C) - ((func_80083F50(F16(b, 0x56)) * (s16)r) >> 12);
+    dx = FU16(a, 0x2E) - x;
+    z = FU16(c, 0x34) + s1;
+    dz = FU16(a, 0x36) - z;
+    if ((u16)func_80084080(dx * dx + dz * dz) > F16(a, 0x80) + F16(b, 0x80)) {
+        return;
+    }
+    y = FU16(c, 0x30) + ((func_80083F50(F16(c, 0xC)) * 0x6E) >> 12);
+    if ((u16)((FU16(a, 0x32) - y) + (FU16(a, 0x84) + FU16(b, 0x84))) > F16(a, 0x86) + F16(b, 0x86)) {
+        return;
+    }
+    if (a[0x5F] == 0x10) {
+        switch (a[0x46] >> 1) {
+        case 0:
+        case 1:
+            t = (func_80083F50(F16(q, 8) + 0x800) * (F16(a, 0x80) + F16(b, 0x80))) >> 12;
+            u = func_80083E80(F16(q, 8) + 0x800) * (F16(a, 0x80) + F16(b, 0x80));
+            F16(a, 0x2E) = x + t;
+            F16(a, 0x32) = y;
+            F16(a, 0x36) = z - (u >> 12);
+            break;
+        case 2:
+        case 3:
+            F16(a, 0x2E) = x;
+            F16(a, 0x36) = z;
+            F16(a, 0x32) = FU16(a, 0x84) + (y + (FU16(b, 0x86) - FU16(b, 0x84)));
+            break;
+        }
+    } else {
+        b[0x2B] = 1;
+        b[0x5F] = FU16(a, 0x56) >> 4;
+    }
+    func_8001E860(a, b, c, 0x200);
+    D_1F800182 = 0;
+}
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80109ED8);
 
@@ -233,7 +283,6 @@ extern u8 D_1F800144;
 extern s16 D_1F800150_058c;
 extern u8 D_1F800150;
 extern u8 D_1F800183;
-extern u8 D_1F800182;
 extern u8 **D_1F800148;
 void func_8010A2D4(void)
 {
