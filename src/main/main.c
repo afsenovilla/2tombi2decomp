@@ -289,7 +289,42 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80022330);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveFlag40ActorClass5Contacts);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaClass5ActorContacts);
+extern s8 D_800BF80D;
+extern s8 D_1F800182[];
+extern s8 D_1F800154[];
+extern s8 D_1F80015C[];
+
+void f_ResolveTombaClass5ActorContacts(u8 *a)
+{
+    u8 **list;
+    u8 *e;
+
+    if (*(s16 *)(a + 0x16E) == 0 || D_800BF80D != 0 || (*(u16 *)(a + 0x17E) & 0x200)) {
+        return;
+    }
+    list = *(u8 ***)D_1F800154;
+    *(u8 *)D_1F800182 = *(u8 *)D_1F80015C;
+    while (*(u8 *)D_1F800182 != 0) {
+        e = *list;
+        *(u8 *)D_1F800182 = *(u8 *)D_1F800182 - 1;
+        list++;
+        if (e[0] == 1) {
+            switch (e[2]) {
+            case 4:
+                if (e[0x5E] == 2) {
+                    func_80114E74(a, e);
+                    break;
+                }
+            case 0: case 1: case 2: case 3: case 7:
+                f_RetireActorOnTombaContact(a, e);
+                break;
+            case 6:
+                func_80022190(a, e);
+                break;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_PrepareTombaCollisionFrame);
 
@@ -310,7 +345,6 @@ void func_80022A80(void)
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80022AC8);
 
 extern u8 D_800BFE55;
-extern s8 D_800BF80D;
 extern u8 D_800BF81E_6fe1;
 extern s32 D_800A3AC4[];
 extern s32 D_800BFE34;
@@ -508,7 +542,6 @@ s32 func_800235A0(u8 *t, u8 *other)
     return 1;
 }
 
-extern s8 D_1F800182[];
 void f_ResolveActiveColliderOffsetActorContact(void *arg0, void *arg1) {
     if ((M2C_FIELD(arg0, u8 *, 0x2A) == M2C_FIELD(arg1, u8 *, 0x2A)) && (f_TestActorOffsetCylinderOverlap() != 0)) {
         f_ApplyActiveColliderImpactResponse(arg0, arg1, 0, 0);
@@ -628,7 +661,38 @@ void func_80024CF4(void)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80024D34);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeHudTombaAnimation);
+extern u8 D_800E7EEF;
+extern u8 D_80017334[];
+
+void f_InitializeHudTombaAnimation(u8 *a)
+{
+    switch (D_800E7EEF) {
+    case 0x12:
+        f_StartActorTimedFrameSequence(a, D_80017334, 0x28);
+        a[0xD] |= 0x80;
+        break;
+    case 0x13:
+        f_StartActorTimedFrameSequence(a, D_80017334, 0x27);
+        a[0xD] |= 0x80;
+        break;
+    case 0x14:
+        f_StartActorTimedFrameSequence(a, D_80017334, 0x25);
+        a[0xD] |= 0x80;
+        break;
+    case 0x15:
+        f_StartActorTimedFrameSequence(a, D_80017334, 0x179);
+        a[0xD] |= 0x80;
+        break;
+    case 0x16:
+        f_StartActorTimedFrameSequence(a, D_80017334, 0x26);
+        a[0xD] |= 0x80;
+        break;
+    default:
+        f_StartActorTimedFrameSequence(a, D_80017334, 0x24);
+        a[0xD] &= 0x7F;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80024F18);
 
@@ -650,7 +714,6 @@ typedef struct Linked { u8 pad0; u8 active; u8 pad2[0x1A]; void (*callback)(stru
 extern Linked *D_800F2738;
 extern Linked *D_800F2624;
 extern s8 *D_800ECF58[];
-extern u8 D_80017334[];
 extern u8 D_800ED058_93c7[];
 
 void f_AddEvilPigRobePower(u8 n)
@@ -1893,7 +1956,45 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawTemplateEffectSlot);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003D584);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawCurrentAreaTilemapLayer);
+void f_DrawCurrentAreaTilemapLayer(void)
+{
+    if (D_800BF870.unk0 == 0x15) {
+        func_8010BE30(D_800ED018_eeff);
+        return;
+    }
+    if (D_800BF870.pad1[2] != 0) {
+        return;
+    }
+    switch (D_800BF870.unk0) {
+    case 0:
+        func_80115598(D_800ED018_eeff);
+        break;
+    case 4:
+        func_8013F0DC(D_800ED018_eeff);
+        break;
+    case 5:
+        func_80136F28(D_800ED018_eeff);
+        break;
+    case 6:
+        func_80141A94(D_800ED018_eeff);
+        break;
+    case 7:
+        func_8012F938(D_800ED018_eeff);
+        break;
+    case 10:
+        func_801142EC(D_800ED018_eeff);
+        break;
+    case 11:
+        func_801141B0(D_800ED018_eeff);
+        break;
+    case 13:
+        func_80116B9C(D_800ED018_eeff);
+        break;
+    case 15:
+        func_80116778(D_800ED018_eeff);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003E030);
 
@@ -2044,7 +2145,47 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F4C4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F594);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawModelPrimitiveStreamForCurrentArea);
+extern u8 D_1F800234_8e95;
+extern u8 D_1F800136;
+
+void f_DrawModelPrimitiveStreamForCurrentArea(u32 *a, void *b, s32 c)
+{
+    if (D_1F800234_8e95 == 0 && !(c & 1)) {
+        switch (D_800BF870.unk0) {
+        case 0:
+            func_80146478(a, b);
+            return;
+        case 1:
+            func_80132DC0(a, b);
+            return;
+        case 2:
+            func_8012555C(a, b);
+            return;
+        case 4:
+            func_8013DAFC(a, b);
+            return;
+        case 5:
+            func_801362CC(a, b);
+            return;
+        case 6:
+            func_8013D568(a, b);
+            return;
+        case 7:
+            func_8012E1A0(a, b);
+            return;
+        case 8:
+            func_8012A9DC(a, b);
+            return;
+        case 20:
+            func_80116B14(a, b);
+            return;
+        case 21:
+            func_8010B1B8(a, b);
+            return;
+        }
+    }
+    func_800803DC(a, b);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F7A0);
 
@@ -7699,8 +7840,6 @@ void f_QueueClass4ActorForRender(s32 arg0) {
     }
 }
 
-extern s8 D_1F800154[];
-extern s8 D_1F80015C[];
 void f_QueueClass5ActorForRender(s32 arg0) {
     void *temp_a0;
 
@@ -8210,7 +8349,38 @@ void func_8007B3F4(void)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007B45C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007BE18);
+void func_8007BE18(u8 a)
+{
+    switch (*(u16 *)(*(u8 **)D_1F800138 + 0x50)) {
+    case 0:
+        func_8018FA88(a);
+        break;
+    case 1:
+        func_8018FBCC();
+        break;
+    case 2:
+        f_PlaySoundEffect(0x14, -9, 0);
+        (*(u8 **)D_1F800138)[0x6B] = 1;
+        D_800BF808[0] = 1;
+        D_1F800136 = 1;
+        *(u16 *)(*(u8 **)D_1F800138 + 0x50) = 0;
+        break;
+    case 3:
+        f_PlaySoundEffect(0x11, 0, 0);
+        (*(u8 **)D_1F800138)[0x6B] = 2;
+        *(u16 *)(*(u8 **)D_1F800138 + 0x50) = 0;
+        break;
+    case 4:
+        (*(u8 **)D_1F800138)[0x6B] = 7;
+        *(u16 *)(*(u8 **)D_1F800138 + 0x50) = 0;
+        break;
+    case 5:
+        f_PlaySoundEffect(0x11, 0, 0);
+        (*(u8 **)D_1F800138)[0x6B] = 9;
+        *(u16 *)(*(u8 **)D_1F800138 + 0x50) = 0;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007BF20);
 
