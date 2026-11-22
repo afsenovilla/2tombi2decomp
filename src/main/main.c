@@ -7835,7 +7835,104 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80066FA8);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800674F4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006762C);
+typedef struct { u8 unk0; u8 pad1[0x5E5]; u16 f5E6; } GsArea_762C;
+extern GsArea_762C D_800BF870_762c;
+typedef struct { u8 pad0[0x3A]; u16 x; u8 pad3C[2]; u16 y; u8 pad40[2]; u16 z; u8 pad44[0x20]; u8 u64; } Cam_762C;
+extern Cam_762C D_800E8008_a455;
+extern u8 D_800BFAD7;
+extern u16 D_1F80019E;
+extern u16 D_1F8001A4;
+
+void func_8006762C(u8 *a)
+{
+    s32 pad[4];
+
+    switch (a[6]) {
+    case 0:
+        if (D_800BFAD7 == 0) {
+            func_8006625C(a);
+        }
+    case 11:
+        f_ApplyTombaStatusCommand(a, 2);
+        f_ClearTombaInteractionState(a);
+        f_PlaySoundEffect(0x24, 0, 0);
+        D_800BF80D = 1;
+        a[6] = 6;
+        break;
+    case 1:
+    case 6:
+        D_1F8001A4 = D_1F80019E;
+        if (D_800BF870_762c.unk0 == 0) {
+            func_8010CAEC(a);
+        } else if (D_800BF870_762c.unk0 == 6) {
+            if (!(D_800BF870_762c.f5E6 & 0x40)) {
+                f_PlaySoundEffect(0x8B, 0, 0);
+            }
+            func_801147CC(a);
+        } else if (D_800BF870_762c.unk0 == 8) {
+            func_8011370C(a);
+        } else if (D_800BF870_762c.unk0 == 13) {
+            func_8010ACC0(a);
+        } else if (D_800BF870_762c.unk0 == 14) {
+            func_8010B4F4(a);
+        }
+        a[0x145] = 0;
+        a[0x146] = 0;
+        a[0x61] = 0;
+        f_ResetTombaControlState(a);
+        f_SetTombaAnimationIfChanged(a, 0x71, 0);
+        f_UpdateTombaModelOrientationFromFacing(a);
+        *(s16 *)(a + 0x4A) = 0x2400;
+        *(s16 *)(a + 0x58) = 0;
+        *(s16 *)(a + 0x40) = 10;
+        a[7] = 0;
+        a[6]++;
+        break;
+    case 2:
+    case 7:
+        if (--*(s16 *)(a + 0x40) == -1) {
+            D_800E8008_a455.u64 = 8;
+            D_800E8008_a455.x = D_1F800160;
+            D_800E8008_a455.y = D_1F800162;
+            D_800E8008_a455.z = D_1F800164;
+            *(s16 *)(a + 0x40) = 20;
+            a[6]++;
+        }
+        func_800674F4(a);
+        f_AdvanceActorSkeletalAnimation(a);
+        break;
+    case 3:
+    case 8:
+        if (--*(s16 *)(a + 0x40) == 0) {
+            if (a[6] == 8) {
+                func_800662D8(a, 1);
+            } else {
+                func_800662D8(a, 0);
+            }
+            D_800BF808[5] = 2;
+            D_800BF808[7] = 2;
+            a[6]++;
+            func_8005245C();
+        }
+        func_800674F4(a);
+        f_AdvanceActorSkeletalAnimation(a);
+        break;
+    case 4:
+    case 9:
+        if (D_800BF808[7] == 0) {
+            D_800BF808[5] = 3;
+            a[6]++;
+        }
+        func_800674F4(a);
+        f_AdvanceActorSkeletalAnimation(a);
+        break;
+    case 5:
+    case 10:
+        func_800674F4(a);
+        f_AdvanceActorSkeletalAnimation(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800678E8);
 
@@ -9604,7 +9701,84 @@ void f_BeginInteriorExitTransition(void *arg0) {
     D_800BF818 = 3;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateInteriorEntranceDoorTransition);
+typedef struct { u8 pad0[7]; u8 u7; u8 pad8[7]; u8 uF; u8 u10; } Gs808_7318;
+extern Gs808_7318 D_800BF808_f0b6;
+
+s32 f_UpdateInteriorEntranceDoorTransition(u8 *a)
+{
+    u8 *t = D_800E7E80_f78d;
+
+    switch (a[6]) {
+    case 0:
+        if (a[0x29] != 0 && t[0x29] != 0 && t[0x17B] == 0) {
+            a[6]++;
+            f_BeginInteriorEntryTransition(a);
+            if (D_1F800137_104c == 0) {
+                D_1F800137_104c = 2;
+            }
+            break;
+        }
+        if (D_800BF808_f0b6.u10 == 5 && D_800BF808_f0b6.uF == a[3]) {
+            a[6]++;
+            f_BeginInteriorEntryTransition(a);
+            return 0;
+        }
+        return 0;
+    case 1:
+        if (f_OpenInteriorEntranceDoor(a) != 0 && D_800BF816 != 0) {
+            a[6]++;
+            f_ApplyInteriorEntranceDoorMirroredYaw(a);
+            return 0;
+        }
+        break;
+    case 2:
+        if (D_800BF808_f0b6.u10 == 2 && D_800BF808_f0b6.u7 == 0) {
+            a[0] = 1;
+            a[6]++;
+            a[0x5F] = 1 - a[0x5F];
+            *(u16 *)(a + 0x84) += 0x320;
+            *(u16 *)(a + 0x86) += 0x320;
+            break;
+        }
+        return 0;
+    case 3:
+        if (a[0x29] != 0 && t[0x29] != 0 && t[0x17B] == 0) {
+            if (D_800BF80F_fcc6 != 0) {
+                return 0;
+            }
+            a[6]++;
+            f_BeginInteriorExitTransition(a);
+            if (D_1F800137_104c == 0) {
+                D_1F800137_104c = 2;
+            }
+            break;
+        }
+        if (D_800BF808_f0b6.u10 == 6 && D_800BF808_f0b6.u7 == 0) {
+            a[6]++;
+            f_BeginInteriorExitTransition(a);
+            return 0;
+        }
+        return 0;
+    case 4:
+        if (D_800BF808_f0b6.u10 == 4 && D_800BF808_f0b6.u7 == 0) {
+            a[6]++;
+            D_800BF808_f0b6.u10 = 0;
+            break;
+        }
+        return 0;
+    case 5:
+        if (f_CloseInteriorEntranceDoor(a) != 0) {
+            a[0] = 1;
+            a[6] = 0;
+            a[0x5F] = 1 - a[0x5F];
+            *(u16 *)(a + 0x84) -= 0x320;
+            *(u16 *)(a + 0x86) -= 0x320;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateEntranceContactIndicator);
 
