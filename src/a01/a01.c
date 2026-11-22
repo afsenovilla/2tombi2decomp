@@ -1977,7 +1977,34 @@ void func_8011ADA0(u8 *a) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011AE9C);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011AFF0);
+void func_8011AFF0(u8 *a) {
+    u8 *e;
+    s32 v;
+
+    switch (a[7]) {
+    case 0:
+        e = D_800E7E80;
+        if ((u8)(a[0xBE] = func_80077768((s16)func_80085690(-(s16)(FU16(e, 0x36) - FU16(a, 0x36)), (s16)(FU16(e, 0x2E) - FU16(a, 0x2E))), F16(a, 0x60), 0)) != a[0x46]) {
+            a[7]++;
+            F16(a, 0x96) = (FU16(a, 0x56) + 0x800) & 0xFFF;
+            if (a[0x46] == 0) {
+                F16(a, 0x92) = 0x80;
+            } else {
+                F16(a, 0x92) = -0x80;
+            }
+        }
+        break;
+    case 1:
+        v = (FU16(a, 0x56) + FU16(a, 0x92)) & 0xFFF;
+        F16(a, 0x56) = v;
+        if (v == F16(a, 0x96)) {
+            a[7] = 0;
+            a[0x46] = a[0xBE];
+        }
+        break;
+    }
+    func_8011AE9C(a);
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011B100);
 
@@ -4294,7 +4321,35 @@ void func_8012EC08(u8 *p) {
     func_80027768(D_80137D94, M2C_FIELD(p, s16 *, 0x4E), M2C_FIELD(p, s16 *, 0x32), 0);
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012EC78);
+typedef struct { s32 a, b; } PairEC;
+typedef struct { PairEC p[14]; } TblEC;
+extern TblEC D_80109E00;
+
+void func_8012EC78(u8 *a) {
+    TblEC t = D_80109E00;
+
+    switch (a[4]) {
+    case 0:
+        F16(a, 0x4C) = 0x400;
+        F16(a, 0x48) = 0;
+        F16(a, 0x4A) = 0;
+        F16(a, 0x4E) = 0;
+        a[4] = 1;
+        a[7] = 0xFF;
+    case 1:
+        if (++a[7] >= 14) {
+            a[4] = 2;
+            break;
+        }
+        { PairEC *q = &t.p[a[7]]; M2C_FIELD(a, s32 *, 0x3C) = q->a; M2C_FIELD(a, s32 *, 0x50) = q->b; }
+        func_8002B278(a);
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 #define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
 void func_8012ED88(u8 *p) {
