@@ -2789,9 +2789,96 @@ s32 func_80117B84(u8 *a) {
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80117BF4);
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", f_UpdateGhostEvilPigRicochetProjectile);
-
 extern s16 D_1F8001A6;
+extern u8 D_1F80025A;
+/* func_801181CC, inlined */
+static inline void inl_801181CC(void *arg0) {
+    s16 temp_s1;
+    s32 temp_lo;
+    s32 temp_s2;
+
+    temp_s1 = M2C_FIELD(arg0, s16 *, 0x60);
+    temp_s2 = func_80083F50(temp_s1) * M2C_FIELD(arg0, s16 *, 0x4E);
+    temp_lo = -func_80083E80(temp_s1) * M2C_FIELD(arg0, s16 *, 0x4E);
+    M2C_FIELD(arg0, s32 *, 0x30) = (s32) (M2C_FIELD(arg0, s32 *, 0x30) + (M2C_FIELD(arg0, s16 *, 0x50) << 0xC));
+    M2C_FIELD(arg0, s16 *, 0x50) = (s16) ((u16) M2C_FIELD(arg0, s16 *, 0x50) + 0x2D);
+    M2C_FIELD(arg0, s32 *, 0x2C) = (s32) (M2C_FIELD(arg0, s32 *, 0x2C) + temp_s2);
+    M2C_FIELD(arg0, s32 *, 0x34) = (s32) (M2C_FIELD(arg0, s32 *, 0x34) + temp_lo);
+}
+static inline void inl_ricochet_move(u8 *a)
+{
+    u16 t;
+
+    inl_801181CC(a);
+    func_8004766C(a);
+    func_80049760(a);
+    t = D_1F8001A0;
+    *(s16 *)(a + 0x60) = t;
+    *(u16 *)(a + 0x56) = t;
+    if (a[0x29] == 0) {
+        a[0x29] = func_800495DC(a, 0, 0);
+        if (a[0x29] != 0 && (D_1F8001A6 & 0x8000)) {
+            a[0x5E] = 1;
+        }
+    }
+}
+
+void f_UpdateGhostEvilPigRicochetProjectile(u8 *a)
+{
+    u8 *p;
+
+    switch (a[4]) {
+    case 0:
+        func_80117BF4(a);
+        break;
+    case 1:
+        if (D_1F800259 != 0) {
+            a[0] = 2;
+            a[4] = 2;
+            a[0x5E] = 1;
+        } else if (D_800BF809 == 0) {
+            switch (a[5]) {
+            case 0:
+                inl_ricochet_move(a);
+                if (*(volatile u8 *)(a + 0x29) == 0) {
+                    if (*(s16 *)(a + 0x50) > 0x80) {
+                        if (a[0x5E] != 0 || D_1F80025A >= 4) {
+                            a[0x5E] = 1;
+                            a[5]++;
+                        } else {
+                            goto hit;
+                        }
+                    }
+                } else {
+                    goto hit;
+                }
+                break;
+            case 1:
+                inl_ricochet_move(a);
+                if (*(volatile u8 *)(a + 0x29) != 0) {
+                hit:
+                    a[0] = 2;
+                    a[4] = 2;
+                }
+                break;
+            }
+            *(s16 *)(a + 0x58) += 0x111;
+        }
+        func_8007778C(a);
+        break;
+    case 2:
+        if (a[0x5E] == 0 && D_1F80025A < 4) {
+            func_80117AC8(a);
+        }
+        func_8003116C(0xD02, a + 0x2C, -0x14);
+        a[4]++;
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
+
 u8 func_80118168(u8 *a)
 {
     if (a[0x29] == 0) {
