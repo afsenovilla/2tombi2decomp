@@ -4227,7 +4227,23 @@ void func_800423FC(void *arg0) {
     f_EndScriptedInteractionAudio();
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80042448);
+typedef struct { u8 pad[0x144]; u8 flags[1]; } Flags_2448;
+
+s32 func_80042448(u8 *a)
+{
+    switch (*(s16 *)(a + 0x72)) {
+    case 0:
+        ((Flags_2448 *)&D_800BF870)->flags[*(s16 *)(a + 0x74)] = a[0x76];
+        break;
+    case 1:
+        ((Flags_2448 *)&D_800BF870)->flags[*(s16 *)(a + 0x74)] |= a[0x76];
+        break;
+    case 2:
+        ((Flags_2448 *)&D_800BF870)->flags[*(s16 *)(a + 0x74)] &= a[0x76];
+        break;
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800424F0);
 
@@ -9097,7 +9113,33 @@ void func_80067FE4(void *arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006804C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80068214);
+typedef struct {
+    u8 pad0[4]; u8 s4; u8 s5; u8 pad6[0x22]; u8 f28; u8 pad29[3];
+    u16 f2C; u16 f2E; u16 f30; u16 f32; u16 f34; u16 f36; u8 pad38[0x18];
+    s32 f50; s32 f54; s32 f58; u8 pad5C[6]; s16 f62;
+} Actor_8214;
+
+void func_80068214(Actor_8214 *o)
+{
+    Actor_8214 *a;
+
+    if (D_1F800236_18be == 6) {
+        func_800525D0(o, 1);
+        return;
+    }
+    a = (Actor_8214 *)f_SpawnTransientEffect(0x1B, -0x60);
+    if (a != NULL) {
+        a->f28 |= 0x80;
+        a->f2C = o->f2E;
+        a->f2E = o->f32 + o->f62 * 2;
+        a->f30 = o->f36;
+        a->f54 = 0x200;
+        a->f58 = 0x200;
+        a->s4 = 1;
+        a->f50 = 0;
+        a->s5 = 4;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800682C4);
 
@@ -9150,7 +9192,28 @@ void func_8006914C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006918C);
+void func_8006918C(u8 *a, s32 check)
+{
+    u8 *t = D_800E7E80_f78d;
+    s32 hit;
+
+    if (check != 0) {
+        hit = 0;
+        if (!(a[0x46] & 4) && t[0x5F] != 0) {
+            hit = (t[0x5F] & 1) == t[0x147];
+        }
+        if (hit) {
+            goto spawn;
+        }
+    }
+    if (func_80069858(a, 0, 0) != 0) {
+    spawn:
+        a[0] = 2;
+        f_PlaySoundEffect(0xE, 0, 0);
+        f_SpawnImpactTransientEffect(2, a + 0x2C, 0, a + 0x68);
+        func_8006914C(a);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006923C);
 
