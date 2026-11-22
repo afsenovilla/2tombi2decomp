@@ -4128,7 +4128,21 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80042448);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800424F0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800425FC);
+s32 func_800425FC(u8 *a)
+{
+    switch (a[0x78]) {
+    case 0:
+        f_StartCurrentScriptActorConversation();
+        a[0x78]++;
+        break;
+    case 1:
+        if (D_800BF843 == 0) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 s32 func_8004266C(void *arg0) {
     f_SetCurrentScriptActorMode(M2C_FIELD(arg0, u8 *, 0x72));
@@ -5325,7 +5339,22 @@ void func_8004D6F4(s32 item)
     f_QueueItemMessage(item, 3);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D714);
+typedef struct { u8 pad[0x444]; u8 world[0x80]; u8 other[0x80]; } Bits_D7EC;
+typedef struct { u8 pad[0x10]; s32 y; u16 pad14; } Cam_DA30;
+extern Cam_DA30 D_1F8000D0_d44f;
+
+void func_8004D714(s32 n, u8 other)
+{
+    s16 bit;
+    s32 byte = n / 8;
+
+    bit = n - byte * 8;
+    if (!other) {
+        ((Bits_D7EC *)&D_800BF870)->world[(s16)byte] |= 1 << bit;
+    } else {
+        ((Bits_D7EC *)&D_800BF870)->other[(s16)byte] |= 1 << bit;
+    }
+}
 
 extern s16 D_800BF808_e253[];
 typedef struct SpuAttrLite { u32 mask; s16 mvolL; s16 mvolR; s16 h8; s16 hA; s16 hC; s16 hE; s16 h10; s16 h12; } SpuAttrLite;
@@ -5340,7 +5369,17 @@ void func_8004D79C(s32 n)
     D_800BF870.appleBits[(s16)byte] |= 1 << (s16)bit;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TestWorldOrOtherPickupCollectedBit);
+s32 f_TestWorldOrOtherPickupCollectedBit(s32 n, u8 other)
+{
+    s16 bit;
+    s32 byte = n / 8;
+
+    bit = n - byte * 8;
+    if (!other) {
+        return ((Bits_D7EC *)&D_800BF870)->world[(s16)byte] & (1 << bit);
+    }
+    return ((Bits_D7EC *)&D_800BF870)->other[(s16)byte] & (1 << bit);
+}
 
 s32 f_TestAppleCollectedBit(s32 n)
 {
@@ -9528,7 +9567,20 @@ void f_SetCameraPositionVertical(s32 arg0, void *arg1) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ApproachCameraPositionHorizontal);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ApproachCameraPositionVertical);
+s32 f_ApproachCameraPositionVertical(void *unused, u8 *t)
+{
+    Cam_DA30 *c = &D_1F8000D0_d44f;
+    s16 d = *(u16 *)(t + 6) - *(u16 *)((u8 *)c + 0x12);
+    s32 r = 1;
+
+    if ((u16)(d + 10) >= 21) {
+        c->y += (f_ClampSignedCameraDelta(d, 0x1600) << 16) >> 3;
+        r = 0;
+    } else {
+        c->y = *(s32 *)(t + 4);
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006DAD8);
 
@@ -11484,7 +11536,28 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007703C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_TestActorVisibilityAndQueueForRender);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_StepWrappedAngleToward);
+s32 f_StepWrappedAngleToward(s32 a, s32 b, s32 step)
+{
+    s32 d = (a - b) & 0xFFF;
+    s16 e = d;
+    s32 r;
+
+    if (e == 0) {
+        return b & 0xFFF;
+    }
+    if ((u32)e < 0x800) {
+        if (e >= (s16)step) {
+            r = b + step;
+            goto done;
+        }
+    } else if (0x1000 - (s16)step >= e) {
+        r = b - step;
+        goto done;
+    }
+    r = b + d;
+done:
+    return r & 0xFFF;
+}
 
 s32 f_TestWrappedAngleSide(s32 a, s32 b, s32 flip)
 {
@@ -11811,7 +11884,20 @@ void *func_800787F8(s32 i)
     return D_800A2B64[*idx];
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80078824);
+typedef struct { u8 pad[0x20]; s32 x, y, z; } GS_8824;
+typedef struct { u16 x; u8 y; u8 clut; s16 u; s16 v; } Glyph_C8C8;
+extern u8 D_80016EE0_e006[8];
+typedef struct { u8 b[8]; } B8_C8C8;
+
+void func_80078824(void)
+{
+    SpawnPoint_8824 *s = &D_800A54A8_86de[D_800BF870.unk0][D_800BF870.pad1[0]];
+
+    ((GS_8824 *)&D_800BF870)->x = s->x << 16;
+    ((GS_8824 *)&D_800BF870)->y = s->y << 16;
+    ((GS_8824 *)&D_800BF870)->z = s->z << 16;
+    D_800BF870.pad5C8[0] = s->flags & 0x7F;
+}
 
 extern s32 D_800BFE50;
 s32 f_TestWarpDestinationUnlocked(s32 arg0) {
@@ -12528,7 +12614,19 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C688);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C780);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C8C8);
+Glyph_C8C8 *func_8007C8C8(Glyph_C8C8 *g, s32 c, u16 *x, u8 y)
+{
+    B8_C8C8 tmp = *(B8_C8C8 *)D_80016EE0_e006;
+
+    c &= 0xFF;
+    g->clut = 0x80;
+    g->u = (c & 0xF) * 16;
+    g->v = (c & 0xF0) + 0x78;
+    g->x = *x;
+    g->y = y;
+    *x += 0x10;
+    return g + 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C940);
 
