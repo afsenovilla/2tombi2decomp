@@ -793,7 +793,35 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801149B8);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801150C4);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80115534);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+
+void func_80115534(u8 *a, u8 *b)
+{
+    u8 *p = *(u8 **)(a + 0x10);
+    s32 t, u, s;
+    s16 r;
+    s16 x;
+    s16 z;
+
+    t = (func_80083F50(H(p, 0xC)) * H(a, 0x156)) >> 12;
+    u = func_80083E80(H(p, 0xC)) * H(a, 0x152);
+    H(a, 0x32) = t + (H(p, 0x30) + (-u >> 12));
+    r = (func_80083F50(H(p, 0xC) + 0x400) * H(a, 0x156)) >> 12;
+    s = (func_80083F50(H(p, 0xA)) * r) >> 12;
+    u = func_80083E80(H(p, 0xA)) * r;
+    x = H(p, 0x2C) - (u >> 12);
+    z = H(p, 0x34) + s;
+    r = (func_80083F50(H(p, 0xC)) * H(a, 0x152)) >> 12;
+    u = func_80083E80(H(b, 0x56)) * r;
+    H(a, 0x2E) = x;
+    H(a, 0x36) = z + (u >> 12);
+    r = (func_80083E80(H(a, 0x58)) * H(a, 0x64)) >> 12;
+    z = (func_80083E80(H(a, 0x56)) * r) >> 12;
+    u = func_80083F50(H(a, 0x56)) * r;
+    H(a, 0x36) += z;
+    H(a, 0x2E) -= u >> 12;
+    H(a, 0x32) += (func_80083F50(H(a, 0x58)) * H(a, 0x64)) >> 12;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80115708);
 
