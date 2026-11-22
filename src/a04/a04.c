@@ -2812,7 +2812,29 @@ void func_8012F054(void *arg0) {
     M2C_FIELD(arg0, s32 *, 0x30) = (s32) (M2C_FIELD(arg0, s32 *, 0x30) - (func_80083E80(M2C_FIELD(arg0, s16 *, 0x4E)) << 6));
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012F090);
+void func_8012F090(u8 *a)
+{
+    u16 t;
+
+    if (func_80077768(*(s16 *)(a + 0x6C), D_1F8001A0, 1) != 0) {
+        a[0xBE] = 0;
+    } else {
+        a[0xBE] = 1;
+    }
+    *(s16 *)(a + 0x6C) &= 0xFFF;
+    t = *(u16 *)(a + 0x56) & 0xFFF;
+    *(u16 *)(a + 0x56) = t;
+    if (*(s16 *)(a + 0x50) > 0) {
+        *(s16 *)(a + 0x40) = *(u16 *)(a + 0x6C) - t;
+    } else {
+        *(s16 *)(a + 0x40) = t - *(u16 *)(a + 0x6C);
+    }
+    if (*(s16 *)(a + 0x40) < 0) {
+        *(s16 *)(a + 0x40) += 0x1000;
+    }
+    *(s16 *)(a + 0x40) = *(s16 *)(a + 0x40) >> 8;
+    *(s16 *)(a + 0x58) &= 0xFFF;
+}
 
 void func_8012F148(u8 *a)
 {
