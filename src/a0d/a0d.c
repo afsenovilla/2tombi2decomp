@@ -50,7 +50,26 @@ s32 func_8010A888(s32 arg0, s32 arg1) {
     return func_80109678(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC0));
 }
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_8010A8AC);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+
+s32 func_8010A8AC(u8 *a, u8 *b)
+{
+    s32 i, r;
+    u8 *e;
+    if ((u16)(U(a, 0x80) + (U(a, 0x36) - U(*(u8 **)(b + 0xC0), 0x34) + 0x190)) > H(a, 0x82) + 0x320) {
+        return -1;
+    }
+    r = -1;
+    for (i = 0; i < b[8]; i++) {
+        e = ((u8 **)(b + 0xC0))[i];
+        if (e[0x3F] != 1 && (u16)(U(a, 0x80) + (U(a, 0x2E) - U(e, 0x2C) + 0x60)) <= H(a, 0x82) + 0xC0) {
+            r = i;
+            break;
+        }
+    }
+    return r;
+}
 
 extern s32 D_1F80009C;
 
@@ -304,7 +323,29 @@ void func_801129FC(void)
     func_80111418();
 }
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80112A58);
+void func_80112A58(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        *(s32 *)(a + 0x48) = 0;
+        *(s32 *)(a + 0x4C) = 0;
+        H(a, 0x4A) = func_8009A450();
+        a[7] = 0xFF;
+        a[4] = 1;
+        H(a, 0x32) = -0x1E;
+    case 1:
+        if (++a[7] >= 8) {
+            a[4] = 2;
+        } else {
+            a[1] = 1;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_80112B1C(u8 *a)
 {

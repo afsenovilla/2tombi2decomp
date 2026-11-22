@@ -571,6 +571,35 @@ INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801179BC);
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", f_SpawnLastEvilPigBattleProjectile);
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801180E8);
+#define gte_ldv0m(p) __asm__ volatile("lwc2	$0, %0;" "lwc2	$1, %1" : : "m"(((s32 *)(p))[0]), "m"(((s32 *)(p))[1]))
+extern s32 D_1F800084[];
+extern s32 D_1F800088;
+extern s32 D_1F800090;
+extern s16 D_1F8001A6;
+extern u16 D_1F8001A0;
+
+u8 func_801180E8(u8 *a)
+{
+    s16 ang;
+    if (a[0x29] == 0) {
+        if (a[0xBE] == 0) {
+            ang = *(u16 *)(a + 0x60);
+        } else {
+            ang = *(u16 *)(a + 0x60) + 0x800;
+        }
+        a[0x29] = func_800455C0(a, 0, 0, ang);
+        if (a[0x29] != 0) {
+            if (D_1F8001A6 & 0x8000) {
+                *(s16 *)(a + 0x40) = 0;
+            }
+            a[0x29] &= 1;
+            if (a[0x29] != 0) {
+                func_80049674(a);
+                *(u16 *)(a + 0x60) = D_1F8001A0;
+            }
+        }
+    }
+    return a[0x29];
+}
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801181AC);
