@@ -97,7 +97,21 @@ void func_8010A3DC(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010A448);
+#define UH(p, o) (*(u16 *)((u8 *)(p) + (o)))
+
+s32 func_8010A448(u8 *a)
+{
+    u8 *o = D_1F800260;
+    u16 y;
+    if (o == NULL) {
+        return 0;
+    }
+    if (H(o, 0x2C) + H(a, 0x80) < H(a, 0x2E)) {
+        return 0;
+    }
+    UH(a, 0x2E) = UH(o, 0x2C) + UH(a, 0x80);
+    return 1;
+}
 
 void func_8010A49C(void) {
     if (*(u8 *)0x1F800137 == 0) {

@@ -591,7 +591,60 @@ void func_8018CCCC(u8 *a)
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018CE40);
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018D26C);
+extern u8 D_8018A114[];
+static inline void crd_measure(u8 *s, s32 *w, s32 *n)
+{
+    s32 c = 0;
+    *n = 1;
+    *w = 0;
+    while (*s != 0) {
+        if (*s == '\n') {
+            if (*w < c) {
+                *w = c;
+            }
+            c = 0;
+            (*n)++;
+        } else {
+            c++;
+        }
+        s++;
+    }
+    if (*w < c) {
+        *w = c;
+    }
+}
+
+void func_8018D26C(CrdMenu *unused)
+{
+    CrdRect r;
+    s32 w, n, y;
+    u8 *s;
+    if (*D_800BF498.x10 != 0) {
+        func_80079374(0x64, 8, 0, D_800BF498.x10, 4);
+        func_8005019C(D_8018A114, 0x40, 0, 4);
+    }
+    s = D_800BF498.xC;
+    if (*s != 0) {
+        crd_measure(s, &w, &n);
+        r.x = 0xA0 - w * 4;
+        r.w = w * 8;
+        r.h = n * 16;
+        switch (D_800BF498.x18) {
+        case 0x39:
+        case 0x3A:
+        case 0x40:
+            y = 0x8C;
+            y -= n * 8;
+            r.y = y;
+            break;
+        default:
+            r.y = 0x52;
+            break;
+        }
+        func_80079374(r.x, r.y, 0, D_800BF498.xC, 4);
+        func_8005019C(&r, 0x40, 0, 4);
+    }
+}
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018D418);
 
