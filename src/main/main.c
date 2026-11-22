@@ -421,9 +421,22 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80021150);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveActiveColliderConfiguredActorContact);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveActiveColliderActorContact);
-
 extern s8 D_1F800182[];
+s32 f_ResolveActiveColliderActorContact(u8 *a, u8 *b, s32 k)
+{
+    s32 r;
+
+    if (!TestCyl_0B08(a, b)) {
+        return 0;
+    }
+    r = f_ApplyActiveColliderImpactResponse(a, b, 0, k);
+    b[0x2B] = 1;
+    if (!(r & 0x80)) {
+        *(u8 *)D_1F800182 = 0;
+    }
+    return 1;
+}
+
 void func_80021800(u8 *a, u8 *b)
 {
     if (TestCyl_0B08(a, b)) {
