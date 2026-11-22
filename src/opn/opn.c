@@ -72,7 +72,31 @@ INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018C820);
 
 INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018CA1C);
 
-INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018CCFC);
+typedef struct {
+    s16 pad0;
+    s16 x;
+    s16 pad4;
+    s16 y;
+    s16 pad8;
+    s16 z;
+} HiPos;
+typedef struct {
+    u8 pad0[8];
+    u8 count;
+    u8 pad9[0xB7];
+    u8 *parts[4];
+} PartOwner;
+
+void func_8018CCFC(PartOwner *a, s16 b)
+{
+    HiPos p;
+
+    p.x = *(s16 *)(a->parts[a->count - 1] + 0x2C);
+    p.y = *(s16 *)(a->parts[a->count - 1] + 0x30);
+    p.z = *(s16 *)(a->parts[a->count - 1] + 0x34);
+    func_80027144(*(void **)(a->parts[a->count - 1] + 0x40), &p, 0x800, b);
+    func_80074590(0xC, 0, 0);
+}
 
 
 void func_8018CDC4(u8 *a)
