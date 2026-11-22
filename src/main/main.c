@@ -9087,7 +9087,64 @@ void f_OpenSequencedMusicSlot(s16 slot, void *data, s16 mode, s16 id)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800754F4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007566C);
+extern s16 D_800A4F7E;
+void func_800753AC(void *dst, s32 sector, s32 size, void *slot);
+
+u8 *func_8007566C(s16 idx, u8 *buf)
+{
+    u16 *tbl = (u16 *)0x80182000;
+    SeqSlot_368 *e;
+    s32 i;
+    s32 *hdr;
+    u16 *t;
+    s32 size;
+
+    if (D_800A4F7E >= 0) {
+        SsVabClose(D_800A4F7E);
+        D_800A4F7E = -1;
+    }
+    for (i = 10; i < 14; i++) {
+        if (D_800BE368[i].on != 0) {
+            SsSeqClose(D_800BE368[i].seq);
+            D_800BE368[i].on = 0;
+        }
+    }
+    t = (u16 *)(idx * 2 + (s32)tbl);
+    size = (t[1] - t[0]) << 11;
+    hdr = (s32 *)(buf + (size - 0x800));
+    ((void (*)(void *, s32, s32))func_800753AC)(buf, t[0], size);
+    func_800753D4(&D_800A4F7E, buf + hdr[0], buf + hdr[1]);
+    switch (D_800BF870.unk0) {
+    case 10:
+        func_80118E28();
+        break;
+    case 11:
+        func_80117988();
+        break;
+    case 12:
+        func_8011727C();
+        break;
+    case 13:
+        func_80116FC8();
+        break;
+    case 14:
+        func_801174AC();
+        break;
+    case 15:
+        func_8011A428();
+        break;
+    case 5:
+        func_8013AC40();
+        break;
+    case 20:
+        func_801174B0();
+        break;
+    case 21:
+        func_80110774();
+        break;
+    }
+    return buf + hdr[1];
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80075824);
 
@@ -9188,21 +9245,95 @@ s32 f_TestWrappedAngleSide(s32 a, s32 b, s32 flip)
     return (d < 0x800) ^ 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TestAndQueueActorForRender);
+typedef struct { u8 pad0[0x2E]; u16 x; u8 pad30[2]; u16 y; u8 pad34[2]; u16 z; } ActorPos_778C;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TestAndQueueActorForRenderMode2);
+void f_TestAndQueueActorForRender(ActorPos_778C *a)
+{
+    s16 dx, dy, dz;
+    D_1F800080 = 0;
+    D_1F800084_8c7c = 0;
+    dx = a->x - D_1F8000D0_fb20[1];
+    dy = a->y - D_1F8000D0_fb20[3];
+    dz = a->z - D_1F8000D0_fb20[5];
+    f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80077870);
+void f_TestAndQueueActorForRenderMode2(ActorPos_778C *a)
+{
+    s16 dx, dy, dz;
+    D_1F800080 = 0;
+    D_1F800084_8c7c = 2;
+    dx = a->x - D_1F8000D0_fb20[1];
+    dy = a->y - D_1F8000D0_fb20[3];
+    dz = a->z - D_1F8000D0_fb20[5];
+    f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TestAndQueueActorForRenderWithYOffset);
+void func_80077870(ActorPos_778C *a)
+{
+    s16 dx, dy, dz;
+    D_1F800080 = 0;
+    D_1F800084_8c7c = 1;
+    dx = a->x - D_1F8000D0_fb20[1];
+    dy = a->y - D_1F8000D0_fb20[3];
+    dz = a->z - D_1F8000D0_fb20[5];
+    f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80077958);
+void f_TestAndQueueActorForRenderWithYOffset(u8 *a, s32 y)
+{
+    s16 dx, dy, dz;
+    D_1F800080 = 0;
+    D_1F800084_8c7c = 0;
+    dx = *(u16 *)(a + 0x2E) - D_1F8000D0_fb20[1];
+    dy = *(u16 *)(a + 0x32) + y - D_1F8000D0_fb20[3];
+    dz = *(u16 *)(a + 0x36) - D_1F8000D0_fb20[5];
+    f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800779D0);
+void func_80077958(u8 *a, s32 x, s32 y)
+{
+    s16 dx, dy, dz;
+    D_1F800080 = 0;
+    dx = *(u16 *)(a + 0x2E) + x - D_1F8000D0_fb20[1];
+    D_1F800084_8c7c = 0;
+    dy = *(u16 *)(a + 0x32) + y - D_1F8000D0_fb20[3];
+    dz = *(u16 *)(a + 0x36) - D_1F8000D0_fb20[5];
+    f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TestActorVisibilityWithXYZOffset);
+void func_800779D0(u8 *a, s32 x, s32 y, s32 z)
+{
+    s16 dx, dy, dz;
+    D_1F800080 = 0;
+    dx = *(u16 *)(a + 0x2E) + x - D_1F8000D0_fb20[1];
+    D_1F800084_8c7c = 0;
+    dy = *(u16 *)(a + 0x32) + y - D_1F8000D0_fb20[3];
+    dz = *(u16 *)(a + 0x36) + z - D_1F8000D0_fb20[5];
+    f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+}
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80077ACC);
+void f_TestActorVisibilityWithXYZOffset(u8 *a, s32 x, s32 y, s32 z)
+{
+    s16 dx, dy, dz;
+    D_1F800080 = 1;
+    dx = *(u16 *)(a + 0x2E) + x - D_1F8000D0_fb20[1];
+    D_1F800084_8c7c = 0;
+    dy = *(u16 *)(a + 0x32) + y - D_1F8000D0_fb20[3];
+    dz = *(u16 *)(a + 0x36) + z - D_1F8000D0_fb20[5];
+    f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+}
+
+void func_80077ACC(void *a, s32 x, s32 y, s32 z)
+{
+    s16 dx, dy, dz;
+    D_1F800080 = 1;
+    dx = x - D_1F8000D0_fb20[1];
+    D_1F800084_8c7c = 4;
+    dy = y - D_1F8000D0_fb20[3];
+    dz = z - D_1F8000D0_fb20[5];
+    f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
+}
 
 
 void f_StartActorTimedFrameSequence(u8 *actor, u16 **table, s32 index)
