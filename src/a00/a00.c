@@ -1602,7 +1602,40 @@ void func_80119254(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80119350);
+extern s16 D_1F8000C0[];
+
+void func_80119350(u8 *a) {
+    u8 *p = FP(a, 0x10);
+    s32 t;
+
+    switch (a[5]) {
+    case 0:
+        a[5]++;
+        a[0xB] = 0x10;
+        a[0x47] = 1;
+        F16(a, 0x5A) = 0x200;
+        a[8] = 0xFC;
+        F16(a, 0x88) = -0x38;
+        F16(a, 0x8A) = 0x20;
+        F16(a, 0x8C) = 0;
+    case 1:
+        t = F16(FP(a, 0x10), 0x16);
+        if (t == 2) {
+            a[0] = t;
+        } else {
+            a[0] = 1;
+        }
+        if (p[0x3F] != 0) {
+            a[1] = 1;
+            func_80077EFC(a);
+            func_80051D90(p, a + 0x88, D_1F8000C0);
+            F16(a, 0x2E) = D_1F8000C0[0];
+            F16(a, 0x32) = D_1F8000C0[1];
+            F16(a, 0x36) = D_1F8000C0[2];
+        }
+        break;
+    }
+}
 
 void func_80119454(u8 *a) {
     u8 *q = M2C_FIELD(a, u8 **, 0x10);
@@ -2108,7 +2141,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleNetBridgeCutsceneTrigger);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122974);
 
-extern s16 D_1F8000C0[];
 extern s16 D_1F8000C8[];
 void func_80122BF4(u8 *a) {
     u8 *p;
