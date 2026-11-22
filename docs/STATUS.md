@@ -3,6 +3,56 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-22: five parallel hand-matching agents
+
+All code in C: **2296 / 7011 functions (32.7 %, 8.8 % of the bytes)**, from 1543 (4.8 %). Five agents worked at
+once on disjoint programs (main; a00-a04; a05-a08; a09-a0f; a0g-a0l + boot/game/demo/opn/sop/crd): 76 + 179 + 197
++ 103 + 112 functions, then `tools/dupsweep.py` put 84 more into the overlay copies. 29 / 29 byte-identical.
+Parallel work rules that worked: one program set per agent, `build.py <progs> --no-split` only, no tools/ edits, each
+agent commits its own paths with `git commit -- <paths>` (a shared index otherwise mixes agents' staged files), the
+coordinator verifies the committed HEAD in a separate worktree (symlink game/ and include/pt, include/psyq) and pushes.
+
+Recipes the agents found (add to the ones below):
+- **Cross-jumping**: gcc 2.8 -O2 merges identical tails. Write each case / branch in full (a store repeated in every
+  case, a call in both arms of an if/else with one argument different) and let gcc merge them; duplicating case
+  bodies is also how to get a jump table where gcc made range compares.
+- **Switch layout**: the source order of the cases is the block order; an empty `case 2: break;` (or the missing
+  cases of a 0..N table) gives the `beq K; slti K+1; ...` decision tree; GNU case ranges `case 0xC0 ... 0xD0:`
+  reproduce range tests; `s32 s = a[k]; switch (s)` in two statements lets gcc reuse the register as a constant.
+- **gcc 2.8 aliasing (MEM_IN_STRUCT_P)**: a scalar global is assumed not to alias an array or struct-field access at a
+  varying address. Retail reloads a global after a store -> access it as an array element / struct field; retail
+  hoists a global load above a pointer store -> make that store a struct field.
+- **Base + offset of a global**: `addiu base; lw 0x48(base)` needs a struct-typed extern or a local pointer
+  (`u8 *g = D_800E7E80;`); a u8 array with M2C_FIELD folds to `%lo(sym+off)`.
+- **Narrow parameter types**: a parameter only stored as a byte -> `u8` (no andi appears) fixes s-register order of
+  spawners; a parameter copied at entry whose uses are all masks is u8.
+- **Callee prototypes**: a `void` prototype for a callee that returns a value changes scheduling around the call
+  (give it the real return type); when main.c's prototype has another argument count, call through a cast function
+  pointer `((void (*)(s32))f)(x)`; a K&R prototype reproduces callees that receive a register untouched.
+- **Loops**: `e++` and `p[i]` give different strength-reduced pointers, try both; `do { } while` with separate index
+  and pointer; `return *p++;` for a pop.
+- **Values**: `u8` counters sharing a zero; `d = K; d -= G; d -= n;` for `K - global - local` with the global loaded
+  first; `u32 r = x & 0x200; return r != 0;` for andi+sltu; split range checks into nested early returns (gcc folds
+  `x < A || x >= B`); a constant set before an if/else stays in a saved register; `x0 = x2 = v` stores x2 first.
+- **GTE**: the "handwritten" area functions starting `addu t0,zero,zero; ... ctc2 t0..t2,$21..$23` are psyq
+  `gte_ldfcdir(0,0,0)` (define it as an `__asm__ volatile` with three "r" operands; load the scratchpad target into
+  a local pointer before the asm). `#include "psyq/inline_c.h"` macros match; an "m"-constraint `gte_ldv0m` gives
+  `lwc2 $0, off(reg)`. install_c.py drops `#include` lines: add them by hand.
+- **Struct copies from an extern** (aligned: lw/sw, byte struct: lwl/lwr) reproduce local array initialisers without
+  new rodata; an unused `s32 pad[4]` gives a 0x10 frame on a leaf.
+- **ccheck masks relocations**: two globals of the same type in swapped positions still show OK; the linked build
+  (install_c) catches it.
+- Near misses left by the agents (1-25 words) are listed in their reports; the most valuable: a0g func_8010C2A4
+  (9 copies, 25 words), a02 func_80127034 (8 copies, 3), a09 func_8010D7D4 (8 copies, 43), main func_8007566C (1).
+
+Tool fixes to do (from the agents): hillclimb's hoist transform declares a local mid-block (invalid C89 for gcc 2.8:
+declare at the top); hillclimb should print scores as it goes and add transforms (empty case, void->s32 return,
+early-return inversion, pointer/index loops, extern <-> constant address, duplicated tails); jtbl.py should treat
+adjacent `$L` labels (same address) as equal when computing a table's shape; install_c.py should keep `#include`
+lines, accept 2-D array externs in its alias check and remove a new alias line when the link fails; dupgroups.py
+should group immediate-only variants as dupsweep does; a ccheck side-by-side mode (objdump of ours next to retail);
+a statement-order permuter for marked lines (agents' scratch: perm.py, perm_stmts.py, variants.py).
+
 ## 2026-11-14 (3): jump tables in C, NON_MATCHING equivalent C
 
 - **Switches with a jump table can go to C** (`tools/jtbl.py`, called by `tools/build.py` through `cc.compile_c(...,

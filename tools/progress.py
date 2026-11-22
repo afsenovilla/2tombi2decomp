@@ -97,13 +97,13 @@ def counts():
 def phases():
     """Progress per roadmap phase: functions and bytes done (C, or asm by design for the library)."""
     c = counts()
-    print("%-40s %15s %22s   %s" % ("", "functions", "bytes", "with equivalent C (NON_MATCHING): bytes"))
+    print("%-40s %15s %22s" % ("", "functions", "bytes"))
     tot = collections.Counter()
 
     def row(title, t):
-        print("%-40s %5d/%-5d %5.1f%% %8d/%-8d %5.1f%%   %5.1f%%" % (
+        print("%-40s %5d/%-5d %5.1f%% %8d/%-8d %5.1f%%" % (
             title, t["_done_n"], t["_n"], 100.0 * t["_done_n"] / t["_n"], t["_done_b"], t["_b"],
-            100.0 * t["_done_b"] / t["_b"], 100.0 * t["_eq_b"] / t["_b"]))
+            100.0 * t["_done_b"] / t["_b"]))
     for title, progs, cat in PHASES:
         t = collections.Counter()
         for p in (progs or ["main", "boot"]):
