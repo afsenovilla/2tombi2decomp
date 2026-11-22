@@ -960,7 +960,27 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011A03C);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateStaticExplosionQuestActor);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011A5F0);
+extern s32 D_800BF850;
+extern u8 D_800BF9C6;
+
+s32 func_8011A5F0(u8 *a)
+{
+    switch (a[0x78]) {
+    case 0:
+        if ((D_800BF850 & 0x1F00) == 0x1F00) {
+            *(s16 *)(a + 0x40) = 0x1E;
+            a[0x78]++;
+        }
+        break;
+    case 1:
+        if (--*(s16 *)(a + 0x40) == 0) {
+            D_800BF9C6 = 8;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011A678);
 
@@ -2306,7 +2326,24 @@ s32 func_8012B118(u8 *p)
     return 0;
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012B188);
+typedef struct { s32 x, y, z; } V3;
+
+void func_8012B188(u8 *a)
+{
+    V3 v = *(V3 *)(a + 0x2C);
+
+    ((s16 *)&v)[3] += 0xA0;
+    func_8003116C(0xD, &v, -0x64);
+    if (a[2] == 0x2F) {
+        if (*(s16 *)(a + 0x66) != 0) {
+            *(s16 *)(a + 0x66) = 0;
+            return;
+        }
+        func_80074590(0x32, -5, 0);
+    } else {
+        func_80074590(0x32, -8, 0);
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateIceBlockAndSculptureActor);
 
@@ -2682,7 +2719,6 @@ void func_80130BC8(u8 *p)
     }
 }
 
-extern u8 D_800BF9C6;
 void func_80130C00(void *arg0) {
     if ((u8) D_800BF9C6 >= 0x15U) {
         M2C_FIELD(arg0, s8 *, 4) = 2;
