@@ -2724,7 +2724,40 @@ void func_8012D404(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldFishhookScenePropActor);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012D908);
+void func_8012D908(u8 *a) {
+    s8 v;
+
+    switch (a[6]) {
+    case 0:
+        if ((F16(a, 0x32) += 4) >= -0x64E) {
+            a[0x1A] = 0x7F;
+            a[0x19] = 0x7F;
+            a[0x18] = 0x7F;
+            a[0xD] = 2;
+            a[6]++;
+        }
+        break;
+    case 1:
+        v = a[0x18] - 3;
+        a[0x1A] = v;
+        a[0x19] = v;
+        a[0x18] = v;
+        if (v <= 0) {
+            if (a[3] == 0) {
+                D_800BF870.pad1[0x16E] |= 4;
+            } else {
+                D_800BF870.pad1[0x16E] |= 8;
+            }
+            a[0x1A] = 0;
+            a[0x19] = 0;
+            a[0x18] = 0;
+            a[4] = 3;
+        }
+        break;
+    }
+    a[1] = 1;
+    func_800517F8(a);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleTownQuestRewardVisualActor);
 
