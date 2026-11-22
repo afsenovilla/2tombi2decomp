@@ -252,7 +252,25 @@ void func_8010F7FC(void *a0)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010F8D4);
+extern u8 **D_1F80014C;
+extern u8 D_1F800152;
+extern s32 D_1F800080;
+
+s32 func_8010F8D4(u8 *a)
+{
+    u8 **l = D_1F80014C;
+    u8 *p;
+    D_1F800182 = D_1F800152;
+    while (D_1F800182 != 0) {
+        p = *l;
+        D_1F800182--;
+        l++;
+        if ((p[0] & 1) && p[2] == 0x58) {
+            func_8010D9AC(a, p);
+        }
+    }
+    return D_1F800080;
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010F98C);
 
@@ -368,7 +386,45 @@ void func_80114CB8(void) {
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", f_SpawnWaterTempleSceneActorsFromPlacementTable);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801152F0);
+extern ClutCycle D_80142EA8[];
+extern s8 D_801485CC[];
+extern u8 D_800BF873;
+
+void func_801152F0(s32 arg0) {
+    ClutRect r;
+    s32 i;
+    ClutCycle *e;
+    u8 *data;
+
+    if (arg0 == 0) {
+        s8 *p;
+        i = 24;
+        p = &D_801485CC[i];
+        do {
+            *p-- = 0;
+        } while (--i >= 0);
+        return;
+    }
+    if (D_800BF873) {
+        return;
+    }
+    e = D_80142EA8;
+    for (i = 0; i < 25; i++, e++) {
+        if (--D_801485CC[i] <= 0) {
+            if (e->ptr[0] == 0xFF) {
+                e->ptr -= e->ptr[1];
+            }
+            data = e->clut + e->ptr[0] * 32;
+            D_801485CC[i] = e->ptr[1];
+            r.x = e->x;
+            r.y = e->y;
+            r.w = 16;
+            r.h = 1;
+            func_80081218(&r, data);
+            e->ptr += 2;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80115428);
 
@@ -614,7 +670,28 @@ void func_8011B900(void) {
     p->z = D_80148668[0].z;
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011B9D0);
+void func_8011B9D0(u8 *a) {
+    RiseMotion *m = (RiseMotion *)(a + 0x50);
+
+    switch (a[4]) {
+    case 0:
+        m->pos = 20;
+        a[4] = 1;
+        m->vel = 10;
+        M2C_FIELD(m, s16 *, 4) = 200;
+    case 1:
+        func_8002B278(a);
+        m->pos += m->vel;
+        if (m->pos > 0xC8) {
+            a[4] = 2;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011BA90);
 
@@ -840,7 +917,6 @@ void func_8011C4BC(u8 *a)
     func_8011CCAC(a);
 }
 
-extern u8 D_800BF873;
 void func_8011C754(void *arg0) {
     u8 temp_v1;
     u8 temp_v1_2;

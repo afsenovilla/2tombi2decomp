@@ -361,7 +361,52 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusInteriorSceneTransition);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_SpawnCircusSceneActorsFromPlacementTable);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80113C20);
+typedef struct { s16 x, y, w, h; } ClutRect;
+typedef struct {
+    u8 *ptr;
+    u8 *clut;
+    s16 x;
+    s16 y;
+} ClutCycle;
+extern ClutCycle D_80132B14[];
+extern s8 D_8013FF40[];
+extern u8 D_800BF873;
+
+void func_80113C20(s32 arg0) {
+    ClutRect r;
+    s32 i;
+    ClutCycle *e;
+    u8 *data;
+
+    if (arg0 == 0) {
+        s8 *p;
+        i = 4;
+        p = &D_8013FF40[i];
+        do {
+            *p-- = 0;
+        } while (--i >= 0);
+        return;
+    }
+    if (D_800BF873) {
+        return;
+    }
+    e = D_80132B14;
+    for (i = 0; i < 5; i++, e++) {
+        if (--D_8013FF40[i] <= 0) {
+            if (e->ptr[0] == 0xFF) {
+                e->ptr -= e->ptr[1];
+            }
+            data = e->clut + e->ptr[0] * 32;
+            D_8013FF40[i] = e->ptr[1];
+            r.x = e->x;
+            r.y = e->y;
+            r.w = 16;
+            r.h = 1;
+            func_80081218(&r, data);
+            e->ptr += 2;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80113D58);
 
@@ -795,7 +840,6 @@ void func_8011AB1C(void) {
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011AB3C);
 
-typedef struct { s16 x, y, w, h; } ClutRect;
 typedef struct { s16 m[3][3]; s16 pad; s32 t[3]; } AreaMatrix;
 extern AreaSVec D_1F8000C0_f4ad;
 typedef struct { u8 pad[0x28]; AreaMatrix m; } AreaScratchD0;
@@ -828,7 +872,33 @@ void func_8011B0E0(void *arg0) {
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011B10C);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011B3B8);
+void func_8011B3B8(u8 *a) {
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        a[0] = 1;
+        if (a[3] == 0) {
+            M2C_FIELD(a, s16 *, 0x80) = 0x9C;
+            M2C_FIELD(a, s16 *, 0x82) = 0x138;
+            M2C_FIELD(a, s16 *, 0x84) = 0xC8;
+            M2C_FIELD(a, s16 *, 0x86) = 0x12C;
+        }
+        a[0x29] = 0;
+        break;
+    case 1:
+        if (a[3] == 0) {
+            func_8011B10C(a);
+        }
+        func_8007778C(a);
+        a[0x29] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011B480);
 
@@ -880,12 +950,6 @@ typedef struct { s16 unk0; s16 x, y, z; } PartPose;
 extern PartPose D_80133210[3];
 extern PartPose D_80133228[3];
 typedef struct { u8 pad[0x5E]; u8 pose; u8 pad2[0xC0 - 0x5F]; s16 *parts[3]; } PosedActor;
-typedef struct {
-    u8 *ptr;
-    u8 *clut;
-    s16 x;
-    s16 y;
-} ClutCycle;
 typedef struct { s16 x, y, z, pad; } RingVec;
 typedef struct { s16 pos; s16 vel; } RiseMotion;
 
@@ -1869,7 +1933,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012E1A0);
 typedef struct {
     u8 x[8];
 } S8;
-extern u8 D_800BF873;
 extern S8 D_80136248[];
 
 void func_8012E2A0(void)

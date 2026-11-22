@@ -389,7 +389,23 @@ void func_80111560(u8 *a, u8 *b) {
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801115D0);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80111710);
+extern u8 **D_1F80013C;
+extern u8 D_1F800144;
+
+void func_80111710(u8 *a)
+{
+    u8 **l = D_1F80013C;
+    u8 *p;
+    D_1F800182_5650 = D_1F800144;
+    while (D_1F800182_5650 != 0) {
+        p = *l;
+        D_1F800182_5650--;
+        l++;
+        if ((p[0] & 1) && p[2] == 8) {
+            func_8002423C(a, p);
+        }
+    }
+}
 
 extern s16 D_1F80009C_c31a;
 
