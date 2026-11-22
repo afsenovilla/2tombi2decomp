@@ -2055,7 +2055,24 @@ s32 func_8013AED8(void) {
     return M2C_FIELD(*(void **)0x1F800214, u8 *, 3) == 0;
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013AEF0);
+void func_8012E194();
+extern u8 D_800BF8D5;
+
+s32 func_8013AEF0(void *a0)
+{
+    u8 *r = func_80072DDC(a0, 3, 3, 0x3F);
+
+    if (r) {
+        *(void **)(r + 0x1C) = func_8012E194;
+        r[3] = 2;
+        r[0x28] |= 0x80;
+        if (D_800BF8D5 != 0xFF) {
+            func_8004D604(0x31, 1);
+        }
+        return 1;
+    }
+    return 0;
+}
 
 s32 func_8013AF68(u8 *p)
 {
@@ -2385,7 +2402,23 @@ void func_80141770(void *arg0) {
     D_800BF870.pad1[0x1D8] |= 2;
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801417C4);
+void func_801417C4(u8 *p)
+{
+    u8 *g;
+
+    switch (p[6]) {
+    case 0:
+        p[6]++;
+        p[7] = 0;
+    case 1:
+        if (func_8004B3F4(p, p[0x5E])) {
+            g = (u8 *)&D_800BF870;
+            p[4] = 3;
+            g[0x1DA]++;
+        }
+        break;
+    }
+}
 
 void func_8014183C(u8 *p)
 {
