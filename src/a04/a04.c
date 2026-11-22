@@ -1651,7 +1651,14 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012F4FC);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012F56C);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012F634);
+s32 func_8012F634(u8 *a) {
+    s16 m;
+    u16 k = D_1F800172; u16 t = D_1F800174 | 0xF0; m = k | t;
+    if (D_800E7E68 & m) {
+        M2C_FIELD(a, s16 *, 0x42)++;
+    }
+    return M2C_FIELD(a, s16 *, 0x42) >= 3;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012F690);
 
