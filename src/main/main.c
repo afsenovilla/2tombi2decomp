@@ -2091,7 +2091,39 @@ void func_800339A4(u8 *a, u8 c)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80033A0C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawPauseMenuButtonIcon);
+typedef struct { u8 a; u8 b; u16 c; } SprAttr_3AC8;
+typedef struct { s16 x; s16 y; s32 z; } SprPos_3AC8;
+u8 *f_SpawnLinkedActorTrailEffect(u8 *owner, u8 kind);
+
+void f_DrawPauseMenuButtonIcon(s32 button, s16 x, s16 y, u8 b)
+{
+    SprAttr_3AC8 attr;
+    SprPos_3AC8 pos;
+    s32 i;
+
+    switch (button) {
+    case 0x8000:
+        i = 0x77;
+        break;
+    case 0x4000:
+        i = 0x75;
+        break;
+    case 0x2000:
+        i = 0x74;
+        break;
+    case 0x1000:
+    default:
+        i = 0x76;
+        break;
+    }
+    attr.c = 0x7CBE;
+    attr.b = b;
+    attr.a = 0;
+    pos.x = x;
+    pos.y = y;
+    pos.z = 0;
+    f_DrawPackedUiSpriteFrame(&pos, D_80017334_ae99[i], D_800ECF58[0], &attr);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80033B94);
 
@@ -3215,7 +3247,30 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F07C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F174);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F264);
+extern u32 *D_800BF544_5fe3;
+typedef struct { unsigned addr : 24; unsigned len : 8; } PTag_F264;
+typedef struct { PTag_F264 tag; u32 code[2]; } DrMode_F264;
+#define setaddr_(p, _addr) (((PTag_F264 *)(p))->addr = (u32)(_addr))
+#define getaddr_(p) (u32)(((PTag_F264 *)(p))->addr)
+#define addPrim_(ot, p) setaddr_(p, getaddr_(ot)), setaddr_(ot, p)
+
+void func_8003F264(void)
+{
+    DrMode_F264 *p;
+    s32 n = D_800A3B0C_b8ee;
+
+    if (n >= 3) {
+        return;
+    }
+    if (n == 0) {
+        return;
+    }
+    p = (DrMode_F264 *)D_800BF544_5fe3;
+    SetDrawStp(p, 1);
+    addPrim_(&D_800ED8C8[0x7FF], p);
+    p++;
+    D_800BF544_5fe3 = (u32 *)p;
+}
 
 u8 func_8003F2F8(u8 a, u8 b)
 {
@@ -4261,7 +4316,35 @@ s32 func_80042DF8(void *arg0) {
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80042E10);
+s32 func_80042E10(u8 *a)
+{
+    s32 k;
+    u16 j;
+
+    switch (a[0x78]) {
+    case 0:
+        k = *(u16 *)(a + 0x72) & 7;
+        j = k;
+        if (k != 0) {
+            if (D_800BF808[7] == 0) {
+                D_800BF808[7] = j;
+            }
+            if (*(s16 *)(a + 0x72) & 0x8000) {
+                return 1;
+            }
+        }
+        a[0x78]++;
+        break;
+    case 1:
+        if (D_800BF80F_fcc6 == 0) {
+            return 1;
+        }
+        break;
+    default:
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80042EA4);
 
@@ -9238,7 +9321,25 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006BB6C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006BD20);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006BDF0);
+void func_8006BDF0(u8 *a, s32 quiet)
+{
+    u8 *t;
+    u8 *p;
+
+    a[0x46] &= 1;
+    t = D_800E7E80_f78d;
+    p = a + 0x60;
+    if (t[5] == 9) {
+        *(u16 *)(p + 8) = *(u16 *)(t + 0x56) - 0x800;
+    } else {
+        *(u16 *)(p + 8) = *(u16 *)(t + 0x56);
+    }
+    *(u16 *)(p + 0xA) = 0x400;
+    f_PlaySoundEffect(0x22, 0, 0);
+    if (quiet == 0) {
+        ((void (*)(u8 *, s32))f_SpawnLinkedActorTrailEffect)(a, a[2] - 1);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006BE88);
 
