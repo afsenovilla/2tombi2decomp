@@ -543,7 +543,50 @@ void func_8010E6BC(u8 *a, u8 *b)
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010E8D8);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010ED60);
+s32 func_8010ED60(u8 *a, u8 *b) {
+    s16 dx = FU16(a, 0x2E) - FU16(b, 0x2E);
+    s16 dz = FU16(a, 0x36) - FU16(b, 0x36);
+    s32 d = func_80084080(dx * dx + dz * dz);
+    u16 ra;
+    u16 rb;
+    u16 b84;
+    u16 a84;
+    u16 b86;
+    s16 dy;
+    s16 h;
+    s16 e;
+    s16 f;
+    s16 s;
+
+    ra = FU16(a, 0x80);
+    rb = FU16(b, 0x80);
+    if ((u16)d > F16(a, 0x80) + F16(b, 0x80)) {
+        return -1;
+    }
+    b84 = FU16(b, 0x84);
+    a84 = FU16(a, 0x84);
+    b86 = FU16(b, 0x86);
+    dy = FU16(a, 0x32) - FU16(b, 0x32);
+    h = (b84 + FU16(a, 0x86)) - a84;
+    if ((u16)(dy + h) > F16(a, 0x86) + F16(b, 0x86)) {
+        return -1;
+    }
+    s = ra + rb - d;
+    if (dy < 0) {
+        dy = -dy;
+        e = h;
+        f = -h;
+    } else {
+        f = e = a84 + (b86 - b84);
+    }
+    if (s < (s16)(e - dy)) {
+        return 0;
+    }
+    if (f <= 0) {
+        return 2;
+    }
+    return 3;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010EEA8);
 
