@@ -7627,7 +7627,79 @@ void func_8006AC7C(void *actor, s32 i)
     f_InitializeSinglePartActorModel(actor, 1, D_800A4A94[i]);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006ACAC);
+extern u8 D_800E7E82;
+
+void func_8006ACAC(u8 *a)
+{
+    u8 *sub = a + 0x60;
+
+    switch (a[2]) {
+    case 1:
+        func_8006ABF4(a);
+        *(s16 *)(a + 0x80) = 0x32;
+        *(s16 *)(a + 0x82) = 0x64;
+        *(s16 *)(a + 0x86) = 0x64;
+        *(s16 *)(a + 0x84) = 0x32;
+        a[8] = 0xF6;
+        break;
+    case 2:
+    case 3:
+        func_8006AC7C(a, a[2]);
+        a[0xB] = 1;
+        *(s16 *)(a + 0x80) = 0x32;
+        *(s16 *)(a + 0x82) = 0x64;
+        *(s16 *)(a + 0x84) = 0x32;
+        *(s16 *)(a + 0x86) = 0x64;
+        break;
+    case 4:
+    case 5:
+    case 6:
+        func_8006AC7C(a, a[2]);
+        a[0xB] = 0;
+        *(s16 *)(a + 0x80) = 0x32;
+        *(s16 *)(a + 0x82) = 0x64;
+        *(s16 *)(a + 0x84) = 0x32;
+        *(s16 *)(a + 0x86) = 0x64;
+        break;
+    case 7:
+    case 8:
+    case 9:
+        func_8006AC7C(a, a[2]);
+        *(s16 *)(a + 0x80) = 0x64;
+        *(s16 *)(a + 0x82) = 0xC8;
+        *(s16 *)(a + 0x84) = 0x5A;
+        a[0xB] = 0;
+        *(s16 *)(a + 0x86) = 0x82;
+        break;
+    case 11:
+        func_8006AC38(a);
+        *(s16 *)(a + 0x80) = 0x32;
+        *(s16 *)(a + 0x82) = 0x64;
+        *(s16 *)(a + 0x84) = 0x32;
+        *(s16 *)(a + 0x86) = 0x64;
+        break;
+    }
+    *(s16 *)(sub + 0x12) = 0;
+    a[0x29] = 0;
+    *(s16 *)(a + 0x54) = 0;
+    *(s16 *)(a + 0x58) = 0;
+    if (a[2] == 6) {
+        *(s16 *)(a + 0xB8) = 0x1800;
+        *(s16 *)(a + 0xBA) = 0x1800;
+        *(s16 *)(a + 0xBC) = 0x1800;
+    } else {
+        *(s16 *)(a + 0xB8) = 0x1000;
+        *(s16 *)(a + 0xBA) = 0x1000;
+        *(s16 *)(a + 0xBC) = 0x1000;
+    }
+    a[1] = 1;
+    a[0x2B] = 0;
+    *(s16 *)(a + 0x44) = 0;
+    a[0x5E] = 0;
+    if (D_800E7E82 == 0) {
+        func_80069858(a, 0, 1);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006AE28);
 
@@ -7982,7 +8054,51 @@ void func_8006DEF0(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006DF88);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006E010);
+void func_8006E010(u8 *a)
+{
+    u8 *g = D_800E7E80_f78d;
+    s16 t;
+
+    if (g[0x164] == 3) {
+        switch (g[0x168]) {
+        case 0:
+        case 1:
+            t = 0;
+            break;
+        case 2:
+            t = -0x80;
+            break;
+        case 3:
+            t = -0x100;
+            break;
+        case 4:
+        default:
+            t = -0x180;
+            break;
+        }
+        if (t < *(s32 *)(a + 0x34)) {
+            *(s32 *)(a + 0x34) -= 8;
+            if (t >= *(s32 *)(a + 0x34)) {
+                *(s32 *)(a + 0x34) = t;
+            }
+        } else {
+            *(s32 *)(a + 0x34) += 8;
+            if (*(s32 *)(a + 0x34) >= t) {
+                *(s32 *)(a + 0x34) = t;
+            }
+        }
+    } else if (*(s32 *)(a + 0x34) > 0) {
+        *(s32 *)(a + 0x34) -= 8;
+        if (*(s32 *)(a + 0x34) <= 0) {
+            *(s32 *)(a + 0x34) = 0;
+        }
+    } else {
+        *(s32 *)(a + 0x34) += 8;
+        if (*(s32 *)(a + 0x34) >= 0) {
+            *(s32 *)(a + 0x34) = 0;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006E0F0);
 
@@ -8955,7 +9071,70 @@ void func_80074BC4(void) {
     f_StopSequencedMusic();
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_PlaySequencedMusic);
+extern u8 D_800FB165;
+extern s8 D_800BE22A;
+char SsSetReservedVoice(char);
+
+void f_PlaySequencedMusic(s32 arg)
+{
+    s32 n = arg & 0x7F;
+    s32 play;
+    u32 t;
+    s32 i;
+    s16 cnt;
+    u8 v;
+    s16 vol;
+
+    t = arg & 0x80;
+    play = t == 0;
+    if ((u32)n >= 14) {
+        return;
+    }
+    switch (n) {
+    case 0:
+    case 1:
+    case 11:
+    case 12:
+        if ((u16)(D_800BED80 - 2) < 2) {
+            return;
+        }
+    case 2:
+    case 3:
+        if ((u16)(D_800BED80 - 4) < 4 || D_800BED80 == 10 || D_800BED80 == 13) {
+            D_800BE22A = D_800BED80 | 0x80;
+        }
+        break;
+    default:
+        if ((u16)(D_800BED80 - 1) < 3) {
+            D_800BE22A = arg;
+            return;
+        }
+        break;
+    }
+    f_StopSequencedMusic();
+    D_800BED80 = n;
+    SsSetReservedVoice(D_800BE368[n].mode);
+    switch (n) {
+    case 0 ... 3:
+    case 11:
+    case 12:
+        vol = D_800FB165 * 127 / 9;
+        break;
+    default:
+        vol = D_800FB164 * 127 / 9;
+        break;
+    }
+    if (D_800BF870.unk0 == 0x15) {
+        vol = D_800FB164 * 127 / 9;
+    }
+    SsSeqSetVol(D_800BE368[D_800BED80].seq, vol, vol);
+    SsSeqPlay(D_800BE368[D_800BED80].seq, 1, play);
+    D_800BED78 = cnt = D_800BE368[D_800BED80].mode;
+    for (i = 0; i < cnt; i++) {
+        *(s32 *)&D_800BE238_df3f[i] = -1;
+    }
+}
+
 
 
 void f_StopSequencedMusic(void)
