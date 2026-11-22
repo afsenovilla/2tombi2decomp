@@ -1,5 +1,6 @@
 /* Names used by library C taken from other projects (psx_tomba, Tombi-Decomp) for addresses this
  * program knows under another name; addresses read off the retail code by tools/libsweep.py. */
+D_1F801DAA = 0x1F801DAA;
 D_800101F0 = 0x800101F0;
 D_80010288 = 0x80010288;
 checkRECT = 0x800132B0;
@@ -21,6 +22,7 @@ setIntrDMA = 0x80018A68;
 DMA_memclr = 0x80018B14;
 getintr = 0x8001961C;
 callback = 0x8001ACA4;
+D_8001B678 = 0x8001B678;
 StCdInterrupt2 = 0x8001C140;
 SpuSetReverb = 0x8001D0AC;
 _spu_writeByIO = 0x8001D4AC;
@@ -118,4 +120,3 @@ previous_frame_location = 0x8003C2E0;
 next_frameid = 0x8003C2E4;
 StFunc1 = 0x8003C2F0;
 StFunc2 = 0x8003C2F4;
-D_1F801DAA = 0x1F801DAA;
