@@ -1,3 +1,10 @@
+// CC gcc-2.8.1-psx
+// FLAGS -O2 -G0 -mno-split-addresses
+// ASPSX 2.79
 #include "common.h"
+extern s32 D_80039EA0;
 
-INCLUDE_ASM("asm/boot/nonmatchings/psyq/libcd/init_ring_status", init_ring_status);
+void init_ring_status(s32 start, u32 count) {
+    s32 i;
+    for (i = 0; i < count; i++) *(s32 *)(D_80039EA0 + ((i + start) << 5)) = 0;
+}

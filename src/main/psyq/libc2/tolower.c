@@ -1,3 +1,10 @@
+// CC gcc-2.7.2-psx
+// FLAGS -O2 -G0
+// ASPSX 2.79
 #include "common.h"
+extern u8 D_800ACE75[];
 
-INCLUDE_ASM("asm/main/nonmatchings/psyq/libc2/tolower", tolower);
+s8 tolower(s8 c) {
+    if (D_800ACE75[(u8)c] & 1) c += 0x20;
+    return c;
+}
