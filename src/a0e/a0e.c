@@ -50,7 +50,15 @@ void func_8010A49C(void) {
     }
 }
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010A4C8);
+extern s32 D_1F80009C;
+
+void func_8010A4C8(u8 *a, void *b)
+{
+    if (func_80022F04(a, b) != 0) {
+        a[0x2B] = D_1F80009C >> 4;
+        func_80022D08(a, b, 1, 1);
+    }
+}
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010A520);
 

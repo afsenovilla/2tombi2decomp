@@ -1867,7 +1867,17 @@ s32 func_80038708(u8 *p)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80038758);
+s32 func_80038758(u8 *a)
+{
+    if (a[0x1F] != 0) {
+        a[0x1F]--;
+        if (a[0x1F] < a[0x1E]) {
+            a[0x1E]--;
+        }
+        return 1;
+    }
+    return 0;
+}
 
 
 s32 func_80038794(u8 *p)
@@ -1944,7 +1954,17 @@ s32 func_80039978(u8 *p)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800399C0);
+s32 func_800399C0(u8 *a)
+{
+    if (a[0x1F] != 0) {
+        a[0x1F]--;
+        if (a[0x1F] < a[0x1E]) {
+            a[0x1E]--;
+        }
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800399FC);
 
@@ -4178,7 +4198,60 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004DE04);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004DF94);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004E29C);
+extern u8 D_1F800207_9c67;
+extern s16 D_1F800164_d75f;
+
+s32 func_8004E29C(u8 *a)
+{
+    switch (*(s16 *)(a + 0x60)) {
+    case 0x6F: case 0x70:
+        if (D_800BF870.unk0 != 1) {
+            return 0;
+        }
+        if (D_1F800207_9c67 != 0xB) {
+            return 0;
+        }
+        if (D_1F800164_d75f >= 0x1495) {
+            return 0;
+        }
+        if (D_800BF870.pad1[0xA5] != 0) {
+            return 2;
+        }
+        f_StartEvent(0x62);
+        return 1;
+    case 0x71: case 0x72:
+        if (D_800BF870.unk0 != 4) {
+            return 0;
+        }
+        if (D_1F800207_9c67 != 0xF) {
+            return 0;
+        }
+        if (D_1F800164_d75f >= 0x16D2) {
+            return 0;
+        }
+        if (D_800BF870.pad1[0xA6] != 0) {
+            return 2;
+        }
+        f_StartEvent(0x63);
+        return 1;
+    case 0x73: case 0x74:
+        if (D_800BF870.unk0 != 6) {
+            return 0;
+        }
+        if (D_1F800207_9c67 != 0xE) {
+            return 0;
+        }
+        if (D_1F800164_d75f < 0x5FE0) {
+            return 0;
+        }
+        if (D_800BF870.pad1[0xA7] != 0) {
+            return 2;
+        }
+        f_StartEvent(0x64);
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004E414);
 

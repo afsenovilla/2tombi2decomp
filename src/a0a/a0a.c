@@ -58,7 +58,14 @@ void func_8010A788(void *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010A7D0);
+extern u8 *D_800E7FD8;
+
+void func_8010A7D0(u8 *a, u8 *b)
+{
+    if (b[0x47] != 2 && (a[2] != 0 || b != D_800E7FD8)) {
+        func_80020F7C(a, b, *(void **)(b + 0xC0), 0x1200);
+    }
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010A824);
 
