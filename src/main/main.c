@@ -1676,9 +1676,54 @@ s32 f_SpawnTransientEffectAtShortPosition(s32 arg0, s32 arg1, s32 arg2) {
     return temp_v0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnFlaggedTransientEffectAtFixedPosition);
+u8 *f_SpawnFlaggedTransientEffectAtFixedPosition(s32 id, u8 *pos, s16 y)
+{
+    u8 *e;
+    u8 *t;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnMovingTransientEffectAtFixedPosition);
+    if (D_800E7E7C < 7) {
+        e = NULL;
+        goto done;
+    }
+    t = (u8 *)f_AllocateActorRecordByType(0, 6, 1);
+    if (t == NULL) {
+        e = NULL;
+        goto done;
+    }
+    {
+        if (pos != NULL) {
+            *(u16 *)(t + 0x2C) = *(u16 *)(pos + 2);
+            *(u16 *)(t + 0x2E) = *(u16 *)(pos + 6);
+            *(u16 *)(t + 0x30) = *(u16 *)(pos + 0xA);
+        }
+        *(s16 *)(t + 0x32) = y;
+        f_InitializeTransientEffectActor(t, id);
+        e = t;
+    }
+done:
+    if (e != NULL) {
+        e[0x28] |= 0x80;
+    }
+    return e;
+}
+
+u8 *f_SpawnMovingTransientEffectAtFixedPosition(s32 id, u8 *pos, s16 y, u16 *vel)
+{
+    u8 *t;
+
+    if (D_800E7E7C >= 7 && (t = (u8 *)f_AllocateActorRecordByType(0, 6, 1)) != NULL) {
+    *(u16 *)(t + 0x2C) = *(u16 *)(pos + 2);
+    *(u16 *)(t + 0x2E) = *(u16 *)(pos + 6);
+    *(u16 *)(t + 0x30) = *(u16 *)(pos + 0xA);
+    *(s16 *)(t + 0x32) = y;
+    *(u16 *)(t + 0x48) = vel[0];
+    *(u16 *)(t + 0x4A) = vel[1];
+    *(u16 *)(t + 0x4C) = vel[2];
+    f_InitializeTransientEffectActor(t, id);
+    return t;
+    }
+    return NULL;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnImpactTransientEffect);
 
