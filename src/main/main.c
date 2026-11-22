@@ -387,7 +387,42 @@ s32 f_ResolveActorAgainstPartCylinderContact(u8 *a, u8 *b, u8 *p)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaRadialContactAndSide);
+extern s32 D_1F80008C_f832;
+/* f_TestActorCylinderOverlap, inlined */
+static inline s32 TestCyl_0B08(u8 *a, u8 *b)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(b + 0x2E);
+    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(b + 0x36);
+    s32 d = SquareRoot0(dx * dx + dz * dz);
+
+    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80)) {
+        return 0;
+    }
+    if ((u16)((*(u16 *)(a + 0x32) - *(u16 *)(b + 0x32)) + (*(u16 *)(a + 0x84) + *(u16 *)(b + 0x84))) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+        return 0;
+    }
+    D_1F80008C_f832 = (s16)d;
+    D_1F80009C = ratan2(-dz, dx, d);
+    return 1;
+}
+
+s32 f_ResolveTombaRadialContactAndSide(u8 *a, u8 *b)
+{
+    s32 c;
+    s32 t;
+
+    if (!TestCyl_0B08(a, b)) {
+        return 0;
+    }
+    if (!(a[0] & 4)) {
+        c = (rcos(D_1F80009C) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80))) >> 12;
+        t = rsin(D_1F80009C) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80));
+        *(u16 *)(a + 0x2E) = *(u16 *)(b + 0x2E) + c;
+        *(u16 *)(a + 0x36) = *(u16 *)(b + 0x36) - (t >> 12);
+    }
+    a[0x5F] = f_TestWrappedAngleSide(*(s16 *)&D_1F80009C, *(s16 *)(a + 0x140), 1) + 2;
+    return 1;
+}
 
 
 s32 f_TestActorOffsetCylinderOverlap(u8 *a, u8 *b)
@@ -495,25 +530,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaConfiguredActorContact);
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaType8ActorContact);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ArmTombaFacingInteraction44);
-
-extern s32 D_1F80008C_f832;
-/* f_TestActorCylinderOverlap, inlined */
-static inline s32 TestCyl_0B08(u8 *a, u8 *b)
-{
-    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(b + 0x2E);
-    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(b + 0x36);
-    s32 d = SquareRoot0(dx * dx + dz * dz);
-
-    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80)) {
-        return 0;
-    }
-    if ((u16)((*(u16 *)(a + 0x32) - *(u16 *)(b + 0x32)) + (*(u16 *)(a + 0x84) + *(u16 *)(b + 0x84))) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
-        return 0;
-    }
-    D_1F80008C_f832 = (s16)d;
-    D_1F80009C = ratan2(-dz, dx, d);
-    return 1;
-}
 
 s32 func_80020B08(u8 *a, u8 *b)
 {
@@ -1188,7 +1204,7 @@ void func_8002369C(u8 *a, u8 *b)
 }
 
 void func_80023764(s32 arg0, void *arg1) {
-    if (f_ResolveTombaRadialContactAndSide() != 0) {
+    if (f_ResolveTombaRadialContactAndSide((u8 *)arg0, arg1) != 0) {
         M2C_FIELD(arg1, s8 *, 0x29) = 1;
     }
 }
