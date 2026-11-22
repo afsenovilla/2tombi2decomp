@@ -2899,7 +2899,79 @@ void func_801271E4(s32 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80127304);
+// nearcopy: 12 words off, C from a04 func_80123CB0
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+#include "gte.h"
+#include "gte.h"
+extern s8 D_800BF80D;
+extern u8 D_800E7E80_d97c;
+extern u8 D_80147A3C[];
+extern u8 D_80147A5C[];
+extern s16 D_1F800160_71b4;
+extern s16 D_1F800162_a8d4;
+extern s16 D_1F800164_d75f;
+extern u8 D_1F80027A;
+
+void func_80127304(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        switch (a[5]) {
+        case 0:
+            func_801271E4(0);
+            a[0xBF] = 0xA0;
+            *(s16 *)(a + 0x7E) = 0x17;
+            *(s16 *)(a + 0x7C) = 0x400;
+            *(s16 *)(a + 0x7A) = 7;
+            *(s16 *)(a + 0x78) = 0x13;
+            *(s16 *)(a + 0x54) = 0;
+            *(s16 *)(a + 0x58) = 0;
+            a[5]++;
+        case 1:
+            func_80126834(a, D_80147A3C);
+            break;
+        case 2:
+            if (func_80078240(D_1F800160_71b4 - *(s16 *)(a + 0x2E), D_1F800162_a8d4 - *(s16 *)(a + 0x32), D_1F800164_d75f - *(s16 *)(a + 0x36)) <= 1000
+                && D_1F80027A == 0 && D_800E7E80_d97c != 6 && D_800BF80D == 0) {
+                a[4] = 1;
+                a[5] = 0;
+                a[0x5E] = 0;
+            }
+            break;
+        }
+        break;
+    case 1:
+        if (func_8007778C(a) != 0) {
+            func_801271E4(1);
+            func_80051844(a);
+        }
+        switch (a[0x5E]) {
+        case 0:
+            func_80126990(a);
+            a[0x29] = 0;
+            break;
+        case 1:
+            func_80126BD8(a);
+            a[0x29] = 0;
+            break;
+        case 2:
+            func_80126DF0(a, D_80147A5C);
+            a[0x29] = 0;
+            break;
+        default:
+            a[0x29] = 0;
+            break;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u8 D_800BF809;
 extern u8 D_800BF8E8;
@@ -2986,7 +3058,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80127C28);
 typedef struct { s16 p0, x, p4, y, p8, z; } HV;
 extern u8 *D_1F800214;
 extern u8 D_800BF9D3;
-extern s16 D_1F800164_d75f;
 
 //-- a
 s32 func_80127E18(u8 *a)
@@ -3368,7 +3439,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", f_UpdateForestGhostAndRockCrabActor);
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012F694);
 
 extern u8 D_8014D97C[];
-extern s16 D_1F800160_71b4;
 void func_8012F79C(u8 *a)
 {
     switch (a[6]) {
