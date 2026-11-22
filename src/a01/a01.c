@@ -4873,7 +4873,83 @@ void func_8012ED88(u8 *p) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012EE14);
+typedef struct {
+    s32 vx, vy;
+} T2Pt32;
+typedef struct {
+    u8 pad0[2];
+    s16 x;
+    u8 pad4[6];
+    s16 y;
+    u8 padC[0x14];
+    s16 rx;
+    u16 ry;
+} T2CamD0;
+extern T2CamD0 D_1F8000D0_3bb0;
+extern s32 D_800A3F90;
+extern s32 D_800A3F94;
+extern u8 *D_800ECFD8;
+extern u8 *D_800ECF78;
+extern u8 D_801388BC[];
+extern u8 D_800E7EAA;
+
+void func_8012EE14(u8 *a)
+{
+    T2Pt32 v0, v1, v2;
+    T2CamD0 *c;
+    s32 ang, r, dx, dz;
+    u16 t;
+    u8 *m;
+
+    if (D_800BF871 >= 0xF) {
+        M2C_FIELD(a, u8 **, 0xC) = D_800ECFD8;
+        D_80139000 = D_801388BC[D_800E7EAA - 0x1B];
+    } else {
+        D_80139000 = 0;
+        M2C_FIELD(a, u8 **, 0xC) = D_800ECF78;
+    }
+    c = &D_1F8000D0_3bb0;
+    {
+        u16 v;
+        u16 *mm = M2C_FIELD(a, u16 **, 0xC);
+        v = mm[0];
+        M2C_FIELD(a, s16 *, 8) = v;
+        D_800A3F90 = 0x5780;
+        v = mm[1];
+        M2C_FIELD(a, s16 *, 0xA) = v;
+    }
+    t = c->ry;
+    D_800A3F94 = 0x12C;
+    ang = (-(s16)t - D_800A3F94) & 0xFFF;
+    v0.vx = c->x;
+    v0.vy = c->y;
+    v1.vx = v0.vx + ((func_80083E80(ang) * D_800A3F90) >> 12);
+    v1.vy = v0.vy + ((func_80083F50(ang) * D_800A3F90) >> 12);
+    ang = (D_800A3F94 - (s16)c->ry) & 0xFFF;
+    v2.vx = v0.vx + ((func_80083E80(ang) * D_800A3F90) >> 12);
+    v2.vy = v0.vy + ((func_80083F50(ang) * D_800A3F90) >> 12);
+    v0.vx -= (func_80083E80(-(s16)c->ry) * 0x3C0) >> 12;
+    v0.vy -= (func_80083F50(-(s16)c->ry) * 0x3C0) >> 12;
+    r = abs(func_80083E80(c->rx));
+    dx = (func_80083E80(-(s16)c->ry) * r) >> 12;
+    dz = (func_80083F50(-(s16)c->ry) * r) >> 12;
+    dx = (dx * D_800A3F90 * 5) >> 16;
+    dz = (dz * D_800A3F90 * 5) >> 16;
+    v1.vx -= dx;
+    v1.vy -= dz;
+    v2.vx -= dx;
+    v0.vx -= dx;
+    v2.vy -= dz;
+    v0.vy -= dz;
+    v0.vx /= 640;
+    v0.vy /= 640;
+    v1.vx /= 640;
+    v1.vy /= 640;
+    v2.vx /= 640;
+    v2.vy /= 640;
+    a[6] = 0;
+    func_8012F188(a, &v0, &v1, &v2);
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012F188);
 
