@@ -986,7 +986,23 @@ u8 *func_80119B20(void *a)
     return r;
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80119B64);
+extern void *D_800ECF80_1c35;
+
+void func_80119B64(u8 *a) {
+    M2C_FIELD(a, void **, 0x3C) = D_800ECF80_1c35;
+    func_80077B38(a, D_8014CEF0, 9);
+    M2C_FIELD(a, s16 *, 0x5C) = 0;
+    a[0xD] = 3;
+    a[0xB] = 0x11;
+    M2C_FIELD(a, s16 *, 0x7A) = 0x2800;
+    M2C_FIELD(a, s16 *, 0x7C) = 0x2000;
+    a[8] = 0x30;
+    a[0x18] = a[0x19] = a[0x1A] = 0x40;
+    M2C_FIELD(a, s16 *, 0x7E) = 0x2800;
+    M2C_FIELD(a, s16 *, 0x5A) = 0;
+    a[0x47] = 0;
+    M2C_FIELD(a, s16 *, 0x60) = 150;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80119BF0);
 

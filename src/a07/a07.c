@@ -274,7 +274,31 @@ void func_80112220(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011237C);
+extern u8 D_800BF80E;
+
+void func_8011237C(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+
+    switch (a[6]) {
+    case 0:
+        o[0x2B] = 1;
+        a[6]++;
+        D_800BF80E = 1;
+    case 1:
+        func_80076D68(a);
+        if (D_1F800137 == 0) {
+            D_800BF80E = 0;
+            a[0x180] = 0x14;
+            a[4] = 1;
+            a[5] = 0;
+            a[6] = 0;
+            a[7] = 0;
+            func_80054D14(a, 2, 6);
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80112428);
 
@@ -567,7 +591,6 @@ void func_80117324(void) {
     func_8007778C();
 }
 
-extern u8 D_800BF80E;
 extern u8 D_80017FE8[];
 extern s32 D_800ECF68;
 extern u8 D_8014005C_9175[];
