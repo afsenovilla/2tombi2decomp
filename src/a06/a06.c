@@ -2285,7 +2285,25 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80124ED4);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80125010);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801251E8);
+void func_801251E8(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        func_80124ED4(a);
+        break;
+    case 1:
+        func_8007778C(a);
+        func_80125010(a);
+        a[0x29] = 0;
+        break;
+    case 2:
+        a[4]++;
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_80125284(void *arg0) {
     u8 temp_v1;
@@ -3006,7 +3024,20 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012F694);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012F79C);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012F844);
+void func_8012F844(u8 *a)
+{
+    if (D_800E7FEE == 0) {
+        a[0] = 2;
+        a[4] = 3;
+        func_8003116C(0x706, a + 0x2C, -0x20);
+    } else {
+        a[0] = 2;
+        a[4] = 3;
+        func_8011AE04(a, a[3]);
+        D_800BF870.pad1[0x1A3] |= 1 << a[3];
+        func_8003116C(0x706, a + 0x2C, -0x20);
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012F8E0);
 

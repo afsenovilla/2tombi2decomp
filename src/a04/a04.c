@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
+#include "psyq/inline_c.h"
 
 extern s8 D_800BF808_c1f7[];
 extern u8 D_1F800137_104c;
@@ -2571,7 +2572,31 @@ void func_80129AA8(ActorDF *a, s32 i) {
     }
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80129B54);
+typedef struct {
+    u8 pad[0x60];
+    s16 v[8];
+} ArrActor60;
+extern u8 D_80145A00[];
+
+void func_80129B54(ArrActor60 *a, s32 k, s32 f, s32 i) {
+    s16 n;
+
+    if (f == 0) {
+        func_80077C40(a, D_80145A00, k);
+    } else {
+        func_80077CFC(a, D_80145A00, k, (s16)f);
+    }
+    func_80129744(a, i + 1);
+    if (a->v[i + 1] != 2) {
+        a->v[i] = 0;
+        return;
+    }
+    n = (s16)M2C_FIELD(M2C_FIELD(a, u8 **, 0x38), u16 *, 4) >> 4;
+    if (n != a->v[i]) {
+        func_80051B04(M2C_FIELD(a, u8 **, 0xC8), 0x23, n);
+        a->v[i] = n;
+    }
+}
 
 s16 func_80129C44(ActorDF *a, s32 i) {
     s32 r = func_80076D68();
