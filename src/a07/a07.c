@@ -316,7 +316,26 @@ void func_80117324(void) {
     func_8007778C();
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80117344);
+extern u8 D_800E7E80[];
+extern u8 D_800BF80E;
+extern u8 D_80017FE8[];
+extern s32 D_800ECF68;
+extern u8 D_8014005C_9175[];
+extern s32 D_800ECF90;
+
+u8 *func_80117344(void *a0, u8 a1)
+{
+    u8 *r = func_80072DDC(a0, 2, 3, 0x10);
+
+    if (r == 0) {
+        return 0;
+    }
+    r[3] = 6;
+    *(void **)(r + 0x1C) = func_80116B88;
+    *(void **)(r + 0x10) = a0;
+    r[0x5E] = a1;
+    return r;
+}
 
 void func_80116B88(u8 *);
 
@@ -751,7 +770,26 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011EB04);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011EDB8);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011EE70);
+s32 func_8011EE70(u8 *p)
+{
+    u8 *e = D_800E7E80;
+
+    switch (p[0x78]) {
+    case 0:
+        p[0x78] = 1;
+        D_800BF80E = 0;
+        e[5] = 0x29;
+        e[6] = 0;
+        goto end;
+    case 1:
+        if (D_800BF80E) {
+            return 1;
+        }
+    end:
+    default:
+        return 0;
+    }
+}
 
 
 s32 func_8011EED4(void *arg0) {
@@ -1153,7 +1191,18 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80128980);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80128BAC);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80128DA0);
+s32 func_80128DA0(u8 *p)
+{
+    if (*(s16 *)(p + 0x72) & 0x8000) {
+        *(s32 *)(p + 0x3C) = D_800ECF68;
+        *(void **)(p + 0x7C) = D_80017FE8;
+    } else {
+        *(s32 *)(p + 0x3C) = D_800ECF90;
+        *(void **)(p + 0x7C) = D_8014005C_9175;
+    }
+    func_80041718(p, *(u16 *)(p + 0x72) & 0x7FFF, 0);
+    return 1;
+}
 
 
 void func_80128E04(void) {

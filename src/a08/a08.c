@@ -1186,7 +1186,28 @@ void func_8012955C(void *arg0) {
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801295C4);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012963C);
+typedef struct {
+    s16 a;
+    s16 b;
+    s16 c;
+    s16 d;
+} SV;
+
+u8 *func_8012963C(void *a0)
+{
+    u8 *r = func_80072DDC(a0, 1, 3, 0x10);
+
+    if (r == 0) {
+        return 0;
+    }
+    r[3] = 0x14;
+    *(void **)(r + 0x1C) = f_UpdateWaterTempleQuestPropActor;
+    *(void **)(r + 0x10) = a0;
+    *(s16 *)(r + 0x36) = 0;
+    *(s16 *)(r + 0x2E) = 0;
+    *(s16 *)(r + 0x32) = 0x140;
+    return r;
+}
 
 void func_801296A0(u8 *p)
 {
@@ -1599,7 +1620,18 @@ s32 func_8012FB64(u8 a)
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012FBB4);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012FC74);
+void func_8012FC74(u8 *p, s32 a1)
+{
+    SV v;
+
+    if (p[1]) {
+        v.a = *(s16 *)(p + 0x2E);
+        v.c = *(s16 *)(p + 0x36);
+        v.b = *(s16 *)(p + 0x7C);
+        func_8011BD98(9, &v, a1);
+        func_80074590(7, 7, -0x28);
+    }
+}
 
 void func_8012EEC8();
 

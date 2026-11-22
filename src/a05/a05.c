@@ -1569,7 +1569,21 @@ void func_801310B0(void *arg0) {
     func_80077B5C(arg0);
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801310F8);
+void f_UpdateKujaraSummitMechanismActor();
+void func_80132418();
+
+u8 *func_801310F8(void *a0)
+{
+    u8 *r = func_80072DDC(0, 1, 3, 0x10);
+
+    if (r) {
+        *(void **)(r + 0x1C) = f_UpdateKujaraSummitMechanismActor;
+        r[3] = 0x11;
+        *(void **)(r + 0x10) = a0;
+        r[0x28] |= 0x80;
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8013115C);
 
@@ -1659,7 +1673,17 @@ void func_801329C0(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80132A1C);
+void func_80132A1C(void *a0, u8 a1)
+{
+    u8 *r = func_80072DDC(0, 2, 3, 0x10);
+
+    if (r) {
+        *(void **)(r + 0x1C) = func_80132418;
+        r[3] = 5;
+        r[0x5E] = a1;
+        *(void **)(r + 0x10) = a0;
+    }
+}
 
 void func_80132418();
 
