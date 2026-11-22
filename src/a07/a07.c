@@ -272,7 +272,22 @@ void func_8011725C(void *arg0) {
     func_8007778C();
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80117294);
+extern u8 D_800BFA3C;
+
+void func_80117294(u8 *p)
+{
+    switch (p[5]) {
+    case 0:
+        if (D_800BFA3C) {
+            p[5] = 1;
+        }
+        break;
+    case 1:
+        p[1] = 1;
+        func_800517F8(p);
+        break;
+    }
+}
 
 void func_801172F0(void *a)
 {
