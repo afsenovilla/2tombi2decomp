@@ -26,6 +26,7 @@ _rootCounter0 = 0x800254A8;
 _interruptMasks = 0x800254AC;
 gpu = 0x8002550C;
 GPU_printf = 0x80025510;
+D_80025514 = 0x80025514;
 GEnv = 0x80025514;
 move_image = 0x800255AC;
 D_80025650 = 0x80025650;

@@ -465,7 +465,88 @@ done:
     a->x3F = 9;
 }
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018B7E4);
+void func_8018B7E4(CrdMenu *a)
+{
+    char name[0x20];
+    u8 *e, *p, *b;
+    s32 i, k;
+    u8 sum;
+    u8 port;
+    u8 t;
+    a->x3E = crd_card_event();
+    if (a->x3E == 0) {
+        return;
+    }
+    e = a->x8;
+    func_800808F0(a->x4);
+    if (a->x3E == 1 && (p = a->x14)[0x5FE] == 3) {
+        b = p;
+        sum = 0;
+        for (i = 0; i < 0x5FF; i++) {
+            sum ^= *p++;
+        }
+        if (b[0x5FF] == sum) {
+            goto done;
+        }
+    }
+    port = 0xFF;
+    if (a->x46 != 0xFF) {
+        port = a->x46 << 4;
+    }
+    if (port == 0xFF) {
+        a->x3E = 2;
+        goto done;
+    }
+    t = a->x5B;
+    if ((t & 0xF) == a->x3E) {
+        a->x5B = t + 0x10;
+    } else {
+        a->x5B = a->x3E;
+    }
+    if (a->x3E == 4) {
+        func_80080840(D_800BF498.x2C);
+        func_80080840(D_800BF498.x30);
+        func_80080840(D_800BF498.x34);
+        func_80080840(D_800BF498.x38);
+        func_8009BAB0(port);
+        while (1) {
+            if (func_80080840(D_800BF498.x2C) == 1) {
+                break;
+            }
+            if (func_80080840(D_800BF498.x30) == 1) {
+                break;
+            }
+            if (func_80080840(D_800BF498.x34) == 1) {
+                break;
+            }
+            if (func_80080840(D_800BF498.x38) == 1) {
+                break;
+            }
+        }
+        a->x5B &= 0xF;
+    }
+    if (port == 0xFF) {
+        goto two;
+    }
+    if ((a->x5B & 0xF0) < 0x20) {
+        goto small;
+    }
+    k = a->x47 * 0x3C;
+    func_8009B0C0(name, D_8018A090, port, D_8018A0A0, (e + k)[4]);
+    func_80080910(name);
+two:
+    a->x3E = 2;
+    goto done;
+small:
+    a->x3E = 0;
+    a->x51 = 0;
+    a->x2 = 0;
+    a->x3F = 5;
+    return;
+done:
+    a->x3F = 0;
+    a->x40 = 0;
+}
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018BA68);
 
