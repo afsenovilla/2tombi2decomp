@@ -271,7 +271,41 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8010CAE8);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8010CE50);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8010D134);
+extern s32 D_1F800184;
+
+void func_8010D134(u8 *a, u8 *b)
+{
+    if (a[0] == 6) {
+        return;
+    }
+    b[0x29] = 0;
+    if (a[0x16B] != 0) {
+        if (D_1F800184 == (s32)b) {
+            func_8010C7F8(a, b, *(u8 **)(b + 0xC4));
+            if (*(s16 *)(b + 0x72) != 0 && (func_8010CE50(a, *(u8 **)(b + 0xD0), 0x64, 0x28) == 2 || func_8010CE50(a, *(u8 **)(b + 0xD8), 0x64, -0x7F88) >= 0)) {
+                a[0x2B] = D_1F80009C >> 4;
+                func_80022D08(a, b, 1, 1);
+            }
+        }
+    } else {
+        switch (func_8010CAE8(a, b, *(u8 **)(b + 0xC8))) {
+        case 2:
+            b[0x29] = 1;
+            if (D_1F80018E_814b != 0) {
+                D_1F80018E_814b = 0x10;
+            }
+            break;
+        case 0:
+            if (func_8010CAE8(a, b, *(u8 **)(b + 0xCC)) == 2) {
+                b[0x29] = 0x81;
+                if (D_1F80018E_814b != 0) {
+                    D_1F80018E_814b = 0x20;
+                }
+            }
+            break;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8010D288);
 
@@ -622,7 +656,6 @@ void func_80111238(void *arg0, void *arg1) {
 
 void f_UpdateDonglinInteriorQuestObjectActor();
 extern s32 D_800BF544;
-extern s32 D_1F800184;
 void func_801112BC(u8 *a0, S11130C *a1)
 {
     if (a0[0] != 6) {

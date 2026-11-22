@@ -196,9 +196,76 @@ void func_8010BB54(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010BCB8);
+void func_8010BCB8(u8 *a, u8 *b, u8 *c)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(c + 0x2C);
+    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(c + 0x34);
+    s32 d = func_80084080(dx * dx + dz * dz);
+    s32 ang;
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010BE54);
+    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80)) {
+        return;
+    }
+    if ((u16)((*(u16 *)(a + 0x32) - *(u16 *)(c + 0x30)) + (*(u16 *)(b + 0x84) + (*(u16 *)(a + 0x86) - *(u16 *)(a + 0x84)))) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+        return;
+    }
+    ang = func_80085690(-dz, dx);
+    D_1F80009C_baed = ang;
+    if (b[0x5E] == 0) {
+        s32 temp_s0 = (s32) (func_80083F50(ang) * (M2C_FIELD(a, s16 *, 0x80) + M2C_FIELD(b, s16 *, 0x80))) >> 0xC;
+        s32 temp_lo = func_80083E80(D_1F80009C_baed) * (M2C_FIELD(a, s16 *, 0x80) + M2C_FIELD(b, s16 *, 0x80));
+        u16 z;
+
+        M2C_FIELD(a, s16 *, 0x2E) = (s16) (M2C_FIELD(c, u16 *, 0x2C) + temp_s0);
+        z = M2C_FIELD(c, u16 *, 0x34);
+        a[0x2B] = 1;
+        M2C_FIELD(a, s16 *, 0x36) = (s16) (z - (temp_lo >> 0xC));
+    } else {
+        a[0x2B] = 0x80;
+        b[0x2B] = 1;
+        *(u8 **)(b + 0x10) = a;
+    }
+    D_1F800182_5650 = 0;
+}
+
+extern u8 **D_1F80014C;
+extern u8 D_1F800152;
+extern u8 **D_1F800140;
+extern u8 D_1F800146;
+
+u8 func_8010BE54(u8 *a, s32 f)
+{
+    u8 **l;
+    u8 *p;
+
+    if (f != 0) {
+        l = D_1F80014C;
+        D_1F800182_5650 = D_1F800152;
+        while (D_1F800182_5650 != 0) {
+            p = *l;
+            D_1F800182_5650--;
+            l++;
+            if (p[0] & 1) {
+                if (p[2] == 0x3F) {
+                    func_8010BCB8(a, p, *(u8 **)(p + 0xC8));
+                } else if (p[2] == 0x18) {
+                    func_8010BB54(a, p);
+                }
+            }
+        }
+    }
+    l = D_1F800140;
+    D_1F800182_5650 = D_1F800146;
+    while (D_1F800182_5650 != 0) {
+        p = *l;
+        D_1F800182_5650--;
+        l++;
+        if ((p[0] & 1) && p[0xC] == 9 && func_80023A04(a, p, 0) >= 0) {
+            a[0x2B] |= 1;
+        }
+    }
+    return a[0x2B];
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010BFAC);
 
@@ -257,7 +324,48 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010DDAC);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010E240);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010E36C);
+extern void *D_1F800080;
+extern s32 D_1F80008C;
+
+u8 *func_8010E36C(u8 *a)
+{
+    u8 **l = D_1F80014C;
+    u8 *p;
+
+    D_1F800182_5650 = D_1F800152;
+    while (D_1F800182_5650 != 0) {
+        p = *l;
+        D_1F800182_5650--;
+        l++;
+        if (p[0] & 1) {
+            s32 t = p[2];
+
+            if (t >= 0x2F) {
+                if (t >= 0x31) {
+                    if (t == 0x41 && p[0x5E] == 0 && func_80024338(a, p) != 0) {
+                        s32 v = D_1F80008C;
+
+                        p[0x29] = 1;
+                        p[0x2B] = (v + 0x800) >> 4;
+                        *(s16 *)(a + 0x156) = -0x1B;
+                        {
+                            s16 r = *(s16 *)(p + 0x80) + *(s16 *)(a + 0x80) - 0xC;
+
+                            a[0x164] = 1;
+                            a[0x15C] = 0;
+                            D_1F800080 = p;
+                            D_1F800182_5650 = 0;
+                            *(s16 *)(a + 0x152) = r;
+                        }
+                    }
+                } else {
+                    func_8010E240(a, p);
+                }
+            }
+        }
+    }
+    return D_1F800080;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010E4B0);
 
@@ -436,8 +544,6 @@ void func_8010EF30(u8 *p)
     }
 }
 
-extern s32 D_1F80008C;
-extern void *D_1F800080;
 void func_8010EFA0(u8 *a, u8 *b)
 {
     if (b[0x5E] == 0 && func_80024338(a, b) != 0) {
@@ -454,8 +560,6 @@ void func_8010EFA0(u8 *a, u8 *b)
     }
 }
 
-extern u8 **D_1F80014C;
-extern u8 D_1F800152;
 s32 func_8010F034(void *a)
 {
     u8 **l = D_1F80014C;
