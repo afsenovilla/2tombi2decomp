@@ -13,7 +13,11 @@ The transforms are the hand recipes of docs/STATUS.md that can be applied blindl
   - an `M2C_FIELD(...)` read in a statement hoisted into a local (a read done before the stores);
   - a constant in a local (`s32 k = 3;`, every use or one), a narrow-type copy variable for a switch
     (`switch (j = x)` with j u8 / s8 / u16 / s16 / s32), a guarded do/while <-> while, one M2C_FIELD read made
-    volatile (docs/STATUS.md 2026-11-22 (2)).
+    volatile (docs/STATUS.md 2026-11-22 (2));
+  - a `default:` moved first in its switch or (when empty / `break;`) removed, `x = K + 1;` -> `x++;` in `case K:`,
+    a scratchpad constant address `*(T *)0x1F80xxxx` as an extern `D_1F80xxxx`, a top-level early return
+    inverted (`if (c) { return X; } ...; return Y;` <-> `if (!(c)) { ...; return Y; } return X;`)
+    (docs/STATUS.md 2026-11-22 (4)).
 Each candidate is compiled and compared by tools/ccheck.py; the score is the number of differing words plus the
 size difference. Matches are written to build/hillclimb/<name>.c and, with --install, installed with
 tools/install_c.py (linked-build checked, one at a time if needed).
@@ -119,6 +123,7 @@ def candidates(body, name):
         line = "%s{ %s %s = %s; %s%s%s }" % (ind, typ, var, expr, pre, var, m.group(7))
         out.append(body[:m.start()] + line + body[m.end():])
     out += new_candidates(body, name)
+    out += round3_candidates(body, name)
     # void function -> s32 (retail leaves v0 live: an empty delay slot before the exit)
     vm = re.search(r"(?m)^void (%s\()" % re.escape(name), body)
     if vm:
@@ -185,6 +190,105 @@ def new_candidates(body, name, max_lits=12):
     for m in re.finditer(r"M2C_FIELD\(([^,]+), ([\w *]+?)\s*\*, ", fn):
         out.append(head + fn[:m.start()] + "M2C_FIELD(%s, %s volatile *, " % (m.group(1), m.group(2)) +
                    fn[m.end():])
+    return out
+
+
+def segments(fn, k):
+    """[(label start, label end, segment end)] of the `case` / `default` labels of the switch block at fn[k] ('{')."""
+    e = block_end(fn, k)
+    if not e:
+        return [], None
+    labs, d, i = [], 0, k
+    while i < e:
+        c = fn[i]
+        if c == "{":
+            d += 1
+        elif c == "}":
+            d -= 1
+        elif d == 1:
+            m = re.match(r"(?:case [^:]+|default):", fn[i:])
+            if m and re.match(r"\s", fn[i - 1]):
+                labs.append((i, i + m.end()))
+                i += m.end()
+                continue
+        i += 1
+    out = [(a_, b_, labs[n + 1][0] if n + 1 < len(labs) else e - 1) for n, (a_, b_) in enumerate(labs)]
+    return out, e
+
+
+def round3_candidates(body, name):
+    """the 2026-11-22 (4) recipes: default case first / removed, `x = K + 1` -> `x++` in `case K`, a scratchpad
+    constant address as an extern symbol, an early return inverted."""
+    out = []
+    st = body_start(body, name)
+    if st is None:
+        return out
+    head, fn = body[:st], body[st:]
+    ends = lambda t: bool(re.search(r"\b(?:break|return[^;]*|goto \w+|continue);\s*$", t))
+    for m in re.finditer(r"\bswitch \(", fn):
+        k = fn.find("{", m.end())
+        segs, e = segments(fn, k)
+        if not segs:
+            continue
+        for n, (a_, b_, z) in enumerate(segs):
+            if not fn[a_:b_].startswith("default"):
+                continue
+            seg = fn[a_:z].rstrip()
+            # removed (a `default: break;` or an empty default)
+            if re.fullmatch(r"default:\s*(?:break;)?", seg):
+                out.append(head + fn[:a_] + fn[z:])
+            # first (it must not fall into the next case, nor be fallen into)
+            if n and ends(seg) and ends(fn[segs[n - 1][1]:a_]):
+                first = segs[0][0]
+                ind = fn[fn.rfind("\n", 0, first) + 1:first]
+                out.append(head + fn[:first] + seg + "\n" + ind + fn[first:a_] + fn[z:])
+        # `x = K + 1;` in `case K:` -> `x++;` (gcc reuses the register of the next compare constant)
+        sw = fn[m.end():fn.rfind(")", m.end(), k)].strip()
+        for a_, b_, z in segs:
+            cm = re.match(r"case (0x[0-9A-Fa-f]+|\d+):", fn[a_:b_])
+            if not cm:
+                continue
+            kv = int(cm.group(1), 0)
+            for am in re.finditer(r"(?m)^(\s+)([^\n=;]+?) = (0x[0-9A-Fa-f]+|\d+);$", fn[b_:z]):
+                if int(am.group(3), 0) == kv + 1 and am.group(2).strip() == sw:
+                    i0, i1 = b_ + am.start(), b_ + am.end()
+                    out.append(head + fn[:i0] + "%s%s++;" % (am.group(1), am.group(2)) + fn[i1:])
+    # a scratchpad constant address as an extern symbol
+    for m in re.finditer(r"\*\(((?:volatile )?\w+) \*\)0x(1F80[0-9A-Fa-f]{4})\b", body):
+        sym = "D_%s" % m.group(2).upper()
+        if re.search(r"\b%s\b" % sym, body):
+            continue
+        new = body.replace(m.group(0), sym)
+        st2 = body_start(new, name)
+        fs = new.rfind("\n", 0, new.rfind("\n", 0, st2)) + 1 if st2 else 0
+        out.append(new[:fs] + "extern %s %s;\n" % (m.group(1), sym) + new[fs:])
+    # early returns inverted at the top level of the body
+    lines = fn.split("\n")
+    for i, l in enumerate(lines):
+        mm = re.match(r"^    if \((.*)\) \{$", l)
+        if not mm:
+            continue
+        j = next((x for x in range(i + 1, len(lines)) if lines[x] == "    }"), None)
+        if j is None:
+            continue
+        inner, rest = lines[i + 1:j], lines[j + 1:]
+        close = next((x for x in range(len(rest)) if rest[x] == "}"), None)
+        if close is None:
+            continue
+        tail, after = rest[:close], rest[close:]
+        cond = mm.group(1)
+        # if (c) { return X; } REST; return Y;   ->   if (!(c)) { REST; return Y; } return X;
+        if len(inner) == 1 and inner[0].strip().startswith("return") and tail and \
+                tail[-1].startswith("    return"):
+            nl = lines[:i] + ["    if (!(%s)) {" % cond] + ["    " + x if x else x for x in tail] + \
+                ["    }", "    " + inner[0].strip()] + after
+            out.append(head + "\n".join(nl))
+        # if (c) { BODY; return Y; } return X;   ->   if (!(c)) { return X; } BODY; return Y;
+        if inner and inner[-1].strip().startswith("return") and len(tail) == 1 and \
+                tail[0].startswith("    return"):
+            nl = lines[:i] + ["    if (!(%s)) {" % cond, "    " + tail[0], "    }"] + \
+                [x[4:] if x.startswith("        ") else x for x in inner] + after
+            out.append(head + "\n".join(nl))
     return out
 
 

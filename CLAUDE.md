@@ -50,8 +50,14 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   between programs, game code left).
 - `python3 -I tools/progress.py [--phases]`: game / library functions in C per program, or per roadmap phase;
   `python3 -I tools/readme_progress.py` rewrites the progress block of README.md.
-- Library: `python3 -I tools/libsweep.py [--prog boot] --install` (automatic candidates), `tools/libnear.py`,
-  `tools/libpermute.py`, `tools/asm_by_design.py`; one file per library function in `src/<prog>/psyq/<lib>/`.
+- Library: `python3 -I tools/libsweep.py [--prog boot] [--epilogue] --install` (automatic candidates; `--epilogue`
+  adds the `// EPILOGUE sony` / `// RETURN sony` set-ups), `tools/libnear.py [--epilogue]`, `tools/libpermute.py`,
+  `tools/asm_by_design.py`; one file per library function in `src/<prog>/psyq/<lib>/`. Hand-written library C:
+  `python3 -I tools/install_lib.py FILE.c [--prog boot] [--auto] [--dry]` (each function into its own file with the
+  scratch's set-up header, or the first libsweep set-up that matches with --auto; build-checked).
+- Set-up lines of a C file (tools/cc.py): `// CC`, `// FLAGS`, `// ASPSX`, `// AS gnu`, `// EPILOGUE sony` (Sony's
+  library epilogue), `// RETURN sony` (one shared `jr ra; nop`, tools/sonyret.py; `sony first` also keeps an early
+  `return K;` after its test); ccheck.py takes `--cc --flags --as --aspsx --epilogue --return` overrides.
 - C lives in `src/<prog>/*.c` (`INCLUDE_ASM` for what is not decompiled yet, `include/common.h`); see docs/STATUS.md.
 - `python3 -I tools/decomp.py NAME [--check] [--write]`: m2c draft of one function; `python3 -I tools/sweep.py
   [--max-size 0x100] --install`: install every draft that matches as is (build-checked).
@@ -63,7 +69,11 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   build/nearcopy/<prog>/near/ for hand work. `tools/dupsweep.py`: exact copies only.
 - `python3 -I tools/ccheck.py FILE.c --prog P --func F --sbs` (or `tools/sbs.py FILE.c F --prog P`): side-by-side
   diff, ours vs retail. `tools/permlines.py FILE.c F --prog P`: moves the lines marked `//P` until it matches.
-  `tools/variants.py FILE.c F --prog P [--set 'k=a|b']`: words off of each `//--` variant in the file.
+  `tools/variants.py FILE.c F --prog P [--set 'k=a|b'] [--alts K=ALTS.txt]`: words off of each `//--` variant in the
+  file (`--alts`: `{K}` takes each `@@`-separated block of ALTS.txt). `tools/ccheck.py --no-protos`: compiles a
+  scratch with its prototypes dropped as install_c.py does. GTE code: `#include "gte.h"` (real command words).
+- `python3 -I tools/families.py [--top 40]`: pending functions of all programs grouped by opcode sequence, copies x
+  size (build/families.csv): the hand-work targets where one match gives several.
   `tools/magicdiv.py MULT --shift S [--unsigned]`: the divisor behind a magic-number multiply.
 - install_c.py renames symbols named after another program's addresses from the relocations (C copied between
   overlays installs as is); libsweep.py maps foreign library names with `#define` and tries the extra set-ups.

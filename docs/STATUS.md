@@ -3,6 +3,58 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-22 (5): tools after round 3
+
+One agent turned the round-3 "tool work left" list into tools (each tested on real functions):
+- **`// RETURN sony`** (tools/cc.py, tools/sonyret.py): Sony's library compiler had no `return` insn: every `j $31`
+  but the last one branches to the last, which becomes `jr ra; nop`; a jump that falls into it goes; a branch
+  over a return is threaded to it (`bne ...,ret; li v0,1`, also when reorg had stolen the target's first insn).
+  `// RETURN sony first` also puts an early `if (bad) return -1;` block back after its test (libsnd), its
+  body's return value after the body's last load. Usual set-up: gcc 2.8.1 `-O2 -G0 -mno-split-addresses`,
+  `// AS gnu`. Installed: memmove, strcmp (main, boot), SsSetReservedVoice, SsUtSetDetVVol (`sony first`),
+  StFreeRing (main, boot; the loop store as `s32 k = (i + idx) * 32; *(s16 *)((u8 *)base + k) = 0;`), and by
+  libsweep StGetNext (main, boot). boot func_80011A0C matches with it too (below).
+- Library installs: `libsweep.py / libnear.py --epilogue` (EPI_VARIANTS: the EPILOGUE / RETURN sony set-ups;
+  header() writes those lines), libnear skips files whose INCLUDE_ASM names another function, and
+  **`tools/install_lib.py FILE.c [--prog P] [--auto] [--dry]`**: each function of a scratch into its own library
+  file with the set-up header, declarations / static helpers it uses, names renamed from the relocations, install
+  lock, build check. libsweep --epilogue over main / boot found StGetNext only; libnear --epilogue: no new
+  distance <= 2 except _SsContPanpot 2 (m2c, -fno-delayed-branch, AS gnu).
+- install_c.py: a type the target has (same text up to layout) is skipped or moved up from further down; one it
+  defines differently is renamed (`Name_xxxx`) and reported, never dropped; prototypes of functions the target
+  defines further down are kept (written from the definition's header); calls with fewer arguments than a kept
+  prototype / an installed definition are reported; a clashing non-D_ global gets an alias from its known
+  address; `#include "psyq/inline_c.h"` becomes `#include "gte.h"`. `ccheck.py --no-protos` compiles a scratch
+  with the prototypes dropped the same way; ccheck also takes `--epilogue` / `--return`.
+- nearcopy.py: alias lines for any name the program does not define (other programs' `D_..._hash` aliases,
+  library names) instead of an undefined symbol; a one-word `move` / `li K` difference tries each variable use as
+  K (or each literal as a variable). Over all programs (`--max-diff 16 --ratio 0.85`): 12 candidates, no match
+  (closest a02 func_80126EA8 5 <- a0a func_80112F0C). permlines.py: orders that move a line across one it depends
+  on (variable read / assignment) are not tried (`--unsafe` for the old search); no more race on equal texts.
+  variants.py `--alts K=FILE`: `{K}` takes each `@@`-separated block (multi-line alternatives).
+- **`tools/families.py`**: pending functions of all programs grouped by opcode sequence, sorted by copies x
+  size (build/families.csv): 167 families of 2+ (425 functions, 0x35300 bytes); the top ones are 6-9 exact copies
+  of 0x2A0-0x3F4 bytes across a0a-a0f / a00-a06 (one hand match each gives the rest through dupsweep).
+- **`include/gte.h`**: includes psyq/inline_c.h (DMPSX placeholders) and redefines its 65 command macros with the
+  real cop2 words (rtps 0x4A180001, rtpt 0x4A280030, nclip 0x4B400006, avsz3 0x4B58002D, avsz4 0x4B68002E, dpcs
+  0x4A780010, mvmva 0x4A400012 + sf/mx/v/cv/lm: rtv0 0x4A486012, rtir 0x4A49E012, ...; the ones retail uses
+  checked against the asm). main, a01, a04, a0k include it instead of psyq/inline_c.h. The GTE recipe below
+  ("redefine per file") is obsolete: `#include "gte.h"`.
+- hillclimb.py: new transforms (round3_candidates): `default:` first / removed, `x = K + 1` -> `x++` in `case K`
+  (x the switch expression), `*(T *)0x1F80xxxx` -> extern `D_1F80xxxx`, top-level early-return inversion.
+  Run on the m2c drafts of a04 / a00 / a05 up to 0xC0 bytes (25 functions, `--rounds 4`): no match; closest a04
+  func_801351B8 7 (37 from the draft), a00 func_80132548 11, a04 func_8011187C 15, a05 func_801155A4 18.
+
+Left: boot func_80011A0C matches with gcc 2.8.1 `-O2 -G0 -mno-split-addresses`, `// AS gnu`, `// RETURN sony`
+(also gcc 2.7.2 AS gnu), not with boot.c's game set-up, so it needs its own file. It is the first function of a
+module [0x80011A0C, 0x80012D2C) at the end of boot.c (9 functions: BIOS region byte 0xBFC7FF52, a message screen
+with Krom2RawAdd / libgpu, shared globals D_80025454 / D_800384A4; func_80012B08 matches with both set-ups) that no
+Psy-Q signature covers. Splitting needs a layout decision (not done): either the 9 as per-function files under
+src/boot/psyq/<dir>/ (counted as library, installable with install_lib.py; `- [0x220C, c, psyq/<dir>/func_80011A0C]`
+... in config/boot.yaml), or a second game file for the module (tools assume one src/<prog>/<prog>.c). Also left:
+SsUtSetVVol (return parts match, register use differs: vc copied to a3 first), SpuGetVoiceVolume (returns match;
+retail keeps `andi 0xFFFF` and `subu` of 0x8000: 5-6 words), nested bool returns in hillclimb.
+
 ## 2026-11-22 (4): third round of five agents
 
 All code in C: **3396 / 7011 functions (48.4 %, 18.2 % of the bytes)**, from 3034 (15.2 %). main +51, library +51
