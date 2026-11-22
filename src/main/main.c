@@ -7056,7 +7056,94 @@ void func_8004B4E8(s32 item, u8 v)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B528);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B788);
+s32 f_UpdateActorUnscaledModelTransforms(s32 arg0);
+void f_ResetTombaControlState(void *arg0);
+u8 *f_AllocateActor(u8 *owner, u8 flags, u8 kind, u8 type);
+void f_QueueClass5ActorForRender(s32 arg0);
+s16 f_CalculateYawFromPositionToPoint(s16 *pos, s16 x, s16 z);
+/* f_SpawnBackEquipmentProxyActor, inlined */
+static inline u8 *SpawnBack_B788(void *owner, u8 item, s16 clut)
+{
+    u8 *a = f_AllocateActor(owner, 0x81, 5, 1);
+
+    if (a != NULL) {
+        *(void **)(a + 0x1C) = func_8004BB38;
+        a[3] = 0;
+        *(s16 *)(a + 0x5C) = clut;
+        do { /* a macro in the original source, probably */
+            a[0x5E] = item;
+        } while (0);
+    }
+    return a;
+}
+
+//--
+void func_8004B788(u8 *a)
+{
+    u8 *t = (u8 *)D_800E7E80;
+    u8 *o = *(u8 **)(a + 0x14);
+    u8 *g;
+    u8 *n;
+    u8 *p;
+    u8 *q;
+    s32 r;
+
+    switch (a[5]) {
+    case 0:
+        if (t[5] != 0x12) {
+            return;
+        }
+        a[5] = 1;
+        {
+            s32 x = *(s16 *)(o + 0x2E);
+            s32 z = *(s16 *)(o + 0x36);
+
+            D_1F800137[0] = 2;
+            *(s16 *)(a + 0x60) = f_CalculateYawFromPositionToPoint((s16 *)(t + 0x2C), x, z);
+        }
+        f_ResetTombaControlState(t);
+        return;
+    case 1:
+        if (f_StepActorYawTowardAngle((s32)t, *(s16 *)(a + 0x60), 0x100)) {
+            a[5]++;
+        }
+        *(u16 *)(a + 0x56) = *(u16 *)(t + 0x56);
+        break;
+    case 2:
+        r = func_8004B528(a, o);
+        if (r == 1) {
+            a[5]++;
+            o[0x29] = r;
+        }
+        break;
+    case 3:
+        if (func_8004B528(a, o) == 2) {
+            g = (u8 *)&D_800BF870;
+            if (g[0] == 0 && g[0x48] != 0xFF) {
+                n = SpawnBack_B788(a, 0, 0);
+                if (n != NULL) {
+                    g[0x1E] = 0x28;
+                    t[0x6E] = 0x28;
+                    *(u8 **)(t + 0x74) = n;
+                }
+            }
+            a[4] = 3;
+            o[0x29] = 2;
+        }
+        break;
+    }
+    p = *(u8 **)(t + 0xDC);
+    q = *(u8 **)(t + 0xD0);
+    *(s16 *)(a + 0x2E) = (*(s32 *)(p + 0x2C) + *(s32 *)(q + 0x2C)) / 2;
+    *(s16 *)(a + 0x32) = (*(s32 *)(p + 0x30) + *(s32 *)(q + 0x30)) / 2;
+    *(s16 *)(a + 0x36) = (*(s32 *)(p + 0x34) + *(s32 *)(q + 0x34)) / 2;
+    if (a[0x28] & 0x7F) {
+        f_UpdateActorUnscaledModelTransforms((s32)a);
+    }
+draw:
+    a[1] = 1;
+    f_QueueClass5ActorForRender((s32)a);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_FillEquippedBucketFromSource);
 
