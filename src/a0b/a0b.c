@@ -602,4 +602,19 @@ u8 func_801180E8(u8 *a)
     return a[0x29];
 }
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801181AC);
+s32 func_801181AC(u8 *a)
+{
+    s16 h = -0x1E;
+    s16 ang;
+    s16 d = 0x3C;
+    if (a[0xBE] == 0) {
+        ang = *(u16 *)(a + 0x60);
+    } else {
+        ang = *(u16 *)(a + 0x60) + 0x800;
+    }
+    if (func_80045CAC(a, d, h, ang) == 0 && func_80045CAC(a, d, (s16)(0x64 - h), ang) == 0) {
+        return 0;
+    }
+    a[0x5F] = 1;
+    return 1;
+}
