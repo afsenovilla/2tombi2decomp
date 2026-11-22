@@ -5488,7 +5488,28 @@ void f_SetTombaAnimation(u8 *t, s32 anim, s16 blend)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SelectTombaContactAnimation6AOr6C);
+void f_SelectTombaContactAnimation6AOr6C(u8 *a, s32 mode, s32 base)
+{
+    s32 anim;
+
+    switch (mode) {
+    case 1:
+        anim = base + 0x6A;
+        break;
+    case 0:
+        if (a[0x147] == (a[0x16A] & 1)) {
+            anim = base + 0x6A;
+            break;
+        }
+    default:
+        anim = base + 0x6C;
+        break;
+    case 2:
+        anim = base + 0x6C;
+        break;
+    }
+    f_SetTombaAnimationIfChanged(a, anim, 0);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaGroundMovementAnimation);
 
@@ -6687,7 +6708,17 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006923C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80069300);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80069634);
+extern u16 D_800A4A6C_tbl2[][2];
+
+void func_80069634(u8 *a)
+{
+    *(u16 *)(a + 0x44) = D_800A4A6C_tbl2[a[2] - 1][a[0x5E]];
+    if (a[0x5E] != 0) {
+        *(s16 *)(a + 0x40) = 2;
+    } else {
+        *(s16 *)(a + 0x40) = 1;
+    }
+}
 
 void func_80069688(u8 *a)
 {
@@ -8650,7 +8681,16 @@ void func_8007AD14(void) {
     memset(&D_800ED058, 0, 0x40);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007AD40);
+void func_8007AD40(void)
+{
+    s32 i;
+
+    memset(D_800EC188_d83b, 0, 0xA00);
+    for (i = 0; i < 40; i++) {
+        D_800EC188_d83b[i].index = i & 7;
+        D_800EC188_d83b[i].scale = 0x1000;
+    }
+}
 
 
 Slot4C *func_8007AD98(void)
@@ -8672,7 +8712,17 @@ void f_RetireSceneController(void *arg0) {
     M2C_FIELD(arg0, s32 *, 4) = 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ReleaseActorModelParts);
+void f_ReleaseActorModelParts(u8 *a)
+{
+    s32 n = a[9];
+
+    while (n != 0) {
+        n--;
+        D_800ED098++;
+        *--D_800E7E74 = ((s32 *)(a + 0xC0))[n];
+    }
+    a[9] = 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007AE30);
 
