@@ -491,8 +491,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ClassifyActorCylinderContact);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ClassifyActiveColliderPartCylinderContact);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveActiveColliderPartContact);
-
 extern s8 D_1F800182[];
 /* f_TestActorAgainstPartCylinderBounds, inlined */
 static inline s32 TestPartCyl_2AC8(u8 *a, u8 *b, u8 *p)
@@ -505,6 +503,30 @@ static inline s32 TestPartCyl_2AC8(u8 *a, u8 *b, u8 *p)
         return 0;
     }
     D_1F80009C = ratan2(-dz, dx);
+    return 1;
+}
+
+s32 f_ResolveActiveColliderPartContact(u8 *a, u8 *b, u8 *p, s32 k)
+{
+    u8 *m = a + 0x60;
+    s32 c;
+    s32 t;
+    s32 r;
+
+    if (!TestPartCyl_2AC8(a, b, p)) {
+        return 0;
+    }
+    if (a[0x5F] == 0x10) {
+        c = (rcos(*(s16 *)(m + 8) + 0x800) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80))) >> 12;
+        t = rsin(*(s16 *)(m + 8) + 0x800) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80));
+        *(u16 *)(a + 0x2E) = *(u16 *)(b + 0xAC) + c;
+        *(u16 *)(a + 0x36) = *(u16 *)(b + 0xB4) - (t >> 12);
+    }
+    r = f_ApplyActiveColliderImpactResponse(a, b, p, k);
+    b[0x2B] = 1;
+    if (!(r & 0x80)) {
+        *(u8 *)D_1F800182 = 0;
+    }
     return 1;
 }
 
