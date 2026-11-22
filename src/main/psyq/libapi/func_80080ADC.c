@@ -1,3 +1,47 @@
-#include "common.h"
+// CC gcc-2.7.2-psx
+// FLAGS -O2 -G0
+// AS gnu
+// Source: psx_tomba's func_8005B668 (MIT), cut by tools/ptsrc.py and renamed.
+#define D_8009B108 D_80100AB0
+#define D_8009B110 D_80100AB8
+#define SKIP_ASM
+#include "pt/common.h"
+typedef struct {
+    char* name;
+    s32 pad[12];
+    s32 (*firstfile)();
+    s32 pad2[6];
+} DevEntry;
+extern s32 firstfile();
+extern s32 (*D_8009B108)();
+extern char D_8009B110[];
+#define DEV_TABLE (*(DevEntry**)0x150)
+#define DEV_SIZE (*(u32*)0x154)
+s32 hook_find(void);
+s32 func_80080ADC();
+s32 func_8005B4CC(signed char* name, void* entry);
+s32 func_80080ADC(s32* fd, void* a1, void* a2)
+{
+    DevEntry* dev;
+    DevEntry* end;
+    DevEntry* tmp;
+    s32 (*saved)();
 
-INCLUDE_ASM("asm/main/nonmatchings/psyq/libapi/func_80080ADC", func_80080ADC);
+    if (*fd == 0) {
+        *fd = 1;
+    }
+    saved = D_8009B108;
+    dev = DEV_TABLE;
+    tmp = dev + DEV_SIZE / sizeof(DevEntry);
+    if (dev < tmp) {
+        end = tmp;
+        do {
+            if (dev->name != NULL && strcmp(dev->name, D_8009B110) == 0) {
+                dev->firstfile = saved;
+                break;
+            }
+            dev++;
+        } while (dev < end);
+    }
+    return D_8009B108(fd, a1, a2);
+}
