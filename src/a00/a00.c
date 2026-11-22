@@ -570,7 +570,25 @@ void func_80114B8C(u8 *a, u8 *b) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114BBC);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114C5C);
+extern u8 D_800BF871;
+
+void func_80114C5C(u8 *a, s32 b) {
+    if (b == 0) {
+        D_800BF871 = 0;
+        return;
+    }
+    if (a[0x2A] >= 0x16 && a[0x2A] < 0x19) {
+        D_800BF871 = 8;
+        return;
+    }
+    if (a[0x2A] == 0x22) {
+        if (M2C_FIELD(a, s16 *, 0x2E) >= 0x4753) {
+            D_800BF871 = 3;
+            return;
+        }
+        D_800BF871 = 2;
+    }
+}
 
 typedef struct { u8 pad0[7]; u8 unk7; u8 pad8[6]; u8 unkE; u8 unkF; u8 pad10[0x21]; u8 unk31; s16 unk32; } AreaState808_E;
 extern AreaState808_E D_800BF808_9a69;
@@ -2057,7 +2075,24 @@ void f_ConfigureAquaticPlantMotion(ActorH *a, s16 k) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ClassifyAquaticPlantContact);
+s32 f_ClassifyAquaticPlantContact(u8 *a) {
+    if (a[0x29] != 0) {
+        if (M2C_FIELD(a, s16 *, 0x78) == 0) {
+            if (M2C_FIELD(a, s16 *, 0x44) > 0) {
+                M2C_FIELD(a, s16 *, 0x78) = 1;
+                M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), s16 *, 0x14) = 0x20;
+            } else if (M2C_FIELD(a, s16 *, 0x44) < 0) {
+                M2C_FIELD(a, s16 *, 0x78) = 2;
+                M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), s16 *, 0x14) = 0x20;
+            }
+        }
+        if (M2C_FIELD(a, s16 *, 0x68) == 0) {
+            return 1;
+        }
+        return 2;
+    }
+    return 0;
+}
 
 
 void f_UpdateAquaticPlantCollisionBounds(u8 *a) {

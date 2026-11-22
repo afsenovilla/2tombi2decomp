@@ -491,7 +491,18 @@ void func_80114F00(void *arg0) {
     func_80077B5C();
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80114F24);
+void f_UpdateCoalMiningTownScenePropActor();
+
+void func_80114F24(u8 *a) {
+    u8 *p = func_80072DDC(a, 1, 3, 0x10);
+
+    M2C_FIELD(p, void **, 0x1C) = f_UpdateCoalMiningTownScenePropActor;
+    p[3] = 3;
+    M2C_FIELD(p, s16 *, 0x2E) = M2C_FIELD(a, s16 *, 0x2E);
+    M2C_FIELD(p, s16 *, 0x32) = M2C_FIELD(a, s16 *, 0x32);
+    M2C_FIELD(p, s16 *, 0x36) = M2C_FIELD(a, s16 *, 0x36);
+    func_80042354(1, 1);
+}
 
 
 void func_80114F90(void) {
@@ -1435,7 +1446,23 @@ void func_80121BB4(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80121C10);
+extern u8 D_800BF9DA;
+
+void func_80121C10(u8 *a) {
+    if (a[0x71] == 0xFF) {
+        switch (a[0x5E]) {
+        case 3:
+            D_800BF9DA = 0;
+        case 2:
+            a[0x5E] += 2;
+            break;
+        case 0:
+            a[0x5E] = 1;
+            break;
+        }
+        a[5] = 0;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80121C74);
 

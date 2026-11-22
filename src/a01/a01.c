@@ -809,7 +809,25 @@ void func_80115C74(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80115CA0);
+extern u8 D_800BF909;
+
+s32 func_80115CA0(u8 *a, s32 b) {
+    u8 *t = D_800E7E80;
+
+    if (*(s16 *)(t + 0x36) >= 0x4149) {
+        *(s16 *)(t + 0x36) = 0x4149;
+        if (b == 2) {
+            if (D_1F800137 == 1) {
+                return 1;
+            }
+            if (D_800BF909 == 0xFF) {
+                D_1F800137 = b;
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
 
 extern s8 D_800BF9FB;
 void func_80115D0C(void *arg0) {
@@ -2488,12 +2506,28 @@ void func_8012EB1C(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012EC08);
+#define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
+extern s32 D_1F800090[];
+extern u8 D_800A1CD4[];
+extern u8 D_80137D94[];
+extern s16 D_801388EC;
+extern s16 D_801388EE;
+extern s16 D_80139004;
+extern s16 D_801388F0;
+extern u8 D_80138AC0[];
+
+void func_8012EC08(u8 *p) {
+    s32 *d = D_1F800090;
+
+    gte_ldfcdir(0, 0, 0);
+    *d = M2C_FIELD(p, s32 *, 0x50);
+    func_800318A0(p + 0x2C, D_800A1CD4, p + 0x48);
+    func_80027768(D_80137D94, M2C_FIELD(p, s16 *, 0x4E), M2C_FIELD(p, s16 *, 0x32), 0);
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012EC78);
 
 #define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
-extern s32 D_1F800090[];
 
 void func_8012ED88(u8 *p) {
     s32 *d = D_1F800090;
@@ -2596,9 +2630,36 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801329C4);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80132DC0);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80132EFC);
+#define AREA_gte_lddp(r0) __asm__ volatile("mtc2	%0, $8" : : "r"(r0))
+#define AREA_gte_ldrgb_r(r0) __asm__ volatile("mtc2	%0, $6" : : "r"(r0))
+#define AREA_gte_dpcs() __asm__ volatile("nop;" "nop;" ".word 0x4A780010")
+#define AREA_gte_strgb(r0) __asm__ volatile("swc2	$22, 0( %0 )" : : "r"(r0) : "memory")
+extern u32 D_1F800080;
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80132F5C);
+void func_80132EFC(u32 *p, s32 b) {
+    u32 s = D_1F800080 * 0x41C64E6D + 0x3039;
+
+    D_1F800080 = s;
+    AREA_gte_lddp(b / 4 + (s >> 22));
+    AREA_gte_ldrgb_r(*p);
+    AREA_gte_dpcs();
+    AREA_gte_strgb(p);
+}
+
+void func_80132F5C(void) {
+    u32 i;
+    u8 *p;
+
+    D_801388EC = 0;
+    D_801388EE = 0;
+    D_80139004 = 0;
+    D_801388F0 = 0;
+    if (D_800BF873 != 0) {
+        for (i = 0, p = D_80138AC0; i < 6; i++, p += 8) {
+            func_801321C4(p);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80132FD0);
 
