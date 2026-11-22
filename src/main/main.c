@@ -11934,7 +11934,33 @@ void func_80068214(Actor_8214 *o)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800682C4);
+void func_800682C4(u8 *a, s32 flag)
+{
+    u8 *g = (u8 *)&D_800BF870;
+
+    a[0x6C] = g[0x1C];
+    a[0x176] = g[0x1C];
+    a[0x6D] = g[0x1D];
+    a[0x6F] = g[0x1F];
+    a[0x6E] = g[0x1E];
+    a[0x174] = g[0x11];
+    if (a[0x174] & 8) {
+        a[0xD] = 0x42;
+    }
+    if (a[0x174] & 0x30) {
+        a[0xD] |= 0x12;
+    }
+    *(s32 *)(a + 0x70) = 0;
+    *(s32 *)(a + 0x74) = 0;
+    func_80067DA8(a);
+    f_ApplyTombaClothesAppearanceAndPhysics(a);
+    if (flag == 0) {
+        func_80067FE4(a);
+        if (g[0x175] == 6) {
+            func_8011740C(a, 2);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800683B8);
 
