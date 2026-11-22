@@ -83,8 +83,7 @@ def fill_args(body, name):
 
 
 def attempt(prog, name, ctx, m2c_opts=()):
-    r = subprocess.run([sys.executable, D.M2C, "--target", "mipsel-gcc-c", "--valid-syntax", "--context", ctx] +
-                       list(m2c_opts) + [D.find_asm(prog, name)],
+    r = subprocess.run(D.m2c_cmd(prog, name, ctx, ["--valid-syntax"] + list(m2c_opts)),
                        capture_output=True, text=True, cwd=ROOT)
     if r.returncode or not r.stdout.strip() or "Decompilation failure" in r.stdout:
         return name, None

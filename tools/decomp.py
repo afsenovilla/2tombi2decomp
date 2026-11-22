@@ -5,8 +5,11 @@ project headers as context, and optionally check the draft at once.
   python3 -I tools/decomp.py NAME [--prog main] [--check] [--write]
 
 NAME: a function of asm/<prog>/nonmatchings. The context is include/common.h + every include/*.h, preprocessed
-(build/ctx.c). --check compiles the draft with the game's compiler (tools/ccheck.py) and reports OK / DIFF;
---write also replaces the function's INCLUDE_ASM line in src/<prog>/*.c by the draft when it matches.
+(build/ctx.c). The program's jump tables (the jtbl_ blocks of asm/<prog>/data/*rodata*.s, gathered in
+build/m2c_jtbl_<prog>.s) are passed too, so functions with a switch through a jump table decompile (m2c refuses a
+`jr` without its table; the rest of the rodata is left out, so drafts keep D_ symbols instead of string literals).
+--check compiles the draft with the game's compiler (tools/ccheck.py) and reports OK / DIFF; --write also replaces
+the function's INCLUDE_ASM line in src/<prog>/*.c by the draft when it matches.
 A draft is only a start: most functions need types and hand edits before they match.
 """
 import argparse, glob, os, re, subprocess, sys
@@ -30,6 +33,38 @@ def context():
     return out
 
 
+def jtbl_file(prog):
+    """build/m2c_jtbl_<prog>.s: the jump tables of the program's rodata, for m2c (None when it has none)."""
+    out = os.path.join(ROOT, "build", "m2c_jtbl_%s.s" % prog)
+    srcs = sorted(glob.glob(os.path.join(ROOT, "asm", prog, "data", "*rodata*.s")))
+    if not srcs:
+        return None
+    if os.path.exists(out) and os.path.getmtime(out) >= max(os.path.getmtime(s) for s in srcs):
+        return out
+    keep = ['.include "macro.inc"', '.section .rodata, "a"']
+    for s in srcs:
+        cur = False
+        for l in open(s):
+            m = re.match(r"\s*(end)?dlabel (\w+)", l)
+            if m:
+                cur = m.group(2).startswith("jtbl_") and not m.group(1)
+                if m.group(1) and m.group(2).startswith("jtbl_"):
+                    keep.append(l.rstrip())
+            if cur:
+                keep.append(l.rstrip())
+    tmp = out + ".%d" % os.getpid()
+    open(tmp, "w").write("\n".join(keep) + "\n")
+    os.replace(tmp, out)
+    return out
+
+
+def m2c_cmd(prog, name, ctx, opts=()):
+    """the m2c command line for one function: context, options, its .s and the program's jump tables."""
+    jt = jtbl_file(prog)
+    return [sys.executable, M2C, "--target", "mipsel-gcc-c"] + list(opts) + ["--context", ctx,
+                                                                            find_asm(prog, name)] + ([jt] if jt else [])
+
+
 def find_asm(prog, name):
     hits = glob.glob(os.path.join(ROOT, "asm", prog, "nonmatchings", "**", name + ".s"), recursive=True)
     if not hits:
@@ -44,8 +79,7 @@ def main():
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--write", action="store_true")
     a = ap.parse_args()
-    r = subprocess.run([sys.executable, M2C, "--target", "mipsel-gcc-c", "--context", context(),
-                        find_asm(a.prog, a.name)], capture_output=True, text=True, cwd=ROOT)
+    r = subprocess.run(m2c_cmd(a.prog, a.name, context()), capture_output=True, text=True, cwd=ROOT)
     draft = r.stdout
     if r.returncode or not draft.strip():
         sys.exit(r.stderr or "m2c failed")

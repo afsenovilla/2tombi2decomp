@@ -155,8 +155,8 @@ def candidates(prog, name, ctx, t1src, sources=("main", "pt", "t1", "m2c")):
         text, f = ptsrc.cut(name)
         if text:
             out.append(("pt:" + f, text))
-    r = subprocess.run([sys.executable, D.M2C, "--target", "mipsel-gcc-c", "--valid-syntax", "--context", lib_context(prog),
-                        D.find_asm(prog, name)], capture_output=True, text=True, cwd=ROOT) if "m2c" in sources else None
+    r = subprocess.run(D.m2c_cmd(prog, name, lib_context(prog), ["--valid-syntax"]), capture_output=True, text=True,
+                       cwd=ROOT) if "m2c" in sources else None
     if r and r.returncode == 0 and r.stdout.strip() and "Decompilation failure" not in r.stdout:
         out.append(("m2c", '#define %s %s_hdr\n#include "psyq_all.h"\n#undef %s\n' % (name, name, name) + r.stdout))
     if "t1" in sources and t1src and "__asm__(" not in open(t1src).read():

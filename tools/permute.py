@@ -51,8 +51,7 @@ def main():
     if a.src:
         text = open(a.src).read()
     else:
-        r = subprocess.run([sys.executable, D.M2C, "--target", "mipsel-gcc-c", "--context", D.context(),
-                            D.find_asm(a.prog, a.name)], capture_output=True, text=True, cwd=ROOT)
+        r = subprocess.run(D.m2c_cmd(a.prog, a.name, D.context()), capture_output=True, text=True, cwd=ROOT)
         text = '#include "common.h"\n' + re.sub(r"(?m)^(extern )?\? ", r"\1s32 ", r.stdout)
     # keep only this function's body among the file's functions: other functions become prototypes is not needed;
     # the permuter scores the whole object, so the input must hold just this function.

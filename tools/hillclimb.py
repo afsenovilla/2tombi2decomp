@@ -157,8 +157,7 @@ def climb(prog, name, ctx, rounds):
 
 
 def draft_of(prog, name, ctx):
-    r = subprocess.run([sys.executable, D.M2C, "--target", "mipsel-gcc-c", "--valid-syntax", "--context", ctx,
-                        D.find_asm(prog, name)], capture_output=True, text=True, cwd=ROOT)
+    r = subprocess.run(D.m2c_cmd(prog, name, ctx, ["--valid-syntax"]), capture_output=True, text=True, cwd=ROOT)
     if r.returncode or not r.stdout.strip() or "Decompilation failure" in r.stdout:
         return name, None
     body = S.fill_args(re.sub(r"(?m)^(extern )?\? ", r"\1s32 ", r.stdout), name)
