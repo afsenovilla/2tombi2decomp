@@ -531,4 +531,17 @@ void func_8010C980(u8 *a)
     *(u16 *)(a + 0xA) = t;
 }
 
-INCLUDE_ASM("asm/a0i/nonmatchings/a0i", f_UpdateWisdomTowerInteriorEntranceActor);
+extern u16 D_8010CAB4[][2];
+extern s32 D_1F80021C;
+
+void f_UpdateWisdomTowerInteriorEntranceActor(s16 a, s16 b)
+{
+    s32 base;
+    u16 *t;
+    if (a == 0) {
+        t = D_8010CAB4[0];
+        base = D_1F80021C;
+        base += t[b * 2] * 32;
+        func_8001D2A8(3, base, base + (t[b * 2 + 1] + 1) * 32, 0);
+    }
+}
