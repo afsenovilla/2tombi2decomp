@@ -916,7 +916,18 @@ void func_801164D0(s32 arg0) {
     func_8003116C(0x607, temp_s0, -0xA);
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80116518);
+void func_80116518(u8 *a)
+{
+    u8 *p = a + 0x2C;
+
+    *(s32 *)(a + 0x2C) += *(s16 *)(a + 0x4E) << 8;
+    *(s32 *)(a + 0x30) += *(s16 *)(a + 0x50) << 8;
+    *(s32 *)(a + 0x34) += *(s16 *)(a + 0x52) << 8;
+    *(s16 *)(a + 0x58) += 0x800;
+    func_800313A0(0x606, p, -0xA, a + 0x54);
+    *(s16 *)(a + 0x58) -= 0x800;
+    func_8003116C(0x607, p, -0xA);
+}
 
 void func_801165BC(void *arg0) {
     M2C_UNK var_a0;

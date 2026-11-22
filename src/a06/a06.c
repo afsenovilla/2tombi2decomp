@@ -362,7 +362,22 @@ void func_80110F28(void *arg0, s32 arg1) {
     }
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80110FE0);
+extern u8 D_800BF808_1760[];
+
+void func_80110FE0(u8 *a)
+{
+    u8 *g = D_800BF808_1760;
+    s32 h = *(u16 *)(g + 0xA);
+
+    if (g[0xF] == 0xA && *(s16 *)(a + 0x36) >= 0x6218) {
+        *(s16 *)(a + 0x36) = 0x6217;
+    }
+    if (!(a[0x145] & 1) && *(s16 *)(a + 0x32) >= (s16)h - *(s16 *)(a + 0x62)) {
+        *(s16 *)(a + 0x32) = h - *(s16 *)(a + 0x62);
+        func_80022C78(a, h);
+        a[0x29] |= 0x80;
+    }
+}
 
 void func_80111084(void *a, u8 *b)
 {
@@ -821,7 +836,6 @@ void func_801153F8(void) {
     func_80051FB4();
 }
 
-extern u8 D_800BF808_1760[];
 extern u8 D_800E806C_5739;
 void func_80115438(void)
 {
@@ -3166,7 +3180,35 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80131944);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80131A18);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80131B10);
+void func_80131B10(u8 *a)
+{
+    u8 *o;
+    switch (a[6]) {
+    case 0:
+        *(s16 *)(a + 0x40) = 0;
+        a[6]++;
+    case 1:
+        if (a[1] == 0) {
+            if (++*(s16 *)(a + 0x40) >= 0x708) {
+                o = *(u8 **)(a + 0x10);
+                if (o != NULL) {
+                    o[6] = 0;
+                    o[5] = 0;
+                    o[4] = 3;
+                    *(u8 **)(a + 0x10) = NULL;
+                }
+                a[5] = 1;
+                a[4] = 0;
+                return;
+            }
+        } else {
+            a[6] = 0;
+            a[5] = 0;
+            return;
+        }
+        break;
+    }
+}
 
 void func_80131BB4(void)
 {
@@ -3593,7 +3635,25 @@ s32 func_8013B668(u8 *a) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013B738);
+s32 func_8013B738(u8 *a, u8 *b, s32 f)
+{
+    s16 dx, dz, dy;
+    s32 d;
+
+    f &= 1;
+    dx = *(s16 *)(b + 2) - *(s16 *)(a + 0x2E);
+    dz = *(s16 *)(b + 0xA) - *(s16 *)(a + 0x36);
+    if (f) {
+        dy = *(s16 *)(b + 6) - *(s16 *)(a + 0x32);
+    } else {
+        dy = 0;
+    }
+    d = func_80084080(dx * dx + dz * dz + dy * dy);
+    if (d >= 0x800) {
+        return 8;
+    }
+    return d >> 8;
+}
 
 void func_8013B7DC(u8 *p)
 {
