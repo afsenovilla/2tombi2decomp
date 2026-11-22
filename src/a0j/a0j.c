@@ -91,7 +91,32 @@ void func_80109C7C(void *a)
 
 INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_80109D40);
 
-INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_80109E40);
+extern s16 D_1F800144_138c;
+extern u8 *D_800F2738;
+
+void func_80109E40(void)
+{
+    u8 *a;
+    u8 **p;
+    u8 *b;
+    if (D_1F800144_138c == 0) {
+        return;
+    }
+    for (a = D_800F2738; a != NULL; a = *(u8 **)(a + 0x24)) {
+        if ((a[0] & 1) && a[0x2B] == 0) {
+            p = D_1F80013C;
+            D_1F800182 = *(u8 *)&D_1F800144_138c;
+            while (D_1F800182 != 0) {
+                b = *p;
+                D_1F800182--;
+                p++;
+                if ((b[0] & 1) && b[2] == 8) {
+                    func_80021394(a, b, 0x100);
+                }
+            }
+        }
+    }
+}
 
 
 s32 func_80109F40(void) {
