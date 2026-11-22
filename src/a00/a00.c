@@ -2666,7 +2666,40 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121CF8);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_FinishStuckFishhookLineSequence);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121FD8);
+extern u8 D_8014E4EC[];
+extern u8 D_80149754[];
+extern u8 D_80149774[];
+extern u8 D_8014977C[];
+
+s32 func_80121FD8(u8 *p) {
+    switch (p[6]) {
+    case 0:
+        if (p[0x2B] == 3) {
+            p[6] = 1;
+            func_80042354(1, 1);
+        }
+        break;
+    case 1:
+        p[6] = 2;
+        if (D_800BF870.itemCounts[0x45] != 0) {
+            func_80040CDC(p, D_8014E4EC, D_80149754);
+        } else if (D_800BF870.pad1[0x86] != 0xFF) {
+            func_80040CDC(p, D_8014E4EC, D_80149774);
+        } else {
+            func_80040CDC(p, D_8014E4EC, D_8014977C);
+        }
+        p[0x70] = 1;
+        break;
+    case 2:
+        func_80041098(p);
+        if (p[0x70] == 0xFF) {
+            func_80042310();
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleStuckFishhookQuestNpc);
 
@@ -2695,7 +2728,6 @@ void func_80122BF4(u8 *a) {
 }
 
 extern u8 D_800BF8B9;
-extern u8 D_8014E4EC[];
 void func_80122CA4(u8 *a) {
     if (D_800BF8B9 != 0xFF) {
         a[4] = 3;

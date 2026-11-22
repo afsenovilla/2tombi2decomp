@@ -3860,11 +3860,84 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801267E8);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80126A80);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80126C1C);
-
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80126D50);
-
 extern s16 D_80137600[];
+/* func_80126EB0, inlined */
+static inline void inl_80126EB0(u8 *a) {
+    if (a[3] == 1) {
+        M2C_FIELD(a, s16 *, 0x56) = 0x180;
+    } else if (a[3] == 2) {
+        M2C_FIELD(a, s16 *, 0x56) = 0xB9A;
+    } else if (a[3] == 3) {
+        M2C_FIELD(a, s16 *, 0x56) = 0xA0;
+    }
+    a[0x47] = 0;
+    func_80126608(a);
+    M2C_FIELD(a, s16 *, 0x80) = 0x32;
+    M2C_FIELD(a, s16 *, 0x82) = 0x64;
+    M2C_FIELD(a, s16 *, 0x84) = D_80137600[a[3]] + 0x5A;
+    M2C_FIELD(a, s16 *, 0x86) = D_80137600[a[3]] + 0xDC;
+}
+
+void func_80126C1C(u8 *a) {
+    switch (a[4]) {
+    case 0:
+        func_80126A80(a);
+        inl_80126EB0(a);
+        M2C_FIELD(a, s16 *, 0x32) += 0xAF;
+        func_800517F8(a);
+        break;
+    case 1:
+        func_801267E8(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
+
+typedef struct {
+    s16 x, y, z;
+} AVec3;
+extern AVec3 D_80137614[];
+extern s16 D_8013764C[];
+/* func_80126F60, inlined */
+static inline void inl_80126F60(u8 *a) {
+    u8 *p;
+
+    M2C_FIELD(a, s16 *, 0x2E) = D_80137614[a[3]].x;
+    M2C_FIELD(a, s16 *, 0x32) = D_80137614[a[3]].y;
+    M2C_FIELD(a, s16 *, 0x36) = D_80137614[a[3]].z;
+    p = M2C_FIELD(a, u8 **, 0x10);
+    M2C_FIELD(a, s16 *, 0x54) = M2C_FIELD(p, s16 *, 0x54);
+    M2C_FIELD(a, s16 *, 0x56) = M2C_FIELD(p, s16 *, 0x56);
+    M2C_FIELD(a, s16 *, 0x58) = M2C_FIELD(p, s16 *, 0x58);
+    M2C_FIELD(a, s16 *, 0x80) = 0x32;
+    M2C_FIELD(a, s16 *, 0x82) = 0x64;
+    M2C_FIELD(a, s16 *, 0x84) = D_8013764C[a[3]] + 0x5A;
+    M2C_FIELD(a, s16 *, 0x86) = D_8013764C[a[3]] + 0xDC;
+}
+
+void func_80126D50(u8 *a) {
+    switch (a[4]) {
+    case 0:
+        func_80126A80(a);
+        inl_80126F60(a);
+        M2C_FIELD(a, s16 *, 0x32) += 0xAF;
+        func_800517F8(a);
+        break;
+    case 1:
+        func_801267E8(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
+
 void func_80126EB0(u8 *a) {
     if (a[3] == 1) {
         M2C_FIELD(a, s16 *, 0x56) = 0x180;
@@ -3881,11 +3954,6 @@ void func_80126EB0(u8 *a) {
     M2C_FIELD(a, s16 *, 0x86) = D_80137600[a[3]] + 0xDC;
 }
 
-typedef struct {
-    s16 x, y, z;
-} AVec3;
-extern AVec3 D_80137614[];
-extern s16 D_8013764C[];
 void func_80126F60(u8 *a) {
     u8 *p;
 
