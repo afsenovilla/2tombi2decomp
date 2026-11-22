@@ -7724,7 +7724,69 @@ void func_8006C80C(void)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C988);
+extern u16 D_1F8000D6;
+
+void func_8006C988(u8 *a)
+{
+    s32 r;
+
+    switch (a[0x76]) {
+    case 0:
+        break;
+    case 1:
+        *(u16 *)(a + 0x86) = D_1F8000D0_fb20[1];
+        *(u16 *)(a + 0x88) = D_1F8000D0_fb20[3];
+        *(u16 *)(a + 0x8A) = D_1F8000D0_fb20[5];
+        a[0x76] = 2;
+        break;
+    case 2:
+        r = rand();
+        D_1F8000D0_fb20[1] = *(s16 *)(a + 0x86) - 0x10 + (r & 0x1F);
+        r = rand();
+        D_1F8000D0_fb20[5] = *(s16 *)(a + 0x8A) - 0x10 + (r & 0x1F);
+        r = rand();
+        D_1F8000D0_fb20[3] = *(s16 *)(a + 0x88) - 8 + (r & 0xF);
+        f_StartControllerVibration(0, 0, 0x81, 2);
+        break;
+    case 3:
+        D_1F8000D0_fb20[1] = *(u16 *)(a + 0x86);
+        D_1F8000D0_fb20[3] = *(u16 *)(a + 0x88);
+        D_1F8000D0_fb20[5] = *(u16 *)(a + 0x8A);
+        a[0x76] = 0;
+        break;
+    case 4:
+        *(u16 *)(a + 0x88) = D_1F8000D6;
+        a[0x76] = 5;
+        break;
+    case 5:
+        r = rand();
+        D_1F8000D6 = *(s16 *)(a + 0x88) - 0x20 + (r & 0x3F);
+        f_StartControllerVibration(0, 0, 0xF1, 2);
+        break;
+    case 6:
+        *(u16 *)(a + 0x88) = D_1F8000D6;
+        a[0x76] = 7;
+    case 7:
+        if (a[0x64] == 0) {
+            r = rand();
+            D_1F8000D6 = *(s16 *)(a + 0x88) - 0x20 + (r & 0x3F);
+            f_StartControllerVibration(0, 0, 0x81, 2);
+        }
+        a[0x76] = 0;
+        break;
+    case 8:
+        *(u16 *)(a + 0x88) = D_1F8000D6;
+        a[0x76] = 9;
+    case 9:
+        if (a[0x64] == 0) {
+            r = rand();
+            D_1F8000D6 = *(s16 *)(a + 0x88) - 0x10 + (r & 0x1F);
+            f_StartControllerVibration(0, 0, 0x81, 2);
+        }
+        a[0x76] = 0;
+        break;
+    }
+}
 
 
 void f_SetCameraFocusPosition(u16 *pos)
