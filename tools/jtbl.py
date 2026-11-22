@@ -130,6 +130,8 @@ def place(res, start, fname, pending, prog, tables, used, canon):
         used.add(hit)
         addrs = dict(zip(ents, tables[hit]))
         body = [re.sub(r"%(hi|lo)\(\s*" + re.escape(lab) + r"\s*\)", r"%\1(" + hit + ")", l) for l in body]
+        # -mno-split-addresses with GNU as: the table is a bare operand (`lw $2,$L16($2)`), as expands it
+        body = [l if re.match(r"\s*\$L\d+:", l) else re.sub(re.escape(lab) + r"(?![\w:])", hit, l) for l in body]
         new = []
         for l in body:
             new.append(l)

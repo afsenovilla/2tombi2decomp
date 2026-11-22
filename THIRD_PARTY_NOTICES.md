@@ -6,3 +6,8 @@
 - Psy-Q library identification uses the signatures of
   [lab313ru/psx_psyq_signatures](https://github.com/lab313ru/psx_psyq_signatures) (fetched at build time, not stored).
 - Tools adapted from [Tombi-Decomp](https://github.com/afsenovilla/Tombi-Decomp).
+- Library C (files under `src/*/psyq/`) is adapted from these MIT-licensed decompilations of Sony's Psy-Q libraries;
+  each file says where it came from (`// Source: ...`):
+  [psx_tomba](https://github.com/hansbonini/psx_tomba) (MIT per its README; its base headers are fetched into
+  `include/pt/` at set-up time), [psyz](https://github.com/Xeeynamo/psyz) (MIT) and
+  [psy-q-decomp](https://github.com/sozud/psy-q-decomp) (MIT, "the psy-q-decomp contributors").
