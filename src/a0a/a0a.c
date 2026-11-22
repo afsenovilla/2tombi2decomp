@@ -892,12 +892,79 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", f_CopyEvilPigCaptureDeformationVertices)
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", f_UpdateEvilPigCaptureDeformation);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80116634);
-
 typedef struct { s16 x, y, z, pad; } SVec;
 typedef struct { u16 x, p0, y, p1, z, p2; } LVec;
 extern SVec D_1F8000C0;
 extern LVec D_1F8000A0;
+extern u16 D_800E7ED6;
+extern u8 D_80126DC8[];
+extern void *D_80126E50[];
+extern void *D_80126F84[];
+extern void *D_80126F98[];
+
+s32 func_80116634(u8 *a)
+{
+    s32 s;
+    void *q;
+    u8 *pl;
+    u16 r;
+    s = a[6];
+    switch (s) {
+    case 0:
+        a[6] = 1;
+        func_80040CDC(a, 0, D_80126DC8);
+        a[0x70] = 1;
+        break;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] != 0xFF) {
+            return 0;
+        }
+        a[6]++;
+        func_80040CDC(a, 0, D_80126E50[D_800BF870.unk0 - 10]);
+        a[0x70] = 1;
+        break;
+    case 2:
+        func_80041098(a);
+        if (a[0x70] != 0xFF) {
+            return 0;
+        }
+        a[6]++;
+        if (!(D_800BF870.pad1[0x1A7] & 0x1F)) {
+            func_80040CDC(a, 0, D_80126F98[D_800BF870.unk0 - 10]);
+        } else {
+            func_80040CDC(a, 0, D_80126F84[D_800BF870.unk0 - 10]);
+        }
+        a[0x70] = 1;
+        r = D_800E7ED6;
+        H(a, 0xB8) = 0x1000;
+        H(a, 0xBA) = 0x1000;
+        H(a, 0xBC) = 0x1000;
+        H(a, 0x56) = r;
+        break;
+    case 3:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            return 1;
+        }
+        pl = D_800E7E80;
+        func_8004BD64(a, 0, W(pl, 0xDC), W(pl, 0xD0), 0);
+        D_1F8000C0.x = -0x28;
+        D_1F8000C0.y = -0x30;
+        D_1F8000C0.z = 0;
+        func_80084470(D_1F8000D0.m, &D_1F8000C0, &D_1F8000A0);
+        *(u16 *)(a + 0x2E) += D_1F8000A0.x;
+        *(u16 *)(a + 0x32) += D_1F8000A0.y;
+        *(u16 *)(a + 0x36) += D_1F8000A0.z;
+        func_8007778C(a);
+        func_800518FC(a);
+        break;
+    default:
+        return 0;
+    }
+    return 0;
+}
+
 extern void *D_80127120[];
 
 s32 func_80116874(u8 *a)
