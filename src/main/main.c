@@ -2187,10 +2187,10 @@ static inline void SetProj_7CB4(s32 dqa)
     gte_lddqb0();
 }
 /* sprite depth projection, inlined */
-static inline s32 ProjZ(u8 *a, s32 *otz0, s32 *flag0)
+static inline s32 ProjZ(u8 *a)
 {
-    s32 *flag = flag0;
-    s32 *otz = otz0;
+    s32 *flag = &D_1F800080;
+    s32 *otz = (s32 *)D_1F800084;
     s32 *sxy = (s32 *)D_1F80008C;
     u16 h = *(u16 *)(a + 0x32);
     s32 e;
@@ -2234,7 +2234,7 @@ void func_80027CB4(u8 *a)
     }
     SetProj_7CB4(6);
     gte_ldv0_2C(a);
-    if (ProjZ(a, (s32 *)D_1F800084, &D_1F800080)) {
+    if (ProjZ(a)) {
         func_80031780(a);
         return;
     }
@@ -2257,7 +2257,7 @@ void func_80027E5C(a)
     }
     SetProj_7CB4(6);
     gte_ldv0_2C(a);
-    if (ProjZ(a, (s32 *)D_1F800084, &D_1F800080)) {
+    if (ProjZ(a)) {
         func_80031780(a);
         return;
     }
@@ -2273,7 +2273,35 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800281EC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002847C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800286CC);
+void func_800286CC(u8 *a)
+{
+    s32 *otz = (s32 *)D_1F800084;
+    s32 *o2 = &D_1F800088;
+    u8 *p = *(u8 **)(a + 0x3C);
+    u32 sc = *(u32 *)(a + 0x34);
+    u8 c;
+
+    if (p == 0) {
+        return;
+    }
+    c = *p;
+    if (c & 0x80) {
+        *(u8 **)(a + 0x40) = 0;
+        c &= 0x7F;
+    } else {
+        *(u8 **)(a + 0x40) = p + 1;
+    }
+    SetProj_7CB4(6);
+    gte_ldv0_2C(a);
+    if (ProjZ(a) == 0) {
+        s32 t;
+        *(s32 *)D_1F800090 = 0;
+        *o2 = (u32)(*otz * (sc >> 16)) >> 8;
+        t = (*(s32 **)(a + 0x50))[c];
+        *otz = (u32)(*otz * (sc & 0xFFFF)) >> 8;
+        func_8002847C(t, 0, 0);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800288AC);
 
@@ -2656,7 +2684,7 @@ void func_8002DBE4(u8 *a)
     }
     SetProj_7CB4(6);
     gte_ldv0_2C(a);
-    if (ProjZ(a, (s32 *)D_1F800084, &D_1F800080) == 0) {
+    if (ProjZ(a) == 0) {
         u16 hi;
         *o2 = *otz;
         hi = *(u16 *)(a + 0x46);
@@ -4633,7 +4661,24 @@ void f_DrawActiveTemplateEffectSlots(void) {
     } while (var_s1 < 0x28);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F07C);
+void f_DrawModelPrimitiveStreamForCurrentArea(u32 *a, void *b, s32 c);
+
+void func_8003F07C(u8 *a, s32 b)
+{
+    s32 i;
+
+    if (a[8] == 0) {
+        return;
+    }
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_SetTransMatrix(D_1F8000F8);
+    for (i = 0; i < a[9]; i++) {
+        if (i >= a[8]) {
+            return;
+        }
+        f_DrawModelPrimitiveStreamForCurrentArea(*(u32 **)(*(u8 **)(a + 0xC0 + i * 4) + 0x40), D_800ED8C8, b);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F174);
 
