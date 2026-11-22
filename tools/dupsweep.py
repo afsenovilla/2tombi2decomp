@@ -5,6 +5,9 @@ match, the symbols it references are renamed to what the target program calls th
 installed (src/<prog>/<prog>.c) when the linked build stays OK.
 
   python3 -I tools/dupsweep.py [--install] [--progs a00,a01,...]
+
+tools/nearcopy.py does the same for near copies too (a few differing words, several sources per key, patched
+load/store offsets); this one stays as the fast exact-copy pass.
 """
 import argparse, collections, glob, os, re, shutil, struct, subprocess, sys, tempfile
 
@@ -39,27 +42,42 @@ def c_functions(prog):
     return out
 
 
-def decl_name(e):
-    """the name a file-scope declaration defines (None: keep it always)."""
-    if e.startswith(("typedef", "struct", "union")):
-        return None
+def decl_names(e):
+    """the names a file-scope declaration defines (None: unknown, keep it always)."""
     m = re.match(r"#define\s+(\w+)", e)
     if m:
-        return m.group(1)
+        return {m.group(1)}
     if e.startswith("static"):
-        return ptsrc.func_name(e)
+        n = ptsrc.func_name(e)
+        return {n} if n else None
+    if e.startswith(("typedef", "struct", "union")):
+        out = set(re.findall(r"^(?:typedef\s+)?(?:struct|union)\s+(\w+)", e))
+        if e.startswith("typedef"):
+            tail = e.rstrip().rstrip(";")
+            fp = re.search(r"\(\s*\*\s*(\w+)\s*\)\s*\([^()]*\)\s*$", tail)
+            m = fp or re.search(r"(\w+)\s*(?:\[[^\]]*\])*\s*$", tail)
+            if m:
+                out.add(m.group(1))
+        return out or None
     m = re.findall(r"\b(\w+)\s*(?:\[[^\]]*\])*\s*;?$", e.rstrip(";"))
-    return m[-1] if m else None
+    return {m[-1]} if m else None
+
+
+def decl_name(e):
+    """one name a file-scope declaration defines (None: keep it always)."""
+    n = decl_names(e)
+    return sorted(n)[0] if n else None
 
 
 def needed(body, decls):
-    """the declarations the body uses, transitively (a macro or static helper uses others), in file order."""
+    """the declarations the body uses, transitively (a macro, type or static helper uses others), in file order."""
+    names = [decl_names(e) for e in decls]
     used, keep, ch = set(re.findall(r"\w+", body)), set(), True
     while ch:
         ch = False
         for i, e in enumerate(decls):
-            n = decl_name(e)
-            if i not in keep and (n is None or n in used):
+            n = names[i]
+            if i not in keep and (n is None or n & used):
                 keep.add(i)
                 used |= set(re.findall(r"\w+", e))
                 ch = True
@@ -101,9 +119,8 @@ def imm_map(obj, name, want):
 def patch_consts(body, m):
     """Replace each literal of the C body whose value is a key of m by its value, when it appears exactly once."""
     for a_, b_ in m.items():
-        pats = [r"(?<![\w.])0x%X\b" % abs(a_), r"(?<![\w.])0x%x\b" % abs(a_)] if abs(a_) > 9 else []
-        pats.append(r"(?<![\w.])%d\b" % abs(a_))
-        hits = [(mm.start(), mm.end()) for pt in set(pats) for mm in re.finditer(pt, body)]
+        pats = [r"(?<![\w.])0[xX]0*%x\b" % abs(a_), r"(?<![\w.])%d\b" % abs(a_)]
+        hits = [(mm.start(), mm.end()) for pt in pats for mm in re.finditer(pt, body, re.I)]
         hits = sorted(set(hits))
         if len(hits) != 1:
             return None

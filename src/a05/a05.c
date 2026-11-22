@@ -630,9 +630,17 @@ s32 func_80115498(void *a0)
     return 1;
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801154B8);
+s32 func_801154B8(void *a0)
+{
+    func_80130D44(a0, 0x2);
+    return 1;
+}
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801154D8);
+s32 func_801154D8(void *a0)
+{
+    func_80130D44(a0, 0x3);
+    return 1;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801154F8);
 
