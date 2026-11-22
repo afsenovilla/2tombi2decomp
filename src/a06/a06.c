@@ -858,7 +858,40 @@ void func_80113ACC(void *arg0, void *arg1) {
     M2C_FIELD(arg0, u16 *, 0x2E) = (u16) (M2C_FIELD(arg0, u16 *, 0x2E) - (temp_lo >> 0xC));
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80113C30);
+extern u16 D_800ECF54;
+extern u16 D_1F800172;
+
+s32 func_80113C30(u8 *a, u8 *b)
+{
+    u8 *p = *(u8 **)(a + 0x10);
+    s32 t, u;
+    s16 r;
+    s32 t2;
+
+    b[0x29] = 2;
+    func_800635D4(a, 3);
+    func_80076D68(a);
+    if (a[0x169] == 0 && (D_800ECF54 & (D_1F800172 | 0x50))) {
+        t = (func_80083F50(H(a, 0x56)) * (H(a, 0x152) + H(a, 0x80) + 0x10)) >> 12;
+        u = func_80083E80(H(a, 0x56)) * (H(a, 0x152) + H(a, 0x80) + 0x10);
+        H(a, 0x2E) = H(p, 0x2C) - t;
+        H(a, 0x36) = H(p, 0x34) + (u >> 12);
+        H(a, 0x32) = H(a, 0x64) + (H(p, 0x30) + H(a, 0x156)) + 0x14;
+        return D_800ECF54;
+    }
+    t = (func_80083F50(H(a, 0x56)) * H(a, 0x152)) >> 12;
+    u = func_80083E80(H(a, 0x56)) * H(a, 0x152);
+    H(a, 0x2E) = H(p, 0x2C) - t;
+    H(a, 0x36) = H(p, 0x34) + (u >> 12);
+    r = (func_80083E80(H(a, 0x58)) * H(a, 0x64)) >> 12;
+    t2 = (func_80083F50(H(a, 0x56)) * r) >> 12;
+    u = func_80083E80(H(a, 0x56)) * r;
+    H(a, 0x2E) -= t2;
+    H(a, 0x36) += u >> 12;
+    H(a, 0x32) = H(p, 0x30) + H(a, 0x156);
+    H(a, 0x32) += (func_80083F50(H(a, 0x58)) * H(a, 0x64)) >> 12;
+    return 0;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80113E3C);
 
