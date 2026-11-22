@@ -2276,7 +2276,48 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80035FAC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80036240);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800364AC);
+u8 func_80078770(u8 a, u8 b);
+
+void func_800364AC(s32 mode, u32 sub, s32 *outMode, s32 *outRes)
+{
+    s32 m;
+
+    if (mode == 0) {
+        m = 0;
+    } else if (mode == 1) {
+        if (sub < 3) {
+            m = 1;
+        } else {
+            m = 2;
+            sub = 0;
+        }
+    } else if (mode == 2) {
+        if (sub == 0) {
+            m = 4;
+            goto clear;
+        } else if (sub == 1) {
+            m = 5;
+            sub = 0;
+        } else {
+            m = 5;
+            sub = 1;
+        }
+    } else if (mode == 3) {
+        m = 6;
+    } else if (mode == 4) {
+        m = 7;
+        sub = 0;
+    } else if (mode == 5) {
+        m = 8;
+        sub = 0;
+    } else {
+        m = 0;
+    clear:
+        sub = 0;
+    }
+    *outMode = m;
+    *outRes = ((s32 (*)(s32, u8))func_80078770)(m, sub);
+}
 
 extern char D_800172A4[];
 extern char D_800172A8[];
@@ -2511,7 +2552,32 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800387E0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80038A00);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80038F7C);
+s32 func_80038F7C(s32 id)
+{
+    s16 alt;
+    s32 r;
+
+    if (id & 0x80) {
+        alt = 1;
+        id &= 0x7F;
+    } else {
+        alt = 0;
+    }
+    if (id == 0x17) {
+        r = alt ? 0x13D : 0xDB;
+    } else if (id == 0x18) {
+        r = alt ? 0x13E : 0xDC;
+    } else if (id == 0x19) {
+        r = alt ? 0x140 : 0xDE;
+    } else if (id == 0x1A) {
+        r = alt ? 0x141 : 0xDF;
+    } else if (id == 0x1B) {
+        r = alt ? 0x13F : 0xDD;
+    } else {
+        r = alt ? 0x142 : 0xE0;
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80039034);
 
