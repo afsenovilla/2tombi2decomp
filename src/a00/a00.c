@@ -421,7 +421,24 @@ s32 func_80114640(s32 arg0, s32 arg1) {
     return func_8010F034(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC4));
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114664);
+void func_80114664(u8 *a, u8 *b) {
+
+    b[0x29] = 0;
+    switch (f_ResolveTombaBoxPartContact(a, b, M2C_FIELD(b, u8 **, 0xC4), 1)) {
+    case 0:
+        break;
+    case 2:
+        goto hit;
+    }
+    switch (f_ResolveTombaBoxPartContact(a, b, M2C_FIELD(b, u8 **, 0xC0), 0)) {
+    case 0:
+        break;
+    case 2:
+    hit:
+        b[0x29] = 1;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801146E0);
 

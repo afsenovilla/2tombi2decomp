@@ -1136,7 +1136,18 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011E3C8);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011E47C);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011E674);
+extern M2C_UNK D_800A3D18;
+
+void func_8011E674(u8 *a) {
+    if (a[0x2B] == 3) {
+        func_80040D68(a, &D_800A3D18);
+        a[0x70] = 1;
+        func_80042354(1, 1);
+        a[5] = 1;
+    } else if (D_1F800137 == 0) {
+        func_8011CE8C(a);
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011E6EC);
 
@@ -1200,7 +1211,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011F640);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011F6EC);
 
-extern M2C_UNK D_800A3D18;
 extern M2C_UNK D_80139240;
 void func_8011F8E0(void *arg0) {
     u8 temp_v1;

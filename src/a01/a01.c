@@ -1110,7 +1110,20 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011E6D0);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011E804);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011E9E8);
+extern u8 D_800A3D40[];
+
+void func_8011E9E8(u8 *a) {
+    if (a[0x2B] == 3) {
+        func_80040D68(a, D_800A3D40);
+        a[0x70] = 1;
+        if (a[0x5E] == 4 || a[0x5E] == 6) {
+            func_80042354(1, 3);
+        } else {
+            func_80042354(1, 1);
+        }
+        a[5] = 1;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011EA60);
 
