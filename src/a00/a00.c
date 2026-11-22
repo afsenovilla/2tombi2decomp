@@ -36,7 +36,54 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010B07C);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010B29C);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010B42C);
+extern u8 D_800ECF58_742e[];
+extern u8 D_8001B7B0[];
+extern u8 D_800BF809;
+extern u8 D_8014AABC_4433[];
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+extern u8 *D_800ECF84;
+extern s16 D_1F8000F0;
+extern s16 D_1F8000F2;
+typedef struct { s16 x, y, z, pad; } SVecDD58;
+extern SVecDD58 D_1F8000C0_317e;
+extern u8 D_1F800000[];
+extern u8 D_1F8000D0_b839[];
+extern s8 D_800BF80D;
+extern u8 D_800E7E80_d97c;
+extern u8 D_8014ABE8[];
+extern u8 D_8014AC08[];
+extern s16 D_1F800160_71b4;
+extern s16 D_1F800162;
+extern s16 D_1F800164_d75f;
+extern u8 D_1F80027A;
+
+void func_8010B42C(u8 *a, u8 *b)
+{
+    u8 *p = *(u8 **)(a + 0x10);
+    s32 t, u, s;
+    s16 r;
+    s16 x;
+    s16 z;
+
+    t = (func_80083F50(H(p, 0xC)) * H(a, 0x156)) >> 12;
+    u = func_80083E80(H(p, 0xC)) * H(a, 0x152);
+    H(a, 0x32) = t + (H(p, 0x30) + (-u >> 12));
+    r = (func_80083F50(H(p, 0xC) + 0x400) * H(a, 0x156)) >> 12;
+    s = (func_80083F50(H(p, 0xA)) * r) >> 12;
+    u = func_80083E80(H(p, 0xA)) * r;
+    x = H(p, 0x2C) - (u >> 12);
+    z = H(p, 0x34) + s;
+    r = (func_80083F50(H(p, 0xC)) * H(a, 0x152)) >> 12;
+    u = func_80083E80(H(b, 0x56)) * r;
+    H(a, 0x2E) = x;
+    H(a, 0x36) = z + (u >> 12);
+    r = (func_80083E80(H(a, 0x58)) * H(a, 0x64)) >> 12;
+    z = (func_80083E80(H(a, 0x56)) * r) >> 12;
+    u = func_80083F50(H(a, 0x56)) * r;
+    H(a, 0x36) += z;
+    H(a, 0x2E) -= u >> 12;
+    H(a, 0x32) += (func_80083F50(H(a, 0x58)) * H(a, 0x64)) >> 12;
+}
 
 extern u16 D_800ECF54;
 s32 func_8010B600(s32 arg0) {
@@ -218,7 +265,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeA00InteriorState);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00InteriorCamera);
 
-extern s16 D_1F800160_71b4;
 void func_8010CED0(u8 *a) {
     s16 x = D_1F800160_71b4;
     s32 d;
@@ -375,7 +421,6 @@ void func_8010DCB8(u8 *a, u8 *b) {
 
 #define F16(p, o) M2C_FIELD(p, s16 *, o)
 #define FU16(p, o) M2C_FIELD(p, u16 *, o)
-extern s8 D_800BF80D;
 extern u8 D_1F800182_5650;
 void func_8010DE0C(u8 *a, u8 *b) {
     u8 *q = a + 0x60;
@@ -962,8 +1007,6 @@ s32 func_80114DF4(u8 *a, u8 *b) {
     return 0;
 }
 
-extern s16 D_1F800162;
-extern s16 D_1F800164_d75f;
 void func_80114E74(u8 *a, u8 *b) {
     if (a[0x164] != 5 || a[0x147] != b[0x47]) {
         if (func_80022F04(a, b) != 0) {
@@ -1080,7 +1123,68 @@ void f_ResolveA00ActiveActorCollisionCandidates(void) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011534C);
+void func_8011534C(u8 *a)
+{
+    s32 pad;
+    u8 *p = D_800ECF84;
+    s32 x, y;
+    u16 n;
+
+    switch (a[0]) {
+    case 0:
+        a[0] = 1;
+        a[3] = 0;
+        *(u16 *)(a + 4) = *(u16 *)(p + 0);
+        *(u16 *)(a + 6) = *(u16 *)(p + 2);
+        *(u16 *)(a + 8) = *(u16 *)(p + 4);
+        *(u16 *)(a + 0xA) = *(u16 *)(p + 6);
+        *(u16 *)(a + 0xC) = *(u16 *)(p + 8);
+        *(u16 *)(a + 0xE) = *(u16 *)(p + 0xA);
+        a[0x10] = p[0xC];
+        a[0x11] = p[0xD];
+        {
+            u16 l1 = *(u16 *)(p + 0xE);
+            u16 l0 = *(u16 *)(p + 0x10);
+        *(u16 *)(a + 0x2C) = 0x900;
+        *(u16 *)(a + 0x2E) = 0x8E8;
+        {
+            u8 *b0 = p + 0x14;
+            u8 *b1 = b0 + l0;
+            u8 *b2 = b1 + l1;
+        *(u8 **)(a + 0x1C) = b2;
+        *(u8 **)(a + 0x18) = b0;
+        *(u8 **)(a + 0x14) = b1;
+        }
+        }
+        *(u8 **)(a + 0x34) = *(u8 **)(a + 0x1C);
+        *(u16 *)(a + 0x30) = (*(u16 *)(a + 0x2C) * a[0x10]) / 144;
+        *(u16 *)(a + 0x32) = (*(u16 *)(a + 0x2E) * a[0x11]) / 144;
+        a[0x38] = 1;
+        break;
+    case 2: break;
+    case 1:
+        { s32 k = D_1F8000F2; u16 w = *(u16 *)(a + 0x2C); x = ((w + 0x140) >> 1) - ((k * w) >> 12); }
+        while (x < 0) {
+            x += *(u16 *)(a + 0x30);
+        }
+        while (x >= *(u16 *)(a + 0x30)) {
+            x -= *(u16 *)(a + 0x30);
+        }
+        y = ((D_1F8000F0 * *(u16 *)(a + 0x2E)) >> 12) + a[0x11] * 8 - 0x20;
+        while (y < 0) {
+            y += *(u16 *)(a + 0x32);
+        }
+        while (y >= *(u16 *)(a + 0x32)) {
+            y -= *(u16 *)(a + 0x32);
+        }
+        if (--*(s8 *)(a + 0x38) <= 0) {
+            a[3] = 1;
+        }
+        *(s16 *)(a + 0x28) = x;
+        *(s16 *)(a + 0x2A) = y;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80115598);
 
@@ -2641,7 +2745,27 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseRotatingEffect);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateWindmillInteriorEffect);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801295B4);
+void func_801295B4(u8 *a)
+{
+    s32 i;
+    u8 *o;
+
+    for (i = 0; i < a[8]; i++) {
+        o = ((u8 **)(a + 0xC0))[i];
+        D_1F8000C0_317e.x = *(s16 *)(o + 0x2C);
+        D_1F8000C0_317e.y = *(s16 *)(o + 0x30);
+        D_1F8000C0_317e.z = *(s16 *)(o + 0x34);
+        func_80084110(&D_1F8000D0_b839[0x28], o + 0x18, D_1F800000);
+        func_80084220(&D_1F8000C0_317e, D_1F800000 + 0x14);
+        { u8 *d = D_1F8000D0_b839;
+        *(s32 *)(D_1F800000 + 0x14) += *(s32 *)(d + 0x3C);
+        *(s32 *)(D_1F800000 + 0x18) += *(s32 *)(d + 0x40);
+        *(s32 *)(D_1F800000 + 0x1C) += *(s32 *)(d + 0x44); }
+        func_80084660(D_1F800000);
+        func_80084690(D_1F800000);
+        func_8012A2D8(a, o);
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801296E0);
 
@@ -3627,8 +3751,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleA00PendulumPlatformActor);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801365C4);
 
 #define FP(p, o) M2C_FIELD(p, u8 **, o)
-extern u8 D_1F8000D0_b839[];
-extern u8 D_1F800000[];
 
 void func_80136748(u8 *a) {
     u8 *c;
@@ -3652,7 +3774,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013681C);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80136954);
 
-extern u8 D_800BF809;
 extern u8 D_800BF89C;
 extern u8 D_800E7EAA;
 void func_80136D9C(void *arg0) {
@@ -3954,7 +4075,6 @@ void func_8013AF18(PosedActor *a, s32 b, s32 c) {
     a->pose = b;
 }
 
-extern u8 D_8001B7B0[];
 void D_8004C930();
 void f_UpdateMagicFlowerWateringSequence(u8 *a, s32 b) {
     u16 v;
@@ -4036,7 +4156,83 @@ void f_UpdateMagicFlowerWateringSequence(u8 *a, s32 b) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleMagicFlowerActor);
+void f_HandleMagicFlowerActor(u8 *a)
+{
+    s32 s = a[4];
+    u8 *g;
+
+    switch (s) {
+    case 0:
+        g = D_800ECF58_742e;
+        if (func_800519E0(a, 3, *(s32 *)(g + 0x7C), D_8014AABC_4433) == 0) {
+            *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x80);
+            {
+                u8 *st = (u8 *)&D_800BF870;
+                if (st[3] != 0) {
+                    a[4] = 3;
+                    break;
+                }
+                if ((st[0x1A3] >> a[3]) & 1) {
+                    a[0x5E] = 0;
+                    func_80077C40(a, D_8001B7B0, 0);
+                } else {
+                    func_8013AF18(a, 1, 0x1F);
+                    func_80077C40(a, D_8001B7B0, 1);
+                }
+            }
+            a[0] = 1;
+            *(s16 *)(a + 0x80) = 0x190;
+            *(s16 *)(a + 0x82) = 0x320;
+            *(s16 *)(a + 0x84) = 0xB4;
+            *(s16 *)(a + 0x86) = 0xB4;
+            a[0x29] = 0;
+            a[0x2B] = 0;
+            a[4]++;
+            if (a[0x5E] == 0) {
+                a[5] = 4;
+            }
+        }
+        break;
+    case 1:
+        if (func_8007778C(a) != 0) {
+            func_80076D68(a);
+            switch (a[6]) {
+            case 2:
+                a[0] = s;
+                a[6] = 0;
+                D_800BF809 = 0;
+            case 0:
+                if (a[0x2B] == 3) {
+                    *(s16 *)(a + 0x40) = 0x1E;
+                    a[6]++;
+                    if (a[0x5E] == 0) {
+                        func_8004ED94(0x62, 0x41);
+                    } else {
+                        func_8004ED94(0x61, 0x41);
+                    }
+                    D_800BF809 = 1;
+                }
+                break;
+            case 1:
+                if (--*(s16 *)(a + 0x40) == 0) {
+                    a[0] = 2;
+                    a[6]++;
+                }
+                break;
+            }
+            f_UpdateMagicFlowerWateringSequence(a, 0x1F);
+            func_800518FC(a);
+        }
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern s16 D_1F8001A0;
 extern s16 D_1F8001A2_3da0;
@@ -4280,7 +4476,62 @@ void func_8013C0BC(s32 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013C1DC);
+void func_8013C1DC(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        switch (a[5]) {
+        case 0:
+            func_8013C0BC(0);
+            a[0xBF] = 0xE0;
+            *(s16 *)(a + 0x7E) = 0x1B;
+            *(s16 *)(a + 0x7C) = 0x400;
+            *(s16 *)(a + 0x7A) = 0xB;
+            *(s16 *)(a + 0x78) = 0x30;
+            a[5]++;
+        case 1:
+            f_InitializeEvilPigDoorFromTravelState(a, D_8014ABE8);
+            break;
+        case 2:
+            if (func_80078240(D_1F800160_71b4 - *(s16 *)(a + 0x2E), D_1F800162 - *(s16 *)(a + 0x32), D_1F800164_d75f - *(s16 *)(a + 0x36)) <= 1000
+                && D_1F80027A == 0 && D_800E7E80_d97c != 6 && D_800BF80D == 0) {
+                a[4] = 1;
+                a[5] = 0;
+                a[0x5E] = 0;
+            }
+            break;
+        }
+        break;
+    case 1:
+        if (func_8007778C(a) != 0) {
+            func_8013C0BC(1);
+            func_80051844(a);
+        }
+        switch (a[0x5E]) {
+        case 0:
+            f_OpenEvilPigDoor(a);
+            a[0x29] = 0;
+            break;
+        case 1:
+            func_8013BAB0(a);
+            a[0x29] = 0;
+            break;
+        case 2:
+            func_8013BCC8(a, D_8014AC08);
+            a[0x29] = 0;
+            break;
+        default:
+            a[0x29] = 0;
+            break;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseProgressEffectActor);
 
