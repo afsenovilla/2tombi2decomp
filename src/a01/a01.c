@@ -1104,7 +1104,29 @@ void func_80115FB4(u8 *a)
     *(s16 *)(a + 0x58) = 0;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80115FEC);
+extern s16 D_1F8000C0_65b0[];
+
+void func_80115FEC(u8 *a) {
+    u8 *p = M2C_FIELD(a, u8 **, 0x10);
+    s16 *v;
+    GameState *g;
+
+    D_1F8000C0_65b0[0] = 0;
+    v = D_1F8000C0_65b0;
+    v[1] = 0x62;
+    v[2] = -0x20;
+    func_8004BD64(a, 2, M2C_FIELD(p, void **, 0xDC), M2C_FIELD(p, void **, 0xD0), v);
+    g = &D_800BF870;
+    if (g->pad1[0x1CD] == 1) {
+        a[4] = 3;
+        func_8004D4F4(0x1C, 1);
+        func_80026100(g->pad1[0xE]);
+        func_8004ED94(0x70, 0x41);
+        func_8004B2E8(a);
+    }
+    a[1] = 1;
+    func_800517F8(a);
+}
 
 
 u8 *func_801160A4(s32 a, s32 b) {
@@ -2453,7 +2475,6 @@ s32 func_80127DC4(u8 *a) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaMudballSurpriseCarrierActor);
 
-extern s16 D_1F8000C0_65b0[];
 
 void func_8012866C(u8 *a) {
     s16 *v = D_1F8000C0_65b0;
