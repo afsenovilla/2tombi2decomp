@@ -96,7 +96,7 @@ extern u8 D_800BF808[];
 extern u8 D_800A4F88[];
 extern s8 D_1F800090[];
 void f_SetActorModelResources(void *, s32, s32);
-void func_8001DC40(void *, s32, s32, void *);
+s32 func_8001DC40(void *, s32, s32, void *);
 void SpuSetCommonAttr(void *);
 void func_8002847C(void *, s32, s32);
 typedef struct CdMixAttr {
@@ -225,7 +225,18 @@ s32 func_8001DB8C(void *dest, s32 sector, s32 bytes)
     return bytes;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8001DC40);
+extern s32 D_1F8001F8;
+extern s32 D_1F8001F0;
+extern volatile s32 D_1F8001F4;
+
+s32 func_8001DC40(void *a, s32 b, s32 c, void *d)
+{
+    D_1F8001F8 = (s32)a;
+    D_1F8001F0 = b;
+    D_1F8001F4 = (c + 3) / 4;
+    func_8001D940(*(void **)D_1F800138);
+    return c;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ApplyActiveColliderBlockingResponse);
 
@@ -1564,7 +1575,22 @@ s32 func_80034548(s32 arg0) {
     return func_8007FCC8(0, 0, 0x140, 0xF0, /* extra? */ 0x81);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800345D8);
+void func_800345D8(u8 *a)
+{
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        if (i == a[8]) {
+            a[i + 0xC] = 0;
+            a[i + 0x10] = 0;
+            a[i + 0x14] = 0x64;
+        } else {
+            a[i + 0xC] = 2;
+            a[i + 0x10] = 3;
+            a[i + 0x14] = 0x84;
+        }
+    }
+}
 
 
 void func_80034634(void *arg0) {
@@ -2865,7 +2891,14 @@ s32 f_SetActorAnimation(s32 arg0, s32 arg1, s32 arg2) {
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetActorAnimationIfChanged);
+
+s32 f_SetActorAnimationIfChanged(u8 *a, s32 anim, s16 c)
+{
+    if (a[0x46] != (u8)anim) {
+        return f_SetActorAnimation((s32)a, anim, c);
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004179C);
 
@@ -3899,7 +3932,12 @@ s32 func_8004B428(s32 arg0) {
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B4B0);
+void func_8004B4B0(s32 item)
+{
+    f_AddItemWithMessage(item, 1);
+    D_800BF88C = item;
+    D_800E7EEC = item;
+}
 
 
 void func_8004B4E8(s32 item, u8 v)
@@ -4126,7 +4164,17 @@ s32 f_TestAppleCollectedBit(s32 n)
     return D_800BF870.appleBits[(s16)byte] & (1 << bit);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D8B0);
+void func_8004D8B0(void)
+{
+    s32 i = 0x7F;
+    u8 *p = (u8 *)&D_800BF870 + i;
+
+    do {
+        p[0x544] = 0;
+        i--;
+        p--;
+    } while (i >= 0);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D8D8);
 
