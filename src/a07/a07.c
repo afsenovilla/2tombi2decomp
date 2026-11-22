@@ -367,7 +367,21 @@ void func_8011765C(void *arg0) {
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80117680);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801178E4);
+void func_80117680();
+
+u8 *func_801178E4(s32 unused)
+{
+    u8 *r = func_8007A980(1, 3, 1);
+
+    if (r == 0) {
+        return 0;
+    }
+    r[2] = 0x12;
+    r[3] = 0;
+    *(void **)(r + 0x1C) = func_80117680;
+    r[0x28] |= 0x80;
+    return r;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011793C);
 
