@@ -184,7 +184,6 @@ static inline void inl_8010E834(u8 *a) {
         g[5] = 1;
     }
 }
-
 void f_UpdateTrolleyMovementAndCamera(u8 *a) {
     u8 *q = a + 0x60;
     u8 *r;

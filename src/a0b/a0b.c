@@ -190,7 +190,6 @@ static inline void inl_list13C_8010B128(u8 *a)
         }
     }
 }
-
 void func_8010B128(void)
 {
     u8 *g = D_800E7E80;
@@ -339,7 +338,6 @@ static inline void inl_8010BDF4(void *arg0) {
     }
     M2C_FIELD(arg0, s16 *, 0x44) = (s16) -var_v1;
 }
-
 void func_8010B938(u8 *a)
 {
     s8 k;
@@ -1028,7 +1026,6 @@ typedef struct {
 } T2Vec3s;
 extern T2Bytes4 D_801091CC;
 extern s32 D_800ED8C8_7a94;
-
 void func_8011159C(u8 *a)
 {
     T2Bytes4 c;

@@ -70,14 +70,15 @@ def main():
     cdefs = {}      # addr -> text (with its leading externs/comments)
     pending = ""
     pos = 0
+    asm_lead = {}   # INCLUDE_ASM name -> the text just above it
     for m in item_re.finditer(body):
         if is_static(m):
             continue
         gap = body[pos:m.start()]
         pos = m.end()
         if m.group(1):
-            if gap.strip():
-                sys.exit("%s: text between INCLUDE_ASM lines would be lost:\n%s" % (path, gap.strip()[:300]))
+            if gap.strip():   # declarations placed before an asm function travel with it (or with the next C)
+                asm_lead[m.group(1)] = gap.strip("\n")
             pending = ""
             continue
         name = m.group(3)
@@ -112,7 +113,10 @@ def main():
         elif name in nm:
             out.append(nm[name])
         else:
-            out.append('INCLUDE_ASM("asm/%s/nonmatchings/%s", %s);' % (prog, prog, name))
+            out.append((asm_lead.pop(name) + "\n" if name in asm_lead else "") +
+                       'INCLUDE_ASM("asm/%s/nonmatchings/%s", %s);' % (prog, prog, name))
+    if asm_lead:   # an asm function that is gone (renamed, split): its text stays, at the end of the header
+        out[0] = out[0].rstrip("\n") + "\n" + "\n".join(asm_lead.values()) + "\n"
     new = "\n".join(out[:1]) + "\n" + "\n\n".join(out[1:]) + "\n"
     changed = new != open(path).read()
     open(path, "w").write(new)

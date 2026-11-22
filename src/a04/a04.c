@@ -249,7 +249,6 @@ extern u8 D_800BF808_1760[];
 extern u16 D_800BF812;
 extern u8 D_800E8008[];
 extern u8 D_1F8000D0[];
-
 void func_8010AEA8(p)
 u8 *p;
 {

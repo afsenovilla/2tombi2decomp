@@ -272,7 +272,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8010CAE8);
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8010CE50);
 
 extern s32 D_1F800184;
-
 void func_8010D134(u8 *a, u8 *b)
 {
     if (a[0] == 6) {
@@ -458,7 +457,6 @@ extern u8 **D_1F80013C;
 extern u8 D_1F800144;
 extern u8 **D_1F800148;
 extern u8 D_1F800150;
-
 void func_8010F2E8(u8 *a)
 {
     u8 **l = D_1F800148;
@@ -544,7 +542,6 @@ static inline void func_801121D0_inl(void)
         }
     }
 }
-
 void func_801109F8(void)
 {
     u8 *p = D_800E7E80;
@@ -1944,7 +1941,6 @@ static inline void func_8011AD3C_inl(void *arg0) {
         M2C_FIELD(arg0, s16 *, 0x76) = (s16) (M2C_FIELD(temp_v1, u16 *, 0x6E) + 4);
     }
 }
-
 void func_8011AB30(u8 *a)
 {
     switch (a[4]) {
@@ -4742,7 +4738,6 @@ typedef struct {
 } T2Vec3s;
 extern T2Bytes4 D_8010A460;
 extern s32 D_800ED8C8;
-
 void func_8013F14C(u8 *a)
 {
     T2Bytes4 c;
@@ -5010,7 +5005,6 @@ void func_80140088(u8 *a) {
 typedef struct { s8 x, y, z; } Byte3;
 extern Byte3 D_8010A464;
 extern u8 D_8014C42C[];
-
 void func_8014013C(u8 *a)
 {
     s32 *d = D_1F800090_81f3;

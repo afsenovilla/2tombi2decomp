@@ -105,7 +105,6 @@ static inline s32 cyl_test(u8 *a, u8 *b)
     }
     return (u16)((*(u16 *)(a + 0x32) - *(u16 *)(b + 0x32)) + ((*(u16 *)(b + 0x84) + *(u16 *)(a + 0x86)) - *(u16 *)(a + 0x84))) <= *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86);
 }
-
 u8 *func_8010A83C(u8 *a)
 {
     u8 **l = D_1F800158;
@@ -429,7 +428,6 @@ static inline void func_8010F288_inl(u8 *p)
         func_8010B104(p);
     }
 }
-
 void func_8010EF9C(void)
 {
     u8 *p = D_800E7E80;
@@ -475,7 +473,6 @@ void func_8010F214(u8 *p)
         p[0x29] |= 0x80;
     }
 }
-
 
 void func_8010F288(u8 *p)
 {
@@ -2073,7 +2070,6 @@ static inline void func_80120068_inl(void *a0)
         r[3] = 2;
     }
 }
-
 void func_801200AC(u8 *a)
 {
     if (D_800ED098 < 2) {
@@ -4959,7 +4955,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80136F5C);
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801371CC);
 
 extern u8 D_80149588[];
-
 void func_8013731C(u8 *a)
 {
     s16 dx = D_1F800160 - *(s16 *)(a + 0x2E);

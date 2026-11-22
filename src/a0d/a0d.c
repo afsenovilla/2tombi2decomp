@@ -99,7 +99,6 @@ static inline s32 inl_8010A8AC(u8 *a, u8 *b)
     }
     return r;
 }
-
 void func_801099E0(u8 *a, u8 *b)
 {
     s16 k = inl_8010A8AC(a, b);
@@ -118,7 +117,6 @@ void func_801099E0(u8 *a, u8 *b)
 }
 
 extern u8 D_1F800182_5650;
-
 void func_80109B0C(u8 *a, u8 *b)
 {
     s16 k = inl_8010A8AC(a, b);
@@ -234,7 +232,6 @@ static inline void inl_8010A7B8(u8 *a)
         D_1F80019E = -0x4B0;
     }
 }
-
 void func_8010A500(void)
 {
     u8 *g = D_800E7E80;
@@ -1094,7 +1091,6 @@ typedef struct {
 } T2Vec3s;
 extern T2Bytes4 D_80109214;
 extern s32 D_800ED8C8_7a94;
-
 void func_80111244(u8 *a)
 {
     T2Bytes4 c;

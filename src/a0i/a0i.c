@@ -246,7 +246,6 @@ static inline void inl_8010A034(void)
         }
     }
 }
-
 void f_DispatchWisdomTowerTombaContacts(void)
 {
     u8 *g = D_800E7E80;
@@ -429,7 +428,6 @@ void func_8010A554(void *arg0) {
 }
 
 extern u8 D_1F8000D0_b839[];
-
 void func_8010A5B8(u8 *a)
 {
     u8 *g = D_800E7E80;

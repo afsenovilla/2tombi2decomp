@@ -91,7 +91,6 @@ static inline void fall_step(u8 *a)
         *(s32 *)(a + 0x30) += *(s16 *)(a + 0x50) << 8;
     }
 }
-
 void func_8010ACB8(u8 *a)
 {
     SpeedTbl *t;
@@ -165,7 +164,6 @@ void func_8010ACB8(u8 *a)
 
 typedef struct { s16 pad; s16 x; s16 pad2; s16 y; s16 pad3; s16 z; } PosV;
 extern u8 D_800E7E80[];
-
 void func_8010AEC4(u8 *a)
 {
     PosV v;
@@ -445,7 +443,6 @@ extern s16 D_1F80018E;
 extern u8 *D_1F800184;
 extern u8 D_800BF840;
 extern u16 D_1F80008C;
-
 void func_8010C510(u8 *a)
 {
     switch (a[6]) {
@@ -641,7 +638,6 @@ static inline void inl_8010F948(u8 *a)
         break;
     }
 }
-
 void func_8010ED88(u8 *a) {
     if ((D_800ECF54 & D_1F800170) || (a[0x174] & 0x30)) {
         a[0x165] = 1;
@@ -1079,7 +1075,6 @@ static inline void inl_80112C58(void) {
         }
     }
 }
-
 void func_801122A4(void) {
     u8 *g = D_800E7E80;
 
@@ -1291,7 +1286,6 @@ void func_80113824(void *arg0) {
 INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateCoalMiningTownInteriorDoorPartTransition);
 
 #define FP(p, o) M2C_FIELD(p, u8 **, o)
-
 void func_80113BC4(u8 *a) {
     u8 *g;
 
@@ -1781,7 +1775,6 @@ static inline s32 inl_801176EC(s32 a, s32 b) {
     }
     return r;
 }
-
 void func_801169D8(a)
 u8 *a;
 {
@@ -2601,7 +2594,6 @@ static inline void inl_8011AB34(u8 *a) {
         M2C_FIELD(a, s16 *, 0x4C) = 0x20;
     }
 }
-
 void func_8011A8D4(u8 *a) {
     switch (a[4]) {
     case 0:
@@ -4275,7 +4267,6 @@ AreaPolyFT4 *func_80127034(AreaPolyFT4 *p, s32 x, s32 y, s32 w, s32 h, s16 c, s1
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80127170);
 
 #define U32(p, o) M2C_FIELD(p, u32 *, o)
-
 void func_80127678(u8 *a) {
     u32 v;
 

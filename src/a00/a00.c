@@ -34,7 +34,6 @@ void func_8010AD68(void *arg0, void *arg1) {
 #define F16(p, o) M2C_FIELD(p, s16 *, o)
 extern u16 D_800ECF54;
 extern u16 D_1F80017C_0fe7;
-
 void f_UpdateA00TombaVerticalClimb(u8 *a) {
     s32 k;
 
@@ -206,7 +205,6 @@ static inline void inl_8010C9F8(u8 *a, u8 *b, s32 f) {
         func_80056D44(a, 0);
     }
 }
-
 void func_8010C290(u8 *a, s32 f) {
     u8 *b = M2C_FIELD(a, u8 **, 0x158);
 
@@ -595,7 +593,6 @@ static inline void inl_80114D48(u8 *a) {
         break;
     }
 }
-
 void f_EnforceA00TombaBoundsAndInteriorExit(u8 *a) {
     if (D_800BF808_1760[0xE] != 0) {
         inl_80114D48(a);
@@ -904,7 +901,6 @@ static inline void inl_80111710(u8 *a)
         }
     }
 }
-
 void f_ResolveActorAgainstA00CollisionLists(u8 *a) {
     u8 **l = D_1F800148;
     u8 *p;
@@ -980,7 +976,6 @@ static inline void inl_ResolveA00ActiveActorCollisionCandidates(void) {
         }
     }
 }
-
 void f_UpdateA00CollisionInteractions(void) {
     u8 *g = D_800E7E80;
 
@@ -1577,7 +1572,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateCrabBasketRewardDrop);
 typedef struct { s16 x, y, z; } SVec3T;
 extern SVec3T D_1F8000C0_4e9b;
 extern u8 D_800BF9E5_1228;
-
 void func_80116E3C(u8 *a) {
     s32 n;
     u8 *g;
@@ -1632,7 +1626,6 @@ static inline void inl_80117460(u8 *a) {
         }
     }
 }
-
 void func_80117228(u8 *a) {
     switch (a[4]) {
     case 0:
@@ -1986,7 +1979,6 @@ static inline void inl_80119254(u8 *a) {
     case 2: break;
     }
 }
-
 void func_80118DB0(u8 *a) {
     u8 *p;
 
@@ -2156,7 +2148,6 @@ static inline s32 inl_8011AC5C(u8 *a) {
     }
     return a[0x5F];
 }
-
 void func_80119828(u8 *a) {
     switch (a[6]) {
     case 0:
@@ -2712,7 +2703,6 @@ extern u8 D_8014E4EC[];
 extern u8 D_80149754[];
 extern u8 D_80149774[];
 extern u8 D_8014977C[];
-
 s32 func_80121FD8(u8 *p) {
     switch (p[6]) {
     case 0:
@@ -3305,7 +3295,6 @@ static inline s32 inl_8012894C(s32 arg0) {
         return 1;
     }
 }
-
 void f_HandleRareFishOrBucketSuspension(u8 *a) {
     u8 *p;
 
@@ -4649,7 +4638,6 @@ static inline void inl_8013A784(u8 *a) {
     } while (M2C_FIELD(a, s16 *, 0x32) < lim);
     M2C_FIELD(a, s32 *, 0x30) = y;
 }
-
 void f_SpawnStarShapedCogPickup(u8 *a) {
     s32 i;
     u8 *e;

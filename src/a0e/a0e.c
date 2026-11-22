@@ -197,7 +197,6 @@ static inline void inl_8010A59C(u8 *a)
         }
     }
 }
-
 void func_8010A1D4(void)
 {
     u8 *g = D_800E7E80;
@@ -2811,7 +2810,6 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80117600);
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80117960);
 
 void func_80111FD8();
-
 void func_80117ADC(u8 *a)
 {
     s16 *p = (s16 *)(a + 0x60);

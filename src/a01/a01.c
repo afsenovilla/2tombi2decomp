@@ -354,7 +354,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010CF68);
 
 #define FP(p, o) M2C_FIELD(p, u8 **, o)
 extern u8 D_800BFAD6;
-
 void func_8010D188(u8 *a, u8 *b) {
     s32 r;
     s32 t;
@@ -413,7 +412,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010DBEC);
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010DF24);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010E0C4);
-
 
 void func_8010E1E8(u8 *a, u8 *b) {
     s32 r;
@@ -606,7 +604,6 @@ static inline void inl_801103C0(u8 *a, u8 *b) {
         M2C_FIELD(a, s16 *, 0x6A) = -0x7900;
     }
 }
-
 void func_8010F690(u8 *a) {
     u8 **l = D_1F800148;
     u8 *p;
@@ -700,7 +697,6 @@ static inline void inl_80110CB8(void) {
         }
     }
 }
-
 void func_801100A8(void) {
     u8 *g = D_800E7E80;
 
@@ -1036,7 +1032,6 @@ static inline void inl_80111C58(void) {
         }
     }
 }
-
 void f_UpdatePipeAreaSceneController(u8 *a) {
     u8 *g;
     u8 *e;
@@ -1959,7 +1954,6 @@ static inline void inl_80119AAC(u8 *a) {
     p.z = M2C_FIELD(M2C_FIELD(a, u8 **, 0xC4), s16 *, 0x34);
     func_80133CAC(0, a, &p, &s);
 }
-
 s32 func_80119104(u8 *a) {
     s32 r = 0;
 
@@ -2344,7 +2338,6 @@ static inline void inl_8011ADA0(u8 *a) {
     }
     func_8004190C(a);
 }
-
 void func_8011AB80(u8 *a) {
     u8 *g;
 
@@ -2470,7 +2463,6 @@ static inline void inl_8011C290(u8 *a) {
         }
     }
 }
-
 void func_8011B3EC(u8 *a) {
     u8 *p;
 
@@ -3317,7 +3309,6 @@ static inline void inl_80122F80(u8 *a, s32 b) {
     }
     func_8004130C(a, 0);
 }
-
 void func_801210A4(u8 *a) {
     u16 v;
     u16 w;
@@ -3905,7 +3896,6 @@ static inline void inl_80126EB0(u8 *a) {
     M2C_FIELD(a, s16 *, 0x84) = D_80137600[a[3]] + 0x5A;
     M2C_FIELD(a, s16 *, 0x86) = D_80137600[a[3]] + 0xDC;
 }
-
 void func_80126C1C(u8 *a) {
     switch (a[4]) {
     case 0:
@@ -3946,7 +3936,6 @@ static inline void inl_80126F60(u8 *a) {
     M2C_FIELD(a, s16 *, 0x84) = D_8013764C[a[3]] + 0x5A;
     M2C_FIELD(a, s16 *, 0x86) = D_8013764C[a[3]] + 0xDC;
 }
-
 void func_80126D50(u8 *a) {
     switch (a[4]) {
     case 0:
@@ -5145,7 +5134,6 @@ extern u8 *D_800ECFD8;
 extern u8 *D_800ECF78;
 extern u8 D_801388BC[];
 extern u8 D_800E7EAA;
-
 void func_8012EE14(u8 *a)
 {
     T2Pt32 v0, v1, v2;

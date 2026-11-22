@@ -25,7 +25,6 @@ extern s32 D_1F80009C_baed;
 extern u8 **D_1F800140;
 extern u8 D_1F800146;
 extern u8 D_1F800182;
-
 s32 func_8010B5BC(u8 *a)
 {
     u8 **list = D_1F800140;
@@ -53,7 +52,6 @@ extern s16 D_1F80018E;
 extern u8 *D_1F800184;
 extern u8 D_800BF840;
 extern u8 D_800BF873;
-
 void func_8010B944(u8 *a, u8 *b)
 {
     s32 *ang;
@@ -97,7 +95,6 @@ void func_8010B944(u8 *a, u8 *b)
 }
 
 extern u16 D_1F80008C;
-
 void func_8010BAD0(u8 *a, u8 *b)
 {
     s16 ang;
@@ -133,7 +130,6 @@ void func_8010BAD0(u8 *a, u8 *b)
 }
 
 extern u8 D_800BF808[];
-
 void func_8010BC9C(u8 *a, u8 *b)
 {
     s16 ang;
@@ -185,7 +181,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010C3C4);
 
 extern u8 **D_1F80013C;
 extern u8 D_1F800144;
-
 void f_DispatchCircusMovingActorContacts(u8 *a)
 {
     u8 **l = D_1F80013C;
@@ -272,7 +267,6 @@ static inline void func_8010CEDC_inl(u8 *p)
         func_8010A7FC(p);
     }
 }
-
 void func_8010CD8C(void)
 {
     u8 *p = D_800E7E80;
@@ -367,7 +361,6 @@ extern SpeedTbl D_800A4574;
 extern u16 D_1F8000F2;
 #define S16(o) (*(s16 *)(a + (o)))
 #define U16(o) (*(u16 *)(a + (o)))
-
 void func_8010D49C(u8 *a)
 {
     SpeedTbl *t;
@@ -440,7 +433,6 @@ void func_8010D49C(u8 *a)
 }
 
 typedef struct { s16 pad; s16 x; s16 pad2; s16 y; s16 pad3; s16 z; } PosV;
-
 void func_8010D6A8(u8 *a)
 {
     PosV v;
@@ -633,7 +625,6 @@ static inline void fall_step(u8 *a)
         *(s32 *)(a + 0x30) += *(s16 *)(a + 0x50) << 8;
     }
 }
-
 void func_8010E244(u8 *a)
 {
     func_80076D68(a);
@@ -684,7 +675,6 @@ void func_8010E244(u8 *a)
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010E448);
 
 extern u16 D_1F800192;
-
 void func_8010E728(u8 *a)
 {
     u16 ang;
@@ -830,7 +820,6 @@ extern u16 D_1F80017C;
 extern u16 D_1F800210;
 extern u16 D_800BF812;
 #define S16(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void func_8010F954(u8 *a)
 {
     u8 *t = *(u8 **)(a + 0x10);
@@ -926,7 +915,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801103D8);
 
 extern u8 D_1F80027A;
 extern u8 D_800BF80A;
-
 void func_80110850(u8 *a)
 {
     u8 s;
@@ -3042,7 +3030,6 @@ static inline s32 func_80126DEC_inl(u8 *a)
     v->z = z;
     return func_8012EE08(a + 0x2C, v, 0) != 0;
 }
-
 s32 func_80125E40(u8 *a, s32 f)
 {
     s32 x = (func_80083F50(*(s16 *)(a + 0x56)) * *(s16 *)(a + 0x44)) >> 4;

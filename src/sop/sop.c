@@ -39,7 +39,6 @@ static inline void inl_80109860(void)
         d++;
     }
 }
-
 void func_80109450(void)
 {
     u8 *p, *q, *r, *t, *w, *x;

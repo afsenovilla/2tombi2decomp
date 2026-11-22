@@ -38,7 +38,6 @@ static inline void inl_80108DA4(void)
     *(s16 *)(p + 0x4C) = 2;
     *(s16 *)(p + 0x4E) = 6;
 }
-
 void func_801070B4(void)
 {
     u8 *p = D_1F800138_5432;
@@ -131,7 +130,6 @@ static inline void inl_80108BE4(void)
     func_80077D8C();
     func_80075A80();
 }
-
 void func_80107230(void)
 {
     u8 *p;
@@ -259,7 +257,6 @@ extern u8 D_800E8008[];
 extern u8 D_80108F78[];
 extern u8 D_80108F84[];
 extern u8 D_80108F90[];
-
 void func_801079AC(void)
 {
     u8 *g = D_800E7E80;
@@ -317,7 +314,6 @@ static inline void inl_80108EBC(void)
     func_8007E9C8((c << 16) | (c << 8) | c, 1, 4);
     D_1F800138_5432[0x6B]--;
 }
-
 void func_80107AFC(void)
 {
     u8 *p, *q, *r, *t, *w;

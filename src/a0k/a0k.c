@@ -116,7 +116,6 @@ static inline void inl_list148_8010A1F8(u8 *a)
         }
     }
 }
-
 void func_8010A1F8(void)
 {
     u8 *g = D_800E7E80;
@@ -241,7 +240,6 @@ static inline void fall_step(u8 *a)
         *(s32 *)(a + 0x30) += *(s16 *)(a + 0x50) << 8;
     }
 }
-
 s32 func_8010A828(s32 arg0, s32 arg1, s32 arg2) {
     s32 var_v0;
     s16 temp_a0;
@@ -389,7 +387,6 @@ static inline void inl_8010B5EC_c(u8 *a, s16 b)
         a[0x66] |= 2;
     }
 }
-
 void func_8010AD0C(u8 *a)
 {
     u8 *c;
@@ -1030,7 +1027,6 @@ extern u16 D_1F80017C;
 extern u16 D_1F800210;
 extern u16 D_800BF812;
 #define S16(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void func_8010DE18(u8 *a)
 {
     u8 *t = *(u8 **)(a + 0x10);
@@ -1470,7 +1466,6 @@ static inline void inl_80111FE8(u8 *a)
     func_800517F8(a);
     a[1] = 1;
 }
-
 void func_801114A0(u8 *a)
 {
     switch (a[0x5E]) {
@@ -1704,7 +1699,6 @@ static inline void inl_80112810(void *arg0) {
     func_8004BD64(arg0, 0, M2C_FIELD(temp_v1, s32 *, 0xD8), M2C_FIELD(temp_v1, s32 *, 0xCC), 0);
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
-
 void f_UpdateTinyMouseVillageRewardActor(u8 *a)
 {
     switch (a[4]) {

@@ -777,7 +777,6 @@ static inline void inl_8010D504(u8 *a)
         a[4] = 3;
     }
 }
-
 void f_UpdateEndingScriptController(u8 *a)
 {
     u8 *p;
@@ -965,7 +964,6 @@ static inline void inl_8010E5F0(u8 *a)
     *(s16 *)(a + 0x56) = func_800782B0(a + 0x2C, D_1F800160, D_1F800164);
     D_1F80024C = a;
 }
-
 void func_8010DFEC(u8 *a)
 {
     s32 *o;
@@ -1200,7 +1198,6 @@ void func_8010F250(u8 *a)
 extern u8 D_801173B0[];
 extern u8 D_8011AC80[];
 extern u8 D_801163F8[];
-
 void func_8010F34C(u8 *a)
 {
     s32 *o;
@@ -1700,7 +1697,6 @@ static inline void inl_8011208C(u8 *a)
     *(s16 *)(a + 0x62) += 4 + (func_8009A450() & 3);
     *(s16 *)(a + 0x66) += 0x30;
 }
-
 void func_80111744(u8 *a)
 {
     switch (a[4]) {
@@ -1879,7 +1875,6 @@ u8 *func_80111F3C(void *a, u8 b)
     }
     return r;
 }
-
 
 void func_80111FA4(u8 *a)
 {

@@ -555,7 +555,6 @@ static inline void Supported_05B4(u8 *a)
         *(u16 *)(a + 0x32) = k + d;
     }
 }
-
 void f_ResolveTombaType8ActorContact(u8 *a, u8 *b)
 {
     s32 c;
@@ -1570,7 +1569,6 @@ static inline s32 Scan_4448(u8 *a)
     }
     return D_1F800080;
 }
-
 s32 f_FindTombaSupportInteractionTarget(u8 *a, s32 flag)
 {
     s32 r;
@@ -2384,7 +2382,6 @@ static inline s32 ProjZ(u8 *a)
     gte_stopz(otz);
     return 0;
 }
-
 void func_80027CB4(u8 *a)
 {
     s32 *flag = &D_1F800080;
@@ -2814,7 +2811,6 @@ static inline void SetRT_C138(void *pos, u8 *scale, s16 *rot)
     gte_SetRotMatrix(D_1F800000);
     gte_SetTransMatrix(D_1F800000);
 }
-
 void func_8002AE0C(u8 *a, s32 s, s32 mode)
 {
     s32 *z = (s32 *)D_1F800090;
@@ -2862,7 +2858,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8002BAFC);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002BC9C);
 
 extern u8 D_8009F05C[];
-
 void func_8002C138(u8 *a)
 {
     s16 rot[4];
@@ -3138,7 +3133,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8002FC40);
 extern u8 D_8009F3E0[];
 typedef struct { u8 b[4]; } B4_FDD0;
 extern B4_FDD0 D_800102EC;
-
 void func_8002FDD0(u8 *a)
 {
     s16 pos[4];
@@ -3277,7 +3271,6 @@ u8 *f_SpawnMovingTransientEffectAtFixedPosition(s32 id, u8 *pos, s16 y, u16 *vel
 }
 
 s32 f_AllocateActorRecordByType(u8 type, u8 b, s32 c);
-
 s32 f_SpawnImpactTransientEffect(s32 kind, u8 *pos, s16 flag, u16 *rot)
 {
     s32 e;
@@ -3342,7 +3335,6 @@ static inline u8 *SpawnFixed_15D4(s32 id, u8 *pos, s16 y)
     f_InitializeTransientEffectActor(t, id);
     return t;
 }
-
 void f_SpawnActorImpactEffectPair(u8 *pos)
 {
     u8 *e;
@@ -3962,7 +3954,6 @@ s32 func_8003499C(void) {
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800349A4);
 
 extern u8 D_800BF81C;
-
 s32 func_80034BE0(s32 unused, s32 item, s32 mode)
 {
     u8 *t = (u8 *)D_800E7E80;
@@ -5125,7 +5116,6 @@ void f_DrawActiveTemplateEffectSlots(void) {
 }
 
 void f_DrawModelPrimitiveStreamForCurrentArea(u32 *a, void *b, s32 c);
-
 void func_8003F07C(u8 *a, s32 b)
 {
     s32 i;
@@ -5576,7 +5566,6 @@ void func_8003FFCC(u8 *a)
 }
 
 s32 f_ProbeActorTerrainAlongFacing(s32 arg0, s32 arg1, s32 arg2);
-
 void func_8004022C(u8 *a)
 {
     switch (a[6]) {
@@ -6795,7 +6784,6 @@ extern s8 D_1F8001BC[];
 extern s8 D_1F8001BE[];
 extern s8 D_1F8001C0[];
 extern s8 D_1F8001C4[];
-
 s32 f_ProbeActorTerrainAtOffset(u8 *arg0, s16 arg1, s32 arg2, s16 arg3)
 {
     s32 temp_a1;
@@ -7220,7 +7208,6 @@ static inline s32 Despawn_A2A0(s32 arg0) {
     }
     return f_PlaySoundEffect(0x28, 0, 0);
 }
-
 s32 func_8004A118(u8 *a)
 {
     u8 *g;
@@ -7296,7 +7283,6 @@ void f_AddItemWithMessage(s32 item, s32 n);
 void f_AddItemWithoutMessage(s32 item, s32 n);
 void f_RemoveItemWithoutMessage(s32 item, s32 count);
 void f_QueueResourceMessage(s16 id, u8 arg);
-
 s32 f_GrantNonGemPickupReward(u8 *a)
 {
     s32 it;
@@ -7729,7 +7715,6 @@ static inline void Init_BB38(u8 *a)
         a[0x29] = 0;
     }
 }
-
 void func_8004BB38(u8 *a)
 {
     u8 v;
@@ -8963,7 +8948,6 @@ static inline void SetModel_1B74(u8 *actor, s32 bank, s32 index)
 
     *(s8 **)(actor + 0x40) = base + entry[1];
 }
-
 s32 f_InitializeSinglePartActorModel(void *av, s32 bank, s32 index)
 {
     u8 *a = av;
@@ -12072,7 +12056,6 @@ static inline void Move_8A94(u8 *a)
         *(s16 *)(a + 0x56) = ratan2(-z, x);
     }
 }
-
 void func_80068A94(u8 *a)
 {
     u8 *b = a + 0x60;
@@ -12236,7 +12219,6 @@ void func_80069688(u8 *a)
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800696C4);
 
 extern s16 D_1F80018C_67a7;
-
 s32 func_80069858(u8 *a, s32 b, s32 c)
 {
     if (D_800E7FEB != 0) {
@@ -12270,7 +12252,6 @@ extern s32 D_1F800208;
 extern s16 D_1F800200;
 extern s16 D_1F800202;
 extern s16 D_1F800204;
-
 s32 func_80069948(u8 *a)
 {
     s32 r = func_80069858(a, 0, 0);
@@ -12351,7 +12332,6 @@ s32 func_80069B6C(u8 *a)
 }
 
 extern u8 D_1F80027C;
-
 void func_80069BEC(u8 *a, s32 flag)
 {
     u8 *m = a + 0x60;
@@ -13128,7 +13108,6 @@ void func_8006E010(u8 *a)
 }
 
 void func_8006C80C(void);
-
 void func_8006E0F0(u8 *c)
 {
     u8 *t = (u8 *)D_800E7E80;
@@ -14450,7 +14429,6 @@ void func_800737F8(s32 arg)
 }
 
 void f_DrawTallMenuText(s16 x, s32 y, s16 c, s32 d, s32 e);
-
 void func_800738B0(void)
 {
     s16 r[4];
@@ -14955,7 +14933,6 @@ s32 f_ControlStreamedAudioTrack(s32 track)
 
 extern u8 D_800BE3D8[];
 typedef struct { u32 mask; s32 mode; s16 left; s16 right; s32 delay; s32 feedback; } RevAttr_5130;
-
 void func_80075130(void)
 {
     RevAttr_5130 attr;
@@ -15618,7 +15595,6 @@ static inline void Step_88AC(void)
         D_800BED8C = t;
     }
 }
-
 void func_800788AC(void)
 {
     D_800ECF54_4583[1] = D_800ECF54_4583[0];

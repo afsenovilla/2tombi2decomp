@@ -296,7 +296,6 @@ static inline void inl_8010A034(void)
         }
     }
 }
-
 void f_DispatchStrengthTowerTombaContacts(void)
 {
     u8 *g = D_800E7E80;

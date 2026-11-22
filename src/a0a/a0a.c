@@ -277,7 +277,6 @@ static inline void inl_list_8010A554(u8 *a)
         }
     }
 }
-
 void func_8010A554(void)
 {
     u8 *g = D_800E7E80;
@@ -1000,7 +999,6 @@ extern s16 D_8011BF14;
 extern s16 D_8011BF16;
 extern u16 D_8011BF18;
 extern s16 D_8011BF1A;
-
 void func_8011024C(PartList *a)
 {
     u16 *p = a->list;
@@ -1364,7 +1362,6 @@ typedef struct {
 } T2Vec3s;
 extern T2Bytes4 D_801091C8;
 extern s32 D_800ED8C8_7a94;
-
 void func_80111B68(u8 *a)
 {
     T2Bytes4 c;
@@ -2109,7 +2106,6 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_801149D8);
 
 typedef struct { s16 x, y, z; } V3;
 extern V3 D_8011EC68[];
-
 void func_80114B38(u8 *a)
 {
     switch (a[4]) {
@@ -2258,7 +2254,6 @@ static inline void inl_80115FF4(u8 *a)
     func_80084360(m + 0x98, a + 0x98);
     func_80051300(a);
 }
-
 void func_80115DF0(u8 *a)
 {
     s32 n;
@@ -2971,7 +2966,6 @@ static inline s32 inl_801187E8(u8 *a)
     a[0x5F] = 1;
     return 1;
 }
-
 void func_80118158(u8 *a)
 {
     s32 s, c;

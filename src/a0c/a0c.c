@@ -220,7 +220,6 @@ static inline void inl_8010BD2C(u8 *a, u8 *b, u8 *c)
         }
     }
 }
-
 void func_8010AD5C(void)
 {
     u8 **l = D_1F80013C;
@@ -336,7 +335,6 @@ static inline void inl_8010BA30(u8 *a)
         }
     }
 }
-
 void func_8010B558(void)
 {
     u8 *g = D_800E7E80;
@@ -2977,7 +2975,6 @@ static inline void inl_ricochet_move(u8 *a)
         }
     }
 }
-
 void f_UpdateGhostEvilPigRicochetProjectile(u8 *a)
 {
     u8 *p;

@@ -225,7 +225,6 @@ s32 func_80109AEC(u8 *a, u8 *b, u8 *c) {
 }
 
 extern u8 D_1F800182;
-
 void func_80109C64(u8 *a, u8 *b, u8 *c) {
     u8 *q = a + 0x60;
     s32 r;
@@ -399,7 +398,6 @@ static inline void inl_list148_8010A7A8(u8 *a)
         }
     }
 }
-
 void func_8010A7A8(void)
 {
     u8 *g = D_800E7E80;
@@ -533,7 +531,6 @@ void func_8010AEE4(void *arg0, void *arg1) {
         func_80022D08(arg0, arg1, 1, 0);
     }
 }
-
 
 void func_8010AF60(u8 *a)
 {
@@ -714,7 +711,6 @@ static inline void inl_8010D924(u8 *a)
     *(u16 *)(a + 0x40) = 2;
     *(u16 *)(a + 0x44) = v;
 }
-
 void func_8010C198(u8 *a)
 {
     u8 *b = a + 0x60;
@@ -819,7 +815,6 @@ static inline void inl_8010DC78(u8 *a)
         func_80074590(0x32, -3, 0x14);
     }
 }
-
 void func_8010D4B8(u8 *a)
 {
     u8 *b = a + 0x60;
