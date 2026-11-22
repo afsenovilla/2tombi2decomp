@@ -2023,7 +2023,43 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011B6B0);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateCapperActor);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011BDC4);
+extern u8 f_UpdateCapperActor[];
+
+void func_8011BDC4(u8 *a) {
+    s32 k;
+    u8 *e;
+
+    if (a[0x5E] == 0) {
+        a[4] = 1;
+        a[5] = 0;
+        return;
+    }
+    k = a[5];
+    switch (k) {
+    case 0:
+        break;
+    case 1:
+        e = func_80072DDC(a, 1, 2, 0x10);
+        if (e != NULL) {
+            a[0x5E] = 0;
+            FP(e, 0x1C) = f_UpdateCapperActor;
+            e[3] = a[0x60];
+            F16(e, 0x2E) = FU16(a, 0x2E);
+            F16(e, 0x32) = FU16(a, 0x32) - 0x64;
+            F16(e, 0x36) = FU16(a, 0x36);
+            e[5] = 2;
+            D_800BF870.pad1[0x183] &= ~(k << F16(a, 0x60));
+            D_800BF870.pad1[0x184]--;
+            a[4] = 3;
+            if (FP(a, 0x14) != NULL) {
+                FP(a, 0x14)[4] = 2;
+                FP(a, 0x14)[5] = 0x80;
+                FP(a, 0x14)[6] = 0;
+            }
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011BED0);
 
@@ -3516,9 +3552,34 @@ u8 *func_8012C2B4(void) {
     return p;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012C304);
-
+#define FPV(p, o) (*(u8 * volatile *)((u8 *)(p) + (o)))
+#define F32(p, o) M2C_FIELD(p, s32 *, o)
 extern u8 D_800BF9FA;
+
+void func_8012C304(u8 *a) {
+    u8 *e;
+
+    switch (a[5]) {
+    case 0:
+        if (D_800BF9FA == 0x17) {
+            a[0] = 2;
+            e = D_800E7E80;
+            F16(a, 0x2E) = (F32(FPV(e, 0xD0), 0x2C) + F32(FPV(e, 0xDC), 0x2C)) / 2;
+            F16(a, 0x32) = (F32(FPV(e, 0xD0), 0x30) + F32(FPV(e, 0xDC), 0x30)) / 2;
+            F16(a, 0x36) = (F32(FPV(e, 0xD0), 0x34) + F32(FPV(e, 0xDC), 0x34)) / 2;
+        } else {
+            a[0] = 1;
+            F32(a, 0x2C) = 0x46E60000;
+            F32(a, 0x30) = 0xE53E0000;
+            F32(a, 0x34) = 0x23400000;
+            a[5]++;
+        }
+    case 1:
+        func_8007778C(a);
+        break;
+    }
+}
+
 extern u8 D_1F800233;
 void func_8012C410(u8 *a) {
     switch (a[5]) {
@@ -4093,9 +4154,73 @@ void func_8012E6A0(u8 *a) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E74C);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E868);
+void func_8012E868(u8 *a) {
+    s32 *p84 = &D_1F800084;
+    s32 *p88 = &D_1F800088;
+    SVecE v;
+    u8 *q = a + 0x60;
+    u8 *s = M2C_FIELD(q, u8 **, 4);
+    u32 sc = M2C_FIELD(a, u32 *, 0x60);
+    u8 k;
+    s32 t, x;
+    u32 m2, m1;
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E974);
+    if (s != NULL) {
+        k = *s;
+        if (k & 0x80) {
+            M2C_FIELD(q, u8 **, 8) = NULL;
+            k &= 0x7F;
+        } else {
+            M2C_FIELD(q, u8 **, 8) = s + 1;
+        }
+        v.x = M2C_FIELD(a, s16 *, 0x2E);
+        v.y = M2C_FIELD(a, s16 *, 0x32);
+        v.z = M2C_FIELD(a, s16 *, 0x36);
+        AREA_gte_ldv0(&v);
+        func_800329E0(6);
+        if (func_800317CC(0) == 0) {
+            t = *p84;
+            m1 = t * (sc >> 16);
+            m2 = t * (sc & 0xFFFF);
+            x = M2C_FIELD(q, s32 **, 0xC)[k];
+            *p88 = m1 >> 8;
+            *p84 = m2 >> 8;
+            func_800328EC(x);
+        }
+    }
+}
+
+void func_8012E974(u8 *a) {
+    SVecE v;
+    s32 *sp = &D_1F800084;
+        u8 *q = a + 0x60;
+        s32 m = M2C_FIELD(a, s32 *, 0x60);
+        u32 sc = M2C_FIELD(q, u32 *, 0x10);
+        s32 t, x;
+        s32 *pp;
+        u32 m1, m2, y;
+
+    if (m != 0) {
+        v.x = M2C_FIELD(a, s16 *, 0x2E);
+        v.y = M2C_FIELD(a, s16 *, 0x32);
+        v.z = M2C_FIELD(a, s16 *, 0x36);
+        AREA_gte_ldv0(&v);
+        func_800329E0(6);
+        if (func_800317CC(-0x32) == 0) {
+            t = *sp;
+            m1 = t * (sc >> 16);
+            m2 = t * (sc & 0xFFFF);
+            y = m1 >> 8;
+            D_1F800088 = y;
+            *sp = m2 >> 8;
+            __asm__ volatile("ctc2 %0, $21; ctc2 %1, $22; ctc2 %2, $23" : : "r"(0), "r"(0), "r"(0));
+            x = M2C_FIELD(q, s32 *, 0xC);
+            pp = M2C_FIELD(q, s32 **, 8);
+            D_1F800090_3460 = x;
+            M2C_FIELD(q, s32 *, 4) = func_80027A4C(m, *pp);
+        }
+    }
+}
 
 void func_8012EA70(u8 *a) {
     u8 *p;
