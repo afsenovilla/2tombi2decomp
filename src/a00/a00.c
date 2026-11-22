@@ -31,7 +31,55 @@ void func_8010AD68(void *arg0, void *arg1) {
     M2C_FIELD(arg0, u16 *, 0x2E) = (u16) (M2C_FIELD(arg0, u16 *, 0x2E) - (temp_lo >> 0xC));
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00TombaVerticalClimb);
+#define F16(p, o) M2C_FIELD(p, s16 *, o)
+extern u16 D_800ECF54;
+extern u16 D_1F80017C_0fe7;
+
+void f_UpdateA00TombaVerticalClimb(u8 *a) {
+    s32 k;
+
+    switch (a[6]) {
+    case 0:
+        func_80054198(a);
+        func_80054D14(a, 0x40, 0);
+        a[7] = 0;
+        a[6]++;
+    case 1:
+        if (D_800ECF54 & 0x10) {
+            if (!(D_1F80017C_0fe7 & 3)) {
+                func_80074590(0x97, 0, -0x1E);
+            }
+            k = 0;
+            func_80054D14(a, 0x41, 0);
+            func_80076D68(a);
+        } else if (D_800ECF54 & 0x40) {
+            if (!(D_1F80017C_0fe7 & 3)) {
+                func_80074590(0x97, 0, -0x1E);
+            }
+            k = 1;
+            func_80054D14(a, 0x43, 0);
+            func_80076D68(a);
+        } else {
+            func_80076D68(a);
+            func_80054D14(a, 0x40, 4);
+            k = 2;
+        }
+        if (func_8006271C(a, k) != 0 && func_80055824() != 0) {
+            a[5] = 4;
+            a[6] = 2;
+            a[0x164] = 0;
+            M2C_FIELD(a, s32 *, 0x158) = 0;
+            a[7] = 0;
+            F16(a, 0x58) = 0;
+            F16(a, 0x40) = 8;
+            func_80074590(0x1D, 0, 0);
+            func_80055E28(a, 0);
+            a[0x149] = (a[0x14A] & 1) + 2;
+            func_80054D14(a, 0x14, 0);
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010B07C);
 
@@ -85,7 +133,6 @@ void func_8010B42C(u8 *a, u8 *b)
     H(a, 0x32) += (func_80083F50(H(a, 0x58)) * H(a, 0x64)) >> 12;
 }
 
-extern u16 D_800ECF54;
 s32 func_8010B600(s32 arg0) {
     u8 temp_v1;
     void *temp_s1;
@@ -1436,7 +1483,71 @@ void func_80116E3C(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleKainenHouseQuestItemActor);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117228);
+/* func_80117460, inlined */
+static inline void inl_80117460(u8 *a) {
+    if (func_80051B70(a, 1, 2) == 0) {
+        M2C_FIELD(a, s16 *, 0x80) = 0x28;
+        M2C_FIELD(a, s16 *, 0x82) = 0x50;
+        M2C_FIELD(a, s16 *, 0x84) = 0x4B;
+        M2C_FIELD(a, s16 *, 0x86) = 0x73;
+        M2C_FIELD(a, s16 *, 0x54) = 0;
+        M2C_FIELD(a, s16 *, 0x56) = 0;
+        M2C_FIELD(a, s16 *, 0x58) = 0;
+        a[0x29] = 0;
+        if (*(u8 *)&D_800BF9E5 == 4) {
+            a[0x5E] = 1;
+        }
+    }
+}
+
+void func_80117228(u8 *a) {
+    switch (a[4]) {
+    case 0:
+        switch (a[3]) {
+        case 0:
+            func_8004BEF4(a);
+            break;
+        case 1:
+            inl_80117460(a);
+            break;
+        }
+        a[4]++;
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            if (a[0x5E] == 0) {
+                f_HandleKainenHouseQuestItemActor(a);
+            }
+            break;
+        case 1:
+            func_80116E3C(a);
+            break;
+        }
+        break;
+    case 2:
+        switch (a[3]) {
+        case 0:
+            break;
+        case 1:
+            if (a[5] == 0 && func_80040C00(6) >= 0) {
+                func_80040B48(7);
+                func_8004D4C4(0x29, 1);
+                func_8004B0D8(a);
+                a[0x5E] = 2;
+                a[4] = 1;
+                a[5] = 0;
+                a[6] = 0;
+                D_800BF9E5 = 6;
+            }
+            break;
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void f_HandleBeachQuestPickup();
 void f_HandleTownQuestRewardVisualActor();
