@@ -60,7 +60,19 @@ void func_8010A4C8(u8 *a, void *b)
     }
 }
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010A520);
+extern u8 D_800BFAD7;
+
+void func_8010A520(u8 *a, u8 *b)
+{
+    if (func_80022F04(a, b) != 0) {
+        if (D_800BFAD7 == 0) {
+            a[0x2B] = D_1F80009C >> 4;
+            func_80022D08(a, b, 1, 1);
+        }
+        b[0] = 2;
+        b[0x5F] = 1;
+    }
+}
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010A59C);
 
@@ -236,7 +248,17 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010F9B4);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010FE74);
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_801100B0);
+void func_801100B0(u8 *a)
+{
+    if (--*(s16 *)(a + 0x40) == 0) {
+        f_SpawnWaterEvilPigSprayActor(a, 0);
+        *(s16 *)(a + 0x40) = 0x1E;
+    }
+    if (--*(s16 *)(a + 0x42) == 0) {
+        f_SpawnWaterEvilPigSprayActor(a, 1);
+        *(s16 *)(a + 0x42) = 0x20;
+    }
+}
 
 
 void func_80110128(void) {
