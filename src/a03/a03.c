@@ -92,7 +92,6 @@ s32 func_80109C48(u8 *t, s32 anim, s32 blend)
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateAndDrawTrolleyRiderModel);
 
 extern u8 D_80111AEC[];
-
 void f_SetTrolleyHudSegmentEnabled(s32 i, s32 on) {
     if (i < 4) {
         if (on) {

@@ -292,7 +292,6 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", f_UpdateEndingIllustrationPanels);
 extern u16 D_1F800160_3621;
 extern u16 D_1F800162;
 extern u16 D_1F800164_7d8c;
-
 void func_8010CF6C(u8 *a0)
 {
     u8 *a = a0;
@@ -436,7 +435,6 @@ extern u8 D_8011AF2C[];
 extern s32 D_800ECFD8;
 extern u8 D_8011A738[];
 extern s32 D_800ECF90;
-
 s32 func_8010E3D4(u8 *p)
 {
     if (!(*(s16 *)(p + 0x72) & 0x8000)) {
@@ -611,7 +609,6 @@ typedef struct { u8 pad[0x38]; s32 x38; u8 pad2[0x28]; s32 x64; s32 x68; s32 x6C
 extern OtCtx D_800ECF58;
 typedef struct { u8 pad[0x80]; s16 w[4]; } Box80;
 extern u8 D_80117688[];
-
 void func_8010FF10(u8 *a)
 {
     s32 s = a[4];
@@ -651,7 +648,6 @@ void func_8010FF10(u8 *a)
 }
 
 extern u8 D_80117610[];
-
 void func_80110094(u8 *a)
 {
     s32 s = a[4];
@@ -691,7 +687,6 @@ void func_80110094(u8 *a)
 }
 
 extern u8 D_80117700[];
-
 void func_80110218(u8 *a)
 {
     s32 s = a[4];
@@ -731,7 +726,6 @@ void func_80110218(u8 *a)
 }
 
 extern u8 D_80117518[];
-
 void func_8011039C(u8 *a)
 {
     s32 s = a[4];
@@ -780,7 +774,6 @@ extern Range D_8011A5BC[];
 extern Range D_8011A5D4[];
 extern Range D_8011A640[];
 extern u8 *D_1F80021C;
-
 void func_801106A8(s16 kind, s16 idx)
 {
     Range *t;
@@ -823,7 +816,6 @@ extern s16 D_800ED098;
 typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner;
 typedef struct { s16 v[5]; } PartInit5;
 extern PartInit5 D_8011A678[];
-
 void func_801107DC(PartsOwner *a)
 {
     s32 i;
@@ -856,7 +848,6 @@ void func_801107DC(PartsOwner *a)
 }
 
 extern PartInit5 D_8011A68C[];
-
 void func_80110918(PartsOwner *a)
 {
     s32 i;
@@ -1100,7 +1091,6 @@ typedef struct {
 } MovieDef;
 extern MovieDef D_8011A6AC[];
 extern u8 *D_1F800138;
-
 void func_80112AE0(DecEnv *d, s16 x0, s16 y0, s16 x1, s16 y1)
 {
     u8 *b;

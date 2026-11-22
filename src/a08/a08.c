@@ -164,7 +164,6 @@ extern u8 D_1F800144;
             }                                            \
         }                                                \
     }
-
 void func_8010E080(void)
 {
     u8 **l = D_1F800154;
@@ -529,7 +528,6 @@ void func_80114B90(void)
 }
 
 s32 func_8007778C();
-
 s32 func_80114C1C(void *a, s32 k)
 {
     s32 v;
@@ -620,7 +618,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80115BE0);
 INCLUDE_ASM("asm/a08/nonmatchings/a08", f_UpdateWaterTempleQuestItemPickupActor);
 
 extern s32 D_800ECFB8;
-
 void func_801161C4(u8 *a)
 {
     if (func_80051B70(a, 0x17, 5) == 0) {
@@ -1916,7 +1913,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80123940);
 typedef struct { s16 x, y, z, pad; } SVec3;
 extern SVec3 D_1F8000C0;
 extern s32 D_800E7F5C;
-
 void func_80123A48(u8 *a)
 {
     u8 *t;
@@ -1949,7 +1945,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80123D10);
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80123E60);
 
 extern u8 D_1F80027A;
-
 void func_80124074(u8 *a)
 {
     s32 s = a[4];
@@ -2016,7 +2011,6 @@ block_5:
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80124210);
 
 extern u8 D_800BFA42;
-
 void func_80124600(u8 *a)
 {
     func_80051B70(a, 0xC, 0x44);
@@ -2621,7 +2615,6 @@ void func_80128EC8(u8 *p)
 }
 
 extern u8 D_800BFA3B;
-
 void func_80128F08(u8 *a)
 {
     switch (a[5]) {
@@ -2792,7 +2785,6 @@ void func_801293B0(u8 *p)
 }
 
 extern u8 D_800BFA30;
-
 void func_80129424(u8 *a)
 {
     u8 *t = D_800E7E80;
@@ -3266,7 +3258,6 @@ s32 func_8012D1C4(void *arg0) {
 }
 
 extern u8 D_800BF914;
-
 s32 func_8012D1EC(u8 *a)
 {
     u8 *g;
@@ -3422,7 +3413,6 @@ s32 func_8012E168(u8 *p)
 }
 
 void func_8012DA44();
-
 s32 func_8012E1A4(u8 *a) {
     u8 *g = (u8 *)&D_800BF870;
     u8 *e;
@@ -3604,7 +3594,6 @@ void func_80130424(u8 *a)
 }
 
 extern u8 D_800BF8F8;
-
 void func_80130484(u8 *a)
 {
     u8 k = a[0x71];
@@ -3653,7 +3642,6 @@ void func_80130500(void *arg0) {
 
 extern u8 D_80146604[];
 extern u8 D_8014661C[];
-
 void func_801305AC(u8 *a)
 {
     u8 s = a[0x5E];
@@ -4383,7 +4371,6 @@ extern u8 D_800BFA35;
 extern s16 D_1F800190;
 extern s16 D_1F800192;
 extern s16 D_1F80016C;
-
 s32 func_8013992C(u8 *a)
 {
     u8 *t;
@@ -4600,7 +4587,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013BCAC);
 
 extern u8 D_800BF80E;
 extern u8 D_800BFA38;
-
 s32 func_8013BF30(u8 *a)
 {
     void *r;

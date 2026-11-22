@@ -30,7 +30,6 @@ extern u8 D_1F800144;
             }                                            \
         }                                                \
     }
-
 void func_80109238(void)
 {
     u8 **l = D_1F800154;

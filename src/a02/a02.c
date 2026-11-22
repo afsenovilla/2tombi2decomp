@@ -31,7 +31,6 @@ s32 func_8010A73C(u8 *a, s32 b) {
 }
 
 extern s16 D_1F8000C0_65b0[];
-
 s32 func_8010A7D8(u8 *a) {
     s16 z = (-func_80083E80(M2C_FIELD(a, s16 *, 0x56)) * M2C_FIELD(a, s16 *, 0x80)) >> 12;
     s16 *v;
@@ -298,7 +297,6 @@ extern u8 D_1F800236;
 extern s16 D_1F8001C6;
 extern u8 D_800BF871;
 void func_8010CFAC(void);
-
 void func_8010F9E4(u8 *a) {
     u8 *e;
     s32 m;
@@ -408,7 +406,6 @@ typedef struct {
     s16 v[4];
 } Box8;
 extern Box8 D_801287E8[];
-
 void func_80112738(u8 *a) {
     u8 *g = D_800BF808_1760;
     s32 i;
@@ -441,7 +438,6 @@ extern u16 D_1F80009C;
 extern s16 D_1F80018E;
 extern u8 *D_1F800184;
 extern u8 D_800BF840;
-
 void func_80112864(u8 *a, u8 *b) {
     s16 d;
     s32 ang;
@@ -1136,7 +1132,6 @@ typedef struct {
     void *fn;
 } Placement16;
 extern Placement16 D_80129C4C[];
-
 void func_80118280(u8 *a, s32 i) {
     Placement16 *p = &D_80129C4C[i];
     u8 *e;
@@ -1220,7 +1215,6 @@ void func_80119990(void *arg0) {
 }
 
 void func_80123470();
-
 void func_801199EC(u8 *a) {
     u8 *e;
 
@@ -1250,7 +1244,6 @@ void func_801199EC(u8 *a) {
 }
 
 extern u8 D_800BF9FE;
-
 void func_80119ADC(u8 *a) {
     switch (a[5]) {
     case 0:
@@ -1759,7 +1752,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011DF98);
 extern u8 D_8012AD54[];
 extern u8 D_8012AD64[];
 extern u8 *D_8012AE64[];
-
 void func_8011E2D8(u8 *a) {
     u8 *g;
 
@@ -2599,7 +2591,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80127678);
 extern s32 D_1F800090[];
 extern u8 D_801386BC[];
 extern u8 D_80138794[];
-
 void func_80127784(u8 *a) {
     s32 *d;
     s32 t;

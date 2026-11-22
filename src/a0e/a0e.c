@@ -32,7 +32,6 @@ void func_80109308(u8 *a, u8 *b)
 extern s32 D_1F80009C;
 #define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
 typedef struct { u8 pad[0x2E]; u16 x; u8 pad2[6]; u16 z; } ArenaXZ;
-
 void func_80109440(u8 *a, u8 *b)
 {
     s32 r = func_8001F40C(a, b, 1);
@@ -90,7 +89,6 @@ extern u8 D_1F800150;
 extern u8 D_1F800183;
 extern u8 D_1F800182;
 extern u8 **D_1F800148;
-
 void func_80109B30(void)
 {
     u8 **l = D_1F80013C;
@@ -195,7 +193,6 @@ void func_8010A3DC(void *arg0) {
 }
 
 #define UH(p, o) (*(u16 *)((u8 *)(p) + (o)))
-
 s32 func_8010A448(u8 *a)
 {
     u8 *o = D_1F800260;
@@ -971,7 +968,6 @@ typedef struct { u8 b[8][4]; } ByteTab8;
 extern PtrTab6 D_8010921C;
 extern ByteTab8 D_80109234;
 extern u8 D_8011CD34[];
-
 void func_80112940(u8 *a)
 {
     PtrTab6 p;
@@ -1083,7 +1079,6 @@ void func_80112C90(u8 *a)
 extern u16 D_1F80017C;
 extern u8 D_8011CEB8[];
 typedef struct { u8 pad[0x48]; s16 r[3]; } RotAct;
-
 void func_80112DA8(u8 *a)
 {
     u8 *p;
@@ -1394,7 +1389,6 @@ void func_80115270(u8 *a)
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8011529C);
 
 extern s16 D_80124CF8[];
-
 void func_80115610(u16 *a, s16 *v)
 {
     s32 i;
@@ -1430,7 +1424,6 @@ extern u8 *D_80124BA0[];
 extern u8 *D_80124CE0[];
 #define EP_FRAME(a) (*(s16 *)((a) + 0x64))
 #define EP_MODEL(a) (*(u8 **)(*(u8 **)((a) + 0xC0) + 0x40))
-
 s32 func_801156F4(u8 *a)
 {
     switch (a[7]) {

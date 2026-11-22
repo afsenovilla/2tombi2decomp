@@ -26,7 +26,6 @@ typedef struct { u8 pad[0x48]; u16 a48, a4A, a4C, a4E; } St138;
 extern St138 *D_1F800138_c102;
 extern u8 D_1F800234;
 extern u8 D_800452C0[];
-
 void func_80107D3C(void)
 {
     St138 *m = D_1F800138_c102;
@@ -52,7 +51,6 @@ void func_80107D3C(void)
         break;
     }
 }
-
 
 void func_80107E20(void)
 {

@@ -78,7 +78,6 @@ extern u8 D_1F800144;
             }                                            \
         }                                                \
     }
-
 void func_80109378(void)
 {
     u8 **l = D_1F800154;
@@ -645,7 +644,6 @@ void func_8010D21C(u8 *a)
 
 extern u16 D_8010D5C0[][2];
 extern s32 D_1F80021C;
-
 void f_PlayCourageTowerStreamedAudioSegment(s16 a, s16 b)
 {
     s32 base;

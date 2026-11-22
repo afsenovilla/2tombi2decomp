@@ -130,7 +130,6 @@ extern u8 D_1F800144;
             }                                            \
         }                                                \
     }
-
 void func_8010949C(void)
 {
     u8 **l = D_1F800154;
@@ -626,7 +625,6 @@ void func_8010C980(u8 *a)
 
 extern u16 D_8010CAB4[][2];
 extern s32 D_1F80021C;
-
 void f_UpdateWisdomTowerInteriorEntranceActor(s16 a, s16 b)
 {
     s32 base;

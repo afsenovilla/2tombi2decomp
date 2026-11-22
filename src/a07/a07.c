@@ -1159,7 +1159,6 @@ void func_8011BAB4(void *arg0) {
 
 typedef struct { s16 p0, x, p4, y, p8, z; } HV;
 extern u8 *D_1F800214_120a;
-
 s32 func_8011BB38(u8 *a)
 {
     HV v;
@@ -1429,7 +1428,6 @@ void func_8011DD48(u8 *a)
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011DDD0);
 
 extern u8 D_800BF913;
-
 s32 func_8011DEB8(u8 *a)
 {
     u8 *g;
@@ -2034,7 +2032,6 @@ extern s16 D_800E7FFE_1cd3;
 extern s16 D_1F800160;
 extern s16 D_1F800162;
 extern s16 D_1F800164;
-
 s32 func_80126E80(u8 *a)
 {
     if (!(D_800E7FFE_1cd3 & 0x8200)) {

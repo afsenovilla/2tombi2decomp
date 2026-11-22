@@ -33,7 +33,6 @@ void func_80109314(u8 *a, u8 *b)
 extern s32 D_1F80009C;
 #define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
 typedef struct { u8 pad[0x2E]; u16 x; u8 pad2[6]; u16 z; } ArenaXZ;
-
 void func_8010944C(u8 *a, u8 *b)
 {
     s32 r = func_8001F40C(a, b, 1);
@@ -138,7 +137,6 @@ extern u8 D_1F800150;
 extern u8 D_1F800183;
 extern u8 D_1F800182;
 extern u8 **D_1F800148;
-
 void func_80109F08(void)
 {
     u8 **l = D_1F80013C;
@@ -415,7 +413,6 @@ typedef struct {
 extern ClutCycle D_8011937C[];
 extern s8 D_801278CC[];
 extern u8 D_800BF873;
-
 void func_8010B9AC(s32 arg0) {
     ClutRect r;
     s32 i;
@@ -933,7 +930,6 @@ typedef struct { u8 b[8][4]; } ByteTab8;
 extern PtrTab6 D_80109210;
 extern ByteTab8 D_80109228;
 extern u8 D_8011E8B8[];
-
 void func_80112AA4(u8 *a)
 {
     PtrTab6 p;
@@ -1046,7 +1042,6 @@ void func_80112DF4(u8 *a)
 extern u16 D_1F80017C;
 extern u8 D_8011EB40[];
 typedef struct { u8 pad[0x48]; s16 r[3]; } RotAct;
-
 void func_80112F0C(u8 *a)
 {
     u8 *p;
@@ -1598,7 +1593,6 @@ void func_801160C4(u8 *a) {
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80116194);
 
 extern s16 D_80126A5C[];
-
 void f_CopyEvilPigCaptureDeformationVertices(u16 *a, s16 *v)
 {
     s32 i;
@@ -1634,7 +1628,6 @@ extern u8 *D_80126904[];
 extern u8 *D_80126A44[];
 #define EP_FRAME(a) (*(s16 *)((a) + 0x64))
 #define EP_MODEL(a) (*(u8 **)(*(u8 **)((a) + 0xC0) + 0x40))
-
 s32 f_UpdateEvilPigCaptureDeformation(u8 *a)
 {
     switch (a[7]) {

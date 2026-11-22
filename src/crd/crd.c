@@ -613,7 +613,6 @@ static inline void crd_measure(u8 *s, s32 *w, s32 *n)
         *w = c;
     }
 }
-
 void func_8018D26C(CrdMenu *unused)
 {
     CrdRect r;

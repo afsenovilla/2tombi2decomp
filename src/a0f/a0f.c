@@ -33,7 +33,6 @@ void func_80109320(u8 *a, u8 *b)
 extern s32 D_1F80009C;
 #define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
 typedef struct { u8 pad[0x2E]; u16 x; u8 pad2[6]; u16 z; } ArenaXZ;
-
 void func_80109458(u8 *a, u8 *b)
 {
     s32 r = func_8001F40C(a, b, 1);
@@ -165,7 +164,6 @@ extern u8 D_1F800150;
 extern u8 D_1F800183;
 extern u8 D_1F800182;
 extern u8 **D_1F800148;
-
 void func_8010A2D4(void)
 {
     u8 **l = D_1F80013C;
@@ -677,7 +675,6 @@ typedef struct {
 extern ClutCycle D_8011AE60[];
 extern s8 D_801297A8[];
 extern u8 D_800BF873;
-
 void func_8010DF5C(s32 arg0) {
     ClutRect r;
     s32 i;
@@ -1193,7 +1190,6 @@ typedef struct { u8 b[8][4]; } ByteTab8;
 extern PtrTab6 D_80109210;
 extern ByteTab8 D_80109228;
 extern u8 D_80120760[];
-
 void func_80113C8C(u8 *a)
 {
     PtrTab6 p;
@@ -1305,7 +1301,6 @@ void func_80113FDC(u8 *a)
 extern u16 D_1F80017C;
 extern u8 D_80120880[];
 typedef struct { u8 pad[0x48]; s16 r[3]; } RotAct;
-
 void func_801140F4(u8 *a)
 {
     u8 *p;
@@ -1624,7 +1619,6 @@ s32 func_80118250(void *arg0) {
 }
 
 typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner;
-
 s32 func_80118264(u8 *a)
 {
     s32 e;
@@ -1685,7 +1679,6 @@ u8 *func_80118534(void *a)
 }
 
 extern s16 D_801289B8[];
-
 void func_80118588(u16 *a, s16 *v)
 {
     s32 i;
@@ -1721,7 +1714,6 @@ extern u8 *D_80128860[];
 extern u8 *D_801289A0[];
 #define EP_FRAME(a) (*(s16 *)((a) + 0x64))
 #define EP_MODEL(a) (*(u8 **)(*(u8 **)((a) + 0xC0) + 0x40))
-
 s32 func_8011866C(u8 *a)
 {
     switch (a[7]) {
@@ -2030,7 +2022,6 @@ extern Range D_8012971C[];
 extern Range D_80129734[];
 extern Range D_8012976C[];
 extern u8 *D_1F80021C;
-
 void func_8011A35C(s16 kind, s16 idx)
 {
     Range *t;

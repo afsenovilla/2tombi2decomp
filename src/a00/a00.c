@@ -852,7 +852,6 @@ void func_80114F54(s32 arg0, void *arg1) {
 
 extern u8 *D_1F800184_6cc7;
 extern s16 D_1F80018E;
-
 void func_80114F94(u8 *a, u8 *b) {
     b[0x29] = 0;
     if (a[0x16B] != 0) {
@@ -912,7 +911,6 @@ void func_801151F4(u8 *a, u8 *b)
 extern u8 D_1F800183;
 extern u8 **D_1F800154;
 extern u8 D_1F80015C;
-
 void f_ResolveA00ActiveActorCollisionCandidates(void) {
     u8 **list = D_1F800154;
     u8 *a;
@@ -957,7 +955,6 @@ typedef struct {
 extern ClutCycle D_80147D84[];
 extern s8 D_8014C4F0[];
 extern u8 D_800BF873;
-
 void func_80115B88(s32 arg0) {
     ClutRect r;
     s32 i;
@@ -1047,7 +1044,6 @@ typedef struct {
 } SVec3T;
 extern SVec3T D_1F8000C0_4e9b;
 extern u8 D_800BF9E5_1228;
-
 void func_801174D8(u8 *a) {
     s32 n;
     u8 *g;
@@ -1118,7 +1114,6 @@ u8 *f_SpawnRareFishPickup(u8 *a) {
 
 extern s32 D_800ECF80;
 extern u8 D_8014C808[];
-
 void func_80117D7C(u8 *a) {
     u8 *p;
 
@@ -1867,7 +1862,6 @@ s32 func_80122F5C(s32 a) {
 
 extern u8 D_800BF9B5;
 extern u8 D_801494FC[];
-
 s32 func_80122FAC(u8 *a) {
     s32 one = 1;
 
@@ -2210,7 +2204,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80127798);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80127D1C);
 
 void func_80127D1C();
-
 s32 func_801280E8(u8 *a) {
     u8 *g = (u8 *)&D_800BF870;
     u8 *e;
@@ -2495,7 +2488,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseWobbleEffect);
 
 extern s16 D_8014A260[];
 extern s16 D_8014A268[];
-
 void func_8012D404(u8 *a) {
     switch (a[4]) {
     case 0:
@@ -2525,7 +2517,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012D908);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleTownQuestRewardVisualActor);
 
 extern u8 D_800BF9DD;
-
 void func_8012DE34(u8 *a) {
     u8 *g = D_800E7E80;
 
@@ -2618,7 +2609,6 @@ void func_8012E0D0(void *a)
         func_800517F8(a);
     }
 }
-
 
 void func_8012E10C(u8 *a) {
     u8 *p = M2C_FIELD(a, u8 **, 0x10);
@@ -2829,7 +2819,6 @@ typedef struct {
     s16 id;
 } PickupLink;
 extern PickupLink D_801485BC[];
-
 void f_HideCollectedBarrelLinkedPickups(AreaPartsOwner *a) {
     PickupLink *t = D_801485BC;
     s16 i = 2;
@@ -3050,7 +3039,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013272C);
 extern s8 D_1F80017C[];
 typedef struct { s16 x, y, z; } AreaVec3s;
 extern AreaVec3s D_8014A684[];
-
 void func_80132954(u8 *a) {
     s16 i;
 
@@ -3086,7 +3074,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80132D58);
 #include "game.h"
 #include "m2c.h"
 extern u8 D_800E7E80[];
-
 void f_UpdateAquaticPlantGrabMotion(u8 *a)
 {
     s32 r = 0;
@@ -3395,7 +3382,6 @@ typedef struct {
     u8 *parts[1];
 } PartsActor;
 extern u8 D_1F800000[];
-
 void func_801389C8(PartsActor *a0) {
     PartsActor *a = a0;
     s32 pad[4];
@@ -3497,7 +3483,6 @@ void func_8013A784(u8 *a) {
 }
 
 extern s16 D_800ED098;
-
 s32 func_8013A818(AreaPartsOwner *a) {
     s32 i;
     u8 *g;

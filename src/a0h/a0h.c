@@ -78,7 +78,6 @@ extern u8 D_1F800144;
             }                                            \
         }                                                \
     }
-
 void func_801092D4(void)
 {
     u8 **l = D_1F800154;
@@ -732,7 +731,6 @@ void func_8010C4FC(u8 *a)
 
 extern u16 D_8010C644[][2];
 extern s32 D_1F80021C;
-
 void f_UpdateStrengthTowerInteriorEntranceActor(s16 a, s16 b)
 {
     s32 base;

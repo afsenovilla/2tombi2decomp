@@ -193,7 +193,6 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", f_SpawnEvilPigDoorActorsFromPlacementTab
 extern ClutCycle D_8010E0DC[];
 extern s8 D_8010E5FC[];
 extern u8 D_800BF873;
-
 void func_8010A060(s32 arg0) {
     ClutRect r;
     s32 i;
@@ -583,7 +582,6 @@ typedef struct { u8 pad[0x5C]; u8 *p5C; } Bf808;
 extern Bf808 D_800BF808_71fd;
 extern u8 *D_800BF864;
 extern u8 D_800E807E;
-
 s32 func_8010BB20(u8 *a)
 {
     switch (a[0x78]) {

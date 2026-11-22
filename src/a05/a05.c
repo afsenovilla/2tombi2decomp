@@ -75,7 +75,6 @@ extern u8 D_1F800144;
             }                                            \
         }                                                \
     }
-
 void func_8010B930(void)
 {
     u8 **l = D_1F800154;
@@ -140,7 +139,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010E4B0);
 extern s32 D_80140D38[];
 extern s16 D_80140E38;
 extern void *D_80140E3C;
-
 void func_8010E5A8(void)
 {
     D_80140E3C = &D_80140D38[0x40];
@@ -159,7 +157,6 @@ void func_8010E5C4(s32 arg0) {
 }
 
 extern u8 D_800BF816;
-
 void func_8010E604(u8 *a0, u8 *a1)
 {
     u8 *b = a1;
@@ -178,7 +175,6 @@ void func_8010E604(u8 *a0, u8 *a1)
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010E698);
 
 extern s16 D_1F80009C_c31a;
-
 void func_8010E760(u8 *a, u8 *b)
 {
     u16 f = *(u16 *)(a + 0x17E);
@@ -264,7 +260,6 @@ void func_8010EC7C(s32 arg0, u8 *arg1) {
 }
 
 extern s32 D_1F80009C_baed;
-
 void func_8010ED00(u8 *a, u8 *b)
 {
     if (func_8002313C(a, b, *(void **)(b + 0xC0)) != 0) {
@@ -319,7 +314,6 @@ void func_8010EF30(u8 *p)
 
 extern s32 D_1F80008C;
 extern void *D_1F800080;
-
 void func_8010EFA0(u8 *a, u8 *b)
 {
     if (b[0x5E] == 0 && func_80024338(a, b) != 0) {
@@ -436,7 +430,6 @@ void func_80111A74(void) {
 }
 
 extern u8 D_1F8000D0[];
-
 void func_80111AB4(u8 *a)
 {
     u8 *p = a + 0x38;
@@ -825,7 +818,6 @@ s32 func_801154D8(void *a0)
 
 extern u8 D_800E8008[];
 extern s16 D_801003F8;
-
 s32 func_801154F8(u8 *a)
 {
     u8 *e = D_800E8008;
@@ -1151,7 +1143,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateStaticExplosionQuestActor);
 
 extern s32 D_800BF850;
 extern u8 D_800BF9C6;
-
 s32 func_8011A5F0(u8 *a)
 {
     switch (a[0x78]) {
@@ -1291,7 +1282,6 @@ s32 func_8011CB08(u8 *a) {
 }
 
 extern u8 D_80141E14_7ad9[];
-
 void func_8011CB9C(u8 *a, s16 x, s16 y, s16 z)
 {
     func_80077CFC(a, D_80141E14_7ad9, 6, 6);
@@ -2067,7 +2057,6 @@ void func_80126880(u8 *p, s32 a1)
 }
 
 extern u8 D_80142108[];
-
 void func_80126924(u8 *a)
 {
     switch (a[6]) {
@@ -2574,7 +2563,6 @@ s32 func_8012B118(u8 *p)
 }
 
 typedef struct { s32 x, y, z; } V3;
-
 void func_8012B188(u8 *a)
 {
     V3 v = *(V3 *)(a + 0x2C);
@@ -3830,7 +3818,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8013A460);
 typedef struct { u8 b[4]; } B4;
 extern B4 D_8010A2A4;
 extern void *D_800ED8C8;
-
 void func_8013A548(u8 *a)
 {
     u8 *p = a + 0x50;

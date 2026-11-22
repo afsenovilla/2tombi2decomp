@@ -501,7 +501,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_SpawnPipeAreaSceneActorsFromPlacementT
 #include "psyq/inline_c.h"
 extern ClutCycle D_801352CC[];
 extern s8 D_80138FD0[];
-
 void func_801112C0(s32 arg0) {
     ClutRect r;
     s32 i;
@@ -585,7 +584,6 @@ typedef struct {
 } Range16;
 extern Range16 D_80135BA0[];
 extern u8 D_1F800207_9c67;
-
 s32 func_80111CCC(s32 x) {
     u8 v;
     s32 k;
@@ -824,7 +822,6 @@ void func_80112BB8(void *arg0) {
 }
 
 extern PairOwner D_800E7E80_6978;
-
 void func_80112CB8(u8 *a) {
     PairOwner *g = &D_800E7E80_6978;
 
@@ -1210,7 +1207,6 @@ u8 *func_80115D84(s32 a) {
     return p;
 }
 
-
 void func_80115DE0(u8 *a) {
     PairOwner *g;
 
@@ -1343,7 +1339,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80119778);
 
 extern u8 *D_800ECFC4;
 extern u8 D_80139B24[];
-
 void func_801199DC(u8 *a, s32 k, s32 f) {
     u8 *b;
     s32 *t;
@@ -1378,7 +1373,6 @@ void func_801199DC(u8 *a, s32 k, s32 f) {
 typedef struct {
     s16 x, y, z;
 } SV3;
-
 void func_80119AAC(u8 *a) {
     SV3 p;
     SV3 s;
@@ -1966,7 +1960,6 @@ typedef struct {
     s16 v[8];
 } ArrActor60;
 extern u8 D_80139FE0[];
-
 void func_8011DE34(ArrActor60 *a, s32 k, s32 f, s32 i) {
     s16 n;
 
@@ -2078,7 +2071,6 @@ void func_8011E1D4(void *arg0) {
 }
 
 extern u8 D_801393C0_27b3[];
-
 void func_8011E324(AreaPartsOwner *a) {
     switch (a->pad[4]) {
     case 0:
@@ -2232,7 +2224,6 @@ extern u8 D_800ECF58_742e[];
 extern u8 D_8013581C[];
 extern u8 D_80137124[];
 extern u8 D_800BF910;
-
 void func_80120420(u8 *a) {
     u8 *g = D_800ECF58_742e;
 
@@ -2573,7 +2564,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80123BF8);
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80123CFC);
 
 void func_80123CFC();
-
 s32 func_80123F28(u8 *a) {
     u8 *g = (u8 *)&D_800BF870;
     u8 *e;
@@ -2604,7 +2594,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80123FF8);
 
 extern s16 D_1F80016C;
 extern s16 D_1F80016E;
-
 void func_80124164(u8 *a) {
     u8 *g = D_800E7E80;
 
@@ -2792,7 +2781,6 @@ typedef struct {
 } AVec3;
 extern AVec3 D_80137614[];
 extern s16 D_8013764C[];
-
 void func_80126F60(u8 *a) {
     u8 *p;
 
@@ -2928,7 +2916,6 @@ typedef struct {
 } SVec3T;
 extern SVec3T D_1F8000C0_4e9b;
 void f_UpdatePipeAreaPersistentSceneryRewardActor();
-
 void func_801286F4(u8 *a) {
     u8 *p = M2C_FIELD(a, u8 **, 0x10);
     u8 *e;
@@ -3119,7 +3106,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012C304);
 
 extern u8 D_800BF9FA;
 extern u8 D_1F800233;
-
 void func_8012C410(u8 *a) {
     switch (a[5]) {
     case 0 ... 5:
@@ -3509,7 +3495,6 @@ typedef struct {
 } SVecE;
 extern s32 D_1F800088;
 extern s32 D_1F800090_3460;
-
 void func_8012E5F8(u8 *a) {
     SVecE v;
     s32 t;
@@ -3792,7 +3777,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80133F38);
 #define GTE_RTPS() __asm__ volatile("nop;" "nop;" ".word 0x4A180001")
 #define GTE_NCLIP() __asm__ volatile("nop;" "nop;" ".word 0x4B400006")
 #define GTE_AVSZ4() __asm__ volatile("nop;" "nop;" ".word 0x4B68002E")
-
 s32 func_801341E8(u8 *poly, u8 *v, s32 *flag) {
     s32 otz;
     s32 n;

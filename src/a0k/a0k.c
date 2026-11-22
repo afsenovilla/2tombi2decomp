@@ -1088,7 +1088,6 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80116708);
 #define AREA_gte_ldrgb_r(r0) __asm__ volatile("mtc2	%0, $6" : : "r"(r0))
 #define AREA_gte_dpcs() __asm__ volatile("nop;" "nop;" ".word 0x4A780010")
 #define AREA_gte_strgb(r0) __asm__ volatile("swc2	$22, 0( %0 )" : : "r"(r0) : "memory")
-
 void func_80116AE8(s32 d, u32 *p) {
     AREA_gte_lddp(d * 2);
     AREA_gte_ldrgb_r(*p);
@@ -1137,7 +1136,6 @@ extern Range D_8011D8EC[];
 extern Range D_8011D908[];
 extern Range D_8011D94C[];
 extern u8 *D_1F80021C;
-
 void func_801173D4(s16 kind, s16 idx)
 {
     Range *t;

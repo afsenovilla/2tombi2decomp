@@ -56,7 +56,6 @@ extern u8 D_800A55B0[];
 extern u8 *D_800A2B84[];
 #define gte_lddqa(r0) __asm__ volatile("ctc2 %0, $27" : : "r"(r0))
 #define gte_lddqb0() __asm__ volatile("addiu $10, $0, 0; ctc2 $10, $28" : : : "$10")
-
 void func_8001CBA8(u8 *a, u8 n)
 {
     s32 i;
@@ -644,7 +643,6 @@ void f_ResolveActiveColliderOffsetActorContact(void *arg0, void *arg1) {
 }
 
 extern u8 D_1F800182_5650;
-
 void func_8002369C(u8 *a, u8 *b)
 {
     if (f_ClassifyActorCylinderContact(a, b) >= 0) {
@@ -766,7 +764,6 @@ void func_80024CF4(void)
 
 extern u8 **D_1F800158_fd3d;
 extern u8 D_1F80015E_6ff1;
-
 s32 func_80024D34(u8 *a)
 {
     u8 **list;
@@ -1486,7 +1483,6 @@ extern FxDef_8E30 D_8010CACC[];
 extern FxDef_8E30 D_8010D8AC[];
 extern FxDef_8E30 D_8011FC0C[];
 extern FxDef_8E30 D_801158A0[];
-
 void f_InitializeTransientEffectActor(u8 *a, s32 id)
 {
     FxDef_8E30 *d;
@@ -2263,7 +2259,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80033A0C);
 typedef struct { u8 a; u8 b; u16 c; } SprAttr_3AC8;
 typedef struct { s16 x; s16 y; s32 z; } SprPos_3AC8;
 u8 *f_SpawnLinkedActorTrailEffect(u8 *owner, u8 kind);
-
 void f_DrawPauseMenuButtonIcon(s32 button, s16 x, s16 y, u8 b)
 {
     SprAttr_3AC8 attr;
@@ -2425,7 +2420,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80035FAC);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80036240);
 
 u8 func_80078770(u8 a, u8 b);
-
 void func_800364AC(s32 mode, u32 sub, s32 *outMode, s32 *outRes)
 {
     s32 m;
@@ -3507,7 +3501,6 @@ typedef struct { PTag_F264 tag; u32 code[2]; } DrMode_F264;
 #define setaddr_(p, _addr) (((PTag_F264 *)(p))->addr = (u32)(_addr))
 #define getaddr_(p) (u32)(((PTag_F264 *)(p))->addr)
 #define addPrim_(ot, p) setaddr_(p, getaddr_(ot)), setaddr_(ot, p)
-
 void func_8003F264(void)
 {
     DrMode_F264 *p;
@@ -3634,7 +3627,6 @@ void f_DrawModelPrimitiveStreamForCurrentArea(u32 *a, void *b, s32 c)
 
 #undef gte_rtps
 #define gte_rtps() __asm__ volatile("nop; nop; .word 0x4A180001")
-
 s32 func_8003F7A0(void *v, void *sxy)
 {
     s32 z;
@@ -3650,7 +3642,6 @@ s32 func_8003F7A0(void *v, void *sxy)
 #define gte_nclip_b() __asm__ volatile("nop; nop; .word 0x4B400006")
 #define gte_avsz4_b() __asm__ volatile("nop; nop; .word 0x4B68002E")
 #define gte_rtps_b2() __asm__ volatile("nop; nop; .word 0x4A180001")
-
 s32 func_8003F7D8(u8 *p, u8 *v, s32 *flag)
 {
     s32 otz;
@@ -3977,7 +3968,6 @@ s32 f_GetEventAPReward(s32 event, s32 low)
 void func_8003AD48(void);
 u8 *func_800727D4(void *owner, s32 ev, s32 kind);
 extern u8 D_800E8008_f2dc[];
-
 u8 *func_80040AA4(s32 x, s32 kind)
 {
     u8 *a = (u8 *)f_AllocateActorRecordByType(4, 3, 1);
@@ -4489,7 +4479,6 @@ void func_800423FC(void *arg0) {
 }
 
 typedef struct { u8 pad[0x144]; u8 flags[1]; } Flags_2448;
-
 s32 func_80042448(u8 *a)
 {
     switch (*(s16 *)(a + 0x72)) {
@@ -4701,7 +4690,6 @@ s32 func_80042E10(u8 *a)
 }
 
 s32 f_PlaySoundEffect();
-
 s32 func_80042EA4(u8 *a, u16 *flags, s32 snd)
 {
     s32 id = snd;
@@ -5789,7 +5777,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D0D4);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D19C);
 
 typedef struct { u8 pad[0x13]; u8 n; u8 ids[1]; } List_D298;
-
 void func_8004D298(s32 k)
 {
     s32 id;
@@ -5862,7 +5849,6 @@ void func_8004D6F4(s32 item)
 typedef struct { u8 pad[0x444]; u8 world[0x80]; u8 other[0x80]; } Bits_D7EC;
 typedef struct { u8 pad[0x10]; s32 y; u16 pad14; } Cam_DA30;
 extern Cam_DA30 D_1F8000D0_d44f;
-
 void func_8004D714(s32 n, u8 other)
 {
     s16 bit;
@@ -5927,7 +5913,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D8D8);
 typedef struct { s16 vx, vy, vz, pad; } SVec_9DD0;
 extern SVec_9DD0 D_1F8000C0_18ff;
 extern SVec_9DD0 D_1F8000C8_65f7;
-
 s32 f_UpdateUsedItemAttachmentPresentation(u8 *a)
 {
     u8 *o;
@@ -6011,7 +5996,6 @@ typedef struct { u8 pad0[9]; u8 u9; } Flags058_DF94;
 extern Flags058_DF94 D_800ED058_c3b3;
 extern s32 D_800BF880;
 extern u8 D_800BF881;
-
 void func_8004DF94(u8 *a)
 {
     u8 *t = D_800E7E80_f78d;
@@ -6320,7 +6304,6 @@ void f_ResetPopupDisplayEntry(PopupDisplayEntry *e)
 
 typedef struct { s32 w[0x23]; } Popup_EE90;
 typedef struct { u8 pad[8]; s16 count; u8 padA[2]; Popup_EE90 e[1]; } PopupList_EE90;
-
 void f_RemoveOldestPopupDisplayEntry(PopupList_EE90 *m)
 {
     s32 i;
@@ -7053,7 +7036,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800527C8);
 
 extern s16 D_1F800166_e9f9;
 extern s16 D_1F800190_19b8;
-
 u8 f_TryPrepareTombaForInteraction(void)
 {
     u8 *t = D_800E7E80_f78d;
@@ -7686,7 +7668,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaLostGroundSupportMotion);
 extern s16 D_800A45A0[];
 extern s16 D_800A4588[];
 extern u16 D_1F800238;
-
 void f_DetachTombaFromSupport(u8 *a, s32 keep)
 {
     a[0x181] = 0;
@@ -8093,7 +8074,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800597AC);
 
 extern void *D_800A4BBC[];
 extern u8 D_800BF830;
-
 void func_80059C60(void)
 {
     u8 *t = D_800E7E80_f78d;
@@ -9174,7 +9154,6 @@ void f_UpdateTombaTransitionTerrainContact(void *arg0, s32 arg1) {
 }
 
 extern u16 D_1F800192;
-
 void func_800654D4(u8 *a)
 {
     u16 ang;
@@ -9635,7 +9614,6 @@ typedef struct {
     u16 f2C; u16 f2E; u16 f30; u16 f32; u16 f34; u16 f36; u8 pad38[0x18];
     s32 f50; s32 f54; s32 f58; u8 pad5C[6]; s16 f62;
 } Actor_8214;
-
 void func_80068214(Actor_8214 *o)
 {
     Actor_8214 *a;
@@ -10392,7 +10370,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006DAD8);
 
 typedef struct { s32 x; s32 y; s32 z; s16 pad; s16 bx; s16 pad10[3]; s16 bz; } Cam_DC38;
 extern Cam_DC38 D_1F8000D0_6683;
-
 void func_8006DC38(u8 *a)
 {
     s32 r = (rcos(*(s16 *)(a + 0x6E)) * *(s16 *)(a + 0x6C)) >> 12;
@@ -11366,7 +11343,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800726D4);
 
 u8 f_FormatIntegerText(s32 v, char *out);
 void func_80072898(void);
-
 u8 *func_800727D4(void *owner, s32 ev, s32 kind)
 {
     s32 ap = f_GetEventAPReward(ev, kind);
@@ -12745,7 +12721,6 @@ typedef struct { u8 pad[0x20]; s32 x, y, z; } GS_8824;
 typedef struct { u16 x; u8 y; u8 clut; s16 u; s16 v; } Glyph_C8C8;
 extern u8 D_80016EE0_e006[8];
 typedef struct { u8 b[8]; } B8_C8C8;
-
 void func_80078824(void)
 {
     SpawnPoint_8824 *s = &D_800A54A8_86de[D_800BF870.unk0][D_800BF870.pad1[0]];
