@@ -4272,7 +4272,50 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013E510);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013E64C);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", f_UpdateCapturedSnowFireflyMotion);
+extern s32 D_800BF858;
+extern u8 D_1F80017C_26d2;
+
+void f_UpdateCapturedSnowFireflyMotion(u8 *a)
+{
+    switch (a[5]) {
+
+    case 0:
+        a[5]++;
+        {
+            u8 r = D_1F80017C_26d2;
+            H(a, 0x4E) = 0;
+            H(a, 0x4A) = -4;
+            H(a, 0x40) = 0;
+            a[0x46] = r & 1;
+        }
+    case 1:
+        func_8004766C(a);
+        func_80049760(a);
+        H(a, 0x32) += H(a, 0x4A);
+        H(a, 0x44) = func_80083E80(H(a, 0x4E));
+        {
+
+            s32 z;
+            H(a, 0x4E) += 0x40;
+            *(s32 *)(a + 0x2C) += H(a, 0x48) * H(a, 0x44);
+            *(s32 *)(a + 0x34) += H(a, 0x4C) * H(a, 0x44);
+        }
+        if (a[0x46] == 0) {
+            *(s32 *)(a + 0x2C) += H(a, 0x48) << 10;
+            *(s32 *)(a + 0x34) += H(a, 0x4C) << 10;
+        } else {
+            *(s32 *)(a + 0x2C) -= H(a, 0x48) << 10;
+            *(s32 *)(a + 0x34) -= H(a, 0x4C) << 10;
+        }
+        func_8004954C(a, H(a, 0x80), 0);
+        H(a, 0x40)++;
+        break;
+    }
+    if (a[1] == 0 && H(a, 0x40) > 0x96) {
+        a[4] = 3;
+        D_800BF858 = 0;
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013E910);
 
@@ -4348,7 +4391,6 @@ void func_8013ECF8(void *arg0) {
     }
 }
 
-extern s32 D_800BF858;
 extern s16 D_800E7FEE;
 void func_8013EDD8(void *arg0) {
     u8 temp_a1;
