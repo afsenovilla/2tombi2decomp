@@ -9036,7 +9036,31 @@ void f_UpdateTombaTransitionTerrainContact(void *arg0, s32 arg1) {
     f_UpdateTombaLostGroundSupportMotion(arg0, 1);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800654D4);
+extern u16 D_1F800192;
+
+void func_800654D4(u8 *a)
+{
+    u16 ang;
+
+    switch (a[6]) {
+    case 0:
+        *(s16 *)(a + 0x58) = 0;
+        D_800BF80E_58ec = 0;
+        a[6]++;
+        f_SetTombaAnimationIfChanged(a, 2, 0);
+    case 1:
+        ang = D_1F800192 & 0xFFF;
+        if ((*(s16 *)(a + 0x56) = f_StepWrappedAngleToward(ang, *(s16 *)(a + 0x56), 0x100)) == ang) {
+            a[6]++;
+            D_800BF80E_58ec = 1;
+        }
+        break;
+    case 2:
+        break;
+    }
+    f_AdvanceActorSkeletalAnimation(a);
+    f_UpdateTombaTransitionTerrainContact(a, 1);
+}
 
 extern s8 D_800BF80E;
 void func_800655A0(void *arg0) {
@@ -9044,7 +9068,7 @@ void func_800655A0(void *arg0) {
     D_800BF80E = 0;
     M2C_FIELD(arg0, s8 *, 5) = 0x1E;
     M2C_FIELD(arg0, u8 *, 6) = (u8) (M2C_FIELD(arg0, u8 *, 6) + 1);
-    func_800654D4();
+    ((void (*)(void))func_800654D4)();
 }
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800655DC);
