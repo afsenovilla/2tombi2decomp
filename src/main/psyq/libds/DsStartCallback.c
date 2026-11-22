@@ -1,3 +1,12 @@
+// CC gcc-2.7.2-psx
+// FLAGS -O2 -G0
+// ASPSX 2.79
 #include "common.h"
+extern void *D_80106220;
 
-INCLUDE_ASM("asm/main/nonmatchings/psyq/libds/DsStartCallback", DsStartCallback);
+void *DsStartCallback(void *func) {
+    void **p = &D_80106220;
+    void *old = *p;
+    *p = func;
+    return old;
+}
