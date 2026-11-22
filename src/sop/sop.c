@@ -6,7 +6,108 @@ INCLUDE_ASM("asm/sop/nonmatchings/sop", func_80109164);
 
 INCLUDE_ASM("asm/sop/nonmatchings/sop", func_801092B4);
 
-INCLUDE_ASM("asm/sop/nonmatchings/sop", func_80109450);
+typedef struct {
+    s16 x, y, z;
+    s16 pad;
+    void *fn;
+} SpawnDef;
+extern SpawnDef D_8010C98C[];
+extern u8 *D_1F800138_5432;
+typedef struct { u8 pad[0x4C]; u16 a4C, a4E, a50, a52, a54; } St138b;
+extern u8 D_800E8008[];
+extern u8 D_8010C95C[];
+extern u8 D_800F2418_9a6f[];
+extern u8 D_1F800137;
+extern u8 D_800BF839;
+extern u16 D_800E7E68;
+extern u8 D_800BF9B4;
+void func_80109164();
+/* func_80109860, inlined */
+static inline void inl_80109860(void)
+{
+    s32 i;
+    u8 *r;
+    SpawnDef *d;
+
+    d = D_8010C98C;
+    for (i = 0; i < 3; i++) {
+        r = func_8007A980(3, 3, 1);
+        *(s16 *)(r + 0x2E) = d->x;
+        *(s16 *)(r + 0x32) = d->y;
+        *(s16 *)(r + 0x36) = d->z;
+        *(void **)(r + 0x1C) = d->fn;
+        d++;
+    }
+}
+
+void func_80109450(void)
+{
+    u8 *p, *q, *r, *t, *w, *x;
+    u8 c;
+    St138b *y;
+
+    switch (*(u16 *)(D_1F800138_5432 + 0x50)) {
+    case 0:
+        func_8007E9C8(0xFFFFFF, 0, 0);
+        func_80044BD4(func_80109164, 0, 0, 3);
+        func_8007B18C();
+        func_800796DC();
+        func_80078610();
+        func_8010A8D4(D_800F2418_9a6f);
+        inl_80109860();
+        func_8006CBD0(D_800E8008, D_8010C95C);
+        func_8006E3B0(D_800E8008, D_800E8008 + 0x38);
+        p = D_1F800138_5432;
+        (*(u16 *)(p + 0x50))++;
+        func_80075240();
+        q = D_1F800138_5432;
+        *(s16 *)(q + 0x60) = 0x1E;
+        *(s16 *)(q + 0x52) = 0;
+        *(s16 *)(q + 0x54) = 0;
+        q[0x6C] = 0x1F;
+        D_1F800137 = 1;
+        break;
+    case 1:
+        c = D_1F800138_5432[0x6C] * 8;
+        func_8007E9C8((c << 16) | (c << 8) | c, 0, 0);
+        D_1F800138_5432[0x6C]--;
+        r = D_1F800138_5432;
+        if (r[0x6C] == 0) {
+            r[0x6C] = 0x1F;
+            (*(u16 *)(r + 0x50))++;
+        }
+        goto common;
+    case 2:
+        func_801092B4();
+        if (D_800BF839 != 0 || (D_800E7E68 & 8)) {
+            t = D_1F800138_5432;
+            (*(u16 *)(t + 0x50))++;
+        }
+        break;
+    case 3:
+        c = -(D_1F800138_5432[0x6C] * 8);
+        func_8007E9C8((c << 16) | (c << 8) | c, 0, 0);
+        D_1F800138_5432[0x6C]--;
+        w = D_1F800138_5432;
+        if (w[0x6C] == 0) {
+            (*(u16 *)(w + 0x50))++;
+        }
+    common:
+        func_801092B4();
+        break;
+    case 4:
+        func_8001CF2C();
+        y = (St138b *)D_1F800138_5432;
+        D_1F800137 = 0;
+        y->a4E = 0;
+        y->a50 = 0;
+        y->a52 = 0;
+        y->a54 = 0;
+        y->a4C++;
+        D_800BF870.pad1[0x143] = 0;
+        break;
+    }
+}
 
 extern s8 D_1F800138[];
 extern M2C_UNK D_800BE0F0;
@@ -17,7 +118,6 @@ void func_80109750(void) {
     func_80044E84(0x8018A000, 0x1F8000);
 }
 
-extern u8 D_800E8008[];
 void func_801097E4(void)
 {
     u8 *c = D_800E8008;
@@ -40,12 +140,6 @@ void func_801097E4(void)
     }
 }
 
-typedef struct {
-    s16 x, y, z;
-    s16 pad;
-    void *fn;
-} SpawnDef;
-extern SpawnDef D_8010C98C[];
 void func_80109860(void)
 {
     s32 i;
@@ -63,7 +157,6 @@ void func_80109860(void)
     }
 }
 
-extern u8 D_800BF9B4;
 extern M2C_UNK D_800ED018;
 extern M2C_UNK D_800F2418;
 void func_801098E8(void) {
@@ -74,7 +167,6 @@ void func_801098E8(void) {
     }
 }
 
-extern u8 *D_1F800138_5432;
 void func_80109934(void)
 {
     u8 *p = D_1F800138_5432;
