@@ -16,7 +16,39 @@ INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018B924);
 
 INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018BD30);
 
-INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018BE40);
+extern u8 D_800BF80E;
+extern s32 D_1F800184;
+extern u8 D_800BF89C;
+extern u8 D_800E7E80[];
+
+void func_8018BE40(u8 *a)
+{
+    u8 *t;
+
+    switch (a[6]) {
+    case 0:
+        D_800BF80E = 0;
+        a[6]++;
+    case 1:
+        if (func_80076D68(a) == 1) {
+            D_800BF80E = 1;
+        }
+        if (D_1F800184 == 1) {
+            *(s16 *)(a + 0x50) = 0;
+            *(s16 *)(a + 0x4A) = 0;
+        } else {
+            func_80065478(a, 1);
+        }
+        break;
+    }
+    if (D_800BF89C == 3) {
+        t = D_800E7E80;
+        t[4] = 7;
+        t[5] = 0;
+        t[6] = 0;
+        t[7] = 0;
+    }
+}
 
 INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018BF08);
 
@@ -42,7 +74,6 @@ INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018CA1C);
 
 INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018CCFC);
 
-extern u8 D_800BF89C;
 
 void func_8018CDC4(u8 *a)
 {

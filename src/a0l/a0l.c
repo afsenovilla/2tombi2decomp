@@ -445,7 +445,26 @@ void func_80111C28(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111C34);
+void func_80111C34(u8 *a)
+{
+    switch (a[5]) {
+    case 0:
+        if (D_800BFA58_9b2e >= 2) {
+            a[5]++;
+        }
+        break;
+    case 1:
+        *(s16 *)(*(u8 **)(a + 0xC4) + 8) -= 0x80;
+        if (*(s16 *)(*(u8 **)(a + 0xC4) + 8) < -0x6FF) {
+            a[5]++;
+            D_800BFA58_9b2e = 3;
+        }
+        break;
+    }
+    a[1] = 1;
+    func_80077E7C(a);
+    func_800517F8(a);
+}
 
 
 void func_80111CFC(u8 *a)
