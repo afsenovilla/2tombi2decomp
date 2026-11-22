@@ -1665,7 +1665,41 @@ void func_8011FD74(void *arg0) {
     func_800735F4(arg0, 0x7E);
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011FDD0);
+// nearcopy: 4 words off, C from a01 func_80126140
+#include "common.h"
+#include "game.h"
+#include "m2c.h"
+#include "gte.h"
+extern u8 D_800E7E80[];
+extern s8 D_800BF81F;
+
+void func_8011FDD0(u8 *a) {
+    u8 *e = D_800E7E80;
+    s32 k = a[5];
+
+    switch (k) {
+    case 0:
+        if (e[0x2A] == a[0x2A] && e[5] == 0) {
+            a[5] = 1;
+            D_1F800137 = 2;
+        }
+        break;
+    case 1:
+        a[5] = 2;
+        D_800BF81F = (k - a[0x5F]) * 16;
+        a[0x29] = k;
+    case 2:
+        if (func_80073328(a, e) != 0) {
+            a[5]++;
+        }
+        break;
+    case 3:
+        if (e[0x2A] != a[0x2A]) {
+            a[5] = 0;
+        }
+        break;
+    }
+}
 
 extern u8 D_800E7FF4;
 void func_8011FECC(s32 arg0) {
