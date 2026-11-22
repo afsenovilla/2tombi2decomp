@@ -153,7 +153,97 @@ INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateUpgradedTrolleyPhysics);
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateStandardTrolleyPhysics);
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyMovementAndCamera);
+#define F16(p, o) M2C_FIELD(p, s16 *, o)
+#define FU16(p, o) M2C_FIELD(p, u16 *, o)
+#define FP(p, o) M2C_FIELD(p, u8 **, o)
+extern s8 D_800BF808[];
+extern u8 D_80111BA8[];
+/* func_8010E834, inlined */
+static inline void inl_8010E834(u8 *a) {
+    s8 *g = D_800BF808;
+    u8 *q = a + 0x60;
+    u8 b1[0x20];
+    u8 b2[8];
+
+    if (g[5] != 0) {
+        return;
+    }
+    if ((u16)(M2C_FIELD(q, u16 *, 0xE) + 0x2AA) >= 0x555) {
+        a[7] = 0;
+        g[5] = 1;
+        return;
+    }
+    if (!(q[0x12] & 1)) {
+        return;
+    }
+    if (!(M2C_FIELD(M2C_FIELD(a, u8 **, 0x60), s16 *, 6) & 0x8000)) {
+        return;
+    }
+    if (M2C_FIELD(f_SampleAirborneTrolleyTrack(M2C_FIELD(a, u8 **, 0x60), M2C_FIELD(q, s16 *, 0xA) - 0x3E8, b2, b1), s16 *, 6) & 0x8000) {
+        a[7] = 1;
+        g[5] = 1;
+    }
+}
+
+void f_UpdateTrolleyMovementAndCamera(u8 *a) {
+    u8 *q = a + 0x60;
+    u8 *r;
+    s32 d;
+
+    q[0x12] &= 0xF1;
+    FU16(a, 0x40)++;
+    if (FP(a, 0x60) <= D_80111BA8) {
+        F16(q, 0xC) = 0x8D0;
+        F16(q, 0xE) = 0;
+        F16(q, 0x10) = 0;
+        F16(q, 0x16) = 0;
+        q[0x12] |= 1;
+    }
+    if (a[4] == 1) {
+        f_UpdateTrolleySteeringInput(a);
+    } else {
+        F16(q, 0xE) = F16(q, 0xE) >> 1;
+        F16(q, 0x10) = F16(q, 0x10) >> 1;
+        F16(q, 0xC) += (0x3C0 - F16(q, 0xC)) >> 6;
+        if (F16(q, 0x16) < 0) {
+            F16(q, 0x16)++;
+        } else if (F16(q, 0x16) > 0) {
+            F16(q, 0x16)--;
+        }
+    }
+    if (D_800BF870.pad1[0x97] == 0xFF && D_800BF870.pad1[0x96] == D_800BF870.pad1[0x97]) {
+        f_UpdateStandardTrolleyPhysics(a);
+        r = a + 0x60;
+        if (F16(r, 0xC) < 0x8D0) {
+            F16(r, 0xC) = 0x8D0;
+        } else if (F16(r, 0xC) > 0x3510) {
+            F16(r, 0xC) = 0x3510;
+        }
+    } else {
+        f_UpdateUpgradedTrolleyPhysics(a);
+        r = a + 0x60;
+        if (F16(r, 0xC) < 0x8D0) {
+            F16(r, 0xC) = 0x8D0;
+        } else if (F16(r, 0xC) > 0x1A80) {
+            F16(r, 0xC) = 0x1A80;
+        }
+    }
+    inl_8010E834(a);
+    F16(a, 0x2E) = FU16(a, 0xAC);
+    F16(a, 0x32) = FU16(a, 0xB0);
+    F16(a, 0x36) = FU16(a, 0xB4);
+    d = F16(q, 0xC) >> 2;
+    F16(FP(a, 0xC4), 0xC) += d;
+    F16(FP(a, 0xC8), 0xC) += d;
+    F16(FP(a, 0xCC), 0xC) += d;
+    F16(FP(a, 0xD0), 0xC) += d;
+    if (a[4] == 1) {
+        a[1] = 1;
+        func_80077EBC(a);
+    }
+    func_80051300(a);
+    f_UpdateTrolleyRaceCamera(a);
+}
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyCourseProgressActor);
 
@@ -164,7 +254,6 @@ s32 func_8010E820(void *arg0) {
     return (u32) &D_8011B748 < (u32) M2C_FIELD(arg0, u32 *, 0x60);
 }
 
-extern s8 D_800BF808[];
 void func_8010E834(u8 *a) {
     s8 *g = D_800BF808;
     u8 *q = a + 0x60;
