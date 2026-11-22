@@ -493,7 +493,14 @@ void func_8011460C(void *a, void *b)
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80114654);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80114730);
+void func_80114730(u8 *a0, s32 a1)
+{
+    u8 *q = *(u8 **)(a0 + 0x158);
+
+    if (q[0xC] == 4 && (q[2] == 0 || q[2] == 0x3C)) {
+        func_801134E4(a0, q, a1);
+    }
+}
 
 s32 func_80114784(u8 *a)
 {

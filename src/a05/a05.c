@@ -343,7 +343,24 @@ void func_80112F30(void *arg0) {
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80112F88);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011318C);
+typedef struct {
+    u8 x0;
+    u8 pad1;
+    s16 x2;
+} S4;
+extern S4 D_8013C510[];
+
+void func_8011318C(s32 i)
+{
+    S4 *e = &D_8013C510[i];
+    s32 v = e->x2;
+
+    if (!(e->x0 & 0x80)) {
+        func_8004D7EC(v, 1);
+    } else {
+        func_8004D868(v, 1);
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801131E0);
 
@@ -1499,9 +1516,33 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80132418);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801326F4);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80132750);
+void func_80132750(u8 *p)
+{
+    u8 *s = D_800BF808;
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801327A4);
+    if (s[0xE] && s[0xF] == 3) {
+        func_800517F8(p);
+        p[1] = 1;
+    }
+}
+
+typedef struct {
+    u8 x[8];
+} S8;
+void func_80132418();
+extern u8 D_800BF873;
+extern S8 D_8013F530[];
+
+void func_801327A4(void *a0)
+{
+    u8 *r = func_80072DDC(0, 0x82, 3, 0x10);
+
+    if (r) {
+        *(void **)(r + 0x1C) = func_80132418;
+        r[3] = 1;
+        *(void **)(r + 0x10) = a0;
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801327F8);
 
@@ -1683,7 +1724,16 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8013606C);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801362CC);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80136434);
+void func_80136434(void)
+{
+    u32 i;
+
+    if (D_800BF873) {
+        for (i = 0; i < 7; i++) {
+            func_80135ED8(&D_8013F530[i]);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80136488);
 

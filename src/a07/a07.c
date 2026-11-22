@@ -52,7 +52,15 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", f_DispatchCircusSupportContacts);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010CD8C);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010CEDC);
+extern u8 D_800BF808[];
+void func_80118184();
+
+void func_8010CEDC(u8 *p)
+{
+    if (p[0x17B] == 0 && (s8)D_800BF808[5] == 0 && D_800BF808[0x31] == 0) {
+        func_8010A7FC();
+    }
+}
 
 extern u8 *D_800BF844;
 
@@ -369,7 +377,18 @@ void func_80118270(void *arg0) {
     D_800BF864 = arg0;
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80118294);
+u8 *func_80118294(void *a0)
+{
+    u8 *r = func_80072DDC(a0, 0, 3, 0x18);
+
+    if (r == 0) {
+        return 0;
+    }
+    r[3] = 1;
+    *(void **)(r + 0x1C) = func_80118184;
+    *(void **)(r + 0x10) = a0;
+    return r;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusSeesawLaunchedActorSequence);
 
@@ -1273,7 +1292,18 @@ u8 *func_8012B3FC(void *a0)
     return r;
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012B44C);
+u8 *func_8012B44C(void)
+{
+    u8 *r = func_80072DDC(0, 1, 5, 3);
+
+    if (r == 0) {
+        return 0;
+    }
+    r[3] = 1;
+    *(void **)(r + 0x1C) = func_8012B1B4;
+    *(void **)(r + 0x10) = 0;
+    return r;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusThrownQuestObject);
 
