@@ -565,7 +565,67 @@ s32 func_80021150(u8 *a, u8 *b, u8 *p, s32 k)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveActiveColliderConfiguredActorContact);
+/* The case dispatch is written as gotos: a switch gives another compare tree. */
+s32 f_ResolveActiveColliderConfiguredActorContact(u8 *a, u8 *b, s32 k)
+{
+    u8 *m = a + 0x60;
+    s32 c;
+    s32 t;
+    s16 dy;
+    s16 h;
+    s16 side;
+    s32 r;
+
+    if (!TestCyl_0B08(a, b)) {
+        return 0;
+    }
+    if ((*(u32 *)b & 0xFF00FF) == 0x80003) {
+        b[0x29] = 1;
+        r = f_ApplyActiveColliderImpactResponse(a, b, 0, 0);
+    } else {
+        if (a[0x5F] == 0x10) {
+            {
+                s32 sw = a[0x46] >> 1;
+                if (sw == 2) goto c2;
+                if (sw >= 3) {
+                    if (sw == 3) goto top;
+                    goto done;
+                }
+                if (sw < 0) goto done;
+                goto snap;
+            }
+        c2:
+            dy = *(u16 *)(a + 0x32) - *(u16 *)(b + 0x32);
+            side = dy;
+            if (dy < 0) {
+                h = *(u16 *)(b + 0x84) + *(u16 *)(a + 0x84);
+                side = -dy;
+            } else {
+                h = (*(u16 *)(b + 0x86) - *(u16 *)(b + 0x84)) + (*(u16 *)(a + 0x86) - *(u16 *)(a + 0x84));
+            }
+            if (!(*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) - D_1F80008C_f832 < h - side)) {
+                goto top;
+            }
+        snap:
+            c = (rcos(*(s16 *)(m + 8) + 0x800) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80))) >> 12;
+            t = rsin(*(s16 *)(m + 8) + 0x800) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80));
+            *(u16 *)(a + 0x2E) = *(u16 *)(b + 0x2E) + c;
+            *(u16 *)(a + 0x36) = *(u16 *)(b + 0x36) - (t >> 12);
+            goto done;
+        top:
+            *(u16 *)(a + 0x2E) = *(u16 *)(b + 0x2E);
+            *(u16 *)(a + 0x36) = *(u16 *)(b + 0x36);
+            *(u16 *)(a + 0x32) = *(u16 *)(a + 0x84) + (*(u16 *)(b + 0x32) + (*(u16 *)(b + 0x86) - *(u16 *)(b + 0x84)));
+        }
+    done:
+        r = f_ApplyActiveColliderImpactResponse(a, b, 0, k);
+    }
+    b[0x2B] = 1;
+    if (!(r & 0x80)) {
+        *(u8 *)D_1F800182 = 0;
+    }
+    return 1;
+}
 
 s32 f_ResolveActiveColliderActorContact(u8 *a, u8 *b, s32 k)
 {
