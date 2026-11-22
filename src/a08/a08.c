@@ -551,7 +551,24 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80115BE0);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", f_UpdateWaterTempleQuestItemPickupActor);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801161C4);
+extern s32 D_800ECFB8;
+
+void func_801161C4(u8 *a)
+{
+    if (func_80051B70(a, 0x17, 5) == 0) {
+        s16 *p = *(s16 **)(a + 0xC0);
+        *(s32 *)(a + 0x3C) = D_800ECFB8;
+        *p -= 0x64;
+        if (a[5] == 0) {
+            a[0] = 1;
+        }
+        *(s16 *)(a + 0x80) = 0x64;
+        *(s16 *)(a + 0x82) = 0xC8;
+        *(s16 *)(a + 0x84) = 0x14;
+        *(s16 *)(a + 0x86) = 0x32;
+        func_8004B354(a, 1);
+    }
+}
 
 extern s8 D_800BFA33;
 void func_80116254(void *arg0) {
@@ -2599,7 +2616,24 @@ void func_801293B0(u8 *p)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80129424);
+extern u8 D_800BFA30;
+
+void func_80129424(u8 *a)
+{
+    u8 *t = D_800E7E80;
+
+    if (a[5] == 0) {
+        func_8004BD64(a, 0, *(s32 *)(t + 0xDC), *(s32 *)(t + 0xD0), 0);
+        if (D_800BFA30 & 1) {
+            *(s16 *)(a + 0x2E) = 0x40C9;
+            *(s16 *)(a + 0x32) = -0xEB8;
+            *(s16 *)(a + 0x36) = 0x10ED;
+            a[5]++;
+        }
+    }
+    func_800517F8(a);
+    func_8007778C(a);
+}
 
 extern s16 D_1F800162;
 void func_801294B4(s16 a0)
