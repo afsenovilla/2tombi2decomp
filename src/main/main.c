@@ -4673,7 +4673,34 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8004E808);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004E928);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_MeasureEncodedMessageLine);
+s16 f_MeasureEncodedMessageLine(u8 *msg, u8 *len)
+{
+    u8 *start;
+    s32 w = 0;
+
+    if (len != NULL) {
+        start = msg;
+    }
+    for (;;) {
+        switch (*msg) {
+        case 0xFB:
+            w += 8;
+            break;
+        case 0xFA:
+        case 0xFF:
+            if (len != NULL) {
+                *len = msg - start;
+            }
+            return w;
+        default:
+            if (*msg < 0xC0) {
+                w += 8;
+            }
+            break;
+        }
+        msg++;
+    }
+}
 
 
 u8 *func_8004EAD0(u8 *out, u8 *src)
@@ -9562,7 +9589,81 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007CC00);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007CDD4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007CEEC);
+void func_8007CEEC(u8 *a, s16 *w, s16 *h)
+{
+    u8 *p;
+    u8 c;
+    s16 max;
+
+    *w = 0;
+    *h = 1;
+    p = *(u8 **)(a + 0x10);
+    c = *p;
+    max = 0;
+    if (c != 0xFF) {
+        do {
+            if (c >= 0xF8 && c <= 0xF9) {
+                if (a[0x47] != 0 || a[3] >= 2) {
+                    break;
+                }
+                *w += 2;
+                break;
+            } else if (c >= 0x60 && c <= 0xA0) {
+                if (c <= 0x80) {
+                    *w += 2;
+                } else {
+                    *w += 1;
+                }
+            } else if (c >= 0xCD && c <= 0xD0) {
+                *w += 2;
+            } else if (c >= 0xF0 && c <= 0xF7) {
+            } else {
+                switch (*p) {
+                case 0xFA:
+                    if (max < *w) {
+                        max = *w;
+                    }
+                    *w = 0;
+                    *h += 1;
+                    break;
+                case 0xC0: case 0xC1: case 0xC2:
+                    *w += 8;
+                    break;
+                case 0xCA: case 0xCB:
+                    *w += 4;
+                    break;
+                case 0xCC:
+                    *w += 2;
+                    break;
+                case 0xC3: case 0xC9:
+                    *w += 2;
+                    break;
+                case 0xC4:
+                    *w += 9;
+                    break;
+                case 0xC5: case 0xC6:
+                    *w += 0xA;
+                    break;
+                case 0xC7: case 0xC8:
+                    *w += 0xC;
+                    break;
+                case 0xFC:
+                    break;
+                default:
+                    *w += 1;
+                    break;
+                }
+            }
+            p++;
+            c = *p;
+        } while (c != 0xFF);
+    }
+    if (max < *w) {
+        max = *w;
+    }
+    *w = max * 8;
+    *h = *h * 16;
+}
 
 void func_8007D0D0(u8 *a)
 {
