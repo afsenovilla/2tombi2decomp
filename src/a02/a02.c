@@ -1614,7 +1614,43 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801246A4);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8012496C);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80124CB8);
+#define gte_SetRotMatrix(r0) __asm__ volatile("lw	$12, 0( %0 );" "lw	$13, 4( %0 );" "ctc2	$12, $0;" "ctc2	$13, $1;" "lw	$12, 8( %0 );" "lw	$13, 12( %0 );" "lw	$14, 16( %0 );" "ctc2	$12, $2;" "ctc2	$13, $3;" "ctc2	$14, $4" : : "r"(r0) : "$12", "$13", "$14")
+#define gte_SetTransMatrix(r0) __asm__ volatile("lw	$12, 20( %0 );" "lw	$13, 24( %0 );" "ctc2	$12, $5;" "lw	$14, 28( %0 );" "ctc2	$13, $6;" "ctc2	$14, $7" : : "r"(r0) : "$12", "$13", "$14")
+extern u8 D_1F8000F8[];
+extern void *D_800ED8C8_a098;
+typedef struct {
+    u8 pad0[6];
+    u8 count;
+    u8 pad7[5];
+    u32 *tbl;
+    u16 list[1];
+} PartList;
+
+void func_80124CB8(PartList *a)
+{
+    u16 *p = a->list;
+    u16 *end;
+    void *ot;
+    u32 *tbl;
+    u32 *e;
+    u32 v;
+    void *r;
+    if (a->count == 0) {
+        return;
+    }
+    end = &a->list[a->count];
+    ot = D_800ED8C8_a098;
+    tbl = a->tbl;
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_SetTransMatrix(D_1F8000F8);
+    for (; p < end; p++) {
+        e = &tbl[*p];
+        v = *e;
+        r = func_801246A4(e + 1, ot, v & 0xFF);
+        v >>= 16;
+        func_8012496C(r, ot, v & 0xFF);
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80124DB8);
 
@@ -1679,7 +1715,65 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80126D24);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80126EA8);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80127034);
+typedef struct {
+    u32 tag;
+    u32 rgbc;
+    s16 x0, y0;
+    u8 u0, v0;
+    u16 clut;
+    s16 x1, y1;
+    u8 u1, v1;
+    u16 tpage;
+    s16 x2, y2;
+    u8 u2, v2;
+    u16 pad1;
+    s16 x3, y3;
+    u8 u3, v3;
+    u16 pad2;
+} AreaPolyFT4;
+extern u32 *D_800ED8C8;
+
+AreaPolyFT4 *func_80127034(AreaPolyFT4 *p, s32 x, s32 y, s32 w, s32 h, s16 c, s16 cy) {
+    u32 rgbc;
+    u16 clut;
+    s16 x0, x1;
+
+    if (c <= 0) return p; {
+        rgbc = ((c | 0x2E00) << 16) | ((c << 8) | c);
+        clut = ((cy + 0x1F0) << 6) | 0x17;
+        x0 = x - w;
+        x1 = x + w;
+        p->u0 = p->u2 = 0xB9;
+        p->u1 = p->u3 = 0xE7;
+        p->v0 = p->v1 = 0x51;
+        p->v2 = p->v3 = 0x67;
+        *(u32 *)((u8 *)p + 4) = rgbc;
+        p->tpage = 0x35;
+        p->clut = clut;
+        p->x0 = p->x2 = x0;
+        p->x1 = p->x3 = x1;
+        p->y0 = p->y1 = y - h;
+        p->y2 = p->y3 = y;
+        p->tag = D_800ED8C8[4] | 0x09000000;
+        D_800ED8C8[4] = (u32)p;
+        p++;
+        p->u0 = p->u2 = 0xB9;
+        p->u1 = p->u3 = 0xE7;
+        p->v0 = p->v1 = 0x67;
+        p->v2 = p->v3 = 0x51;
+        *(u32 *)((u8 *)p + 4) = rgbc;
+        p->tpage = 0x35;
+        p->clut = clut;
+        p->x0 = p->x2 = x0;
+        p->x1 = p->x3 = x1;
+        p->y0 = p->y1 = y;
+        p->y2 = p->y3 = y + h;
+        p->tag = D_800ED8C8[4] | 0x09000000;
+        D_800ED8C8[4] = (u32)p;
+        return p + 1;
+    }
+
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80127170);
 
