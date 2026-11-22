@@ -1,3 +1,28 @@
+// CC gcc-2.7.2-psx
+// FLAGS -O2 -G0
+// AS gnu
 #include "common.h"
+typedef struct { void *f[16]; } GPUF;
+extern GPUF *D_800A5998;
+extern volatile s32 *D_800A5AA8;
+extern volatile s32 *D_800A5AB4;
+extern s32 D_800A5ADC;
+extern s32 D_800A5AE0;
+extern char D_8001BF80[];
+extern s32 (*D_800A599C)();
+extern u8 D_800A59A2;
+s32 VSync(s32);
+s32 func_800834D4(void);
+void _GPU_ResetCallback(void);
 
-INCLUDE_ASM("asm/main/nonmatchings/psyq/libgpu/DrawOTag2", DrawOTag2);
+s32 DrawOTag2(u32 *p) {
+    if (D_800A59A2 >= 2) D_800A599C(D_8001BF80, p);
+    D_800A5ADC = VSync(-1) + 240;
+    D_800A5AE0 = 0;
+    while ((*D_800A5AB4 & 0x01000000) || !(*D_800A5AA8 & 0x04000000)) {
+        if (func_800834D4()) return -1;
+    }
+    DMACallback(2, _GPU_ResetCallback);
+    ((s32 (*)(u32 *))D_800A5998->f[6])(p);
+    return 0;
+}
