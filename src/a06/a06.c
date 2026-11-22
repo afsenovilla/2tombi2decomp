@@ -189,11 +189,26 @@ void func_80111238(void *arg0, void *arg1) {
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801112BC);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011130C);
+extern u8 D_801422B0[];
+extern u8 D_800BF91F;
+typedef struct {
+    u8 pad0[0xC0];
+    s32 xC0[1];
+} S11130C;
+
+void func_8011130C(void *a0, S11130C *a1)
+{
+    func_80023D48(a0, a1, a1->xC0[D_801422B0[((u8 *)a1)[3]]], 0);
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80111350);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801113A8);
+void func_801113A8(u8 *a0, u8 *a1)
+{
+    if (a0[0] != 6 && a0[0x78] != 7) {
+        func_8010C3B4(a0, a1, *(s32 *)(a1 + 0xC0));
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801113EC);
 
@@ -250,7 +265,12 @@ s32 func_80111988(s32 arg0, s32 arg1) {
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801119AC);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80111A80);
+void func_80111A80(void *a0, u8 *a1)
+{
+    if (func_800216B4(a0, a1, 0) && D_800BF91F != 0xFF) {
+        a1[0] = 4;
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80111AC4);
 
@@ -653,7 +673,13 @@ void func_8011983C(void *arg0) {
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80119874);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80119938);
+void func_80119938(u8 *p)
+{
+    func_80051B70(p, 0xC, 0x26);
+    *(s16 *)(p + 0x54) = 0;
+    *(s16 *)(p + 0x56) = 0x800;
+    *(s16 *)(p + 0x58) = 0;
+}
 
 
 void func_80119974(void *arg0) {

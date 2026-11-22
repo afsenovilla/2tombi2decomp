@@ -367,7 +367,17 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801145F0);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801146E8);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80114838);
+typedef struct {
+    s16 x0;
+    s16 x2;
+    u8 pad4[6];
+} S10;
+extern S10 D_8013C9D4[];
+
+void func_80114838(s32 i)
+{
+    func_8004D7EC(D_8013C9D4[i].x2, 1);
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80114874);
 
@@ -491,7 +501,18 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801169D0);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80116BE4);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011711C);
+typedef struct {
+    s16 v[3];
+} S16x3;
+extern u8 D_800BF9BC;
+extern S16x3 D_8013CF34[];
+
+s32 func_8011711C(void *a0, s32 a1)
+{
+    s16 *row = D_8013CF34[D_800BF9BC & 0xF].v;
+
+    return row[a1];
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80117154);
 
@@ -1696,7 +1717,14 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801399E8);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80139C0C);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80139E2C);
+void func_80139E2C(void)
+{
+    u8 *r = func_800310F4(0x60D, 0);
+
+    if (r) {
+        r[0x28] |= 0x80;
+    }
+}
 
 #define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
 extern s32 D_1F800090[];
