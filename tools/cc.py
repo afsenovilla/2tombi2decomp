@@ -10,19 +10,29 @@ A C file can override it in its first lines (needed for the Psy-Q library, which
     // EPILOGUE sony             Sony's gcc build of the library (no exact copy here) left the epilogue alone: the insn
                                  reorg moved into `j $31`'s delay slot goes back before the register restores, and
                                  a restore of $31 just before `j $31` becomes `lw ra; addiu sp; jr ra; nop`
+    // RETURN sony               one return per function, as Sony's library compiler: every `j $31` but the last
+                                 one of the function branches to the last one, which becomes `jr ra; nop` (its
+                                 delay-slot insn, if any, goes before it); gcc 2.8.1 emits a `j $31` per return
+                                 path (leaf functions: memmove, strcmp, ...); with jump threading over the
+                                 shared return (tools/sonyret.py). Runs after EPILOGUE sony.
+    // RETURN sony first         the same, and an early `return K;` block that gcc moved to the end goes back
+                                 after its branch, as in the C (`if (bad) return -1;` in libsnd)
 """
 import os, re, subprocess, sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OLDGCC = "/opt/oldgcc"
-DEFAULT = {"cc": "gcc-2.8.1-psx", "flags": "-O2 -G0", "aspsx": "2.79", "as": "maspsx", "epilogue": ""}
+DEFAULT = {"cc": "gcc-2.8.1-psx", "flags": "-O2 -G0", "aspsx": "2.79", "as": "maspsx", "epilogue": "", "return": ""}
 AS = ["mipsel-linux-gnu-as", "-EL", "-march=r3000", "-mtune=r3000", "-no-pad-sections", "-G0"]
 
 
 def options(src, override=None):
     o = dict(DEFAULT)
     head = open(src, errors="replace").read(800)
-    for k, key in (("CC", "cc"), ("FLAGS", "flags"), ("ASPSX", "aspsx"), ("AS", "as"), ("EPILOGUE", "epilogue")):
+    for k, key in (("CC", "cc"), ("FLAGS", "flags"), ("ASPSX", "aspsx"), ("AS", "as"), ("EPILOGUE", "epilogue"),
+                   ("RETURN", "return")):
         m = re.search(r"^//\s*%s\s+(.+?)\s*$" % k, head, re.M)
         if m:
             o[key] = m.group(1)
@@ -89,6 +99,9 @@ def compile_c(src, obj, override=None, defines=(), pad_to=None, asm_filter=None)
     s = open(base + ".cc.s").read()
     if o["epilogue"] == "sony":
         s = sony_epilogue(s)
+    if o["return"].split()[:1] == ["sony"]:
+        import sonyret
+        s = sonyret.sony_return(s, o["return"] == "sony first")
     if o["as"] == "gnu":
         s = re.sub(r"(?m)^\tmove\t(\$[0-9a-z]+),(\$[0-9a-z]+)", r"\taddu\t\1,\2,$0", s)
         s = re.sub(r"(?m)^\t\.rdata$", "\t.section .rodata", s)

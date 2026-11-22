@@ -2,7 +2,7 @@
 """Compile a C file and compare each function in it with the retail bytes (fast check, no link).
 
   python3 -I tools/ccheck.py src/main/foo.c [--prog main] [--cc gcc-2.7.2-psx] [--aspsx 2.56] [--flags "-O2 -G0"]
-      [--as gnu] [-v] [--func NAME] [--all] [--sbs [--sbs-all]]
+      [--as gnu] [--epilogue sony] [--return sony] [-v] [--func NAME] [--all] [--sbs [--sbs-all]]
 
 Pipeline: tools/cc.py (the file's // CC, // FLAGS, // ASPSX, // AS headers; default the game's gcc 2.8.1 + ASPSX 2.79).
 Each defined function is looked up by name in config/symbol_addrs_<prog>.txt or as func_XXXXXXXX, and compared word by
@@ -34,7 +34,8 @@ def prog_info(prog):
 
 def compile_c(src, a, d):
     import cc
-    over = {k: v for k, v in (("cc", a.cc), ("aspsx", a.aspsx), ("flags", a.flags), ("as", a.asm)) if v}
+    over = {k: v for k, v in (("cc", a.cc), ("aspsx", a.aspsx), ("flags", a.flags), ("as", a.asm),
+                              ("epilogue", a.epilogue), ("return", a.ret)) if v}
     try:
         cc.compile_c(src, d + "/a.o", over)
     except cc.CompileError as e:
@@ -108,6 +109,8 @@ def main():
     ap.add_argument("--aspsx", help="override // ASPSX (default 2.79)")
     ap.add_argument("--flags", help="override // FLAGS (default -O2 -G0)")
     ap.add_argument("--as", dest="asm", help="override // AS (maspsx or gnu)")
+    ap.add_argument("--epilogue", help="override // EPILOGUE (sony, or none)")
+    ap.add_argument("--return", dest="ret", help="override // RETURN (sony, or none)")
     ap.add_argument("-v", action="store_true")
     ap.add_argument("--all", action="store_true", help="also check the INCLUDE_ASM functions (sanity test)")
     ap.add_argument("--func", action="append", help="check only these functions (repeatable)")
