@@ -624,7 +624,21 @@ void func_8011499C(u8 *a, u8 *b)
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActorPairMultipartContact);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114AF4);
+void func_80114AF4(u8 *a, u8 *b) {
+    s32 r = func_80023D48(a, b, M2C_FIELD(b, u8 **, 0xC8), 0);
+
+    if (r != 0) {
+        if (r == 2) {
+            a[0x5F] = b[0x5E];
+        }
+        D_1F800182_5650 = 0;
+    } else if (M2C_FIELD(b, u16 *, 0x60) & 2) {
+        if (func_80023D48(a, b, M2C_FIELD(b, u8 **, 0xCC), 0) == 2) {
+            a[0x5F] = b[0x5E];
+            D_1F800182_5650 = 0;
+        }
+    }
+}
 
 extern u8 *D_8014C804_6a3a;
 extern u16 D_8014C800;
@@ -1429,7 +1443,26 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122BF4);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122CA4);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122D58);
+extern u8 D_8014E4EC[];
+
+void func_80122D58(u8 *a) {
+    switch (a[5]) {
+    case 0:
+        a[5]++;
+        a[0] = 2;
+        a[0xB] = 1;
+        M2C_FIELD(a, s16 *, 0x2E) = 0x3900;
+        M2C_FIELD(a, s16 *, 0x32) = -0xAE0;
+        M2C_FIELD(a, s16 *, 0x36) = 0x240;
+        M2C_FIELD(a, s16 *, 0x56) = 0x400;
+        func_80077CFC(a, D_8014E4EC, 4, 4);
+        break;
+    }
+    if (func_8007778C(a) != 0) {
+        func_80076D68(a);
+        func_800518FC(a);
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122DF0);
 
