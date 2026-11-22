@@ -368,7 +368,28 @@ s32 func_8010A854(u8 *a, s16 id)
 
 INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010A918);
 
-INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010ABE8);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+void func_8010A918();
+
+void func_8010ABE8(u8 *a)
+{
+    s32 i, j;
+    u8 *c;
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 3; j++) {
+            c = func_80072DDC(a, 1, 4, 0x20);
+            if (c != NULL) {
+                c[3] = j + 1;
+                *(void **)(c + 0x1C) = func_8010A918;
+                H(c, 0x56) = c[3] * 0x200 + 0xF1A;
+                H(c, 0x56) += (func_8009A450() & 0x3F) - 0x1F;
+                H(c, 0x2E) = H(a, 0x2E) + (func_80083F50(H(c, 0x56)) >> 4);
+                H(c, 0x32) = H(a, 0x32) + (i - 2) * 200;
+                H(c, 0x36) = H(a, 0x36) + (-func_80083E80(H(c, 0x56)) >> 4);
+            }
+        }
+    }
+}
 
 typedef struct { u16 lo; u16 hi; } Fix;
 typedef struct {
