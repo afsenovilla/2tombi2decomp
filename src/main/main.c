@@ -12852,7 +12852,26 @@ void func_8006E010(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006E0F0);
+void func_8006C80C(void);
+
+void func_8006E0F0(u8 *c)
+{
+    u8 *t = (u8 *)D_800E7E80;
+
+    func_8006D2AC(c);
+    f_ApproachCameraPositionHorizontal(c, c + 8);
+    func_8006D654(c);
+    f_ApproachCameraPositionVertical(c, c + 8);
+    ((void (*)(u8 *))func_8006C80C)(c);
+    if (c[0x76] == 0 && t[0x17A] == 0) {
+        func_8006DCF4(c);
+    }
+    f_RebuildCameraViewTransform(c);
+    if (c[0x77] == 0) {
+        func_8006E010(c);
+    }
+    D_1F8000D0_42d8[17] -= *(s32 *)(c + 0x28) + *(s32 *)(c + 0x34);
+}
 
 void f_SetCameraMode(u8 mode)
 {
@@ -14633,7 +14652,41 @@ s32 f_ControlStreamedAudioTrack(s32 track)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80075130);
+extern u8 D_800BE3D8[];
+typedef struct { u32 mask; s32 mode; s16 left; s16 right; s32 delay; s32 feedback; } RevAttr_5130;
+
+void func_80075130(void)
+{
+    RevAttr_5130 attr;
+    s32 i;
+
+    SsInit();
+    SsSetReservedVoice(0x18);
+    SsSetAutoKeyOffMode(0);
+    SpuSetKey(0, 0xFFFFFF);
+    SsSetTickMode(1);
+    SsSetTableSize(D_800BE3D8, 0xE, 1);
+    SsSetMVol(0x7F, 0x7F);
+    SsStart();
+    D_800BED78 = 0;
+    D_800BED80 = -1;
+    func_800752B4(2);
+    D_800BE358 = 0;
+    for (i = 0xD; i >= 0; i--) {
+        D_800BE368[i].on = 0;
+    }
+    attr.mask = 7;
+    attr.mode = 0x102;
+    attr.left = 0x4000;
+    attr.right = 0x4000;
+    SpuReserveReverbWorkArea(1);
+    SpuSetReverbModeParam(&attr);
+    SpuSetReverb(1);
+    SpuSetReverbDepth(&attr);
+    SpuSetReverbVoice(1, 0xFFFFFF);
+    D_800BE1F8_296f[0x32] = 0;
+    D_800BE1F8_296f[0x33] = 0;
+}
 
 void func_80075240(void)
 {
