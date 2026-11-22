@@ -738,7 +738,23 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011C090);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldenCrabAndWindmillActor);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011C610);
+void f_HandleGoldenCrabAndWindmillActor();
+void func_80135D64();
+void f_HandleCurvedSupportContactActor();
+void func_8013A900();
+
+u8 *func_8011C610(s32 a, u8 b) {
+    u8 *p = func_8007A980(0, 2, 0);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    M2C_FIELD(p, void **, 0x1C) = f_HandleGoldenCrabAndWindmillActor;
+    M2C_FIELD(p, s32 *, 0x10) = a;
+    p[0x2] = 4;
+    p[0x3] = b;
+    return p;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleNetBridgeRaiseNpcInteraction);
 
@@ -1534,7 +1550,18 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateRopeSwingInteraction);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80135D64);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801360F4);
+u8 *func_801360F4(s32 a, u8 b) {
+    u8 *p = func_8007A980(2, 4, 0);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    M2C_FIELD(p, void **, 0x1C) = func_80135D64;
+    M2C_FIELD(p, s32 *, 0x10) = a;
+    p[0x2] = 7;
+    p[0x3] = b;
+    return p;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleA00PendulumPlatformActor);
 
@@ -1616,7 +1643,18 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleFishermensTownEntranceActor);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleCurvedSupportContactActor);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80139838);
+u8 *func_80139838(s32 a, u8 b) {
+    u8 *p = func_8007A980(1, 4, 0);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    M2C_FIELD(p, void **, 0x1C) = f_HandleCurvedSupportContactActor;
+    M2C_FIELD(p, s32 *, 0x10) = a;
+    p[0x2] = 13;
+    p[0x3] = b;
+    return p;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeDryingRackControllerState);
 
@@ -1652,7 +1690,18 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A818);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A900);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013AC34);
+u8 *func_8013AC34(s32 a, u8 b) {
+    u8 *p = func_8007A980(2, 4, 0);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    M2C_FIELD(p, void **, 0x1C) = func_8013A900;
+    M2C_FIELD(p, s32 *, 0x10) = a;
+    p[0x2] = 17;
+    p[0x3] = b;
+    return p;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013AC98);
 

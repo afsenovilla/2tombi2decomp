@@ -1516,7 +1516,21 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_SynchronizePullAndOpenGateAssembly);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaInteractiveSceneryActor);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012AB50);
+void f_UpdatePipeAreaMudballSurpriseCarrierActor();
+
+void func_8012AB50(u8 *a) {
+    u8 t;
+    u8 *p = func_8007A980(2, 4, 0);
+
+    if (p != NULL) {
+        M2C_FIELD(p, void **, 0x1C) = f_UpdatePipeAreaMudballSurpriseCarrierActor;
+        p[0x2] = 22;
+        t = a[3];
+        M2C_FIELD(p, u8 **, 0x10) = a;
+        p[0x3] = t;
+        p[0x2A] = a[0x2A];
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012ABB4);
 
