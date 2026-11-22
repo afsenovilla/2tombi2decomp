@@ -2,10 +2,6 @@
 #include "game.h"
 #include "m2c.h"
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018A1E8);
-
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018A428);
-
 typedef struct {
     u8 x0;
     u8 x1;
@@ -32,7 +28,8 @@ typedef struct {
     u8 x3F;
     u8 x40;
     u8 x41;
-    u8 pad42[2];
+    u8 x42;
+    u8 x43;
     u8 x44;
     u8 x45;
     u8 x46;
@@ -103,8 +100,28 @@ static inline u8 crd_card_event(void)
     }
     return 0;
 }
+/* crd_card_event, or 2 once the wait counter x43 runs out */
+static inline u8 crd_card_event_wait(void)
+{
+    if (func_80080840(D_800BF498.x1C) == 1) {
+        return 1;
+    }
+    if (func_80080840(D_800BF498.x20) == 1) {
+        return 2;
+    }
+    if (func_80080840(D_800BF498.x24) == 1) {
+        return 3;
+    }
+    if (func_80080840(D_800BF498.x28) == 1) {
+        return 4;
+    }
+    if (++D_800BF498.x43 >= 0xFF) {
+        return 2;
+    }
+    return 0;
+}
 typedef struct { s16 x; s16 y; u16 w; s16 h; } CrdRect;
-/* One menu label: text at the rect's right edge, then the rect widened to the text and filled (highlighted when
+/* One menu label: text at the right edge of the rect, then the rect widened to the text and filled (highlighted when
  * sel) */
 static inline void crd_draw_label(u8 *str, CrdRect *r, s32 sel)
 {
@@ -121,6 +138,80 @@ static inline void crd_draw_label(u8 *str, CrdRect *r, s32 sel)
     r->w += func_8009A600(str) << 3;
     func_8005019C(r, mode, 0, 3);
 }
+
+/* One menu label: text at the right edge of the rect, then the rect widened to the text and filled (highlighted when
+ * sel) */
+extern u16 D_800ECF54;
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+
+u8 func_8018A1E8(CrdMenu *a)
+{
+    s32 port = a->x3D << 4;
+    s32 one = 1;
+    u8 r;
+    switch (a->x40) {
+    case 0:
+        func_8009BA90(port);
+        a->x40 = one;
+        a->x43 = 0;
+        a->x41 = 0xFF;
+        break;
+    case 1:
+        r = crd_card_event_wait();
+        if (r == 0) {
+            break;
+        }
+        switch (r) {
+        case 4:
+            if (((u8 *)a + a->x3D)[0x4A] == 0) {
+                a->x42 = 0;
+                break;
+            }
+            func_80080840(D_800BF498.x2C);
+            func_80080840(D_800BF498.x30);
+            func_80080840(D_800BF498.x34);
+            func_80080840(D_800BF498.x38);
+            func_8009BAB0(port);
+            while (1) {
+                if (func_80080840(D_800BF498.x2C) == 1) {
+                    break;
+                }
+                if (func_80080840(D_800BF498.x30) == 1) {
+                    break;
+                }
+                if (func_80080840(D_800BF498.x34) == 1) {
+                    break;
+                }
+                if (func_80080840(D_800BF498.x38) == 1) {
+                    break;
+                }
+            }
+            a->x42 = 1;
+            ((u8 *)a + a->x3D)[0x48] = 0;
+            ((u8 *)a + a->x3D)[0x4E] = 0xFF;
+            break;
+        case 1:
+            a->x42 = 0;
+            break;
+        case 2 ... 3:
+            a->x42 = 0xFE;
+            ((u8 *)a + a->x3D)[0x48] = 0;
+            ((u8 *)a + a->x3D)[0x4E] = 0xFF;
+            break;
+        }
+        a->x41 = a->x42;
+        ((u8 *)a + a->x3D)[0x4A] = a->x41;
+        a->x40 = 0;
+        a->x3D = 1 - a->x3D;
+        break;
+    case 2:
+        break;
+    }
+    return a->x41;
+}
+
+INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018A428);
+
 extern u16 D_800ECF54;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern char D_8018A090[];
