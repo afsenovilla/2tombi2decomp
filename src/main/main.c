@@ -1594,9 +1594,100 @@ void f_InitializeTransientEffectActor(u8 *a, s32 id)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002918C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800292B8);
+extern u8 D_800A1D88[];
+extern u8 D_800A1D68[];
+extern u8 D_800A1D78[];
+extern u8 D_800A1CD8[];
+extern u8 D_800A1E78[];
+extern u8 D_800A1E28[];
+extern u8 D_800A1E50[];
+extern u8 D_800A1D98[];
+void func_80027E5C();
+void func_800288AC();
+void func_80031780(u8 *p);
+void func_80031708(void *arg0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800293F4);
+void func_800292B8(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        if (a[6] == 0x20) {
+            *(u8 **)(a + 0x40) = D_800A1D88;
+        } else if (a[6] == 0x10) {
+            *(u8 **)(a + 0x40) = D_800A1D68;
+        } else {
+            *(u8 **)(a + 0x40) = D_800A1D78;
+        }
+        *(u8 **)(a + 0x50) = D_800A1CD8;
+        a[4] = 1;
+        a[0x29] = 0;
+    case 1:
+        if ((*(s32 *)(a + 0x34) = *(s32 *)(a + 0x38)) == 0) {
+            if (*(void **)(a + 0x18) == func_80027E5C) {
+                a[4] = 2;
+                break;
+            }
+            *(void **)(a + 0x18) = func_800288AC;
+        }
+        if ((*(s32 *)(a + 0x3C) = *(s32 *)(a + 0x40)) == 0) {
+            if (*(void **)(a + 0x18) == func_800288AC) {
+                a[4] = 2;
+                break;
+            }
+            *(void **)(a + 0x18) = func_80027E5C;
+        }
+        if (func_8002B278(a) == 0) {
+            func_80031780(a);
+            func_80031708(a);
+        }
+        break;
+    case 2:
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
+
+void func_800293F4(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        if (a[6] == 0x20) {
+            *(u8 **)(a + 0x40) = D_800A1E78;
+        } else if (a[6] == 0x10) {
+            *(u8 **)(a + 0x40) = D_800A1E28;
+        } else {
+            *(u8 **)(a + 0x40) = D_800A1E50;
+        }
+        *(u8 **)(a + 0x50) = D_800A1D98;
+        a[4] = 1;
+        a[0x29] = 0;
+    case 1:
+        if ((*(s32 *)(a + 0x34) = *(s32 *)(a + 0x38)) == 0) {
+            if (*(void **)(a + 0x18) == func_80027E5C) {
+                a[4] = 2;
+                break;
+            }
+            *(void **)(a + 0x18) = func_800288AC;
+        }
+        if ((*(s32 *)(a + 0x3C) = *(s32 *)(a + 0x40)) == 0) {
+            if (*(void **)(a + 0x18) == func_800288AC) {
+                a[4] = 2;
+                break;
+            }
+            *(void **)(a + 0x18) = func_80027E5C;
+        }
+        if (func_8002B278(a) == 0) {
+            func_80031780(a);
+            func_80031708(a);
+        }
+        break;
+    case 2:
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80029530);
 
@@ -10984,13 +11075,69 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006F2D0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeLinkedPickupFromVisualDefinition);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnAreaLinkedItemPickupActor);
+extern s16 *D_800A3E80[];
+extern u8 D_800A4BB8[];
+extern s16 *D_800A3EA4[];
+u8 *f_AllocateActor(u8 *owner, u8 flags, u8 kind, u8 type);
+
+u8 *f_SpawnAreaLinkedItemPickupActor(u8 *owner, s16 id)
+{
+    s16 *p = D_800A3E80[D_800BF870.unk0];
+    s32 i;
+    u8 *e;
+
+    for (; *p != -1; p += 3) {
+        if ((s16)*(u16 *)p == id) {
+            break;
+        }
+    }
+    if (*p != -1) {
+        for (i = 0; i < 3; i++) {
+            e = f_AllocateActor(owner, D_800A4BB8[i], 3, 4);
+            if (e != NULL) {
+                goto found;
+            }
+        }
+        return NULL;
+found:
+        if (f_InitializeLinkedPickupFromVisualDefinition(owner, e, p, id) == 0) {
+            return NULL;
+        }
+        return e;
+    }
+    return NULL;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006FC34);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnAreaLinkedWeaponPickupActor);
+u8 *f_SpawnAreaLinkedWeaponPickupActor(u8 *owner, s16 id)
+{
+    s16 *p = D_800A3EA4[D_800BF870.unk0];
+    s32 i;
+    u8 *e;
 
-extern u8 D_800A4BB8[];
+    for (; *p != -1; p += 3) {
+        if ((s16)*(u16 *)p == id) {
+            break;
+        }
+    }
+    if (*p != -1) {
+        for (i = 0; i < 3; i++) {
+            e = f_AllocateActor(owner, D_800A4BB8[i], 3, 4);
+            if (e != NULL) {
+                goto found;
+            }
+        }
+        return NULL;
+found:
+        if (f_InitializeLinkedPickupFromVisualDefinition(owner, e, p, id) == 0) {
+            return NULL;
+        }
+        return e;
+    }
+    return NULL;
+}
+
 void func_80070018(u8 *a);
 u8 *f_SpawnLinkedItemPickupActor(u8 *owner, s16 id)
 {
