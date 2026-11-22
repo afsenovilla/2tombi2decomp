@@ -2700,7 +2700,21 @@ void func_8012C8AC(u8 *a, s32 k)
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012C934);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8012C9E0);
+u8 func_8012C9E0(u8 *a)
+{
+    if (a[0x5F] == 0) {
+        s16 v;
+        if (*(s16 *)(a + 0x44) >= 0) {
+            v = *(s16 *)(a + 0x80);
+        } else {
+            v = -*(s16 *)(a + 0x80);
+        }
+        if (func_80045CAC(a, (s16)v, (s16)(*(s16 *)(a + 0x86) - *(s16 *)(a + 0x84) - 0x18), (s16)*(s16 *)(a + 0x60)) != 0) {
+            a[0x5F] = a[0xBE] + 2;
+        }
+    }
+    return a[0x5F];
+}
 
 s32 func_8012CA80(void *arg0) {
     s32 var_v0;
