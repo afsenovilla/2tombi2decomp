@@ -3643,13 +3643,99 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", f_RunRockCrabBalanceCameraSequence);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80139728);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801398E4);
+extern u8 D_800BFAE5;
+extern u8 D_80149990[];
+extern u8 D_80149F38[];
+extern u8 D_80149F58[];
+
+s32 func_801398E4(u8 *a)
+{
+    switch (a[7]) {
+    case 0:
+        a[7] = 1;
+        func_80040CDC(a, D_8014D014, D_80149F38);
+        a[0x70] = 1;
+        break;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[7]++;
+            func_80040CDC(a, D_8014D014, D_80149990);
+            a[0x70] = 1;
+        }
+        break;
+    case 2:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            if (D_800BFAE5 == 0) {
+                a[7]++;
+                func_80040CDC(a, D_8014D014, D_80149F58);
+                a[0x70] = 1;
+            } else {
+                a[7] = 0;
+                return 3;
+            }
+        }
+        break;
+    case 3:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[7] = 0;
+            return 2;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80139A28);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80139C84);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80139F58);
+extern u8 D_800BFB29;
+extern u8 D_8014A000[];
+extern u8 D_80149FC8[];
+extern u8 D_8014A0A8[];
+
+s32 func_80139F58(u8 *a)
+{
+    switch (a[7]) {
+    case 0:
+        a[7] = 1;
+        func_80040CDC(a, D_8014D014, D_80149FC8);
+        a[0x70] = 1;
+        break;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[7]++;
+            func_80040CDC(a, D_8014D014, D_8014A000);
+            a[0x70] = 1;
+        }
+        break;
+    case 2:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            if (D_800BFB29 == 0) {
+                a[7]++;
+                func_80040CDC(a, D_8014D014, D_8014A0A8);
+                a[0x70] = 1;
+            } else {
+                a[7] = 0;
+                return 3;
+            }
+        }
+        break;
+    case 3:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[7] = 0;
+            return 2;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013A09C);
 
@@ -4142,7 +4228,51 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013F14C);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013F320);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013F51C);
+void func_8013F51C(u8 *a)
+{
+    s16 *q = (s16 *)(a + 0x50);
+
+    switch (a[4]) {
+    case 0:
+        a[0x29] = 0;
+        *(s32 *)(a + 0x48) = 0;
+        *(s32 *)(a + 0x4C) = 0;
+        *(s32 *)(a + 4) = 1;
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            *(s16 *)(a + 0x50) = 0x1000;
+            q[1] = 0;
+            q[2] = 0;
+            a[5] = 1;
+            break;
+        case 1:
+            if (*(s16 *)(a + 0x50) > 0) {
+                *(s16 *)(a + 0x50) -= 0x199;
+            }
+            if (q[2] >= 0x80) {
+                a[5] = 2;
+            }
+            break;
+        case 2:
+            if (*(s16 *)(a + 0x50) < 0x1000) {
+                *(s16 *)(a + 0x50) += 0x199;
+            } else {
+                a[4] = 2;
+            }
+            break;
+        }
+        q[2] += 6;
+        *(s16 *)(a + 0x4A) += 0x22;
+        func_8002B278(a);
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 #define W(p, o) M2C_FIELD(p, u32 *, o)
 extern FlickerTbl D_8010A468;
