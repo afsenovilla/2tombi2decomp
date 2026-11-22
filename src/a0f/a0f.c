@@ -124,7 +124,78 @@ s32 func_80109694(u8 *a, u8 *b) {
     }
 }
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80109808);
+extern s32 D_1F800098;
+extern void (*D_8009D1D4[])(void);
+extern void (*D_8009D22C[])(void);
+extern void (*D_8009D314[])(u8 *);
+extern void (*D_8009D52C[])(u8 *);
+extern void (*D_800A4AF8[])(void);
+extern void (*D_800A4B50[])(void);
+extern void (*D_800A4AA0[])(u8 *);
+extern u8 D_800E8008[];
+extern u8 D_1F8000DC[];
+
+s32 func_80109808(u8 *a, u8 *b, u8 *c) {
+    s16 dx, dz, dy, e, f;
+    u16 h, bh, ah;
+    u16 r;
+    s32 ang, s, t, k, y;
+
+    dx = FU16(a, 0x2E) - FU16(c, 0x2C);
+    dz = FU16(a, 0x36) - FU16(c, 0x34);
+    r = func_80084080(dx * dx + dz * dz);
+    if (r > F16(a, 0x80) + F16(b, 0x80)) {
+        return -1;
+    }
+    dy = FU16(a, 0x32) - FU16(c, 0x30);
+    bh = FU16(b, 0x84); ah = FU16(a, 0x84); h = bh + ah;
+    if ((u16)(dy + h) > F16(a, 0x86) + F16(b, 0x86)) {
+    fail:
+        return -1;
+    }
+    if (dy < 0) {
+        dy = -dy;
+        e = h;
+        f = -h;
+    } else {
+        f = e = (FU16(b, 0x86) - bh) + (FU16(a, 0x86) - ah);
+    }
+    ang = func_80085690(-dz, dx);
+    s = F16(a, 0x80) + F16(b, 0x80) - (s16)r;
+    k = e - dy;
+    D_1F80009C = ang;
+    if (s < k) {
+        if (!(a[0] & 4)) {
+                        e = (func_80083F50(ang) * (F16(a, 0x80) + F16(b, 0x80))) >> 12;
+                        t = func_80083E80(D_1F80009C) * (F16(a, 0x80) + F16(b, 0x80));
+                        F16(a, 0x2E) = FU16(c, 0x2C) + e;
+            F16(a, 0x36) = FU16(c, 0x34) - (t >> 12);
+        }
+        a[0x5F] = func_80077768((s16)D_1F80009C, F16(a, 0x140), 1) + 2;
+        if (k >= 0x92) {
+            a[0x60] = 1;
+        }
+        return 1;
+    }
+    if (f <= 0) {
+        if (a[0x145] & 1) {
+            goto fail;
+        }
+        b[0x29] = 1;
+        M2C_FIELD(a, s32 *, 0x30) = (F16(c, 0x30) + f) << 16;
+        func_80022C78(a);
+        return 2;
+    }
+    if (D_1F800098 == 0) {
+        y = F16(c, 0x30) + f;
+        D_1F800253 = 4;
+        M2C_FIELD(a, s32 *, 0x30) = y << 16;
+        if (a[0x145] == 1 && F16(a, 0x4A) < 0) {
+            F16(a, 0x4A) = 0;
+        }
+    }
+    return 3;
+}
 
 extern s32 D_1F800088;
 extern u8 *D_1F800084;
@@ -442,7 +513,60 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010C448);
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010CA3C);
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010CB8C);
+void func_8010CB8C(u8 *a)
+{
+    u8 *m = a + 0x60;
+
+    switch (a[7]) {
+    case 0:
+        a[7] = 1;
+    case 1:
+        if (a[0x2B] >= 2) {
+            *(u16 *)(a + 0x44) = 0;
+            a[7] = 3;
+            return;
+        }
+        a[7]++;
+        break;
+    case 2:
+        if (a[0x2B] == 1) {
+            *(u16 *)(a + 0x42) = 2;
+            a[0x2B] = 0;
+        } else if (a[0x2B] >= 2) {
+            *(u16 *)(a + 0x44) = 0;
+        }
+        a[7]++;
+        break;
+    case 3:
+        *(u16 *)(a + 0x44) -= *(u16 *)(m + 0x16);
+        *(u16 *)(m + 0xA) -= 0x80;
+        if (a[0x2B] == 1) {
+            if (--*(s16 *)(a + 0x42) == 0) {
+                a[0x2B] = 0;
+                *(u16 *)(a + 0x42) = 2;
+            }
+        }
+        if (*(s16 *)(a + 0x44) < 0 || a[0x2B] >= 2) {
+            a[0x2B] = 2;
+            *(u16 *)(a + 0x44) = 0;
+            a[7] = 0;
+            a[6]++;
+            switch ((a[0x46] >> 1) & 3) {
+            case 0:
+            case 1:
+                *(u16 *)(m + 0xA) = 0xC00;
+                break;
+            case 2:
+                *(u16 *)(m + 0xA) = 0x980;
+                break;
+            case 3:
+                *(u16 *)(m + 0xA) = 0x700;
+                break;
+            }
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010CD20);
 
@@ -666,6 +790,7 @@ void func_8010DDE4(Owner *a, s32 sel)
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
+#include "gte.h"
 typedef struct {
     u8 *ptr;
     u8 *clut;
@@ -2561,6 +2686,61 @@ void func_8011A428(void) {
     func_80075448(0xA, &D_80129134, 0x10, D_800BED82);
 }
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8011A45C);
+s32 func_8011A45C(u8 *a)
+{
+    u8 *g = D_800E8008;
+    u8 s = a[0x78];
+    s32 pad[4];
+
+    switch (s) {
+    case 0:
+        if (!(*(u16 *)(a + 0x72) & 1)) {
+            func_8006E1C0(7);
+        } else {
+            g[0x64] = 7;
+        }
+        if (*(s16 *)(a + 0x66) == 0) {
+            func_8006CBD0(g, *(s32 *)(a + 0x74));
+            if (*(s16 *)(a + 0x64) != 0) {
+                *(s16 *)(a + 0x4E) = *(s16 *)(g + 0x3A);
+                *(s16 *)(a + 0x50) = *(s16 *)(g + 0x3E);
+                *(s16 *)(a + 0x52) = *(s16 *)(g + 0x42);
+            }
+            return 1;
+        }
+        func_8006CBA8(D_1F8000DC);
+        func_8006CC1C(g, *(s32 *)(a + 0x74), *(s16 *)(a + 0x66));
+        if (*(s16 *)(a + 0x64) != 0) {
+            *(s16 *)(a + 0x4E) = *(s16 *)(g + 0x3A);
+            *(s16 *)(a + 0x50) = *(s16 *)(g + 0x3E);
+            *(s16 *)(a + 0x52) = *(s16 *)(g + 0x42);
+        }
+        if (*(s16 *)(a + 0x68) != 0) {
+            return 1;
+        }
+        a[0x78]++;
+        break;
+    case 1:
+        if (*(s16 *)(a + 0x64) != 0) {
+            *(s16 *)(g + 0x3A) = *(s16 *)(a + 0x4E);
+            *(s16 *)(g + 0x3E) = *(s16 *)(a + 0x50);
+            *(s16 *)(g + 0x42) = *(s16 *)(a + 0x52);
+        }
+        {
+            s32 r = func_8006CDCC(g);
+            if (*(s16 *)(a + 0x64) != 0) {
+                *(s16 *)(a + 0x4E) = *(s16 *)(g + 0x3A);
+                *(s16 *)(a + 0x50) = *(s16 *)(g + 0x3E);
+                *(s16 *)(a + 0x52) = *(s16 *)(g + 0x42);
+            }
+            if (r == s) {
+                return 1;
+            }
+        }
+        break;
+    
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8011A620);

@@ -124,7 +124,69 @@ s32 func_80109688(u8 *a, u8 *b) {
     }
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_801097FC);
+extern s32 D_1F800098;
+
+s32 func_801097FC(u8 *a, u8 *b, u8 *c) {
+    s16 dx, dz, dy, e, f;
+    u16 h, bh, ah;
+    u16 r;
+    s32 ang, s, t, k, y;
+
+    dx = FU16(a, 0x2E) - FU16(c, 0x2C);
+    dz = FU16(a, 0x36) - FU16(c, 0x34);
+    r = func_80084080(dx * dx + dz * dz);
+    if (r > F16(a, 0x80) + F16(b, 0x80)) {
+        return -1;
+    }
+    dy = FU16(a, 0x32) - FU16(c, 0x30);
+    bh = FU16(b, 0x84); ah = FU16(a, 0x84); h = bh + ah;
+    if ((u16)(dy + h) > F16(a, 0x86) + F16(b, 0x86)) {
+    fail:
+        return -1;
+    }
+    if (dy < 0) {
+        dy = -dy;
+        e = h;
+        f = -h;
+    } else {
+        f = e = (FU16(b, 0x86) - bh) + (FU16(a, 0x86) - ah);
+    }
+    ang = func_80085690(-dz, dx);
+    s = F16(a, 0x80) + F16(b, 0x80) - (s16)r;
+    k = e - dy;
+    D_1F80009C = ang;
+    if (s < k) {
+        if (!(a[0] & 4)) {
+                        e = (func_80083F50(ang) * (F16(a, 0x80) + F16(b, 0x80))) >> 12;
+                        t = func_80083E80(D_1F80009C) * (F16(a, 0x80) + F16(b, 0x80));
+                        F16(a, 0x2E) = FU16(c, 0x2C) + e;
+            F16(a, 0x36) = FU16(c, 0x34) - (t >> 12);
+        }
+        a[0x5F] = func_80077768((s16)D_1F80009C, F16(a, 0x140), 1) + 2;
+        if (k >= 0x92) {
+            a[0x60] = 1;
+        }
+        return 1;
+    }
+    if (f <= 0) {
+        if (a[0x145] & 1) {
+            goto fail;
+        }
+        b[0x29] = 1;
+        M2C_FIELD(a, s32 *, 0x30) = (F16(c, 0x30) + f) << 16;
+        func_80022C78(a);
+        return 2;
+    }
+    if (D_1F800098 == 0) {
+        y = F16(c, 0x30) + f;
+        D_1F800253 = 4;
+        M2C_FIELD(a, s32 *, 0x30) = y << 16;
+        if (a[0x145] == 1 && F16(a, 0x4A) < 0) {
+            F16(a, 0x4A) = 0;
+        }
+    }
+    return 3;
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80109AE0);
 
@@ -404,6 +466,7 @@ void func_8010B834(Owner *a, s32 sel)
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
+#include "gte.h"
 typedef struct {
     u8 *ptr;
     u8 *clut;

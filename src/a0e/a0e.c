@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
+#include "gte.h"
 
 extern u8 D_1F800246_6eef;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
@@ -865,7 +866,59 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80111E14);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80111FD8);
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80112260);
+extern u8 D_800A0B38[];
+extern u8 D_8011CE64[];
+extern u8 D_8011CE98[];
+
+void func_80112260(u8 *a)
+{
+    s16 sp[6];
+    s8 *s = (s8 *)(a + 0x50);
+    u8 *e;
+
+    switch (a[4]) {
+    case 0:
+        *(u8 **)(a + 0x50) = D_800A0B38;
+        *(s16 *)(a + 0x48) = 0;
+        *(s16 *)(a + 0x4A) = 0;
+        *(s16 *)(a + 0x4C) = 0;
+        s[4] = 0;
+        a[0x29] = 0;
+        a[4] = 1;
+        a[5] = 0;
+    case 1:
+        *(u8 **)(a + 0x3C) = D_8011CE64 + s[4] * 4;
+        a[0x29] = D_8011CE98[s[4]];
+        if (++s[4] >= 0xC) {
+            a[4] = 2;
+        } else {
+            func_8002B278(a);
+        }
+        switch (a[5]) {
+        case 2: break;
+        case 0:
+            if (++s[4] >= 6) {
+                a[5] = 1;
+            }
+            break;
+        case 1:
+            sp[1] = *(s16 *)(a + 0x2C);
+            sp[3] = *(s16 *)(a + 0x2E) - 0x8C;
+            sp[5] = *(s16 *)(a + 0x30);
+            e = func_8003116C(8, sp, 0);
+            if (e != NULL) {
+                e[0x28] = a[0x28];
+            }
+            a[5]++;
+            break;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80112400);
 
