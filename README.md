@@ -24,16 +24,16 @@ bytes of the disc; everything else is still built from the original assembly, so
 byte-identical at every step.
 
 <!-- progress:start -->
-**Whole game: 15.2 % of the code matches byte for byte** (429912 of 2827992 bytes, 3029 of 7011 functions; 2026-11-22).
+**Whole game: 15.2 % of the code matches byte for byte** (430976 of 2827992 bytes, 3034 of 7011 functions; 2026-11-22).
 
 | Part | Functions | Bytes | Matching (bytes) |
 |---|---:|---:|---|
-| 1. Psy-Q library (MAIN + boot) | 607 / 865 | 53004 / 169544 | 🟩🟩🟩⬜⬜⬜⬜⬜⬜⬜ 31.3 % |
+| 1. Psy-Q library (MAIN + boot) | 609 / 865 | 53784 / 169544 | 🟩🟩🟩⬜⬜⬜⬜⬜⬜⬜ 31.7 % |
 | 2. MAIN.EXE engine | 548 / 1168 | 77824 / 408972 | 🟩🟩⬜⬜⬜⬜⬜⬜⬜⬜ 19.0 % |
 | 3. boot + game/demo/opn/sop/crd | 90 / 162 | 22980 / 75544 | 🟩🟩🟩⬜⬜⬜⬜⬜⬜⬜ 30.4 % |
 | 4a. small areas a0g-a0j | 102 / 158 | 19028 / 61632 | 🟩🟩🟩⬜⬜⬜⬜⬜⬜⬜ 30.9 % |
 | 4b. medium areas + bosses | 439 / 1020 | 85004 / 502332 | 🟩🟩⬜⬜⬜⬜⬜⬜⬜⬜ 16.9 % |
-| 4c. big areas a00-a08 | 1243 / 3638 | 172072 / 1609968 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 10.7 % |
+| 4c. big areas a00-a08 | 1246 / 3638 | 172356 / 1609968 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 10.7 % |
 
 <details>
 <summary><b>Per program</b> (game code, without the Psy-Q library)</summary>
@@ -47,12 +47,12 @@ byte-identical at every step.
 | OPN.BIN: opening | 9 / 16 | 2308 / 12860 | 🟩🟩⬜⬜⬜⬜⬜⬜⬜⬜ 17.9 % |
 | SOP.BIN | 20 / 41 | 2844 / 14328 | 🟩🟩⬜⬜⬜⬜⬜⬜⬜⬜ 19.8 % |
 | CRD.BIN: credits | 26 / 35 | 13056 / 23772 | 🟩🟩🟩🟩🟩⬜⬜⬜⬜⬜ 54.9 % |
-| A00.BIN: area overlay | 166 / 511 | 24748 / 247424 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 10.0 % |
+| A00.BIN: area overlay | 167 / 511 | 24968 / 247424 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 10.1 % |
 | A01.BIN: area overlay | 152 / 406 | 22392 / 173892 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 12.9 % |
 | A02.BIN: area overlay | 117 / 306 | 13988 / 122524 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 11.4 % |
 | A03.BIN: area overlay | 10 / 43 | 940 / 35128 | ⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜ 2.7 % |
 | A04.BIN: area overlay | 149 / 474 | 23160 / 218464 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 10.6 % |
-| A05.BIN: area overlay | 154 / 470 | 21632 / 200480 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 10.8 % |
+| A05.BIN: area overlay | 156 / 470 | 21696 / 200480 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 10.8 % |
 | A06.BIN: area overlay | 169 / 519 | 23600 / 227456 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 10.4 % |
 | A07.BIN: area overlay | 127 / 373 | 14412 / 159552 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 9.0 % |
 | A08.BIN: area overlay | 199 / 536 | 27200 / 225048 | 🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜ 12.1 % |
@@ -108,12 +108,16 @@ Every program prints `OK` when its rebuilt file is byte-identical to the origina
 
 - `tools/build.py`: splat split, C compiled with the game's compiler (GCC 2.8.1 + ASPSX 2.79 through maspsx),
   link, SHA-1 compared with the disc's file. C `switch` statements reuse the disc's jump tables (`tools/jtbl.py`).
-- `tools/ccheck.py`: compile one scratch C file and compare each function with the retail bytes;
-  `tools/install_c.py` puts matched functions in place (linked-build checked).
-- `tools/sweep.py` (m2c drafts that match as they are), `tools/hillclimb.py` (small source transforms that bring
-  drafts closer), `tools/permute.py` (decomp-permuter).
+- `tools/ccheck.py`: compile one scratch C file and compare each function with the retail bytes (`--sbs`, or
+  `tools/sbs.py`: side-by-side diff of ours and retail); `tools/install_c.py` puts matched functions in place
+  (linked-build checked, symbols renamed to the program's names from the relocations).
+- `tools/sweep.py` (m2c drafts that match as they are; m2c gets the jump tables), `tools/hillclimb.py` (small
+  source transforms that bring drafts closer), `tools/permute.py` (decomp-permuter), `tools/permlines.py`
+  (statement-order search over lines marked `//P`), `tools/variants.py` (several variants of one function in a file),
+  `tools/magicdiv.py` (the divisor behind a magic-number multiply).
 - `tools/dupsweep.py`: the area overlays share many functions; one matched copy is installed in every other copy,
-  also when they differ only in constants.
+  also when they differ only in constants. `tools/nearcopy.py` does the same for near copies (a few differing
+  words, patched constants and offsets) and lists the closest C for hand matching.
 - `tools/libsweep.py` and friends: the Psy-Q library, by signature.
 
 ## Documents

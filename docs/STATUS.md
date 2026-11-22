@@ -3,6 +3,27 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-22 (3): the round-2 prototypes as tools
+
+One agent turned the hand-matching agents' scratch scripts into tools (each tested on real functions):
+- `tools/nearcopy.py [PROG ...] [--install] [--ratio 0.8 --near]`: every pending function against the matched C of
+  every program (same length within max(8, 25 %) masked words; `--ratio`: other lengths by difflib, near misses
+  only), compiled in its place with patched constants / offsets and renamed symbols, installed through install_c.
+  Over all programs it found 2 (a05 func_801154B8 / func_801154D8, one-digit hex literals dupsweep did not patch):
+  only 13 pending functions are within 16 structural words of matched C now, so its use is after new hand matches.
+  `--near` writes the closest C of the others to build/nearcopy/<prog>/near/ (37 with --ratio 0.8, 1-25 words off:
+  a00 func_801230A4 1 (matched, below), a0a func_8010B9AC 4, a00 func_80115B88 5, a05 func_8010E5A8 5, a09
+  func_8010A060 5, a0c func_80117B84 5, a0f func_8010DF5C 5, a07 func_8011D410 6, ...).
+- `tools/sbs.py FILE.c FUNC --prog P` / `ccheck.py --sbs`: side-by-side diff, branch targets through the alignment.
+- `tools/permlines.py FILE.c FUNC --prog P`: moves the `//P` lines (single moves, then pairs; `--slots`); it matched
+  a00 func_801230A4 from nearcopy's 1-word near miss (the store is not in retail).
+- `tools/variants.py FILE.c FUNC --prog P [--set 'k=a|b']`: words off of each `//--` variant.
+- `tools/magicdiv.py MULT --shift S [--unsigned]`: the divisor of a magic-number division.
+- install_c.py renames symbols from the relocations (C copied from another overlay installs as is); m2c gets the
+  program's jump tables (746 pending jump-table functions now draft; no new as-is matches, hillclimb on the 36
+  under 0x140 bytes: none, closest main func_8007AA38 8 words); libsweep: extra set-ups and `#define` renames
+  (boot ReadTIM, ReadTMD installed; main rcos matches but changes the link).
+
 ## 2026-11-22 (2): second round of five agents
 
 All code in C: **3028 / 7011 functions (43.2 %, 15.2 % of the bytes)**, from 2296 (8.8 %). Agents per scope: main
@@ -75,18 +96,18 @@ a04 func_8013CCDC / func_8013CD78 / a06 func_8014013C 7, a07 func_8011DF48 5, a0
 func_8018D26C 14; library _SsSndReplay 1, _SsContResetAll 1, memmove 1, SsUtSetReverbFeedback 2, func_8008C260 2
 (main and boot), strcmp 2 (2.7.2 frame only), SpuFree 2; rcos and func_8008831C match alone but fail the link.
 
-Tool fixes to do next (the agents' prototypes): install_c.py must hold the program lock over the whole read-modify-
-write of config/aliases_<prog>.ld and merge lines (concurrent agents lost each other's alias lines; one commit did
-not link), insert an extern that the file declares only further down, auto-rename alias-suffixed type clashes, keep
-a scratch file's `static inline` helpers, optionally build in an isolated worktree of HEAD; ptsrc.items() must strip
-comments (an apostrophe in a comment breaks parsing); dupsweep.py must carry `#define` macros and prototypes with
-the copied C (copies failed to compile silently), try several sources per masked key and patch differing load/store
-offsets as well as immediates; a near-copy finder (matched C anywhere whose masked words are within ~25 % of a
-pending function, then rename overlay-local symbols from the relocations); libsweep.py: the three set-ups above and
-`#define` renames; decomp.py: pass the rodata .s to m2c (jump-table functions fail without it); a side-by-side diff
-(`ccheck.py --sbs`); a `//P` statement-order permuter; a variant tester (several `//--` variants in one file); a
-magic-number division solver; hillclimb transforms: narrow-type copy variable, constant into a local, do/while <->
-while, volatile reload, struct-ify a store.
+Tool fixes from the agents' prototypes. Done: install_c.py holds the program lock over the whole edit and merges
+alias lines, moves up an extern the file declares further down, aliases type clashes, keeps a scratch file's
+`static inline` helpers, and renames symbols named after another program's addresses from the relocations
+(nearcopy.fix_names()); ptsrc.items() skips comments; dupsweep.py carries macros, helpers and the types a body
+uses; tools/nearcopy.py (near copies: several sources per key, patched immediates and load/store offsets,
+relocation renames, `--ratio --near` for hand work); libsweep.py: the three set-ups above and `#define` renames;
+decomp.py (and sweep / hillclimb / libsweep / permute) pass the jump tables to m2c; tools/sbs.py / `ccheck.py
+--sbs`; tools/permlines.py (`//P`); tools/variants.py (`//--`); tools/magicdiv.py (division magic numbers);
+hillclimb: constant into a local, narrow-type copy variable for a switch, guarded do/while <-> while, volatile
+field read. Still to do: an isolated-worktree build option for install_c; libsweep: pending statics against every
+psx_tomba function of the same library (the agent's cross.py) and MAIN <-> boot ports by relocation alignment;
+hillclimb: struct-ify a store, narrow copy variables outside switches.
 
 ## 2026-11-22: five parallel hand-matching agents
 

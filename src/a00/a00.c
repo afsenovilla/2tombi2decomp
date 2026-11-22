@@ -1663,7 +1663,6 @@ s32 func_80122F5C(s32 a) {
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80122FAC);
 
 extern u8 D_80149564[];
-
 s32 func_801230A4(u8 *p) {
     switch (p[6]) {
     case 0:

@@ -58,6 +58,15 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
 - Hand-written C: check a scratch file with `tools/ccheck.py FILE.c`, install with `python3 -I tools/install_c.py FILE.c
   [--prog main]` (build-checked); recurring fixes are listed in docs/STATUS.md.
 - `python3 -I tools/permute.py NAME --src FILE.c`: decomp-permuter with the game's pipeline (near-misses).
+- `python3 -I tools/nearcopy.py [PROG ...] [--install] [--ratio 0.8 --near]`: matched C from any program put into
+  near copies (patched constants / offsets, renamed symbols); `--near` writes the closest C of the rest to
+  build/nearcopy/<prog>/near/ for hand work. `tools/dupsweep.py`: exact copies only.
+- `python3 -I tools/ccheck.py FILE.c --prog P --func F --sbs` (or `tools/sbs.py FILE.c F --prog P`): side-by-side
+  diff, ours vs retail. `tools/permlines.py FILE.c F --prog P`: moves the lines marked `//P` until it matches.
+  `tools/variants.py FILE.c F --prog P [--set 'k=a|b']`: words off of each `//--` variant in the file.
+  `tools/magicdiv.py MULT --shift S [--unsigned]`: the divisor behind a magic-number multiply.
+- install_c.py renames symbols named after another program's addresses from the relocations (C copied between
+  overlays installs as is); libsweep.py maps foreign library names with `#define` and tries the extra set-ups.
 - `python3 -I tools/ccheck.py src/main/<file>.c`: compile with the game's compiler (gcc 2.8.1 + ASPSX 2.79,
   docs/COMPILER.md) and compare every function in the file with the retail bytes.
 - `python3 -I tools/import_names.py /opt/tomba2edit --write [--eu]`: names from Tomba2Edit (docs/TOMBA2EDIT.md).

@@ -10,7 +10,10 @@ The transforms are the hand recipes of docs/STATUS.md that can be applied blindl
   - the type of one parameter or local (s32 / u8 / s8 / u16 / s16);
   - `if (c) { A } else { B }` -> `if (!(c)) { B } else { A }` (branch layout);
   - two adjacent simple statements swapped (load / store order);
-  - an `M2C_FIELD(...)` read in a statement hoisted into a local (a read done before the stores).
+  - an `M2C_FIELD(...)` read in a statement hoisted into a local (a read done before the stores);
+  - a constant in a local (`s32 k = 3;`, every use or one), a narrow-type copy variable for a switch
+    (`switch (j = x)` with j u8 / s8 / u16 / s16 / s32), a guarded do/while <-> while, one M2C_FIELD read made
+    volatile (docs/STATUS.md 2026-11-22 (2)).
 Each candidate is compiled and compared by tools/ccheck.py; the score is the number of differing words plus the
 size difference. Matches are written to build/hillclimb/<name>.c and, with --install, installed with
 tools/install_c.py (linked-build checked, one at a time if needed).
@@ -115,10 +118,73 @@ def candidates(body, name):
         # a block of its own: gcc 2.8 (C89) wants declarations at the top of a block
         line = "%s{ %s %s = %s; %s%s%s }" % (ind, typ, var, expr, pre, var, m.group(7))
         out.append(body[:m.start()] + line + body[m.end():])
+    out += new_candidates(body, name)
     # void function -> s32 (retail leaves v0 live: an empty delay slot before the exit)
     vm = re.search(r"(?m)^void (%s\()" % re.escape(name), body)
     if vm:
         out.append(body[:vm.start()] + "s32 " + body[vm.start(1):])
+    return out
+
+
+def body_start(body, name):
+    """index just past the `{` opening the function `name` (None when not found)."""
+    m = re.search(r"\b%s\([^;{]*\)\s*\{" % re.escape(name), body)
+    return m.end() if m else None
+
+
+def new_candidates(body, name, max_lits=12):
+    """the 2026-11-22 recipes: a constant in a local, a narrow-type copy variable for a switch, while <->
+    guarded do/while, a volatile field reload."""
+    out = []
+    st = body_start(body, name)
+    if st is None:
+        return out
+    head, fn = body[:st], body[st:]
+    # a constant in a local (`s32 k = 3;` keeps it in a register / where retail has it): all uses, or one
+    lits = {}
+    for m in re.finditer(r"(?<![\w.])(0x[0-9A-Fa-f]+|[1-9]\d*)(?![\w.])", fn):
+        pre = fn[:m.start()]
+        line = pre[pre.rfind("\n") + 1:]
+        if re.search(r"\bcase\s*$", pre) or re.search(r"\*\s*,\s*$", pre) or "[" in line and \
+                re.match(r"\s*(?:s32|u32|s16|u16|s8|u8)\b[^=]*\[$", line):
+            continue
+        if re.match(r"\s*(?:s32|u32|s16|u16|s8|u8|void)\b[^=;]*$", line):
+            continue     # a declaration's array size
+        lits.setdefault(int(m.group(1), 0), []).append((m.start(), m.end()))
+    for v, spans in list(lits.items())[:max_lits]:
+        for pick in ([spans] + ([[s] for s in spans] if 1 < len(spans) <= 4 else [])):
+            f = fn
+            for a_, b_ in sorted(pick, reverse=True):
+                f = f[:a_] + "hc_k" + f[b_:]
+            out.append(head + "\n    s32 hc_k = 0x%X;" % v + f)
+    # a narrow-type copy variable for a switch (`s32 k = x; u8 j = k;`, the cases on j)
+    for m in re.finditer(r"\bswitch \(", fn):
+        i, d = m.end() - 1, 0
+        for j in range(i, len(fn)):
+            d += {"(": 1, ")": -1}.get(fn[j], 0)
+            if d == 0:
+                break
+        for ty in ("u8", "s8", "u16", "s16", "s32"):
+            out.append(head + "\n    %s hc_s;" % ty + fn[:i + 1] + "hc_s = " + fn[i + 1:])
+    # guarded do/while <-> while
+    for m in re.finditer(r"(?m)^(\s*)if \((.*)\) \{\n\s*do \{\n", fn):
+        k = fn.find("{", m.end() - 2)
+        e = block_end(fn, k)
+        tail = re.match(r" while \((.*)\);\n\s*\}", fn[e:]) if e else None
+        if tail:
+            inner = fn[k + 1:e - 1]
+            out.append(head + fn[:m.start()] + "%swhile (%s) {%s}" % (m.group(1), tail.group(1), inner) +
+                       fn[e + tail.end():])
+    for m in re.finditer(r"(?m)^(\s*)while \((.*)\) \{", fn):
+        e = block_end(fn, m.end() - 1)
+        if e:
+            inner = fn[m.end():e - 1]
+            out.append(head + fn[:m.start()] + "%sif (%s) { do {%s} while (%s); }" %
+                       (m.group(1), m.group(2), inner, m.group(2)) + fn[e:])
+    # one field read made volatile (retail reloads it)
+    for m in re.finditer(r"M2C_FIELD\(([^,]+), ([\w *]+?)\s*\*, ", fn):
+        out.append(head + fn[:m.start()] + "M2C_FIELD(%s, %s volatile *, " % (m.group(1), m.group(2)) +
+                   fn[m.end():])
     return out
 
 

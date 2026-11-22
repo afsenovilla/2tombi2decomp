@@ -53,7 +53,8 @@ def install(a):
             if s not in t and not re.search(r'"(common|game|m2c|actor)\.h"', s):
                 includes.append(s)   # e.g. psyq/inline_c.h for GTE macros: goes after the target's own includes
             continue
-        n = ptsrc.func_name(s) if s.endswith("}") else None
+        # a static (inline) helper goes with the declarations, before the first function that uses it
+        n = ptsrc.func_name(s) if s.endswith("}") and not s.startswith("static") else None
         if n:
             funcs.append((n, s))
         else:
@@ -146,7 +147,8 @@ def install(a):
         done, failed = [], []
         for n, _ in funcs:
             one = "".join(seg for kind, seg in segs
-                          if not (seg.strip().endswith("}") and ptsrc.func_name(seg.strip()) not in (None, n)))
+                          if not (seg.strip().endswith("}") and not seg.strip().startswith("static")
+                                  and ptsrc.func_name(seg.strip()) not in (None, n)))
             tmp = os.path.join(ROOT, "build", "install_one.c")
             open(tmp, "w").write(one)
             r = subprocess.run([sys.executable, "-I", os.path.abspath(__file__), tmp, "--prog", a.prog],
