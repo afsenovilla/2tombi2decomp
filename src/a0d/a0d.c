@@ -669,7 +669,35 @@ INCLUDE_ASM("asm/a0d/nonmatchings/a0d", f_UpdateEarthEvilPigDetachedPartsAttack)
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_8010FA2C);
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_8010FDA8);
+void func_8010FDA8(u8 *a)
+{
+    s32 k;
+    switch (a[6]) {
+    case 0:
+        a[0] = 1;
+        *(s16 *)(a + 0x40) = 0x96;
+        a[6]++;
+        func_80041768(a, 10, 6);
+        if (func_80077768((s16)func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f), *(s16 *)(a + 0x60), 0) != 0) {
+            a[0xBE] = 1;
+        } else {
+            a[0xBE] = 0;
+        }
+    case 1:
+        if (a[0xBE] == 0) {
+            k = *(u16 *)(a + 0x60) & 0xFFF;
+        } else {
+            k = (*(u16 *)(a + 0x60) + 0x800) & 0xFFF;
+        }
+        *(s16 *)(a + 0x56) = func_800776F8(k, *(s16 *)(a + 0x56), 0x80);
+        if (--*(s16 *)(a + 0x40) == 0) {
+            a[5] = 0;
+            a[6] = 0;
+            *(s16 *)(a + 0x64) = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_8010FEBC);
 

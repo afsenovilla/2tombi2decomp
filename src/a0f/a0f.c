@@ -1443,7 +1443,35 @@ s32 func_80118250(void *arg0) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80118264);
+typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner;
+
+s32 func_80118264(u8 *a)
+{
+    s32 e;
+    s32 i;
+    switch (a[0x78]) {
+    case 0:
+        e = func_8003116C(0x1005, a + 0x2C, -10);
+        if (e != 0) {
+            func_80074590(0x84, 0x18, 0);
+            *(s32 *)(a + 0x10) = e;
+            *(s16 *)(a + 0x40) = 0;
+            a[0x78]++;
+        }
+        break;
+    case 1:
+        if (++*(s16 *)(a + 0x40) >= 10) {
+            for (i = 0; i < a[9]; i++) {
+                func_80051B04(((PartsOwner *)a)->parts[i], 0x14, i);
+            }
+            *(s16 *)(a + 0x56) = 0x60E;
+            func_80041718(a, 6, 0);
+            return 1;
+        }
+        return 0;
+    }
+    return 0;
+}
 
 s32 func_80118378(u8 *a)
 {
