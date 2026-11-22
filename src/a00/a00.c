@@ -663,7 +663,20 @@ void func_80114B8C(u8 *a, u8 *b) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114BBC);
+void func_80114BBC(u8 *a, u8 *b) {
+    s32 k = 3;
+
+    if (f_ResolveActorPairType3Contact(a, b, M2C_FIELD(b, u8 **, 0xC0), a[2] == k) != 0) {
+        if (a[2] == k && b[0x5F] == 1) {
+            a[0] = k;
+            a[0x2B] = D_1F80009C >> 4;
+            a[4] = 2;
+            a[5] = 0;
+            a[6] = 0;
+        }
+        D_1F800182_5650 = 0;
+    }
+}
 
 
 void func_80114C5C(u8 *a, s32 b) {
@@ -904,7 +917,26 @@ void func_80117E5C(void *arg0) {
     M2C_FIELD(arg0, s8 *, 4) = 3;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117E98);
+void func_80117E98(u8 *a) {
+    s16 *q = M2C_FIELD(a, s16 **, 0x10);
+    s16 x, y, z;
+
+    if (func_8007778C(a) != 0) {
+        if (a[5] == 2) {
+            x = D_1F800160_71b4;
+            y = D_1F800162;
+            z = D_1F800164_d75f;
+            M2C_FIELD(a, s16 *, 0x2E) = x;
+            M2C_FIELD(a, s16 *, 0x32) = y;
+            M2C_FIELD(a, s16 *, 0x36) = z;
+        } else {
+            M2C_FIELD(a, s16 *, 0x2E) = q[0] - 0x20;
+            M2C_FIELD(a, s16 *, 0x32) = q[1] + 0x50;
+        }
+        func_80077B5C(a);
+        func_8004B374(a, 0);
+    }
+}
 
 extern u8 D_800BF9DC;
 void f_HandleRareFishOrBlueBucketPickup();
@@ -2544,7 +2576,24 @@ void f_SpawnSegmentedTownActor(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801389C8);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80138A64);
+void func_80138A64(u8 *a) {
+    u8 *p;
+
+    if (M2C_FIELD(a, s16 *, 0x6A) != 0 && a[3] != 0) {
+        if (--M2C_FIELD(a, s16 *, 0x40) < 0) {
+            D_800BF821 = 0;
+            M2C_FIELD(a, s16 *, 0x6A) = 0;
+        }
+    }
+    p = M2C_FIELD(a, u8 **, 0x10);
+    if (M2C_FIELD(a, s16 *, 0x6A) == 0 && M2C_FIELD(p, s16 *, 0x76) == 1) {
+        if (a[3] != 0 && M2C_FIELD(p, s16 *, 0x78) == 0) {
+            D_800BF821 = 1;
+        }
+        a[6] = 0;
+        a[5]++;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleA00Warp0813Entrance);
 

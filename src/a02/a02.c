@@ -759,7 +759,54 @@ s32 func_80117658(s32 k) {
     return r;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801176EC);
+s32 func_801176EC(s32 a, s32 b) {
+    s32 r;
+
+    switch (b) {
+    case 1:
+        r = 1;
+        break;
+    case 2:
+        r = 2;
+        break;
+    case 3:
+        r = 11;
+        break;
+    case 4:
+        if (a == 0) {
+            r = 6;
+        } else if (a == 0x20) {
+            r = 5;
+        } else if (a == 0x40) {
+            r = 4;
+        } else {
+            r = 3;
+        }
+        break;
+    case 5:
+        if (a == 0) {
+            r = 9;
+        } else {
+            r = 10;
+        }
+        break;
+    case 6:
+        if (a == 0) {
+            r = 7;
+        } else {
+            r = 8;
+        }
+        break;
+    case 7:
+        r = 12;
+        break;
+    case 0:
+    default:
+        r = 0;
+        break;
+    }
+    return r;
+}
 
 extern u8 D_800BF8BE;
 void func_8011778C(void *arg0) {
