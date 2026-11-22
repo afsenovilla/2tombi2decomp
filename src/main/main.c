@@ -446,7 +446,25 @@ void func_80021800(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveActiveColliderStaticActorContact);
+s32 f_ResolveActiveColliderStaticActorContact(u8 *a, u8 *b, s32 flag)
+{
+    s32 r;
+
+    if (!TestCyl_0B08(a, b)) {
+        return 0;
+    }
+    if (b[0] & 8) {
+        r = f_ApplyActiveColliderImpactResponse(a, b, 0, 0) & 0x80;
+    } else if (flag == 0) {
+        r = f_ApplyActiveColliderBlockingResponse(a, b, 0, 0x800) & 0x80;
+    } else {
+        r = f_ApplyActiveColliderBlockingResponse(a, b, 0, 0) & 0x80;
+    }
+    if (!r) {
+        *(u8 *)D_1F800182 = 0;
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80021AB0);
 
