@@ -1,3 +1,15 @@
+// CC gcc-2.8.1-psx
+// FLAGS -O2 -G0 -mno-split-addresses
+// AS gnu
+// EPILOGUE sony
 #include "common.h"
+extern char D_8001CA40[];
+void _putchar(s8);
+void _putchar_flash(void);
 
-INCLUDE_ASM("asm/main/nonmatchings/psyq/libc2/puts", puts);
+void puts(s8 *s) {
+    s8 c;
+    if (s == NULL) s = (s8 *)D_8001CA40;
+    while ((c = *s++) != 0) _putchar(c);
+    _putchar_flash();
+}
