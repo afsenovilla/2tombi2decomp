@@ -366,11 +366,48 @@ s32 f_TestActorOffsetCylinderOverlap(u8 *a, u8 *b)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaPlaneTransitionActorContact);
-
 extern u16 D_1F80018C_c065;
 extern u16 D_1F80018E;
 extern u8 D_800BF840;
+
+void f_ResolveTombaPlaneTransitionActorContact(u8 *a, u8 *b)
+{
+    s16 dx;
+    s16 dz;
+    s32 d;
+    s32 ang;
+
+    if (a[0x145] != 0) {
+        return;
+    }
+    dx = *(u16 *)(b + 0x2E) - *(u16 *)(a + 0x2E);
+    dz = *(u16 *)(b + 0x36) - *(u16 *)(a + 0x36);
+    d = SquareRoot0(dx * dx + dz * dz);
+    if ((u16)d > *(s16 *)(b + 0x80) + *(s16 *)(a + 0x80)) {
+        return;
+    }
+    if ((u16)((*(u16 *)(a + 0x32) - *(u16 *)(b + 0x32)) + (*(u16 *)(a + 0x84) + *(u16 *)(b + 0x84))) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+        return;
+    }
+    ang = ratan2(-dz, dx);
+    if ((u32)((ang - *(u16 *)(a + 0x140) + 0x580) & 0xFFF) >= 0x301) {
+        return;
+    }
+    if (D_1F800137_104c != 0) {
+        return;
+    }
+    D_1F80018C_c065 = ang & 0xFFF;
+    b[0x2B] = 1;
+    if (b[2] == 0xE || b[2] == 0x39) {
+        D_1F80018E = 0x4400;
+    } else {
+        D_1F80018E = 0x4800;
+    }
+    if (a[0x61] != 0x80) {
+        D_800BF840 = 0x44;
+    }
+}
+
 
 void func_8001FC50(u8 *a, u8 *b)
 {
