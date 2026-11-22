@@ -2001,7 +2001,73 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80119510);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SubmitPendingGoldenCrabs);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80119828);
+extern u8 D_800BF80E;
+extern u8 D_80148680[];
+extern u8 D_801486F0[];
+extern u8 D_801486F8[];
+extern u8 D_80148708[];
+extern u8 D_80148718[];
+extern u8 D_80148720[];
+/* func_8011AC5C, inlined */
+static inline s32 inl_8011AC5C(u8 *a) {
+    s32 i;
+
+    a[0x5F] = 0;
+    if (D_800BF870.pad1[0x172] == 0) {
+        return 0;
+    }
+    for (i = 0; i < 3; i++) {
+        if (((D_800BF870.pad1[0x172] >> i) & 1) && !((D_800BF870.pad1[0x172] >> (i + 4)) & 1)) {
+            a[0x5F] |= 1 << i;
+        }
+    }
+    return a[0x5F];
+}
+
+void func_80119828(u8 *a) {
+    switch (a[6]) {
+    case 0:
+        if (a[0x2B] == 3) {
+            func_80042354(1, 1);
+            func_80040D68(a, D_80148680);
+            a[0x70] = 1;
+            a[6]++;
+        } else {
+            M2C_FIELD(a, s16 *, 0x56) = func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f);
+        }
+        break;
+    case 1:
+        if (a[0x71] == 0xFF && D_800BF80E != 0) {
+            if (D_800BF870.pad1[0x16D] == 0) {
+                D_800BF870.pad1[0x16D] = 1;
+                if (inl_8011AC5C(a) != 0) {
+                    D_800E7E80[5] = 0x26;
+                    D_800E7E80[6] = 0;
+                    if (a[0x5F] & 4) {
+                        func_80040D68(a, D_80148708);
+                        a[5] = 3;
+                    } else {
+                        func_80040D68(a, D_801486F8);
+                        a[5] = 2;
+                    }
+                } else {
+                    func_80040D68(a, D_801486F0);
+                    a[5] = 1;
+                }
+            } else if (inl_8011AC5C(a) != 0) {
+                D_800E7E80[5] = 0x26;
+                D_800E7E80[6] = 0;
+                func_80040D68(a, D_80148720);
+                a[5] = 5;
+            } else {
+                func_80040D68(a, D_80148718);
+                a[5] = 4;
+            }
+            a[6] = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldenCrabDialogueFirstVisit);
 
