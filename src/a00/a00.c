@@ -191,11 +191,41 @@ void func_8010DA70(void) {
     func_80051FB4();
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010DAB0);
+extern u8 D_800E7E80[];
+extern u8 D_800BF808_1760[];
+extern u8 D_800E8008[];
+extern s32 D_1F800184;
+extern s16 D_1F8000D0[];
+
+void func_8010DAB0(void) {
+    u8 *t = D_800E7E80;
+    u8 *g = D_800BF808_1760;
+    u8 *e = D_800E8008;
+    s16 *v;
+
+    t[0x16B] = 0;
+    g[0xE] = 0;
+    e[0x64] = 0;
+    D_1F800184 = 0;
+    if (g[0xF] == 2) {
+        t[0x2A] = 0x1F;
+        v = D_1F8000D0;
+        M2C_FIELD(e, s16 *, 0xA) = 0x4F00;
+        M2C_FIELD(e, s16 *, 0x12) = 0x1AEE;
+        v[0xB] = 0x1AEE;
+        v[1] = 0x5716;
+        v[7] = 0x4F00;
+        v[5] = 0x1BE1;
+        t[0x147] = 0;
+        g[0x17] = 0;
+    }
+    func_80054198(t);
+    t[5] = 0x24;
+    t[6] = 0;
+}
 
 extern u8 D_80146EEC[];
 extern u8 D_800BF871;
-extern s16 D_1F8000D0[];
 
 void func_8010DB58(u8 *a) {
     s16 *v;
@@ -1237,7 +1267,24 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011CA04);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011CBD0);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011CD14);
+extern void *D_800ECF94;
+extern u8 D_8014BFB4[];
+
+void func_8011CD14(u8 *a) {
+    switch (a[7]) {
+    case 0:
+        if (a[1] != 0 && func_800519E0(a, 0xF, D_800ECF94, D_8014BFB4) == 0) {
+            a[7]++;
+        }
+        break;
+    case 1:
+        if (a[1] == 0) {
+            func_8007ADDC(a);
+            a[7]--;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011CDB8);
 
@@ -2085,7 +2132,26 @@ u8 *func_8012DF08(s32 a) {
     return p;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012DF50);
+extern s32 D_800ECF80;
+extern u8 D_8014C808[];
+
+void func_8012DF50(u8 *a) {
+    u8 *p = M2C_FIELD(a, u8 **, 0x10);
+
+    switch (a[5]) {
+    case 0:
+        a[5]++;
+        M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+        func_80077B38(a, D_8014C808, 2);
+        M2C_FIELD(a, s16 *, 0x60) = 0x20;
+        M2C_FIELD(a, s16 *, 0x62) = 0x10;
+        M2C_FIELD(a, s16 *, 0x64) = 0;
+    case 1:
+        func_8004BD64(a, 1, M2C_FIELD(p, void **, 0xDC), 0, a + 0x60);
+        a[1] = p[1];
+        break;
+    }
+}
 
 
 void func_8012DFF8(void *arg0) {
@@ -2899,7 +2965,6 @@ done:
     }
 }
 
-extern u8 D_800E7E80[];
 extern u8 D_800BF841;
 extern u8 D_800E806E;
 extern u16 D_1F8000D6;
@@ -2957,7 +3022,6 @@ void f_OpenEvilPigDoor(u8 *a) {
     }
 }
 
-extern u8 D_800BF808_1760[];
 
 void func_8013BAB0(u8 *a) {
     u8 *t = D_800E7E80;
@@ -3473,7 +3537,23 @@ u8 *func_801462E4(s32 a, s32 b) {
     return p;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80146348);
+u8 *func_80146348(u8 *a, void *b) {
+    u8 *g = D_800BF808_1760;
+    u8 *p;
+
+    if (g[0x1B] & 0x80) {
+        return NULL;
+    }
+    p = func_80072DDC(a, 3, 2, 3);
+    if (p != NULL) {
+        g[0x1B] |= 0x80;
+        p[3] = 0x80;
+        M2C_FIELD(p, u8 **, 0x10) = a;
+        M2C_FIELD(p, void **, 0x14) = b;
+        M2C_FIELD(p, void **, 0x1C) = f_HandleTownCreatureActor;
+    }
+    return p;
+}
 
 extern u8 D_800BF823;
 
