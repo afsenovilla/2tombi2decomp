@@ -1981,9 +1981,61 @@ void func_80133500(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateAquaticPlantRotationKick);
+#define P0(a) M2C_FIELD(a, u8 **, 0xC0)
+typedef union {
+    u8 b[0xC0];
+    s16 h[0x60];
+} ActorH;
+#define H(o) h[(o) / 2]
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ConfigureAquaticPlantMotion);
+void f_UpdateAquaticPlantRotationKick(u8 *a) {
+    switch (F16(a, 0x78)) {
+    case 1:
+        F16(P0(a), 0xC) = FU16(P0(a), 0xC) + FU16(P0(a), 0x14);
+        F16(P0(a), 0x14) -= 8;
+        if (F16(P0(a), 0x14) < -0x20) {
+            F16(a, 0x78) = 0;
+            F16(P0(a), 0xC) = 0;
+        }
+        break;
+    case 2:
+        F16(P0(a), 0xC) = FU16(P0(a), 0xC) - FU16(P0(a), 0x14);
+        F16(P0(a), 0x14) -= 8;
+        if (F16(P0(a), 0x14) < -0x20) {
+            F16(a, 0x78) = 0;
+            F16(P0(a), 0xC) = 0;
+        }
+        break;
+    }
+    if (a[0x2B] != 0) {
+        F16(a, 0x78) = 0;
+        F16(P0(a), 0xC) = 0;
+    }
+}
+
+void f_ConfigureAquaticPlantMotion(ActorH *a, s16 k) {
+    a->H(0x50) = a->H(0x4E) = a->H(0x62) * 32 + 0x30;
+    switch (k) {
+    case 0:
+        a->H(0x4A) = 0x10;
+        a->H(0x74) = a->H(0x66) - (a->H(0x66) >> 4);
+        a->H(0x40) = a->H(0x66) >> 5;
+        break;
+    case 1:
+        a->H(0x4A) = 0x20;
+        a->H(0x74) = a->H(0x66);
+        a->H(0x40) = a->H(0x66) >> 5;
+        a->H(0x40) += a->H(0x66) >> 6;
+        break;
+    case 2:
+        a->H(0x4A) = 0x40;
+        a->H(0x74) = a->H(0x66);
+        a->H(0x40) = a->H(0x66) >> 3;
+        a->H(0x4E) += 0x70;
+        a->H(0x50) += 0x70;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ClassifyAquaticPlantContact);
 

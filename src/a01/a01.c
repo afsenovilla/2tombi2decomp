@@ -821,7 +821,22 @@ s32 func_80119B80(s32 arg0, s32 arg1) {
     return (u32) (((arg1 - func_800782B0(arg0 + 0x2C, *((s16 *)D_1F800160), *((s16 *)D_1F800164))) + 0x400) & 0xFFF) >= 0x801U;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80119BCC);
+extern s16 D_1F800160_71b4;
+extern s16 D_1F800164_d75f;
+
+s32 func_80119BCC(u8 *a) {
+    u8 *q = a + 0x60;
+    s32 h = M2C_FIELD(q, u16 *, 4);
+    s8 r;
+
+    r = (u32)((h - func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f) + 0x400) & 0xFFF) > 0x800;
+    if (r) {
+        M2C_FIELD(q, u16 *, 6) |= 1;
+    } else {
+        M2C_FIELD(q, u16 *, 6) &= 0xFFFE;
+    }
+    return r;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80119C4C);
 
@@ -869,7 +884,6 @@ s32 func_80119FF8(u8 *a) {
 
 extern u8 D_800E7FE4;
 extern u16 D_1F800160_3621;
-extern s16 D_1F800164_d75f;
 extern u16 D_1F800162;
 
 s32 func_8011A03C(u8 *a) {
@@ -1166,7 +1180,31 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011DD88);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011DE34);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011DF24);
+typedef struct {
+    u8 pad0[0x38];
+    u8 *p38;
+    u8 pad3C[0x24];
+    s16 h60[0x34];
+    u8 *pC8;
+} ActorDF;
+
+s16 func_8011DF24(ActorDF *a, s32 i) {
+    s32 r = func_80076D68();
+    s32 j = i + 1;
+    s16 v;
+
+    func_8011D9E4(a, j);
+    if (a->h60[j] != 2) {
+        a->h60[i] = 0;
+    } else {
+        v = *(s16 *)(a->p38 + 4) >> 4;
+        if (v != a->h60[i]) {
+            func_80051B04(a->pC8, 0x15, v);
+            a->h60[i] = v;
+        }
+    }
+    return r;
+}
 
 
 void func_8011DFEC(u8 *a) {
