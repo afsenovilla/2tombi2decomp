@@ -1949,7 +1949,47 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_TryStartFeedChicksActorTombaReaction);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AdvanceFeedChicksActorMotion);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801205EC);
+extern u8 *D_80149460[];
+
+s32 func_801205EC(u8 *a) {
+    u8 *t;
+    s16 r;
+    s16 k;
+    s32 y;
+    s16 d;
+
+    t = D_80149460[a[3]];
+    t += F16(a, 0x6C) * 6 + 2;
+    r = func_8009A450() & 0xF;
+    k = 1;
+    if (r >= 6) {
+        k = 3;
+        if (r < 11) {
+            k = 2;
+        }
+    }
+    if (F16(a, 0x68) == k) {
+        F16(a, 0x42) = r;
+        r = 3;
+        F16(a, 0x4A) = 0;
+    } else {
+        y = *(u16 *)t + k * 0x96 - 0x32;
+                d = y - FU16(a, 0x32);
+        F16(a, 0x42) = d;
+        if (d > 0) {
+            F16(a, 0x48) = 0x800;
+            F16(a, 0x4A) = 0x800;
+            F16(a, 0x4C) = 0x40;
+        } else {
+            F16(a, 0x48) = -0x800;
+            F16(a, 0x4A) = -0x800;
+            F16(a, 0x4C) = -0x40;
+        }
+        r = 4;
+    }
+    F16(a, 0x68) = k;
+    return r;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801206F4);
 
