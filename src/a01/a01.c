@@ -491,6 +491,7 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_SpawnPipeAreaSceneActorsFromPlacementT
 #include "common.h"
 #include "game.h"
 #include "m2c.h"
+#include "psyq/inline_c.h"
 extern ClutCycle D_801352CC[];
 extern s8 D_80138FD0[];
 
@@ -1191,7 +1192,33 @@ u8 *func_80115D84(s32 a) {
     return p;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80115DE0);
+typedef struct {
+    u8 pad[0xD0];
+    s32 *p0;
+    u8 pad2[8];
+    s32 *p1;
+} PairOwner;
+extern PairOwner D_800E7E80_6978;
+
+void func_80115DE0(u8 *a) {
+    PairOwner *g;
+
+    if (func_80051B70(a, 0xC, 0x18) != 0) {
+        return;
+    }
+    g = &D_800E7E80_6978;
+    M2C_FIELD(a, s16 *, 0x2E) = (g->p0[0x2C / 4] + g->p1[0x2C / 4]) / 2;
+    M2C_FIELD(a, s16 *, 0x32) = (g->p0[0x30 / 4] + g->p1[0x30 / 4]) / 2;
+    M2C_FIELD(a, s16 *, 0x36) = (g->p0[0x34 / 4] + g->p1[0x34 / 4]) / 2;
+    M2C_FIELD(a, s16 *, 0x32) -= 0x20;
+    M2C_FIELD(a, s16 *, 0x58) = 0;
+    M2C_FIELD(a, s16 *, 0x56) = 0;
+    M2C_FIELD(a, s16 *, 0x54) = 0;
+    M2C_FIELD(a, s16 *, 0x80) = 0x40;
+    M2C_FIELD(a, s16 *, 0x82) = 0x80;
+    M2C_FIELD(a, s16 *, 0x84) = 0x64;
+    M2C_FIELD(a, s16 *, 0x86) = 0x64;
+}
 
 extern u8 D_800BF9FD;
 extern u8 *D_800F2738;
@@ -2015,7 +2042,31 @@ void func_8011E1D4(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011E324);
+extern u8 D_801393C0_27b3[];
+
+void func_8011E324(AreaPartsOwner *a) {
+    switch (a->pad[4]) {
+    case 0:
+        M2C_FIELD(a, s16 *, 0x56) = 0x400;
+        a->pad[0x7B] = 1;
+        func_80051B04(a->parts[a->pad[9] - 1], 0x1A, 4);
+        func_80077C40(a, D_801393C0_27b3, 1);
+        a->pad[0x2B] = 0;
+        a->pad[4]++;
+    case 1:
+        func_8011E1D4(a);
+        if (a->pad[1] != 0) {
+            func_800518FC(a);
+        }
+        a->pad[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011E404);
 
@@ -3613,7 +3664,42 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80133D74);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80133F38);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801341E8);
+#define GTE_RTPT() __asm__ volatile("nop;" "nop;" ".word 0x4A280030")
+#define GTE_RTPS() __asm__ volatile("nop;" "nop;" ".word 0x4A180001")
+#define GTE_NCLIP() __asm__ volatile("nop;" "nop;" ".word 0x4B400006")
+#define GTE_AVSZ4() __asm__ volatile("nop;" "nop;" ".word 0x4B68002E")
+
+s32 func_801341E8(u8 *poly, u8 *v, s32 *flag) {
+    s32 otz;
+    s32 n;
+
+    gte_ldv3c(v);
+    GTE_RTPT();
+    gte_stflg(flag);
+    if (*flag < 0) {
+        return -1;
+    }
+    gte_stsxy3_gt3(poly);
+    GTE_NCLIP();
+    gte_stopz(flag);
+    n = *flag;
+    if (n < 0) {
+        n = -n;
+    }
+    if (n < 8) {
+        return -1;
+    }
+    gte_ldv0(v + 0x18);
+    GTE_RTPS();
+    gte_stflg(flag);
+    if (*flag < 0) {
+        return -1;
+    }
+    gte_stsxy(poly + 0x2C);
+    GTE_AVSZ4();
+    gte_stotz(&otz);
+    return otz;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801342C8);
 

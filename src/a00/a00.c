@@ -1070,7 +1070,35 @@ u8 *f_SpawnRareFishPickup(u8 *a) {
     return NULL;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117D7C);
+extern s32 D_800ECF80;
+extern u8 D_8014C808[];
+
+void func_80117D7C(u8 *a) {
+    u8 *p;
+
+    a[0xB] = 0x10;
+    a[8] = 0xF8;
+    a[0x47] = 0;
+    M2C_FIELD(a, s16 *, 0x5A) = 0;
+    a[0xD] = 0;
+    p = M2C_FIELD(a, u8 **, 0x10);
+    M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+    func_80077B38(a, D_8014C808, 1);
+    M2C_FIELD(a, s32 *, 0x2C) = 0x13D20000;
+    M2C_FIELD(a, s32 *, 0x30) = 0xF7E00000;
+    M2C_FIELD(a, s32 *, 0x34) = 0x15AA0000;
+    M2C_FIELD(a, s16 *, 0x80) = 0x3C;
+    M2C_FIELD(a, s16 *, 0x82) = 0x78;
+    M2C_FIELD(a, s16 *, 0x84) = 0x50;
+    M2C_FIELD(a, s16 *, 0x86) = 0xA0;
+    a[0] = 4;
+    M2C_FIELD(p, s16 *, 6) = M2C_FIELD(a, s16 *, 0x2E);
+    M2C_FIELD(p, s16 *, 8) = M2C_FIELD(a, s16 *, 0x32) - 0x1A4;
+    M2C_FIELD(p, s16 *, 0xA) = M2C_FIELD(a, s16 *, 0x36);
+    M2C_FIELD(p, s16 *, 0x16) = 0x1E;
+    a[4]++;
+    func_8004B354(a, 0);
+}
 
 void func_80117E5C(void *arg0) {
     func_8004D4C4(0x3A, 1);
@@ -2374,8 +2402,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012D908);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleTownQuestRewardVisualActor);
 
 extern u8 D_800BF9DD;
-extern s32 D_800ECF80;
-extern u8 D_8014C808[];
 
 void func_8012DE34(u8 *a) {
     u8 *g = D_800E7E80;
@@ -2595,7 +2621,33 @@ void func_8012E678(u8 *a) {
     func_80077B38(a, D_8014C808, r + 0x12);
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012E70C);
+void func_8012E70C(u8 *a) {
+    s16 s;
+    s16 c;
+    s32 m;
+    s32 d;
+    s16 e;
+
+    c = --M2C_FIELD(a, s16 *, 0x40);
+    if (a[1] == 0 || c <= 0) {
+        if (a[0x5E] == 2) {
+            M2C_FIELD(a, u8 **, 0x10)[0x5E] = 0;
+        }
+        a[4] = 3;
+        return;
+    }
+    s = M2C_FIELD(a, s16 *, 0x44);
+    m = s * M2C_FIELD(a, s16 *, 0x48);
+    e = M2C_FIELD(a, s16 *, 0x4E);
+    d = M2C_FIELD(a, s16 *, 0x4A) >> 8;
+    M2C_FIELD(a, s16 *, 0x32) += d;
+    M2C_FIELD(a, s16 *, 0x54) += e;
+    M2C_FIELD(a, s32 *, 0x2C) += m;
+    M2C_FIELD(a, s32 *, 0x34) += s * M2C_FIELD(a, s16 *, 0x4C);
+    if ((s16)func_8012E87C(a)) {
+        func_8012E7EC(a);
+    }
+}
 
 void func_8012E7EC(u8 *a) {
     s16 r = func_8009A450();
