@@ -6908,7 +6908,132 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_SetTombaMiniatureForm);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_RebuildTombaAppearanceModelParts);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ApplyTombaStatusCommand);
+typedef struct { u8 unk0; u8 pad1[0x1E]; u8 u1F; u8 pad20[0xE]; s16 s2E; } GsStat_82F8;
+extern GsStat_82F8 D_800BF870_82f8;
+extern u8 D_800BF881;
+extern u8 D_1F800247;
+
+void f_ApplyTombaStatusCommand(u8 *a, s32 cmd)
+{
+    u8 v;
+    u16 t;
+
+    switch (cmd) {
+    case 0:
+        if (!(a[0x174] & 8)) {
+            f_QueueResourceMessage(0x3A, 0x41);
+            a[0x174] |= 8;
+            a[0xD] |= 0x42;
+        }
+        break;
+    case 1:
+        if (a[0x174] & 8) {
+            f_SpawnTransientEffect(0x25, 0);
+            a[0x174] &= 0xF7;
+            a[0xD] &= 0xBD;
+            f_QueueResourceMessage(0x3B, 0x41);
+        }
+        break;
+    case 2:
+        if (a[0x174] & 8) {
+            f_QueueResourceMessage(0x3B, 0x41);
+            a[0x174] &= 0xF7;
+            a[0xD] &= 0xBD;
+        }
+        break;
+    case 3:
+        a[0x174] |= 0x20;
+        a[0xD] |= 0x12;
+        f_QueueResourceMessage(0x4B, 0x41);
+        D_1F800247 = 0;
+        break;
+    case 4:
+        a[0x174] |= 0x10;
+        a[0xD] |= 0x12;
+        f_QueueResourceMessage(0x4B, 0x41);
+        D_1F800247 = 0;
+        break;
+    case 5:
+        a[0x174] &= 0xCF;
+        a[0xD] &= 0xED;
+        f_QueueResourceMessage(0x4C, 0x41);
+        break;
+    case 6:
+        a[0x174] |= 4;
+        f_SetTombaMiniatureForm(a, 1);
+        D_800BF89E = *(u16 *)(a + 0x17E);
+        f_QueueResourceMessage(0x49, 0x41);
+        break;
+    case 7:
+        a[0x174] &= 0xFB;
+        f_SetTombaMiniatureForm(a, 0);
+        D_800BF89E = *(u16 *)(a + 0x17E);
+        f_QueueResourceMessage(0x4A, 0x41);
+        break;
+    case 8:
+    case 13:
+        v = a[0x174];
+        if (!(v & 1)) {
+            a[0x174] = (v & 0xFD) | 1;
+            f_QueueResourceMessage(0x45, 0x41);
+            if (cmd == 13) {
+                f_PlaySoundEffect(0x39, 0, 0);
+            } else {
+                a[5] = 0x38;
+                a[6] = 2;
+            }
+        }
+        break;
+    case 9:
+    case 14:
+        v = a[0x174];
+        if (!(v & 2)) {
+            a[0x174] = (v & 0xFE) | 2;
+            f_QueueResourceMessage(0x47, 0x41);
+            if (cmd == 14) {
+                f_PlaySoundEffect(0x3A, 0, 0);
+            } else {
+                a[5] = 0x39;
+                a[6] = 2;
+            }
+        }
+        break;
+    case 10:
+        a[0x174] &= 0xFC;
+        if (D_800BF881 & 1) {
+            f_QueueResourceMessage(0x46, 0x41);
+        } else if (D_800BF881 & 2) {
+            f_QueueResourceMessage(0x48, 0x41);
+        }
+        break;
+    case 11:
+        if (a[0x174] & 0x20) {
+            f_QueueResourceMessage(0x4C, 0x41);
+        }
+        t = a[0x174];
+        a[0x174] = t & 0xDF;
+        if (!(t & 0x10)) {
+            a[0xD] &= 0xED;
+        }
+        break;
+    case 12:
+        a[0x174] = 0;
+        a[0xD] = 0;
+        if (*(s16 *)(a + 0x17E) & 0x8000) {
+            t = *(u16 *)(a + 0x17E) & 0x7FFF;
+            *(u16 *)(a + 0x17E) = t;
+            D_800BF89E = t;
+        }
+        if (*(u16 *)(a + 0x17E) & 0x200) {
+            a[0x6F] = 0;
+            D_800BF870_82f8.u1F = 0;
+            *(u16 *)(a + 0x17E) = 0x10;
+            D_800BF870_82f8.s2E = 0x10;
+        }
+        break;
+    }
+    D_800BF881 = a[0x174];
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeTombaPlayerActor);
 
