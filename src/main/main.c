@@ -6556,7 +6556,42 @@ s32 f_AdvanceActorFixedStepMotion(u8 *a)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80041C54);
+s32 func_80041C54(u8 *a)
+{
+    u8 *p;
+    u8 *q;
+
+    switch (a[0x78]) {
+    case 0:
+        if (*(s16 *)(a + 0x74) >= 0) {
+            a[0x7A] = a[0x74];
+        }
+        a[0x78]++;
+    case 1:
+        p = f_SpawnScriptedPresentationActor(*(s16 *)(a + 0x72), a[0x7A], *(s16 *)(a + 0x76));
+        *(u8 **)(a + 0x10) = p;
+        if (p == NULL) {
+            break;
+        }
+        if ((u16)(*(u16 *)(a + 0x76) - 1) < 2) {
+            return 1;
+        }
+        goto inc;
+    case 2:
+        q = *(u8 **)(a + 0x10);
+        if (q[4] != 2) {
+            return 0;
+        }
+        q[4] = 3;
+    inc:
+        a[0x78]++;
+        break;
+    case 3:
+        *(u8 **)(a + 0x10) = NULL;
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80041D60);
 
@@ -6755,7 +6790,39 @@ s32 func_80042448(u8 *a)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800424F0);
+void f_ConfigureScriptActorConversation(u8 a, u8 b, u8 c);
+void func_8007074C(u8 a, u8 b, u8 c, Vec3i_74C v);
+
+s32 func_800424F0(u8 *a)
+{
+    union { s16 h[6]; Vec3i_74C v; } u;
+
+    switch (a[0x78]) {
+    case 0:
+        if (D_800BF843 != 0) {
+            return 1;
+        }
+        if (*(u16 *)(a + 0x76) & 4) {
+            u.h[1] = *(u16 *)(a + 0x64);
+            u.h[3] = *(u16 *)(a + 0x66);
+            u.h[5] = *(u16 *)(a + 0x68);
+            ((void (*)(s32, s32, s32, Vec3i_74C))func_8007074C)(*(u16 *)(a + 0x72) & 0xFFF, *(s16 *)(a + 0x74), *(s16 *)(a + 0x76), u.v);
+        } else {
+            ((void (*)(s32, s32, s32))f_ConfigureScriptActorConversation)(*(u16 *)(a + 0x72) & 0xFFF, *(s16 *)(a + 0x74), *(s16 *)(a + 0x76));
+        }
+        if (*(s16 *)(a + 0x72) & 0x8000) {
+            return 1;
+        }
+        a[0x78]++;
+        break;
+    case 1:
+        if (D_800BF843 == 1) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 s32 func_800425FC(u8 *a)
 {
