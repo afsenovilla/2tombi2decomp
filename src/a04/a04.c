@@ -3842,7 +3842,101 @@ s32 func_8012FF68(u8 *p)
     return 1;
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013001C);
+extern u8 D_80141C70[];
+extern u8 D_80141C80[];
+extern u8 D_800BF8C8;
+static inline s32 init_001c(u8 *a)
+{
+    u8 *g = D_800ECF58;
+    s32 r;
+
+    if (func_800519E0(a, 0xF, *(s32 *)(g + 0x74), D_8013FB64) == 0) {
+        *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x38);
+        func_80040CDC(a, D_80144404, D_800A3D18);
+        r = 1;
+        a[0xB] = 0x40;
+        a[0] = 9;
+        *(s16 *)(a + 0x80) = 0x55;
+        *(s16 *)(a + 0x82) = 0xAA;
+        *(s16 *)(a + 0x84) = 0x80;
+        *(s16 *)(a + 0x86) = 0xD0;
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        *(s16 *)(a + 0x58) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x54) = 0;
+    } else {
+        r = 0;
+    }
+    return r;
+}
+
+void func_8013001C(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        if (init_001c(a)) {
+            *(s32 *)(a + 0x2C) = 0x11C60000;
+            *(s32 *)(a + 0x30) = 0xDF260000;
+            *(s32 *)(a + 0x34) = 0x24CE0000;
+            a[0x2A] = 0xA;
+            *(s16 *)(a + 0x56) = 0;
+            a[0x7B] = 0;
+            func_80041718(a, 0, 0);
+            a[4]++;
+        }
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            if (func_80116B48(a) == 0) {
+                goto skip;
+            }
+            if (a[0x2B] == 3) {
+                func_80042354(1, 1);
+                func_80040D68(a, D_80141C70);
+                a[0x70] = 2;
+                a[6] = 0;
+                a[5]++;
+            }
+            break;
+        case 1:
+            a[1] = 1;
+            func_80077E7C(a);
+            if (a[0x70] == 0xFF) {
+                switch (a[6]) {
+                case 0:
+                    if (D_800BF8C8 == 0xFF) {
+                        a[0x7A] = 0x20;
+                    } else {
+                        a[0x7A] = 0x1F;
+                    }
+                    func_80040D68(a, D_80141C80);
+                    a[0x70] = 2;
+                    a[6]++;
+                    break;
+                case 1:
+                    a[5] = 0;
+                    break;
+                }
+            }
+            break;
+        }
+        func_80041098(a);
+        func_8004190C(a);
+    skip:
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_80130290(u8 *p)
 {
