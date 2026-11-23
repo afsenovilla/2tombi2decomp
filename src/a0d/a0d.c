@@ -182,11 +182,99 @@ void func_80109EA8(void)
     }
 }
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_8010A04C);
+void func_8010A04C(u8 *a)
+{
+    u8 **l = D_1F80013C;
+    u8 *e;
+    s32 r;
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_8010A1D4);
+    D_1F800182_5650 = D_1F800144;
+    while (D_1F800182_5650 != 0) {
+        e = *l;
+        D_1F800182_5650--;
+        l++;
+        if (e[0] & 1) {
+            switch (e[2]) {
+            case 0x40:
+                r = func_8001F40C(a, e, 1);
+                if (r >= 0) {
+                    e[0x5F] = func_80077768((s16)(*(u16 *)&D_1F80009C + 0x800), *(s16 *)(e + 0x60), 1) + 2;
+                    func_8001FF7C(a, e, r, 1);
+                }
+                break;
+            case 0x51:
+                if (func_80022F04(a, e) != 0) {
+                    a[0x2B] = D_1F80009C >> 4;
+                    func_80022D08(a, e, 1, 0);
+                }
+                break;
+            case 0x68:
+                func_8010943C(a, e);
+                break;
+            }
+        }
+    }
+}
 
 extern u8 *D_800F2738;
+
+void func_8010A1D4(void)
+{
+    u8 *p;
+    u8 **l;
+    u8 *e;
+    s32 r;
+
+    if (*(s16 *)&D_1F800144 == 0) {
+        return;
+    }
+    for (p = D_800F2738; p != NULL; p = *(u8 **)(p + 0x24)) {
+        if (!(p[0] & 1) || p[0x2B] != 0) {
+            continue;
+        }
+        l = D_1F80013C;
+        D_1F800182_5650 = D_1F800144;
+        while (D_1F800182_5650 != 0) {
+            e = *l;
+            D_1F800182_5650--;
+            l++;
+            if (e[0] & 1) {
+                switch (e[2]) {
+                case 0x40:
+                    if (func_80022F04(p, e) != 0) {
+                        r = func_8001DC9C(p, e, 0, 0);
+                        if (!(r & 0x80)) {
+                            D_1F800182_5650 = 0;
+                        }
+                    }
+                    break;
+                case 0x51:
+                    func_800216B4(p, e, 0);
+                    break;
+                case 0x68:
+                    if (func_80022F04(p, e) != 0) {
+                        if (D_800BF870.unk0 == 14) {
+                            if (e[0xBF] != 0) {
+                                r = func_8001E860(p, e, 0, 0);
+                            } else {
+                                r = func_8001DC9C(p, e, 0, 1);
+                            }
+                        } else if (e[0] & 8) {
+                            r = func_8001E860(p, e, 0, 0);
+                        } else {
+                            r = func_8001DC9C(p, e, 0, 1);
+                        }
+                        if (!(r & 0x80)) {
+                            D_1F800182_5650 = 0;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
+}
+
 
 void func_8010A3C0(void)
 {
