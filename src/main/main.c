@@ -16154,7 +16154,53 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_UnlockWarpDestinationAndAreaDoor);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800783DC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80078610);
+void func_80078610(void)
+{
+    u8 *m = D_1F8000F8;
+    u8 *c = D_800E8008_f2dc;
+    u8 *t = (u8 *)D_800E7E80;
+    u8 *v;
+    s32 x, y, z;
+
+    f_SetIdentityMatrix(m);
+    f_SetIdentityMatrix(m + 0x20);
+    v = m - 0x28;
+    *(s16 *)(v + 0x1E) = -0x6D6;
+    *(s16 *)(v + 0x1C) = 0x1000;
+    *(s16 *)(v + 0x18) = 0;
+    *(s16 *)(v + 0x1A) = 0;
+    *(s16 *)(v + 0x20) = 0;
+    *(s16 *)(v + 0x22) = 0;
+    *(s16 *)(v + 0x24) = 0;
+    *(s16 *)(c + 0x70) = 0x400;
+    *(s32 *)(c + 0x58) = 0;
+    *(s32 *)(c + 0x20) = 0;
+    *(s32 *)(c + 0x24) = 0;
+    *(s32 *)(c + 0x28) = 0;
+    *(s32 *)(c + 0x14) = 0;
+    *(s32 *)(c + 0x18) = 0;
+    *(s16 *)(c + 0x6E) = 0x100;
+    y = *(s32 *)(t + 0x30);
+    x = *(s32 *)(t + 0x2C);
+    z = *(s32 *)(t + 0x34);
+    *(s16 *)(c + 0x6C) = 0x6D6;
+    *(s32 *)(v + 0x10) = y;
+    *(s32 *)(v + 0xC) = x;
+    *(s32 *)(v + 0x14) = z;
+    *(s32 *)(c + 8) = y;
+    *(s32 *)(c + 0x10) = z;
+    *(s32 *)(c + 0xC) = x;
+    *(s32 *)(v + 0) = x;
+    *(s32 *)(v + 4) = y - 0x1400000;
+    *(s32 *)(v + 8) = z - 0x6D60000;
+    f_RebuildCameraViewTransform(c, y - 0x1400000, x, z - 0x6D60000);
+    if (D_800BF870.unk0 == 3) {
+        D_801003F8 = 0xE9;
+    } else {
+        D_801003F8 = 0x15E;
+    }
+    SetGeomScreen(D_801003F8);
+}
 
 s32 func_80078738(u8 a, u8 b)
 {
