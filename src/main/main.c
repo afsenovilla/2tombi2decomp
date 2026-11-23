@@ -338,10 +338,108 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ApplyActiveColliderBlockingResponse)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ApplyActiveColliderImpactResponse);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8001EC3C);
-
 extern s32 D_1F80009C;
 extern u8 D_800BF816;
+extern s32 D_1F800098_bca3;
+extern u8 D_1F800253;
+s32 f_TestWrappedAngleSide(s32 a, s32 b, s32 flip);
+static inline void Supported_EC3C(u8 *a, u8 *b, s32 y)
+{
+    s32 c;
+    s32 d;
+    u16 k;
+
+    b[0x29] = 1;
+    a[0x29] = 1;
+    a[0x145] = 0;
+    *(s16 *)(a + 0x4A) = 0;
+    *(s16 *)(a + 0x50) = 0;
+    a[0x148] = 0;
+    *(s32 *)(a + 0x30) = y << 16;
+    if (a[0x78] == 0 && D_800BF816 == 0) {
+        if (*(s16 *)(a + 0x17E) >= 0) {
+            if (*(s16 *)(a + 0x84) != 0x8C) {
+                k = *(u16 *)(a + 0x84);
+                d = *(u16 *)(a + 0x32) - 0x8C;
+                *(u16 *)(a + 0x32) = k + d;
+            }
+        } else {
+            if (*(s16 *)(a + 0x84) != 0x46) {
+                k = *(u16 *)(a + 0x84);
+                d = *(u16 *)(a + 0x32) - 0x46;
+                *(u16 *)(a + 0x32) = k + d;
+            }
+        }
+    }
+}
+
+s32 func_8001EC3C(a, b)
+    u8 *a;
+    u8 *b;
+{
+    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(b + 0x2E);
+    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(b + 0x36);
+    s32 d = SquareRoot0(dx * dx + dz * dz);
+    s16 dy;
+    s16 h;
+    s16 h2;
+    s16 t;
+
+    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80)) {
+        return -1;
+    }
+    dy = *(u16 *)(a + 0x32) - *(u16 *)(b + 0x32);
+    t = *(u16 *)(b + 0x84) + *(u16 *)(a + 0x84);
+    if ((u16)(dy + t) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+        return -1;
+    }
+    if (dy < 0) {
+        dy = -dy;
+        h = t;
+        h2 = -t;
+    } else {
+        h = (*(u16 *)(b + 0x86) - *(u16 *)(b + 0x84)) + (*(u16 *)(a + 0x86) - *(u16 *)(a + 0x84));
+        h2 = h;
+    }
+    D_1F80009C = ratan2(-dz, dx);
+    if (h2 < 0 && h - dy < 0x1A) {
+        if (a[0x145] & 1) {
+            return -1;
+        }
+        Supported_EC3C(a, b, *(s16 *)(b + 0x32) + h2);
+        return 2;
+    }
+    if (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) - (s16)d < h - dy) {
+        if (!(a[0] & 4)) {
+            s32 c = (rcos(D_1F80009C) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80))) >> 12;
+            s32 t = rsin(D_1F80009C) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80));
+            *(u16 *)(a + 0x2E) = *(u16 *)(b + 0x2E) + c;
+            *(u16 *)(a + 0x36) = *(u16 *)(b + 0x36) - (t >> 12);
+        }
+        if (h - dy >= 0x92) {
+            a[0x60] = 1;
+        }
+        a[0x5F] = f_TestWrappedAngleSide(*(s16 *)&D_1F80009C, *(s16 *)(a + 0x140), 1) + 2;
+        return 1;
+    }
+    if (h2 <= 0) {
+        if (a[0x145] & 1) {
+            return -1;
+        }
+        Supported_EC3C(a, b, *(s16 *)(b + 0x32) + h2);
+        return 2;
+    }
+    if (D_1F800098_bca3 != 0) {
+        return 3;
+    }
+    D_1F800253 = 4;
+    *(s32 *)(a + 0x30) = (MEMBER_AT(s16, b, 0x32) + h2) << 16;
+    if (a[0x145] == 1 && *(s16 *)(a + 0x4A) < 0) {
+        *(s16 *)(a + 0x4A) = 0;
+    }
+    return 3;
+}
+
 s32 f_TestWrappedAngleSide(s32 a, s32 b, s32 flip);
 static inline void Supported_F054(u8 *a, s32 y)
 {
@@ -426,8 +524,6 @@ s32 func_8001F054(u8 *a, u8 *b)
     return 2;
 }
 
-extern s32 D_1F800098_bca3;
-extern u8 D_1F800253;
 
 s32 f_ClassifyTombaActorCylinderContact(u8 *a, u8 *b, s32 mode)
 {
