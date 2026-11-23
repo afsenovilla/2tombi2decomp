@@ -4477,7 +4477,154 @@ void func_8012FDEC(u8 *a)
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012FF00);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", f_UpdateClosedClamshellQuestActor);
+/* tools/dispatch.py draft of f_UpdateClosedClamshellQuestActor (a08, 0x2fc bytes): 3 inlined bodies
+ * register maps (body -> here): 
+ *   inl_8013073C (a08:func_8013073C, cover 0.95, regs 0.98): s0->s1
+ *   inl_80130500 (a08:func_80130500, cover 0.90, regs 0.96): s0->s1
+ *   inl_8013080C (a08:func_8013080C, cover 0.90, regs 0.92): s0->s1
+ * notes:
+ *   inl_8013073C: replaces 80130164-80130210
+ *   inl_80130500: the copy at 80130234 branches out to .L80130344: a value-returning helper used in a condition (beqz on its result stands in for each exit; check which result goes where)
+ *   inl_80130500: replaces 80130234-801302C0
+ *   inl_8013080C: code inside the copy is also reached from outside (.L8013033C 8013033C, .L80130344 80130344: a tail gcc cross-jumped, or a case entering it): that path is missing from the draft; write it out in full (gcc merges the identical tails again), from tools/decomp.py's draft
+ *   inl_8013080C: replaces 801302C4-80130348
+ * next: fix the draft's types and the helper calls' arguments, then
+ *   python3 -I tools/ccheck.py THIS.c --prog a08 --func f_UpdateClosedClamshellQuestActor --sbs
+ *   python3 -I tools/install_c.py THIS.c --prog a08 */
+
+extern u8 D_80148E68[];
+extern s32 D_800ECF94;
+extern s32 D_800ECFA4;
+extern s32 D_800ECFA8;
+extern M2C_UNK D_8014168C;
+extern s32 D_800ECFA4;
+extern s32 D_800ECF94;
+extern s32 D_800ECFA8;
+/* func_8013073C, inlined */
+static inline void inl_8013073C(u8 *a)
+{
+    u8 *g;
+
+    *(s32 *)(a + 0x14) = func_80124A48(a);
+    func_80040CDC(a, D_80148E68, D_800A3D40);
+    func_80041718(a, 1, 0);
+    *(s16 *)(a + 0x56) = 0x140;
+    g = (u8 *)&D_800BF870;
+    if (g[0x88] == 0xFF) {
+        a[0x5E] = 3;
+    } else if (g[0x88] == 0) {
+        a[0x5E] = 0;
+        a[0] = 2;
+    } else if (g[0x267]) {
+        a[0x5E] = 2;
+        a[0] = 2;
+    } else {
+        a[0x5E] = 1;
+        a[0] = 2;
+    }
+    *(s16 *)(a + 0x80) = 0xAE;
+    *(s16 *)(a + 0x82) = 0x15C;
+    *(s16 *)(a + 0x84) = 0x96;
+    *(s16 *)(a + 0x86) = 0x12C;
+}
+/* func_80130500, inlined */
+static inline void inl_80130500(void *arg0) {
+    u8 temp_v1;
+
+    func_8007778C(arg0);
+    func_80041098(arg0);
+    func_8004190C(arg0);
+    temp_v1 = M2C_FIELD(arg0, u8 *, 5);
+    switch (temp_v1) {                               
+    case 0:
+        func_8013036C(arg0);
+        break;
+    case 1:
+        func_80130424(arg0);
+        break;
+    case 2:
+        func_80130484(arg0);
+        break;
+    }
+    if (M2C_FIELD(arg0, u8 *, 1) != 0) {
+        func_800518FC(arg0);
+    }
+}
+/* func_8013080C, inlined */
+static inline void inl_8013080C(void *arg0) {
+    u8 temp_v1;
+
+    M2C_FIELD(arg0, s8 *, 1) = 1;
+    func_80077E7C(arg0);
+    func_80041098(arg0);
+    func_8004190C(arg0);
+    temp_v1 = M2C_FIELD(arg0, u8 *, 5);
+    switch (temp_v1) {                               
+    case 0:
+        func_801305AC(arg0);
+        break;
+    case 1:
+        func_80130644(arg0);
+        break;
+    case 2:
+        func_801306A4(arg0);
+        break;
+    }
+    func_800518FC(arg0);
+}
+
+void f_UpdateClosedClamshellQuestActor(u8 *a)
+{
+    s32 v;
+    s32 k;
+    s32 m;
+    s32 v_f;
+
+    switch (a[4]) {
+    case 0:
+        if (a[3] == 0) {
+            v = func_800519E0(a, 0xB, D_800ECFA4, &D_8014168C);
+        } else {
+            v = func_800519E0(a, 0xB, D_800ECF94, &D_8014168C);
+        }
+        if (v == 0) {
+            v_f = D_800ECFA8;
+            a[0] = 9;
+            k = a[3];
+            a[0x2B] = 0;
+            a[0x29] = 0;
+            M2C_FIELD(a, s16 *, 0x54) = 0;
+            M2C_FIELD(a, s16 *, 0x58) = 0;
+            M2C_FIELD(a, s32 *, 0x3C) = v_f;
+            a[4]++;
+            switch (k) {
+            case 0:
+                func_8012FDEC(a);
+                break;
+            case 1:
+                inl_8013073C(a);
+                break;
+            }
+        }
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            inl_80130500(a);
+            break;
+        case 1:
+            inl_8013080C(a);
+            break;
+        }
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013036C);
 
