@@ -614,7 +614,49 @@ void func_8010D134(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8010D288);
+extern s32 D_1F800088;
+extern u8 *D_1F800084;
+
+s32 func_8010D288(u8 *a, u8 *b, u8 *c)
+{
+    s16 dx = *(u16 *)(a + 0x14C) - *(u16 *)(c + 0x2C);
+    s16 dz = *(u16 *)(a + 0x150) - *(u16 *)(c + 0x34);
+    u16 d = func_80084080(dx * dx + dz * dz);
+    u16 cy;
+    s16 t;
+    u16 h;
+
+    if (*(s16 *)(b + 0x80) + D_1F800088 < d) {
+        return 0;
+    }
+    {
+        s32 k = *(u16 *)(a + 0x14E);
+        cy = *(u16 *)(c + 0x30);
+        k = k - cy + 0x64;
+        h = *(volatile u16 *)(a + 0x68);
+        k = (u16)(h + k);
+        if ((s16)h + 0xC8 < k) {
+            return 0;
+        }
+    }
+    t = *(u16 *)(a + 0x32) - cy;
+    if ((u16)(t + 0x3C) >= 0x51) {
+        if (t < 0) {
+            *(s16 *)(a + 0x156) = -0x3C;
+        } else {
+            *(s16 *)(a + 0x156) = 0x14;
+        }
+    } else {
+        *(s16 *)(a + 0x156) = t;
+    }
+    D_1F800084 = c;
+    {
+        u16 w = *(u16 *)(b + 0x80);
+        D_1F800182_5650 = 0;
+        *(s16 *)(a + 0x152) = w + 0x1E;
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8010D3BC);
 
@@ -675,12 +717,49 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8010E3DC);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8010E548);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8010E7D4);
+s32 func_8010E7D4(u8 *a, u8 *b, u8 *c)
+{
+    s16 dx = *(u16 *)(a + 0x14C) - *(u16 *)(c + 0x2C);
+    s16 dz = *(u16 *)(a + 0x150) - *(u16 *)(c + 0x34);
+    u16 d = func_80084080(dx * dx + dz * dz);
+    u16 cy;
+    s16 t;
+    u16 h;
+
+    if (*(s16 *)(b + 0x80) + D_1F800088 < d) {
+        return 0;
+    }
+    {
+        s32 k = *(u16 *)(a + 0x14E);
+        cy = *(u16 *)(c + 0x30);
+        k = k - cy + 0x8C;
+        h = *(volatile u16 *)(a + 0x68);
+        k = (u16)(h + k);
+        if ((s16)h + 0x118 < k) {
+            return 0;
+        }
+    }
+    t = *(u16 *)(a + 0x32) - cy;
+    if ((u16)(t + 0x3C) >= 0x51) {
+        if (t < 0) {
+            *(s16 *)(a + 0x156) = -0x3C;
+        } else {
+            *(s16 *)(a + 0x156) = 0x14;
+        }
+    } else {
+        *(s16 *)(a + 0x156) = t;
+    }
+    D_1F800084 = c;
+    {
+        u16 w = *(u16 *)(b + 0x80);
+        D_1F800182_5650 = 0;
+        *(s16 *)(a + 0x152) = w + 0x1E;
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8010E908);
 
-extern s32 D_1F800088;
-extern u8 *D_1F800084;
 s32 func_8010ED04(u8 *a, u8 *b, u8 *c) {
     s16 rad, ox, oz, dx, dz;
     u16 r, ah, ay;
