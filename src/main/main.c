@@ -7815,7 +7815,40 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTerrainProbeSurfaceBySideMask
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ClassifyActorDirectionalTerrainContact);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveActorAreaPlanePosition);
+extern s16 D_1F8001C2;
+extern s16 D_1F8001C6;
+extern u16 *D_1F8001E0;
+void f_SelectAreaPlaneCollisionTables(u8 i);
+
+s32 f_ResolveActorAreaPlanePosition(u8 *a)
+{
+    s32 r;
+    s16 x, z;
+
+    *(s16 *)D_1F8001BC = *(s16 *)(a + 0x2E);
+    *(s16 *)D_1F8001BE = *(s16 *)(a + 0x32);
+    *(s16 *)D_1F8001C0 = *(s16 *)(a + 0x36);
+    do {
+        r = f_ProjectActorOntoAreaPlane(a);
+        f_SelectAreaPlaneCollisionTables(a[0x2A]);
+        if (f_FindAreaPlaneCollisionCell() == 0) {
+            return 0;
+        }
+        if (!(*D_1F8001E0 & 0x4000)) {
+            break;
+        }
+        a[0x2A] = *(u8 *)D_1F8001E0;
+    } while (*D_1F8001E0 & 0x4000);
+    f_ComputeAreaPlaneCellCorrection();
+    f_SelectAreaPlaneVerticalProfile();
+    x = *(s16 *)D_1F8001BC + D_1F8001C2;
+    z = *(s16 *)D_1F8001C0 + D_1F8001C6;
+    *(s16 *)D_1F8001BC = x;
+    *(s16 *)D_1F8001C0 = z;
+    *(s16 *)(a + 0x2E) = x;
+    *(s16 *)(a + 0x36) = z;
+    return r;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ProjectActorOntoAreaPlane);
 
@@ -8001,7 +8034,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80049800);
 
 typedef struct { u8 on; u8 flags; u8 pad[10]; } SpuVoiceSlot_238;
 extern SpuVoiceSlot_238 D_800BE238_df3f[];
-extern u16 *D_1F8001E0;
 extern s16 D_800BED80;
 extern s32 D_800BED78;
 typedef struct { s16 h0; s16 y; u8 pad[0x88]; } PopupLine_474;
