@@ -3404,7 +3404,56 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011BC3C);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011BDB8);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseSceneActor);
+#define KSH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define KSW(p, o) (*(s32 *)((u8 *)(p) + (o)))
+extern u8 D_800BF9E0;
+
+void f_UpdateKainenHouseSceneActor(u8 *a) {
+    s32 r;
+
+    if (func_8007778C(a) == 0) {
+        return;
+    }
+    r = func_80077B5C(a);
+    switch (a[5]) {
+    case 0:
+        func_80077B38(a, D_8014C808, 0xB);
+        a[5]++;
+        break;
+    case 1:
+        if (r != 0) {
+            KSH(a, 0x4A) = -((func_8009A450() & 0x7FF) + 0x2600);
+            a[5]++;
+        }
+        break;
+    case 2:
+        KSW(a, 0x30) += KSH(a, 0x4A) << 8;
+        KSH(a, 0x4A) += 0x400;
+        if (KSH(a, 0x32) >= -0x7BC) {
+            KSH(a, 0x32) = -0x7BC;
+            func_80077B38(a, D_8014C808, 0xA);
+            a[5]++;
+        }
+        break;
+    case 3:
+        if (r != 0) {
+            KSH(a, 0x40) = func_8009A450() & 0x1F;
+            a[5]++;
+        }
+        break;
+    case 4:
+        if (D_800BF9E0 >= 0x11) {
+            func_80077B38(a, D_8014C808, 7);
+            a[5]++;
+        } else if (--KSH(a, 0x40) <= 0) {
+            a[5] = 0;
+        }
+        break;
+    }
+    if (D_800BF9E0 >= 0x12) {
+        a[4] = 3;
+    }
+}
 
 void func_8011C090(u8 *a) {
     GameState *g;
@@ -7703,7 +7752,6 @@ void func_8013C1DC(u8 *a)
     }
 }
 
-extern u8 D_800BF9E0;
 extern u8 D_8014AC18[];
 extern u8 D_8014AF20[];
 void f_UpdateKainenHouseProgressEffectActor(u8 *a)
