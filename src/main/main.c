@@ -6925,7 +6925,42 @@ s32 func_80042884(void) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80042894);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80042A8C);
+extern s16 D_1F800160_71b4;
+extern s16 D_1F800162_a8d4;
+extern s16 D_1F800164_d75f;
+void f_RestorePreviousCameraMode(void);
+void f_SetCameraMode(u8 mode);
+
+s32 func_80042A8C(u8 *a)
+{
+    u8 *c = D_800E8008_f2dc;
+
+    c[0x66] = 0;
+    switch (*(s16 *)(a + 0x72)) {
+    case -1:
+        f_RestorePreviousCameraMode();
+        return 1;
+    case 0:
+        ((void (*)(s32))f_SetCameraMode)(*(s16 *)(a + 0x74));
+        break;
+    case 1:
+        c[0x64] = a[0x74];
+        break;
+    }
+    switch (*(s16 *)(a + 0x76)) {
+    case 0:
+        *(s32 *)(c + 0x38) = *(s16 *)(a + 0x64) << 16;
+        *(s32 *)(c + 0x3C) = *(s16 *)(a + 0x66) << 16;
+        *(s32 *)(c + 0x40) = *(s16 *)(a + 0x68) << 16;
+        break;
+    case 1:
+        *(s32 *)(c + 0x38) = D_1F800160_71b4 << 16;
+        *(s32 *)(c + 0x3C) = (D_1F800162_a8d4 - 0x8C) << 16;
+        *(s32 *)(c + 0x40) = D_1F800164_d75f << 16;
+        break;
+    }
+    return 1;
+}
 
 s32 func_80042BAC(u16 *p)
 {
@@ -6940,7 +6975,53 @@ s32 func_80042BAC(u16 *p)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80042BDC);
+extern u8 D_800E7FC7;
+extern u16 D_800E7FC0;
+
+s32 func_80042BDC(u8 *a)
+{
+    u8 *c = D_800E8008_f2dc;
+    s32 d;
+    s16 v;
+
+    if (*(s16 *)(a + 0x72) == 0) {
+        f_SetCameraMode(1);
+    } else {
+        c[0x64] = 1;
+    }
+    *(s16 *)(c + 0x6E) = 0x130;
+    *(s32 *)(c + 0x38) = D_1F800160_71b4 << 16;
+    *(s32 *)(c + 0x3C) = (D_1F800162_a8d4 - 0x8C) << 16;
+    *(s32 *)(c + 0x40) = D_1F800164_d75f << 16;
+    switch (*(s16 *)(a + 0x74)) {
+    case 0:
+        d = 0x240;
+        break;
+    case 3:
+        d = -0x180;
+        break;
+    case 1:
+        d = 0x180;
+        break;
+    case 2:
+        d = 0x180;
+        break;
+    default:
+        d = 0x180;
+        break;
+    }
+    if (*(s16 *)(a + 0x74) < 2 && D_800E7FC7 != 0) {
+        d = -d;
+    }
+    *(s16 *)(c + 0x70) = d + (D_800E7FC0 + *(u16 *)(c + 0x52));
+    v = *(u16 *)(a + 0x76);
+    *(s16 *)(c + 0x6C) = v;
+    if (v == 0) {
+        *(s16 *)(c + 0x6C) = 0x480;
+    }
+    c[0x66] = 0;
+    return 1;
+}
 
 s32 func_80042D28(u8 *a)
 {
@@ -8999,7 +9080,6 @@ void func_8004DF94(u8 *a)
 }
 
 extern u8 D_1F800207_9c67;
-extern s16 D_1F800164_d75f;
 s32 func_8004E29C(u8 *a)
 {
     switch (*(s16 *)(a + 0x60)) {
