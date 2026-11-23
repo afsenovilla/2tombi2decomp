@@ -4352,7 +4352,41 @@ void func_80033278(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80033380);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80033450);
+extern s32 D_800A2068[];
+
+void func_80033450(u8 *a)
+{
+    s32 one = 1;
+
+    switch (a[4]) {
+    case 0:
+        *(s32 *)(a + 0x5C) = 0xC010C;
+        a[4] = one;
+        a[5] = 0;
+        *(s32 *)(a + 0x58) = 0;
+        *(s32 *)(a + 0x60) = 0x1000;
+    case 1:
+        a[5]++;
+        *(s32 *)(a + 0x64) = D_800A2068[a[5]];
+        if (a[5] < 4) {
+            *(s32 *)(a + 0x5C) += *(s32 *)(a + 0x60);
+            *(s32 *)(a + 0x60) -= 0x300;
+            *(s32 *)(a + 0x58) += 0xCC;
+        } else if (a[5] < 16) {
+            *(s32 *)(a + 0x5C) += 0x200;
+            *(s32 *)(a + 0x58) += 0x174;
+        } else {
+            a[4] = 2;
+            break;
+        }
+        a[1] = 1;
+        break;
+    case 2:
+    case 3:
+        f_ResolveEffectEightByteStreamPayload();
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80033560);
 
@@ -11950,7 +11984,45 @@ end:
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006032C);
+extern u8 D_800A46F0[];
+
+void func_8006032C(u8 *a, s32 keep)
+{
+    s16 r;
+    u8 v;
+
+    switch (a[0x169]) {
+    case 0:
+        break;
+    case 1:
+        r = D_1F800238 % 6;
+        if (r == 0) {
+            a[0x168] = a[0x168] + 1;
+        } else {
+            if (r >= 5) {
+                r = 4;
+            }
+            a[0x168] = r + a[0x168];
+        }
+        if (a[0x168] >= 0x10) {
+            a[0x168] = 0xF;
+        }
+        break;
+    case 2:
+    case 3:
+        v = a[0x168] - 2;
+        a[0x168] = v;
+        if ((s8)v < 0) {
+            a[0x168] = 0;
+        }
+        break;
+    }
+    if (keep == 0) {
+        a[0x169] = 0;
+    }
+    D_1F800238 = 0;
+    *(s16 *)(a + 0x44) = D_800A46F0[a[0x168]];
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006042C);
 
