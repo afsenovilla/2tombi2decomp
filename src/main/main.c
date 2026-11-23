@@ -340,12 +340,148 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ApplyActiveColliderImpactResponse);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8001EC3C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8001F054);
+extern s32 D_1F80009C;
+extern u8 D_800BF816;
+s32 f_TestWrappedAngleSide(s32 a, s32 b, s32 flip);
+static inline void Supported_F054(u8 *a, s32 y)
+{
+    s32 c;
+    s32 d;
+    u16 k;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ClassifyTombaActorCylinderContact);
+    a[0x29] = 1;
+    a[0x145] = 0;
+    *(s16 *)(a + 0x4A) = 0;
+    *(s16 *)(a + 0x50) = 0;
+    a[0x148] = 0;
+    *(s32 *)(a + 0x30) = y << 16;
+    if (a[0x78] == 0 && D_800BF816 == 0) {
+        if (*(s16 *)(a + 0x17E) >= 0) {
+            if (*(s16 *)(a + 0x84) != 0x8C) {
+                k = *(u16 *)(a + 0x84);
+                d = *(u16 *)(a + 0x32) - 0x8C;
+                *(u16 *)(a + 0x32) = k + d;
+            }
+        } else {
+            if (*(s16 *)(a + 0x84) != 0x46) {
+                k = *(u16 *)(a + 0x84);
+                d = *(u16 *)(a + 0x32) - 0x46;
+                *(u16 *)(a + 0x32) = k + d;
+            }
+        }
+    }
+}
+
+s32 func_8001F054(u8 *a, u8 *b)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(b + 0x2E);
+    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(b + 0x36);
+    s32 d = SquareRoot0(dx * dx + dz * dz);
+    s16 dy;
+    s16 h;
+    s16 h2;
+    s16 t;
+
+    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80)) {
+        return -1;
+    }
+    dy = *(u16 *)(a + 0x32) - *(u16 *)(b + 0x32);
+    t = *(u16 *)(b + 0x84) + *(u16 *)(a + 0x84);
+    if ((u16)(dy + t) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+        return -1;
+    }
+    if (dy < 0) {
+        dy = -dy;
+        h = t;
+        h2 = -t;
+    } else {
+        h = (*(u16 *)(b + 0x86) - *(u16 *)(b + 0x84)) + (*(u16 *)(a + 0x86) - *(u16 *)(a + 0x84));
+        h2 = h;
+    }
+    D_1F80009C = ratan2(-dz, dx);
+    if (h2 < 0 && h - dy < 0x1A) {
+        if (a[0x145] & 1) {
+            return -1;
+        }
+        Supported_F054(a, *(s16 *)(b + 0x32) + h2);
+        return 2;
+    }
+    if (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) - (s16)d < h - dy) {
+        if (!(a[0] & 4)) {
+            s32 c = (rcos(D_1F80009C) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80))) >> 12;
+            s32 t = rsin(D_1F80009C) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80));
+            *(u16 *)(a + 0x2E) = *(u16 *)(b + 0x2E) + c;
+            *(u16 *)(a + 0x36) = *(u16 *)(b + 0x36) - (t >> 12);
+        }
+        if (h - dy >= 0x92) {
+            a[0x60] = 1;
+        }
+        a[0x5F] = f_TestWrappedAngleSide(*(s16 *)&D_1F80009C, *(s16 *)(a + 0x140), 1) + 2;
+        return 1;
+    }
+    if (a[0x145] & 1) {
+        return -1;
+    }
+    Supported_F054(a, *(s16 *)(b + 0x32) + h2);
+    return 2;
+}
+
+extern s32 D_1F800098_bca3;
+extern u8 D_1F800253;
+
+s32 f_ClassifyTombaActorCylinderContact(u8 *a, u8 *b, s32 mode)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(b + 0x2E);
+    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(b + 0x36);
+    s32 d = SquareRoot0(dx * dx + dz * dz);
+    s16 dy;
+    s16 h;
+    s16 e;
+    s16 k;
+    s16 y0;
+    s16 t;
+
+    if ((u16)d > *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80)) {
+        return -1;
+    }
+    dy = *(u16 *)(a + 0x32) - *(u16 *)(b + 0x32);
+    h = *(u16 *)(b + 0x84) + *(u16 *)(a + 0x84);
+    if ((u16)(dy + h) > *(s16 *)(a + 0x86) + *(s16 *)(b + 0x86)) {
+        return -1;
+    }
+    D_1F80009C = ratan2(-dz, dx);
+    y0 = dy;
+    e = MEMBER_AT(u16, a, 0x80) + MEMBER_AT(u16, b, 0x80) - d;
+    if (dy < 0) {
+        dy = -dy;
+    } else {
+        h = (*(u16 *)(b + 0x86) - *(u16 *)(b + 0x84)) + (*(u16 *)(a + 0x86) - *(u16 *)(a + 0x84));
+    }
+    t = h - dy;
+    if (y0 < -((k = *(u16 *)(a + 0x84)) / 2)) {
+        return e >= t;
+    }
+    if (e < t) {
+        return 2;
+    }
+    if (*(u16 *)(a + 0x17E) & 0x200) {
+        return 3;
+    }
+    if (D_1F800098_bca3 != 0) {
+        return 3;
+    }
+    if (mode != 0) {
+        return 3;
+    }
+    D_1F800253 = 4;
+    *(u16 *)(a + 0x32) = *(u16 *)(b + 0x32) + (MEMBER_AT(u16, b, 0x86) - MEMBER_AT(u16, b, 0x84)) + (*(u16 *)(a + 0x86) - k);
+    if (a[0x145] == 1 && *(s16 *)(a + 0x4A) < 0) {
+        *(s16 *)(a + 0x4A) = 0;
+    }
+    return 3;
+}
 
 extern s8 D_1F800182[];
-extern s32 D_1F80009C;
 /* f_TestActorAgainstPartCylinderBounds, inlined */
 static inline s32 TestPartCyl_2AC8(u8 *a, u8 *b, u8 *p)
 {
@@ -522,7 +658,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaActorImpactResponse);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaConfiguredActorContact);
 
-extern u8 D_800BF816;
 s32 f_TestWrappedAngleSide(s32 a, s32 b, s32 flip);
 /* f_ApplyTombaSupportedContactState, inlined */
 static inline void Supported_05B4(u8 *a)
@@ -2855,7 +2990,56 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B8F4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002BAFC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002BC9C);
+extern u8 D_800A1CD4[];
+#define gte_ldv0_58(r0) __asm__ volatile("lwc2 $0, 0x58(%0); lwc2 $1, 0x5C(%0)" : : "r"(r0))
+
+void func_8002BC9C(u8 *a)
+{
+    s32 *otz = (s32 *)D_1F800084;
+    s32 *o2 = &D_1F800088;
+    u8 *p;
+    u8 *m;
+    s32 b;
+    s32 i;
+    s32 d;
+
+    *(s32 *)D_1F800090 = 0;
+    p = *(u8 **)(a + 0x3C);
+    if (p != NULL) {
+        b = p[0];
+        if (b & 0x80) {
+            *(s32 *)(a + 0x40) = 0;
+            b &= 0x7F;
+        } else {
+            *(u8 **)(a + 0x40) = p + 1;
+        }
+        m = (*(u8 ***)(a + 0x50))[b];
+        gte_ldfcdir(0, 0, 0);
+        for (i = 0; i < 4; i++) {
+            SetRT_C138(a + 0x2C, D_800A1CD4, (s16 *)(a + 0x48));
+            f_DrawPackedGouraudQuadStream(m, 0, *(s16 *)(a + 0x32), 0);
+            *(u16 *)(a + 0x4A) += 0x400;
+        }
+    }
+    if ((u32)(a[3] - 0x14) < 2) {
+        d = *(s32 *)(a + 0x34);
+        if (d == 0) {
+            return;
+        }
+        SetProj_7CB4(6);
+        gte_ldv0_58(a);
+        if (ProjZ(a)) {
+            func_80031780(a);
+            return;
+        }
+        {
+            s32 k = (*(u16 *)(a + 0x46) << 16) | *(u16 *)(a + 0x44);
+
+            *o2 = *otz;
+            *(s32 *)(a + 0x38) = f_DrawProjectedSpriteDefinitionStream(d, k);
+        }
+    }
+}
 
 extern u8 D_8009F05C[];
 void func_8002C138(u8 *a)
