@@ -4679,7 +4679,54 @@ s32 func_801216E0(s32 arg0) {
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801217A0);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80121948);
+extern void *D_8012C248[];
+extern u8 D_800BF9DA;
+extern u8 D_8012BFC8[];
+
+void func_80121948(u8 *a) {
+    u8 *g;
+
+    if (a[0x2B] == 3) {
+        switch (a[0x5E]) {
+        case 2:
+            D_800BF9DA = 1;
+        case 0:
+            func_80040D68(a, D_8012BFC8);
+            a[0x70] = 1;
+            a[5] = 1;
+            break;
+        case 1:
+        case 4:
+        case 5:
+            func_80040D68(a, D_800A3CC0);
+            a[0x70] = 1;
+            a[5] = 1;
+            break;
+        case 3:
+            func_80040D68(a, D_8012C248[a[0x5E]]);
+            a[0x70] = 1;
+            a[5] = 2;
+            D_800BF9DA = 2;
+            break;
+        default:
+            a[0x70] = 1;
+            a[5] = 1;
+            break;
+        }
+    } else {
+        g = (u8 *)&D_800BF870;
+        if (g[0x16A] == 1) {
+            func_80040D68(a, D_8012C248[a[0x5E]]);
+            a[0x70] = 1;
+            a[5] = 2;
+            g[0x16A] = 2;
+        } else if (g[0x16A] == 2) {
+            func_80040D68(a, D_8012BFC8);
+            a[0x70] = 1;
+            a[5] = 1;
+        }
+    }
+}
 
 void func_80121BB4(u8 *a);
 void func_80121C10(u8 *a);
@@ -4715,7 +4762,6 @@ void func_80121AA4(u8 *a) {
     }
 }
 
-extern void *D_8012C248[];
 void func_80121BB4(u8 *a)
 {
     if (a[0x71] == 0xFF) {
@@ -4725,7 +4771,6 @@ void func_80121BB4(u8 *a)
     }
 }
 
-extern u8 D_800BF9DA;
 void func_80121C10(u8 *a) {
     if (a[0x71] == 0xFF) {
         switch (a[0x5E]) {
