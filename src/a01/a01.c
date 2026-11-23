@@ -3670,7 +3670,93 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011C6E4);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011C854);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011C998);
+#define QH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define QU(p, o) (*(u16 *)((u8 *)(p) + (o)))
+
+void func_8011C998(u8 *a) {
+    SV3 v;
+    SV3 w;
+    s32 r;
+    s16 s;
+    s32 k, k3, r1;
+    u8 *q;
+
+    switch (a[6]) {
+    case 0:
+        r = func_8009A450() & 0xF;
+        if (r < 4) {
+            QH(a, 0x40) = 0x3C;
+        } else if (r < 0xB) {
+            QH(a, 0x40) = 0x5A;
+        } else {
+            QH(a, 0x40) = 0x96;
+        }
+        QH(a, 0x42) = 0xA;
+        QH(a, 0x70) = QH(a, 0x40);
+        func_80074590(0x89, 0, 0);
+        func_80074590(0x8A, 0, 0);
+        a[6]++;
+        break;
+    case 1:
+        func_8011CF9C(a, 0);
+        if (--QH(a, 0x42) == 0) {
+            v.x = QH(*(u8 **)(a + 0xCC), 0x2C) + QH(a, 0x60) * 2;
+            v.y = QH(*(u8 **)(a + 0xCC), 0x30) + QH(a, 0x62) * 2;
+            v.z = QH(*(u8 **)(a + 0xCC), 0x34) + QH(a, 0x64) * 2;
+            k = QU(a, 0x6C) << 9;
+            r1 = func_8009A450() & 0x3F;
+            k -= 0x1F;
+            s = k + r1;
+            w.y = -func_80083E80(s) >> 4;
+            s = func_80083F50(s) >> 8;
+            w.x = (func_80083F50(QH(a, 0x56)) * s) >> 8;
+            w.z = (-func_80083E80(QH(a, 0x56)) * s) >> 8;
+            w.x *= 32;
+            w.y *= 32;
+            w.z *= 32;
+            q = func_80133CAC(1, a, &v, &w);
+            if (q != NULL) {
+                q[0x5E] = a[0x6C];
+            }
+            QH(a, 0x42) = 4;
+        }
+        if (!(QH(a, 0x40) & 0x1F)) {
+            func_80074590(0x8A, 0, 0);
+        }
+        if (--QH(a, 0x40) == 0) {
+            func_8011DE34(a, 0x12, 4, 3);
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (QH(a, 0x6A) == 1) {
+            func_8011DE34(a, 1, 4, 3);
+            a[6]++;
+        }
+        break;
+    case 3:
+        k3 = QH(a, 0x6A);
+        if (k3 == 1) {
+            func_8011DE34(a, 0xF, 0xC, 3);
+            a[0x5E] = k3;
+            func_8011DC4C(a, 5);
+            QH(a, 0x40) = QH(a, 0x70) + 0x5A;
+            a[6]++;
+        }
+        break;
+    case 4:
+        func_80076D68(a);
+        if (--QH(a, 0x40) == 0) {
+            func_8011DE34(a, 0, 0xC, 3);
+            func_8011DC4C(a, 2);
+            a[0x5E] = 0;
+            QH(a, 0x6C) = 0xFF;
+            a[5] = 0;
+            a[6] = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateAnemoneCaptureSequence);
 
