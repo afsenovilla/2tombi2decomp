@@ -4994,7 +4994,215 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AnimateWindmillCollapseOpening);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AnimateWindmillCollapseMainSequence);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AnimateWindmillCollapseFinale);
+#define CH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define CPART(a, i) (((PartsOwner *)(a))->parts[i])
+typedef struct { s16 pad0, pad2, y, pad6, x8, xA, xC, padE; } CollapseT;
+extern u8 D_80149F84[];
+extern CollapseT D_80149F90[];
+
+void f_AnimateWindmillCollapseFinale(u8 *a) {
+    s16 v[6];
+    u8 *e = D_800E8008;
+    u8 *p;
+    s32 i, n, k;
+    s16 t;
+
+    switch (a[6]) {
+    case 0:
+        i = 2;
+        if (D_800BF9DE >= 0x15) {
+            a[6] = 6;
+            break;
+        }
+        a[6]++;
+        for (; i < a[8] - 2; i++) {
+            p = CPART(a, i);
+            CH(p, 2) = 0xBB8;
+        }
+        break;
+    case 1:
+        i = 2;
+        if (D_800BF9DE == 0x11) {
+            a[6]++;
+            for (; i < a[8] - 2; i++) {
+                p = CPART(a, i);
+                CH(p, 2) = -0xBB8;
+                CH(p, 0x12) = 0;
+                CH(p, 0x10) = 1;
+                CH(p, 0x16) = 0;
+                CH(p, 0x14) = 0x40;
+            }
+            CH(a, 0x40) = 2;
+            CH(a, 0x42) = 0;
+            a[0x2B] = 0;
+            CH(a, 0x60) = 0;
+        }
+        break;
+    case 2:
+        i = 2;
+        if (D_800BF9DE >= 0x12) {
+            for (; i <= CH(a, 0x40); i++) {
+                if (i >= a[8] - 2) {
+                    break;
+                }
+                p = CPART(a, D_80149F84[i]);
+                CH(p, 2) += CH(p, 0x12);
+                CH(p, 0x12) += CH(p, 0x10);
+                CH(p, 0xC) += 0x40;
+                if (CH(p, 2) > D_80149F90[D_80149F84[i]].y) {
+                    CH(p, 2) = D_80149F90[D_80149F84[i]].y;
+                }
+            }
+            if (!(++CH(a, 0x42) & 3)) {
+                CH(a, 0x40)++;
+            }
+            i = 2;
+            if (D_800BF9DE == 0x13) {
+                a[6]++;
+                for (; i < a[8] - 2; i++) {
+                    p = CPART(a, i);
+                    CH(p, 2) = -0x960;
+                    CH(p, 0x12) = 0x10;
+                    CH(p, 0x10) = 2;
+                    CH(p, 0x16) = 0;
+                    CH(p, 0x14) = 0x40;
+                    CH(p, 8) = D_80149F90[i].x8;
+                    CH(p, 0xA) = D_80149F90[i].xA;
+                    CH(p, 0xC) = D_80149F90[i].xC;
+                }
+                CH(a, 0x40) = 2;
+                CH(a, 0x42) = 0;
+                a[0x2B] = 0;
+                CH(a, 0x60) = 0;
+                CH(a, 0x62) = 0x1F;
+            }
+        }
+        break;
+    case 3:
+        i = 2;
+        a[0x2B] = 0;
+        if (i <= CH(a, 0x40)) {
+            for (; i <= CH(a, 0x40); i++) {
+                if (i >= a[8] - 2) {
+                    break;
+                }
+                p = CPART(a, i);
+                CH(p, 2) += CH(p, 0x12);
+                CH(p, 0x12) += CH(p, 0x10);
+                if (CH(p, 2) > D_80149F90[i].y) {
+                    CH(p, 2) = D_80149F90[i].y;
+                    if (CH(p, 0x16) == 0) {
+                        func_80074590(0x85, -0xA, 0x1B);
+                        if (i < 6) {
+                            {
+                                s32 j, ang, x, s, c2;
+                                u8 *q;
+
+                                ang = 0x400;
+                                for (j = 0; j < 5; j++) {
+                                    x = (s16)ang;
+                                    s = (func_80083F50(x) * 200) >> 12;
+                                    c2 = func_80083E80(x);
+                                    ang += 0x199;
+                                    v[1] = CH(p, 0x2C) + s;
+                                    v[3] = CH(p, 0x30) + 0x5A;
+                                    v[5] = CH(p, 0x34) - ((c2 * 300) >> 12);
+                                    q = func_8003116C(0, v, -0x64);
+                                    q[0x28] |= 0x80;
+                                }
+                            }
+                        }
+                        CH(p, 0x12) = -0xC;
+                        CH(p, 0x10) = 4;
+                        CH(p, 0x16)++;
+                        a[0x2B] = 1;
+                        func_80054DAC(D_800E7E80, 0xB4, 0);
+                    }
+                }
+            }
+            for (i = 2; i <= CH(a, 0x40); i++) {
+                n = a[8];
+                if (i >= n - 2) {
+                    break;
+                }
+                p = CPART(a, i);
+                k = CH(p, 0x16);
+                if (k == 0) {
+                } else if (k == 1) {
+                    CH(p, 0xC) += CH(p, 0x14);
+                    if ((CH(p, 0x14) -= 0x40) < -0x40) {
+                        CH(p, 0x14) = 0x20;
+                        CH(p, 0x16)++;
+                    }
+                    a[0x2B] = 1;
+                } else if (k == 2) {
+                    CH(p, 0xC) += CH(p, 0x14);
+                    if ((CH(p, 0x14) -= 0x20) < -0x20) {
+                        if (i < 6) {
+                            {
+                                s32 j, ang, x, s, c2;
+                                u8 *q;
+
+                                ang = 0x400;
+                                for (j = 0; j < 5; j++) {
+                                    x = (s16)ang;
+                                    s = (func_80083F50(x) * 200) >> 12;
+                                    c2 = func_80083E80(x);
+                                    ang += 0x199;
+                                    v[1] = CH(p, 0x2C) + s;
+                                    v[3] = CH(p, 0x30) + 0x5A;
+                                    v[5] = CH(p, 0x34) - ((c2 * 300) >> 12);
+                                    q = func_8003116C(0, v, -0x64);
+                                    q[0x28] |= 0x80;
+                                }
+                            }
+                        }
+                        CH(p, 0x16)++;
+                    }
+                    a[0x2B] = 1;
+                } else {
+                    if (i == n - 3) {
+                        a[6]++;
+                        D_800BF870.pad1[0x16D] = 0x14;
+                    }
+                }
+            }
+        }
+        if (!(++CH(a, 0x42) & CH(a, 0x62))) {
+            t = ++CH(a, 0x40);
+            if (t >= 8) {
+                CH(a, 0x62) = 7;
+            } else if (t >= 5) {
+                CH(a, 0x62) = 0xF;
+            }
+        }
+        if (a[0x2B] != 0) {
+            if (CH(a, 0x60) == 0) {
+                e[0x76] = 1;
+                CH(a, 0x60) = 1;
+            }
+            a[0x2B] = 0;
+        } else {
+            if (e[0x76] != 0) {
+                e[0x76] = 3;
+            }
+            CH(a, 0x60) = 0;
+        }
+        break;
+    case 4:
+        CH(a, 0x40) = 0x14;
+        a[6]++;
+        break;
+    case 5:
+        if (--CH(a, 0x40) == 0) {
+            a[6]++;
+            D_800BF9DE = 0x15;
+        }
+        break;
+    case 6:
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00InteriorTransitionActor);
 
