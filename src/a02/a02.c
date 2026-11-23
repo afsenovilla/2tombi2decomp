@@ -3456,7 +3456,60 @@ void func_8011BFF4(void *arg0, void *arg1, s16 arg2, s32 arg3) {
     M2C_FIELD(arg0, s16 *, 0x32) = (s16) (arg3 + ((s32) (M2C_FIELD(M2C_FIELD(arg1, void **, 0xD0), s32 *, 0x30) + M2C_FIELD(M2C_FIELD(arg1, void **, 0xDC), s32 *, 0x30)) / 2));
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011C100);
+void func_8011C100(u8 *a)
+{
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        M2C_FIELD(a, s16 *, 0x5C) = 0;
+        M2C_FIELD(a, void **, 0x3C) = D_800ECF80;
+        func_80077B38(a, D_80139100, 5);
+        a[0xB] = 0x10;
+        M2C_FIELD(a, s16 *, 0x68) = 0x79;
+        a[0] = 2;
+        a[0xD] = 0;
+        a[0x47] = 0;
+        a[8] = 0;
+        M2C_FIELD(a, s16 *, 0x5A) = 0;
+        M2C_FIELD(a, s16 *, 0x80) = 0x32;
+        M2C_FIELD(a, s16 *, 0x82) = 0x64;
+        M2C_FIELD(a, s16 *, 0x84) = 0x32;
+        M2C_FIELD(a, s16 *, 0x86) = 0x64;
+        func_8004B354(a, 0);
+        a[4]++;
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            g = D_800BF808_1760;
+            if (g[0xE] != 0 && g[0xF] == 3) {
+                a[0] = 1;
+                a[5]++;
+            }
+            break;
+        case 1:
+            if (D_800BF816 == 0) {
+                a[0] = 2;
+                a[5] = 0;
+                break;
+            }
+            func_8004B374(a, 0);
+            a[1] = 1;
+            func_80077EBC(a);
+            break;
+        }
+        break;
+    case 2:
+        func_80040B48(0x4F);
+        func_8004A3D4(a);
+        a[4]++;
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateFreedCharlesSequence);
 
