@@ -3020,13 +3020,60 @@ void f_HandleGoldenCrabDialogueRepeatVisit(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_StageWindmillCutsceneActor);
+#define STH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+extern u8 D_8014886C[];
+typedef struct { u8 pad[0x12]; s16 a; s16 b; s16 c; } StgT;
+extern StgT D_8014886C_a7c3;
+
+void f_StageWindmillCutsceneActor(u8 *a) {
+
+    switch (a[7]) {
+    case 0:
+        a[0x70] = 1;
+        func_80041B08(a, (u8 *)&D_8014886C_a7c3.a, 0xF);
+        STH(a, 0x42) = func_800782B0(a + 0x2C, D_8014886C_a7c3.a, D_8014886C_a7c3.c);
+        a[7]++;
+        break;
+    case 1:
+        if (a[0x70] == 0) {
+            a[7]++;
+        }
+        break;
+    case 2:
+        if (func_80041438(a, STH(a, 0x42), 0x80) != 0) {
+            a[7]++;
+            func_80041718(a, 2, 2);
+        }
+        break;
+    case 3:
+        if (func_80041BF0(a) != 0) {
+            func_80041718(a, 0, 2);
+            if (a[0x70] == 0) {
+                a[0x70] = 1;
+                a[7]++;
+            }
+        }
+        break;
+    case 4:
+        if (a[0x70] == 0) {
+            func_80041718(a, 5, 0);
+            a[7]++;
+        }
+        break;
+    case 5:
+        if (a[0x79] == 1) {
+            func_80074590(0x32, 0, 0);
+            a[7] = 0;
+            a[6]++;
+        }
+        break;
+    }
+}
 
 #define WH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern u8 *D_1F800214;
 #define SP214 D_1F800214
 extern u8 D_800BF9DE;
-extern u8 D_8014886C[];
 
 s32 f_ApplyWindmillCutsceneTransition(u8 *a) {
     u8 *t = D_800E7E80;
