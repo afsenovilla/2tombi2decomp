@@ -4,7 +4,80 @@
 
 INCLUDE_ASM("asm/sop/nonmatchings/sop", func_80109164);
 
-INCLUDE_ASM("asm/sop/nonmatchings/sop", func_801092B4);
+extern u8 D_800E8008[];
+extern u8 *D_1F800138_5432;
+extern M2C_UNK D_800ED018;
+extern M2C_UNK D_800F2418;
+extern u8 D_80100400[];
+extern u8 D_1F800234;
+/* func_801097E4, inlined */
+static inline void inl_801097E4(void)
+{
+    u8 *c = D_800E8008;
+
+    switch (c[0]) {
+    case 0:
+        c[0]++;
+        c[0x64] = 0;
+        break;
+    case 1:
+        switch (c[0x64]) {
+        case 0:
+            func_8006E3B0(c, c + 0x38);
+            break;
+        case 1:
+            c[0x64] = 0;
+            break;
+        }
+        break;
+    }
+}
+/* func_80109934, inlined */
+static inline void inl_80109934(void)
+{
+    u8 *p = D_1F800138_5432;
+
+    switch (*(u16 *)(p + 0x52)) {
+    case 0:
+        *(s16 *)(p + 0x62) = 0;
+        func_8001D71C(0xE);
+        (*(s16 *)(D_1F800138_5432 + 0x52))++;
+        break;
+    case 1:
+        if (func_8010C79C() != 0) {
+            (*(s16 *)(D_1F800138_5432 + 0x52))++;
+        }
+        break;
+    case 2:
+        break;
+    }
+}
+
+void func_801092B4(void)
+{
+    u8 *p = D_1F800138_5432;
+
+    if (*(s16 *)(p + 0x60) == 0) {
+        func_8002655C(D_80100400);
+        func_8010A0E0(&D_800F2418);
+        func_8007B008();
+        D_1F800234 = 1;
+        inl_801097E4();
+        func_80075A80();
+        if (D_800BF870.pad1[0x143] != 5) {
+            func_8010BFFC(&D_800ED018);
+        }
+        func_80109FE0(&D_800F2418);
+        func_8003C048();
+        if (D_800BF870.pad1[0x143] != 5) {
+            func_8010C26C(&D_800ED018);
+        }
+        D_1F800234 = 0;
+    } else {
+        *(s16 *)(p + 0x60) -= 1;
+    }
+    inl_80109934();
+}
 
 typedef struct {
     s16 x, y, z;
@@ -12,9 +85,7 @@ typedef struct {
     void *fn;
 } SpawnDef;
 extern SpawnDef D_8010C98C[];
-extern u8 *D_1F800138_5432;
 typedef struct { u8 pad[0x4C]; u16 a4C, a4E, a50, a52, a54; } St138b;
-extern u8 D_800E8008[];
 extern u8 D_8010C95C[];
 extern u8 D_800F2418_9a6f[];
 extern u8 D_1F800137;
@@ -156,8 +227,6 @@ void func_80109860(void)
     }
 }
 
-extern M2C_UNK D_800ED018;
-extern M2C_UNK D_800F2418;
 void func_801098E8(void) {
     func_80109FE0(&D_800F2418);
     func_8003C048();

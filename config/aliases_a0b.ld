@@ -16,3 +16,4 @@ D_800BF544_e6cf = 0x800BF544;
 D_800BF808_76d5 = 0x800BF808;
 D_800ED8C8_065b = 0x800ED8C8;
 D_800ED8C8_7a94 = 0x800ED8C8;
+.L80117FA4 = 0x80117FA4; /* func_80115EEC stores this address inside func_801179BC (case 3 tail) as an actor callback */
