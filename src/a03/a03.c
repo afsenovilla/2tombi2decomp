@@ -380,8 +380,119 @@ void func_801113DC(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyFinishMenu);
+extern u16 D_800E7E68;
+typedef struct { u8 pad[0x104]; u8 *s[6]; } TrolleyMenuText;
+extern TrolleyMenuText D_800A2854;
+typedef struct { s16 x, y, w, h; } TrolleyMenuRect;
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyRetryMenu);
+s32 f_UpdateTrolleyFinishMenu(void) {
+    u8 *strs[4];
+    s32 ys[4];
+    s32 xs[4];
+    TrolleyMenuRect r;
+    s32 i;
+    s32 m;
+    u8 sel;
+
+    if (D_800E7E68 & 0x4000) {
+        return *(u8 *)D_800BF808 + 1;
+    }
+    if (D_800E7E68 & 0x1000) {
+        return 1;
+    }
+    if (D_800E7E68 & 0x40) {
+        if (*(u8 *)D_800BF808 < 2) {
+            *(u8 *)D_800BF808 = *(u8 *)D_800BF808 + 1;
+            func_80074590(0x15, 0, 0);
+        }
+    } else if (D_800E7E68 & 0x10) {
+        if (*(u8 *)D_800BF808 != 0) {
+            *(u8 *)D_800BF808 = *(u8 *)D_800BF808 - 1;
+            func_80074590(0x15, 0, 0);
+        }
+    }
+    ys[0] = 0x50;
+    ys[1] = 0x64;
+    ys[2] = 0x78;
+    strs[0] = D_800A2854.s[3];
+    strs[1] = D_800A2854.s[4];
+    strs[2] = D_800A2854.s[5];
+    func_800793C4(strs, 3, xs);
+    if (xs[0] < xs[1]) {
+        m = xs[2];
+        if (xs[0] < m) {
+            m = xs[0];
+        }
+    } else {
+        m = xs[2];
+        if (xs[1] < m) {
+            m = xs[1];
+        }
+    }
+    for (i = 0; i < 3; i++) {
+        s16 x = m;
+
+        sel = *(u8 *)D_800BF808;
+        func_80079374(x, (s16)ys[i], (sel == i) * 2, strs[i], 0);
+    }
+    func_8007E998(m - 0x10, ys[*(u8 *)D_800BF808] + 4, 0);
+    r.x = m - 0x20;
+    r.w = (0xA0 - m) * 2 + 0x30;
+    r.h = 0x40;
+    r.y = ys[0] - 4;
+    func_8005019C(&r, 0, 1, 1);
+    return 0;
+}
+
+
+s32 f_UpdateTrolleyRetryMenu(void) {
+    u8 *strs[4];
+    s32 ys[4];
+    s32 xs[4];
+    TrolleyMenuRect r;
+    s32 i;
+    s32 k;
+    u8 sel;
+
+    if (D_800E7E68 & 0x4000) {
+        return *(u8 *)D_800BF808 + 1;
+    }
+    if (D_800E7E68 & 0x40) {
+        if (*(u8 *)D_800BF808 == 0) {
+            *(u8 *)D_800BF808 = *(u8 *)D_800BF808 + 1;
+            func_80074590(0x15, 0, 0);
+        }
+    } else if (D_800E7E68 & 0x10) {
+        if (*(u8 *)D_800BF808 != 0) {
+            *(u8 *)D_800BF808 = *(u8 *)D_800BF808 - 1;
+            func_80074590(0x15, 0, 0);
+        }
+    }
+    strs[0] = D_800A2854.s[0];
+    func_800793C4(strs, 1, xs);
+    i = 0;
+    func_80079374((s16)xs[0], 0x70, i, strs[0], 0);
+    r.y = 0x6C;
+    ys[0] = 0x84;
+    ys[1] = 0x98;
+    r.x = xs[0] - 0x10;
+    r.w = (0xA0 - xs[0]) * 2 + 0x20;
+    strs[0] = D_800A2854.s[1];
+    strs[1] = D_800A2854.s[2];
+    k = func_800793C4(strs, 2, xs);
+loop:
+    do {
+        sel = *(u8 *)D_800BF808;
+        func_80079374((s16)xs[i], (s16)ys[i], (sel == i) * 2, strs[i], 0);
+    } while (0);
+    i++;
+    if (i < 2) {
+        goto loop;
+    }
+    func_8007E998(k, ys[*(u8 *)D_800BF808] + 4, 0);
+    r.h = 0x40;
+    func_8005019C(&r, 0, 1, 1);
+    return 0;
+}
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyCourseOverlayActor);
