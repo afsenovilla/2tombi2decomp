@@ -4879,12 +4879,57 @@ s32 func_8012894C(s32 arg0) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RunA00Event4ItemUseCutscene);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RunNetBridgeCogInstallationCutscene);
+#define CGH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+extern u8 D_8001B860[];
+extern u8 *D_80149E50[];
+extern u8 D_800BF9DD;
+
+void f_RunNetBridgeCogInstallationCutscene(u8 *a) {
+    u8 *g;
+
+    switch (a[6]) {
+    case 0:
+        func_80040CDC(a, D_8001B860, D_80149E50[D_800BF830]);
+        a[0x70] = 2;
+        a[6]++;
+        break;
+    case 1:
+        if (a[0x70] == 0) {
+            func_8004D688(0x24, 1);
+            D_800BF9DD = 9;
+            a[0x70] = 2;
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (a[0x70] == 0) {
+            g = (u8 *)D_800BF808;
+            CGH(g, 0x22) = 0xB4;
+            CGH(g, 0x1E) = 0;
+            CGH(g, 0x26) = 0xFA;
+            a[0x70] = 2;
+            a[6]++;
+        }
+        break;
+    case 3:
+        if (func_8007101C(a, 0) != 0 && a[0x70] == 0) {
+            a[0x70] = 2;
+            a[6]++;
+        }
+        break;
+    case 4:
+        if (a[0x70] == 0xFF) {
+            func_80070798();
+        }
+        break;
+    }
+    func_80041098(a);
+    func_80070E60(a);
+    func_8004190C(a);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldFishhookRecovery);
 
-extern u8 D_8001B860[];
-extern u8 *D_80149E50[];
 extern u8 *D_80149E70;
 extern u8 D_800BFAD8;
 void func_80129008(u8 *a) {
@@ -5482,7 +5527,6 @@ void func_8012D908(u8 *a) {
  *   python3 -I tools/install_c.py THIS.c --prog a00 */
 
 extern u8 D_800E7E80[];
-extern u8 D_800BF9DD;
 /* f_InitializeTownQuestRewardVisualModel, inlined */
 static inline void f_InitializeTownQuestRewardVisualModel_inl(u8 *a) {
     if (func_80051B70(a, 0xC, 0x4F) == 0) {
