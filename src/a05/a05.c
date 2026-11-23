@@ -2970,7 +2970,6 @@ void func_80126AB4(void) {
 extern s32 D_800BF854;
 extern u16 D_1F8000EE;
 
-//-- a
 void func_80126ABC(u8 *a, s32 k)
 {
     u8 *e = D_800E8008;
@@ -3732,7 +3731,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012DBA0);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012DD44);
 
-//-- a
 void func_8012DE08(u8 *a)
 {
     switch (a[6]) {
@@ -4936,7 +4934,6 @@ u8 *func_80132A80(void)
     return r;
 }
 
-//-- a
 void func_80132AC8(u8 *a)
 {
     u8 *g = (u8 *)&D_800BF870;

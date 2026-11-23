@@ -839,7 +839,6 @@ extern u8 D_800BF871;
 extern u8 D_1F80019C;
 void func_80114CB8();
 
-//-- a
 void func_80114B90(void)
 {
     u32 s = D_800BF871;

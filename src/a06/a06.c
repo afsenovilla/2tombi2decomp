@@ -4410,7 +4410,6 @@ typedef struct { s16 p0, x, p4, y, p8, z; } HV;
 extern u8 *D_1F800214;
 extern u8 D_800BF9D3;
 
-//-- a
 s32 func_80127E18(u8 *a)
 {
     HV v;
@@ -5584,7 +5583,6 @@ s32 func_8013AF68(u8 *p)
     return 1;
 }
 
-//-- a
 s32 func_8013AFD8(u8 *a)
 {
     HV v;
