@@ -136,10 +136,79 @@ void func_80109DBC(u8 *a)
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80109F14);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010A034);
-
 extern u8 **D_1F800154;
 extern u8 D_1F80015C;
+extern s32 D_800BF85C;
+typedef struct {
+    u8 pad[0xA];
+    s16 count;
+    u8 *entries;
+    u32 pending;
+    u32 done;
+} RewardSet;
+/* func_8010A550, inlined */
+static inline void inl_8010A550(void *a, u8 *b)
+{
+    RewardSet *r = (RewardSet *)(b + 0x60);
+    u8 *e = r->entries;
+    s32 i;
+    u32 bit;
+
+    for (i = 0; i < r->count; i++, e += 0x10) {
+        bit = 1 << i;
+        if ((r->pending & bit) && func_80109F14(a, e)) {
+            r->done |= bit;
+            r->pending &= ~bit;
+            func_801100E4(b, e, 0);
+            return;
+        }
+    }
+}
+
+void func_8010A034(u8 *a)
+{
+    u8 **l;
+    u8 *e;
+
+    if (*(s16 *)(a + 0x16E) == 0) {
+        return;
+    }
+    if (((s8 *)D_800BF808)[5] != 0) {
+        return;
+    }
+    if (*(u16 *)(a + 0x17E) & 0x200) {
+        return;
+    }
+    l = D_1F800154;
+    D_1F800182 = D_1F80015C;
+    while (D_1F800182 != 0) {
+        e = *l;
+        D_1F800182--;
+        l++;
+        if (e[0] != 1) {
+            continue;
+        }
+        switch (e[2]) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 7:
+            func_80022060(a, e);
+            break;
+        case 5:
+        case 6:
+            break;
+        case 8:
+            if (D_800BF85C == 2) {
+                inl_8010A550(a, e);
+            }
+            break;
+        }
+    }
+}
+
 extern u8 D_1F800183;
 extern u8 D_800E7E80[];
 /* func_8010A4A0, inlined */
@@ -264,13 +333,6 @@ void func_8010A4A0(void)
     }
 }
 
-typedef struct {
-    u8 pad[0xA];
-    s16 count;
-    u8 *entries;
-    u32 pending;
-    u32 done;
-} RewardSet;
 void func_8010A550(void *a, u8 *b)
 {
     RewardSet *r = (RewardSet *)(b + 0x60);
@@ -444,7 +506,6 @@ extern u8 D_1F8000D0[];
 extern s16 D_1F8000EE;
 extern u8 D_800E8008[];
 extern u8 D_1F800236;
-extern s32 D_800BF85C;
 /* func_8010B470, inlined */
 static inline void inl_8010B470(u8 *a, s16 ang)
 {
