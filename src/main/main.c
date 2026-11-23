@@ -14603,7 +14603,38 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80071DFC);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80072114);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800721DC);
+void func_800721DC(u8 *a, s16 x, s16 y)
+{
+    u16 v;
+    s32 t;
+
+    switch (a[6]) {
+    case 0:
+        v = (*(u16 *)(a + 0x5A) + 0x100) & 0xFFF;
+        *(u16 *)(a + 0x5A) = v;
+        if (v == 0) {
+            a[6]++;
+        }
+        t = rsin(*(s16 *)(a + 0x5A)) * *(s16 *)(a + 0x82);
+        *(s16 *)(a + 0x2E) = x;
+        *(s32 *)(a + 0x30) = (y << 16) + (t << 4);
+        break;
+    case 1:
+        v = (*(u16 *)(a + 0x5A) + 0x100) & 0xFFF;
+        *(u16 *)(a + 0x5A) = v;
+        if (v == 0) {
+            a[6]++;
+        }
+        t = rsin(*(s16 *)(a + 0x5A)) * *(s16 *)(a + 0x82);
+        *(s16 *)(a + 0x2E) = x;
+        *(s32 *)(a + 0x30) = (y << 16) + (t << 3);
+        break;
+    case 2:
+        *(s16 *)(a + 0x2E) = x;
+        *(s16 *)(a + 0x32) = y;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80072308);
 
