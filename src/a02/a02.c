@@ -3785,7 +3785,41 @@ void func_80120070(void *arg0) {
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80120144);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801202DC);
+extern u8 D_800A3D18_ed09[];
+
+void func_801202DC(u8 *a)
+{
+    s32 i;
+
+    switch (a[4]) {
+    case 0:
+        func_80040CDC(a, D_80139240_0000, D_800A3D18_ed09);
+        i = a[9] - 1;
+        func_80051B04(*(u8 **)(a + (i << 2) + 0xC0), 0x1B, 4);
+        func_80041718(a, 1, 0);
+        if (D_800BF8BE == 0xFF) {
+            a[0x7A] = 10;
+        } else {
+            a[0x7A] = 9;
+        }
+        a[0x7B] = 1;
+        M2C_FIELD(a, s16 *, 0x56) = 0x400;
+        a[4]++;
+        break;
+    case 1:
+        func_80120144(a);
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u8 D_8012B504[];
 void func_80120564(u8 *a);
