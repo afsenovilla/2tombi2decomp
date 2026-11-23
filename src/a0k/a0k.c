@@ -2337,7 +2337,59 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80113854);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80113A7C);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80113C50);
+extern u8 D_800BF8FA;
+extern u8 *D_1F800138;
+extern u16 D_800E7FEE;
+extern u16 D_1F800194;
+
+s32 func_80113C50(u8 *a)
+{
+    u8 *g;
+    u8 *p;
+
+    switch (a[7]) {
+    case 0:
+        a[7] = 1;
+        func_80042310();
+        D_1F800137 = 2;
+        {
+            u8 *g0 = D_800BF808;
+            g0[0x10] = 1;
+            if (D_800BF8FA != 0xFF) {
+                *(s32 *)(g0 + 0x48) = 1;
+            } else {
+                *(s32 *)(g0 + 0x48) = 2;
+            }
+        }
+        break;
+    case 1:
+        g = D_800BF808;
+        if (g[0x10] != 0) {
+            return 0;
+        }
+        a[7] = 2;
+        g[7] = 2;
+        break;
+    case 2:
+        if (D_800BF80F != 0) {
+            return 0;
+        }
+        a[7] = 3;
+        {
+        u8 *g2 = (u8 *)&D_800BF870;
+        *(s16 *)(g2 + 0x1B6) = 0;
+        p = D_1F800138;
+        *(s16 *)(p + 0x4C) = 6;
+        *(s16 *)(p + 0x4E) = 0;
+        g2[0x153] = 0x80;
+        g2[1] = 4;
+        g2[0x10] = 1;
+        D_1F800194 = D_800E7FEE;
+        return 1;
+        }
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_UpdateBerryNutsMinigameController);
 

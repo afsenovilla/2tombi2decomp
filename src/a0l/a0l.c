@@ -1944,7 +1944,37 @@ void func_80112180(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", f_AdvanceEndingScriptedPresentation);
+s32 f_AdvanceEndingScriptedPresentation(u8 *a)
+{
+    u8 *o;
+
+    switch (a[0x78]) {
+    case 0:
+        if (*(s16 *)(a + 0x74) >= 0) {
+            a[0x7A] = a[0x74];
+        }
+        a[0x78]++;
+    case 1:
+        if ((*(u8 **)(a + 0x10) = func_8007DEF8((s16)(*(u16 *)(a + 0x72) | 0x1000), a[0x7A], 3)) != NULL) {
+            D_800BF870.pad1[0x1E5]++;
+            a[0x78]++;
+        }
+        break;
+    case 2:
+        o = *(u8 **)(a + 0x10);
+        if (o[4] != 2) {
+            return 0;
+        }
+        o[4] = 3;
+        D_800BF870.pad1[0x1E6]++;
+        a[0x78]++;
+        break;
+    case 3:
+        *(u8 **)(a + 0x10) = NULL;
+        return 1;
+    }
+    return 0;
+}
 
 extern void (*D_8009D1D4[])(void);
 extern void (*D_8009D22C[])(void);

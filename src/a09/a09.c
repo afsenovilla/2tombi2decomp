@@ -761,7 +761,48 @@ s32 func_8010CAF8(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010CBB0);
+extern u8 D_800BF809;
+extern u8 D_8010E3B0[];
+
+s32 func_8010CBB0(u8 *a)
+{
+    u8 *g;
+
+    switch (a[6]) {
+    case 0:
+        if (D_800BF809 != 0) {
+            return 0;
+        }
+        if (a[0x29] == 0) {
+            break;
+        }
+        g = (u8 *)&D_800BF870;
+        if (g[0x76] == 0) {
+            func_80040B48(0x32);
+        }
+        if (g[0x1D0] != 0) {
+            return 0;
+        }
+        a[6]++;
+        func_80042354(1, 4);
+        g[0x1D0] = 1;
+        break;
+    case 1:
+        a[6] = 2;
+        func_80040CDC(a, 0, D_8010E3B0);
+        a[0x70] = 1;
+        break;
+    case 2:
+        func_80041098(a);
+        if (a[0x70] != 0xFF) {
+            return 0;
+        }
+        a[6] = 0;
+        func_80042310();
+        return 1;
+    }
+    return 0;
+}
 
 extern u8 D_8010E3FC[];
 s32 func_8010CCD8(u8 *a)
