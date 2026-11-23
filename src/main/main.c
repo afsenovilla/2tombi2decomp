@@ -3454,7 +3454,59 @@ void func_8002DD88(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002DF68);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002E1E8);
+#define W(p, o) (*(u32 *)((p) + (o)))
+typedef struct {
+    u8 b[6][4];
+} FlickerTbl_E1E8;
+extern FlickerTbl_E1E8 D_800102BC;
+extern s32 D_1F800160_faaf;
+s32 f_ResolveEffectEightByteStreamPayload();
+
+void func_8002E1E8(u8 *a)
+{
+    FlickerTbl_E1E8 t = D_800102BC;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        W(a, 0x64) = 0x400;
+        W(a, 0x6C) = 0x200;
+        W(a, 0x60) = 0;
+        W(a, 0x68) = 0;
+        *(s16 *)(a + 0x32) = -200;
+    case 1:
+    case 2:
+        if (a[4] == 1) {
+            W(a, 0x60) += (0x200 - W(a, 0x60)) >> 5;
+            W(a, 0x68) += (0x400 - W(a, 0x68)) >> 5;
+        } else {
+            W(a, 0x64) -= W(a, 0x64) >> 2;
+            W(a, 0x68) += W(a, 0x68) >> 4;
+            W(a, 0x6C) -= W(a, 0x6C) >> 2;
+            if (W(a, 0x6C) < 9) {
+                a[4] = 3;
+            }
+        }
+        if (++a[7] >= 6) {
+            a[7] = 0;
+        }
+        W(a, 0x50) = (W(a, 0x60) * t.b[a[7]][0]) >> 4;
+        W(a, 0x54) = (W(a, 0x64) * t.b[a[7]][1]) >> 4;
+        W(a, 0x58) = (W(a, 0x68) * t.b[a[7]][2]) >> 4;
+        {
+            u32 k = W(a, 0x6C) * t.b[a[7]][3];
+
+            *(s32 *)(a + 0x2C) = D_1F800160_faaf;
+            *(u16 *)(a + 0x30) = D_1F800164;
+            a[1] = 1;
+            W(a, 0x5C) = k >> 4;
+        }
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002E458);
 
