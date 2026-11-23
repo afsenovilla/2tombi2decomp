@@ -7263,9 +7263,56 @@ void func_80043BB0(u8 *actor)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80043BD4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80043D8C);
+extern u16 D_1F800190_b2e0;
+extern u16 D_1F800192;
+extern u16 D_1F80016C_4910;
+extern u16 D_1F80016E_cd4b;
 
-void func_80043D8C(void *, s32);
+s32 func_80043D8C(u8 *a, s32 k)
+{
+    s32 one = 1;
+    u8 *e;
+    u16 v;
+    u8 *s;
+
+    switch (a[0x78]) {
+    case 0:
+        if (*(s16 *)(a + 0x76) != 0) {
+            D_1F800190_b2e0 = 0;
+            e = (u8 *)D_800E7E80;
+            v = *(u16 *)(a + 0x74);
+            e[5] = 0x1F;
+            e[6] = 0;
+            D_1F800192 = v;
+            a[0x78] = one;
+        } else {
+            a[0x78] = 2;
+        }
+        break;
+    case 1:
+        D_1F800190_b2e0 = 0;
+        if (D_800BF816 == (k & 0xFF)) {
+            a[0x78]++;
+        } else if (*(s16 *)(a + 0x74) == 0) {
+            D_1F800190_b2e0 = D_1F80016C_4910;
+        } else {
+            D_1F800190_b2e0 = D_1F80016E_cd4b;
+        }
+        break;
+    case 2:
+        s = D_800BF808;
+        if (s[0xE] != (k & 0xFF)) {
+            return 0;
+        }
+        if (s[6] == one) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
+
+s32 func_80043D8C(u8 *a, s32 k);
 void f_QueueItemMessage(s32, s32);
 void func_80043E9C(void *a)
 {
@@ -11036,7 +11083,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80058F5C);
 
 extern u8 D_1F800232;
 extern u16 D_1F800166_b02d;
-extern u16 D_1F800190_b2e0;
 extern u8 D_1F80019B_e707;
 extern u8 D_800BF89C;
 void func_8005950C(u8 *a)
@@ -12233,7 +12279,6 @@ void f_UpdateTombaTransitionTerrainContact(void *arg0, s32 arg1) {
     f_UpdateTombaLostGroundSupportMotion(arg0, 1);
 }
 
-extern u16 D_1F800192;
 void func_800654D4(u8 *a)
 {
     u16 ang;
