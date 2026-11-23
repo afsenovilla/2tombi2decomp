@@ -501,7 +501,6 @@ s32 func_8010A660(void) {
 #define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
 extern s16 D_1F80019E;
 extern u16 D_1F80017C;
-
 void func_8010A668(u8 *a, s32 arg1)
 {
     s16 sp[8];
@@ -3080,7 +3079,6 @@ extern s16 D_80125400[];
 extern u8 D_801251F0[];
 extern u8 D_80117FA4[];
 void func_80115D20();
-
 void func_80116714(u8 *a)
 {
     u8 *e = D_800E7E80;

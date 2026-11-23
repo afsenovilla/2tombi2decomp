@@ -41,6 +41,10 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
      patched compilers, reach the same code by hand: a constant local assigned at the end of the do/while body is
      hoisted last (`m1 = -1; } while (--count != m1);`), a long-lived local declared before the loop (`int one =
      1;`) gets reload's `li t0,K`, and `one = 1` at the top of the body keeps `x & (one << bit)` as sllv/and.
+  gcc 2.7.2 gives a for / while loop with a non-constant bound an unused 8-byte frame slot: write `i = 0; if (n >
+  0) do { ...; i++; } while (i < n);` (the guard compares the bound with 0; `continue` -> a goto before the
+  increment); a 2.7.2 near miss with a frame 8 / 16 bytes too big is this. `la reg, sym+off` followed by stores from
+  that register means gcc 2.8.1 `-mno-split-addresses` (2.7.2 folds a constant pointer into `sw sym+off`).
   The region module in boot is partly gcc 2.7.2: try it first there; CdControlF needs `AS gnu` under 2.7.2.
   Plus the asm rewrites Sony's compiler needs: `// EPILOGUE sony` (nothing in the `j $31` delay slot; ra restore then
   `addiu sp; jr ra; nop`) and `// RETURN sony` (one shared final `jr ra; nop`; `sony first` keeps an early
@@ -236,6 +240,20 @@ struct-member form of a cast access, regswap `member` toggles every one)
   retail hoisting `move a0` above an if/else with `li a1` in each arm: the whole call in both arms.
 
 **More forms**
+- Division by a field just stored: `a->40 = K; a->4A = (...) / a->40; a->4C = (...) / a->40;` gives `li K; div`
+  and the `lh` reloads (MEMBER_AT stores when the expressions read scalar globals).
+- A constant from the switch dispatch reused in a shared tail: write the tail in each branch (cross-jumping merges the
+  copies); a constant rematerialised after an if: `if (c) x = A; else x = B;` with the store in both arms.
+- Each copy of a repeated inner loop in its own block with its own locals; gcc will not merge an arm with another
+  case's identical code, so retail's branch into another case's arm is a `goto` to a label inside it; `goto ret0;`
+  into `case K: ret0: return 0;` places a shared return-0 block in the middle of the switch; a `common:` label inside
+  the switch with its own pointer local for a tail shared by two cases.
+- Two identical tests retail keeps apart: read one through `*(volatile u8 *)&D`; nested ifs keep two compares where
+  `&&` folds them; an inner switch on `x & 0xF00` gives a balanced tree, retail's linear chain is an if / else if
+  chain on `k = x & 0xF00`.
+- Shifting when a product is computed (`t = (rsin * k) >> 12`) places the temporary like retail; drop m2c's extra
+  call arguments until stray `li`s disappear; a block-scoped table pointer `{ T *tb = D; f(a, &tb[5]); }` keeps a
+  separate `addiu +off`; camera-script tables are 12-byte entries (`&T[H(a, 0x6A)++]`).
 - `h = *(volatile u16 *)(a + 0x68);` keeps a single lhu with `(s16)h` as sll/sra; `*(volatile s16 *)&G = 1;`
   keeps a store out of a jump delay slot; `u8 c = a[5]--; if (c == 0)` for `addiu v1,v0,255; andi`; a loop counter
   `n = 0x800000; ... if (--n == 0)` (splat names the constant D_7FFFFF); `(s16)(x + K)` stops reassociation; `u32 k`
@@ -279,7 +297,14 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - statemachine.py's header and m2c's prototypes (`M2C_UNK f(M2C_UNK, ...)`) go into src/ with the install: delete
   the header from the scratch first; use the target's array declarations (`D_800E7E80`, not `&D_800E7E80` with a
   new extern, which makes an alias).
-- variants.py writes `//--` separators: never leave them in src/.
+- variants.py writes `//--` separators: never leave them in src/. In `--set` values write `\&` and `\|`.
+- permlines may move `//P` lines out of their switch case (invalid C that still scores lower): check its output.
+- regswap's narrowing splits can truncate values and its `__typeof__` locals must not reach src/.
+- Copy the target file's prototypes into a scratch: a different scratch prototype can pass ccheck and fail the
+  link. ccheck `--no-protos` is currently broken (STATUS 2026-11-23 (3)).
+- install_c may drop a macro whose name is redefined differently further down in the target (use unique macro
+  names per function).
+- Never `pkill -f`, even with a narrow pattern: kill by PID.
 - `register ... asm("reg")` matches are not installed (compiler-specific); they stay near misses.
 - A static inline helper must be defined before its first use, or gcc emits it as a function.
 - nearcopy refuses or mis-patches some copies (a repeated immediate, constants in helpers, callee names that differ

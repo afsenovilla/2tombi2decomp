@@ -62,7 +62,6 @@ static inline void inl_801094B8(u8 *a)
         *(s16 *)(((u8 **)(a + 0xC0))[i] + 4) = D_801178E0[i].z;
     }
 }
-
 void func_801092E8(u8 *a)
 {
     GameState *g = &D_800BF870;
@@ -137,7 +136,6 @@ extern CamEnt D_801131BC[];
 extern CamEnt D_80114EE4[];
 extern u8 D_800BF80F;
 extern u8 D_800BFA55;
-
 void func_8010983C(u8 *a)
 {
     u8 *g;
@@ -246,7 +244,6 @@ void func_8010983C(u8 *a)
 
 extern CamEnt D_80114EFC[];
 extern u8 D_800BFA57;
-
 void f_UpdateEndingArea2CameraSequence(u8 *a)
 {
     s32 pad[4];
@@ -324,7 +321,6 @@ void f_UpdateEndingArea2CameraSequence(u8 *a)
 
 extern CamEnt D_80114F68[];
 extern u8 D_800BE0E4;
-
 void f_UpdateEndingArea4CameraSequence(u8 *a)
 {
     s32 pad[4];
@@ -1220,7 +1216,6 @@ void func_8010D558(void *arg0) {
 
 #define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
 void func_8010C1D8(u8 *a);
-
 void func_8010D590(u8 *a)
 {
     u8 *p = a + 0x60;
@@ -1340,7 +1335,6 @@ extern u8 D_8011A738[];
 extern u8 D_80117868[];
 extern u16 D_80116050[];
 extern s32 D_80116038[];
-
 void func_8010DB68(u8 *a)
 {
     s32 s = a[4];

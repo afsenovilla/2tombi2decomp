@@ -1935,7 +1935,6 @@ void func_80113554(u8 *a, u8 *b) {
 extern u8 D_80135B24[][2];
 extern s16 *D_80135B0C[];
 extern s16 D_800ED098;
-
 void func_80113710(u8 *a) {
     s32 i;
     s16 *r;
@@ -2075,7 +2074,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateQuickTrolleyDescentSequence);
 #define GPART(a, i) (*(u8 **)((u8 *)(a) + (i) * 4 + 0xC0))
 extern u8 D_1F8000D0_b839[];
 extern s16 D_800E7EB6;
-
 void func_80114A28(u8 *a) {
     s16 h;
     s32 i, k;
@@ -2468,7 +2466,6 @@ static inline void a01_turn(u8 *a) {
     s32 v;
     if (!(FU(q, 6) & 1)) { FH(a, 0x56) += func_80083E80(FH(q, 4) - FH(a, 0x56)) >> 5; } else { v = FH(a, 0x56) - 0x800; FH(a, 0x56) += func_80083E80(FH(q, 4) - v) >> 5; }
 }
-
 s32 func_801175D0(u8 *a) {
     s32 ret = 0;
     u8 *q = a + 0x60;
@@ -3701,7 +3698,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011C854);
 
 #define QH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define QU(p, o) (*(u16 *)((u8 *)(p) + (o)))
-
 void func_8011C998(u8 *a) {
     SV3 v;
     SV3 w;
@@ -4293,7 +4289,6 @@ extern u8 D_800BF9FA;
 extern u8 D_80136CE0[];
 extern u8 D_80136DA0[];
 extern s32 D_1F800214;
-
 void func_8011F4B8(u8 *a) {
     u8 *p;
     s32 s = a[5];
@@ -4598,7 +4593,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80120C34);
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80120DA0);
 
 #define RH(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void func_80120F00(u8 *a) {
     switch (a[6]) {
     case 0:
@@ -5475,7 +5469,6 @@ static inline void f125548_start(u8 *p) {
     p[5]++;
     func_80072EFC(p);
 }
-
 void func_80125548(u8 *a) {
     u8 *t = D_800E7E80;
     u8 *g;
@@ -6030,7 +6023,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012AC84);
 #define FU(p, o) (*(u16 *)((u8 *)(p) + (o)))
 typedef struct { s32 x, y, z; } V3W;
 typedef union { V3W w; s16 h[6]; } V3U;
-
 void func_8012AF08(u8 *a) {
     V3U v;
     s32 r, r1, r2, k, k1;

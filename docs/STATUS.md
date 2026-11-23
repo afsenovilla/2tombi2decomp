@@ -3,6 +3,53 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-23 (3): seventh round of five agents (time-boxed)
+
+All code in C: **4216 / 7011 functions (60.1 %, 33.1 % of the bytes)**, from 4130 (31.0 %). main +12 in two passes
+(an actor family func_8006A080..func_8006BB6C, Tomba state machines func_80065A54, func_800702C0,
+f_ArmTombaFacingInteraction44), library +9 (_SsClose with gcc-2.7.2-loop4, _spu_FwriteByIO, SsSeqCalledTbyT,
+SpuSetReverbModeParam, _SsVmSeqKeyOff, SetGraphQueue main / boot, region func_80012954), a00-a03 +23 (~16.6 KB,
+windmill / net bridge cutscenes, a01 state machines), a04-a08 +29 (~13.8 KB), a09-a0l + overlays +13 (~15 KB:
+a0l ending camera sequences, f_UpdateEvilPigDefeatAndRewardSequence and its 5 copies). 29 / 29 byte-identical; agents
+had about 70 minutes each. Several intermediate commits of this round did not link (alias lines committed later):
+always push only after the clean full build.
+
+Findings (folded into AGENTS.md):
+- **gcc 2.7.2 gives a for / while loop with a non-constant bound an unused 8-byte frame slot**: write `i = 0; if (n
+  > 0) do { ...; i++; } while (i < n);` (the guard must compare the bound with 0; `continue` becomes a goto before the
+  increment). A 2.7.2 near miss whose frame is 8 or 16 bytes too big is this case.
+- **Division by a field just stored** (`a->40 = K; a->4A = (...) / a->40; a->4C = (...) / a->40;`) gives retail's
+  `li K; div` and the `lh` reloads; `la reg, sym+off` followed by stores from that register means gcc 2.8.1
+  `-mno-split-addresses`, not 2.7.2.
+- A constant from the switch dispatch reused in a shared tail: write the tail in each branch (CSE carries the
+  register into each copy, cross-jumping merges them); the opposite (a constant rematerialised after an if): `if (c)
+  x = A; else x = B;` with the store in both arms.
+- Block-scoped locals for each copy of a repeated inner loop in a big function; camera-script tables are 12-byte
+  entries (`&T[H(a, 0x6A)++]`); gcc will not merge an arm with another case's identical code: goto labels inside the
+  later case's arms.
+
+Near misses (scratch in the session scratchpad r7b/<scope>/): a01 func_80117290 1, func_80117BCC 1, func_8012AC84 1,
+a04 func_8011A8A0 1 instruction, main func_8007AA38 1 instruction, a0l f_UpdateEndingArea5MysteryCameraSequence 2
+(order only), CD_sync 3, CD_ready 3 (prologue tie-break), Snd_SetPlayMode 3, a01 func_80124F14 3, a08 func_8012282C 3
+lines, _dws 4, _SsVmVSetUp 4, a00 f_HandleKainenInteraction 5, f_UpdateA00InteriorTransitionActor 5, a01
+func_80129394 7, a02 func_80112D08 7, a05 func_8012D908 9, a06 func_8011EBD0 9, StCdInterrupt 9, region func_800127E0
+11, a07 func_801222A4 13, a0a f_UpdateEvilPigRushAttack 14 lines (family of 6), f_UpdateEvilPigRelocationAttack 15
+lines (family of 6), a00 f_RunWinsWindmillCutscene 16, main func_800696C4 17 lines, a04 func_8011C4E0 20, main
+func_80066878 29 lines.
+
+Tool work left: ccheck `--no-protos` is broken ("#include expects FILENAME"); install_c: print the first differing
+address / function on a link failure, warn when a scratch prototype differs from the target's, say to commit the
+aliases file it changed, keep a `// Source:` line (install_lib), check macro redefinitions between the first
+definition and the insertion point (a00 `H` with one and two arguments); permlines: keep moves inside the enclosing
+block (it moved `//P` lines out of a switch case), a time budget for `--exhaustive`; regswap: semantic checks
+(narrowing splits truncate, reused variables), `do { } while (0)` around a variable's uses, block-scope a region,
+shared tail -> duplicated per predecessor, `__typeof__` locals never into src/, speed on 0x600+ functions;
+statemachine.py: the target file's prototypes instead of m2c's, the exit kind of each case, the div-reload shape,
+code shared between sibling state machines, the camera-script family; ccheck / sbs: frame difference in the summary,
+scheduling-only marks with a MEMBER_AT hint, a held-constant detector; pzsweep / libsweep: automatic for -> guarded
+do/while under 2.7.2, "frame only" near misses; a prologue tie-break and a scheduling-dependence diagnostic; variants
+block substitution; prio.py names with array locals.
+
 ## 2026-11-23 (2): tools after round 6
 
 One tools agent on the "Tool work left" list below. +2 functions: main `_spu_gcSPU` (0x300, `// CC

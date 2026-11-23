@@ -1442,7 +1442,6 @@ void func_80112300(void *arg0, void *arg1) {
 #define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
 extern s16 D_1F80019E;
 extern u16 D_1F80017C_0fe7;
-
 void func_8011237C(u8 *a, s32 arg1)
 {
     s16 sp[8];
@@ -1986,7 +1985,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", f_UpdateDonglinInteriorEnvironmentActor)
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801168E4);
 
 extern u8 D_800BFA22;
-
 void func_80116AF8(u8 *a)
 {
     switch (a[5]) {
@@ -3674,7 +3672,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011F1E4);
 
 extern u8 D_800BF80F;
 extern u8 D_800BF816;
-
 void func_8011F4B0(u8 *a)
 {
     u8 *p = D_800E7E80;
@@ -6658,7 +6655,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801406E8);
 
 typedef struct { s16 x; s16 z; } Pair;
 extern Pair D_8014CE4C[];
-
 void func_801408BC(u8 *a)
 {
     s32 x;

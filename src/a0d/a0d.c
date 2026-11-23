@@ -2717,7 +2717,6 @@ extern s16 D_801250EC[];
 extern u8 D_80124EDC[];
 extern u8 D_80117FA4[];
 void func_801152CC();
-
 void func_80115CC0(u8 *a)
 {
     u8 *e = D_800E7E80;

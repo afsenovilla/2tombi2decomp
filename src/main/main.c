@@ -845,7 +845,6 @@ extern u8 D_1F800230_d8aa;
 extern u8 D_800BF81F;
 extern int rcos(int a);
 extern int rsin(int a);
-
 void f_ArmTombaFacingInteraction44(u8 *a, u8 *b)
 {
     s16 ang;
@@ -8559,7 +8558,6 @@ static inline u8 *SpawnBack_B788(void *owner, u8 item, s16 clut)
     }
     return a;
 }
-
 void func_8004B788(u8 *a)
 {
     u8 *t = (u8 *)D_800E7E80;
@@ -13665,7 +13663,6 @@ void func_80069BEC(u8 *a, s32 flag)
 }
 
 extern s32 D_1F800280;
-
 void func_80069CD8(u8 *a, s32 b)
 {
     u8 *q = (u8 *)D_1F800280;
@@ -13749,7 +13746,6 @@ void func_80069CD8(u8 *a, s32 b)
 
 extern u8 D_1F80027B;
 extern u8 D_1F80023A;
-
 void func_8006A080(u8 *a)
 {
     u8 *m = a + 0x60;
@@ -13851,7 +13847,6 @@ void func_8006A240(u8 *a)
 }
 
 extern u8 D_1F800252;
-
 void func_8006A384(u8 *a)
 {
     u8 *m = a + 0x60;
@@ -14006,7 +14001,6 @@ s32 func_8006A8C8(s32 arg0) {
     }
     return temp_v0;
 }
-
 
 void func_8006A900(u8 *a)
 {
@@ -14419,7 +14413,6 @@ s32 func_8006B390(u8 *a)
 
 s16 func_80069A2C(u8 *a, s16 x, s16 y, s16 z);
 s32 f_StepWrappedAngleToward(s32 a, s32 b, s32 step);
-
 void func_8006B494(u8 *a)
 {
     u8 *m = a + 0x60;

@@ -2932,7 +2932,6 @@ void func_80119828(u8 *a) {
 extern u8 D_800BF843;
 extern u8 D_800BF9E3;
 extern u8 D_80148698[];
-
 void f_HandleGoldenCrabDialogueFirstVisit(u8 *a) {
     switch (a[6]) {
     case 0:
@@ -2977,7 +2976,6 @@ void f_HandleGoldenCrabDialogueFirstVisit(u8 *a) {
 }
 
 extern u8 D_801486A0[];
-
 void f_HandleGoldenCrabDialogueRepeatVisit(u8 *a) {
     s32 n;
 
@@ -3024,7 +3022,6 @@ void f_HandleGoldenCrabDialogueRepeatVisit(u8 *a) {
 extern u8 D_8014886C[];
 typedef struct { u8 pad[0x12]; s16 a; s16 b; s16 c; } StgT;
 extern StgT D_8014886C_a7c3;
-
 void f_StageWindmillCutsceneActor(u8 *a) {
 
     switch (a[7]) {
@@ -3074,7 +3071,6 @@ void f_StageWindmillCutsceneActor(u8 *a) {
 extern u8 *D_1F800214;
 #define SP214 D_1F800214
 extern u8 D_800BF9DE;
-
 s32 f_ApplyWindmillCutsceneTransition(u8 *a) {
     u8 *t = D_800E7E80;
     u8 st = D_800BF9DE;
@@ -3454,7 +3450,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011BDB8);
 #define KSH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define KSW(p, o) (*(s32 *)((u8 *)(p) + (o)))
 extern u8 D_800BF9E0;
-
 void f_UpdateKainenHouseSceneActor(u8 *a) {
     s32 r;
 
@@ -3552,7 +3547,6 @@ extern u8 D_80148924[];
 extern u8 D_80148974[];
 extern u8 D_801489A4[];
 extern u8 D_8014DC2C[];
-
 void f_HandleNetBridgeRaiseNpcInteraction(u8 *a) {
     u8 *g;
     u8 *p;
@@ -4979,7 +4973,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RunA00Event4ItemUseCutscene);
 extern u8 D_8001B860[];
 extern u8 *D_80149E50[];
 extern u8 D_800BF9DD;
-
 void f_RunNetBridgeCogInstallationCutscene(u8 *a) {
     u8 *g;
 
@@ -5227,7 +5220,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AnimateWindmillCollapseMainSequence);
 typedef struct { s16 pad0, pad2, y, pad6, x8, xA, xC, padE; } CollapseT;
 extern u8 D_80149F84[];
 extern CollapseT D_80149F90[];
-
 void f_AnimateWindmillCollapseFinale(u8 *a) {
     s16 v[6];
     u8 *e = D_800E8008;
@@ -6612,7 +6604,6 @@ static inline s32 swing_hit(u8 *a) {
     }
     return 0;
 }
-
 void f_UpdateSingleSegmentSwingMotion(u8 *a) {
     u8 *t = D_800E7E80;
     s16 ang;
@@ -6845,7 +6836,6 @@ typedef struct { s16 a, b, c, d, e; } BRow5;
 extern s16 D_800ED098;
 extern BRow5 D_8014A7E4[];
 extern u8 D_800BF822;
-
 void func_80136954(u8 *a) {
     s32 i, k;
     s16 e;

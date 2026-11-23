@@ -3136,7 +3136,6 @@ extern s16 D_80127164[];
 extern u8 D_80126F54[];
 extern u8 D_80117FA4[];
 void f_UpdateEvilPigRobeRewardActor(u8 *a);
-
 void f_UpdateEvilPigDefeatAndRewardSequence(u8 *a)
 {
     u8 *e = D_800E7E80;

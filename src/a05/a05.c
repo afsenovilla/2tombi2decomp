@@ -1937,7 +1937,6 @@ extern u8 D_8013DEA0[];
 extern u8 D_8013DFA8[];
 extern u8 *D_1F800214;
 extern u16 D_1F80017C_0fe7;
-
 void func_801198B8(u8 *a)
 {
     u8 *g;
@@ -3924,7 +3923,6 @@ extern u8 D_800BF924;
 extern u8 D_800BF87D;
 extern s16 D_800E7FEE;
 extern u8 D_800ED058[];
-
 void func_8012C1F8(u8 *a)
 {
     s16 n;
@@ -5011,7 +5009,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801316C4);
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80131824);
 
 extern s8 D_800BF841;
-
 void func_80131988(u8 *a)
 {
     u8 *p = D_800E7E80;
@@ -5431,7 +5428,6 @@ extern u8 D_800BFA08;
 void func_8013466C(void *arg0);
 void func_8011318C(s32 i);
 void func_80114838(s32 i);
-
 u8 *func_80133E8C(u8 *a, s16 k)
 {
     u8 *e = NULL;
@@ -5726,7 +5722,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801384F8);
 
 typedef struct { s16 x, y, z, pad; s16 u, v, w, pad2; } Ent16;
 extern Ent16 D_80140298[];
-
 void func_80138758(u8 *a)
 {
     u32 n;

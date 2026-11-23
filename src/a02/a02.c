@@ -4237,7 +4237,6 @@ s32 func_8011F10C(void *arg0) {
 }
 
 extern u8 D_800BF822;
-
 s32 func_8011F120(u8 *a) {
     s32 one;
 
@@ -4682,7 +4681,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801217A0);
 extern void *D_8012C248[];
 extern u8 D_800BF9DA;
 extern u8 D_8012BFC8[];
-
 void func_80121948(u8 *a) {
     u8 *g;
 

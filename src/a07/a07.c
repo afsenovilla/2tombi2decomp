@@ -1295,7 +1295,6 @@ void func_80113660(u8 *a) {
 
 extern u8 D_800BF818_7697;
 extern u8 *D_1F800138;
-
 s32 f_UpdateCircusInteriorSceneTransition(u8 *a)
 {
     u8 *g;
@@ -3277,7 +3276,6 @@ s32 func_801225D4(void *arg0) {
 }
 
 extern u8 D_800BF8D8;
-
 void func_801225EC(u8 *a)
 {
     s16 sp[4];
@@ -3778,7 +3776,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80128E34);
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80129170);
 
 extern u8 D_800BF822;
-
 s32 func_80129360(u8 *a)
 {
     switch (a[0x78]) {
