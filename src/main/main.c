@@ -841,7 +841,76 @@ void f_ResolveTombaType8ActorContact(u8 *a, u8 *b)
     b[0x29] = 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ArmTombaFacingInteraction44);
+extern u8 D_1F800230_d8aa;
+extern u8 D_800BF81F;
+extern int rcos(int a);
+extern int rsin(int a);
+
+void f_ArmTombaFacingInteraction44(u8 *a, u8 *b)
+{
+    s16 ang;
+    s32 x;
+    s32 t;
+    s32 w;
+    s32 h;
+    u8 *b_p = b;
+
+    b_p[0x29] = 0;
+    if ((D_800BF808[0xE] == 0 || D_800BF808[0xF] == b_p[3]) && a[0x2A] == b_p[0x2A] && f_TestActorOffsetCylinderOverlap(a, b_p) != 0) {
+        if (b_p[0x5F] == 0) {
+            ang = *(u16 *)(a + 0x140);
+        } else {
+            ang = *(u16 *)(a + 0x140) + 0x800;
+        }
+        x = (rcos(ang) * (*(s16 *)(a + 0x80) + *(s16 *)(b_p + 0x80))) >> 12;
+        t = (rsin(ang) * (*(s16 *)(a + 0x80) + *(s16 *)(b_p + 0x80))) >> 12;
+        w = *(s16 *)&D_1F80009C;
+        *(u16 *)(a + 0x2E) = x + (*(u16 *)(b_p + 0x2E) + *(u16 *)(b_p + 0x60));
+        MEMBER_AT(u16, a, 0x36) = (*(u16 *)(b_p + 0x36) + *(u16 *)(b_p + 0x64)) - t;
+        h = *(s16 *)(a + 0x140);
+        a[0x5F] = f_TestWrappedAngleSide(w, h, 1) + 2;
+        if (b_p[0x5F] != a[0x147] && D_1F800230_d8aa == 0 && D_800BF808[7] == 0) {
+            if (D_800BF870.pad1[2] != 0) {
+                switch (D_800BF870.unk0) {
+                case 1:
+                    if (a[0x2A] == 0x49 || a[0x2A] == 0x19 || a[0x2A] == 0x1A || a[0x2A] == 0x27) {
+                        goto set;
+                    }
+                    if (a[0x2A] != 0x2B) {
+                        break;
+                    }
+                    goto set;
+                case 5:
+                    if (a[0x2A] == 8 && *(s16 *)(a + 0x36) >= 0x2969) {
+                            b_p[0x29] = 1;
+                            D_800BF81F = (1 - b_p[0x5F]) * 16;
+                            break;
+                    }
+                    break;
+                case 6:
+                    if (a[0x2A] == 7 && *(s16 *)(a + 0x2E) < 0x1CE8) {
+                            b_p[0x29] = 1;
+                            D_800BF81F = (1 - b_p[0x5F]) * 16;
+                            break;
+                    }
+                    break;
+                case 8:
+                    if (a[0x2A] != 0x1F) {
+                        break;
+                    }
+                case 9:
+                set:
+                    b_p[0x29] = 1;
+                    D_800BF81F = (1 - b_p[0x5F]) * 16;
+                    break;
+                }
+            } else {
+                b_p[0x29] = 1;
+                D_800BF808[0x17] = (1 - b_p[0x5F]) * 16;
+            }
+        }
+    }
+}
 
 s32 func_80020B08(u8 *a, u8 *b)
 {
@@ -6541,7 +6610,6 @@ s32 func_800419C4(u8 *a, s16 b, s16 c)
 }
 
 extern u8 D_800BF809;
-extern u8 D_1F800230_d8aa;
 extern u16 D_800ECF54;
 s32 func_80041A1C(u8 *a, s32 flags)
 {
@@ -13374,8 +13442,6 @@ void func_80069BEC(u8 *a, s32 flag)
 }
 
 extern s32 D_1F800280;
-extern int rcos(int a);
-extern int rsin(int a);
 
 void func_80069CD8(u8 *a, s32 b)
 {
