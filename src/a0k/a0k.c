@@ -21,7 +21,39 @@ u8 *func_80109788(void)
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801097DC);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010996C);
+extern s32 D_1F80009C_baed;
+extern u8 D_1F800137;
+extern s16 D_1F80018E;
+extern u8 *D_1F800184;
+extern u16 D_1F80008C;
+extern u8 D_800BF808[];
+
+void func_8010996C(u8 *a, u8 *b)
+{
+    s16 ang;
+
+    if (func_8002300C(a, b, *(s16 *)(b + 0x80) + 0x96) == 0) {
+        return;
+    }
+    ang = *(u16 *)&D_1F80009C_baed & 0xFFF;
+    if (!(*(u16 *)(a + 0x17E) & 0x200) && D_1F800137 == 0 && !(b[0] & 2)) {
+        if (abs((s16)((ang - *(u16 *)(a + 0x56)) << 4)) < 0x2001) {
+            D_1F80018E = 0x1200;
+            D_1F800184 = b;
+            D_800BF808[0x38] = 0x4B;
+        }
+    }
+    if (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) >= D_1F80008C) {
+        s32 temp_s0;
+        s32 temp_lo;
+
+        ang += 0x800;
+        temp_s0 = (s32) (func_80083F50(ang) * (M2C_FIELD(a, s16 *, 0x80) + M2C_FIELD(b, s16 *, 0x80))) >> 0xC;
+        temp_lo = func_80083E80(ang) * (M2C_FIELD(a, s16 *, 0x80) + M2C_FIELD(b, s16 *, 0x80));
+        M2C_FIELD(a, s16 *, 0x2E) = (s16) (M2C_FIELD(b, u16 *, 0x2E) + temp_s0);
+        M2C_FIELD(a, s16 *, 0x36) = (s16) (M2C_FIELD(b, u16 *, 0x36) - (temp_lo >> 0xC));
+    }
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80109AC8);
 
@@ -256,8 +288,6 @@ extern u16 D_1F8000F2;
 typedef struct { s16 pad; s16 x; s16 pad2; s16 y; s16 pad3; s16 z; } PosV;
 extern u8 D_800BF80E_58ec;
 extern u16 D_1F800192;
-extern u8 D_1F800137;
-extern u8 D_800BF808[];
 extern u8 D_1F80027A;
 extern u8 D_800BF80A;
 static inline void fall_step(u8 *a)
@@ -2305,7 +2335,64 @@ void func_80116B14(u32 *a, s32 b)
     }
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80116B9C);
+typedef struct {
+    s32 vx, vy;
+} T2Pt32;
+typedef struct {
+    u8 pad0[2];
+    s16 x;
+    u8 pad4[6];
+    s16 y;
+    u8 padC[0x14];
+    s16 rx;
+    u16 ry;
+} T2CamD0;
+extern T2CamD0 D_1F8000D0_3bb0;
+extern s32 D_800A3F90;
+extern s32 D_800A3F94;
+
+void func_80116B9C(u8 *a)
+{
+    T2Pt32 v0, v1, v2;
+    T2CamD0 *c;
+    s32 ang, r, dx, dz;
+    u16 t;
+
+    if (D_800BF871 < 4) {
+        a[6] = 0;
+        return;
+    }
+    c = &D_1F8000D0_3bb0;
+    t = c->ry;
+    D_800A3F90 = 0x2800;
+    ang = (-(s16)t - D_800A3F94) & 0xFFF;
+    v0.vx = c->x;
+    v0.vy = c->y;
+    v1.vx = v0.vx + ((func_80083E80(ang) * D_800A3F90) >> 12);
+    v1.vy = v0.vy + ((func_80083F50(ang) * D_800A3F90) >> 12);
+    ang = (D_800A3F94 - (s16)c->ry) & 0xFFF;
+    v2.vx = v0.vx + ((func_80083E80(ang) * D_800A3F90) >> 12);
+    v2.vy = v0.vy + ((func_80083F50(ang) * D_800A3F90) >> 12);
+    r = abs(func_80083E80(c->rx));
+    dx = (func_80083E80(-(s16)c->ry) * r) >> 12;
+    dz = (func_80083F50(-(s16)c->ry) * r) >> 12;
+    dx = (dx * D_800A3F90 * 5) >> 16;
+    dz = (dz * D_800A3F90 * 5) >> 16;
+    v1.vx -= dx;
+    v1.vy -= dz;
+    v2.vx -= dx;
+    v0.vx -= dx;
+    v2.vy -= dz;
+    v0.vy -= dz;
+    v0.vx /= 640;
+    v0.vy /= 640;
+    v1.vx /= 640;
+    v1.vy /= 640;
+    v2.vx /= 640;
+    v2.vy /= 640;
+    a[6] = 0;
+    func_80116E68(a, &v0, &v1, &v2);
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80116E68);
 
