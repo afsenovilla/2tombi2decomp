@@ -1439,7 +1439,139 @@ void func_80112300(void *arg0, void *arg1) {
     }
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011237C);
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+extern s16 D_1F80019E;
+extern u16 D_1F80017C_0fe7;
+
+void func_8011237C(u8 *a, s32 arg1)
+{
+    s16 sp[8];
+    s16 d;
+    s16 t;
+
+    s32 k;
+
+    if (a[0x145] & 1) {
+        return;
+    }
+    d = -0x14;
+    if (H(a, 0x17E) < 0) {
+        d = -0xA;
+    }
+    switch (a[7]) {
+    case 0:
+        func_80058304(a, 2);
+        t = U(a, 0x4A) - 0x3200;
+        if (t < 0) {
+            H(a, 0x50) = 0x1400;
+        } else {
+            if (t > 0xC00) {
+                t = 0xC00;
+            }
+            H(a, 0x50) = t / 2 + 0x1400;
+        }
+        a[7]++;
+    case 1:
+        W(a, 0x30) += H(a, 0x50) << 8;
+        t = U(a, 0x50) - 0x180;
+        H(a, 0x50) = t;
+        if (t <= 0) {
+            a[7]++;
+        }
+        break;
+    case 2:
+        if (D_800BF870.unk0 == 0) {
+            k = 0x10E;
+        } else if (D_800BF870.unk0 == 6) {
+            k = 0x70E;
+        } else if (D_800BF870.unk0 == 0xE) {
+            k = 0xF0D;
+        } else {
+            goto s2;
+        }
+        func_800312D4(k, a + 0x2C, -0xA);
+    s2:
+        a[7]++;
+    case 3:
+    case 4:
+        W(a, 0x30) -= H(a, 0x50) << 8;
+        if (a[7] == 3) {
+            U(a, 0x50) += 0x180;
+        } else {
+            U(a, 0x50) += 0x80;
+        }
+        if (H(a, 0x50) >= 0x1000) {
+            H(a, 0x50) = 0x1000;
+        }
+        if (D_1F80019E + d >= H(a, 0x32)) {
+            U(a, 0x32) = *(u16 *)&D_1F80019E;
+            if (D_800BF870.unk0 == 0) {
+                func_8003116C(0x10D, a + 0x2C, -0xA);
+            } else if (D_800BF870.unk0 == 6) {
+                func_800312D4(0x704, a + 0x2C, -0xA);
+            } else if (D_800BF870.unk0 == 0xE) {
+                func_800312D4(0xF06, a + 0x2C, -0xA);
+            }
+            U(a, 0x32) += d;
+            if (a[0x146] == 0 && !(a[0x14A] & 2)) {
+                a[7] = 6;
+            } else {
+                a[7] = 5;
+            }
+            H(a, 0x50) = 0;
+        }
+        break;
+    case 5:
+        W(a, 0x30) += H(a, 0x50) << 8;
+        t = U(a, 0x50) + 0x80;
+        H(a, 0x50) = t;
+        if (t >= 0x600) {
+            H(a, 0x50) = 0;
+            a[7]--;
+        }
+        break;
+    case 6:
+        if (D_1F80019E + d < H(a, 0x32)) {
+            W(a, 0x30) -= H(a, 0x50) << 8;
+            t = U(a, 0x50) + 0x100;
+            H(a, 0x50) = t;
+            if (t >= 0x1000) {
+                H(a, 0x50) = 0x1000;
+            }
+            if (D_1F80019E + d >= H(a, 0x32)) {
+                U(a, 0x32) = *(u16 *)&D_1F80019E;
+                if (D_800BF870.unk0 == 0) {
+                    func_8003116C(0x10D, a + 0x2C, -0xA);
+                } else if (D_800BF870.unk0 == 6) {
+                    func_800312D4(0x704, a + 0x2C, -0xA);
+                } else if (D_800BF870.unk0 == 0xE) {
+                    func_800312D4(0xF06, a + 0x2C, -0xA);
+                }
+                H(a, 0x50) = 0;
+                U(a, 0x32) += d;
+            }
+        } else if (a[0x146] != 0 || (a[0x14A] & 2)) {
+            a[7] = 5;
+        }
+        if (arg1 != 0) {
+            arg1 = 7;
+        } else {
+            arg1 = 3;
+        }
+        if (!(D_1F80017C_0fe7 & arg1)) {
+            sp[1] = U(a, 0x2E) + ((func_80083F50(H(a, 0x56) + 0x800) * 100) >> 12);
+            sp[3] = *(u16 *)&D_1F80019E + 0x1E;
+            sp[5] = U(a, 0x36) - ((func_80083E80(H(a, 0x56) + 0x800) * 100) >> 12);
+            func_8003116C(8, sp, -0x50);
+        }
+        break;
+    }
+    if (D_1F80019E + H(a, 0x62) / 2 < H(a, 0x32)) {
+        a[0x148] = 1;
+    } else {
+        a[0x148] = 0;
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80112838);
 
@@ -1854,7 +1986,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", f_UpdateDonglinInteriorEnvironmentActor)
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801168E4);
 
 extern u8 D_800BFA22;
-extern u16 D_1F80017C_0fe7;
 
 void func_80116AF8(u8 *a)
 {
