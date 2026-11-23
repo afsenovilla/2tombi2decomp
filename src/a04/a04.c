@@ -1343,7 +1343,154 @@ void func_801189C4(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", f_UpdateKujaraQuestPickupActor);
+extern s32 D_800ECF80_d353;
+/* func_80118E50, inlined */
+static inline void func_80118E50_inl(u8 *a) {
+    if (func_80051B70(a, 0xC, 0x37) == 0) {
+        a[0xB] = 0xF;
+        a[0] = 1;
+        a[0xD] = 0;
+        M2C_FIELD(a, s16 *, 0x80) = 0x20;
+        M2C_FIELD(a, s16 *, 0x82) = 0x40;
+        M2C_FIELD(a, s16 *, 0x84) = 0x20;
+        M2C_FIELD(a, s16 *, 0x86) = 0x40;
+        func_8004B354(a, 1);
+    }
+}
+/* func_80118F04, inlined */
+static inline void func_80118F04_inl(u8 *a) {
+    a[0xB] = 0x11;
+    M2C_FIELD(a, s16 *, 0x7A) = 0x1C00;
+    M2C_FIELD(a, s16 *, 0x7C) = 0x1C00;
+    M2C_FIELD(a, s16 *, 0x7E) = 0x1C00;
+    M2C_FIELD(a, s16 *, 0x5A) = 0;
+    a[0x47] = 0;
+    M2C_FIELD(a, s16 *, 0x5C) = 0;
+    a[0xD] = 0;
+    M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80_d353;
+    func_80077B38(a, D_80144360, 10);
+    a[0x2A] = 7;
+    a[0] = 1;
+    M2C_FIELD(a, s16 *, 0x80) = 0x20;
+    M2C_FIELD(a, s16 *, 0x82) = 0x40;
+    M2C_FIELD(a, s16 *, 0x84) = 0x40;
+    M2C_FIELD(a, s16 *, 0x86) = 0x80;
+    func_8004B354(a, 0);
+}
+/* func_80119080, inlined */
+static inline void func_80119080_inl(u8 *a) {
+    a[0xB] = 0x11;
+    M2C_FIELD(a, s16 *, 0x7A) = 0x1C00;
+    M2C_FIELD(a, s16 *, 0x7C) = 0x1C00;
+    M2C_FIELD(a, s16 *, 0x7E) = 0x1C00;
+    M2C_FIELD(a, s16 *, 0x5A) = 0;
+    a[0x47] = 0;
+    M2C_FIELD(a, s16 *, 0x5C) = 0;
+    a[0xD] = 0;
+    M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80_d353;
+    func_80077B38(a, D_80144360, 11);
+    a[0] = 1;
+    M2C_FIELD(a, s16 *, 0x80) = 0x20;
+    M2C_FIELD(a, s16 *, 0x82) = 0x40;
+    M2C_FIELD(a, s16 *, 0x84) = 0x20;
+    M2C_FIELD(a, s16 *, 0x86) = 0x40;
+}
+/* func_80118FA0, inlined */
+static inline void func_80118FA0_inl(void *arg0) {
+    if (func_80040B48(0x85) >= 0) {
+        func_8004D4C4(0x94, 1);
+        func_8004B0D8(arg0);
+        D_800BF870.pad1[0xC8] |= 0x10;
+    }
+    M2C_FIELD(arg0, s8 *, 4) = 3;
+}
+/* func_80119104, inlined */
+static inline void func_80119104_inl(void *arg0) {
+    if (func_80040C00(0x66) >= 0) {
+        func_8004D4C4(0x3F, 1);
+        func_8004B0D8(arg0);
+        D_800BF870.pad1[0x17B] += 1 << (M2C_FIELD(arg0, u8 *, 3) * 2);
+    }
+    M2C_FIELD(arg0, s8 *, 4) = 3;
+}
+
+void f_UpdateKujaraQuestPickupActor(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        switch (a[3]) {
+        case 0:
+            func_80118E50_inl(a);
+            break;
+        case 1:
+            func_80118F04_inl(a);
+            break;
+        case 2:
+        case 3:
+            func_80119080_inl(a);
+            break;
+        case 4:
+            a[3] = 0x26;
+            func_8004A828(a);
+            a[3] = 4;
+            a[0] = 1;
+            a[0x2A] = 0;
+            func_80041194(a, 0x20, 0, 0);
+            break;
+        }
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            if (func_8007778C(a) != 0) {
+                func_800517F8(a);
+                func_8004B374(a, 1);
+            }
+            break;
+        case 1:
+            if (func_8007778C(a) != 0) {
+                func_8004B374(a, 0);
+            }
+            break;
+        case 2:
+        case 3:
+            func_8007778C(a);
+            break;
+        case 4:
+            func_8007778C(a);
+            func_8004B374(a, 0);
+            break;
+        }
+        break;
+    case 2:
+        switch (a[3]) {
+        case 0:
+            if (func_80040B48(0x61) >= 0) {
+                func_8004D4C4(0x52, 1);
+                func_8004B0D8(a);
+            }
+            a[4] = 3;
+            break;
+        case 1:
+            func_80118FA0_inl(a);
+            break;
+        case 2:
+        case 3:
+            func_80119104_inl(a);
+            break;
+        case 4:
+            if (func_8004A3D4(a) != 0) {
+                a[4]++;
+            }
+            break;
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_80118E50(u8 *a) {
     if (func_80051B70(a, 0xC, 0x37) == 0) {
@@ -1366,7 +1513,6 @@ void func_80118EB8(void *arg0) {
     M2C_FIELD(arg0, s8 *, 4) = 3;
 }
 
-extern s32 D_800ECF80_d353;
 void func_80118F04(u8 *a) {
     a[0xB] = 0x11;
     M2C_FIELD(a, s16 *, 0x7A) = 0x1C00;
