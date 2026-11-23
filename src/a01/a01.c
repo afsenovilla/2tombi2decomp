@@ -1901,7 +1901,104 @@ void func_80113554(u8 *a, u8 *b) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80113710);
+#define LH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define LP(p) (*(u8 **)((u8 *)(p) + 0xC0))
+extern u8 D_80135B24[][2];
+extern s16 *D_80135B0C[];
+extern s16 D_800ED098;
+
+void func_80113710(u8 *a) {
+    s32 i;
+    s16 *r;
+    u8 *pa;
+    u8 *q;
+
+    switch (a[4]) {
+    case 0:
+        a[8] = D_80135B24[a[3]][0];
+        if (D_800ED098 < a[8]) {
+            a[4] = 3;
+            break;
+        }
+        a[9] = a[8];
+        a[4]++;
+        a[0xD] = 0;
+        a[0xB] = 0;
+        LH(a, 0x54) = 0;
+        LH(a, 0x56) = 0;
+        LH(a, 0x58) = 0;
+        r = D_80135B0C[a[3]];
+        i = 0;
+        if (a[8] != 0) {
+            pa = a;
+        loop:
+            i++;
+            q = func_8007AAE8();
+            LP(pa) = q;
+            LH(q, 6) = *r++;
+            LH(LP(pa), 0) = *r++;
+            LH(LP(pa), 2) = *r++;
+            LH(LP(pa), 4) = *r++;
+            LH(LP(pa), 8) = *r++;
+            LH(LP(pa), 0xA) = *r++;
+            LH(LP(pa), 0xC) = *r++;
+            func_80051B04(LP(pa), 0xC, *r++);
+            pa += 4;
+            if (i < a[8]) {
+                goto loop;
+            }
+        }
+        a[0xD] |= 4;
+        LP(a)[0x3F] = 0x10;
+        switch (a[3]) {
+        case 0:
+            a[0x46] = 1;
+            a[0xBF] = 1;
+            a[0x5E] = 0;
+            break;
+        case 1:
+            LH(LP(a), 2) = 0x28A;
+            break;
+        case 4:
+            a[0x46] = 1;
+            a[0xBF] = 1;
+            func_80040C00(0x56);
+            break;
+        case 5:
+            a[0xBF] = 1;
+            a[0x46] = 0;
+            LH(a, 0x56) = 0xC00;
+            break;
+        case 2:
+        case 3:
+            break;
+        }
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+        case 4:
+            func_80113554(a, *(u8 **)(a + 0xC4));
+            LH(*(u8 **)(a + 0xC8), 0xA) = LH(*(u8 **)(a + 0xC4), 0xA);
+            break;
+        case 5:
+            func_80113554(a, *(u8 **)(a + 0xC4));
+            break;
+        case 1:
+        case 2:
+        case 3:
+            break;
+        }
+        a[1] = 1;
+        func_800517F8(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801139D4);
 
@@ -6170,7 +6267,6 @@ void func_8012C8C0(u8 *a)
     }
 }
 
-extern s16 D_800ED098;
 extern s16 D_1F8001A0_b0de;
 extern s16 D_1F8001A2;
 typedef struct {
