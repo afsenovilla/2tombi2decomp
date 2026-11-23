@@ -3868,7 +3868,102 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateGranPostPipeAreaDialogue);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011F2A4);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011F4B8);
+#define FH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+extern u8 D_800BF9FA;
+extern u8 D_80136CE0[];
+extern u8 D_80136DA0[];
+extern s32 D_1F800214;
+
+void func_8011F4B8(u8 *a) {
+    u8 *p;
+    s32 s = a[5];
+    s32 t;
+
+    switch (s) {
+    case 0:
+        if (D_800BF9FA == 0x19) {
+            func_80040D68(a, D_80136CE0);
+            a[0x70] = 2;
+            a[5]++;
+        }
+        break;
+    case 1:
+        if (a[0x70] == 0xFF) {
+            func_80040D68(a, D_80136DA0);
+            a[0x70] = 2;
+            a[6] = 0;
+            a[5]++;
+        }
+        break;
+    case 2:
+        p = *(u8 **)(a + 0x14);
+        if (p == NULL) {
+            break;
+        }
+        switch (a[6]) {
+        case 0:
+            if (FH(a, 0x2E) < 0x4877) {
+                FH(p, 0x60) = 0;
+                p[5] = 1;
+                FH(p, 0x48) = FH(p, 0x2E);
+                FH(p, 0x4A) = FH(p, 0x32);
+                a[6]++;
+            }
+            break;
+        case 1:
+            if ((FH(p, 0x4A) += 0x1E) >= -0x1B8C) {
+                FH(p, 0x4A) = -0x1B8C;
+                FH(p, 0x4C) = 0;
+                func_80074810(0x98, 0);
+                a[6]++;
+            }
+            break;
+        case 2:
+            FH(p, 0x4A) = -0x1B8C;
+            if (!(++FH(p, 0x4C) & 7)) {
+                FH(p, 0x4C) = 0;
+                a[6]++;
+            } else {
+                FH(p, 0x4A) -= func_8009A450() & 7;
+            }
+            break;
+        case 3:
+            FH(p, 0x4C) += 0x20;
+            if ((FH(p, 0x58) += FH(p, 0x4C)) >= 0x400) {
+                func_80074810(0x98, 0);
+                func_800440E4(D_800E7E80, 0x80B4, 4);
+                func_80041768(D_1F800214, 4, 4);
+                FH(p, 0x58) = 0x400;
+                a[6]++;
+            }
+            break;
+        case 4:
+            FH(p, 0x4A) = -0x1B8C;
+            if (!(++FH(p, 0x4C) & 7)) {
+                D_800BF844 = p;
+                a[5]++;
+            } else {
+                FH(p, 0x4A) -= func_8009A450() & 7;
+            }
+            break;
+        }
+        FH(p, 0x2E) = FH(p, 0x48) + ((func_80083E80(FH(p, 0x58)) * 0xC0) >> 12);
+        t = ((func_80083F50(FH(p, 0x58)) * 0xC0) >> 12) - 0xC0;
+        FH(p, 0x32) = FH(p, 0x4A) - t;
+        break;
+    case 3:
+        if (a[0x70] == 0xFF) {
+            a[4] = s;
+        }
+        break;
+    }
+    a[1] = 1;
+    func_80077E7C(a);
+    if (a[1] != 0) {
+        func_80041098(a);
+        func_8004190C(a);
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011F7CC);
 
@@ -5419,7 +5514,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012AC84);
 #define FU(p, o) (*(u16 *)((u8 *)(p) + (o)))
 typedef struct { s32 x, y, z; } V3W;
 typedef union { V3W w; s16 h[6]; } V3U;
-extern u8 D_800BF9FA;
 
 void func_8012AF08(u8 *a) {
     V3U v;
