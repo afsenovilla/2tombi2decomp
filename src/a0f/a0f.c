@@ -2405,7 +2405,67 @@ void func_80117984(u8 *a) {
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80117A64);
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80117C70);
+extern u16 D_1F8000F2;
+
+void func_80117C70(u8 *a)
+{
+    s32 n;
+    s32 x;
+
+    switch (a[4]) {
+    case 0:
+        func_80117A64(a);
+        break;
+    case 1:
+        if (a[0x2B] != 0) {
+            n = (u16)(*(u16 *)(*(u8 **)(a + 0xC0) + 0x3A) / 320);
+            if (n == 0) {
+                n = 1;
+            } else if (n >= 5) {
+                n = 4;
+            }
+            *(s16 *)(a + 0x7C) = 0;
+            *(s16 *)(a + 0x7E) = n * 8;
+        } else {
+            x = (*(u16 *)(a + 0x7C) + 0x1E0) & 0xFFF;
+            *(s16 *)(a + 0x7C) = x;
+            if (x < 0x1E0 && *(s16 *)(a + 0x7E) != 0) {
+                *(s16 *)(a + 0x7E) -= 8;
+            }
+        }
+        switch (a[5]) {
+        case 0:
+            if (a[0x29] != 0) {
+                a[5] = 1;
+                n = (u16)(*(u16 *)(*(u8 **)(a + 0xC0) + 0x3A) / 320);
+                if (n == 0) {
+                    n = 1;
+                } else if (n >= 5) {
+                    n = 4;
+                }
+                *(s16 *)(a + 0x7C) = 0;
+                *(s16 *)(a + 0x7E) = n * 8;
+            }
+            break;
+        case 1:
+            if (a[0x29] == 0) {
+                a[5] = 0;
+            }
+            break;
+        }
+        *(s16 *)(a + 0x56) = -D_1F8000F2;
+        func_800517F8(a);
+        a[1] = 1;
+        func_80077EBC(a);
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_80117E40(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x56) = (s16) -(s16) *(u16 *)0x1F8000F2;

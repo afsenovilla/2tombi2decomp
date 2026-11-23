@@ -1498,7 +1498,155 @@ s32 func_8010C958(u8 *a, s16 id)
     }
 }
 
-INCLUDE_ASM("asm/a0j/nonmatchings/a0j", func_8010CA1C);
+#define P(p, o) (*(void **)((u8 *)(p) + (o)))
+/* func_8010CDCC, inlined */
+static inline void inl_8010CDCC(u8 *a)
+{
+    u8 *r;
+
+    func_80051B70(a, 0xC, 0);
+    a[0xD] |= 4;
+    (*(u8 **)(a + 0xC0))[0x3F] = 0xE0;
+    func_800517F8(a);
+    r = func_80072DDC(a, 1, 3, 0x10);
+    if (r != NULL) {
+        r[3] = 1;
+        *(void **)(r + 0x1C) = func_8010CA1C;
+        *(s16 *)(r + 0x2E) = *(s16 *)(a + 0x2E);
+        *(s16 *)(r + 0x32) = *(s16 *)(a + 0x32);
+        *(s16 *)(r + 0x36) = *(s16 *)(a + 0x36);
+    }
+}
+/* func_8010CE8C, inlined */
+static inline void inl_8010CE8C(u8 *a)
+{
+    *(void **)(a + 0x3C) = D_800ECF80;
+    func_80077B38(a, D_8010D8AC, 5);
+    a[0xD] = 1;
+    a[0xB] = 0x10;
+    *(s16 *)(a + 0x5C) = 0;
+    *(s16 *)(a + 0x5A) = 0;
+    a[0x47] = 0;
+    a[8] = 0xC0;
+}
+/* func_8010CF3C, inlined */
+static inline void inl_8010CF3C(u8 *a)
+{
+    *(void **)(a + 0x3C) = D_800ECF80;
+    func_80077B38(a, D_8010D8AC, 6);
+    a[0xD] = 0;
+    *(s16 *)(a + 0x5C) = 0;
+    a[0xB] = 0x10;
+    *(s16 *)(a + 0x5A) = 0;
+    a[0x47] = 0;
+    a[8] = 0;
+}
+/* func_8010D094, inlined */
+static inline void inl_8010D094(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+
+    *(void **)(a + 0x3C) = D_800ECF80;
+    func_80077B38(a, D_8010D8AC, 4);
+    a[0xB] = 0x10;
+    a[0xD] = 0;
+    *(s16 *)(a + 0x5C) = 0;
+    *(s16 *)(a + 0x5A) = 0;
+    a[0x47] = 0;
+    a[8] = 0xE0;
+    *(s16 *)(a + 0x2E) = *(s16 *)(o + 0x2E);
+    *(s16 *)(a + 0x32) = *(s16 *)(o + 0x32) - 0x118;
+    *(s16 *)(a + 0x36) = *(s16 *)(o + 0x36);
+}
+/* func_8010CEEC, inlined */
+static inline void inl_8010CEEC(void *arg0) {
+    u8 temp_v0;
+
+    temp_v0 = M2C_FIELD(M2C_FIELD(arg0, void **, 0x10), u8 *, 1);
+    M2C_FIELD(arg0, u8 *, 1) = temp_v0;
+    if (temp_v0 & 0xFF) {
+        func_8010D1F0(arg0);
+    }
+    func_80077B5C(arg0);
+}
+/* func_8010CF94, inlined */
+static inline void inl_8010CF94(u8 *a)
+{
+    u8 *t = D_800E7E80;
+    u8 *o = P(a, 0x10);
+    switch (a[5]) {
+    case 0:
+        if (D_800BF850 == 1) {
+            func_8004ED94(0x6F, 0x42);
+            a[5]++;
+        }
+        func_8004BD64(a, 0, P(t, 0xDC), P(t, 0xD0), 0);
+        break;
+    case 1:
+        if (D_800BF850 == 2) {
+            func_8004ED94(0x2C, 0x42);
+            a[4] = 3;
+        }
+        func_8004BD64(a, 0, P(o, 0xDC), P(o, 0xD0), 0);
+        *(s16 *)(a + 0x2E) -= 0x30;
+        break;
+    }
+    a[1] = 1;
+}
+/* func_8010D124, inlined */
+static inline void inl_8010D124(void *arg0) {
+    if (D_800BF870.pad1[0x29B] != 0) {
+        M2C_FIELD(arg0, s8 *, 4) = 3;
+        M2C_FIELD(&D_800BF870, s8 *, 0x5E5) = 1;
+    }
+    M2C_FIELD(arg0, s8 *, 1) = 1;
+}
+
+void func_8010CA1C(u8 *a)
+{
+    switch (a[4]) {
+    case 0: {
+        s32 one = 1;
+        a[4] = one;
+        switch (a[3]) {
+        case 0:
+            inl_8010CDCC(a);
+            break;
+        case 1:
+            inl_8010CE8C(a);
+            break;
+        case 2:
+            inl_8010CF3C(a);
+            break;
+        case 3:
+            inl_8010D094(a);
+            break;
+        }
+        break;
+    }
+    case 1:
+        switch (a[3]) {
+        case 0:
+            func_8007778C(a);
+            break;
+        case 1:
+            inl_8010CEEC(a);
+            break;
+        case 2:
+            inl_8010CF94(a);
+            break;
+        case 3:
+            inl_8010D124(a);
+            break;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_8010CDCC(u8 *a)
 {
