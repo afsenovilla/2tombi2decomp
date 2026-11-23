@@ -6610,7 +6610,157 @@ void func_80136748(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013681C);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80136954);
+#define BH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define BW(p, o) (*(s32 *)((u8 *)(p) + (o)))
+#define BPART(a, i) (*(u8 **)((u8 *)(a) + (i) * 4 + 0xC0))
+typedef struct { s32 x, y, z; } BV3W;
+typedef struct { s16 a, b, c, d, e; } BRow5;
+extern s16 D_800ED098;
+extern BRow5 D_8014A7E4[];
+extern u8 D_800BF822;
+
+void func_80136954(u8 *a) {
+    s32 i, k;
+    s16 e;
+    BRow5 *r;
+    u8 *pa;
+    u8 *q;
+    u8 *g;
+    u8 *t;
+
+    switch (a[4]) {
+    case 0:
+        if (D_800ED098 < 4) {
+            a[4] = 3;
+            break;
+        }
+        a[8] = 4;
+        a[9] = 4;
+        a[0xB] = 3;
+        i = 0;
+        a[0xD] = 0;
+        a[4]++;
+        if (a[8] != 0) {
+            r = D_8014A7E4;
+            pa = a;
+        loop:
+                q = func_8007AAE8();
+                *(u8 **)(pa + 0xC0) = q;
+                BH(q, 6) = r->a;
+                BH(*(u8 **)(pa + 0xC0), 0) = r->b;
+                BH(*(u8 **)(pa + 0xC0), 2) = r->c;
+                BH(*(u8 **)(pa + 0xC0), 4) = r->d;
+                BW(*(u8 **)(pa + 0xC0), 8) = 0;
+                BW(*(u8 **)(pa + 0xC0), 0xC) = 0;
+                func_80051B04(*(u8 **)(pa + 0xC0), 0xC, r->e);
+                i++;
+                r++;
+                pa += 4;
+                if (i < a[8]) {
+                    goto loop;
+                }
+        }
+        BH(a, 0x60) = 0xF;
+        BH(a, 0x62) = 0x3BBF;
+        BH(a, 0x64) = 0x70F0;
+        BH(a, 0x66) = 0x70F8;
+        BH(a, 0x68) = -0x7710;
+        BH(a, 0x6A) = -0x7708;
+        BH(a, 0x6C) = 0x28;
+        BH(a, 0x6E) = 0;
+        BH(a, 0xBA) = 0xF0;
+        BH(a, 0x50) = 0;
+        a[0x2B] = 0;
+        break;
+    case 1:
+        if (func_8007778C(a) == 0) {
+            break;
+        }
+        switch (a[5]) {
+        case 1:
+            break;
+        case 0:
+            if (D_800BF870.pad1[0x48] == 0xFF) {
+                if (D_800BF870.pad1[0xC6] == 0) {
+                    func_80051B04(*(u8 **)(a + 0xC0), 0xC, 0xB);
+                    a[5] = 1;
+                } else if (!(D_800BF870.pad1[0x1DA] & 1)) {
+                    a[0] = 1;
+                    BH(a, 0x80) = 0x15E;
+                    BH(a, 0x82) = 0x2BC;
+                    BH(a, 0x84) = 0xC8;
+                    BH(a, 0x86) = 0x190;
+                    func_80051B04(*(u8 **)(a + 0xC0), 0xC, 0xB);
+                    a[5] = 4;
+                } else {
+                    a[5] = 1;
+                }
+            } else {
+                a[5] = 2;
+            }
+            break;
+        case 2:
+            if (D_800BF9DD == 0xC) {
+                a[5]++;
+            }
+            break;
+        case 3:
+            func_8013681C(a);
+            break;
+        case 4:
+            switch (a[6]) {
+            case 0:
+                if (a[0x2B] == 3) {
+                    D_800E7E80[4] = 4;
+                    D_800E7E80[5] = 0x21;
+                    D_800E7E80[6] = 0;
+                    D_800E7E80[0x61] = 0;
+                    a[0] = 2;
+                    a[6]++;
+                    func_80042354(1, 1);
+                }
+                break;
+            case 1:
+                if (D_800BF80E != 0) {
+                    func_800440E4(D_800E7E80, 0xCF, 4);
+                    a[6]++;
+                }
+                break;
+            case 2:
+                g = (u8 *)D_800BF808;
+                if (g[6] != 0) {
+                    u8 *q2 = func_8006FF10(a, 0x24);
+                    *(u8 **)(g + 0x3C) = q2;
+                    if (q2 != NULL) {
+                        t = D_800E7E80;
+                        *(BV3W *)(q2 + 0x2C) = *(BV3W *)(t + 0x2C);
+                        func_80051B04(*(u8 **)(a + 0xC0), 0xC, 0x4E);
+                        D_800BF870.pad1[0x1DA] |= 1;
+                        func_800440E4(t, 2, 4);
+                        a[6]++;
+                    }
+                }
+                break;
+            case 3:
+                if (!(D_800BF822 & 1)) {
+                    func_80042310();
+                    a[6] = 0;
+                    a[5] = 1;
+                }
+                break;
+            }
+            break;
+        }
+        func_800517F8(a);
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u8 D_800BF89C;
 extern u8 D_800E7EAA;
@@ -6842,7 +6992,6 @@ void func_8013A784(u8 *a) {
     M2C_FIELD(a, s32 *, 0x30) = y;
 }
 
-extern s16 D_800ED098;
 s32 func_8013A818(AreaPartsOwner *a) {
     s32 i;
     u8 *g;
