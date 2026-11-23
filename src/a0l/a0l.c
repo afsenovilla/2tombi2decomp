@@ -181,9 +181,141 @@ void func_8010983C(u8 *a)
     func_8006E3B0(a, a + 0x38);
 }
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", f_UpdateEndingArea2CameraSequence);
+extern CamEnt D_80114EFC[];
+extern u8 D_800BFA57;
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", f_UpdateEndingArea4CameraSequence);
+void f_UpdateEndingArea2CameraSequence(u8 *a)
+{
+    s32 pad[4];
+
+    switch (a[2]) {
+    case 0:
+        D_800BFA55 = 0;
+        H(a, 0x6A) = 1;
+        a[2]++;
+        a[0x64] |= 0x80;
+        func_8006CBD0(a, D_80114EFC);
+        H(a, 0x68) = 0;
+        break;
+    case 1:
+        if (D_800BFA57 == 1) {
+            a[2]++;
+            func_8006CBD0(a, &D_80114EFC[H(a, 0x6A)++]);
+        }
+        break;
+    case 2:
+        if (D_800BFA57 == 3) {
+            func_8006CC1C(a, &D_80114EFC[H(a, 0x6A)++], 0x1E);
+            a[2]++;
+        }
+        break;
+    case 3:
+        func_8006CDCC(a);
+        if (D_800BFA57 == 5) {
+            func_8006CC1C(a, &D_80114EFC[H(a, 0x6A)++], 0x1E);
+            a[2]++;
+        }
+        break;
+    case 4:
+        func_8006CDCC(a);
+        if (D_800BFA57 == 6) {
+            H(a, 0x68) = 0x14;
+            a[2]++;
+        }
+        break;
+    case 5:
+        if (--H(a, 0x68) == 0) {
+            a[2]++;
+            func_8006CC1C(a, &D_80114EFC[H(a, 0x6A)++], 0x1E);
+        }
+        break;
+    case 6:
+        func_8006CDCC(a);
+        if (D_800BFA57 == 0xE) {
+            func_8006CC1C(a, &D_80114EFC[H(a, 0x6A)++], 0x1E);
+            a[2]++;
+        }
+        break;
+    case 7:
+        func_8006CDCC(a);
+        if (D_800BFA57 == 0xF) {
+            func_8006CC1C(a, &D_80114EFC[H(a, 0x6A)++], 0x1E);
+            a[2]++;
+        }
+        break;
+    case 8:
+        func_8006CDCC(a);
+        if (D_800BFA57 == 0x18) {
+            func_8006CC1C(a, &D_80114EFC[H(a, 0x6A)++], 0x3C);
+            a[2]++;
+        }
+        break;
+    case 9:
+        if (func_8006CDCC(a) != 0) {
+            a[2]++;
+        }
+        break;
+    }
+    func_8006E3B0(a, a + 0x38);
+}
+
+extern CamEnt D_80114F68[];
+extern u8 D_800BE0E4;
+
+void f_UpdateEndingArea4CameraSequence(u8 *a)
+{
+    s32 pad[4];
+
+    switch (a[2]) {
+    case 0:
+        D_800BFA55 = 0;
+        H(a, 0x6A) = 1;
+        a[2]++;
+        a[0x64] |= 0x80;
+        func_8006CBD0(a, D_80114F68);
+        func_8001D71C(0xC);
+        H(a, 0x68) = 0x3C;
+        break;
+    case 1:
+        if (!(D_800BE0E4 & 0x80) || --H(a, 0x68) == 0) {
+            H(a, 0x68) = 0x3C;
+            a[2]++;
+        }
+        break;
+    case 2:
+        if (--H(a, 0x68) == 0) {
+            func_8006CC1C(a, &D_80114F68[H(a, 0x6A)++], 0x3C);
+            a[2]++;
+        }
+        break;
+    case 3:
+        if (func_8006CDCC(a) != 0) {
+            func_8006CBD0(a, &D_80114F68[H(a, 0x6A)++]);
+            D_800BFA55 = 1;
+            a[2]++;
+        }
+        break;
+    case 4:
+        if (D_800BFA57 == 1) {
+            a[2]++;
+        }
+        break;
+    case 5:
+        func_8006CBD0(a, &D_80114F68[H(a, 0x6A)++]);
+        D_800BFA55 = 2;
+        a[2]++;
+        break;
+    case 6:
+        if (D_800BFA55 == 3) {
+            func_8006CBD0(a, &D_80114F68[H(a, 0x6A)++]);
+            a[2]++;
+        }
+        break;
+    case 7:
+        break;
+    }
+    func_8006E3B0(a, a + 0x38);
+}
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", f_UpdateEndingArea5MysteryCameraSequence);
 
@@ -1074,7 +1206,6 @@ extern s16 D_1F800160;
 extern s16 D_1F800164;
 extern u8 *D_1F80024C;
 extern u8 D_800BFA56;
-extern u8 D_800BFA57;
 extern s32 D_800ECF58_a4fb[];
 extern u8 D_80117338[];
 extern u8 D_8011AF2C[];
