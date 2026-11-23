@@ -319,7 +319,60 @@ void func_8010DAF0(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010DC80);
+extern u16 D_1F80008C;
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+extern u16 D_1F80018E_f9ee;
+extern u16 D_1F80018C_c065;
+
+void func_8010DC80(u8 *a, u8 *b)
+{
+    s32 k;
+    s32 g;
+    s32 m;
+    s32 c;
+    s32 x, y;
+    if (H(a, 0x17E) & 0x8200) {
+        if (func_8002300C(a, b, H(b, 0x80)) == 0) {
+            return;
+        }
+        k = D_1F80009C_efeb + 0x800;
+        goto near;
+    }
+    if (func_8002300C(a, b, H(b, 0x80) * 4) == 0) {
+        return;
+    }
+    k = D_1F80009C_efeb + 0x800;
+    b[0x2B] = 1;
+    if (D_1F800137 == 0) {
+        m = U(a, 0x140) - 0x400;
+        g = func_80085690(-(s16)(U(b, 0x36) - U(a, 0x36)), (s16)(U(b, 0x2E) - U(a, 0x2E))) << 4;
+        if (abs((s16)(g - m * 16)) < 0x1000) {
+            D_1F80018E_f9ee = 0x4100;
+            D_1F80018C_c065 = U(a, 0x140) - 0x400;
+            D_800BF840 = 0x42;
+        } else {
+            c = U(a, 0x140) + 0x400;
+            if (abs((s16)(g - c * 16)) < 0x1000) {
+                D_1F80018C_c065 = c;
+                D_1F80018E_f9ee = 0x4200;
+                D_800BF840 = 0x43;
+            }
+        }
+    }
+    if (D_1F80008C > H(a, 0x80) + H(b, 0x80) + 0x50) {
+        return;
+    }
+    b[0x2B] = 2;
+near:
+    if (H(a, 0x80) + H(b, 0x80) < D_1F80008C) {
+        return;
+    }
+    x = (func_80083F50((s16)k) * (H(a, 0x80) + H(b, 0x80))) >> 12;
+    y = (func_80083E80((s16)k) * (H(a, 0x80) + H(b, 0x80))) >> 12;
+    U(a, 0x2E) = U(b, 0x2E) + x;
+    U(a, 0x36) = U(b, 0x36) - y;
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010DEB4);
 
@@ -4281,7 +4334,21 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012E82C);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012EA68);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012ED44);
+s32 func_8012ED44(u8 *a)
+{
+    u8 *p = D_800E7E80;
+    s16 dx, dz;
+    dx = H(p, 0x2E) - H(a, 0x2E);
+    dz = H(p, 0x36) - H(a, 0x36);
+    if ((u16)func_80084080(dx * dx + dz * dz) > H(p, 0x80)) {
+        return 0;
+    }
+    if ((u16)(H(p, 0x32) - H(a, 0x32) + 0x258 + (H(p, 0x84) + H(a, 0x84))) > H(p, 0x86) + H(a, 0x86) + 0x258) {
+        return 0;
+    }
+    a[0x29] = 0x80;
+    return 1;
+}
 
 void func_8012EE20(void *arg0) {
     u8 temp_v1;
