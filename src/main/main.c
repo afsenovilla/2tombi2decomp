@@ -3465,7 +3465,69 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800308C0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80030A3C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80030D68);
+extern s32 D_1F800020_edd9[];
+void f_SetIdentityMatrix(s32 *m);
+typedef struct { u8 b[12]; } B12_0D68;
+typedef struct { u8 b[9]; } B9_0D68;
+extern B12_0D68 D_800102F0;
+extern B9_0D68 D_800102FC;
+/* func_80031D24, inlined */
+static inline void SetRTY_1D24(void *pos, u8 *scale, s16 *rot)
+{
+    s32 v[3];
+
+    RotMatrix_gte(rot, D_1F800000);
+    f_SetIdentityMatrix(D_1F800020_edd9);
+    RotMatrixY(rot[3], D_1F800020_edd9);
+    MulMatrix(D_1F800000, D_1F800020_edd9);
+    v[0] = scale[0] * 4;
+    v[1] = scale[1] * 4;
+    v[2] = scale[2] * 4;
+    ScaleMatrix(D_1F800000, v);
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_ldclmv(D_1F800000);
+    gte_rtir();
+    gte_stclmv(D_1F800000);
+    gte_ldclmv(D_1F800002);
+    gte_rtir();
+    gte_stclmv(D_1F800002);
+    gte_ldclmv(D_1F800004);
+    gte_rtir();
+    gte_stclmv(D_1F800004);
+    gte_ldv0(pos);
+    gte_rtv0();
+    gte_stlvnl(D_1F800014);
+    D_1F800000[5] += D_1F8000D0_42d8[15];
+    D_1F800000[6] += D_1F8000D0_42d8[16];
+    D_1F800000[7] += D_1F8000D0_42d8[17];
+    gte_SetRotMatrix(D_1F800000);
+    gte_SetTransMatrix(D_1F800000);
+}
+
+void func_80030D68(u8 *a0)
+{
+    u8 *a = a0;
+    B12_0D68 sc;
+    B9_0D68 col;
+    s32 *z = (s32 *)D_1F800090;
+    u8 k;
+    u8 *c;
+    s32 i;
+    s32 d;
+
+    k = a[5] >> 1;
+    sc = D_800102F0;
+    col = D_800102FC;
+    c = &col.b[k * 3];
+    gte_ldfcdir(c[0] << 4, c[1] << 4, c[2] << 4);
+    d = k << 5;
+    *z = 0xFFF;
+    for (i = 0; i < 4; i++) {
+        SetRTY_1D24(a + 0x2C, &sc.b[k * 4], (s16 *)(a + 0x48));
+        f_DrawPackedGouraudQuadStream(D_8009F3E0, 0, 0, d);
+        *(u16 *)(a + 0x4E) += 0x400;
+    }
+}
 
 s32 f_SpawnTransientEffect(s32 arg0, s32 arg1) {
     s32 temp_v0;
@@ -3708,7 +3770,6 @@ void func_80031780(u8 *p)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ProjectEffectPointToScreenAndDepth);
 
-extern s32 D_1F800020_edd9[];
 void f_SetIdentityMatrix(s32 *m);
 void f_SetEffectRenderTransform(void *pos, u8 *scale, s16 *rot)
 {
