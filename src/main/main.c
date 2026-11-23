@@ -6489,7 +6489,34 @@ s32 f_ApplyActorScriptTransition(u8 *a)
     return r;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_RunActorScriptInterpreter);
+extern s32 (*D_800A3B78[])(u8 *);
+#define SCRIPT_APPLY(a, k) ((s32 (*)(u8 *, s32))f_ApplyActorScriptTransition)(a, k)
+
+s32 f_RunActorScriptInterpreter(u8 *a)
+{
+    s32 r;
+
+    do {
+        r = 0;
+        if (*(s8 *)(a + 0x70) <= 0) {
+            goto end;
+        }
+        switch (D_800A3B78[**(u16 **)(a + 0x6C) & 0x7FF](a)) {
+        case 0:
+            a[0x71] |= 1;
+            return 1;
+        case 1:
+        case 3:
+            r = SCRIPT_APPLY(a, 0);
+            break;
+        case 2:
+            r = SCRIPT_APPLY(a, 1);
+            break;
+        }
+    } while (r == 1);
+end:
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_PlaceActorOnTerrainSurface);
 
