@@ -3383,11 +3383,48 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121978);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121B44);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121CF8);
+extern u8 D_8014E4EC[];
+extern u8 D_801494D0[];
+
+void func_80121CF8(u8 *a)
+{
+    switch (a[5]) {
+    case 0:
+        a[0] = 9;
+        M2C_FIELD(a, s16 *, 0x80) = 0x50;
+        M2C_FIELD(a, s16 *, 0x82) = 0xA0;
+        M2C_FIELD(a, s16 *, 0x84) = 0x80;
+        a[5] = 1;
+        M2C_FIELD(a, s16 *, 0x86) = 0xE0;
+        a[0xB] = 0;
+        func_80077CFC(a, D_8014E4EC, 0, 4);
+        break;
+    case 1:
+        if (a[0x2B] == 3) {
+            a[5] = 2;
+            func_80042354(1, 1);
+        }
+        break;
+    case 2:
+        a[5]++;
+        func_80040CDC(a, D_8014E4EC, D_801494D0);
+        a[0x70] = 1;
+        break;
+    case 3:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[5] = 1;
+            func_80042310();
+        }
+        break;
+    }
+    func_8004190C(a);
+    func_8007778C(a);
+    func_800518FC(a);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_FinishStuckFishhookLineSequence);
 
-extern u8 D_8014E4EC[];
 extern u8 D_80149754[];
 extern u8 D_80149774[];
 extern u8 D_8014977C[];
