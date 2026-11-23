@@ -2195,7 +2195,86 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011DE38);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011DFA4);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011E1BC);
+extern u8 D_800BF816;
+
+void func_8011E1BC(u8 *a)
+{
+    u8 *p = D_800E7E80;
+    u8 *g;
+
+    switch (a[6]) {
+    case 0:
+        if (p[0x2A] == a[0x2A] && p[0x181] != 0 && p[0x61] == 0) {
+            u8 *h;
+            u8 *sp;
+            s32 one;
+            s32 m;
+
+            a[0] = 2;
+            a[6]++;
+            func_80054198(p);
+            h = D_800BF808;
+            sp = &D_1F800137;
+            one = 1;
+            m = a[0x5F];
+            h[0x10] = one;
+            h[0x17] = (one - m) * 16;
+            h[0xF] = a[3];
+            if (*sp == 0) {
+                *sp = 2;
+            }
+        }
+        break;
+    case 1:
+        if (D_800BF816 != 0) {
+            a[6]++;
+        }
+        break;
+    case 2:
+        g = D_800BF808;
+        if (g[0x10] == 2 && g[7] == 0) {
+            a[0] = 1;
+            a[6]++;
+            a[0x5F] = 1 - a[0x5F];
+            *(s16 *)(a + 0x84) += 0x320;
+            *(s16 *)(a + 0x86) += 0x320;
+        }
+        break;
+    case 3:
+        if (a[0x29] != 0 && p[0x17B] == 0 && p[0x181] != 0) {
+            u8 *h = D_800BF808;
+            if (h[7] == 0) {
+                a[0] = 2;
+                a[6]++;
+                func_80054198(p);
+                h[0x10] = 3;
+                if (D_1F800137 == 0) {
+                    D_1F800137 = 2;
+                }
+            }
+        }
+        break;
+    case 4:
+        g = D_800BF808;
+        if (g[0x10] == 4 && g[7] == 0) {
+            a[6]++;
+            g[0x10] = 0;
+        }
+        break;
+    case 5:
+        a[0] = 1;
+        a[6]++;
+        a[0x5F] = 1 - a[0x5F];
+        *(s16 *)(a + 0x84) -= 0x320;
+        *(s16 *)(a + 0x86) -= 0x320;
+        break;
+    case 6:
+        if (p[0x2A] != a[0x2A]) {
+            a[6] = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011E438);
 
@@ -3566,7 +3645,6 @@ extern M2C_UNK func_8011973C;
 extern u16 D_1F8000E2;
 extern u8 D_800BFA4E;
 extern u8 D_800BFA3A;
-extern u8 D_800BF816;
 extern u8 D_800BFA30;
 extern u8 D_800BF8E3;
 static inline void func_80128C78_inl(u8 *p)
