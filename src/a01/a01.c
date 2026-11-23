@@ -1944,7 +1944,103 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateTurboTrolleyLiftSequence);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateQuickTrolleyDescentSequence);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80114A28);
+#define GH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define GW(p, o) (*(s32 *)((u8 *)(p) + (o)))
+#define GPART(a, i) (*(u8 **)((u8 *)(a) + (i) * 4 + 0xC0))
+extern u8 D_1F8000D0_b839[];
+extern s16 D_800E7EB6;
+
+void func_80114A28(u8 *a) {
+    s16 h;
+    s32 i, k;
+    u8 *sc;
+    u8 *t;
+
+    switch (a[5]) {
+    case 0:
+        if (a[0x46] != 0) {
+            break;
+        }
+        func_8006E1C0(7);
+        {
+            u8 *s0 = D_1F8000D0_b839;
+            GH(s0, 2) = 0x2E61;
+            GH(s0, 6) = -0x11D1;
+            GH(s0, 0xA) = 0x3EBF;
+        }
+        GH(a, 0x36) = 0x4E20;
+        GH(a, 0x42) = 1;
+        a[5]++;
+    case 1:
+        k = (u16)GH(a, 0x60) - 0xC8;
+        h = ((u16)GH(a, 0x36) - k) * 8;
+        GH(a, 0x44) = h;
+        GW(a, 0x34) -= h << 8;
+        if (--GH(a, 0x42) == 0) {
+            func_80074590(0x8D, 0, 0);
+            if (h > 0x2000) {
+                h = 0x2000;
+            }
+            GH(a, 0x42) = (0x3000 - h) >> 8;
+        }
+        for (i = 1; i < a[8]; i++) {
+            GH(GPART(a, i), 0xC) += GH(a, 0x44) >> 3;
+        }
+        if (GH(a, 0x36) < GH(a, 0x60) + 0x12C) {
+            sc = D_1F8000D0_b839;
+            if ((GH(sc, 2) -= 8) < 0x2D71) {
+                GH(sc, 2) = 0x2D71;
+            }
+            if ((GH(sc, 6) -= 8) < -0x12A9) {
+                GH(sc, 6) = -0x12A9;
+            }
+            if ((GH(sc, 0xA) += 0x10) > 0x409F) {
+                GH(sc, 0xA) = 0x409F;
+            }
+        }
+        if (GH(a, 0x36) < GH(a, 0x60)) {
+            GH(a, 0x36) = GH(a, 0x60);
+            GH(a, 0x40) = 6;
+            a[5]++;
+        }
+        D_800E7EB6 = GH(a, 0x36);
+        func_8006CBA8(a + 0x2C);
+        break;
+    case 2:
+        {
+            s32 r2 = func_8009A450() & 0xF;
+            s32 k2 = (u16)GH(a, 0x60) - 8;
+            GH(a, 0x36) = k2 + r2;
+        }
+        if (--GH(a, 0x40) == 0) {
+            GH(a, 0x40) = 0x1E;
+            a[5]++;
+        }
+        D_800E7EB6 = GH(a, 0x36);
+        func_8006CBA8(a + 0x2C);
+        break;
+    case 3:
+        if (--GH(a, 0x40) == 0) {
+            func_8006E1E4();
+            D_1F800190 = 0x20;
+            a[5]++;
+        }
+        func_8006CBA8(a + 0x2C);
+        break;
+    case 4:
+        t = D_800E7E80;
+        if (GH(t, 0x36) < 0x4011) {
+            GH(t, 0x36) = 0x4010;
+            D_1F800190 = 0;
+            func_80054198(t);
+            a[0x46] = 1;
+            a[5] = 0;
+        }
+        break;
+    case 5:
+        break;
+    }
+}
 
 extern u8 D_800BF9FB_3655;
 void f_UpdatePipeAreaTrolleyCutscene(u8 *a) {
@@ -6379,7 +6475,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012D9E8);
 
 extern u8 D_801387C0[];
 extern u8 D_80138160[];
-extern u8 D_1F8000D0_b839[];
 void func_8012E014(u8 *a)
 {
     u8 *p;
