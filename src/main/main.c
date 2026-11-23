@@ -10072,7 +10072,44 @@ void f_UpdateActorScaledOffsetModelTransforms(u8 *a)
     f_UpdateActorScaledPartTransforms(a);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeMultiPartActorModel);
+s32 f_AllocateActorModelPart(void);
+
+s32 f_InitializeMultiPartActorModel(u8 *a, s32 n, u8 *base, u16 *def)
+{
+    s32 i;
+    u8 *p;
+    s32 *offs;
+    u8 *a_p = a;
+    u16 *d;
+
+    if (D_800ED098 < n) {
+        a_p[9] = 0;
+        a_p[4] = 3;
+        return 1;
+    }
+    d = def;
+    a_p[9] = n;
+    *(s16 *)(a_p + 0xBC) = 0x1000;
+    *(s16 *)(a_p + 0xBA) = 0x1000;
+    *(s16 *)(a_p + 0xB8) = 0x1000;
+    a_p[8] = n;
+    a_p[0xD] = 0;
+    offs = (s32 *)(base + 4);
+
+    for (i = 0; i < a_p[9]; i++) {
+        p = f_AllocateActorModelPart();
+        ((u8 **)(a_p + 0xC0))[i] = p;
+        *(u16 *)(p + 6) = *d++;
+        *(u16 *)(p + 0) = *d++;
+        *(u16 *)(p + 2) = *d++;
+        *(u16 *)(p + 4) = *d++;
+        *(s16 *)(p + 0x38) = 0x1000;
+        *(s16 *)(p + 0x3A) = 0x1000;
+        *(s16 *)(p + 0x3C) = 0x1000;
+        *(u8 **)(p + 0x40) = base + offs[i];
+    }
+    return 0;
+}
 
 void f_SetActorPartModel(u8 *actor, s32 bank, s32 index)
 {
