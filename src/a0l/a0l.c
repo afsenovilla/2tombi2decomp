@@ -1218,7 +1218,110 @@ void func_8010D558(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010D590);
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+void func_8010C1D8(u8 *a);
+
+void func_8010D590(u8 *a)
+{
+    u8 *p = a + 0x60;
+    s16 v;
+    s32 t;
+    s32 h;
+
+
+    switch (a[4]) {
+    case 0:
+        a[0xB] = 0x20;
+        W(a, 0x18) = (s32)func_8010C1D8;
+        H(a, 0x80) = 0x46;
+        H(a, 0x82) = 0x8C;
+        a[0] = 2;
+        a[4] = 1;
+        a[5] = 0;
+        a[6] = 0;
+        a[7] = 0;
+        H(a, 0x40) = 0;
+        H(a, 0x42) = 0x100;
+        a[0x29] = 0;
+        H(a, 0x44) = 0;
+    case 1:
+        H(a, 0x40) += 0x100;
+        if (H(a, 0x40) >= 0x600) {
+            H(a, 0x40) -= 0x600;
+        }
+        h = H(a, 0x42);
+        t = h * 704;
+        v = (h * 24) / 32;
+        H(p, 0xC) = v;
+        H(p, 8) = v;
+        if (v < 0x1000) {
+            H(p, 0xC) = 0x1000;
+            H(p, 8) = 0x1000;
+        }
+        switch (a[3]) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+            do {
+                H(p, 0xA) = t / 32;
+            } while (0);
+            break;
+        case 4:
+            H(p, 0xA) = t / 45;
+            break;
+        case 7:
+            H(p, 0xA) = -t / 45;
+            break;
+        case 6:
+            H(p, 0xA) = t / 45;
+            break;
+        case 5:
+            do {
+                H(p, 0xA) = t / 32;
+            } while (0);
+            break;
+        }
+        H(p, 0) = U(a, 0x2E);
+        H(p, 4) = U(a, 0x36);
+        switch (a[3]) {
+        case 4:
+            H(p, 2) = U(a, 0x32) - (H(a, 0x42) * 504) / 256;
+            break;
+        case 7:
+            H(p, 2) = U(a, 0x32) + (H(a, 0x42) * 504) / 256;
+            break;
+        case 6:
+            H(p, 2) = U(a, 0x32) - (H(a, 0x42) * 504) / 256;
+            break;
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 5:
+            H(p, 2) = U(a, 0x32) - (H(a, 0x42) * 896) / 256;
+            break;
+        }
+        H(p, 0x10) = H(a, 0x42) * 16;
+        if (a[3] != 8) {
+            H(a, 0x84) = H(a, 0x86) = U(a, 0x32) - U(p, 2) + 0xC8;
+        } else {
+            H(a, 0x84) = 0;
+            H(a, 0x86) = abs(H(a, 0x32) - H(p, 2)) + 0xC8;
+        }
+        H(a, 0x80) = 0x64;
+        H(a, 0x82) = 0xC8;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = -D_1F8000F2;
+        H(a, 0x58) = 0;
+        func_8007703C(a);
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010D8F0);
 
