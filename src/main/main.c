@@ -9991,7 +9991,29 @@ s32 f_UpdateActorUnscaledModelTransforms(s32 arg0) {
     return f_UpdateActorUnscaledPartTransforms(arg0);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateActorScaledModelTransforms);
+void f_UpdateActorScaledModelTransforms(u8 *a)
+{
+    s32 *m = D_1F800000;
+    s16 y = *(s16 *)(a + 0xBA);
+    s32 x = *(s16 *)(a + 0xB8);
+    s16 z;
+
+    m[1] = 0;
+    m[3] = 0;
+    m[5] = 0;
+    m[6] = 0;
+    m[7] = 0;
+    m[0] = x;
+    z = *(s16 *)(a + 0xBC);
+    m[2] = y;
+    m[4] = z;
+    RotMatrix_gte(a + 0x54, D_1F800020_edd9);
+    MulMatrix0(D_1F800020_edd9, D_1F800000, a + 0x98);
+    *(s32 *)(a + 0xAC) = *(s16 *)(a + 0x2E);
+    *(s32 *)(a + 0xB0) = *(s16 *)(a + 0x32);
+    *(s32 *)(a + 0xB4) = *(s16 *)(a + 0x36);
+    f_UpdateActorScaledPartTransforms(a);
+}
 
 void f_UpdateActorScaledOffsetModelTransforms(u8 *a)
 {
