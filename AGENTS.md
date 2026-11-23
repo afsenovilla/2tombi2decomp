@@ -83,6 +83,10 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
    {...} }` over the lists 0x1F80013C / 148 / 14C / 154, and the outer `if (*(s16 *)&COUNT == 0) return; for (p =
    D_800F2738; p; p = *(u8 **)(p + 0x24)) { if (!(p[0] & 1) || p[0x2B]) continue; ... }`.
 4. **Near misses** listed in STATUS (1-12 words off), with the tools below.
+   Sources checked and exhausted: Tombi! 1's C (`tools/t1sweep.py`, 2026-11-23): compiled with this pipeline it
+   comes within 4 words of no pending function (the code the two games share is matched already); read T1's C only
+   for idioms (T1's AnimAdvance gave f_AdvanceActorTimedFrameSequence with T2's offsets). Credit T1-derived C in
+   the file (`adapted from Tombi-Decomp's NAME (src/NAME.c, MIT)`).
 5. **Medium and large functions** (0x200+ bytes): the small ones are mostly done; bytes are what is left.
 6. After each batch: nearcopy over your programs (copies of your new C); list copies in other scopes for the
    coordinator.

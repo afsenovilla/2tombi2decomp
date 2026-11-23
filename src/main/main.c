@@ -4446,7 +4446,36 @@ void func_80033450(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80033560);
+extern u8 D_800E7FF9;
+s32 f_ResolveEffectEightByteStreamPayload();
+void func_80033560(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        a[7] = 0;
+        a[0x29] = 0;
+        break;
+    case 1:
+        a[1] = 1;
+        a[0x29] = (a[0x29] - 1) & 0x1F;
+        if (D_800E7FF9 == 0) {
+            a[4] = 2;
+        }
+        break;
+    case 2:
+        if ((s8)a[7] < 0) {
+            a[4] = 3;
+            break;
+        }
+        a[1] = 1;
+        a[7] += 0xC;
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 void func_80033630(u8 *a)
 {
@@ -17480,7 +17509,41 @@ void f_StartActorTimedFrameSequence(u8 *actor, u16 **table, s32 index)
     *(u16 *)(actor + 0xE) = frames & 0x3FFF;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_AdvanceActorTimedFrameSequence);
+/* f_AdvanceActorTimedFrameSequence: adapted from Tombi-Decomp's AnimAdvance (src/AnimAdvance.c, MIT) */
+typedef struct AnimFrameEntry { char p0[2]; unsigned short v; } AnimFrameEntry;
+typedef struct { char p0[0xE]; short t; char p1[0x28]; AnimFrameEntry *a; } AnimTimedActor;
+int f_AdvanceActorTimedFrameSequence(AnimTimedActor *o)
+{
+    AnimFrameEntry *e, *n;
+    unsigned short v;
+
+    o->t = o->t - 1;
+    if (o->t != 0) return 0;
+    e = o->a;
+    v = e->v;
+    switch (v & 0xc000) {
+    case 0:
+        n = e + 1;
+        goto set;
+    case 0x4000:
+        o->a = e + 1;
+        n = *(AnimFrameEntry **)(e + 1);
+    set:
+        o->a = n;
+        o->t = n->v & 0x3fff;
+        break;
+    case 0x8000:
+        o->t = v & 0x3fff;
+        return 1;
+    case 0xc000:
+        o->a = e + 1;
+        n = *(AnimFrameEntry **)(e + 1);
+        o->a = n;
+        o->t = n->v & 0x3fff;
+        return 1;
+    }
+    return 0;
+}
 
 void f_StartActorSkeletalAnimation(u8 *a, u8 **tbl, s32 i)
 {

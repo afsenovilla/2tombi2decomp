@@ -136,6 +136,10 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   overlays installs as is); libsweep.py maps foreign library names with `#define` and tries the extra set-ups.
 - `python3 -I tools/ccheck.py src/main/<file>.c`: compile with the game's compiler (gcc 2.8.1 + ASPSX 2.79,
   docs/COMPILER.md) and compare every function in the file with the retail bytes.
+- `python3 -I tools/t1sweep.py [--t1 ../afsenovilla/tombi-decomp] [--matched] [--reuse] [--ratio 0.8]`: Tombi! 1's
+  game C (Tombi-Decomp, MIT) compiled with this pipeline and compared with every pending function (build/t1sweep.csv).
+  Run 2026-11-23: nothing within 4 words, no ratio >= 0.8; what T2 shares with T1 is already matched. Not worth more
+  effort (STATUS "2026-11-23 (4)").
 - `python3 -I tools/import_names.py /opt/tomba2edit --write [--eu]`: names from Tomba2Edit (docs/TOMBA2EDIT.md).
 - `python3 -I tools/vermatch.py`: how much USA code is found in the EU / ES builds.
 - `python3 -I tools/gen_configs.py game/usa [--force] [--out config/eu]`: regenerates the first configs (keeps hand-made ones without --force).

@@ -3,6 +3,32 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-23 (4): Tombi! 1 C against Tomba! 2
+
+Question: can the matched C of the first game (Tombi-Decomp, PAL, fully matched, MIT) be reused here? Its
+docs/TOMBA2_DEMO.md had only compared bytes (one identical function, tickTaskTimers). New tool **tools/t1sweep.py**
+compiles every T1 game C file with this repo's game pipeline (gcc 2.8.1 + maspsx 2.79, T1's headers in a temporary
+build/t1sweep/inc, T2's include/psyq for the Psy-Q headers T1 fetches at set-up) and compares each function by masked
+words with every pending function of the 29 programs (same length: words off; lengths within 15 %: difflib ratio).
+
+Result: **no reusable code.** 9244 T1 game files (library range of MAIN0 and per-version copies with a base file left
+out), 9217 compiled (9229 functions), 27 failed (version-only files needing T1 headers outside include/, a few
+parse errors; not pursued). Best match per T1 function of 8+ words against the 2678 pending T2 functions: 0 within 0
+words, 0 within 1-4, 115 within 5-16 (all tiny 10-20 word functions with ratio < 0.6: chance), difflib ratio >= 0.9:
+0, >= 0.8: 0, >= 0.7: 1, >= 0.6: 10. Positive control (`--matched`, against all 7011 T2 functions): 92 exact, 86
+within 1-4 words, 149 with ratio >= 0.9: the method works, and the code T2 shares with T1 (task / thread helpers
+tickTaskTimers, ThreadTableRun, ThreadWaitFrames, initObjectPoolUnlayered, clearMenuState, small animation thunks)
+is **already matched** here. T1 was built with gcc 2.7.2, T2 with gcc 2.8.1; the shared helpers compile the same under both.
+
+Installed (+4, now 4220 / 7011 functions; all by hand from the closest pairs): main **f_AdvanceActorTimedFrameSequence** (0xE4, T1's
+AnimAdvance with T2's offsets: timer s16 at +0xE, list pointer at +0x38, 4-byte entries; the `case 0` writes the
+pointer once and shares the tail with 0x4000; the only T1-derived function, credited in the file and in
+THIRD_PARTY_NOTICES.md), and three small actor state machines the sweep pointed at by shape (not T1 code): main
+func_80033560, a06 func_80119874, a06 func_80122CAC (each matched at the first try written plainly from the asm).
+Verdict: **not worth more effort** as a C source; the only use left is reading T1's C for the
+engine's idioms (actor struct, animation lists) when a T2 function looks familiar. t1sweep stays for a re-run if
+T1 gains code (it takes ~10 minutes, `--reuse` re-compares the cached keys in seconds).
+
 ## 2026-11-23 (3): seventh round of five agents (time-boxed)
 
 All code in C: **4216 / 7011 functions (60.1 %, 33.1 % of the bytes)**, from 4130 (31.0 %). main +12 in two passes
