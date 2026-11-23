@@ -3,7 +3,129 @@
 #include "m2c.h"
 #include "gte.h"
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00TombaWaterSurfaceMotion);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+extern s16 D_1F80019E;
+extern u16 D_1F80017C_0fe7;
+#define SP19E D_1F80019E
+
+void f_UpdateA00TombaWaterSurfaceMotion(u8 *a, s32 mode) {
+    s16 v[6];
+    s16 dy;
+    s16 t;
+
+    if (a[0x145] & 1) {
+        return;
+    }
+    dy = -0x14;
+    if (H(a, 0x17E) < 0) {
+        dy = -0xA;
+    }
+    switch (a[7]) {
+    case 0:
+        func_80058304(a, 2);
+        t = U(a, 0x4A) - 0x3200;
+        if (t < 0) {
+            H(a, 0x50) = 0x1400;
+        } else {
+            if (t > 0xC00) {
+                t = 0xC00;
+            }
+            H(a, 0x50) = t / 2 + 0x1400;
+        }
+        a[7]++;
+    case 1:
+        W(a, 0x30) += H(a, 0x50) << 8;
+        if ((s16)(H(a, 0x50) -= 0x180) <= 0) {
+            a[7]++;
+        }
+        break;
+    case 2:
+        if (D_800BF870.unk0 == 0) {
+            func_800312D4(0x10E, a + 0x2C, -0xA);
+        } else if (D_800BF870.unk0 == 6) {
+            func_800312D4(0x70E, a + 0x2C, -0xA);
+        } else if (D_800BF870.unk0 == 0xE) {
+            func_800312D4(0xF0D, a + 0x2C, -0xA);
+        }
+        a[7]++;
+    case 3:
+    case 4:
+        W(a, 0x30) -= H(a, 0x50) << 8;
+        if (a[7] == 3) {
+            H(a, 0x50) += 0x180;
+        } else {
+            H(a, 0x50) += 0x80;
+        }
+        if (H(a, 0x50) >= 0x1000) {
+            H(a, 0x50) = 0x1000;
+        }
+        if (SP19E + dy >= H(a, 0x32)) {
+            H(a, 0x32) = SP19E;
+            if (D_800BF870.unk0 == 0) {
+                func_8003116C(0x10D, a + 0x2C, -0xA);
+            } else if (D_800BF870.unk0 == 6) {
+                func_800312D4(0x704, a + 0x2C, -0xA);
+            } else if (D_800BF870.unk0 == 0xE) {
+                func_800312D4(0xF06, a + 0x2C, -0xA);
+            }
+            H(a, 0x32) += dy;
+            if (a[0x146] == 0 && !(a[0x14A] & 2)) {
+                a[7] = 6;
+            } else {
+                a[7] = 5;
+            }
+            H(a, 0x50) = 0;
+        }
+        break;
+    case 5:
+        W(a, 0x30) += H(a, 0x50) << 8;
+        if ((s16)(H(a, 0x50) += 0x80) >= 0x600) {
+            H(a, 0x50) = 0;
+            a[7]--;
+        }
+        break;
+    case 6:
+        if (SP19E + dy < H(a, 0x32)) {
+            W(a, 0x30) -= H(a, 0x50) << 8;
+            if ((s16)(H(a, 0x50) += 0x100) >= 0x1000) {
+                H(a, 0x50) = 0x1000;
+            }
+            if (SP19E + dy >= H(a, 0x32)) {
+                H(a, 0x32) = SP19E;
+                if (D_800BF870.unk0 == 0) {
+                    func_8003116C(0x10D, a + 0x2C, -0xA);
+                } else if (D_800BF870.unk0 == 6) {
+                    func_800312D4(0x704, a + 0x2C, -0xA);
+                } else if (D_800BF870.unk0 == 0xE) {
+                    func_800312D4(0xF06, a + 0x2C, -0xA);
+                }
+                H(a, 0x50) = 0;
+                H(a, 0x32) += dy;
+            }
+        } else if (a[0x146] != 0 || (a[0x14A] & 2)) {
+            a[7] = 5;
+        }
+        if (mode != 0) {
+            mode = 7;
+        } else {
+            mode = 3;
+        }
+        if (!(D_1F80017C_0fe7 & mode)) {
+            v[1] = U(a, 0x2E) + ((func_80083F50(H(a, 0x56) + 0x800) * 100) >> 12);
+            v[3] = SP19E + 0x1E;
+            v[5] = U(a, 0x36) - ((func_80083E80(H(a, 0x56) + 0x800) * 100) >> 12);
+            func_8003116C(8, v, -0x50);
+        }
+        break;
+    }
+    if (SP19E + H(a, 0x62) / 2 < H(a, 0x32)) {
+        a[0x148] = 1;
+    } else {
+        a[0x148] = 0;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010A7F8);
 
@@ -33,7 +155,6 @@ void func_8010AD68(void *arg0, void *arg1) {
 
 #define F16(p, o) M2C_FIELD(p, s16 *, o)
 extern u16 D_800ECF54;
-extern u16 D_1F80017C_0fe7;
 void f_UpdateA00TombaVerticalClimb(u8 *a) {
     s32 k;
 
@@ -2979,7 +3100,131 @@ s32 func_8011ACDC(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateWindmillExplosionDebris);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateWindmillFallingActor);
+void f_UpdateWindmillFallingActor(u8 *a) {
+    u32 st = D_800BF9DE;
+    s32 t;
+
+    if (st >= 4) {
+        switch (a[7]) {
+        case 0:
+            H(a, 0x40) = 0x1E;
+            a[7]++;
+            break;
+        case 1:
+            if ((H(a, 0x32) += 8) >= -0x95B) {
+                H(a, 0x32) = -0x95C;
+            }
+            if (H(a, 0x40) != 0) {
+                H(a, 0x40)--;
+                switch (a[3]) {
+                case 3:
+                    U(a, 0x2E) -= 6;
+                    U(a, 0x36) += 6;
+                    break;
+                case 7:
+                    U(a, 0x2E) -= 6;
+                    U(a, 0x36) -= 6;
+                    break;
+                case 8:
+                    U(a, 0x2E) += 6;
+                    U(a, 0x36) -= 6;
+                    break;
+                case 9:
+                    U(a, 0x2E) += 6;
+                    U(a, 0x36) += 6;
+                    break;
+                }
+            } else {
+                a[7]++;
+            }
+            break;
+        case 2:
+            if (st >= 5) {
+                a[5] = 0;
+                a[6] = 0;
+                a[7] = 0;
+                if (a[3] == 3) {
+                    a[3] = 0xA;
+                } else {
+                    a[3] += 4;
+                }
+            }
+            break;
+        }
+    } else {
+        switch (a[6]) {
+        case 0:
+            func_80077B38(a, D_8014C808, 8);
+            H(a, 0x60) = H(a, 0x32);
+            a[6]++;
+            if (a[3] & 1) {
+                H(a, 0x40) = 0xF;
+            } else {
+                H(a, 0x40) = 1;
+            }
+            break;
+        case 1:
+            if (--H(a, 0x40) == 0) {
+                if (func_8009A450(st) & 1) {
+                    a[6] = 2;
+                    H(a, 0x4C) = 0x200;
+                    H(a, 0x52) = -8;
+                } else {
+                    a[6] = 5;
+                    H(a, 0x4C) = -0x200;
+                    H(a, 0x52) = 8;
+                }
+            }
+            break;
+        case 2:
+            U(a, 0x5A) = (U(a, 0x5A) - 0x10) & 0xFFF;
+            W(a, 0x30) += -0x14000;
+            W(a, 0x34) += H(a, 0x4C) << 8;
+            if ((H(a, 0x4C) += H(a, 0x52)) < -0x200) {
+                func_80077B38(a, D_8014C808, 0xC);
+                a[6]++;
+            }
+            break;
+        case 3:
+        case 6:
+            W(a, 0x30) += 0x28000;
+            if (H(a, 0x32) >= H(a, 0x60)) {
+                W(a, 0x30) = H(a, 0x60) << 16;
+                a[6]++;
+                func_80077B38(a, D_8014C808, 8);
+            }
+            break;
+        case 4:
+            t = (U(a, 0x5A) - 0x40) & 0xFFF;
+            U(a, 0x5A) = t;
+            if (t < 0x40) {
+                H(a, 0x4C) = -0x200;
+                U(a, 0x5A) = 0;
+                H(a, 0x52) = 8;
+                a[6]++;
+            }
+            break;
+        case 5:
+            U(a, 0x5A) = (U(a, 0x5A) + 0x10) & 0xFFF;
+            W(a, 0x30) += -0x14000;
+            W(a, 0x34) += H(a, 0x4C) << 8;
+            if ((H(a, 0x4C) += H(a, 0x52)) > 0x200) {
+                func_80077B38(a, D_8014C808, 0xC);
+                a[6]++;
+            }
+            break;
+        case 7:
+            t = (U(a, 0x5A) + 0x40) & 0xFFF;
+            U(a, 0x5A) = t;
+            if (t >= 0xFC0) {
+                H(a, 0x40) = 1;
+                a[6] = 1;
+                U(a, 0x5A) = 0;
+            }
+            break;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011B738);
 
@@ -5717,9 +5962,142 @@ void f_UpdateAquaticPlantCollisionBounds(u8 *a) {
     M2C_FIELD(a, s16 *, 0x86) = t << 1;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateSingleSegmentSwingMotion);
-
+#define SWH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define SWU(p, o) (*(u16 *)((u8 *)(p) + (o)))
+#define PP(p) (*(u8 **)((u8 *)(p) + 0xC0))
 extern s16 D_8014A6E4[];
+extern s16 D_8014A6F4[][2];
+static inline s32 swing_hit(u8 *a) {
+    if (a[0x2B] != 0) {
+        a[6] = 4;
+        if (func_80077768(a[0x5F] << 4, SWH(a, 0x56), 0)) {
+            SWH(a, 0x44) = 0x100;
+        } else {
+            SWH(a, 0x44) = -0x100;
+        }
+        a[0x2B] = 0;
+        return 1;
+    }
+    return 0;
+}
+
+void f_UpdateSingleSegmentSwingMotion(u8 *a) {
+    u8 *t = D_800E7E80;
+    s16 ang;
+    s16 vel;
+
+    if (SWH(a, 0x62) != 0) {
+        SWH(a, 0x62) = 0;
+        SWH(a, 0x32) = D_8014A6E4[a[3]];
+        a[6] = 0;
+        SWH(PP(a), 0xC) = 0;
+        SWH(a, 0x44) = 0;
+    }
+    switch (a[6]) {
+    case 0:
+        SWH(a, 0x42) = 0;
+        a[6] = 1;
+    case 1:
+        if (a[0x29] == 0) {
+            if (swing_hit(a)) {
+                break;
+            }
+            if (a[0x46] != 0) {
+                a[0x46]--;
+                break;
+            }
+            SWH(PP(a), 0xC) = (u32)func_80083F50(SWH(a, 0x42)) >> 5;
+            SWH(a, 0x42) += 0x44 + (func_8009A450() >> 8);
+            break;
+        }
+        a[6] = 2;
+    case 2:
+        if (a[0x29] == 0) {
+            a[6] = 3;
+            break;
+        }
+        if (t[0x147] != 0) {
+            SWH(PP(a), 0xC) = -SWH(t, 0x58);
+        } else {
+            SWH(PP(a), 0xC) = SWH(t, 0x58);
+        }
+        if (t[0x168] >= 3) {
+            if (t[0x147] != 0) {
+                SWH(a, 0x32) -= (t[0x168] - 2) * 6;
+            } else {
+                SWH(a, 0x32) += (t[0x168] - 2) * 6;
+            }
+            if (SWH(a, 0x32) < D_8014A6F4[a[3]][1]) {
+                SWH(a, 0x32) = D_8014A6F4[a[3]][1];
+            }
+            if (D_8014A6F4[a[3]][0] < SWH(a, 0x32)) {
+                SWH(a, 0x32) = D_8014A6F4[a[3]][0];
+            }
+        }
+        break;
+    case 3:
+        switch (t[0x168]) {
+        case 0:
+            SWH(a, 0x44) = 0x20;
+            break;
+        case 1:
+            SWH(a, 0x44) = 0x30;
+            break;
+        case 2:
+            SWH(a, 0x44) = 0x40;
+            break;
+        default:
+            SWH(a, 0x44) = 0x80;
+            break;
+        }
+        if (t[0x147] != 0) {
+            SWH(a, 0x44) = -SWH(a, 0x44);
+        }
+        a[6] = 4;
+    case 4:
+        if (a[0x29] != 0) {
+            a[6] = 1;
+            break;
+        }
+        if (swing_hit(a)) {
+            break;
+        }
+        vel = SWH(a, 0x44);
+        ang = SWH(PP(a), 0xC);
+        ang += vel;
+        if ((u16)(ang + 0x800) > 0x1000) {
+            ang &= 0xFFF;
+            if (ang > 0x800) {
+                ang |= 0xF000;
+            }
+        }
+        if (vel > 0) {
+            vel -= 8;
+            if (vel < 0) {
+                vel = 0;
+            }
+        } else {
+            vel += 8;
+            if (vel > 0) {
+                vel = 0;
+            }
+        }
+        if (ang > 0) {
+            vel -= 0x14;
+        } else {
+            vel += 0x14;
+        }
+        if (abs(ang) < 0x20 && abs(vel) < 0x14) {
+            ang = 0;
+            vel = 0;
+            a[6] = 0;
+        }
+        SWH(a, 0x44) = vel;
+        SWH(PP(a), 0xC) = ang;
+        break;
+    }
+}
+
 void f_HandleSingleSegmentSwingActor(u8 *a)
 {
     s16 v;
