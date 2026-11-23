@@ -62,8 +62,10 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   The library compiler also hoists more loop invariants around loops with calls (a `loop_has_call` patch of cc1
   reproduces it per file: `// CC gcc-2.7.2-loop4`, `gcc-2.8.1-loop2`, `gcc-2.8.1-nocse-loop2`, made and sha1
   checked by tools/setup_native.sh; AGENTS.md "Compilers" item 5).
-- What is left (2026-11-23): mostly actor state machines and dispatchers built from matched handlers (AGENTS.md
+- What is left (2026-11-23, 4216 / 7011 functions, 33 % of the bytes): mostly actor state machines and dispatchers built from matched handlers (AGENTS.md
   "Order of work" item 3), the big areas a00-a08 above all.
+- Agents' commits do not always link on their own (alias lines committed later): verify with a clean full build
+  before every push; time-box agents (about 70 minutes) when the user gives a time budget.
 - Library C is adapted from psx_tomba, psyz (/opt/psyz) and psy-q-decomp (/opt/psy-q-decomp), all MIT: say so in the
   file and in THIRD_PARTY_NOTICES.md.
 
