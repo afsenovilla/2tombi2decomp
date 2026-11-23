@@ -10585,7 +10585,43 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8005490C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80054B34);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80054C08);
+extern u8 D_800A44F0[];
+extern u8 D_800A44E0[];
+extern u8 D_800A44E8[];
+extern u8 D_800A44D0[];
+s32 f_SetTombaAnimationIfChanged(u8 *t, s32 anim, s32 blend);
+
+void func_80054C08(u8 *a, s32 mode)
+{
+    s16 k = (u32)(func_800535D4(a) - 7) < 3;
+    u8 *t;
+
+    if (mode != 0) {
+        if (k) {
+            t = D_800A44F0;
+            mode = t[a[0xBE]];
+        } else {
+            t = D_800A44E0;
+            mode = (t + (a[0x14A] & 6))[a[0xBE]];
+        }
+        f_SetTombaAnimationIfChanged(a, mode, 0);
+        return;
+    }
+    if (k) {
+        t = D_800A44E8;
+        mode = t[a[0xBE]];
+    } else {
+        t = D_800A44D0;
+        mode = t[a[0x14A] & 6];
+    }
+    if (a[0x46] == mode) {
+        return;
+    }
+    a[0x46] = mode;
+    func_80054790(a, mode);
+    *(u8 **)(a + 0x38) = ((u8 **)D_80017FE8)[mode] + *(s16 *)(*(u8 **)(a + 0x38) + 2) * 8;
+    func_80076904(a);
+}
 
 extern void *D_800ECF58_449d;
 s32 f_SetTombaAnimationIfChanged(u8 *t, s32 anim, s32 blend)
