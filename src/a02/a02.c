@@ -2571,7 +2571,100 @@ void func_80118280(u8 *a, s32 i) {
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80118354);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateBuryItInTheSandPitActor);
+extern u8 D_800A3CC0[];
+extern s16 D_80129D4C[];
+extern s16 D_80129D54[];
+extern u8 D_80129D5C[];
+
+void f_UpdateBuryItInTheSandPitActor(u8 *a)
+{
+    u8 *g;
+    u8 *h;
+    s32 k;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 0x3B) != 0) {
+            break;
+        }
+        M2C_FIELD(a, s16 *, 0x80) = 0xBB;
+        M2C_FIELD(a, s16 *, 0x82) = 0x180;
+        a[0] = 1;
+        M2C_FIELD(a, s16 *, 0x84) = 0x190;
+        M2C_FIELD(a, s16 *, 0x86) = 0x190;
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        a[4]++;
+        func_80040CDC(a, 0, D_800A3CC0);
+        h = (u8 *)&D_800BF870;
+        M2C_FIELD(a, s16 *, 0x32) = D_80129D4C[h[0x157] & 0x7F];
+        if (h[0x50] == 0xFF) {
+            a[4] = 2;
+            a[0] = 3;
+        }
+        func_800517F8(a);
+        break;
+    case 1:
+        if (func_8007778C(a) != 0) {
+            if (a[0x2B] == 1) {
+                g = (u8 *)&D_800BF870;
+                k = g[0x157];
+                k &= 0x7F;
+                func_8004ED94(D_80129D54[k], 0x41);
+                {
+                    s16 *t = D_80129D4C;
+                    do { k++; } while (0);
+                    M2C_FIELD(a, s16 *, 0x32) = t[k];
+                }
+                g[0x157]++;
+                func_800517F8(a);
+                a[0x2B] = 0;
+                if (k == 3) {
+                    func_80040C00(0xC);
+                    g[0x157] |= 0x80;
+                    a[4] = 2;
+                    a[0] = k;
+                    a[5] = 0x80;
+                }
+            }
+            if (a[5] == 0) {
+                switch (a[6]) {
+                case 0:
+                    if (a[0x29] != 0) {
+                        a[0x70] = 1;
+                        a[6]++;
+                    }
+                    break;
+                case 1:
+                    if (a[0x70] == 0xFF) {
+                        func_80040D68(a, D_80129D5C);
+                        a[0x70] = 1;
+                        a[6]++;
+                    }
+                    break;
+                case 2:
+                    if (a[0x70] == 0xFF) {
+                        D_800BF870.pad1[0x156] |= 0x80;
+                        a[5]++;
+                    }
+                    break;
+                }
+                func_80041098(a);
+            }
+        }
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        break;
+    case 2:
+        if (func_8007778C(a) != 0) {
+            func_800517F8(a);
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_80118860(void) {
     func_801167A8();
@@ -3652,7 +3745,6 @@ void func_8011DBD8(void *arg0) {
     }
 }
 
-extern u8 D_800A3CC0[];
 void func_8011E2D8(u8 *a);
 void func_8011E3A8(void *arg0);
 
