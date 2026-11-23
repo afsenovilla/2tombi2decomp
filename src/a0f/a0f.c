@@ -553,7 +553,35 @@ void func_8010AF60(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010B078);
+void func_8010B078(u8 *a)
+{
+    u8 **l = D_1F800148;
+    u8 *e;
+
+    D_1F800182 = D_1F800150;
+    while (D_1F800182 != 0) {
+        e = *l;
+        D_1F800182--;
+        l++;
+        if (e[0] & 1) {
+            switch (e[2]) {
+            case 0x12:
+                func_8002311C(a, e);
+                break;
+            case 7:
+                func_80109ED8(a, e, *(void **)(e + 0xC0));
+                break;
+            case 0x17:
+                if (e[0x47] == 2) {
+                    func_80109808(a, e, *(void **)(e + 0xC0));
+                } else {
+                    func_8001F650(a, e, *(void **)(e + 0xC0));
+                }
+                break;
+            }
+        }
+    }
+}
 
 void func_8010B194(void *arg0, void *arg1) {
     s32 temp_lo;
