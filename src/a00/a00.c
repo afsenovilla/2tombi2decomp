@@ -1509,7 +1509,90 @@ void func_8011534C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80115598);
+extern u32 *D_800ED8C8_065b;
+typedef struct {
+    u32 tag;
+    u32 rgbc;
+    u32 xy;
+    u16 uv;
+    u16 clut;
+} T2Sprt16;
+extern T2Sprt16 *D_800BF544_e6cf;
+
+void func_80115598(u8 *a)
+{
+    s32 w2 = a[0x10] * 2;
+    s32 size = w2 * a[0x11];
+    u16 sx = U(a, 0x28);
+    u16 sy = U(a, 0x2A);
+    s16 x0 = sx - 160;
+    s16 y0 = sy - 120;
+    s16 row, col, x, y, c;
+    T2Sprt16 *p, *start, *last, *q;
+    u16 t;
+    u16 k;
+    s32 yy;
+
+    last = NULL;
+
+    row = y0 >> 4;
+    if (row < 0) {
+        do {
+            row += a[0x11];
+        } while (row < 0);
+    }
+    while (row >= a[0x11]) {
+        row -= a[0x11];
+    }
+    sx = -sx + 0x98;
+    sy = -sy + 0x70;
+    row *= w2;
+    col = x0 >> 4;
+    if (col < 0) {
+        do {
+            col += a[0x10];
+        } while (col < 0);
+    }
+    while (col >= a[0x10]) {
+        col -= a[0x10];
+    }
+    col <<= 1;
+    p = D_800BF544_e6cf;
+    start = p;
+    for (y = y0; y < y0 + 0x100; y += 16) {
+        c = col;
+        yy = (y & 0xFFF0) + (s16)sy;
+        for (x = x0; x < x0 + 0x160;) {
+            t = *(u16 *)(*(u8 **)(a + 0x14) + (row + c));
+            c += 2;
+            last = p;
+            if (c >= w2) {
+                c = 0;
+            }
+            p->xy = (((x & 0xFFF0) + (s16)sx) & 0xFFFF) | (yy << 16);
+            p->uv = ((t << 4) & 0xF0) | (((t & 0xF0) + 8) << 8);
+            k = U(a, 6);
+            p->rgbc = 0x7D808080;
+            ((u8 *)p)[3] = 3;
+            ((u8 *)p)[7] = 0x7C;
+            p->clut = k + ((t & 0xF00) >> 2);
+            p++;
+            x += 16;
+            last->tag = (u32)p | 0x03000000;
+        }
+        row += w2;
+        if (row >= size) {
+            row -= size;
+        }
+    }
+    last->tag = (last->tag & 0xFF000000) | D_800ED8C8_065b[0x7FF];
+    func_80083DE0(p, 0, 0, U(a, 4), 0);
+    p->tag = (u32)start | 0x02000000;
+    q = p;
+    p = (T2Sprt16 *)((u32 *)p + 3);
+    *(T2Sprt16 **)&D_800ED8C8_065b[0x7FF] = q;
+    D_800BF544_e6cf = p;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801158E0);
 
@@ -3508,7 +3591,49 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_DeliverCarriedChickToNest);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80125C4C);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80125E0C);
+void func_80125FE0(u8 *a);
+void func_801261FC(u8 *a);
+
+void func_80125E0C(u8 *a) {
+    switch (a[4]) {
+    case 0:
+        func_801253E8(a);
+        break;
+    case 1:
+        func_8007778C(a);
+        switch (a[5]) {
+        case 0:
+            func_80125FE0(a);
+            break;
+        case 1:
+            func_801255CC(a);
+            break;
+        case 2:
+            f_DeliverCarriedChickToNest(a);
+            break;
+        }
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        break;
+    case 2:
+        func_8007778C(a);
+        switch (a[5]) {
+        case 0 ... 1:
+            break;
+        case 2 ... 3:
+            func_801261FC(a);
+            break;
+        }
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u8 D_800BF9F2;
 void func_80125E0C();

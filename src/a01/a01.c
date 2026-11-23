@@ -1175,10 +1175,55 @@ void func_80111ECC(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80111F94);
-
 extern s32 D_800ECF80;
 extern u8 D_80139294_2487[];
+extern u8 D_800A3D40[];
+
+void func_80111F94(u8 *a)
+{
+    F16(a, 0x5C) = 0;
+    M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+    switch (a[3] & 0x7F) {
+    case 3:
+        func_80077B38(a, D_80139294_2487, 6);
+        F16(a, 0x68) = 0x7C;
+        a[0xD] = 0;
+        break;
+    case 4:
+        func_80077B38(a, D_80139294_2487, 7);
+        F16(a, 0x68) = 0x7D;
+        a[0xD] = 0;
+        break;
+    case 5:
+        func_80077B38(a, D_80139294_2487, 8);
+        F16(a, 0x68) = 0x7E;
+        a[0xD] = 1;
+        break;
+    }
+    a[0xB] = 0x11;
+    F16(a, 0x80) = 0x19;
+    F16(a, 0x82) = 0x32;
+    F16(a, 0x84) = 0x32;
+    a[0x47] = 0;
+    a[8] = 0;
+    F16(a, 0x5A) = 0;
+    F16(a, 0x86) = 0x64;
+    a[0x2B] = 0;
+    if (a[3] & 0x80) {
+        a[0] = 2;
+        F16(a, 0x60) = F16(a, 0x68);
+        func_80040CDC(a, 0, D_800A3D40);
+        a[0x70] = 1;
+        func_80042354(1, 1);
+        a[5] = 1;
+    } else {
+        a[0] = 1;
+    }
+    F16(a, 0x7A) = 0x1600;
+    F16(a, 0x7C) = 0x1600;
+    F16(a, 0x7E) = 0x1600;
+}
+
 extern u8 D_800BF871;
 extern u8 D_800BF9FF;
 typedef struct { s16 a2; s16 a1; u8 w; u8 h; s16 k; } PickupDef;
@@ -3253,7 +3298,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011E6D0);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011E804);
 
-extern u8 D_800A3D40[];
 void func_8011E9E8(u8 *a) {
     if (a[0x2B] == 3) {
         func_80040D68(a, D_800A3D40);
@@ -3443,7 +3487,42 @@ void func_80120200(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80120308);
+void func_80120420(u8 *a);
+void func_80120508(u8 *a);
+void f_ReturnThirstyMinerToIdleScript(u8 *a);
+
+void func_80120308(u8 *a) {
+    switch (a[4]) {
+    case 0:
+        func_80120420(a);
+        break;
+    case 1:
+        a[1] = 1;
+        func_80077E7C(a);
+        func_80041098(a);
+        func_8004190C(a);
+        func_800518FC(a);
+        switch (a[5]) {
+        case 0:
+            f_HandleThirstyMinerInteraction(a);
+            break;
+        case 1:
+            func_80120508(a);
+            break;
+        case 2:
+            f_ReturnThirstyMinerToIdleScript(a);
+            break;
+        }
+        func_80120200(a);
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u8 D_8013581C[];
 extern u8 D_80137124[];
@@ -4924,7 +5003,37 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012BA60);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaQuestSceneryActor);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012C18C);
+void func_8012C18C(u8 *a)
+{
+    u8 *c;
+
+    switch (a[5]) {
+    case 0 ... 5:
+        a[0] = 1;
+        a[4] = 1;
+        break;
+    case 6:
+        switch (a[6]) {
+        case 0:
+            a[0] = 2;
+            func_80042354(1, 1);
+            a[6]++;
+        case 1:
+            c = M2C_FIELD(a, u8 **, 0xC0);
+            M2C_FIELD(c, u16 *, 0x3A) -= 0x400;
+            if (M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), u16 *, 0x3A) < 0x400) {
+                D_800BF870.pad1[0x18B] |= 1;
+                func_80027144(M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), s32 *, 0x40), a + 0x2C, 0x400, 0xC);
+                func_80074590(0xC, 0, 0);
+                a[4] = 3;
+                func_80074590(0x97, 0, 0);
+            }
+            break;
+        }
+        func_80051844(a);
+        break;
+    }
+}
 
 u8 *func_8012C2B4(void) {
     u8 *p = func_8007A980(2, 4, 0);
