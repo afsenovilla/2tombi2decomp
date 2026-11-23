@@ -309,7 +309,38 @@ void func_8010A62C(void *a)
     }
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010A6F0);
+void func_8010A6F0(u8 *a)
+{
+    u8 **p;
+    u8 *b;
+    p = D_1F800148;
+    D_1F800182 = D_1F800150;
+    while (D_1F800182 != 0) {
+        b = *p;
+        D_1F800182--;
+        p++;
+        if (b[0] & 1) {
+            switch (b[2]) {
+            case 14:
+            case 15:
+                func_80109AC8(a, b);
+                break;
+            case 12:
+                func_80020868(a, b);
+                break;
+            case 18:
+                func_8002311C(a, b);
+                break;
+            case 31:
+                func_80023764(a, b);
+                break;
+            case 0x4B:
+                func_8010996C(a, b);
+                break;
+            }
+        }
+    }
+}
 
 typedef struct { u16 acc, inc, max, dec; } SpeedTbl;
 extern SpeedTbl D_800A455C[];
