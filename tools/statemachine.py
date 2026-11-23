@@ -2,7 +2,7 @@
 """Actor state-machine drafter: a pending `switch (a[4])` function (sub-switches on a[3] / a[5]) as a scratch.
 
   python3 -I tools/statemachine.py --list [PROG ...] [--top 40]
-  python3 -I tools/statemachine.py PROG NAME [NAME ...] [--out build/statemachine] [--no-check]
+  python3 -I tools/statemachine.py PROG NAME [NAME ...] [--out build/statemachine] [--no-check] [--actor [--actor-args 0,1]]
 
 --list: the pending functions of the programs (default a00-a08) that dispatch through rodata jump tables, with the
 number of tables / cases, the share of their calls that go to matched functions (C in src/) and the switch
@@ -119,8 +119,10 @@ def describe(prog, name, tables, calls, ins, hits, matched):
     return out
 
 
-def m2c_body(prog, name):
-    r = subprocess.run(decomp.m2c_cmd(prog, name, decomp.context(), ("--valid-syntax",)), capture_output=True,
+def m2c_body(prog, name, actor=None):
+    """m2c's draft (--valid-syntax); actor: the parameters typed Actor * ("0": arg0; tools/decomp.py --actor)."""
+    ctx = decomp.actor_context(prog, name, actor) if actor else decomp.context()
+    r = subprocess.run(decomp.m2c_cmd(prog, name, ctx, ("--valid-syntax",)), capture_output=True,
                        text=True, cwd=ROOT)
     if r.returncode or not r.stdout.strip():
         return None
@@ -145,7 +147,7 @@ def check(path, prog, name):
     return (int(m.group(1)) if m else 10 ** 6), last
 
 
-def draft(prog, name, out_dir, do_check=True, jt=None, matched=None):
+def draft(prog, name, out_dir, do_check=True, jt=None, matched=None, actor=None):
     matched = matched_names(prog) if matched is None else matched
     tables, calls, ins = analyse(prog, name, jt, matched)
     hits = I.search([prog], N.progs_list(), 10, 0.8, pending_only={(prog, name)})
@@ -164,7 +166,9 @@ def draft(prog, name, out_dir, do_check=True, jt=None, matched=None):
             drafts.append(("dispatch.py", open(p).read()))
         except Exception as e:     # m2c crash on the rewritten asm
             head.append(" * dispatch.py draft failed: %s: %s" % (type(e).__name__, e))
-    body = m2c_body(prog, name)
+    body = m2c_body(prog, name, actor)
+    if body and "Actor" in body:
+        body = '#include "actor.h"\n' + body
     if body:
         if drafts:
             pre, _ = split_func(drafts[0][1], name)
@@ -237,6 +241,8 @@ def main():
     ap.add_argument("--top", type=int, default=40)
     ap.add_argument("--out", default=OUT)
     ap.add_argument("--no-check", action="store_true")
+    ap.add_argument("--actor", action="store_true", help="m2c draft with arg0 typed Actor * (include/actor.h)")
+    ap.add_argument("--actor-args", default="0", help="with --actor: the parameters typed Actor * (e.g. 0,1)")
     a = ap.parse_args()
     if a.list:
         listing(a.args or ["a0%d" % i for i in range(9)], a.top)
@@ -247,7 +253,7 @@ def main():
     jt, matched = jtbl_targets(prog), matched_names(prog)
     for name in a.args[1:]:
         try:
-            out, res = draft(prog, name, a.out, not a.no_check, jt, matched)
+            out, res = draft(prog, name, a.out, not a.no_check, jt, matched, a.actor_args if a.actor else None)
         except Exception as e:
             print("%s: failed: %s: %s" % (name, type(e).__name__, e))
             continue

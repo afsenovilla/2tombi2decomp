@@ -65,6 +65,12 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
 
 ## Order of work for a scope
 
+0. **The work queue**: `python3 -I tools/workqueue.py <progs> [--top 30] [--max-size 0x400]` (build/queue_<progs>.csv;
+   run `tools/inlined.py <progs>` first for its `inl` column): every pending function with its callees (jal targets
+   resolved in its program, then MAIN / boot), how many are still pending, size, jump tables (`jt`), inlined matched
+   bodies, family / exact copies; the ones that call no pending function first, then by size x exact copies. Take
+   targets from the top; its last line names the pending callees that block the most functions (MAIN's
+   f_PlaySoundEffect blocks 521 pending functions over all programs, 2026-11-23).
 1. **Families**: `python3 -I tools/families.py --by-scope`: pending functions with exact copies in several programs.
    Match one, then `python3 -I tools/nearcopy.py <progs> --install` fills the copies.
 2. **Inlined bodies**: `python3 -I tools/inlined.py <progs>` (build/inlined_<progs>.csv): pending functions that
@@ -93,7 +99,11 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
 
 ## The loop for one function
 
-- Draft: `python3 -I tools/decomp.py NAME` (m2c, jump tables included). m2c invents constant arguments for calls
+- Draft: `python3 -I tools/decomp.py NAME` (m2c, jump tables included); `--actor` types arg0 as `Actor *`
+  (include/actor.h, `--actor-args 0,1` for others; also statemachine.py / dispatch.py `--actor`): far fewer casts
+  (24 -> 5 on a typical state machine), the same ccheck score on 8 of 10 tries; keep the plain draft too when retail
+  keeps a derived base pointer (`s1 = a + 0x60`: the plain draft has it, the struct draft folds it). Scratches get
+  `#include "actor.h"`, which install_c carries into the target file; already-matched C keeps its byte-pointer forms. m2c invents constant arguments for calls
   whose register is not set on that path (decomp.py flags them after the draft: `/* decomp.py: F at ADDR: a2 not
   written on every path ... */`), and leaves "uninitialised" locals that are really incoming parameters.
 - Check: `python3 -I tools/ccheck.py FILE.c --prog P --func NAME [-v] [--sbs] [--no-protos]`. `--sbs` is the
@@ -124,10 +134,14 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
   (`git add F && git commit -m MSG -- F`, include the config/aliases_<prog>.ld the C needs, in the same commit);
   never push; scratch only in the session scratchpad. Final report in English: functions per program, copies in
   other scopes, near misses (words off, scratch path), recipes, tool ideas.
-- Coordinator at the end of a round: clean full build (`rm -rf build asm && python3 tools/build.py`, 29 OK; commit
-  the sync_src normalisation), `tools/nearcopy.py --install` and `tools/dupsweep.py --install` over all programs,
-  full build again, STATUS section + this file + CLAUDE.md, `tools/readme_progress.py`, pull, push to master and the
-  session branch.
+- Coordinator at the end of a round: `python3 -I tools/integrate.py --since <the previous integration commit>` does
+  the mechanical part in one command (never commits or pushes): clean full build (`rm -rf build asm`, build, build
+  again: which src/ files sync_src rewrote and whether only whitespace changed, then commit that normalisation),
+  `tools/nearcopy.py --install` and `tools/dupsweep.py --install` over all programs, full build again,
+  readme_progress, progress --phases, and every commit of REF..HEAD built in a temporary worktree
+  (build/tmp_integrate_wt; the programs each commit touched) with the commits that do not link (`first` = the commit
+  that broke a program). About 1 minute per full build; `--only-since REF` for the link check alone. Then:
+  commit what it changed, STATUS section + this file + CLAUDE.md, pull, push to master and the session branch.
 
 ## Recipe catalogue (gcc 2.8.1 -O2; the dated details are in STATUS)
 
@@ -323,6 +337,9 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - install_c: a prototype the target has for a function used as a value (`void f(void);`) is rewritten to the
   installed definition's header (conflicting types otherwise; a02 func_8010CFAC); a prototype from a definition
   further down is K&R when some call passes fewer arguments.
+
+- Never name a tool after a stdlib module (`tools/queue.py` would shadow `queue`, which concurrent.futures imports,
+  for every tool run as `python3 tools/X.py`): the work queue is tools/workqueue.py.
 
 ## Decisions (with dates in STATUS)
 

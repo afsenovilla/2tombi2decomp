@@ -2,7 +2,7 @@
 """Draft C for one function with m2c (github.com/matt-kempster/m2c, cloned to /opt/m2c by the bootstrap), using the
 project headers as context, and optionally check the draft at once.
 
-  python3 -I tools/decomp.py NAME [--prog main] [--check] [--write]
+  python3 -I tools/decomp.py NAME [--prog main] [--check] [--write] [--actor [--actor-args 0,1]]
 
 NAME: a function of asm/<prog>/nonmatchings. The context is include/common.h + every include/*.h, preprocessed
 (build/ctx.c). The program's jump tables (the jtbl_ blocks of asm/<prog>/data/*rodata*.s, gathered in
@@ -10,6 +10,8 @@ build/m2c_jtbl_<prog>.s) are passed too, so functions with a switch through a ju
 `jr` without its table; the rest of the rodata is left out, so drafts keep D_ symbols instead of string literals).
 --check compiles the draft with the game's compiler (tools/ccheck.py) and reports OK / DIFF; --write also replaces
 the function's INCLUDE_ASM line in src/<prog>/*.c by the draft when it matches.
+--actor types the function's first parameter (or the --actor-args ones) as `Actor *` (include/actor.h: the common actor
+fields by offset), so the draft reads `arg0->state` / `arg0->x` with the field types instead of casts.
 A draft is only a start: most functions need types and hand edits before they match. After the draft, a
 `/* decomp.py: ... */` note flags each call whose m2c arguments include argument registers not written before the
 `jal` in its block (a guessed argument from an older value, or a parameter passed through).
@@ -32,6 +34,33 @@ def context():
     if r.returncode:
         sys.exit(r.stderr)
     open(out, "w").write(re.sub(r"__asm__\(.*?\);", "", r.stdout, flags=re.S))
+    return out
+
+
+def actor_context(prog, name, args="0", ctx=None):
+    """A context for m2c in which NAME's parameters ARGS (comma list of indices) are `Actor *` (include/actor.h):
+    the plain draft's signature with those parameters retyped, appended to the context as NAME's prototype, so m2c
+    writes `arg0->state` / `arg0->x` with the field types instead of casts. Returns the context path (the plain one
+    when the draft has no such parameter)."""
+    ctx = ctx or context()
+    r = subprocess.run(m2c_cmd(prog, name, ctx, ("--valid-syntax",)), capture_output=True, text=True, cwd=ROOT)
+    m = re.search(r"(?m)^(?!extern\b)([A-Za-z_][^\n;=]*?)\b%s\(([^)]*)\)\s*\{" % re.escape(name), r.stdout)
+    if not m:
+        return ctx
+    ret = m.group(1).strip()
+    params = [x.strip() for x in m.group(2).split(",")] if m.group(2).strip() not in ("", "void") else []
+    idx = [int(x) for x in str(args).split(",") if x.strip() != ""]
+    if not any(i < len(params) for i in idx):
+        return ctx
+    for i in idx:
+        if i < len(params):
+            params[i] = "Actor *arg%d" % i
+    params = [re.sub(r"^(\?|M2C_UNK)\s", "s32 ", x) for x in params]
+    if ret in ("?", "M2C_UNK"):
+        ret = "s32"
+    out = os.path.join(ROOT, "build", "ctx_actor", "%s_%s.c" % (prog, name))
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    open(out, "w").write(open(ctx).read() + "\n%s %s(%s);\n" % (ret, name, ", ".join(params)))
     return out
 
 
@@ -164,8 +193,11 @@ def main():
     ap.add_argument("--prog", default="main")
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--write", action="store_true")
+    ap.add_argument("--actor", action="store_true", help="type arg0 as Actor * (include/actor.h)")
+    ap.add_argument("--actor-args", default="0", help="with --actor: the parameters typed Actor * (e.g. 0,1)")
     a = ap.parse_args()
-    r = subprocess.run(m2c_cmd(a.prog, a.name, context()), capture_output=True, text=True, cwd=ROOT)
+    ctx = actor_context(a.prog, a.name, a.actor_args) if a.actor else context()
+    r = subprocess.run(m2c_cmd(a.prog, a.name, ctx), capture_output=True, text=True, cwd=ROOT)
     draft = r.stdout
     if r.returncode or not draft.strip():
         sys.exit(r.stderr or "m2c failed")
@@ -176,7 +208,7 @@ def main():
         return
     test = os.path.join(ROOT, "build", "draft_%s.c" % a.name)
     body = re.sub(r"(?m)^(extern )?\? ", r"\1s32 ", draft)          # unknown return types of externs
-    open(test, "w").write('#include "common.h"\n' + body)
+    open(test, "w").write('#include "common.h"\n' + ('#include "actor.h"\n' if "Actor" in body else "") + body)
     r = subprocess.run([sys.executable, "-I", os.path.join(ROOT, "tools", "ccheck.py"), test, "--prog", a.prog,
                         "--func", a.name], capture_output=True, text=True, cwd=ROOT)
     print(r.stdout + r.stderr[-2000:])

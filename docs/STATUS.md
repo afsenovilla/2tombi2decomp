@@ -3,6 +3,93 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-23 (5): speed-up tools
+
+One tools agent (the user approved the list). No function count change.
+
+- **tools/integrate.py**: the coordinator's end-of-round checklist in one command, never commits or pushes:
+  `python3 -I tools/integrate.py [--since REF] [--skip-clean] [--skip-sweeps] [-j N]` / `--only-since REF`. Clean
+  full build (`rm -rf build asm`, build), a second build, the src/ files the first build's sync_src rewrote (and
+  whether the change is whitespace / blank lines only) and whether the second build changed anything more;
+  `nearcopy.py --install` and `dupsweep.py --install` over all programs; full build; readme_progress; progress
+  --phases; with `--since REF` every commit of REF..HEAD checked out in a temporary worktree (build/tmp_integrate_wt,
+  game/ include/pt include/psyq symlinked, `checkout -f` because the build's sync_src rewrites src/) and the
+  programs it touched built (src/<prog>/, config/<prog>.yaml / aliases / symbol_addrs; include/, config/*.ld or the
+  build tools -> all 29); prints the commits that do not link, `first` when that program built at the previous
+  checked commit. A full build is about 1 minute, so a round of ~40 commits checks in well under an hour. Tried:
+  `--only-since HEAD~8` (8 commits, 5 touching programs: all link, 1 minute); the full run `--since HEAD~3 -j 4` (3 minutes): clean build 29 OK (55 s), no sync_src change, second build 29 OK and unchanged, nearcopy / dupsweep nothing to install (the round 7 integration had swept), build 29 OK, 4220 / 7011 functions (33.1 % of the bytes), README unchanged, 3 commits all link; the worktree is removed afterwards. Not tried yet: a round with a commit that really does not link (the report path is untested).
+- **tools/workqueue.py** (bottom-up work queue; not tools/queue.py, which would shadow the stdlib `queue` that
+  concurrent.futures imports for every tool run from tools/): `python3 -I tools/workqueue.py [PROG ...] [--top 30]
+  [--min-size N] [--max-size N] [--lib]`. Per pending function: callees (jal targets resolved in the program, then
+  MAIN, then boot, by name or func_<address>), how many are pending (named), `ext` (found nowhere), `jalr`, size,
+  jump tables, inlined matched bodies (build/inlined_<progs>.csv or build/inlined.csv when present), family (same
+  opcodes, any program) and exact copies, callers in the scope. Rank: no pending callee first, then size x exact
+  copies. build/queue_<progs>.csv; the last line names the pending callees blocking the most functions. Over all
+  programs: 2674 pending game functions; the most-needed pending callees are all MAIN functions:
+  **f_PlaySoundEffect (0x280) is called by 521 pending functions**, f_RunActorScriptInterpreter 202, ratan2 173,
+  f_BeginScriptedInteractionAudio 161, f_UpdateActorScaledOffsetModelTransforms 158, f_ResolveActorAreaPlanePosition
+  135, f_AdvanceActorSkeletalAnimation 121, f_InitializeMultiPartActorModel 109 (main agent: these first; a pending
+  callee does not stop a caller from matching, but its real signature and return type are then known). a00-a01: 424
+  pending (0x48C04 bytes), 139 (0x140EC bytes) call no pending function; top: f_CollectA00GridCellsInsideTriangle
+  0x604 (2 exact copies), f_ConfigureSegmentedTownActorMorph 0x830, a01 func_8013000C 0x82C, func_801234A4 0x7F0,
+  f_UpdatePipeAreaMudballSurpriseCarrierActor 0x7D8.
+- **include/actor.h** rewritten from a census of the matched C (19k accesses through `a` / `p` pointers:
+  `a[0xNN]`, `H(a, 0xNN)`, `*(T *)(a + 0xNN)`, MEMBER_AT): `typedef struct Actor` (0xC8 bytes) with each offset at
+  its most used access type (u8 0x00-0x0D with flags / kind / mode a[3] / state a[4] / subState a[5], linked 0x10,
+  callback 0x1C, next 0x24, position halves xFrac/x 0x2C/0x2E, y 0x30/0x32, z 0x34/0x36, s16 fields 0x40-0x94,
+  parts 0xC0), the Tomba2Edit names kept. m2c gets it through **`tools/decomp.py NAME --actor [--actor-args 0,1]`**
+  (and statemachine.py / dispatch.py `--actor`): decomp.actor_context() runs the plain draft, retypes the listed
+  parameters of its signature as `Actor *` and appends that prototype to the context (build/ctx_actor/). Scratches get
+  `#include "actor.h"` (install_c carries it into the target). Kept optional (a flag): arg0 is not always an actor.
+  Effect on 10 pending a00 / a01 state machines (m2c draft as is, ccheck words off / casts): the same words off on 8
+  (e.g. f_UpdateKainenHouseWobbleEffect 64 / 24 casts -> 64 / 5, f_AnimateNetBridgeFishIdle 98 / 62 -> 98 / 21,
+  f_AdvanceKainenHouseRescueSequence 114 / 43 -> 114 / 17), one better (f_AnimateSmallFishSuspendedMotion 55 -> 54,
+  40 -> 9 casts), one worse (a01 func_80117A00 90 -> 103: retail keeps a derived base `s1 = a + 0x60` that the plain
+  draft reproduces and the struct draft folds into field accesses; use the plain draft there). The drafts read
+  `arg0->state`, `arg0->y`, `arg0->unk_58 += ...` with the right signedness; already-matched C is untouched.
+
+**Proposal (not done): split src/main/main.c (19.5k lines) and the big overlays (a00 8.8k, a01 7.3k, a08 7.6k, a06
+6.9k lines) into several C files by address range.** Why: two agents can work one program without touching the
+same file, ccheck / install_c / sync_src read and rewrite a fraction of the text, builds compile the parts in
+parallel. gcc 2.8.1 at -O2 does not inline across functions without `inline` (no -finline-functions), so each
+function's code depends only on the declarations visible to it: splitting is safe when each part gets the same
+declarations, static inline helpers and macros its functions saw. Plan:
+1. splat: the program's single game `c` subsegment (`[0xD2C0, c, main]`, a00 `[0x13A0, c, a00]`) becomes several
+   (`[0xD2C0, c, main_00]`, `[0x1A000, c, main_01]`, ... at function starts; the .rodata / .data subsegments stay as
+   they are: game C has no rodata of its own, its switches use the retail tables through tools/jtbl.py). The asm of
+   pending functions moves to asm/<prog>/nonmatchings/<part>/, so INCLUDE_ASM lines name the part. Cut points: the
+   original object boundaries where visible (alignment padding, a change in rodata use), else every ~150 functions.
+2. Shared declarations: the file-scope text before the first function and the externs / prototypes / macros / static
+   inline helpers between functions go to src/<prog>/<prog>.h (types, externs, macros) and each part keeps the
+   helpers its functions use (a helper used by two parts: in the header as `static inline`). Watch macros redefined
+   differently further down (a00 `H` with one and two arguments), prototypes that differ on purpose (K&R definitions
+   for callers passing fewer arguments, `T f();` for leftover registers, calls through cast pointers): those stay
+   per part. A one-off tools/splitsrc.py does the cut and proves it with a full build (29 OK) before committing.
+3. A shared module tools/srcfiles.py: `game_files(prog)` -> [(path, start, end, asm dir)] from the yaml,
+   `file_for(prog, name or address)`, `include_asm_line(prog, name)`; every tool below uses it instead of
+   `src/<prog>/<prog>.c` / `"asm/%s/nonmatchings/%s"`. Land this first with one part per program (no change in
+   behaviour), then split.
+Tools that assume one src/<prog>/<prog>.c and what each needs:
+- build.py: runs sync_src only when src/<prog>/<prog>.c exists -> once per game part (or sync_src does all parts);
+  the split / re-split loop is unchanged.
+- sync_src.py: rewrites the one file in address order -> per part over its address range; a C function whose
+  address falls into another part after a re-split moves to that part (as it already moves functions into library
+  files); renames over all parts.
+- install_c.py: target = `src/<prog>/<prog>.c` (line 189) and the INCLUDE_ASM line format (lines 280, 285) -> the part
+  holding the function's INCLUDE_ASM; the declarations / helpers / alias logic per part; the per-program lock stays.
+- nearcopy.py (Prog.src, Prog.pending, Prog.includes), dupsweep.py (c_functions, the INCLUDE_ASM replacements at lines
+  270-290): read all parts, write into the part holding each target.
+- ccheck.py (line 131: the target file's declarations for scratch prototypes): the part holding --func, or the header
+  plus all parts.
+- dispatch.py helpers() (the `/* NAME, inlined */` helpers of the file), statemachine.py (globs: fine), inlined.py
+  (globs: fine): read all parts.
+- sweep.py, nonmatching.py, libnear.py `--game`, libpermute.py `--game`, t1sweep.py, decomp.py `--write` (glob, but
+  INCLUDE_ASM line format): the part and the new line format.
+- progress.py, funcstats.py, arity.py, workqueue.py, integrate.py, readme_progress.py: glob src/<prog>/**/*.c and parse
+  INCLUDE_ASM by regex: work as they are (check the library test `/psyq/` still excludes the parts).
+- install_lib.py, libsweep.py, pzsweep.py, asm_by_design.py: library files only, unaffected.
+- config/eu/: no C, unaffected; AGENTS.md / CLAUDE.md lines that say `src/<prog>/<prog>.c`.
+
 ## 2026-11-23 (4): Tombi! 1 C against Tomba! 2
 
 Question: can the matched C of the first game (Tombi-Decomp, PAL, fully matched, MIT) be reused here? Its

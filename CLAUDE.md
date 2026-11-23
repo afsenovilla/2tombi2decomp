@@ -55,6 +55,10 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   when a new compiler set-up or recipe unblocks it, or in an occasional round -> the coordinator integrates (clean full build 29 OK, nearcopy + dupsweep over all programs,
   STATUS / AGENTS.md / CLAUDE.md / README, push) -> one tools agent implements the round's tool ideas alone -> next
   round. The agents' rules and the coordinator's checklist are in AGENTS.md ("Parallel rounds").
+- The coordinator's end-of-round checklist is one command since 2026-11-23: `python3 -I tools/integrate.py --since
+  <previous integration commit>` (clean full build twice with the sync_src report, nearcopy + dupsweep, full build,
+  README / phases, and which commits of the round do not link, built in a temporary worktree). It never commits or
+  pushes. Agents take their targets from `python3 -I tools/workqueue.py <their progs>` (bottom-up queue).
 - Never push a round before the clean full build: agents' intermediate commits have broken the link more than once
   (an alias line committed later, a shared aliases file rewritten).
 - Compiler facts that matter: game code is gcc 2.8.1 + ASPSX 2.79 (`-O2 -G0 -funsigned-char`); the library needs the
@@ -114,6 +118,15 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   inlined copy of matched C (registers renamed, prologue / epilogue dropped; build/inlined.csv for all programs,
   build/inlined_<progs>.csv for a scope; `{op:K->K2}`: constants that differ in the copy): copy the matched C as a
   `static inline` helper headed `/* NAME, inlined */` and call it (install_c.py dedupes / renames helpers).
+- `python3 -I tools/workqueue.py [PROG ...] [--top 30] [--max-size N]`: bottom-up work queue (build/queue_<progs>.csv):
+  pending functions with their callees (pending count, MAIN / boot resolved), jump tables, inlined bodies
+  (inlined.py csv), family / exact copies, callers; no pending callee first, then size x copies. (Not tools/queue.py:
+  that name shadows the stdlib module concurrent.futures imports.)
+- `python3 -I tools/integrate.py [--since REF] [--only-since REF] [--skip-clean] [--skip-sweeps]`: the coordinator's
+  end-of-round checklist (AGENTS.md "Parallel rounds"); never commits.
+- include/actor.h: `typedef struct Actor` (the common actor fields by offset, types from a census of the matched C);
+  `tools/decomp.py NAME --actor [--actor-args 0,1]` (also statemachine.py / dispatch.py `--actor`) drafts with arg0
+  as `Actor *`: far fewer casts, same scores; matched C is not rewritten to use it.
 - `python3 -I tools/statemachine.py --list [PROGS]` / `tools/statemachine.py PROG NAME`: actor state machines (rodata
   jump tables): build/statemachine/<prog>/<name>.c with every table's cases (operand, target, calls, inlined matched
   bodies), the helpers and the closer of the dispatch.py / decomp.py drafts; write each case in full, drop the header.

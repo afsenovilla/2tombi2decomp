@@ -319,7 +319,7 @@ def candidates(progs, min_cover=0.8, min_len=10):
     return out
 
 
-def draft(prog, name, hits, out_dir, check=True):
+def draft(prog, name, hits, out_dir, check=True, actor=None):
     sp = I.spans(hits)
     have = target_helpers(prog)
     path = decomp.find_asm(prog, name)
@@ -355,7 +355,7 @@ def draft(prog, name, hits, out_dir, check=True):
     os.makedirs(os.path.join(ROOT, "build", "dispatch_tmp"), exist_ok=True)
     tmp_s = os.path.join(ROOT, "build", "dispatch_tmp", name + ".s")
     open(tmp_s, "w").write(asm)
-    ctx = decomp.context()
+    ctx = decomp.actor_context(prog, name, actor) if actor else decomp.context()   # actor: params typed Actor *
     ctx2 = os.path.join(ROOT, "build", "dispatch_tmp", "ctx_%s.c" % name)
     open(ctx2, "w").write(open(ctx).read() + "\n" + "\n".join(protos) + "\n")
     jt = decomp.jtbl_file(prog)
@@ -410,7 +410,7 @@ def draft(prog, name, hits, out_dir, check=True):
             seen_def.add(n)
         dd.append(e)
     decls = dd
-    src = N.PRELUDE + "".join(i + "\n" for i in tp.includes) + "\n".join(head) + "\n\n" + \
+    src = N.PRELUDE + ('#include "actor.h"\n' if actor else "") + "".join(i + "\n" for i in tp.includes) + "\n".join(head) + "\n\n" + \
         "\n".join(decls) + "\n\n" + "\n\n".join(t for _, t in helpers) + "\n\n" + body.strip() + "\n"
     os.makedirs(os.path.join(out_dir, prog), exist_ok=True)
     out = os.path.join(out_dir, prog, name + ".c")
@@ -435,6 +435,8 @@ def main():
     ap.add_argument("--top", type=int, default=40)
     ap.add_argument("--out", default=OUT)
     ap.add_argument("--no-check", action="store_true")
+    ap.add_argument("--actor", action="store_true", help="m2c skeleton with arg0 typed Actor * (include/actor.h)")
+    ap.add_argument("--actor-args", default="0", help="with --actor: the parameters typed Actor * (e.g. 0,1)")
     a = ap.parse_args()
     if a.list:
         progs = a.args or N.progs_list()
@@ -455,7 +457,7 @@ def main():
             print("%s: no inlined matched body found" % name)
             continue
         try:
-            out, res = draft(prog, name, hs, a.out, not a.no_check)
+            out, res = draft(prog, name, hs, a.out, not a.no_check, a.actor_args if a.actor else None)
         except Exception as e:    # m2c / parsing crash on one function: report it, go on with the others
             print("%s: draft failed: %s: %s" % (name, type(e).__name__, e))
             continue
