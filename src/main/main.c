@@ -13375,7 +13375,61 @@ void func_80069BEC(u8 *a, s32 flag)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80069CD8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006A080);
+extern u8 D_1F80027B;
+extern u8 D_1F80023A;
+
+void func_8006A080(u8 *a)
+{
+    u8 *m = a + 0x60;
+    u8 *t = (u8 *)D_800E7E80;
+    u8 *p;
+    u8 k;
+
+    switch (a[6]) {
+    case 0:
+        *(s16 *)(m + 6) = 3;
+        if (t[0x146] != 0 && *(s16 *)(t + 0x16E) != 0) {
+            t[5] = 0x19;
+            t[6] = 0;
+            t[7] = 0;
+            a[6]++;
+        }
+        break;
+    case 1:
+        *(u16 *)(m + 8) = *(u16 *)(t + 0x56);
+        *(u16 *)(m + 0xA) = *(u16 *)(t + 0x58);
+        break;
+    }
+    p = (u8 *)D_1F800208;
+    if (p != (u8 *)1) {
+        if (p != 0) {
+            if ((s32)p < 0) {
+                if ((k = p[0xC]) == 2 && p[0] != 1) {
+                    D_1F800208 = 0;
+                    if (D_1F80027B != k && t[0x146] == 4) {
+                        t[0x146] = 0;
+                    }
+                } else {
+                    *(u16 *)(a + 0x2E) = *(u16 *)(p + 0x2E) + *(u16 *)(m + 0);
+                    *(u16 *)(a + 0x32) = *(u16 *)(p + 0x32) + *(u16 *)(m + 2);
+                    *(u16 *)(a + 0x36) = *(u16 *)(p + 0x36) + *(u16 *)(m + 4);
+                }
+            } else {
+                func_80069CD8(a, (s32)p);
+            }
+        }
+        func_80069858(a, 0, 1);
+    }
+    D_1F800200 = *(u16 *)(a + 0x2E);
+    D_1F800202 = *(u16 *)(a + 0x32);
+    D_1F800204 = *(u16 *)(a + 0x36);
+    if (t[0x146] == 0) {
+        a[0] = 2;
+        a[4]++;
+        t[0x79] = 0;
+        D_1F80023A = 0;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006A240);
 
@@ -13536,7 +13590,90 @@ s32 func_8006A8C8(s32 arg0) {
     return temp_v0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006A900);
+extern int rcos(int a);
+extern int rsin(int a);
+
+void func_8006A900(u8 *a)
+{
+    u8 *t = (u8 *)D_800E7E80;
+    u8 *m = a + 0x60;
+    s32 r;
+    s32 h;
+    s16 ang;
+    s16 d;
+    s32 k;
+
+    switch (a[6]) {
+    case 0:
+        {
+            s32 k = 1;
+            a[6] = k;
+            *(s16 *)(a + 0x40) = k;
+        }
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x58) = 0;
+    case 1:
+        if (--*(s16 *)(a + 0x40) == 0) {
+            if (t[0xBE] != 0) {
+                f_PlaySoundEffect(0xA, 0, 0);
+                *(s16 *)(a + 0x40) = 0xA;
+            } else {
+                f_PlaySoundEffect(9, 0, 0);
+                *(s16 *)(a + 0x40) = 0x12;
+            }
+        }
+        r = 0x37;
+        if (t[0xBE] != 0) {
+            r = 0x6E;
+            h = 0x78;
+            if (a[0x5E] == 0) {
+                a[0x5E] = 1;
+                func_8006A8C8((s32)a);
+            }
+            *(s16 *)(m + 0xA) += 0x1C0;
+            ang = *(u16 *)(t + 0x56) + 0x180;
+        } else {
+            *(s16 *)(m + 0xA) += 0x100;
+            h = 0x41;
+            ang = *(u16 *)(t + 0x56) + 0x200;
+        }
+        d = (r * rcos(*(u16 *)(m + 0xA) &= 0xFFF)) >> 12;
+        *(u16 *)(a + 0x2E) = *(u16 *)(*(u8 **)(t + 0xDC) + 0x2C) + ((rcos(ang) * d) >> 12);
+        *(u16 *)(a + 0x32) = *(u16 *)(*(u8 **)(t + 0xDC) + 0x30) + ((h * rsin(*(s16 *)(m + 0xA))) >> 12);
+        *(u16 *)(a + 0x36) = *(u16 *)(*(u8 **)(t + 0xDC) + 0x34) - ((rsin(ang) * d) >> 12);
+        *(s16 *)(a + 0x56) = ang;
+        if (a[2] != 1) {
+            *(u16 *)(*(u8 **)(a + 0xC0) + 0xC) = *(u16 *)(m + 0xA);
+        }
+        if (t[0x144] == 2 || t[0x146] == 0) {
+            a[5] = 0;
+            a[4]++;
+            break;
+        }
+        if (t[0x146] == 3) {
+            *(u16 *)(a + 0x2E) = *(u16 *)(t + 0x2E);
+            *(u16 *)(a + 0x32) = *(u16 *)(t + 0x32);
+            *(u16 *)(a + 0x36) = *(u16 *)(t + 0x36);
+            a[0x46] = t[0x14A];
+            *(s16 *)(a + 0x54) = 0;
+            *(s16 *)(a + 0x58) = 0;
+            if (t[5] == 9) {
+                *(s16 *)(a + 0x56) = *(u16 *)(t + 0x56) - 0x800;
+            } else {
+                *(s16 *)(a + 0x56) = *(u16 *)(t + 0x56);
+            }
+            *(u16 *)(m + 8) = *(u16 *)(a + 0x56);
+            a[0x2A] = t[0x2A];
+            a[5] = k = 1;
+            func_80069BEC(a, 1);
+            *(s16 *)(*(u8 **)(a + 0xC0) + 0xC) = 0;
+            a[6] = k;
+            func_80069688(a);
+        }
+        break;
+    }
+}
 
 void func_8006ABF4(u8 *a)
 {
