@@ -28,7 +28,8 @@ another program's alias names, get an alias line in config/aliases_<prog>.ld at 
 Matches go to build/nearcopy/<prog>/<name>.c (install_c.py scratch files); --install installs them with
 tools/install_c.py (linked build checked; files with clashing declarations go in separate batches). --near also
 writes the closest attempt of every target that did not match to build/nearcopy/<prog>/near/<name>.c, headed by
-how many words are off and where the C came from: starting points for hand matching.
+how many words are off and where the C came from: starting points for hand matching (--near alone implies
+--ratio 0.8; pass --ratio to change it).
 """
 import argparse, collections, concurrent.futures as cf, difflib, glob, itertools, os, re, shutil, struct, \
     subprocess, sys, tempfile
@@ -656,6 +657,8 @@ def main():
     ap.add_argument("--lib", action="store_true", help="library files: pending ones against the matched library "
                     "files of the other programs (main <-> boot)")
     a = ap.parse_args()
+    if a.near and a.ratio is None:
+        a.ratio = 0.8     # --near: other lengths too (the near misses worth hand work are often a few words longer)
     allp = progs_list()
     progs = {p: Prog(p) for p in allp}
     if a.lib:

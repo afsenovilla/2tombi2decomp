@@ -24,7 +24,7 @@ python3 -c "import spimdisasm, rabbitizer, yaml, splat" 2>/dev/null || {
 python3 -c "import pylibyaml" 2>/dev/null || python3 -c "import site,os; open(os.path.join(site.getsitepackages()[0],'pylibyaml.py'),'w').write('# optional accelerator stub\n')"
 
 log "2/5 PS1 toolchain"
-[ -x /opt/oldgcc/gcc-2.7.2-psx/cc1 ] && [ -x /opt/oldgcc/gcc-2.8.1-nocse/cc1 ] && [ -d include/psyq ] && [ -d /opt/maspsx ] || bash tools/setup_native.sh
+[ -x /opt/oldgcc/gcc-2.7.2-psx/cc1 ] && [ -x /opt/oldgcc/gcc-2.8.1-nocse/cc1 ] && [ -x /opt/oldgcc/gcc-2.7.2-loop4/cc1 ] && [ -x /opt/oldgcc/gcc-2.8.1-loop2/cc1 ] && [ -x /opt/oldgcc/gcc-2.8.1-nocse-loop2/cc1 ] && [ -d include/psyq ] && [ -d /opt/maspsx ] || bash tools/setup_native.sh
 
 log "3/5 discs"
 bash tools/disc_fetch.sh USA

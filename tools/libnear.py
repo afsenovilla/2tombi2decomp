@@ -4,7 +4,7 @@ compiler set-up and report how far the best one is from the retail bytes (differ
 permuter (tools/permute.py) can be pointed at the closest. Writes build/libnear_<prog>.csv.
 
   python3 -I tools/libnear.py [--prog main] [--max-size 0x200] [-j N] [--game] [--epilogue] [--nocse | --only-nocse]
-      [--names A,B]
+      [--loop | --only-loop] [--names A,B]
 
 --game: the game functions still INCLUDE_ASM in src/<prog>/<prog>.c, game compiler only (build/gamenear_<prog>.csv).
 """
@@ -68,6 +68,8 @@ def main():
     ap.add_argument("--epilogue", action="store_true", help="also the EPILOGUE / RETURN sony set-ups")
     ap.add_argument("--nocse", action="store_true", help="also the gcc-2.8.1-nocse set-ups")
     ap.add_argument("--only-nocse", action="store_true", help="only the gcc-2.8.1-nocse set-ups")
+    ap.add_argument("--loop", action="store_true", help="also the loop-hoisting set-ups (gcc-2.7.2-loop4, ...)")
+    ap.add_argument("--only-loop", action="store_true", help="only the loop-hoisting set-ups")
     ap.add_argument("--names", help="comma list: only these functions")
     a = ap.parse_args()
     lim = int(a.max_size, 0)
@@ -77,12 +79,7 @@ def main():
         pend = re.findall(r'INCLUDE_ASM\("[^"]+", (\w+)\);', t)
     else:
         pend = sorted(L.pending_files(a.prog))   # a file whose INCLUDE_ASM names another function is skipped
-    if a.epilogue:
-        L.VARIANTS.extend(L.EPI_VARIANTS)
-    if a.only_nocse:
-        L.VARIANTS[:] = L.NOCSE_VARIANTS
-    elif a.nocse:
-        L.VARIANTS.extend(L.NOCSE_VARIANTS)
+    L.apply_variant_args(a)
     if a.names:
         pend = [n for n in pend if n in a.names.split(",")]
     for n in pend:

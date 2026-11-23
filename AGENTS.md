@@ -33,8 +33,12 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
   5. **the library compiler also hoists more loop invariants around loops that contain calls** (constants and
      global loads kept in saved registers: `li s8,-1` in CdControl, the five constants of _SsVmInit). Patching the
      `loop_has_call` multiplier of scan_loop reproduces it (gcc-2.7.2-psx cc1 file offsets 0xC6C66 / 0xC6C6D,
-     gcc-2.8.1 0xDC87D / 0xDC884); it is per file (CD_cachefile breaks with it). Until those set-ups are in
-     setup_native.sh, reach the same code by hand: a constant local assigned at the end of the do/while body is
+     gcc-2.8.1 0xDC87D / 0xDC884); it is per file (CD_cachefile breaks with it). Set-ups (tools/setup_native.sh,
+     sha1 checked): `// CC gcc-2.7.2-loop4` (both multipliers 4; _spu_gcSPU matches as is), `// CC gcc-2.8.1-loop2`
+     (call case 2) and `// CC gcc-2.8.1-nocse-loop2`; libsweep / libnear `--loop` / `--only-loop`, pzsweep `--loop`
+     and `--cc A,B` (a compiler no set-up names takes its stock family's set-ups). Under loop4 a function can get
+     an unused 8-byte frame slot (_SsClose: `vars= 8`, frame 32 for retail's 24, all code equal). Without the
+     patched compilers, reach the same code by hand: a constant local assigned at the end of the do/while body is
      hoisted last (`m1 = -1; } while (--count != m1);`), a long-lived local declared before the loop (`int one =
      1;`) gets reload's `li t0,K`, and `one = 1` at the top of the body keeps `x & (one << bit)` as sllv/and.
   The region module in boot is partly gcc 2.7.2: try it first there; CdControlF needs `AS gnu` under 2.7.2.
@@ -67,8 +71,10 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
 3. **Actor state machines** (the bulk of the medium / large functions left): `switch (a[4])` with sub-switches
    on a[3] / a[5], whose cases call matched handlers. Write them whole from the plain decomp.py draft: each matched
    body as `static inline`, every case in full, the case table read from the rodata jump tables (dispatch.py drafts
-   are poor for these). About 3 minutes each; pending asm calling func_800518FC / func_8007A624 with few memory
-   operations is a good list of them. In a09-a0f, the **list walkers** follow one template:
+   are poor for these). About 3 minutes each; `python3 -I tools/statemachine.py --list [PROGS]` lists the pending
+   functions with jump tables (all calls to matched functions first) and `tools/statemachine.py PROG NAME` writes
+   the scratch: a header with each jump table (switch operand a[4] / a[5] / ..., every case's target, its calls
+   and the matched bodies inlined there), the helpers, and the closer of the dispatch.py and decomp.py drafts. In a09-a0f, the **list walkers** follow one template:
    `l = LIST; D_1F800182 = COUNT; while (D_1F800182 != 0) { e = *l; D_1F800182--; l++; if (e[0] & 1) switch (e[2])
    {...} }` over the lists 0x1F80013C / 148 / 14C / 154, and the outer `if (*(s16 *)&COUNT == 0) return; for (p =
    D_800F2738; p; p = *(u8 **)(p + 0x24)) { if (!(p[0] & 1) || p[0x2B]) continue; ... }`.
@@ -258,13 +264,21 @@ struct-member form of a cast access, regswap `member` toggles every one)
 
 ## Tool pitfalls (open ones are listed in STATUS)
 
-- dispatch.py can emit a helper twice and crash m2c; for state machines the plain decomp.py draft is better.
+- dispatch.py wrote a helper twice when another helper needed it (fixed 2026-11-23: written once, with the
+  declarations); a crash on one function no longer stops the others. For state machines use statemachine.py.
 - regswap rewrites can produce invalid or semantically wrong C (MEMBER_AT with a variable offset, an unset fork
   variable, a reused variable read after its reassignment): check every result before installing.
 - prio.py names pseudos by declaration order even when array locals are not pseudos (names shifted).
 - install_c: an existing caller with fewer arguments needs a K&R definition (`void f(a) u8 *a; {`); alias renames are
   not applied inside moved helpers; a moved helper loses prototypes declared further down (declare them in the
-  helper's block); `extern M2C_UNK func_X;` (a function used as data) must become `void func_X();`.
+  helper's block). `extern M2C_UNK func_X;` for a function the C calls becomes `s32 func_X();` (dropped when the
+  target declares it) since 2026-11-23.
+- regswap's member toggle only takes `name + literal` / `a->b + literal` bases (a variable offset never becomes
+  MEMBER_AT, 2026-11-23); the reused / forked variable check is still by hand.
+- nearcopy `--near` alone implies `--ratio 0.8` (other lengths too).
+- statemachine.py's header and m2c's prototypes (`M2C_UNK f(M2C_UNK, ...)`) go into src/ with the install: delete
+  the header from the scratch first; use the target's array declarations (`D_800E7E80`, not `&D_800E7E80` with a
+  new extern, which makes an alias).
 - variants.py writes `//--` separators: never leave them in src/.
 - `register ... asm("reg")` matches are not installed (compiler-specific); they stay near misses.
 - A static inline helper must be defined before its first use, or gcc emits it as a function.

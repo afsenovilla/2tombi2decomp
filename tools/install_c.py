@@ -211,6 +211,20 @@ def install(a):
             funcs.append((n, s))
         else:
             pre.append(s)
+    # m2c's `extern M2C_UNK func_X;` (or `extern s32 func_X;`) for a function the C calls: a function declaration,
+    # none at all when the target already declares the function
+    body_text = "\n".join(b for _, b in funcs) + "\n".join(x for x in pre if x.startswith("static"))
+    for i, p in enumerate(pre):
+        m = re.fullmatch(r"extern\s+(?:M2C_UNK|s32|\?)\s+(\w+)\s*;(?:\s*/\*[^*]*\*/)?", p)
+        if m and re.search(r"\b%s\s*\(" % m.group(1), body_text):
+            k = m.group(1)
+            if re.search(r"(?m)^[^\n;{}()]*\b%s\s*\([^;{]*\)\s*[;{]" % k, t):
+                pre[i] = ""
+                print("extern %s: a function the target declares: declaration dropped" % k)
+            else:
+                pre[i] = "s32 %s();" % k
+                print("extern %s: a function: declared `s32 %s();`" % (k, k))
+    pre = [x for x in pre if x]
     # a global the target declares with another type is used here under an alias name (config/aliases_<prog>.ld)
     import libsweep
     aliases = libsweep.read_aliases(a.prog)

@@ -571,7 +571,9 @@ def casts(l, macros):
         if en is None:
             continue
         inner = l[m.end():en - 1]
-        im = re.fullmatch(r"\s*(?:\(\s*u8\s*\*\s*\)\s*)?([A-Za-z_][\w\->.]*)\s*\+\s*(0x[0-9A-Fa-f]+|\d+)\s*", inner)
+        # the base: a name or a member chain (`a-i + 4` is no base: a variable offset never becomes MEMBER_AT)
+        im = re.fullmatch(r"\s*(?:\(\s*u8\s*\*\s*\)\s*)?([A-Za-z_]\w*(?:(?:->|\.)[A-Za-z_]\w*)*)\s*\+\s*"
+                          r"(0x[0-9A-Fa-f]+|\d+)\s*", inner)
         if im:
             out.append((m.start(), en, l[m.start():en], "MEMBER_AT(%s, %s, %s)" % (m.group(1), im.group(1), im.group(2))))
     for name, ty in macros.items():

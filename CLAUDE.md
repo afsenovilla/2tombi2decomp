@@ -60,7 +60,8 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   `// RETURN sony`, and `gcc-2.8.1-nocse` (Sony's library compiler had no post-reload CSE; made by
   tools/setup_native.sh from the stock cc1, one byte, sha1 checked).
   The library compiler also hoists more loop invariants around loops with calls (a `loop_has_call` patch of cc1
-  reproduces it per file; AGENTS.md "Compilers" item 5).
+  reproduces it per file: `// CC gcc-2.7.2-loop4`, `gcc-2.8.1-loop2`, `gcc-2.8.1-nocse-loop2`, made and sha1
+  checked by tools/setup_native.sh; AGENTS.md "Compilers" item 5).
 - What is left (2026-11-23): mostly actor state machines and dispatchers built from matched handlers (AGENTS.md
   "Order of work" item 3), the big areas a00-a08 above all.
 - Library C is adapted from psx_tomba, psyz (/opt/psyz) and psy-q-decomp (/opt/psy-q-decomp), all MIT: say so in the
@@ -84,7 +85,9 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
 - Set-up lines of a C file (tools/cc.py): `// CC`, `// FLAGS`, `// ASPSX`, `// AS gnu`, `// EPILOGUE sony` (Sony's
   library epilogue), `// RETURN sony` (one shared `jr ra; nop`, tools/sonyret.py; `sony first` also keeps an early
   `return K;` after its test, `sony thread` sends a branch to a `j ret; li v0,K` block straight to the return);
-  `// CC gcc-2.8.1-nocse`: the library compiler without post-reload CSE; ccheck.py and variants.py take
+  `// CC gcc-2.8.1-nocse`: the library compiler without post-reload CSE; `// CC gcc-2.7.2-loop4` /
+  `gcc-2.8.1-loop2` / `gcc-2.8.1-nocse-loop2`: it hoisting more loop invariants around calls (setup_native.sh,
+  libsweep / libnear `--loop`, pzsweep `--loop` / `--cc A,B`); ccheck.py and variants.py take
   `--cc --flags --as --aspsx --epilogue --return` overrides.
 - C lives in `src/<prog>/*.c` (`INCLUDE_ASM` for what is not decompiled yet, `include/common.h`); see docs/STATUS.md.
 - `python3 -I tools/decomp.py NAME [--check] [--write]`: m2c draft of one function; `python3 -I tools/sweep.py
@@ -107,6 +110,9 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   inlined copy of matched C (registers renamed, prologue / epilogue dropped; build/inlined.csv for all programs,
   build/inlined_<progs>.csv for a scope; `{op:K->K2}`: constants that differ in the copy): copy the matched C as a
   `static inline` helper headed `/* NAME, inlined */` and call it (install_c.py dedupes / renames helpers).
+- `python3 -I tools/statemachine.py --list [PROGS]` / `tools/statemachine.py PROG NAME`: actor state machines (rodata
+  jump tables): build/statemachine/<prog>/<name>.c with every table's cases (operand, target, calls, inlined matched
+  bodies), the helpers and the closer of the dispatch.py / decomp.py drafts; write each case in full, drop the header.
 - `python3 -I tools/dispatch.py --list [PROGS]` / `tools/dispatch.py PROG NAME`: a pending function holding several
   matched bodies (inlined.py) -> build/dispatch/<prog>/<name>.c, the bodies as `static inline` helpers + an m2c
   caller skeleton with each inlined span replaced by the helper call (read its header notes: shared tails), ccheck'd.

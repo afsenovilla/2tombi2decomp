@@ -18,6 +18,28 @@ if [ ! -x /opt/oldgcc/gcc-2.8.1-nocse/cc1 ]; then
   echo "2e7a0f71ade51e18a1d05322d55b0986540b76f4  /opt/oldgcc/gcc-2.8.1-nocse.tmp/cc1" | sha1sum -c --quiet
   mv /opt/oldgcc/gcc-2.8.1-nocse.tmp /opt/oldgcc/gcc-2.8.1-nocse
 fi
+# Loop-hoisting variants (docs/STATUS.md 2026-11-23): Sony's library compiler hoisted more loop invariants out of
+# loops with calls than the stock cc1. In scan_loop the threshold is `(loop_has_call ? 1 : 2) * (3 + n_non_fixed_regs)`;
+# patching the immediates of `mov $1,%edx` / `mov $2,%edx` raises it. gcc-2.7.2-loop4: both set to 4 (file offsets
+# 0xC6C66 / 0xC6C6D); gcc-2.8.1-loop2: the call case set to 2 (0xDC87D); gcc-2.8.1-nocse-loop2: the same on the
+# nocse cc1. Per-file set-ups (`// CC gcc-2.7.2-loop4`...): CD_cachefile does not match with loop4.
+patch_cc1() {  # patch_cc1 SRC DST SHA1_SRC SHA1_DST OFFSET:BYTE...
+  local src=$1 dst=$2 s0=$3 s1=$4; shift 4
+  [ -x /opt/oldgcc/$dst/cc1 ] && return 0
+  echo "$s0  /opt/oldgcc/$src/cc1" | sha1sum -c --quiet
+  rm -rf /opt/oldgcc/$dst.tmp && cp -r /opt/oldgcc/$src /opt/oldgcc/$dst.tmp
+  for ob in "$@"; do
+    printf "\\x${ob#*:}" | dd of=/opt/oldgcc/$dst.tmp/cc1 bs=1 seek=$((${ob%%:*})) conv=notrunc status=none
+  done
+  echo "$s1  /opt/oldgcc/$dst.tmp/cc1" | sha1sum -c --quiet
+  mv /opt/oldgcc/$dst.tmp /opt/oldgcc/$dst
+}
+patch_cc1 gcc-2.7.2-psx gcc-2.7.2-loop4 2eb81ff2bb8a3a3515f7a6ec4676a48f7cca45bf \
+  3384800e862f52e87cd3cbfb6ea5897496f2395b 0xC6C66:04 0xC6C6D:04
+patch_cc1 gcc-2.8.1-psx gcc-2.8.1-loop2 1e6d934a67650c9f9d9b8e9792df19e3252ce36d \
+  1f4a6ea4628c05cdd1dd16f155f4e6405367e345 0xDC87D:02
+patch_cc1 gcc-2.8.1-nocse gcc-2.8.1-nocse-loop2 2e7a0f71ade51e18a1d05322d55b0986540b76f4 \
+  0204821eb2eeadab4fa91b7a1517617d3feb3bb0 0xDC87D:02
 [ -d /opt/maspsx ] || git clone -q https://github.com/mkst/maspsx.git /opt/maspsx
 command -v mipsel-linux-gnu-as >/dev/null || apt-get install -y binutils-mipsel-linux-gnu
 # PSY-Q headers used by the functions ported from psx_tomba (Sony copyright: not stored in this repo)

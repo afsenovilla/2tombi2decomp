@@ -394,6 +394,22 @@ def draft(prog, name, hits, out_dir, check=True):
     head.append(" * next: fix the draft's types and the helper calls' arguments, then\n"
                 " *   python3 -I tools/ccheck.py THIS.c --prog %s --func %s --sbs\n"
                 " *   python3 -I tools/install_c.py THIS.c --prog %s */" % (prog, name, prog))
+    # a helper that is also a declaration another helper needs (a static inline the body program defines) is
+    # written once, where the declarations are (it comes before its users there)
+    indecls = set()
+    for e in decls:
+        if e.startswith("static"):
+            indecls |= DS.decl_names(e) or set()
+    helpers = [(h, t) for h, t in helpers if h not in indecls]
+    seen_def, dd = set(), []
+    for e in decls:
+        n = ptsrc.func_name(e) if e.startswith("static") else None
+        if n and n in seen_def:
+            continue
+        if n:
+            seen_def.add(n)
+        dd.append(e)
+    decls = dd
     src = N.PRELUDE + "".join(i + "\n" for i in tp.includes) + "\n".join(head) + "\n\n" + \
         "\n".join(decls) + "\n\n" + "\n\n".join(t for _, t in helpers) + "\n\n" + body.strip() + "\n"
     os.makedirs(os.path.join(out_dir, prog), exist_ok=True)
@@ -438,7 +454,11 @@ def main():
         if not hs:
             print("%s: no inlined matched body found" % name)
             continue
-        out, res = draft(prog, name, hs, a.out, not a.no_check)
+        try:
+            out, res = draft(prog, name, hs, a.out, not a.no_check)
+        except Exception as e:    # m2c / parsing crash on one function: report it, go on with the others
+            print("%s: draft failed: %s: %s" % (name, type(e).__name__, e))
+            continue
         print("%s: %s%s" % (name, os.path.relpath(out, ROOT), ("  [" + res + "]") if res else ""))
 
 

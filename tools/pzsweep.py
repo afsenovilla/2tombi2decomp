@@ -2,7 +2,7 @@
 """Library C from psyz and psy-q-decomp against every pending library function (whole files, all set-ups).
 
   python3 -I tools/pzsweep.py [--prog main,boot] [--src psyz,sz] [--files SUBSTR,...] [--all-files]
-      [--all-variants] [--max-off 8] [-j N] [--install] [--out build/pzsweep]
+      [--all-variants] [--loop] [--cc CC,...] [--max-off 8] [-j N] [--install] [--out build/pzsweep]
 
 Sources (MIT, cloned by tools/setup_native.sh; AGENTS.md "Compilers"):
   psyz          /opt/psyz/decomp/src (Psy-Q 4.0), headers /opt/psyz/decomp/include + the 4.0 SDK headers
@@ -10,7 +10,7 @@ Sources (MIT, cloned by tools/setup_native.sh; AGENTS.md "Compilers"):
   sz            /opt/psy-q-decomp/src with -DVERSION=40, headers /opt/psy-q-decomp/include(/psxsdk) + src.
 Every .c file of a library the project has (src/*/psyq/<lib>; --all-files: every file) is preprocessed as a whole (-DPERMUTER: its INCLUDE_ASM functions drop out)
 and compiled under the library set-ups (tools/libsweep.py VARIANTS + the nocse and Sony-epilogue ones;
---all-variants: all 72), and every function of the object is compared, relocated fields masked, with every
+--all-variants: all of them; --loop adds the loop-hoisting compilers, --cc keeps only the named compilers), and every function of the object is compared, relocated fields masked, with every
 pending library function of main / boot (src/<prog>/psyq/*/NAME.c still INCLUDE_ASM) of the same size, whatever
 its name: unnamed statics and functions the sources call by another name are found too. A file is skipped when
 no function of it comes within 25 % of a pending size under the first two set-ups.
@@ -38,11 +38,29 @@ SOURCES = {
 COMMON = {"u8", "s8", "u16", "s16", "u32", "s32"}
 
 
-def variants(full):
+def variants(full, loop=False, ccs=None):
+    """The set-ups tried. loop: also the loop-hoisting compilers (libsweep LOOP_VARIANTS; with full all of them,
+    else those without Sony's return). ccs: only these compilers; a compiler no set-up names takes the set-ups of
+    its stock family (gcc-2.7.2-* those of gcc-2.7.2-psx, gcc-2.8.1-* those of gcc-2.8.1-psx / -nocse), so
+    `--cc gcc-2.7.2-loop4` runs every 2.7.2 set-up with it."""
     seen, out = set(), []
     pool = L.VARIANTS + L.EPI_VARIANTS + L.NOCSE_VARIANTS if full else \
         L.VARIANTS + [v for v in L.EPI_VARIANTS if v.get("epilogue") == "sony" and "return" not in v] + \
         [v for v in L.NOCSE_VARIANTS if "return" not in v and "epilogue" not in v]
+    if loop:
+        pool = pool + [v for v in L.LOOP_VARIANTS if full or "return" not in v]
+    if ccs:
+        allp = L.VARIANTS + L.EPI_VARIANTS + L.NOCSE_VARIANTS + L.LOOP_VARIANTS
+        named = {v["cc"] for v in allp}
+        sel = []
+        for c in ccs:
+            if c in named:
+                sel += [v for v in (allp if full else pool + [v for v in L.LOOP_VARIANTS if "return" not in v])
+                        if v["cc"] == c]
+            else:
+                fam = "gcc-2.7.2" if c.startswith("gcc-2.7.2") or "272" in c else "gcc-2.8.1"
+                sel += [dict(v, cc=c) for v in pool if v["cc"].startswith(fam)]
+        pool = sel
     for v in pool:
         k = json.dumps(v, sort_keys=True)
         if k not in seen:
@@ -275,6 +293,9 @@ def main():
     ap.add_argument("--files", default="", help="only source files whose path has one of these substrings")
     ap.add_argument("--all-files", action="store_true")
     ap.add_argument("--all-variants", action="store_true")
+    ap.add_argument("--loop", action="store_true", help="also the loop-hoisting compilers (gcc-2.7.2-loop4, ...)")
+    ap.add_argument("--cc", help="comma list: only these compilers (an /opt/oldgcc name or a path; one no set-up "
+                    "names takes the set-ups of its stock family)")
     ap.add_argument("--max-off", type=int, default=8)
     ap.add_argument("-j", type=int, default=os.cpu_count())
     ap.add_argument("--install", action="store_true")
@@ -285,7 +306,7 @@ def main():
     if not os.path.exists("/opt/psyz_inc/og/libgpu.h") and "psyz" in srcs:
         print("note: /opt/psyz_inc/og missing (bash tools/setup_native.sh makes it): psyz files may not preprocess")
     pend = pending(progs)
-    vs = variants(a.all_variants)
+    vs = variants(a.all_variants, a.loop, a.cc.split(",") if a.cc else None)
     files = source_files(srcs, a.all_files, [x for x in a.files.split(",") if x])
     print("%d pending library functions (%s), %d source files, %d set-ups" % (len(pend), ",".join(progs),
                                                                               len(files), len(vs)), flush=True)

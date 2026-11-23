@@ -5230,7 +5230,51 @@ void func_80136C6C(void *arg0) {
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80136D84);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80137148);
+M2C_UNK func_80041768(void *, M2C_UNK, M2C_UNK);
+M2C_UNK func_800440E4(M2C_UNK *, M2C_UNK, M2C_UNK);
+M2C_UNK func_8004D650(M2C_UNK, M2C_UNK);
+M2C_UNK func_8004ED0C(M2C_UNK, M2C_UNK);
+extern u8 D_800BF80E;
+extern u8 D_800BF822;
+extern void *D_800BF844;
+s32 func_80137148(u8 *a) {
+    u8 *s = D_800BF844;
+    switch (a[0x78]) {
+    case 0:
+        func_800440E4(D_800E7E80, 0xCF, 4);
+        s[5] = 0;
+        s[0x5E] = 0;
+        func_8004ED0C(0x30, 4);
+        func_8004D650(0x30, 1);
+        a[0x78]++;
+        break;
+    case 1:
+        if (D_800BF80E != 0) {
+            func_80041768(a, 0xC, 4);
+            a[0x78]++;
+        }
+        break;
+    case 2:
+        if ((*(u8 **)(a + 0x38))[4] != 0) {
+            s[4] = 2;
+            func_800440E4(D_800E7E80, 2, 4);
+            a[0x78]++;
+        }
+        break;
+    case 3:
+        if (a[0x79] == 1) {
+            func_80041768(a, 0x17, 4);
+            a[0x78]++;
+        }
+        break;
+    case 4:
+        if (!(D_800BF822 & 1)) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80137284);
 

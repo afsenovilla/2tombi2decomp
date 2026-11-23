@@ -4,13 +4,14 @@ under several compiler set-ups (Sony built its libraries with other compilers th
 first that matches the retail bytes, with the // CC / // FLAGS / // ASPSX / // AS header that made it match.
 
   python3 -I tools/libsweep.py [--prog main] [--lib libc2] [--install] [-j N] [--source m2c|t1|both] [--epilogue]
-      [--nocse | --only-nocse] [--names A,B]
+      [--nocse | --only-nocse] [--loop | --only-loop] [--names A,B]
 
 Candidates, in this order: psx_tomba's library C cut to the function (tools/ptsrc.py), Tombi-Decomp's matched C for
 the same function (tools/t1match.py; its __asm__ wrappers are skipped), the m2c draft (tools/decomp.py); compiler
 set-ups: VARIANTS below (gcc 2.8.1 / 2.7.2, maspsx 2.79 / 2.56 or GNU as, -O1..-O3, -mno-split-addresses,
 -fno-delayed-branch; --epilogue adds the // EPILOGUE sony and // RETURN sony ones, --nocse the gcc-2.8.1-nocse
-ones, --only-nocse tries those alone). A candidate whose D_ / func_ names carry another program's addresses (psx_tomba and
+ones, --only-nocse tries those alone, --loop / --only-loop the gcc-2.7.2-loop4 / gcc-2.8.1-loop2 /
+gcc-2.8.1-nocse-loop2 ones). A candidate whose D_ / func_ names carry another program's addresses (psx_tomba and
 Tombi-Decomp use Tombi's) gets one `#define OLD NEW` line per name, NEW being this program's name for the address
 the bytes give. After --install the linked build of the program must still be OK, else the installs are undone
 one by one.
@@ -59,6 +60,35 @@ for _f in ("-O2 -G0 -mno-split-addresses", "-O2 -G0", "-O2 -G0 -mno-split-addres
         for _r in ({}, {"return": "sony"}, {"epilogue": "sony"}, {"epilogue": "sony", "return": "sony"},
                    {"return": "sony first"}, {"return": "sony thread"}):
             NOCSE_VARIANTS.append(dict({"cc": "gcc-2.8.1-nocse", "flags": _f}, **_a, **_r))
+# --loop: the loop-hoisting compilers (tools/setup_native.sh; docs/STATUS.md 2026-11-23): Sony's library compiler
+# hoisted more invariants out of loops with calls. gcc-2.7.2-loop4 (_spu_gcSPU, CdControl / F / B as is),
+# gcc-2.8.1-loop2 and gcc-2.8.1-nocse-loop2 (SpuSetCommonAttr, CD_sync / CD_ready closest). Per-file set-ups:
+# CD_cachefile matches only with the stock 2.7.2.
+LOOP_VARIANTS = []
+for _f in ("-O2 -G0", "-O2 -G0 -mno-split-addresses"):
+    for _a in ({"as": "gnu"}, {"as": "maspsx", "aspsx": "2.79"}):
+        for _r in ({}, {"epilogue": "sony"}):
+            LOOP_VARIANTS.append(dict({"cc": "gcc-2.7.2-loop4", "flags": _f}, **_a, **_r))
+for _cc in ("gcc-2.8.1-loop2", "gcc-2.8.1-nocse-loop2"):
+    for _f in ("-O2 -G0 -mno-split-addresses", "-O2 -G0"):
+        for _a in ({"as": "gnu"}, {"as": "maspsx", "aspsx": "2.79"}):
+            for _r in ({}, {"return": "sony"}, {"epilogue": "sony"}, {"epilogue": "sony", "return": "sony"}):
+                LOOP_VARIANTS.append(dict({"cc": _cc, "flags": _f}, **_a, **_r))
+
+
+def apply_variant_args(a, variants=None):
+    """--epilogue / --nocse / --only-nocse / --loop / --only-loop of libsweep and libnear on the VARIANTS list."""
+    v = VARIANTS if variants is None else variants
+    if getattr(a, "epilogue", False):
+        v.extend(EPI_VARIANTS)
+    if getattr(a, "only_nocse", False):
+        v[:] = NOCSE_VARIANTS
+    elif getattr(a, "nocse", False):
+        v.extend(NOCSE_VARIANTS)
+    if getattr(a, "only_loop", False):
+        v[:] = LOOP_VARIANTS
+    elif getattr(a, "loop", False):
+        v.extend(LOOP_VARIANTS)
 
 
 def prog_bytes(prog):
@@ -387,14 +417,11 @@ def main():
     ap.add_argument("--epilogue", action="store_true", help="also the EPILOGUE / RETURN sony set-ups (EPI_VARIANTS)")
     ap.add_argument("--nocse", action="store_true", help="also the gcc-2.8.1-nocse set-ups (NOCSE_VARIANTS)")
     ap.add_argument("--only-nocse", action="store_true", help="only the gcc-2.8.1-nocse set-ups")
+    ap.add_argument("--loop", action="store_true", help="also the loop-hoisting compilers (LOOP_VARIANTS)")
+    ap.add_argument("--only-loop", action="store_true", help="only the loop-hoisting set-ups")
     ap.add_argument("--names", help="comma list: only these functions")
     a = ap.parse_args()
-    if a.epilogue:
-        VARIANTS.extend(EPI_VARIANTS)
-    if a.only_nocse:
-        VARIANTS[:] = NOCSE_VARIANTS
-    elif a.nocse:
-        VARIANTS.extend(NOCSE_VARIANTS)
+    apply_variant_args(a)
     files = pending_files(a.prog, a.lib)
     if a.names:
         files = {k: v for k, v in files.items() if k in a.names.split(",")}

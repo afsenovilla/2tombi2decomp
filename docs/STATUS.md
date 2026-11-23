@@ -3,6 +3,43 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-23 (2): tools after round 6
+
+One tools agent on the "Tool work left" list below. +2 functions: main `_spu_gcSPU` (0x300, `// CC
+gcc-2.7.2-loop4`, the library agent's psyz scratch as is), a06 func_80137148 (0x13C state machine: statemachine.py's
+decomp.py draft was 50 words off, every case written in full matched at once). 29 / 29 byte-identical.
+
+Done:
+- **Loop-hoisting compilers** in tools/setup_native.sh (copied from the stock directories, sha1 checked before and
+  after, same as nocse; session_bootstrap.sh checks them): `/opt/oldgcc/gcc-2.7.2-loop4` (0xC6C66 / 0xC6C6D -> 4,
+  sha1 3384800e...), `gcc-2.8.1-loop2` (0xDC87D -> 2, 1f4a6ea4...), `gcc-2.8.1-nocse-loop2` (0204821e...); identical
+  to the library agent's copies. libsweep `LOOP_VARIANTS` (`--loop` / `--only-loop`, also in libnear; shared
+  `apply_variant_args`), pzsweep `--loop` and `--cc A,B` (only these compilers; an unknown one, e.g. a path, takes
+  the set-ups of its stock family). Runs: libsweep `--only-loop --install` main 0 / 174, boot 0 / 73; pzsweep with
+  the three compilers 0 matched, near: Snd_SetPlayMode 6 (nocse-loop2 + EPILOGUE sony), _SsClose (main
+  func_8008DC00) 7. Hand tries: CD_sync 3 words (loop2 or nocse-loop2, `-mno-split-addresses`), CD_ready 18 (cdr.c
+  with `Intr.c = 0;` / `Intr.ready = 0;` before the copies), _SsClose 6 words with gcc-2.7.2-loop4 (from 71): only
+  the frame differs (`vars= 8`: 32 bytes for retail's 24, every instruction equal), _SsVmInit 51 (loop4 alone does
+  not do it).
+- **tools/statemachine.py**: `--list [PROGS]` (pending functions with rodata jump tables, matched-call share,
+  switch operand a[N]; MAIN's functions named by address in overlay asm count as matched) and `PROG NAME`: header
+  with every table's cases (target, calls, inlined matched bodies), helpers, the closer of the dispatch.py /
+  decomp.py drafts (other one in <name>.alt.c). Drafts of 12 small all-matched candidates: 46-98 words off as
+  written by m2c; they need the cases written in full by hand (as func_80137148).
+- dispatch.py: a helper another helper needs is written once (a06 func_80130F1C now compiles: 356 words off); a
+  crash on one function is reported and the rest go on.
+- install_c: `extern M2C_UNK func_X;` (or `s32`) for a called function -> `s32 func_X();`, dropped when the target
+  declares it. regswap: no MEMBER_AT unless the base is a name / member chain plus a literal. nearcopy `--near`
+  alone implies `--ratio 0.8`.
+
+Left: install_c (auto K&R when existing callers pass fewer arguments, alias renames inside moved helpers, a moved
+helper's prototypes, forward prototype of a self-referencing function used in a helper above it, typedefs declared
+further down -> K&R); regswap semantic check for reused / forked variables; prio.py names with array locals;
+inlined.py reverse search; families.py tail-extra variants; statemachine.py: case bodies written per case (each
+case's code from the jump target to the next target, cross-jumped tails duplicated) instead of m2c's gotos; the
+loop4 frame slot of _SsClose (an unused spill slot, look at reload's frame with loop4); and the rest of the list
+below.
+
 ## 2026-11-23: sixth round of five agents (dispatchers first)
 
 All code in C: **4128 / 7011 functions (58.9 %, 30.9 % of the bytes)**, from 3925 (26.9 %): the biggest round in
