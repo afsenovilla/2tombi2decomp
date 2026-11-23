@@ -7371,7 +7371,50 @@ void f_StartTombaScriptedAnimation(u8 *t, s32 anim, s16 blend)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80044144);
+void f_PlaySoundEffectWithPitchOffset(s32 arg0, s8 arg1);
+
+s32 func_80044144(u8 *a)
+{
+    u8 *e = (u8 *)D_800E7E80;
+    u16 f;
+
+    switch (a[0x78]) {
+    case 0:
+        if (e[0x164] != 0) {
+            return 1;
+        }
+        if (*(s16 *)(a + 0x72) == 2) {
+            f_StartTombaScriptedAnimation(e, *(s16 *)(a + 0x74) | 0x8000, *(s16 *)(a + 0x76));
+        } else {
+            f_StartTombaScriptedAnimation(e, *(s16 *)(a + 0x74), *(s16 *)(a + 0x76));
+        }
+        if (*(s16 *)(a + 0x72) != 0) {
+            return 1;
+        }
+        if (!(**(u16 **)(a + 0x6C) & 0x2000)) {
+            a[0x78] = 2;
+        } else {
+            a[0x78] = 1;
+        }
+        break;
+    case 1:
+        f = *(u16 *)(a + 0x66);
+        if (!(*(s16 *)(a + 0x66) & 0x8000)) {
+            if ((f & 0xFF) == (*(u8 **)(e + 0x38))[4]) {
+                f_PlaySoundEffectWithPitchOffset(a[0x68], 0);
+                *(u16 *)(a + 0x66) |= 0x8000;
+            }
+        } else if ((f & 0xFF) != (*(u8 **)(e + 0x38))[4]) {
+            *(u16 *)(a + 0x66) = f & 0x7FFF;
+        }
+    case 2:
+        if (D_800BF80E_58ec != 0) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 s32 func_800442A0(u8 *p)
 {
