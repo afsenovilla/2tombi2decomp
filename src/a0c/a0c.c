@@ -195,7 +195,50 @@ INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010A138);
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010A55C);
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010A870);
+extern s32 D_1F800088;
+extern u8 *D_1F800084_66c9;
+extern u8 D_1F800182_5650;
+
+s32 func_8010A870(u8 *a, u8 *b, u8 *c)
+{
+    s16 dx = *(u16 *)(a + 0x14C) - *(u16 *)(c + 0x2C);
+    s16 dz = *(u16 *)(a + 0x150) - *(u16 *)(c + 0x34);
+    u16 d = func_80084080(dx * dx + dz * dz);
+    u16 cy;
+    s16 t;
+    u16 h;
+
+    if (*(s16 *)(b + 0x80) + D_1F800088 < d) {
+        return 0;
+    }
+    {
+        s32 k = *(u16 *)(a + 0x14E);
+        cy = *(u16 *)(c + 0x30);
+        k = k - cy + 0x64;
+        h = *(volatile u16 *)(a + 0x68);
+        k = (u16)(h + k);
+        if ((s16)h + 0xC8 < k) {
+            return 0;
+        }
+    }
+    t = *(u16 *)(a + 0x32) - cy;
+    if ((u16)(t + 0x3C) >= 0x51) {
+        if (t < 0) {
+            *(s16 *)(a + 0x156) = -0x3C;
+        } else {
+            *(s16 *)(a + 0x156) = 0x14;
+        }
+    } else {
+        *(s16 *)(a + 0x156) = t;
+    }
+    D_1F800084_66c9 = c;
+    {
+        u16 w = *(u16 *)(b + 0x80);
+        D_1F800182_5650 = 0;
+        *(s16 *)(a + 0x152) = w + 0x1E;
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010A9A4);
 
@@ -206,7 +249,6 @@ extern u8 D_1F800144;
 extern s16 D_1F800150_058c;
 extern u8 D_1F800150;
 extern u8 D_1F800183;
-extern u8 D_1F800182_5650;
 extern u8 **D_1F800148;
 /* func_8010BD2C, inlined */
 static inline void inl_8010BD2C(u8 *a, u8 *b, u8 *c)
@@ -1251,7 +1293,6 @@ void func_801125A8(u8 *a)
 #define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
 #define gte_ldv0m(p) __asm__ volatile("lwc2	$0, %0;" "lwc2	$1, %1" : : "m"(((s32 *)(p))[0]), "m"(((s32 *)(p))[1]))
 extern s32 D_1F800084[];
-extern s32 D_1F800088;
 extern s32 D_1F800090[];
 extern u8 D_8011DBC0[];
 extern u8 D_8011DB78[];

@@ -577,7 +577,44 @@ u32 *func_8010AD40(u32 *f, u32 *ot, s32 n)
     return f;
 }
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010B0B8);
+#define gte_SetRotMatrix(r0) __asm__ volatile("lw	$12, 0( %0 );" "lw	$13, 4( %0 );" "ctc2	$12, $0;" "ctc2	$13, $1;" "lw	$12, 8( %0 );" "lw	$13, 12( %0 );" "lw	$14, 16( %0 );" "ctc2	$12, $2;" "ctc2	$13, $3;" "ctc2	$14, $4" : : "r"(r0) : "$12", "$13", "$14")
+#define gte_SetTransMatrix(r0) __asm__ volatile("lw	$12, 20( %0 );" "lw	$13, 24( %0 );" "ctc2	$12, $5;" "lw	$14, 28( %0 );" "ctc2	$13, $6;" "ctc2	$14, $7" : : "r"(r0) : "$12", "$13", "$14")
+extern u8 D_1F8000F8[];
+extern void *D_800ED8C8_a098;
+typedef struct {
+    u8 pad0[6];
+    u8 count;
+    u8 pad7[5];
+    u32 *tbl;
+    u16 list[1];
+} PartList;
+
+void func_8010B0B8(PartList *a)
+{
+    u16 *p;
+    u16 *end;
+    void *ot;
+    u32 *tbl;
+    u32 *e;
+    u32 v;
+    void *r;
+    if (a->count == 0) {
+        return;
+    }
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_SetTransMatrix(D_1F8000F8);
+    p = a->list;
+    end = &a->list[a->count];
+    ot = D_800ED8C8_a098;
+    tbl = a->tbl;
+    for (; p < end; p++) {
+        e = &tbl[*p];
+        v = *e;
+        r = func_8010AA4C(e + 1, ot, v & 0xFF);
+        v >>= 16;
+        func_8010AD40(r, ot, v & 0xFF);
+    }
+}
 
 void func_8010B1B8(u32 *p, void *b)
 {
