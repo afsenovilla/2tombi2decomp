@@ -1946,7 +1946,99 @@ void func_80112180(void *arg0) {
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", f_AdvanceEndingScriptedPresentation);
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_801122B4);
+extern void (*D_8009D1D4[])(void);
+extern void (*D_8009D22C[])(void);
+extern void (*D_8009D314[])(u8 *);
+extern void (*D_8009D52C[])(u8 *);
+extern void (*D_800A4AF8[])(void);
+extern void (*D_800A4B50[])(void);
+extern void (*D_800A4AA0[])(u8 *);
+extern u8 D_800E7E80_f78d[];
+extern u16 D_1F80017C;
+#define S16(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U16(p, o) (*(u16 *)((u8 *)(p) + (o)))
+
+s32 func_801122B4(u8 *a)
+{
+    u8 *g = D_800E7E80_f78d;
+    u8 *o;
+    u16 k;
+    s16 n;
+    s16 h;
+    u8 snd;
+    s32 vol;
+
+    o = *(u8 **)(a + 0x6C);
+    k = U16(o, 0xA);
+    switch (a[0x78]) {
+    case 0:
+        g[5] = 0x21;
+        g[6] = 0;
+        n = S16(a, 0x64) >> 8;
+        if (n == 0) {
+            n = 10;
+        }
+        S16(a, 0x48) = U16(a, 0x74) - U16(g, 0x2E);
+        S16(a, 0x4C) = U16(a, 0x76) - U16(g, 0x36);
+        S16(a, 0x64) = (s16)func_80084080(S16(a, 0x4C) * S16(a, 0x4C) + S16(a, 0x48) * S16(a, 0x48)) / n;
+        if (S16(a, 0x64) == 0) {
+            S16(a, 0x64) = 1;
+        }
+        S16(a, 0x64) = 0x1000 / S16(a, 0x64);
+        S16(a, 0x44) = 0x1000;
+        n = k;
+        if (n == -1) {
+            S16(g, 0x56) = func_80085690(-S16(a, 0x4C), S16(a, 0x48)) & 0xFFF;
+        } else if (n == 0) {
+            a[0x78] = 2;
+            return 0;
+        }
+        S16(a, 0x66) = func_80085690(-S16(a, 0x4C), S16(a, 0x48)) & 0xFFF;
+        a[0x78]++;
+    case 1:
+        if (func_80041438(g, S16(a, 0x66), 0x100) != 0) {
+            a[0x78]++;
+        }
+        if ((s16)k == 1) {
+            return 0;
+        }
+    case 2:
+        func_80054D14(g, U16(a, 0x72) & 0xFFF, 4);
+        S16(a, 0x44) -= U16(a, 0x64);
+        if (S16(a, 0x44) <= 0) {
+            S16(a, 0x44) = 0;
+        }
+        S16(g, 0x2E) = U16(o, 4) - S16(a, 0x44) * S16(a, 0x48) / 0x1000;
+        S16(g, 0x36) = U16(o, 6) - S16(a, 0x44) * S16(a, 0x4C) / 0x1000;
+        if (S16(a, 0x44) == 0) {
+            if (!(S16(a, 0x72) & 0x8000)) {
+                func_80054DAC(g, 2, 4);
+            }
+            return 1;
+        }
+        h = S16(a, 0x68);
+        if (h != 0) {
+            snd = S16(a, 0x6A);
+            vol = (S16(a, 0x6A) & 0xFF00) >> 8;
+            if (h & 0x3F) {
+                if (!(D_1F80017C & h)) {
+                    func_80074590(snd, 0, (s8)vol);
+                }
+            } else if (h & 0x80) {
+                if ((*(u8 **)(g + 0x38))[4] != 0) {
+                    if (!(h & 0x40)) {
+                        S16(a, 0x68) = h | 0x40;
+                        func_80074590(snd, 0, (s8)vol);
+                    }
+                } else {
+                    S16(a, 0x68) = h & 0xFFBF;
+                }
+            }
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80112660);
 
