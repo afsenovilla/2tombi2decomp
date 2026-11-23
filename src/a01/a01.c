@@ -2205,7 +2205,119 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80117188);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80117290);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801175D0);
+#define FH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define FU(p, o) (*(u16 *)((u8 *)(p) + (o)))
+#define FW(p, o) (*(s32 *)((u8 *)(p) + (o)))
+static inline s32 a01_target_y(u8 *a) {
+    u8 *p = a + 0x2C;
+    s32 v, y;
+
+    switch (a[3]) {
+    case 0:
+        v = FH(p, 2);
+        if (v < 0x3A14) {
+            y = -0x1BCC;
+        } else if (v < 0x3C69) {
+            y = (v - 0x3A14) * 0x300 / 597 - 0x1BCC;
+        } else {
+            y = -0x18CC;
+        }
+        break;
+    case 1:
+        y = -0x156F;
+        break;
+    case 2:
+        y = -0x1BD3;
+        break;
+    case 3:
+        y = -0x1401;
+        break;
+    case 4:
+        y = -0x1498;
+        break;
+    default:
+        y = FH(p, 6);
+        break;
+    }
+    return y;
+}
+static inline void a01_turn(u8 *a) {
+    u8 *q = a + 0x60;
+    s32 v;
+    if (!(FU(q, 6) & 1)) { FH(a, 0x56) += func_80083E80(FH(q, 4) - FH(a, 0x56)) >> 5; } else { v = FH(a, 0x56) - 0x800; FH(a, 0x56) += func_80083E80(FH(q, 4) - v) >> 5; }
+}
+
+s32 func_801175D0(u8 *a) {
+    s32 ret = 0;
+    u8 *q = a + 0x60;
+    u8 *p;
+    s32 r, s, t, y, w, v;
+
+    switch (a[7]) {
+    case 0:
+        FH(a, 0x52) = 0;
+        FH(a, 0x40) = 10;
+        FH(a, 0x50) = FH(a, 0x4E);
+        a[7]++;
+    case 1:
+        FH(a, 0x58) += func_80083E80(-FH(a, 0x58)) >> 5;
+        a01_turn(a);
+        if (--FH(a, 0x40) > 0) {
+            break;
+        }
+        a[7]++;
+        break;
+    case 2:
+        FH(a, 0x50) += (0x280 - FH(a, 0x50)) / 16;
+        FH(a, 0x56) += 0x44;
+        if ((FH(a, 0x52) -= 0x44) < -0x400) {
+            FH(a, 0x52) = -0x400;
+            FH(a, 0x40) = 0xF;
+            FH(q, 4) += 0x800;
+            a[7]++;
+        }
+        break;
+    case 3:
+        FH(a, 0x50) += (0xA0 - FH(a, 0x50)) / 16;
+        if (--FH(a, 0x40) <= 0) {
+            FH(a, 0x40) = 0xF;
+            a[7]++;
+            if (a[5] == 3) {
+                FU(q, 6) &= ~1;
+            } else {
+                FU(q, 6) |= 1;
+            }
+        }
+        break;
+    case 4:
+        FH(a, 0x50) += (0xA0 - FH(a, 0x50)) / 16;
+        FH(a, 0x56) += 0x44;
+        FH(a, 0x52) += 0x44;
+        if (--FH(a, 0x40) <= 0) {
+            FH(a, 0x40) = 0xF;
+            FH(a, 0x52) = 0;
+            a[7]++;
+        }
+        break;
+    case 5:
+        FH(a, 0x50) += (0xA0 - FH(a, 0x50)) / 16;
+        if (--FH(a, 0x40) <= 0) {
+            ret = 1;
+        }
+        break;
+    }
+    r = FH(a, 0x50);
+    s = func_80083E80(FH(a, 0x52)) * r;
+    t = func_80083F50(FH(a, 0x52)) * r;
+    FW(a, 0x30) += s;
+    FH(a, 0x58) = -FH(a, 0x58) >> 4;
+    FH(a, 0x4E) = t >> 12;
+    y = a01_target_y(a);
+    y += func_80083F50(FH(q, 0x10)) >> 5;
+    FH(q, 0x10) += func_8009A450() >> 9;
+    FH(a, 0x32) += (y - FH(a, 0x32)) / 16;
+    return ret;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80117A00);
 
