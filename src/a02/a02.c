@@ -3932,7 +3932,108 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80120F70);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80121268);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateGranActor);
+extern s32 D_800ECF58[];
+extern u8 D_80129258[];
+extern u8 D_800BF9FA;
+s32 func_80126C18(u8 *a);
+
+void f_UpdateGranActor(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        if (a[5] == 0) {
+            a[5]++;
+            break;
+        }
+        a[5] = 0;
+        if (func_800519E0(a, 0xF, D_800ECF58[0x5C / 4], D_80129258) != 0) {
+            break;
+        }
+        M2C_FIELD(a, s32 *, 0x3C) = D_800ECF58[0x38 / 4];
+        func_80040CDC(a, D_80139240_0000, D_800A3D18_ed09);
+        a[0x7B] = 4;
+        func_80041718(a, 4, 0);
+        a[0xB] = 0x40;
+        a[0] = 9;
+        M2C_FIELD(a, s16 *, 0x80) = 0xAA;
+        M2C_FIELD(a, s16 *, 0x82) = 0x154;
+        M2C_FIELD(a, s16 *, 0x84) = 0xE0;
+        M2C_FIELD(a, s16 *, 0x58) = 0;
+        M2C_FIELD(a, s16 *, 0x54) = 0;
+        M2C_FIELD(a, s16 *, 0x86) = 0x180;
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        switch (a[3]) {
+        case 0:
+            M2C_FIELD(a, s16 *, 0x56) = 0x400;
+            break;
+        case 1:
+            M2C_FIELD(a, s16 *, 0x56) = 0;
+            switch (D_800BF9FA) {
+            case 0:
+                a[0xBF] = 0;
+                break;
+            case 1:
+                a[0xBF] = 1;
+                break;
+            }
+            func_8011BF84(a, 0);
+            break;
+        case 2:
+            M2C_FIELD(a, s16 *, 0x56) = 0;
+            func_8011BF84(a, 1);
+            break;
+        case 3:
+            M2C_FIELD(a, s16 *, 0x56) = 0x400;
+            func_80041718(a, 0xF, 0);
+            a[0x7B] = 0;
+            break;
+        case 4:
+            M2C_FIELD(a, s16 *, 0x56) = 0xC00;
+            break;
+        }
+        func_80126C18(a);
+        a[5] = 0;
+        a[4]++;
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            func_80120718(a);
+            break;
+        case 1:
+            switch (a[0xBF]) {
+            case 0:
+                func_80120848(a);
+                break;
+            case 1:
+                func_80120A3C(a);
+                break;
+            }
+            break;
+        case 2:
+            func_80120BE0(a);
+            break;
+        case 3:
+            func_80120F70(a);
+            break;
+        case 4:
+            func_80121268(a);
+            break;
+        }
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_8012167C(void) {
     u8 *p = PLAYER;

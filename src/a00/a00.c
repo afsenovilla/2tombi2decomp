@@ -6418,7 +6418,64 @@ void func_8013C1DC(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseProgressEffectActor);
+extern u8 D_800BF9E0;
+extern u8 D_8014AC18[];
+extern u8 D_8014AF20[];
+
+void f_UpdateKainenHouseProgressEffectActor(u8 *a)
+{
+    u8 *p;
+    s32 t;
+    u8 k;
+    s32 c;
+
+    switch (a[4]) {
+    case 0:
+        if (D_800BF9E0 < 0x1C) {
+            M2C_FIELD(a, u16 *, 4) = 1;
+        } else {
+            a[4] = 3;
+            break;
+        }
+    case 1:
+        if (D_800E7FEB == 1) {
+            break;
+        }
+        p = M2C_FIELD(a, u8 **, 0x38);
+        M2C_FIELD(a, u8 **, 0x34) = p;
+        if (p == NULL) {
+            M2C_FIELD(a, u8 **, 0x34) = D_8014AC18;
+            k = a[3];
+            c = 0x80;
+if (k == c) {
+                M2C_FIELD(a, u8 **, 0x34) = NULL;
+                a[4] = 3;
+                break;
+            }
+            if (k < 2) {
+                t = D_800BF9E0 < 6;
+            } else {
+                t = D_800BF9E0 < 0x10;
+            }
+            if (t == 0) {
+                M2C_FIELD(a, u8 **, 0x34) = D_8014AF20;
+                a[3] = c;
+            }
+        }
+        if (D_800E7EAA < 0xC) {
+            if (func_8002B278(a) == 0) {
+                func_80031780(a);
+            }
+        } else {
+            a[4] = 3;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseFallingParticleActor);
 
