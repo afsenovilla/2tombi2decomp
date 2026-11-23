@@ -328,7 +328,6 @@ void func_8010A2D4(void)
 }
 
 extern u8 *D_800F2738;
-
 void func_8010A47C(void)
 {
     u8 *p;
@@ -489,7 +488,6 @@ void func_8010A7A8(void)
 extern u8 **D_1F80014C;
 extern u8 D_1F800152;
 extern void *D_1F800080;
-
 void *func_8010AB94(u8 *a)
 {
     u8 **l = D_1F80014C;
@@ -939,7 +937,6 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010CE24);
 extern void *D_800ECF80;
 extern u8 D_80129EC0[];
 extern u8 D_8011A9EC[];
-
 void f_InitializeLastEvilPigCopiedWeaponProjectile(u8 *a)
 {
     s16 *p = (s16 *)(a + 0x60);
@@ -2624,7 +2621,6 @@ void func_80117984(u8 *a) {
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80117A64);
 
 extern u16 D_1F8000F2;
-
 void func_80117C70(u8 *a)
 {
     s32 n;
@@ -3472,7 +3468,6 @@ s32 func_8011A45C(u8 *a)
 
 #define S16(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define U16(p, o) (*(u16 *)((u8 *)(p) + (o)))
-
 s32 func_8011A620(u8 *a)
 {
     u8 *g = D_800E7E80;

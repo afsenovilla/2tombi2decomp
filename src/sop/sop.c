@@ -52,7 +52,6 @@ static inline void inl_80109934(void)
         break;
     }
 }
-
 void func_801092B4(void)
 {
     u8 *p = D_1F800138_5432;
@@ -757,7 +756,6 @@ INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010B588);
 extern u8 D_800ECF58[];
 extern u8 D_8010CB08[];
 extern u8 D_80017FE8[];
-
 void func_8010B798(u8 *a)
 {
     u8 *t;

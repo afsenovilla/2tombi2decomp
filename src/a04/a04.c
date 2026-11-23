@@ -1413,7 +1413,6 @@ static inline void func_80119104_inl(void *arg0) {
     }
     M2C_FIELD(arg0, s8 *, 4) = 3;
 }
-
 void f_UpdateKujaraQuestPickupActor(u8 *a)
 {
     switch (a[4]) {
@@ -1650,7 +1649,6 @@ void func_80119588(u8 *a) {
 
 typedef struct { s16 h[7]; } E8013F238;
 extern E8013F238 D_8014128C[];
-
 void func_801195AC(u8 *a, s32 i)
 {
     u8 **slot;
@@ -1953,7 +1951,6 @@ static inline void func_8011B57C_inl(u8 *a)
         func_800517F8(a);
     }
 }
-
 void func_8011A9E4(u8 *a)
 {
     s16 v[6];
@@ -2565,7 +2562,6 @@ s32 func_8011D0A4(u8 *a)
 
 extern s16 D_1F8001A0;
 extern s16 D_1F8001A2;
-
 void func_8011D13C(u8 *a)
 {
     if (func_80051B70(a, 0xC, 0x22) == 0) {
@@ -4254,7 +4250,6 @@ static inline s32 init_001c(u8 *a)
     }
     return r;
 }
-
 void func_8013001C(u8 *a)
 {
     switch (a[4]) {
@@ -4775,7 +4770,6 @@ static inline void func_80138438_inl(void *arg0) {
     M2C_FIELD(arg0, s8 *, 8) = 2;
     M2C_FIELD(arg0, s8 *, 9) = 2;
 }
-
 void func_80138140(u8 *a)
 {
     s32 one = 1;
@@ -4967,7 +4961,6 @@ static inline void func_80139058_inl(u8 *a)
         break;
     }
 }
-
 void func_80138C80(u8 *a)
 {
     s32 i = 1;
@@ -5856,7 +5849,6 @@ static inline void func_8013EDD8_inl(void *arg0) {
         M2C_FIELD(arg0, s8 *, 4) = 3;
     }
 }
-
 void func_8013E910(u8 *a)
 {
     switch (a[4]) {

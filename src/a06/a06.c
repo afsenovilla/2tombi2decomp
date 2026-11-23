@@ -307,7 +307,6 @@ done:
     M2C_FIELD(a, s32 *, 0x30) = (F16(c, 0x30) + f) << 16;
     return 2;
 }
-
 s32 func_8010BA74(u8 *a, u8 *b, u8 *c) {
     s16 dx, dz, dy, e, f;
     u16 h, bh, ah;
@@ -504,7 +503,6 @@ static inline void land_inl(u8 *p, s32 y)
     M2C_FIELD(p, s32 *, 0x30) = y << 16;
     func_80022C78(p);
 }
-
 s32 func_8010CAE8(u8 *a, u8 *b, u8 *c) {
     s16 dx, dz, dy, e, f;
     u16 h, bh, ah;
@@ -616,7 +614,6 @@ void func_8010D134(u8 *a, u8 *b)
 
 extern s32 D_1F800088;
 extern u8 *D_1F800084;
-
 s32 func_8010D288(u8 *a, u8 *b, u8 *c)
 {
     s16 dx = *(u16 *)(a + 0x14C) - *(u16 *)(c + 0x2C);
@@ -2222,7 +2219,6 @@ static inline void func_8011A4F4_inl(u8 *p)
     p[8] = 0;
     p[0x5E] = p[0x2E];
 }
-
 void f_UpdateDonglinInteriorQuestObjectActor(u8 *a)
 {
     u8 *g;
@@ -3515,7 +3511,6 @@ void func_801205E8(void) {
 }
 
 extern s8 D_800BF81F;
-
 void func_80120608(u8 *a) {
     u8 *e = D_800E7E80;
     s32 k = a[5];
@@ -4409,7 +4404,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80127C28);
 typedef struct { s16 p0, x, p4, y, p8, z; } HV;
 extern u8 *D_1F800214;
 extern u8 D_800BF9D3;
-
 s32 func_80127E18(u8 *a)
 {
     HV v;
@@ -4564,7 +4558,6 @@ static inline void func_8012A384_inl(u8 *a)
     *(s16 *)(a + 0x56) = *(s16 *)(a + 0x60);
     ((void (*)(void *))func_8011AD34)(a);
 }
-
 void func_80129858(u8 *a)
 {
     s32 t;
@@ -5329,7 +5322,6 @@ static inline void anim(u8 *p, u8 *t, s32 k)
         break;
     }
 }
-
 void func_801381A8(u8 *a)
 {
     u8 *g;

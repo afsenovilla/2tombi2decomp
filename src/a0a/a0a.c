@@ -281,7 +281,6 @@ void func_8010A0C8(u8 *a)
 }
 
 extern u8 *D_800F2738;
-
 void func_8010A234(void)
 {
     u8 *p;
@@ -454,7 +453,6 @@ void func_8010A8A0(u8 *a)
 
 extern u8 **D_1F80014C;
 extern u8 D_1F800152;
-
 void *func_8010A988(u8 *a)
 {
     u8 **l = D_1F80014C;
@@ -1473,7 +1471,6 @@ typedef struct {
 extern T2CamD0 D_1F8000D0_3bb0;
 extern s32 D_800A3F90;
 extern s32 D_800A3F94;
-
 void func_80110A14(u8 *a)
 {
     T2SVec v0, v1, v2;
@@ -1539,7 +1536,6 @@ typedef struct {
 extern T2Bytes4 D_801091C8;
 extern s32 D_1F800090[];
 extern u8 D_1F8000D0_b839[];
-
 void func_80111564(u8 *a)
 {
     T2Bytes4 c;
@@ -1632,7 +1628,6 @@ extern s32 D_1F800088;
 extern T2Bytes4 D_801091CC;
 extern void *D_8011C194;
 extern u8 D_8011D724[];
-
 void func_8011212C(u8 *a)
 {
     T2Bytes4 c;
@@ -2082,7 +2077,6 @@ void func_8011384C(u8 *a)
 extern u8 D_8011EABC[];
 extern u8 D_8011EA8C[];
 extern u8 D_8011EAE0[][2];
-
 void func_80113904(u8 *a)
 {
     switch (a[4]) {

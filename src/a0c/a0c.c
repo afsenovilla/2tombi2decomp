@@ -198,7 +198,6 @@ INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010A55C);
 extern s32 D_1F800088;
 extern u8 *D_1F800084_66c9;
 extern u8 D_1F800182_5650;
-
 s32 func_8010A870(u8 *a, u8 *b, u8 *c)
 {
     s16 dx = *(u16 *)(a + 0x14C) - *(u16 *)(c + 0x2C);
@@ -356,7 +355,6 @@ void func_8010AFF8(u8 *a)
 }
 
 extern u8 *D_800F2738;
-
 void func_8010B174(void)
 {
     u8 *p;
@@ -508,7 +506,6 @@ void func_8010B558(void)
 extern u8 **D_1F80014C;
 extern u8 D_1F800152;
 extern void *D_1F800080;
-
 void *func_8010B888(u8 *a)
 {
     u8 **l = D_1F80014C;
@@ -3275,7 +3272,6 @@ void func_801181CC(void *arg0) {
 
 extern SVec D_1F8000C8;
 void f_UpdateGhostEvilPigRicochetProjectile(u8 *a);
-
 u8 *f_SpawnGhostEvilPigRicochetProjectile(u8 *a, s32 k)
 {
     u8 *p = func_8007A980(1, 2, 0);
@@ -3308,7 +3304,6 @@ INCLUDE_ASM("asm/a0c/nonmatchings/a0c", f_UpdateGhostEvilPigGraspActor);
 
 extern u8 D_1F80025B;
 void f_UpdateGhostEvilPigGraspActor(u8 *a);
-
 u8 *f_SpawnGhostEvilPigGraspActor(u8 *a)
 {
     u8 *p = func_8007A980(1, 2, 0);

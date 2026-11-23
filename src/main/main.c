@@ -372,7 +372,6 @@ static inline void Supported_EC3C(u8 *a, u8 *b, s32 y)
         }
     }
 }
-
 s32 func_8001EC3C(a, b)
     u8 *a;
     u8 *b;
@@ -469,7 +468,6 @@ static inline void Supported_F054(u8 *a, s32 y)
         }
     }
 }
-
 s32 func_8001F054(u8 *a, u8 *b)
 {
     s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(b + 0x2E);
@@ -523,7 +521,6 @@ s32 func_8001F054(u8 *a, u8 *b)
     Supported_F054(a, *(s16 *)(b + 0x32) + h2);
     return 2;
 }
-
 
 s32 f_ClassifyTombaActorCylinderContact(u8 *a, u8 *b, s32 mode)
 {
@@ -3037,7 +3034,6 @@ static inline void SetRT_C138(void *pos, u8 *scale, s16 *rot)
     gte_SetRotMatrix(D_1F800000);
     gte_SetTransMatrix(D_1F800000);
 }
-
 void func_8002A834(u8 *a0)
 {
     u8 *a = a0;
@@ -3116,7 +3112,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B8F4);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002BAFC);
 
 #define gte_ldv0_58(r0) __asm__ volatile("lwc2 $0, 0x58(%0); lwc2 $1, 0x5C(%0)" : : "r"(r0))
-
 void func_8002BC9C(u8 *a)
 {
     s32 *otz = (s32 *)D_1F800084;
@@ -3329,7 +3324,6 @@ static inline s32 ProjZ2(void)
     gte_stopz(otz);
     return 0;
 }
-
 void func_8002D65C(u8 *a0)
 {
     u8 *a = a0;
@@ -3461,7 +3455,6 @@ typedef struct {
 extern FlickerTbl_E1E8 D_800102BC;
 extern s32 D_1F800160_faaf;
 s32 f_ResolveEffectEightByteStreamPayload();
-
 void func_8002E1E8(u8 *a)
 {
     FlickerTbl_E1E8 t = D_800102BC;
@@ -3679,7 +3672,6 @@ static inline void SetRTY_1D24(void *pos, u8 *scale, s16 *rot)
     gte_SetRotMatrix(D_1F800000);
     gte_SetTransMatrix(D_1F800000);
 }
-
 void func_80030D68(u8 *a0)
 {
     u8 *a = a0;
@@ -4304,7 +4296,6 @@ u8 *f_SpawnLinkedActorSpriteRingEffect(u8 *src, void *owner, s32 v, s32 y)
 
 extern u8 D_800A0C5C[];
 extern u8 D_800A0DCC[];
-
 void func_80033278(u8 *a)
 {
     s16 v;
@@ -4353,7 +4344,6 @@ void func_80033278(u8 *a)
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80033380);
 
 extern s32 D_800A2068[];
-
 void func_80033450(u8 *a)
 {
     s32 one = 1;
@@ -6826,7 +6816,6 @@ s32 func_80042448(u8 *a)
 
 void f_ConfigureScriptActorConversation(u8 a, u8 b, u8 c);
 void func_8007074C(u8 a, u8 b, u8 c, Vec3i_74C v);
-
 s32 func_800424F0(u8 *a)
 {
     union { s16 h[6]; Vec3i_74C v; } u;
@@ -6964,7 +6953,6 @@ extern s16 D_1F800162_a8d4;
 extern s16 D_1F800164_d75f;
 void f_RestorePreviousCameraMode(void);
 void f_SetCameraMode(u8 mode);
-
 s32 func_80042A8C(u8 *a)
 {
     u8 *c = D_800E8008_f2dc;
@@ -7011,7 +6999,6 @@ s32 func_80042BAC(u16 *p)
 
 extern u8 D_800E7FC7;
 extern u16 D_800E7FC0;
-
 s32 func_80042BDC(u8 *a)
 {
     u8 *c = D_800E8008_f2dc;
@@ -7301,7 +7288,6 @@ extern u16 D_1F800190_b2e0;
 extern u16 D_1F800192;
 extern u16 D_1F80016C_4910;
 extern u16 D_1F80016E_cd4b;
-
 s32 func_80043D8C(u8 *a, s32 k)
 {
     s32 one = 1;
@@ -7406,7 +7392,6 @@ void f_StartTombaScriptedAnimation(u8 *t, s32 anim, s16 blend)
 }
 
 void f_PlaySoundEffectWithPitchOffset(s32 arg0, s8 arg1);
-
 s32 func_80044144(u8 *a)
 {
     u8 *e = (u8 *)D_800E7E80;
@@ -9072,7 +9057,6 @@ void func_8004E414(u8 *a);
 void func_8004E808(u8 *a);
 void func_8004E928(u8 *a);
 void func_8004DE04(u8 *a);
-
 u8 *func_8004DC84(s32 k, s32 mode)
 {
     u8 *a = f_AllocateActor(NULL, 0x80, 3, 5);
@@ -10624,7 +10608,6 @@ extern u8 D_800A44E0[];
 extern u8 D_800A44E8[];
 extern u8 D_800A44D0[];
 s32 f_SetTombaAnimationIfChanged(u8 *t, s32 anim, s32 blend);
-
 void func_80054C08(u8 *a, s32 mode)
 {
     s16 k = (u32)(func_800535D4(a) - 7) < 3;
@@ -11985,7 +11968,6 @@ end:
 }
 
 extern u8 D_800A46F0[];
-
 void func_8006032C(u8 *a, s32 keep)
 {
     s16 r;
@@ -15006,7 +14988,6 @@ void func_80071A3C(void *arg0) {
 
 u8 f_FormatIntegerText(s32 v, char *out);
 void func_80072520(u8 *a);
-
 void func_80071B44(u8 *src, s32 n, s32 kind)
 {
     u8 *a = f_AllocateActor(src, 0x80, 3, 0xD);
@@ -15063,7 +15044,6 @@ void func_80071C48(void *arg0, s16 arg1, s16 arg2) {
 
 typedef struct { u8 pad[0x60]; u16 v[16]; } Arr_1CF4;
 typedef struct { u8 pad[0x60]; s16 s[16]; } ArrS_1CF4;
-
 void func_80071CF4(u8 *a, s32 x, s16 y, s32 i)
 {
     s32 x0 = x;
@@ -16891,7 +16871,6 @@ extern s32 D_1F800280;
 extern u8 D_1F800233_33a2;
 extern u8 D_1F80023B_0a71;
 void f_SetDoubleBufferedClearColor(u8 r, u8 g, u8 b);
-
 void func_800796DC(void)
 {
     u8 c;
@@ -18298,7 +18277,6 @@ typedef struct {
 #define T2_stsz1(r0) __asm__ volatile("swc2 $17, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_8007FDB0(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[6];

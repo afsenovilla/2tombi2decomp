@@ -97,7 +97,6 @@ static inline s32 inl_8010A448(u8 *a)
     UH(a, 0x2E) = UH(o, 0x2C) + UH(a, 0x80);
     return 1;
 }
-
 void func_8010967C(a)
 u8 *a;
 {
@@ -282,7 +281,6 @@ void func_80109DB8(u8 *a)
 }
 
 extern u8 *D_800F2738;
-
 void func_80109F44(void)
 {
     u8 *p;
@@ -324,7 +322,6 @@ void func_80109F44(void)
 }
 
 extern s16 D_1F800150_h;
-
 void func_8010A0C0(void)
 {
     u8 *a;
@@ -1599,7 +1596,6 @@ AreaPolyFT4 *func_80112F3C(AreaPolyFT4 *p, s32 x, s32 y, s32 w, s32 h, s16 c, s1
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80113078);
 
 extern u8 D_8011B030[];
-
 void func_80113594(u8 *a)
 {
     u8 *o = *(u8 **)(a + 0x10);
@@ -2144,7 +2140,6 @@ typedef struct {
     u32 *tbl;
     u16 list[1];
 } PartList;
-
 void func_80114320(PartList *a)
 {
     u16 *p;
@@ -3197,7 +3192,6 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80117D1C);
 
 extern SVec D_1F8000C8;
 void func_80117D1C(void);
-
 u8 *f_SpawnWaterEvilPigSprayActor(u8 *a, s32 k)
 {
     u8 *p = func_8007A980(1, 2, 0);

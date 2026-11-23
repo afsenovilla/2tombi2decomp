@@ -1043,7 +1043,6 @@ extern u8 D_1F800182;
 extern u8 **D_1F800148;
 extern u8 **D_1F80013C;
 extern u8 D_1F800144;
-
 void func_80112140(void *a)
 {
     u8 **l = D_1F800148;
@@ -1619,7 +1618,6 @@ static inline void inl_80115090(void *arg0) {
     }
     func_8007778C(arg0);
 }
-
 void f_UpdateCoalMiningTownScenePropActor(u8 *a)
 {
     switch (a[4]) {
@@ -2107,7 +2105,6 @@ extern u8 D_800BF817;
 extern u8 D_800BF818;
 typedef struct { u8 pad0[7]; u8 unk7; u8 pad8[7]; u8 unkF; u8 unk10; } AreaState808_10;
 extern AreaState808_10 D_800BF808_7eac;
-
 void func_80116C14(a)
 u8 *a;
 {
@@ -2539,7 +2536,6 @@ void func_80117C0C(void *arg0) {
 typedef struct { s16 w, h; } BoxWH;
 extern s16 D_80129C20[];
 extern BoxWH D_80129C40[];
-
 void func_80117C3C(u8 *a)
 {
     s16 *t;
@@ -2613,7 +2609,6 @@ extern u8 D_800A3CC0[];
 extern s16 D_80129D4C[];
 extern s16 D_80129D54[];
 extern u8 D_80129D5C[];
-
 void f_UpdateBuryItInTheSandPitActor(u8 *a)
 {
     u8 *g;
@@ -3247,7 +3242,6 @@ typedef struct { s16 a, b, c, d, e; } PartInit10;
 extern s16 D_800ED098;
 extern PartInit10 D_8012A160[];
 extern u8 D_8012A194[];
-
 void func_8011B5C4(u8 *a)
 {
     s32 i;
@@ -3392,7 +3386,6 @@ static inline void inl_talk(u8 *a)
     }
     func_80041098(b);
 }
-
 void func_8011B904(u8 *a)
 {
     switch (a[4]) {
@@ -3519,7 +3512,6 @@ extern u8 D_80139240_0000[];
 extern u8 D_8012A214[];
 void func_8011C9C8(u8 *a);
 void func_8011CA78(void *arg0);
-
 void func_8011C52C(u8 *a)
 {
     s32 v;
@@ -3793,7 +3785,6 @@ extern u8 D_80129158[];
 extern s32 D_8012AD0C[];
 extern u8 D_800BFA05;
 s32 func_80126C18(u8 *a);
-
 void func_8011D4E8(u8 *a)
 {
     s32 *t;
@@ -3904,7 +3895,6 @@ void func_8011DBD8(void *arg0) {
 
 void func_8011E2D8(u8 *a);
 void func_8011E3A8(void *arg0);
-
 void func_8011DC88(u8 *a)
 {
     switch (a[4]) {
@@ -4016,7 +4006,6 @@ extern u8 D_8012AE70[];
 void func_8011E674(u8 *a);
 void func_8011E6EC(u8 *a);
 void func_8011E76C(void *arg0);
-
 void func_8011E47C(u8 *a)
 {
     u8 *g;
@@ -4123,7 +4112,6 @@ extern u8 D_8012B100[];
 extern u8 D_8012AF14[];
 void func_8011EF70(void *arg0);
 void func_8011EFC8(u8 *a);
-
 void func_8011E7C8(u8 *a)
 {
     u8 *g;
@@ -4356,7 +4344,6 @@ void func_80120070(void *arg0) {
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80120144);
 
 extern u8 D_800A3D18_ed09[];
-
 void func_801202DC(u8 *a)
 {
     s32 i;
@@ -4395,7 +4382,6 @@ extern u8 D_8012B504[];
 void func_80120564(u8 *a);
 void func_80120610(u8 *a);
 void func_8012067C(u8 *a);
-
 void func_801203F0(u8 *a)
 {
     switch (a[4]) {
@@ -4505,7 +4491,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80121268);
 extern u8 D_80129258[];
 extern u8 D_800BF9FA;
 s32 func_80126C18(u8 *a);
-
 void f_UpdateGranActor(u8 *a)
 {
     switch (a[4]) {
@@ -4860,7 +4845,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801225EC);
 extern u8 D_80129348[];
 extern u8 D_8012C5A4[];
 s32 func_80126C18(u8 *a);
-
 void func_80122728(u8 *a)
 {
     switch (a[4]) {
@@ -5018,7 +5002,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8012396C);
 void func_80123CD8(u8 *a);
 void func_80123D38(void *arg0);
 void func_80123D54(void *arg0);
-
 void func_80123BB8(u8 *a) {
     switch (a[4]) {
     case 0:

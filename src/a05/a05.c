@@ -73,7 +73,6 @@ static inline void land_inl(u8 *p, s32 y)
     M2C_FIELD(p, s32 *, 0x30) = y << 16;
     func_80022C78(p);
 }
-
 s32 func_8010AF84(u8 *a, u8 *b) {
     s16 dx, dz, dy, e, f;
     u16 h, bh, ah;
@@ -391,7 +390,6 @@ u8 func_8010BE54(u8 *a, s32 f)
 extern s32 D_1F800098;
 #define F16(p, o) M2C_FIELD(p, s16 *, o)
 #define FU16(p, o) M2C_FIELD(p, u16 *, o)
-
 s32 func_8010BFAC(u8 *a, u8 *b, u8 *c) {
     s16 dx, dz, dy, e, f, v;
     u16 h, bh, ah;
@@ -564,7 +562,6 @@ static inline void func_8010E7EC_inl(void *arg0, void *arg1) {
         M2C_FIELD(arg1, s8 *, 6) = 0;
     }
 }
-
 void func_8010D490(u8 *a)
 {
     u8 **l = D_1F80013C;
@@ -657,7 +654,6 @@ static inline void func_8010EA50_inl(void *arg0, s8 *arg1)
         D_1F800182_5650 = 0;
     }
 }
-
 void func_8010DB50(void)
 {
     u8 *a;
@@ -1534,7 +1530,6 @@ static inline void func_80115810_inl(u8 *p)
         break;
     }
 }
-
 void func_80114CC8(u8 *a)
 {
     switch (a[5]) {
@@ -2785,7 +2780,6 @@ static inline void func_801266E8_inl(u8 *a, u8 *b, s32 k)
     func_8004130C(a, 0);
     a[0x46] = a[0xBE];
 }
-
 void func_801244DC(u8 *a)
 {
     s32 n, d, v, t;
@@ -2969,7 +2963,6 @@ void func_80126AB4(void) {
 
 extern s32 D_800BF854;
 extern u16 D_1F8000EE;
-
 void func_80126ABC(u8 *a, s32 k)
 {
     u8 *e = D_800E8008;
@@ -4079,7 +4072,6 @@ static inline void func_80130DB4_inl(u8 *p)
         p[0x5E] = 1;
     }
 }
-
 void f_UpdateKujaraSummitMechanismActor(u8 *a)
 {
     u8 *p;
@@ -4746,7 +4738,6 @@ static inline void func_80132B5C_inl(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x32) = -0x2D37;
     M2C_FIELD(arg0, s16 *, 0x36) = 0x46BE;
 }
-
 void func_80132418(u8 *a)
 {
     u8 *o;

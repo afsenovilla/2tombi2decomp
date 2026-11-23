@@ -145,7 +145,6 @@ void func_8010ACA8(void)
 }
 
 extern u8 *D_800F2738;
-
 void func_8010AE50(void)
 {
     u8 *p;
@@ -196,7 +195,6 @@ void func_8010AE50(void)
         }
     }
 }
-
 
 void func_8010B010(void)
 {
@@ -1103,7 +1101,6 @@ void func_8010F144(u8 *a)
 }
 
 extern u8 *D_1F800214;
-
 s32 func_8010F43C(u8 *a)
 {
     u16 v = *(u16 *)(a + 0x72);
@@ -3076,7 +3073,6 @@ static inline s32 inl_801181AC(u8 *a)
     a[0x5F] = 1;
     return 1;
 }
-
 void func_801179BC(u8 *a)
 {
     s16 v;
@@ -3224,7 +3220,6 @@ void func_801179BC(u8 *a)
 
 extern SVec D_1F8000C8;
 void func_801179BC(u8 *a);
-
 u8 *f_SpawnLastEvilPigBattleProjectile(u8 *a)
 {
     u8 *p = func_8007A980(1, 2, 0);

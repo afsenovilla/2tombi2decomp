@@ -1557,7 +1557,6 @@ typedef struct {
     u16 clut;
 } T2Sprt16;
 extern T2Sprt16 *D_800BF544_e6cf;
-
 void func_80115598(u8 *a)
 {
     s32 w2 = a[0x10] * 2;
@@ -2012,7 +2011,6 @@ static inline void inl_801181E0(u8 *a, u8 *b) {
         M2C_FIELD(b, s16 *, 0x14) = -0xC00;
     }
 }
-
 void f_HandleRareFishOrBlueBucketPickup(u8 *a)
 {
     u8 st = a[4];
@@ -2312,7 +2310,6 @@ static inline void inl_801188A0(u8 *a) {
     D_800BF870.pad1[0x179] &= ~(1 << (M2C_FIELD(a, s16 *, 0x60) + 4));
     func_80040C00(0x4E);
 }
-
 void f_HandleBeachQuestPickup(u8 *a)
 {
     u8 *p;
@@ -2829,7 +2826,6 @@ extern s32 D_800ECF58_a4fb[];
 extern u8 D_801485F8[];
 extern u8 D_8014C9C0[];
 extern u8 D_800BF9DE;
-
 void func_8011A928(u8 *a)
 {
     s32 *t;
@@ -3041,7 +3037,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011CA04);
 extern u8 D_800BF89C;
 extern s32 D_800ECFA4;
 void func_8011CD14(u8 *a);
-
 void func_8011CBD0(u8 *a)
 {
     s32 v;
@@ -3182,7 +3177,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011D910);
 void func_8012185C(void *arg0);
 void func_8012175C(u8 *a);
 void func_801217F4(u8 *a);
-
 void f_HandleFeedChicksSceneActor(u8 *a)
 {
     switch (a[4]) {
@@ -3536,7 +3530,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121B44);
 
 extern u8 D_8014E4EC[];
 extern u8 D_801494D0[];
-
 void func_80121CF8(u8 *a)
 {
     switch (a[5]) {
@@ -3890,7 +3883,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80125C4C);
 
 void func_80125FE0(u8 *a);
 void func_801261FC(u8 *a);
-
 void func_80125E0C(u8 *a) {
     switch (a[4]) {
     case 0:
@@ -4029,7 +4021,6 @@ void func_801261FC(u8 *a) {
 
 extern u8 D_800BF8F1;
 void func_80127420(void *arg0);
-
 void func_80126264(u8 *a)
 {
     s32 r;
@@ -4439,7 +4430,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeLinkedWindmillInteriorEffect
 
 extern u8 D_800BF816;
 extern u8 D_800BF8BC;
-
 void f_HandleInteriorEffectActor(u8 *a)
 {
     u8 *g;
@@ -5198,7 +5188,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownBarrelChildTransforms);
 
 extern u8 D_800BF9D2;
 u8 *func_80146348(u8 *a, void *b);
-
 void f_HandleTownBarrelSeesawController(u8 *a)
 {
     u16 f;
@@ -5731,7 +5720,6 @@ void f_UpdateAquaticPlantCollisionBounds(u8 *a) {
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateSingleSegmentSwingMotion);
 
 extern s16 D_8014A6E4[];
-
 void f_HandleSingleSegmentSwingActor(u8 *a)
 {
     s16 v;
@@ -6655,7 +6643,6 @@ void func_8013C1DC(u8 *a)
 extern u8 D_800BF9E0;
 extern u8 D_8014AC18[];
 extern u8 D_8014AF20[];
-
 void f_UpdateKainenHouseProgressEffectActor(u8 *a)
 {
     u8 *p;
@@ -6712,7 +6699,6 @@ if (k == c) {
 }
 
 typedef struct { s16 x, y, z, w; } Particle8;
-
 void f_UpdateKainenHouseFallingParticleActor(u8 *a)
 {
     s32 n;

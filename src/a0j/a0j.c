@@ -1601,7 +1601,6 @@ static inline void inl_8010D124(void *arg0) {
     }
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
-
 void func_8010CA1C(u8 *a)
 {
     switch (a[4]) {

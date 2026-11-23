@@ -1178,7 +1178,6 @@ void func_80111ECC(void *arg0) {
 extern s32 D_800ECF80;
 extern u8 D_80139294_2487[];
 extern u8 D_800A3D40[];
-
 void func_80111F94(u8 *a)
 {
     F16(a, 0x5C) = 0;
@@ -1231,7 +1230,6 @@ extern PickupDef D_800A2A74;
 void f_UpdatePipeAreaScenePropActor();
 void func_80112A8C(u8 *a);
 void func_80112BB8(void *arg0);
-
 void f_UpdatePipeAreaQuestPickupActor(u8 *a)
 {
     u8 *p;
@@ -1414,6 +1412,7 @@ a[4] = 3;
 if (FP(a, 0x10) != NULL) {
     FP(a, 0x10)[4] = 3;
 }
+
             D_800BF870.pad1[0x18B] |= 2;
             break;
         case 1:
@@ -2160,7 +2159,6 @@ void func_801160F8(u8 *a) {
 
 extern s16 D_80135BB8[];
 extern s16 D_80135BA0_d762[];
-
 void func_80116194(u8 *a)
 {
     switch (a[6]) {
@@ -2297,7 +2295,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80119320);
 extern u8 D_800BF809;
 extern u8 D_800BF9F0;
 extern u16 D_1F80017C;
-
 void func_80119778(u8 *a)
 {
     u8 *b = a + 0x60;
@@ -2616,7 +2613,6 @@ extern u8 D_801356AC[];
 extern u8 D_801393C0_27b3[];
 extern u8 D_800A3D18[];
 extern u8 D_80135C48[];
-
 void func_8011A27C(u8 *a)
 {
     switch (a[4]) {
@@ -2739,7 +2735,6 @@ static inline s32 inl_run2(u8 *a)
     }
     return 0;
 }
-
 void f_UpdateKainenActor(u8 *a)
 {
     s32 *t;
@@ -3302,7 +3297,6 @@ void func_8011D754();
 void func_8011E040();
 void func_8011DCE0();
 void func_8011D104();
-
 void func_8011C4D0(u8 *a) {
     switch (a[4]) {
     case 0:
@@ -3628,7 +3622,6 @@ extern u8 D_800A3E58[];
 extern u8 D_801363D4[];
 void func_8011E9E8(u8 *a);
 void func_8011EA60(u8 *a);
-
 void func_8011E404(u8 *a)
 {
     u8 *g;
@@ -3757,7 +3750,6 @@ s32 func_8011EAE4(void *arg0) {
 
 extern u8 D_800A3D70[];
 extern u8 D_801367D8[];
-
 void func_8011EB00(u8 *a)
 {
     s32 i;
@@ -3977,7 +3969,6 @@ void func_80120200(u8 *a) {
 void func_80120420(u8 *a);
 void func_80120508(u8 *a);
 void f_ReturnThirstyMinerToIdleScript(u8 *a);
-
 void func_80120308(u8 *a) {
     switch (a[4]) {
     case 0:
@@ -4241,7 +4232,6 @@ static inline s32 inl_check(u8 *a)
     }
     return 2;
 }
-
 void func_801213F4(u8 *a)
 {
     s32 r;
@@ -4691,7 +4681,6 @@ static inline void inl_80123B40(void *arg0) {
     M2C_FIELD(temp_v1_2, s16 *, 0x2E) = (s16) (M2C_FIELD(arg0, u16 *, 0x32) - 0x40);
     M2C_FIELD(temp_v1_2, u16 *, 0x30) = (u16) M2C_FIELD(arg0, u16 *, 0x36);
 }
-
 void f_UpdatePipeAreaPersistentSceneryRewardActor(u8 *a)
 {
     u8 *p;
@@ -6075,7 +6064,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012D9E8);
 extern u8 D_801387C0[];
 extern u8 D_80138160[];
 extern u8 D_1F8000D0_b839[];
-
 void func_8012E014(u8 *a)
 {
     u8 *p;

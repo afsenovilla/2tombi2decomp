@@ -91,7 +91,6 @@ void func_801091CC(u8 *a, u8 *b) {
 
 extern u8 **D_1F800148;
 extern u8 D_1F800150;
-
 void func_80109398(u8 *a)
 {
     u8 **l = D_1F800148;
@@ -143,7 +142,6 @@ void func_80109398(u8 *a)
 }
 
 extern u8 *D_800F2738;
-
 void func_801095B8(void)
 {
     u8 *p;
@@ -292,7 +290,6 @@ typedef struct {
 } Owner;
 extern Spawn *D_8010E044[];
 extern Pos D_800BF808_76d5;
-
 void f_SpawnEvilPigDoorActorsFromPlacementTable(Owner *a, s32 sel)
 {
     Spawn *e;
@@ -786,7 +783,6 @@ s32 func_8010BC9C(u8 *a)
 }
 
 extern s16 D_8010E398[];
-
 s32 f_StartOrWaitForIndexedEvilPigPlateEvent(u8 *a)
 {
     switch (a[6]) {
@@ -823,7 +819,6 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", f_UpdateEvilPigStatueActor);
 
 extern u8 D_800BFA41;
 extern u8 D_800E8008[];
-
 s32 func_8010C588(u8 *a)
 {
     u8 *t;
@@ -890,7 +885,6 @@ s32 func_8010CAF8(u8 *a)
 
 extern u8 D_800BF809;
 extern u8 D_8010E3B0[];
-
 s32 func_8010CBB0(u8 *a)
 {
     u8 *g;

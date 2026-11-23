@@ -89,7 +89,6 @@ extern char D_80106264[];
 extern char D_8010627C[];
 extern char D_801062A8[];
 void func_801072F4(void);
-
 s32 func_80106F80(s32 idx)
 {
     u8 buf[0x18];

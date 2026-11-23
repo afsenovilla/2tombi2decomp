@@ -26,7 +26,6 @@ extern u8 *D_1F800184;
 extern u8 D_800BF840;
 extern u16 D_1F80008C;
 extern u8 D_1F800137;
-
 void func_801097DC(u8 *a, u8 *b)
 {
     s16 ang;
@@ -59,7 +58,6 @@ void func_801097DC(u8 *a, u8 *b)
 }
 
 extern u8 D_800BF808[];
-
 void func_8010996C(u8 *a, u8 *b)
 {
     s16 ang;
@@ -96,7 +94,6 @@ extern u8 D_1F800144;
 extern u8 D_1F800182;
 extern u8 **D_1F800148;
 extern u8 D_1F800150;
-
 void func_80109DBC(u8 *a)
 {
     u8 **l;
@@ -164,7 +161,6 @@ static inline void inl_8010A550(void *a, u8 *b)
         }
     }
 }
-
 void func_8010A034(u8 *a)
 {
     u8 **l;
@@ -1368,7 +1364,6 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010EF80);
 extern s16 D_1F800240;
 void func_8010DE18(u8 *a);
 u8 *func_80109788(void);
-
 void func_8010F544(u8 *a)
 {
     u8 *g;
@@ -2433,7 +2428,6 @@ extern u8 D_800BF8FA;
 extern u8 *D_1F800138;
 extern u16 D_800E7FEE;
 extern u16 D_1F800194;
-
 s32 func_80113C50(u8 *a)
 {
     u8 *g;
@@ -2568,7 +2562,6 @@ typedef struct {
 extern T2CamD0 D_1F8000D0_3bb0;
 extern s32 D_800A3F90;
 extern s32 D_800A3F94;
-
 void func_80116B9C(u8 *a)
 {
     T2Pt32 v0, v1, v2;

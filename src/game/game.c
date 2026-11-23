@@ -428,7 +428,6 @@ INCLUDE_ASM("asm/game/nonmatchings/game", func_8010810C);
 
 extern u8 D_800BF808_cee0;
 extern u16 D_800E7E68;
-
 void func_801084F8(void)
 {
     u16 b;

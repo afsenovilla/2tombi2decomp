@@ -237,7 +237,6 @@ void func_8010CA60(u8 *a, u8 *b)
 
 extern u8 **D_1F800148;
 extern u8 D_1F800150;
-
 void f_DispatchCircusSupportContacts(u8 *a)
 {
     u8 **l = D_1F800148;
@@ -1728,7 +1727,6 @@ static inline void func_801174FC_inl(void *arg0) {
     M2C_FIELD(arg0, u16 *, 0x56) = (u16) M2C_FIELD(temp_s0, s16 *, 0x56);
     func_8007778C(arg0);
 }
-
 void func_80116B88(u8 *a)
 {
     switch (a[4]) {
@@ -2888,7 +2886,6 @@ static inline void func_8012009C_inl(void *arg0) {
         break;
     }
 }
-
 void func_8011FA0C(u8 *a)
 {
     void *f;

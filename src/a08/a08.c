@@ -324,7 +324,6 @@ extern u16 D_1F80008C;
 #define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
 extern u16 D_1F80018E_f9ee;
 extern u16 D_1F80018C_c065;
-
 void func_8010DC80(u8 *a, u8 *b)
 {
     s32 k;
@@ -838,7 +837,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80114A70);
 extern u8 D_800BF871;
 extern u8 D_1F80019C;
 void func_80114CB8();
-
 void func_80114B90(void)
 {
     u32 s = D_800BF871;
@@ -1069,7 +1067,6 @@ static inline void func_8011661C_inl(void *arg0) {
     }
     M2C_FIELD(arg0, s8 *, 4) = 3;
 }
-
 void f_UpdateWaterTempleQuestItemPickupActor(u8 *a)
 {
     u16 t;
@@ -1687,7 +1684,6 @@ void func_8011B9D0(u8 *a) {
 }
 
 typedef struct { s16 pos; s16 vel; s16 max; } RiseMotion3;
-
 void func_8011BA90(u8 *a) {
     RiseMotion3 *m = (RiseMotion3 *)(a + 0x50);
 
@@ -3724,7 +3720,6 @@ static inline void func_80129B40_inl(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x84) = 0x190;
     M2C_FIELD(arg0, s16 *, 0x86) = 0x320;
 }
-
 void f_UpdateWaterTempleQuestPropActor(u8 *a)
 {
     u8 *p;
@@ -5243,7 +5238,6 @@ static inline void inl_8013080C(void *arg0) {
     }
     func_800518FC(arg0);
 }
-
 void f_UpdateClosedClamshellQuestActor(u8 *a)
 {
     s32 v;
@@ -6329,7 +6323,6 @@ static inline void func_8013B110_inl(u8 *a)
         break;
     }
 }
-
 void func_8013A9F8(u8 *a)
 {
     s32 one = 1;

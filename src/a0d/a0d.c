@@ -217,7 +217,6 @@ void func_8010A04C(u8 *a)
 }
 
 extern u8 *D_800F2738;
-
 void func_8010A1D4(void)
 {
     u8 *p;
@@ -274,7 +273,6 @@ void func_8010A1D4(void)
         }
     }
 }
-
 
 void func_8010A3C0(void)
 {
@@ -1120,7 +1118,6 @@ INCLUDE_ASM("asm/a0d/nonmatchings/a0d", f_UpdateEarthEvilPigDetachedPartsAttack)
 
 extern u8 D_1F80025A;
 extern M2C_UNK f_UpdateEarthEvilPigSplitActor;
-
 void func_8010FA2C(u8 *a)
 {
     s32 k;
@@ -1833,7 +1830,6 @@ typedef struct {
     u32 *tbl;
     u16 list[1];
 } PartList;
-
 void func_80113628(PartList *a)
 {
     u16 *p = a->list;
@@ -2940,7 +2936,6 @@ u8 *func_80117378(s32 a)
 typedef struct { u16 a, b, c, d; } Box4;
 extern Box4 D_80125840[];
 extern u16 D_1F800162;
-
 void func_801173CC(u8 *a)
 {
     switch (a[4]) {

@@ -588,7 +588,6 @@ typedef struct {
     u32 *tbl;
     u16 list[1];
 } PartList;
-
 void func_8010B0B8(PartList *a)
 {
     u16 *p;
@@ -2024,7 +2023,6 @@ extern u8 D_800E7E80_f78d[];
 extern u16 D_1F80017C;
 #define S16(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define U16(p, o) (*(u16 *)((u8 *)(p) + (o)))
-
 s32 func_801122B4(u8 *a)
 {
     u8 *g = D_800E7E80_f78d;
@@ -2137,7 +2135,6 @@ extern char D_80109180[];
 extern char D_80109198[];
 extern char D_801091C4[];
 void func_801129D4(void);
-
 s32 func_80112660(s32 idx)
 {
     u8 buf[0x18];
