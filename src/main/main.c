@@ -13947,9 +13947,110 @@ void func_8006B494(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006B9DC);
+void func_8006B9DC(u8 *a)
+{
+    u8 *t = (u8 *)D_800E7E80;
+    u8 *m = a + 0x60;
+    u8 kind;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006BB6C);
+    switch (a[6]) {
+    case 0:
+        {
+        s32 k = 1;
+        a[6] = k;
+        *(s16 *)(a + 0x40) = k;
+        }
+    case 1:
+        if (--*(s16 *)(a + 0x40) == 0) {
+            if (t[0xBE] != 0) {
+                f_PlaySoundEffect(0xA, 0, 0);
+                *(s16 *)(a + 0x40) = 0xA;
+            } else {
+                f_PlaySoundEffect(9, 0, 0);
+                *(s16 *)(a + 0x40) = 0x12;
+            }
+        }
+        if (t[0xBE] != 0 && a[0x5E] == 0) {
+            a[0x5E] = 1;
+            func_8006A8C8((s32)a);
+        }
+        if (t[0x144] == 2 || t[0x146] == 0) {
+            a[5] = 0;
+            a[4]++;
+        } else if (t[0x146] == 3) {
+            a[0x46] = t[0x14A];
+            if (t[5] == 9) {
+                *(u16 *)(m + 8) = *(u16 *)(t + 0x56) - 0x800;
+            } else {
+                *(u16 *)(m + 8) = *(u16 *)(t + 0x56);
+            }
+            kind = t[0x2A];
+            a[5] = 1;
+            a[0x2A] = kind;
+            func_8006B124(a, 1);
+            func_80069688(a);
+            a[6] = 1;
+        }
+        func_8006B020(a, 0);
+        break;
+    }
+}
+
+void func_8006BB6C(u8 *a)
+{
+    u8 *m = a + 0x60;
+
+    switch (a[4]) {
+    case 0:
+        a[0x5F] = 0x40;
+        func_8006ACAC(a);
+        *(s32 *)(a + 0x10) = 0;
+        a[4]++;
+        *(u16 *)(m + 8) = *(u16 *)(a + 0x56);
+        *(u16 *)(a + 0x56) = 0;
+        *(s16 *)(m + 0xA) = 0;
+        *(s16 *)(m + 6) = 1;
+        *(s16 *)(m + 0xE) = 0;
+        a[0] = 2;
+        *(s16 *)(a + 0x54) = 0x400;
+        a[0x2B] = 0;
+        if (a[3] == 0) {
+            a[5] = 1;
+            func_80069688(a);
+        } else {
+            ((u8 *(*)())f_SpawnLinkedActorTrailEffect)(a, a[2] - 1);
+        }
+    case 1:
+        a[1] = 1;
+        switch (a[5]) {
+        case 0:
+            func_8006B9DC(a);
+            break;
+        case 1:
+            func_8006B494(a);
+            if (*(s16 *)(m + 6) == 0) {
+                if (a[2] == 6) {
+                    f_UpdateActorScaledModelTransforms(a);
+                } else {
+                    f_UpdateActorUnscaledModelTransforms((s32)a);
+                }
+            }
+            func_8006AFC4(a);
+            break;
+        }
+        break;
+    case 2:
+        a[1] = 0;
+        a[4]++;
+        break;
+    case 3:
+        if (*(s16 *)(m + 0xE) == 0) {
+            D_1F800231--;
+        }
+        func_8007AB44(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006BD20);
 
