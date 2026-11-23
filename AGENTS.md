@@ -29,7 +29,15 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
   3. `// CC gcc-2.7.2-psx`, `// AS gnu` (libsnd, libpad, libcd/libetc statics; `-O1` once);
   4. any of these with `// CC gcc-2.8.1-nocse` instead of 2.8.1: **Sony's library compiler had no post-reload CSE**
      (no `move a2,a1` for two zero arguments, no `sllv` with a register holding 16, no `and x,v0` with v0 = 1).
-     tools/setup_native.sh makes it from the stock cc1 (one byte patched, sha1 checked).
+     tools/setup_native.sh makes it from the stock cc1 (one byte patched, sha1 checked);
+  5. **the library compiler also hoists more loop invariants around loops that contain calls** (constants and
+     global loads kept in saved registers: `li s8,-1` in CdControl, the five constants of _SsVmInit). Patching the
+     `loop_has_call` multiplier of scan_loop reproduces it (gcc-2.7.2-psx cc1 file offsets 0xC6C66 / 0xC6C6D,
+     gcc-2.8.1 0xDC87D / 0xDC884); it is per file (CD_cachefile breaks with it). Until those set-ups are in
+     setup_native.sh, reach the same code by hand: a constant local assigned at the end of the do/while body is
+     hoisted last (`m1 = -1; } while (--count != m1);`), a long-lived local declared before the loop (`int one =
+     1;`) gets reload's `li t0,K`, and `one = 1` at the top of the body keeps `x & (one << bit)` as sllv/and.
+  The region module in boot is partly gcc 2.7.2: try it first there; CdControlF needs `AS gnu` under 2.7.2.
   Plus the asm rewrites Sony's compiler needs: `// EPILOGUE sony` (nothing in the `j $31` delay slot; ra restore then
   `addiu sp; jr ra; nop`) and `// RETURN sony` (one shared final `jr ra; nop`; `sony first` keeps an early
   `return K;` after its test; `sony thread` sends a branch to a `j ret; li v0,K` block to the return). An empty
@@ -56,9 +64,17 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
    call it. Big dispatchers are usually a switch over several such handlers: `python3 -I tools/dispatch.py --list
    <progs>`, then `tools/dispatch.py PROG NAME` writes the scratch (helpers + m2c caller skeleton with the helper
    calls in place; read its notes on shared tails), fix types and the cases, ccheck, install.
-3. **Near misses** listed in STATUS (1-12 words off), with the tools below.
-4. **Medium and large functions** (0x200+ bytes): the small ones are mostly done; bytes are what is left.
-5. After each batch: nearcopy over your programs (copies of your new C); list copies in other scopes for the
+3. **Actor state machines** (the bulk of the medium / large functions left): `switch (a[4])` with sub-switches
+   on a[3] / a[5], whose cases call matched handlers. Write them whole from the plain decomp.py draft: each matched
+   body as `static inline`, every case in full, the case table read from the rodata jump tables (dispatch.py drafts
+   are poor for these). About 3 minutes each; pending asm calling func_800518FC / func_8007A624 with few memory
+   operations is a good list of them. In a09-a0f, the **list walkers** follow one template:
+   `l = LIST; D_1F800182 = COUNT; while (D_1F800182 != 0) { e = *l; D_1F800182--; l++; if (e[0] & 1) switch (e[2])
+   {...} }` over the lists 0x1F80013C / 148 / 14C / 154, and the outer `if (*(s16 *)&COUNT == 0) return; for (p =
+   D_800F2738; p; p = *(u8 **)(p + 0x24)) { if (!(p[0] & 1) || p[0x2B]) continue; ... }`.
+4. **Near misses** listed in STATUS (1-12 words off), with the tools below.
+5. **Medium and large functions** (0x200+ bytes): the small ones are mostly done; bytes are what is left.
+6. After each batch: nearcopy over your programs (copies of your new C); list copies in other scopes for the
    coordinator.
 
 ## The loop for one function
@@ -164,6 +180,17 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - Dispatchers (dispatch.py): write every case in full with its helper call; where retail shares a tail between a
   case and a helper (a branch into the middle of the copy), the same code written out again is merged back by gcc
   (a00 f_HandleTownQuestRewardVisualActor matched at the first compile that way).
+- Per-case pointer locals (or one per copy of an inline body) shorten live ranges and fix s-register swaps
+  (regswap's fork finds them); an unexplained `move sN,sM` of the actor pointer is `u8 *b = a;` used only in the last
+  call; one inline helper per constant address (a helper taking the address as a parameter loads it at the call
+  site); pass the caller's pointer to a helper that would re-read a field; one parameterized inline for helpers that
+  differ only in a table or argument cross-jumps like retail; a shared tail retail places after the last case is
+  written in every case; nested `if (x != c) {...}` instead of an early return inside a helper stops gcc
+  cross-jumping one arm between two copies.
+- Collision-handler family (a04-a08 func_8010A9A8 / func_8010C8B4 adapt to all variants): a separate temporary per
+  multiply, reuse dx for later locals (lim, abs value) so it gets s0, `fail:` / `ret1:` labels with gotos for the
+  shared return blocks, the land tail as `static inline land(p, y)`, and the store before `return 2` with plain
+  gotos (never a `ret` variable).
 - `if (--S16F(a, 0x40) == 0)` (an s16 field) tests with `sll 16`; the u16 field gives `andi 0xFFFF`.
 
 **Calls and prototypes**
@@ -193,14 +220,52 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - Primitives: addPrim / setaddr / setlen with `struct { unsigned addr:24; unsigned len:8; }`; `TERM_PRIM` through a
   local pointer.
 
+**Switch and jump-table shapes (more)**
+- Duplicate the cases with identical code to get a jump table whose entries share a target (gcc builds the table,
+  then cross-jumps the blocks); `case 1: d = X; break; case 2: d = X; break; default: d = X;` gives separate tree
+  nodes where `case 1: case 2: default:` merges them into a range; `case 0 ... 1: break; case 2 ... 3:` for the
+  `bltz; slti 2; slti 4` tree; an empty `case 0: break;` keeps a `slti 2` tree; a `switch` instead of `x == K1 ||
+  x == K2` in an inner loop hoists the compare constants; `break` to the final `return 0` vs an explicit `return 0`
+  per case decides where v0 is set; `& 0x80` after the if/else (not in each arm) lets gcc cross-jump call tails;
+  retail hoisting `move a0` above an if/else with `li a1` in each arm: the whole call in both arms.
+
+**More forms**
+- `h = *(volatile u16 *)(a + 0x68);` keeps a single lhu with `(s16)h` as sll/sra; `*(volatile s16 *)&G = 1;`
+  keeps a store out of a jump delay slot; `u8 c = a[5]--; if (c == 0)` for `addiu v1,v0,255; andi`; a loop counter
+  `n = 0x800000; ... if (--n == 0)` (splat names the constant D_7FFFFF); `(s16)(x + K)` stops reassociation; `u32 k`
+  for a u8 that is both compared and passed on; a field read twice gives the CSE `move a2,v1` a local does not; a
+  store through a pointer local (`p = a->10; p[0] = 1;`) changes the constant's register; `v = 0x34800; d = ...;
+  v = v / d;` loads the dividend first; `s16 k = (u32)(f() - 7) < 3` drops a copy; a code label used as a callback
+  value needs an alias line (`.L80117FA4 = 0x80117FA4;` in config/aliases_<prog>.ld).
+- Load order of `lh 4A; lw 30; lhu 4A; lhu 50`: `*(s32 *)(a + 0x30) += H(a,0x4A) << 8; n = H(a,0x4A) +
+  H(a,0x50); H(a,0x4A) = n;`; `h - i * 20` (a giv) instead of a user variable `k += 20` fixes spilled stack-slot
+  order; `s32 *z = (s32 *)D_1F800090;` declared at the start of a section gives the early `lui`; accesses sharing
+  `lui 0x1F80` come from `u8 *s = (u8 *)0x1F800000;`.
+- Library: a pointer to a field with the others at negative offsets (`volatile s32 *t = &G.f; t[-k]`) for a
+  hoisted field address; `p -= n` to re-derive the base; a block-scoped `{ volatile T *p = &G; ... }` keeps the base
+  in a register across the field stores; 4.4 libcd ReadAttr layout in STATUS 2026-11-23.
+
 **GTE**
 - `gte_ldfcdir(0,0,0)` for the "handwritten" functions starting `addu t0,zero,zero; ... ctc2 t0..t2,$21..$23`;
   offset macros `gte_ldv3c` / `gte_stsxy3_g3`; DQA/DQB loads with custom asm (`ctc2 %0,$27`); draw loops with
   private macros (command word without nops, packed vertex loads, one `swc2` per SZ) and scratchpad pointers as
   locals (`s32 *flg = (s32 *)0x1F800000`).
+- Reload spill registers (the asm's base pointers in GTE functions) are the call-clobbered registers no pseudo uses,
+  in order: make the rest of the function allocate retail's registers and the spill cycle follows (keep a value in
+  the call's a0 instead of re-reading it; compute call arguments into locals before a store so it lands in the jal
+  delay slot). A pointer local with no register is rematerialised at its use; to stop two pointers to one address
+  being CSE'd, give one an alias symbol.
 
 ## Tool pitfalls (open ones are listed in STATUS)
 
+- dispatch.py can emit a helper twice and crash m2c; for state machines the plain decomp.py draft is better.
+- regswap rewrites can produce invalid or semantically wrong C (MEMBER_AT with a variable offset, an unset fork
+  variable, a reused variable read after its reassignment): check every result before installing.
+- prio.py names pseudos by declaration order even when array locals are not pseudos (names shifted).
+- install_c: an existing caller with fewer arguments needs a K&R definition (`void f(a) u8 *a; {`); alias renames are
+  not applied inside moved helpers; a moved helper loses prototypes declared further down (declare them in the
+  helper's block); `extern M2C_UNK func_X;` (a function used as data) must become `void func_X();`.
+- variants.py writes `//--` separators: never leave them in src/.
 - `register ... asm("reg")` matches are not installed (compiler-specific); they stay near misses.
 - A static inline helper must be defined before its first use, or gcc emits it as a function.
 - nearcopy refuses or mis-patches some copies (a repeated immediate, constants in helpers, callee names that differ
@@ -221,5 +286,6 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - USA is the reference; EU in config/eu/.
 - The licensed-region module at the end of boot.c [0x80011A0C, 0x80012D2C) is library-style files in
   src/boot/psyq/region/ (built with the library compiler; not a known Psy-Q library).
+- The loop-hoisting compiler patch (2026-11-23) will be per-file set-ups like nocse, never a replacement.
 - gcc-2.8.1-nocse is a set-up of the library (made reproducibly by tools/setup_native.sh).
 - decomp.dev no longer accepts new projects (checked 2026-11-22).

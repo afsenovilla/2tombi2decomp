@@ -3,6 +3,60 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-23: sixth round of five agents (dispatchers first)
+
+All code in C: **4128 / 7011 functions (58.9 %, 30.9 % of the bytes)**, from 3925 (26.9 %): the biggest round in
+bytes. main +30 (GTE draw dispatchers, cylinder contact code), library +16 (getintr, SsSeqOpen, CdControl / F / B,
+CdInit, CdReadSync, region func_80012B9C, ...), a00-a03 +50 (~30 KB, actor state machines), a04-a08 +43 (~36 KB,
+state machines up to 0xC8C bytes), a09-a0l + overlays +67. 29 / 29 byte-identical. sync_src.py takes K&R definitions
+written on one line. Stray `//-- a` variant separators removed from a05 / a06 / a08 (main.c line ~8192 has a `//--`
+comment of the same kind: harmless, remove when next in that area).
+
+Findings:
+- **Actor state machines** are the bulk of the medium / large functions left: `switch (a[4])` (sub-switches on a[3]
+  / a[5]) whose cases call already-matched handlers. Write them whole: each matched body as `static inline`, every
+  case in full, the case table read from rodata (dispatch.py's drafts are poor for these: decomp.py's are better).
+  About 3 minutes each when the handlers are matched. The pending asm calling func_800518FC / func_8007A624 with a
+  low memory-op ratio is a good list of them.
+- **List walkers** (a09-a0f): a fixed template over the scratchpad lists 0x1F80013C / 148 / 14C / 154 with counter
+  D_1F800182 (AGENTS.md); 16 matches this round.
+- **The library compiler hoists more loop invariants around loops with calls**: patching the `loop_has_call`
+  multiplier in scan_loop (gcc-2.7.2-psx cc1 file offsets 0xC6C66 / 0xC6C6D, `mov $1/$2,%edx` -> 4; gcc-2.8.1
+  0xDC87D / 0xDC884) makes CdControl / F / B and _spu_gcSPU match as is; every other matched 2.7.2 loop file still
+  matches except CD_cachefile, so it must be a per-file set-up (like nocse). With the stock compiler the same code is
+  reached by hand (`m1 = -1;` at the end of the do/while body, a long-lived `int one = 1;` before the loop): that is
+  how CdControl / F / B are in. To do: `gcc-2.7.2-loop4` / `gcc-2.8.1-loop2` set-ups in setup_native.sh (sha1
+  checked) and in libsweep / libnear / pzsweep.
+- **Reload spill registers** in GTE functions are the call-clobbered registers no pseudo uses, in order: make the
+  rest of the function allocate retail's registers and the spill cycle follows.
+- 4.4 libcd ReadAttr at D_800AC2E4 (boot D_80026BF8): {u0, u4, addr, mode, size, nsec, u18, u1c = start_time, cnt =
+  pos, done, cbsync, cbready, cbdata, result}; the region module is partly gcc 2.7.2 (try it first there).
+
+Near misses (words off; scratch in the session scratchpad r6b/<scope>/): a01 func_80116294 1, a05
+f_UpdateKujaraSummitQuestPickupActor 1 (retail keeps a second `beqz p`), a0b func_8010B73C 1 / a0a func_80118038 6
+(clamp copy: retail compares the source after `move a0,v0`), region func_80012954 1, a0e func_80117600 2, CD_sync 3,
+Snd_SetPlayMode 3, _spu_FwriteByIO 3, a0a func_8010A3D8 / a0c func_8010B36C / a0f func_8010A5F8 3 (hoist order:
+counter `lui` before the invariant), a01 f_UpdateCapperActor 4, func_80115F08 4 (and its dispatcher
+f_UpdatePipeAreaScenePropActor 4), main func_8007A464 4, func_80021DF4 4 (prologue save order), SetGraphQueue 4, _dws
+4, sop func_8010A0E0 4, _spu_gcSPU 6 (matches with the loop4 compiler), _SsClose 6, main func_8007F104 6, a08
+func_8010B9FC 6 lines, CD_ready 7, a06 func_8010B59C 7, a08 func_8012282C 7, main func_8002E458 8, a01
+f_UpdatePipeAreaQuestSceneryActor 11, func_8010F87C 11, main func_80035528 / func_800355B4 14 (exact priority tie).
+Untouched dispatchers with good bodies: a06 func_80130F1C (0x734), a08 func_8010D334 (0x678).
+
+Tool work left: the loop4 / loop2 compiler set-ups (above) and pzsweep `--cc`; an actor state-machine generator
+(rodata jump tables -> switch skeleton, matched case bodies as static inline helpers, sub-switches on a[3] / a[5],
+common tails); a list-walker generator; dispatch.py: duplicate helper definitions, m2c crashes on its drafts, a
+rodata jump-table mode; install_c: auto K&R when existing callers pass fewer arguments, apply alias renames inside
+moved helpers, keep the prototypes a moved helper needs, forward prototype of a self-referencing function used in a
+helper above it, prototypes with typedefs declared further down -> K&R, `extern M2C_UNK func_X;` -> function
+declaration, the helper move-up that broke a link; regswap: semantic check (no use of a reused / forked variable
+after reassignment, no MEMBER_AT with a variable offset), "per-case local" and "copy used only in the last call";
+prio.py: names shifted when array locals are not pseudos, a tie mode; a spill-register predictor for GTE functions;
+a hoist-order diagnostic; inlined.py reverse search (a pending function identical to an existing helper); families.py
+tail-extra variants (sop func_80109FE0, a0d func_80113628, a0e func_80114320, a0l func_8010B0B8); variants.py `--set`
+placeholders inside `--alts` blocks; sbs.py: relocation annotations on literal `lui` values; a frame-slot tool for
+inlined helpers' stack arrays (a06 func_80129C50); nearcopy `--near` default ratio.
+
 ## 2026-11-22 (10): paused after the round-5 tools pass (where to pick up)
 
 The user stopped the cycle before a sixth round. State at the pause: **3925 / 7011 functions in C (26.9 % of the

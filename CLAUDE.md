@@ -59,6 +59,10 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   set-ups in AGENTS.md ("Compilers"): gcc 2.8.1 `-mno-split-addresses` or gcc 2.7.2 with GNU as, `// EPILOGUE sony`,
   `// RETURN sony`, and `gcc-2.8.1-nocse` (Sony's library compiler had no post-reload CSE; made by
   tools/setup_native.sh from the stock cc1, one byte, sha1 checked).
+  The library compiler also hoists more loop invariants around loops with calls (a `loop_has_call` patch of cc1
+  reproduces it per file; AGENTS.md "Compilers" item 5).
+- What is left (2026-11-23): mostly actor state machines and dispatchers built from matched handlers (AGENTS.md
+  "Order of work" item 3), the big areas a00-a08 above all.
 - Library C is adapted from psx_tomba, psyz (/opt/psyz) and psy-q-decomp (/opt/psy-q-decomp), all MIT: say so in the
   file and in THIRD_PARTY_NOTICES.md.
 
