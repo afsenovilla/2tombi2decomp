@@ -3168,7 +3168,117 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8002C920);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002CD18);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002D65C);
+extern s32 D_800A2064;
+extern u8 D_800A172C[];
+typedef struct { u8 b[4]; } B4_D65C;
+extern B4_D65C D_800102B4;
+/* sprite depth projection without height bias, inlined */
+static inline s32 ProjZ2(void)
+{
+    s32 *flag = &D_1F800080;
+    s32 *otz = (s32 *)D_1F800084;
+    s32 *sxy = (s32 *)D_1F80008C;
+    s32 e;
+
+    gte_rtps();
+    gte_stflg(flag);
+    if (*flag < 0) {
+        return 1;
+    }
+    gte_stsz(flag);
+    if (*flag <= 0) {
+        return 1;
+    }
+    *flag = *flag >> 2;
+    if (*flag < 4) {
+        *flag = 4;
+    }
+    e = *flag >> 10;
+    *flag = (*flag >> e) + (e << 9);
+    if ((u32)(*flag - 4) >= 0x7FC) {
+        *flag = -1;
+    }
+    if (*flag < 0) {
+        return 1;
+    }
+    gte_stsxy(sxy);
+    gte_stopz(otz);
+    return 0;
+}
+
+void func_8002D65C(u8 *a0)
+{
+    u8 *a = a0;
+    s32 *o2 = &D_1F800088;
+    s32 *otz = &D_1F800084_8c7c;
+    s16 pos[4];
+    B4_D65C sc;
+    s16 rot[4];
+    s16 p2[4];
+    s32 d;
+    s32 r;
+    s32 ang;
+    s32 i;
+    s32 j;
+    s32 y;
+
+    r = 0;
+    ang = 0;
+    d = *(s32 *)(a + 0x34);
+    if (d == 0) {
+        return;
+    }
+    SetProj_7CB4(6);
+    *(s32 *)D_1F800090 = 0;
+    gte_ldfcdir(0, 0, 0);
+    for (i = 0; i < 8; i++) {
+        pos[0] = *(u16 *)(a + 0x2C) + ((rcos(ang) * 1200) >> 12);
+        pos[2] = *(u16 *)(a + 0x30) + ((rsin(ang) * 1200) >> 12);
+        y = *(u16 *)(a + 0x2E) + *(u16 *)(a + 0x4E);
+        pos[1] = y - 0xC00;
+        if (i >= 4) {
+            pos[1] = y - 0xA80;
+        }
+        for (j = 0; j < 8; j++) {
+            gte_ldv0(pos);
+            if (ProjZ2() == 0) {
+                u16 hi = *(u16 *)(a + 0x46);
+                s32 z = *otz;
+                s32 k = (hi << 16) | *(u16 *)(a + 0x44);
+
+                *o2 = z;
+                *otz -= *otz >> 2;
+                r = f_DrawProjectedSpriteDefinitionStream(d, k);
+            }
+            pos[1] += 0x300;
+        }
+        j = 3;
+        if (i == j) {
+            ang += 0x200;
+        }
+        ang += 0x400;
+    }
+    *(s32 *)(a + 0x38) = r;
+    {
+    s32 *z = (s32 *)D_1F800090;
+
+    sc = D_800102B4;
+    memset(rot, 0, 8);
+    p2[1] = *(u16 *)(a + 0x2E);
+    p2[0] = *(u16 *)(a + 0x2C);
+    p2[2] = *(u16 *)(a + 0x30);
+    SetRT_C138(p2, sc.b, rot);
+    *z = 0;
+    if (D_1F800236_18be == j) {
+        D_800A2064 -= 6;
+    } else {
+        D_800A2064 += 6;
+    }
+    D_800A2064 &= 0x3F;
+    gte_ldfcdir(0, 0, 0);
+    f_DrawPackedGouraudQuadStream(D_800A172C, 0, 0, (s16)D_800A2064);
+    }
+}
 
 void func_8002DBE4(u8 *a)
 {
