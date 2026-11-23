@@ -49,8 +49,10 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
 
 - The user asked not to be asked: take the decision, say what was decided and why, and go on. Agents run on the most capable model with
   high effort, five at a time.
-- Cycle: five hand-matching agents on disjoint scopes (main; library; a00-a03; a04-a08; a09-a0l + game/demo/opn/sop/
-  crd + boot game code) -> the coordinator integrates (clean full build 29 OK, nearcopy + dupsweep over all programs,
+- Cycle: five hand-matching agents on disjoint scopes. Since round 8 (2026-11-23, the user's choice): main; a00-a01;
+  a02-a03; a04-a08; a09-a0l + game/demo/opn/sop/crd + boot game code. The library has no fixed agent any more (it
+  yielded ~4 KB a round against 14-17 KB for an area agent; 4 % of the bytes left): it is worked in the tools passes
+  when a new compiler set-up or recipe unblocks it, or in an occasional round -> the coordinator integrates (clean full build 29 OK, nearcopy + dupsweep over all programs,
   STATUS / AGENTS.md / CLAUDE.md / README, push) -> one tools agent implements the round's tool ideas alone -> next
   round. The agents' rules and the coordinator's checklist are in AGENTS.md ("Parallel rounds").
 - Never push a round before the clean full build: agents' intermediate commits have broken the link more than once

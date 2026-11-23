@@ -111,8 +111,9 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
 
 ## Parallel rounds (coordinator and agents)
 
-- One coordinator, five hand-matching agents on disjoint scopes (main game code; the library; a00-a03; a04-a08;
-  a09-a0l + game/demo/opn/sop/crd + boot game code), then one tools agent alone (it implements the tool ideas of the
+- One coordinator, five hand-matching agents on disjoint scopes (since round 8: main game code; a00-a01; a02-a03;
+  a04-a08; a09-a0l + game/demo/opn/sop/crd + boot game code; the library only in tools passes or an occasional
+  round), then one tools agent alone (it implements the tool ideas of the
   round; nobody else edits tools/ meanwhile).
 - Agents: touch only the scope's files; never edit tools/, never run dupsweep, never `tools/build.py` without
   `--no-split`, never `rm -rf build asm`; `-j 1` (4 CPUs for 5 agents); commit every few functions with a pathspec
