@@ -16272,7 +16272,62 @@ u8 f_FormatIntegerText(s32 v, char *out)
     return n;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800796DC);
+extern u8 D_800BF9D4;
+extern u8 D_1F80027E_1248;
+extern s32 D_1F800248;
+extern u8 D_1F800246;
+extern s32 D_1F80024C;
+extern u8 D_1F800250;
+extern u8 D_1F800259;
+extern u8 D_1F80025A;
+extern u8 D_1F80025B;
+extern s32 D_1F800214_f5da;
+extern s32 D_1F800280;
+extern u8 D_1F800233_33a2;
+extern u8 D_1F80023B_0a71;
+void f_SetDoubleBufferedClearColor(u8 r, u8 g, u8 b);
+
+void func_800796DC(void)
+{
+    u8 c;
+    s32 v;
+
+    memset(D_800BF808, 0, 0x68);
+    D_800BF808[0x29] = 0xFF;
+    D_800BF808[0x28] = 0xFF;
+    D_1F80027E_1248 = 0;
+    D_1F800248 = 0;
+    D_1F800246 = 0;
+    D_1F80024C = 0;
+    D_1F800250 = 0;
+    D_1F800259 = 0;
+    D_1F80025A = 0;
+    D_1F80025B = 0;
+    D_1F80027A = 0;
+    D_1F800230_d8aa = 0;
+    D_800BF808[7] = 1;
+    D_1F800136 = 0;
+    D_1F800137_104c = 0;
+    D_1F800184 = 0;
+    D_1F800214_f5da = 0;
+    D_1F800208 = 0;
+    D_1F800280 = 0;
+    D_1F800231 = 0;
+    D_1F800251 = 0;
+    D_1F800232 = 0;
+    D_1F800253 = 0;
+    D_1F800233_33a2 = 0;
+    D_1F80023B_0a71 = 0;
+    f_UnlockWarpDestinationAndAreaDoor(D_800BF870.unk0, D_800BF870.pad1[0]);
+    func_800508A8();
+    c = D_1F800236_18be;
+    v = 0;
+    if (c != 0 && (u32)(c - 7) >= 2) {
+        v = 0xFF;
+    }
+    ((void (*)(s32, s32, s32))f_SetDoubleBufferedClearColor)(v, v, v);
+    D_800BF9D4 = 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_NewGameSetDefaultValues);
 
@@ -17121,7 +17176,6 @@ void func_8007BE18(u8 a)
     }
 }
 
-extern u8 D_1F80023B_0a71;
 void func_8007BE18(u8 a);
 s32 f_ControlStreamedAudioTrack(s32 track);
 void func_80045558(s32 arg0, s32 arg1, s32 arg2, void *arg3);
