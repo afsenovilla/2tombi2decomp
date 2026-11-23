@@ -2957,7 +2957,47 @@ void func_801174AC(void) {
     func_80075448(0xA, &D_80125474, 0x10, D_800BED82);
 }
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", f_UpdateWaterProjectileTerrainContact);
+u8 f_UpdateWaterProjectileTerrainContact(u8 *a)
+{
+    s16 *p = (s16 *)(a + 0x60);
+    s32 d;
+    s32 v;
+
+    if (a[0x29] == 0) {
+        a[0x29] = func_80049250(a, 0, (s16)(*(u16 *)(a + 0x86) - *(u16 *)(a + 0x84)));
+        if (a[0x29] != 0) {
+            u16 x, y;
+            func_80049674(a);
+            x = D_1F8001A0;
+            y = D_1F8001A2;
+            *(s16 *)(a + 0x60) = x;
+            p[1] = y;
+        }
+        if (a[0x29] == 2) {
+            p[2] = 0;
+            return 1;
+        }
+        if (a[0x29] == 0) {
+            *(s16 *)(a + 0x4A) += 0x30;
+            if (*(s16 *)(a + 0x4A) >= 0x301) {
+                *(s16 *)(a + 0x4A) = 0x300;
+            }
+            goto end;
+        }
+    }
+    d = (func_80083E80(p[1]) * 4) >> 12;
+    v = *(s16 *)(a + 0x44);
+    if (v > 0) {
+        d = -d;
+    }
+    v += d;
+    if (abs(v) > 0x80 && abs(v) < 0x400) {
+        *(s16 *)(a + 0x44) = v;
+    }
+    *(s16 *)(a + 0x4A) = 0x100;
+end:
+    return a[0x29];
+}
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80117600);
 

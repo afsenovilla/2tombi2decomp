@@ -857,7 +857,87 @@ s32 func_8010CD20(u8 *a)
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8010CE24);
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", f_InitializeLastEvilPigCopiedWeaponProjectile);
+extern void *D_800ECF80;
+extern u8 D_80129EC0[];
+extern u8 D_8011A9EC[];
+
+void f_InitializeLastEvilPigCopiedWeaponProjectile(u8 *a)
+{
+    s16 *p = (s16 *)(a + 0x60);
+    s16 v;
+
+    switch (a[3]) {
+    case 0:
+        a[0xB] = 0x10;
+        a[0xD] = 0;
+        *(s16 *)(a + 0x5C) = 0;
+        *(void **)(a + 0x3C) = D_800ECF80;
+        func_80077B38(a, D_80129EC0, 0);
+        *(s16 *)(a + 0x80) = 0x46;
+        *(s16 *)(a + 0x82) = 0x8C;
+        *(s16 *)(a + 0x84) = 0x46;
+        *(s16 *)(a + 0x86) = 0x8C;
+        break;
+    case 1:
+        func_80051B70(a, 1, D_8011A9EC[a[3]]);
+        a[0xB] = 0;
+        *(s16 *)(a + 0x80) = 0x46;
+        *(s16 *)(a + 0x82) = 0x8C;
+        *(s16 *)(a + 0x84) = 0x46;
+        *(s16 *)(a + 0x86) = 0x8C;
+        break;
+    case 2:
+        func_80051B70(a, 1, D_8011A9EC[a[3]]);
+        a[0xB] = 0;
+        *(s16 *)(a + 0x80) = 0x46;
+        *(s16 *)(a + 0x82) = 0x8C;
+        *(s16 *)(a + 0x84) = 0x46;
+        *(s16 *)(a + 0x86) = 0x8C;
+        break;
+    case 3:
+        func_80051B70(a, 1, D_8011A9EC[a[3]]);
+        a[0xB] = 0;
+        *(s16 *)(a + 0x80) = 0x46;
+        *(s16 *)(a + 0x82) = 0x8C;
+        *(s16 *)(a + 0x84) = 0x46;
+        *(s16 *)(a + 0x86) = 0x8C;
+        break;
+    case 4:
+        func_80051B70(a, 1, D_8011A9EC[a[3]]);
+        a[0xB] = 0;
+        *(s16 *)(a + 0x80) = 0x46;
+        *(s16 *)(a + 0x82) = 0x8C;
+        *(s16 *)(a + 0x84) = 0x46;
+        *(s16 *)(a + 0x86) = 0x8C;
+        break;
+    case 5:
+        func_80051B70(a, 1, D_8011A9EC[a[3]]);
+        a[0xB] = 0;
+        *(s16 *)(a + 0x80) = 0x46;
+        *(s16 *)(a + 0x82) = 0x8C;
+        *(s16 *)(a + 0x84) = 0x46;
+        *(s16 *)(a + 0x86) = 0x8C;
+        break;
+    }
+    p[9] = 0;
+    a[0x29] = 0;
+    *(s16 *)(a + 0x54) = 0;
+    *(s16 *)(a + 0x58) = 0;
+    if (a[3] == 5) {
+        *(s16 *)(a + 0xB8) = 0x1C00;
+        *(s16 *)(a + 0xBA) = 0x1C00;
+        *(s16 *)(a + 0xBC) = 0x1C00;
+    } else {
+        *(s16 *)(a + 0xB8) = 0x1800;
+        *(s16 *)(a + 0xBA) = 0x1800;
+        *(s16 *)(a + 0xBC) = 0x1800;
+    }
+    a[0x2B] = 0;
+    *(s16 *)(a + 0x44) = 0;
+    a[0x5E] = 0;
+    func_8004766C(a);
+    func_80049760(a);
+}
 
 extern s16 D_1F800266;
 /* func_8010DC78, inlined */
