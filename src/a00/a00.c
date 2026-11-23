@@ -5730,7 +5730,54 @@ void f_UpdateAquaticPlantCollisionBounds(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateSingleSegmentSwingMotion);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleSingleSegmentSwingActor);
+extern s16 D_8014A6E4[];
+
+void f_HandleSingleSegmentSwingActor(u8 *a)
+{
+    s16 v;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 0x14) != 0) {
+            break;
+        }
+        a[0x2A] = 0x22;
+        M2C_FIELD(a, s16 *, 0x80) = 0x1E;
+        M2C_FIELD(a, s16 *, 0x82) = 0x3C;
+        M2C_FIELD(a, s16 *, 0x84) = 0x32;
+        a[4] = 1;
+        a[0] = 1;
+        a[0x29] = 0;
+        a[0x46] = 0;
+        M2C_FIELD(a, s16 *, 0x86) = 0x64;
+        func_8004766C(a);
+        M2C_FIELD(a, s16 *, 0x42) = 0;
+        v = D_8014A6E4[a[3]];
+        M2C_FIELD(a, s16 *, 0x60) = -0xC8;
+        M2C_FIELD(a, s16 *, 0x32) = v;
+        break;
+    case 1:
+        f_UpdateSingleSegmentSwingMotion(a);
+        if (D_800E7EAA < 0x1C) {
+            M2C_FIELD(a, s16 *, 0x62) = 1;
+            break;
+        }
+        if (D_800E7EAA == 0x22) {
+            a[1] = 1;
+            func_80077EBC(a);
+        } else if (func_800778E4(a, M2C_FIELD(a, s16 *, 0x60)) == 0) {
+            M2C_FIELD(a, s16 *, 0x62) = 1;
+            break;
+        }
+        func_8004766C(a);
+        func_800517F8(a);
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80133D6C);
 
