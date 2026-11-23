@@ -1519,7 +1519,42 @@ void func_80111B68(u8 *a)
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80111D3C);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8011212C);
+#define gte_ldv0m(p) __asm__ volatile("lwc2	$0, %0;" "lwc2	$1, %1" : : "m"(((s32 *)(p))[0]), "m"(((s32 *)(p))[1]))
+extern s32 D_1F800084[];
+extern s32 D_1F800088;
+extern T2Bytes4 D_801091CC;
+extern void *D_8011C194;
+extern u8 D_8011D724[];
+
+void func_8011212C(u8 *a)
+{
+    T2Bytes4 c;
+    u8 *e = a + 0x50;
+    s32 *p = D_1F800084;
+    s32 *d;
+    u8 *m;
+    u8 *m_f;
+
+    d = D_1F800090;
+    m = *(u8 **)(a + 0x34);
+    if (m == NULL) {
+        return;
+    }
+    func_800329E0(6);
+    gte_ldv0m(a + 0x2C);
+    if (func_800317CC(*(s16 *)(a + 0x32)) != 0) {
+        func_80031780(a);
+        return;
+    }
+    D_1F800088 = *p = *p >> 1;
+    *d = -(func_8009A450() & 0x1FF);
+    *(s32 *)(a + 0x38) = func_80027A4C(m, D_8011C194);
+    c = D_801091CC;
+    m_f = D_8011D724;
+    *d = func_8009A450() & 0x3FF;
+    func_800318A0(a + 0x2C, &c, a + 0x48);
+    func_80027768(m_f, 0, *(s16 *)(a + 0x32), *(s16 *)(e + 0xC));
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80112244);
 
@@ -1594,8 +1629,6 @@ void func_80112764(u8 *a)
 
 #define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
 #define gte_ldv0m(p) __asm__ volatile("lwc2	$0, %0;" "lwc2	$1, %1" : : "m"(((s32 *)(p))[0]), "m"(((s32 *)(p))[1]))
-extern s32 D_1F800084[];
-extern s32 D_1F800088;
 extern u8 D_8011E9FC[];
 extern u8 D_8011E9B4[];
 extern u8 D_8011EB2C[];

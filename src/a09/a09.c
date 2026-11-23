@@ -696,7 +696,35 @@ s32 func_8010BC9C(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", f_StartOrWaitForIndexedEvilPigPlateEvent);
+extern s16 D_8010E398[];
+
+s32 f_StartOrWaitForIndexedEvilPigPlateEvent(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        if (D_800BF870.pad1[D_8010E398[a[3]] + 0x43] != 0) {
+            return 1;
+        }
+        a[6] = 1;
+        return 0;
+    case 1:
+        if (a[0x2B] == 3) {
+            a[6] = 2;
+            func_80040B48(D_8010E398[a[3]]);
+            return 0;
+        }
+        if (D_800BF870.pad1[D_8010E398[a[3]] + 0x43] != 0) {
+            return 1;
+        }
+        break;
+    case 2:
+        if (func_80042728() != 0) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", f_UpdateRemainingEvilPigStatueArrivalSequence);
 
