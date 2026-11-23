@@ -1,6 +1,7 @@
 // CC gcc-2.8.1-nocse
 // FLAGS -O2 -G0 -mno-split-addresses
 // AS gnu
+// Source: psyz (github.com/Xeeynamo/psyz, MIT) decomp/src/libspu/s_srmp.c, function SpuSetReverbModeParam (the attr parameter copied into a local; the first _spu_rev_startaddr read as a byte offset).
 #include "common.h"
 typedef unsigned int size_t;
 typedef struct {

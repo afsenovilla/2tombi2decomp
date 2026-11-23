@@ -1,6 +1,7 @@
 // CC gcc-2.7.2-psx
 // FLAGS -O2 -G0
 // AS gnu
+// Source: psyz (github.com/Xeeynamo/psyz, MIT) decomp/src/libsnd/sscall.c, function SsSeqCalledTbyT (loops as guarded do/while: gcc 2.7.2 gives a for loop with a variable bound an unused 8-byte frame slot).
 #include "common.h"
 struct SeqStruct {
                u8* seq_ptr;

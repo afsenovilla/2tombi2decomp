@@ -1,6 +1,7 @@
 // CC gcc-2.7.2-psx
 // FLAGS -O2 -G0
 // AS gnu
+// Source: psyz (github.com/Xeeynamo/psyz, MIT) decomp/src/libspu/spu.c, function _spu_FwriteByIO (gcc 2.7.2: loops as guarded do/while, the inner guard `n > 0`).
 #include "common.h"
 typedef unsigned long u_long;
 typedef struct {
