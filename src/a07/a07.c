@@ -2631,7 +2631,118 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011F6A4);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011F7F4);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011FA0C);
+/* tools/dispatch.py draft of func_8011FA0C (a07, 0x244 bytes): 2 inlined bodies
+ * register maps (body -> here): 
+ *   func_80120004_inl (a07:func_80120004, cover 1.00, regs 0.98): a0->s0, a1->a0
+ *   func_8012009C_inl (a07:func_8012009C, cover 1.00, regs 1.00): same registers
+ * notes:
+ *   func_80120004_inl: the copy at 8011FA38 branches out to .L8011FC38 .L8011FB30: a value-returning helper used in a condition (beqz on its result stands in for each exit; check which result goes where)
+ *   func_80120004_inl: code inside the copy is also reached from outside (.L8011FA44 8011FA44, .L8011FA5C 8011FA5C: a tail gcc cross-jumped, or a case entering it): that path is missing from the draft; write it out in full (gcc merges the identical tails again), from tools/decomp.py's draft
+ *   func_80120004_inl: replaces 8011FA3C-8011FAF4
+ *   func_8012009C_inl: the copy at 8011FB98 branches out to .L8011FC18 .L8011FC0C: a value-returning helper used in a condition (beqz on its result stands in for each exit; check which result goes where)
+ *   func_8012009C_inl: replaces 8011FB98-8011FBF8
+ * next: fix the draft's types and the helper calls' arguments, then
+ *   python3 -I tools/ccheck.py THIS.c --prog a07 --func func_8011FA0C --sbs
+ *   python3 -I tools/install_c.py THIS.c --prog a07 */
+
+extern s32 D_800ECF90;
+extern void *D_80133B20[];
+extern u8 D_800BF9D9;
+/* func_80120004, inlined */
+static inline void func_80120004_inl(u8 *a)
+{
+    s32 k = 0x80;
+    s32 t = D_800ECF90;
+
+    *(s16 *)(a + 0x58) = 0;
+    *(s16 *)(a + 0x54) = 0;
+    a[0xB] = k;
+    a[0] = 9;
+    *(s32 *)(a + 0x3C) = t;
+    if (!(D_800BFE56 & k)) {
+        *(s16 *)(a + 0x80) = 0xC0;
+        *(s16 *)(a + 0x82) = 0x180;
+        *(s16 *)(a + 0x84) = 0xE0;
+        *(s16 *)(a + 0x86) = 0x16C;
+    } else {
+        *(s16 *)(a + 0x82) = 0x100;
+        *(s16 *)(a + 0x84) = 0xA0;
+        *(s16 *)(a + 0x80) = k;
+        *(s16 *)(a + 0x86) = 0x145;
+        if (a[3] & 0x40) {
+            *(s16 *)(a + 0x86) = 0x140;
+        }
+    }
+    a[0x2B] = 0;
+    a[0x29] = 0;
+    a[0x5E] = 0;
+}
+/* func_8012009C, inlined */
+static inline void func_8012009C_inl(void *arg0) {
+    u8 temp_v1;
+
+    temp_v1 = M2C_FIELD(arg0, u8 *, 0x5E);
+    switch (temp_v1) {                               
+    case 0:
+        if ((M2C_FIELD(arg0, u8 *, 1) != 0) && (func_8011EF34(arg0) != 0)) {
+            M2C_FIELD(arg0, u8 *, 0x5E) = 1U;
+            return;
+        }
+        return;
+    case 1:
+        if (M2C_FIELD(arg0, u8 *, 1) == 0) {
+            func_8007ADDC(arg0);
+            M2C_FIELD(arg0, u8 *, 0x5E) = 0U;
+        }
+        break;
+    }
+}
+
+void func_8011FA0C(u8 *a)
+{
+    void *f;
+
+    switch (a[4]) {
+    case 0:
+        func_80120004_inl(a);
+        if (!(a[3] & 0x80)) {
+            func_8011EF34(a);
+            f = D_80133B20[a[3] & 0x1F];
+            *(void **)(a + 0x1C) = f;
+            if (f == NULL) {
+                func_8007A624(a);
+                break;
+            }
+            *(s16 *)(a + 0x56) = 0;
+        } else {
+            func_80040CDC(a, D_8014005C_9175, *(s32 *)(*(u8 **)(a + 0x14) + 0xC));
+            func_80041718(a, a[0x7B], 0);
+            a[4]++;
+        }
+        break;
+    case 1:
+        if (!(a[0x5F] & 0xF)) {
+            func_8011F6A4(a);
+        } else {
+            func_8011F7F4(a);
+        }
+        func_8012009C_inl(a);
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        if (D_800BF9D9 == 2) {
+            a[4] = 3;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011FC50);
 
