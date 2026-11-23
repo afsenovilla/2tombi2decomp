@@ -38,14 +38,77 @@ s32 func_801092D8(void) {
     return *(s32 *)0x1F800080;
 }
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_801092E8);
-
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 typedef struct {
     s16 pad;
     s16 x, y, z;
 } PartPos;
 extern u8 D_800BFA58_9b2e;
 extern PartPos D_801178E0[];
+extern u8 D_1F800137;
+/* func_801094B8, inlined */
+static inline void inl_801094B8(u8 *a)
+{
+    s32 k = 0x27;
+    s32 i;
+
+    if (D_800BFA58_9b2e == 0) {
+        k = 0x26;
+    }
+    for (i = 0; i < a[9]; i++) {
+        func_80051B04(((u8 **)(a + 0xC0))[i], k, i);
+        *(s16 *)(((u8 **)(a + 0xC0))[i] + 0) = D_801178E0[i].x;
+        *(s16 *)(((u8 **)(a + 0xC0))[i] + 2) = D_801178E0[i].y;
+        *(s16 *)(((u8 **)(a + 0xC0))[i] + 4) = D_801178E0[i].z;
+    }
+}
+
+void func_801092E8(u8 *a)
+{
+    GameState *g = &D_800BF870;
+
+    g->pad1[0x5E4] = 0;
+    func_80055284();
+    switch (g->pad1[0]) {
+    case 0:
+        a[1] = 0;
+        break;
+    case 1:
+        a[1] = 1;
+        func_80042354(1, 6);
+        break;
+    case 2:
+        a[1] = 1;
+        func_8003315C(a);
+        break;
+    case 3:
+        a[1] = 1;
+        H(a, 0x56) = 0x800;
+        func_8003315C(a);
+        func_80042354(1, 6);
+        break;
+    case 4:
+        a[1] = 1;
+        func_8003315C(a);
+        inl_801094B8(a);
+        break;
+    case 5:
+        a[1] = 1;
+        H(a, 0x56) = 0x800;
+        func_8003315C(a);
+        break;
+    }
+    H(a, 0x142) = 0;
+    H(a, 0x58) = 0;
+    func_80054198(a);
+    func_80054D14(a, 2, 0);
+    D_1F800137 = 1;
+    a[4] = 4;
+    a[5] = 0x21;
+    a[6] = 0;
+    a[7] = 0;
+}
+
 void func_801094B8(u8 *a)
 {
     s32 k = 0x27;
