@@ -2904,19 +2904,14 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80029F6C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002A584);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002A834);
-
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002AB5C);
-
 extern s32 D_1F800000[];
 extern s16 D_1F800002[];
 extern s16 D_1F800004[];
 extern s32 D_1F800014[];
 extern s32 D_1F8000D0_42d8[];
-extern u8 D_800A203C[];
-extern u8 D_8009FAE8[];
-extern u8 D_800A1CCC[];
-extern s8 D_1F800094[];
+extern u8 D_800A1CD4[];
+extern u8 D_800A1FC4[];
+extern u8 D_8009FB0C[];
 /* f_SetEffectRenderTransform, inlined */
 static inline void SetRT_C138(void *pos, u8 *scale, s16 *rot)
 {
@@ -2946,6 +2941,40 @@ static inline void SetRT_C138(void *pos, u8 *scale, s16 *rot)
     gte_SetRotMatrix(D_1F800000);
     gte_SetTransMatrix(D_1F800000);
 }
+
+void func_8002A834(u8 *a0)
+{
+    u8 *a = a0;
+    s32 *z = (s32 *)D_1F800090;
+    u8 *pp = a + 0x50;
+    s16 rot[4];
+    u8 sc[4];
+    u8 *c;
+    u8 *p;
+    s32 i;
+
+    c = &D_800A1FC4[(*(u8 **)(a + 0x10))[2] * 4];
+    gte_ldfcdir(c[0] << 4, c[1] << 4, c[2] << 4);
+    rot[0] = *(u16 *)(a + 0x48);
+    rot[1] = *(u16 *)(a + 0x4A);
+    rot[2] = *(u16 *)(a + 0x4C);
+    *z = 0xFFF;
+    for (i = 0; i < 10; i++) {
+        sc[0] = sc[1] = sc[2] = pp[i * 4 + 3];
+        rot[0] = pp[i * 4 + 0] << 4;
+        rot[1] = pp[i * 4 + 1] << 4;
+        rot[2] = pp[i * 4 + 2] << 4;
+        SetRT_C138(a + 0x2C, sc, rot);
+        f_DrawPackedGouraudQuadStream(D_8009FB0C, 0, *(s16 *)(a + 0x32), 0);
+    }
+}
+
+INCLUDE_ASM("asm/main/nonmatchings/main", func_8002AB5C);
+
+extern u8 D_800A203C[];
+extern u8 D_8009FAE8[];
+extern u8 D_800A1CCC[];
+extern s8 D_1F800094[];
 void func_8002AE0C(u8 *a, s32 s, s32 mode)
 {
     s32 *z = (s32 *)D_1F800090;
@@ -2990,7 +3019,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B8F4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002BAFC);
 
-extern u8 D_800A1CD4[];
 #define gte_ldv0_58(r0) __asm__ volatile("lwc2 $0, 0x58(%0); lwc2 $1, 0x5C(%0)" : : "r"(r0))
 
 void func_8002BC9C(u8 *a)
