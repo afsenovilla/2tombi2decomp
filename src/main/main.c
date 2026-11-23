@@ -4734,7 +4734,7 @@ extern u8 D_800BF88C;
 extern u8 D_800E7EEC;
 extern u16 D_1F800172_5cdb;
 extern u8 **D_800A54A8[];
-void func_80071B44(s32, s32, s32);
+void func_80071B44(u8 *src, s32 n, s32 kind);
 s32 func_80036DC4(s32 i)
 {
     if (D_800BF873 != 0) {
@@ -14573,7 +14573,40 @@ void func_80071A3C(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80071B44);
+u8 f_FormatIntegerText(s32 v, char *out);
+void func_80072520(u8 *a);
+
+void func_80071B44(u8 *src, s32 n, s32 kind)
+{
+    u8 *a = f_AllocateActor(src, 0x80, 3, 0xD);
+    u8 *old;
+
+    if (a == NULL) {
+        return;
+    }
+    *(void **)(a + 0x1C) = func_80072520;
+    a[3] = kind;
+    if ((kind & 0xFF) == 1) {
+        u8 *g = (u8 *)&D_800BF870;
+
+        *(s32 *)(g + 4) += n;
+        *(u16 *)(a + 0x54) = *(u16 *)(src + 0x2E);
+        *(u16 *)(a + 0x56) = *(u16 *)(src + 0x32);
+        *(u16 *)(a + 0x58) = *(u16 *)(src + 0x36);
+    }
+    *(s16 *)(a + 0xE) = ((s16 (*)(s32, u8 *))f_FormatIntegerText)(n, a + 0x44);
+    *(s16 *)(a + 0x5C) = (n >= 5000) ? 0x7C3E : 0x7C7E;
+    f_PlaySoundEffect(0x11, 0xF, 0);
+    {
+        u8 *s = D_800BF808;
+
+        old = *(u8 **)(s + 0x34);
+        if (old != NULL) {
+            old[4] = 3;
+        }
+        *(u8 **)(s + 0x34) = a;
+    }
+}
 
 void func_80071C48(void *arg0, s16 arg1, s16 arg2) {
     u16 temp_v0;
@@ -14597,7 +14630,34 @@ void func_80071C48(void *arg0, s16 arg1, s16 arg2) {
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80071CF4);
+typedef struct { u8 pad[0x60]; u16 v[16]; } Arr_1CF4;
+typedef struct { u8 pad[0x60]; s16 s[16]; } ArrS_1CF4;
+
+void func_80071CF4(u8 *a, s32 x, s16 y, s32 i)
+{
+    s32 x0 = x;
+    s16 y0 = y;
+    s16 *st = (s16 *)(a + (i + 7) * 2);
+    u16 v;
+
+    switch (st[0x30]) {
+    case 0:
+        if (*(s16 *)(a + 0x42) >= i) {
+            v = (((Arr_1CF4 *)a)->v[i] + 0x100) & 0xFFF;
+            ((Arr_1CF4 *)a)->v[i] = v;
+            if (v == 0) {
+                st[0x30]++;
+            }
+        }
+        *(s16 *)(a + 0x2E) = x0 + *(s16 *)(a + 0x82) * i;
+        *(s32 *)(a + 0x30) = (y0 << 16) + ((rsin(((ArrS_1CF4 *)a)->s[i]) * *(s16 *)(a + 0x82)) << 4);
+        break;
+    case 1:
+        *(s16 *)(a + 0x32) = y;
+        *(s16 *)(a + 0x2E) = x + *(s16 *)(a + 0x82) * i;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80071DFC);
 
