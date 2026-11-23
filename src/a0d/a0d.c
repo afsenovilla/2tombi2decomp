@@ -2751,4 +2751,31 @@ u8 *func_80117378(s32 a)
     return p;
 }
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_801173CC);
+typedef struct { u16 a, b, c, d; } Box4;
+extern Box4 D_80125840[];
+extern u16 D_1F800162;
+
+void func_801173CC(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        *(u16 *)(a + 0x80) = D_80125840[a[3]].a;
+        *(u16 *)(a + 0x82) = D_80125840[a[3]].b;
+        *(u16 *)(a + 0x84) = D_80125840[a[3]].c;
+        *(u16 *)(a + 0x86) = D_80125840[a[3]].d;
+        a[8] = 0;
+        a[9] = 0;
+        a[0] = 1;
+        a[0xB] = 0;
+        a[0x2B] = 0;
+        a[4]++;
+        break;
+    case 1:
+        func_800778E4(a, (s16)(D_1F800162 - *(u16 *)(a + 0x32)));
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}

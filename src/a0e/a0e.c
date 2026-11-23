@@ -3042,4 +3042,32 @@ u8 func_80117C78(void *arg0) {
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80117D1C);
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", f_SpawnWaterEvilPigSprayActor);
+extern SVec D_1F8000C8;
+void func_80117D1C(void);
+
+u8 *f_SpawnWaterEvilPigSprayActor(u8 *a, s32 k)
+{
+    u8 *p = func_8007A980(1, 2, 0);
+    SVec *v;
+    SVec *w;
+
+    if (p == NULL) {
+        return NULL;
+    }
+    v = &D_1F8000C0;
+    *(void **)(p + 0x1C) = func_80117D1C;
+    w = &D_1F8000C8;
+    p[2] = 0xD2;
+    p[3] = 0;
+    D_1F8000C0.x = 0;
+    v->y = 0;
+    v->z = 0;
+    func_800844C0(*(u8 **)(a + 0xC4) + 0x18, v, w);
+    *(u16 *)(p + 0x2E) = *(u16 *)(*(u8 **)(a + 0xC4) + 0x2C) + D_1F8000C8.x;
+    *(u16 *)(p + 0x32) = *(u16 *)(*(u8 **)(a + 0xC4) + 0x30) + w->y;
+    *(u16 *)(p + 0x36) = *(u16 *)(*(u8 **)(a + 0xC4) + 0x34) + w->z;
+    p[0x2A] = a[0x2A];
+    p[0xBE] = k;
+    func_80074590(0x8C, 0, 0);
+    return p;
+}

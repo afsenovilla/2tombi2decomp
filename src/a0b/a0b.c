@@ -3116,7 +3116,35 @@ void func_801179BC(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", f_SpawnLastEvilPigBattleProjectile);
+extern SVec D_1F8000C8;
+void func_801179BC(u8 *a);
+
+u8 *f_SpawnLastEvilPigBattleProjectile(u8 *a)
+{
+    u8 *p = func_8007A980(1, 2, 0);
+    SVec *v;
+    SVec *w;
+
+    if (p == NULL) {
+        return NULL;
+    }
+    v = &D_1F8000C0;
+    *(void **)(p + 0x1C) = func_801179BC;
+    p[2] = 0x55;
+    w = &D_1F8000C8;
+    p[3] = 0;
+    D_1F8000C0.x = 0x12C;
+    v->y = 0;
+    v->z = 0;
+    func_800844C0(*(u8 **)(a + 0xC4) + 0x18, v, w);
+    *(u16 *)(p + 0x2E) = *(u16 *)(*(u8 **)(a + 0xC4) + 0x2C) + D_1F8000C8.x;
+    *(u16 *)(p + 0x32) = *(u16 *)(*(u8 **)(a + 0xC4) + 0x30) + w->y;
+    *(u16 *)(p + 0x36) = *(u16 *)(*(u8 **)(a + 0xC4) + 0x34) + w->z;
+    p[0x2A] = a[0x2A];
+    p[0xBE] = a[0xBE];
+    D_1F80025A++;
+    return p;
+}
 
 #define gte_ldv0m(p) __asm__ volatile("lwc2	$0, %0;" "lwc2	$1, %1" : : "m"(((s32 *)(p))[0]), "m"(((s32 *)(p))[1]))
 extern s32 D_1F800090;

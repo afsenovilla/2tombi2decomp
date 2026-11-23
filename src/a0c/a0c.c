@@ -3056,13 +3056,71 @@ void func_801181CC(void *arg0) {
     M2C_FIELD(arg0, s32 *, 0x34) = (s32) (M2C_FIELD(arg0, s32 *, 0x34) + temp_lo);
 }
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", f_SpawnGhostEvilPigRicochetProjectile);
+extern SVec D_1F8000C8;
+void f_UpdateGhostEvilPigRicochetProjectile(u8 *a);
+
+u8 *f_SpawnGhostEvilPigRicochetProjectile(u8 *a, s32 k)
+{
+    u8 *p = func_8007A980(1, 2, 0);
+    SVec *v;
+    SVec *w;
+
+    if (p == NULL) {
+        return NULL;
+    }
+    v = &D_1F8000C0;
+    *(void **)(p + 0x1C) = f_UpdateGhostEvilPigRicochetProjectile;
+    p[2] = 0x58;
+    w = &D_1F8000C8;
+    p[3] = k;
+    D_1F8000C0.x = 0x32;
+    v->y = 0;
+    v->z = 0;
+    func_800844C0(*(u8 **)(a + 0x100) + 0x18, v, w);
+    *(u16 *)(p + 0x2E) = *(u16 *)(*(u8 **)(a + 0x100) + 0x2C) + D_1F8000C8.x;
+    *(u16 *)(p + 0x32) = *(u16 *)(*(u8 **)(a + 0x100) + 0x30) + w->y;
+    *(u16 *)(p + 0x36) = *(u16 *)(*(u8 **)(a + 0x100) + 0x34) + w->z;
+    p[0x2A] = a[0x2A];
+    p[0xBE] = a[0xBE];
+    return p;
+}
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8011836C);
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", f_UpdateGhostEvilPigGraspActor);
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", f_SpawnGhostEvilPigGraspActor);
+extern u8 D_1F80025B;
+void f_UpdateGhostEvilPigGraspActor(u8 *a);
+
+u8 *f_SpawnGhostEvilPigGraspActor(u8 *a)
+{
+    u8 *p = func_8007A980(1, 2, 0);
+    SVec *v;
+    SVec *w;
+
+    if (p == NULL) {
+        return NULL;
+    }
+    v = &D_1F8000C0;
+    w = &D_1F8000C8;
+    *(void **)(p + 0x1C) = f_UpdateGhostEvilPigGraspActor;
+    p[2] = 0xD1;
+    p[3] = 0;
+    D_1F8000C0.x = 0xC8;
+    v->y = 0;
+    v->z = 0;
+    {
+        u8 *m = *(u8 **)(a + 0xC4);
+        D_1F80025B++;
+        func_800844C0(m + 0x18, v, w);
+    }
+    *(u16 *)(p + 0x2E) = *(u16 *)(*(u8 **)(a + 0xC4) + 0x2C) + D_1F8000C8.x;
+    *(u16 *)(p + 0x32) = *(u16 *)(*(u8 **)(a + 0xC4) + 0x30) + w->y;
+    *(u16 *)(p + 0x36) = *(u16 *)(*(u8 **)(a + 0xC4) + 0x34) + w->z;
+    p[0x2A] = a[0x2A];
+    p[0xBE] = a[0xBE];
+    return p;
+}
 
 void func_80118B54(u8 *a)
 {
