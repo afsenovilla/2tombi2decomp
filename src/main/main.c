@@ -15384,7 +15384,71 @@ void func_80070018(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800702C0);
+void func_800702C0(u8 *a)
+{
+    u8 *o;
+    u8 *q;
+    u16 r;
+    u16 ang;
+
+    r = *(u16 *)(a + 0x62);
+    o = MEMBER_AT(u8 *, a, 0x10);
+    ang = *(u16 *)(o + 0x56);
+    switch (a[0x5E]) {
+    case 0:
+        *(u16 *)(a + 0x2E) = (*(s32 *)(MEMBER_AT(u8 *, D_800E7E80, 0xD0) + 0x2C) + *(s32 *)(MEMBER_AT(u8 *, D_800E7E80, 0xDC) + 0x2C)) / 2;
+        *(u16 *)(a + 0x32) = (*(s32 *)(MEMBER_AT(u8 *, D_800E7E80, 0xD0) + 0x30) + *(s32 *)(MEMBER_AT(u8 *, D_800E7E80, 0xDC) + 0x30)) / 2;
+        *(u16 *)(a + 0x36) = (*(s32 *)(MEMBER_AT(u8 *, D_800E7E80, 0xD0) + 0x34) + *(s32 *)(MEMBER_AT(u8 *, D_800E7E80, 0xDC) + 0x34)) / 2;
+        *(u16 *)(a + 0x32) += *(u16 *)(a + 0x60);
+        ang = *(u16 *)(D_800E7E80 + 0x56);
+        r = 0x20;
+        break;
+    case 1:
+        *(u16 *)(a + 0x2E) = *(u16 *)(MEMBER_AT(u8 *, o, 0xDC) + 0x2C);
+        *(u16 *)(a + 0x32) = *(u16 *)(MEMBER_AT(u8 *, o, 0xDC) + 0x30);
+        *(u16 *)(a + 0x36) = *(u16 *)(MEMBER_AT(u8 *, o, 0xDC) + 0x34);
+        *(u16 *)(a + 0x32) += *(u16 *)(a + 0x60);
+        break;
+    case 2:
+        *(u16 *)(a + 0x2E) = (*(s32 *)(MEMBER_AT(u8 *, o, 0xD0) + 0x2C) + *(s32 *)(MEMBER_AT(u8 *, o, 0xDC) + 0x2C)) / 2;
+        *(u16 *)(a + 0x32) = (*(s32 *)(MEMBER_AT(u8 *, o, 0xD0) + 0x30) + *(s32 *)(MEMBER_AT(u8 *, o, 0xDC) + 0x30)) / 2;
+        *(u16 *)(a + 0x36) = (*(s32 *)(MEMBER_AT(u8 *, o, 0xD0) + 0x34) + *(s32 *)(MEMBER_AT(u8 *, o, 0xDC) + 0x34)) / 2;
+        *(u16 *)(a + 0x32) += *(u16 *)(a + 0x60);
+        break;
+    case 3:
+        *(u16 *)(a + 0x2E) = *(u16 *)(MEMBER_AT(u8 *, o, 0xC0) + 0x2C) - ((rcos(*(s16 *)(o + 0x56)) * *(s16 *)(o + 0x80) / 2) >> 12);
+        *(u16 *)(a + 0x32) = *(u16 *)(MEMBER_AT(u8 *, o, 0xC0) + 0x30);
+        *(u16 *)(a + 0x36) = *(u16 *)(MEMBER_AT(u8 *, o, 0xC0) + 0x34) + ((rsin(*(s16 *)(o + 0x56)) * *(s16 *)(o + 0x80) / 2) >> 12);
+        *(u16 *)(a + 0x32) += *(u16 *)(a + 0x60);
+        break;
+    case 4:
+        *(u16 *)(a + 0x2E) = *(u16 *)(MEMBER_AT(u8 *, o, 0xD0) + 0x2C);
+        *(u16 *)(a + 0x32) = *(u16 *)(MEMBER_AT(u8 *, o, 0xD0) + 0x30);
+        *(u16 *)(a + 0x36) = *(u16 *)(MEMBER_AT(u8 *, o, 0xD0) + 0x34);
+        *(u16 *)(a + 0x32) += *(u16 *)(a + 0x60);
+        break;
+    case 5:
+        *(u16 *)(a + 0x2E) = *(u16 *)(MEMBER_AT(u8 *, D_800E7E80, 0xDC) + 0x2C);
+        *(u16 *)(a + 0x32) = *(u16 *)(MEMBER_AT(u8 *, D_800E7E80, 0xDC) + 0x30);
+        *(u16 *)(a + 0x36) = *(u16 *)(MEMBER_AT(u8 *, D_800E7E80, 0xDC) + 0x34);
+        *(u16 *)(a + 0x32) += *(u16 *)(a + 0x60);
+        break;
+    case 6:
+        *(u16 *)(a + 0x2E) = *(u16 *)(MEMBER_AT(u8 *, D_800E7E80, 0xD0) + 0x2C);
+        *(u16 *)(a + 0x32) = *(u16 *)(MEMBER_AT(u8 *, D_800E7E80, 0xD0) + 0x30);
+        *(u16 *)(a + 0x36) = *(u16 *)(MEMBER_AT(u8 *, D_800E7E80, 0xD0) + 0x34);
+        *(u16 *)(a + 0x32) += *(u16 *)(a + 0x60);
+        break;
+    case 7:
+        *(u16 *)(a + 0x2E) = *(u16 *)(MEMBER_AT(u8 *, o, 0xE4) + 0x2C);
+        *(u16 *)(a + 0x32) = *(u16 *)(MEMBER_AT(u8 *, o, 0xE4) + 0x30);
+        *(u16 *)(a + 0x36) = *(u16 *)(MEMBER_AT(u8 *, o, 0xE4) + 0x34);
+        *(u16 *)(a + 0x32) += *(u16 *)(a + 0x60);
+        break;
+    }
+    *(u16 *)(a + 0x2E) += (rcos((s16)ang) * (s16)r) >> 12;
+    *(u16 *)(a + 0x36) += (-rsin((s16)ang) * (s16)r) >> 12;
+}
 
 void func_80070650(void *arg0) {
     u16 temp_v0;
