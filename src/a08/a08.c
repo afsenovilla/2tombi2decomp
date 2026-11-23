@@ -1439,7 +1439,28 @@ void func_8011B9D0(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011BA90);
+typedef struct { s16 pos; s16 vel; s16 max; } RiseMotion3;
+
+void func_8011BA90(u8 *a) {
+    RiseMotion3 *m = (RiseMotion3 *)(a + 0x50);
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        m->vel = 10;
+    case 1:
+        func_8002B278(a);
+        m->pos += m->vel;
+        if (m->pos > m->max) {
+            a[4] = 2;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u16 D_1F80017C_0fe7;
 void func_8011BB40(u8 *a)
