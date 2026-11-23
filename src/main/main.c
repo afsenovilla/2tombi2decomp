@@ -8492,7 +8492,6 @@ static inline u8 *SpawnBack_B788(void *owner, u8 item, s16 clut)
     return a;
 }
 
-//--
 void func_8004B788(u8 *a)
 {
     u8 *t = (u8 *)D_800E7E80;
@@ -13380,7 +13379,152 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006A080);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006A240);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006A384);
+extern u8 D_1F800252;
+
+void func_8006A384(u8 *a)
+{
+    u8 *m = a + 0x60;
+    u8 *t = (u8 *)D_800E7E80;
+    u16 ang;
+    s32 n;
+    s32 i;
+    s32 d;
+    s32 len;
+    s32 step;
+
+    switch (a[6]) {
+    case 0:
+        func_80069BEC(a, 0);
+        a[6]++;
+        break;
+    case 1:
+        func_80069AE4((u16 *)a);
+        if (--*(s16 *)(a + 0x40) == 0) {
+            f_PlaySoundEffect(0xB, 0, 0);
+            a[0] = 1;
+            a[6]++;
+            if (func_80069948(a) == 1) {
+                a[6] = 8;
+                *(s16 *)(a + 0x44) = 0;
+            }
+        }
+        break;
+    case 2:
+        if (a[0x29] == 0) {
+            func_80069AE4((u16 *)a);
+            a[7] = 0;
+            a[6]++;
+            if (a[0x2B] != 0 || func_80069948(a) == 1) {
+                a[6] = 8;
+                *(s16 *)(a + 0x44) = 0;
+            }
+        } else {
+            a[5] = 2;
+            a[6] = 0;
+            a[7] = 0;
+        }
+        break;
+    case 3:
+        func_8006A240(a);
+        if (a[0x29] != 0) {
+            a[5] = 2;
+            a[6] = 0;
+            a[7] = 0;
+        }
+        break;
+    case 4:
+        a[6]++;
+        *(s16 *)(m + 0xA) -= 0x500;
+    case 5:
+        *(s16 *)(m + 6) = 2;
+        *(s16 *)(m + 0xA) -= 0x40;
+        *(s16 *)(a + 0x44) += 0x28;
+        if (*(s16 *)(a + 0x44) > 0x3C) {
+            *(s16 *)(a + 0x40) = 0;
+            a[6]++;
+        }
+        break;
+    case 6:
+        D_1F800252 = 1;
+        MEMBER_AT(s16, m, 0x12) = 1;
+        *(s16 *)(m + 0x14) = f_CalculateYawFromPositionToPoint((s16 *)(a + 0x2C), MEMBER_AT(s16, MEMBER_AT(u8 *, t, 0xDC), 0x2C),
+                                                               MEMBER_AT(s16, MEMBER_AT(u8 *, t, 0xDC), 0x34));
+        *(s16 *)(m + 0xA) = func_80069A2C(a, *(s16 *)(*(u8 **)(t + 0xDC) + 0x2C), *(s16 *)(*(u8 **)(t + 0xDC) + 0x30),
+                                          *(s16 *)(*(u8 **)(t + 0xDC) + 0x34));
+        *(s16 *)(a + 0x44) += 0x32;
+        if (*(s16 *)(a + 0x44) > 0x1A4) {
+            *(s16 *)(a + 0x44) = 0x1A4;
+        }
+        if (func_80069B6C(a) == 0) {
+            break;
+        }
+    case 7:
+        a[0] = 2;
+        a[4]++;
+        if (t[0x146] & 1) {
+            t[0x79] = 0;
+        }
+        *(u16 *)(a + 0x2E) = *(u16 *)(*(u8 **)(t + 0xDC) + 0x2C);
+        *(u16 *)(a + 0x32) = *(u16 *)(*(u8 **)(t + 0xDC) + 0x30);
+        *(u16 *)(a + 0x36) = *(u16 *)(*(u8 **)(t + 0xDC) + 0x34);
+        return;
+    case 8:
+        D_1F800252 = 1;
+        a[0] = 2;
+        a[4]++;
+        if (t[0x146] & 1) {
+            t[0x79] = 0;
+        }
+        return;
+    }
+    if (t[0x146] == 0) {
+        a[0] = 2;
+        a[4] = 3;
+        return;
+    }
+    if (a[6] < 3) {
+        return;
+    }
+    if (a[0x46] & 1) {
+        ang = 0x800 - *(u16 *)(m + 0xA);
+    } else {
+        ang = *(u16 *)(m + 0xA);
+    }
+    if (*(s16 *)(m + 0x12) == 0) {
+        n = *(s16 *)(a + 0x44) / 64;
+        i = 0;
+        if (n > 0) {
+            s32 sa;
+            sa = (s16)ang;
+            step = 0x40;
+            do {
+                *(s32 *)(a + 0x30) += (rsin(sa) * step) << 4;
+                d = (rcos(sa) * step) >> 4;
+                *(s32 *)(a + 0x2C) += *(s16 *)(a + 0x48) * d;
+                *(s32 *)(a + 0x34) += *(s16 *)(a + 0x4C) * d;
+                if (func_80069948(a) != 0) {
+                    return;
+                }
+            } while (++i < n);
+        }
+        len = *(u16 *)(a + 0x44) & 0x3F;
+        if (len != 0) {
+            *(s32 *)(a + 0x30) += (rsin((s16)ang) * len) << 4;
+            d = (rcos((s16)ang) * len) >> 4;
+            *(s32 *)(a + 0x2C) += *(s16 *)(a + 0x48) * d;
+            *(s32 *)(a + 0x34) += *(s16 *)(a + 0x4C) * d;
+            func_80069948(a);
+        }
+    } else {
+        *(s32 *)(a + 0x30) += (rsin((s16)ang) * *(s16 *)(a + 0x44)) << 4;
+        d = (rcos((s16)ang) * *(s16 *)(a + 0x44)) >> 4;
+        if (d < 0) {
+            d = -d;
+        }
+        *(s32 *)(a + 0x2C) += (rcos(*(s16 *)(m + 0x14)) * d) >> 4;
+        *(s32 *)(a + 0x34) -= (rsin(*(s16 *)(m + 0x14)) * d) >> 4;
+    }
+}
 
 s32 func_8006A8C8(s32 arg0) {
     s32 temp_v0;
@@ -13667,7 +13811,141 @@ s32 func_8006B390(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006B494);
+s16 func_80069A2C(u8 *a, s16 x, s16 y, s16 z);
+s32 f_StepWrappedAngleToward(s32 a, s32 b, s32 step);
+
+void func_8006B494(u8 *a)
+{
+    u8 *m = a + 0x60;
+    u8 *t = (u8 *)D_800E7E80;
+    u16 ang;
+    s32 sp;
+    s32 n;
+    s32 i;
+    s32 d;
+    s32 len;
+    s32 step;
+
+    switch (a[6]) {
+    case 0:
+        func_8006B124(a, 0);
+        a[6]++;
+        break;
+    case 1:
+        func_8006B020(a, 0);
+        if (--*(s16 *)(a + 0x40) == 0) {
+            f_PlaySoundEffect(0xB, 0, 0);
+            a[0] = 1;
+            *(s16 *)(a + 0x54) = 0;
+            a[6]++;
+            if (func_8006B390(a) != 0 && a[2] == 4) {
+                a[0x2B] = 2;
+                a[4] = 2;
+            }
+        }
+        break;
+    case 2:
+        a[7] = 0;
+        a[6]++;
+        *(s16 *)(m + 6) = 0;
+        if (a[0x2B] >= 2) {
+            *(s16 *)(a + 0x44) = 0;
+        }
+        break;
+    case 3:
+        func_8006B1FC(a);
+        func_8006B0D8(a);
+        break;
+    case 4:
+        a[6]++;
+        *(s16 *)(m + 0x10) = 0x40;
+    case 5:
+        if (a[0x2B] == 1) {
+            if (--*(s16 *)(a + 0x42) == 0) {
+                a[0x2B] = 0;
+                *(s16 *)(a + 0x42) = 2;
+            }
+        }
+        *(s16 *)(a + 0x44) += 0x12;
+        if (*(s16 *)(a + 0x44) > 0x50) {
+            a[0x2B] = 2;
+            *(s16 *)(a + 0x40) = 0;
+            a[6]++;
+        }
+        func_8006B0D8(a);
+        *(s16 *)(m + 0xA) = f_StepWrappedAngleToward(
+            ((s16 (*)())func_80069A2C)(a, *(s32 *)(*(u8 **)(t + 0xDC) + 0x2C), *(s32 *)(*(u8 **)(t + 0xDC) + 0x30),
+                               *(s32 *)(*(u8 **)(t + 0xDC) + 0x34)),
+            *(s16 *)(m + 0xA), *(s16 *)(m + 0x10));
+        *(s16 *)(m + 0x10) += *(s16 *)(a + 0x44);
+        break;
+    case 6:
+        *(s16 *)(m + 0xA) = ((s16 (*)())func_80069A2C)(a, *(s32 *)(*(u8 **)(t + 0xDC) + 0x2C), *(s32 *)(*(u8 **)(t + 0xDC) + 0x30),
+                                          *(s32 *)(*(u8 **)(t + 0xDC) + 0x34));
+        *(s16 *)(m + 0x12) = 1;
+        *(s16 *)(m + 0x14) = f_CalculateYawFromPositionToPoint((s16 *)(a + 0x2C), *(s16 *)(*(u8 **)(t + 0xDC) + 0x2C),
+                                                               *(s16 *)(*(u8 **)(t + 0xDC) + 0x34));
+        *(s16 *)(a + 0x44) += 0x32;
+        if (*(s16 *)(a + 0x44) > 0x1A4) {
+            *(s16 *)(a + 0x44) = 0x1A4;
+        }
+        if (func_80069B6C(a) == 0) {
+            break;
+        }
+    case 7:
+        a[1] = 0;
+        a[0] = 2;
+        a[4]++;
+        *(s16 *)(m + 0xE) = 1;
+        *(u16 *)(a + 0x2E) = *(u16 *)(t + 0x2E);
+        *(u16 *)(a + 0x32) = *(u16 *)(t + 0x32);
+        D_1F800231--;
+        *(u16 *)(a + 0x36) = *(u16 *)(t + 0x36);
+        return;
+    }
+    if (a[6] < 3) {
+        return;
+    }
+    *(u16 *)(a + 0x58) += 0x280;
+    if (a[0x46] & 1) {
+        ang = 0x800 - *(u16 *)(m + 0xA);
+    } else {
+        ang = *(u16 *)(m + 0xA);
+    }
+    sp = rsin((s16)ang) * 0x50 / 100;
+    if (*(s16 *)(m + 0x12) == 0) {
+        n = *(s16 *)(a + 0x44) / 64;
+        i = 0;
+        if (n > 0) {
+            step = 0x40;
+            do {
+                *(s32 *)(a + 0x30) += sp << 10;
+                d = (rcos((s16)ang) * step) >> 4;
+                *(s32 *)(a + 0x2C) += *(s16 *)(a + 0x48) * d;
+                *(s32 *)(a + 0x34) += *(s16 *)(a + 0x4C) * d;
+                if (func_8006B390(a) != 0) {
+                    return;
+                }
+            } while (++i < n);
+        }
+        len = *(u16 *)(a + 0x44) & 0x3F;
+        if (len != 0) {
+            *(s32 *)(a + 0x30) += (sp * len) << 4;
+            d = (rcos((s16)ang) * len) >> 4;
+            *(s32 *)(a + 0x2C) += *(s16 *)(a + 0x48) * d;
+            *(s32 *)(a + 0x34) += *(s16 *)(a + 0x4C) * d;
+            func_8006B390(a);
+        }
+    } else {
+        *(s32 *)(a + 0x30) += (sp * *(s16 *)(a + 0x44)) << 4;
+        d = (rcos((s16)ang) * *(s16 *)(a + 0x44)) >> 4;
+        if (d < 0) {
+            d = -d;
+        }
+        *(s32 *)(a + 0x2C) += (rcos(*(s16 *)(m + 0x14)) * d) >> 4;
+        *(s32 *)(a + 0x34) -= (rsin(*(s16 *)(m + 0x14)) * d) >> 4;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006B9DC);
 
