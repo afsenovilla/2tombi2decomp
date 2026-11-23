@@ -1753,7 +1753,254 @@ void func_80117628(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleRareFishOrBlueBucketPickup);
+#define FP(p, o) M2C_FIELD(p, u8 **, o)
+extern s32 D_800ECF80;
+extern u8 D_8014C808[];
+extern u8 D_80148574[];
+extern u8 D_1F800207_9c67;
+/* func_80117D7C, inlined */
+static inline void inl_80117D7C(u8 *a, u8 *p) {
+
+    a[0xB] = 0x10;
+    a[8] = 0xF8;
+    a[0x47] = 0;
+    M2C_FIELD(a, s16 *, 0x5A) = 0;
+    a[0xD] = 0;
+    M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+    func_80077B38(a, D_8014C808, 1);
+    M2C_FIELD(a, s32 *, 0x2C) = 0x13D20000;
+    M2C_FIELD(a, s32 *, 0x30) = 0xF7E00000;
+    M2C_FIELD(a, s32 *, 0x34) = 0x15AA0000;
+    M2C_FIELD(a, s16 *, 0x80) = 0x3C;
+    M2C_FIELD(a, s16 *, 0x82) = 0x78;
+    M2C_FIELD(a, s16 *, 0x84) = 0x50;
+    M2C_FIELD(a, s16 *, 0x86) = 0xA0;
+    a[0] = 4;
+    M2C_FIELD(p, s16 *, 6) = M2C_FIELD(a, s16 *, 0x2E);
+    M2C_FIELD(p, s16 *, 8) = M2C_FIELD(a, s16 *, 0x32) - 0x1A4;
+    M2C_FIELD(p, s16 *, 0xA) = M2C_FIELD(a, s16 *, 0x36);
+    M2C_FIELD(p, s16 *, 0x16) = 0x1E;
+    a[4]++;
+    func_8004B354(a, 0);
+}
+/* func_80117E5C, inlined */
+static inline void inl_80117E5C(u8 *a) {
+    func_8004D4C4(0x3A, 1);
+    func_8004B0D8(a);
+    a[4] = 3;
+}
+/* func_80117E98, inlined */
+static inline void inl_80117E98(u8 *a) {
+    s16 *q = M2C_FIELD(a, s16 **, 0x10);
+    s16 x, y, z;
+
+    if (func_8007778C(a) != 0) {
+        if (a[5] == 2) {
+            x = D_1F800160_71b4;
+            y = D_1F800162;
+            z = D_1F800164_d75f;
+            M2C_FIELD(a, s16 *, 0x2E) = x;
+            M2C_FIELD(a, s16 *, 0x32) = y;
+            M2C_FIELD(a, s16 *, 0x36) = z;
+        } else {
+            M2C_FIELD(a, s16 *, 0x2E) = q[0] - 0x20;
+            M2C_FIELD(a, s16 *, 0x32) = q[1] + 0x50;
+        }
+        func_80077B5C(a);
+        func_8004B374(a, 0);
+    }
+}
+/* func_80117FAC, inlined */
+static inline void inl_80117FAC(u8 *a) {
+    s32 r;
+
+    switch (a[5]) {
+    case 0:
+        func_8004D4F4(0x28, 1);
+        func_8004ED94(0x2D, 0x42);
+        func_8004B0D8(a);
+        r = func_8004BD04(a, 0, 0);
+        if (r != 0) {
+            func_8004BEA8(0x28, r);
+            func_80042354(1, 1);
+            D_800BF870.pad1[0x16B] |= 1;
+        }
+        a[5]++;
+        break;
+    case 1:
+        if (func_8005308C() != 0) {
+            func_80040CDC(a, 0, D_80148574);
+            a[0x70] = 2;
+            a[5]++;
+        }
+        break;
+    case 2:
+        if (a[0x70] == 0xFF) {
+            a[4] = 3;
+        } else {
+            func_80041098(a);
+        }
+        break;
+    }
+}
+/* func_801180CC, inlined */
+static inline void inl_801180CC(u8 *a) {
+    u8 *p = FP(a, 0x10);
+
+    if (D_1F800207_9c67 < 5 && func_8007778C(a) != 0) {
+        if (a[5] == 2) {
+            u16 x = D_1F800160_71b4;
+            u16 y = D_1F800162;
+            u16 z = D_1F800164_d75f;
+            F16(a, 0x2E) = x;
+            F16(a, 0x32) = y;
+            F16(a, 0x36) = z;
+        } else {
+            F16(a, 0x2E) = FU16(p, 0) + ((F16(FP(a, 0xC0), 0x1A) * 9) >> 8);
+            F16(a, 0x32) = FU16(p, 2) + ((F16(FP(a, 0xC0), 0x20) * 9) >> 8);
+            F16(a, 0x58) = -FU16(p, 0xC);
+        }
+        func_800517F8(a);
+        func_8004B374(a, 1);
+    }
+}
+/* func_801181BC, inlined */
+static inline void inl_801181BC(void *arg0, void *arg1) {
+    if (M2C_FIELD(arg0, u8 *, 0x2B) == 2) {
+        M2C_FIELD(arg1, s16 *, 0x14) = 0x2000;
+        return;
+    }
+    M2C_FIELD(arg1, s16 *, 0x14) = -0x2000;
+}
+/* func_801181E0, inlined */
+static inline void inl_801181E0(u8 *a, u8 *b) {
+    if (a[0x2B] == 2) {
+        if (M2C_FIELD(b, s16 *, 0xE) < 0x800) {
+            M2C_FIELD(b, s16 *, 0xE) -= 0x1000;
+        } else {
+            M2C_FIELD(b, s16 *, 0xE) = -M2C_FIELD(b, s16 *, 0xE);
+        }
+        M2C_FIELD(b, s16 *, 0x14) = 0xC00;
+    } else {
+        if (M2C_FIELD(b, s16 *, 0xE) < -0x7FF) {
+            M2C_FIELD(b, s16 *, 0xE) = -M2C_FIELD(b, s16 *, 0xE);
+        } else {
+            M2C_FIELD(b, s16 *, 0xE) += 0x1000;
+        }
+        M2C_FIELD(b, s16 *, 0x14) = -0xC00;
+    }
+}
+
+void f_HandleRareFishOrBlueBucketPickup(u8 *a)
+{
+    u8 st = a[4];
+    u8 *s = FP(a, 0x10);
+    s32 r;
+    s32 t;
+
+    switch (st) {
+    case 0:
+        switch (a[3]) {
+        case 0:
+            inl_80117D7C(a, s);
+            break;
+        case 1:
+            a[0] = 4;
+            a[0x5E] = 0;
+            if (func_80051B70(a, 1, 0) == 0) {
+                M2C_FIELD(a, s32 *, 0x2C) = 0x28D20000;
+                M2C_FIELD(a, s32 *, 0x30) = 0xF9E80000;
+                M2C_FIELD(a, s32 *, 0x34) = 0x0F800000;
+                M2C_FIELD(a, s16 *, 0x80) = 0x46;
+                M2C_FIELD(a, s16 *, 0x82) = 0x8C;
+                M2C_FIELD(a, s16 *, 0x84) = 0x8C;
+                M2C_FIELD(a, s16 *, 0x86) = 0x8C;
+                M2C_FIELD(s, s16 *, 6) = M2C_FIELD(a, s16 *, 0x2E);
+                M2C_FIELD(s, s16 *, 8) = M2C_FIELD(a, s16 *, 0x32) - 0x190;
+                M2C_FIELD(s, s16 *, 0xA) = M2C_FIELD(a, s16 *, 0x36);
+                M2C_FIELD(s, s16 *, 0xC) = 0x52;
+                a[4]++;
+                func_8004B354(a, 1);
+            }
+            break;
+        }
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            if (a[0x5E] == 1) {
+                func_80074590(0x92, 0, 0);
+                F16(s, 0x18) = 0x24;
+                F16(s, 0x1A) = 0x580;
+                F16(s, 0x14) = 0x2800;
+                a[5]++;
+            } else if (a[3] == 0) {
+                if (F16(s, 0x14) == 0) {
+                    if (--F16(s, 0x16) < 0) {
+r = func_8009A450();
+F16(s, 0x16) = (r & 3) * 0x1E + (s16)((func_8009A450() >> 11) + 0x1E);
+                        F16(s, 0x14) = (-((func_8009A450() & 7) + 10)) << 8;
+                    }
+                }
+            } else {
+                a[0x2B] = 0;
+                func_801141C8(a);
+                if (a[0x2B] != 0) {
+                    switch (a[3]) {
+                    case 0:
+                        inl_801181BC(a, s);
+                        break;
+                    case 1:
+                        inl_801181E0(a, s);
+                        break;
+                    }
+                }
+            }
+            break;
+        case 1:
+            if (F16(s, 0x18) == 0 || a[0x5E] == 0) {
+                F16(s, 0x14) = -0x2800;
+                F16(s, 0x1A) = 0x200;
+                switch (a[3]) {
+                case 0:
+                    F16(a, 0x36) = 0x1590;
+                    break;
+                case 1:
+                    F16(a, 0x36) = 0xF80;
+                    break;
+                }
+                a[0] = 1;
+                a[0x5E] = 2;
+                a[5]++;
+            } else {
+                F16(s, 0x18)--;
+            }
+            break;
+        }
+        switch (a[3]) {
+        case 0:
+            inl_80117E98(a);
+            break;
+        case 1:
+            inl_801180CC(a);
+            break;
+        }
+        break;
+    case 2:
+        switch (a[3]) {
+        case 0:
+            inl_80117E5C(a);
+            break;
+        case 1:
+            inl_80117FAC(a);
+            break;
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void f_HandleRareFishOrBlueBucketPickup();
 u8 *f_SpawnRareFishPickup(u8 *a) {
@@ -1776,8 +2023,6 @@ u8 *f_SpawnRareFishPickup(u8 *a) {
     return NULL;
 }
 
-extern s32 D_800ECF80;
-extern u8 D_8014C808[];
 void func_80117D7C(u8 *a) {
     u8 *p;
 
@@ -1850,7 +2095,38 @@ u8 *f_SpawnBlueBucketPickup(u8 *a) {
     return NULL;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80117FAC);
+void func_80117FAC(u8 *a) {
+    s32 r;
+
+    switch (a[5]) {
+    case 0:
+        func_8004D4F4(0x28, 1);
+        func_8004ED94(0x2D, 0x42);
+        func_8004B0D8(a);
+        r = func_8004BD04(a, 0, 0);
+        if (r != 0) {
+            func_8004BEA8(0x28, r);
+            func_80042354(1, 1);
+            D_800BF870.pad1[0x16B] |= 1;
+        }
+        a[5]++;
+        break;
+    case 1:
+        if (func_8005308C() != 0) {
+            func_80040CDC(a, 0, D_80148574);
+            a[0x70] = 2;
+            a[5]++;
+        }
+        break;
+    case 2:
+        if (a[0x70] == 0xFF) {
+            a[4] = 3;
+        } else {
+            func_80041098(a);
+        }
+        break;
+    }
+}
 
 #define FP(p, o) M2C_FIELD(p, u8 **, o)
 void func_801180CC(u8 *a) {
@@ -2895,7 +3171,6 @@ s32 func_801231B0(void) {
 extern u8 D_800BF8F6;
 extern s32 D_800ECFCC;
 extern u8 D_8014C02C[];
-extern u8 D_1F800207_9c67;
 s32 func_801231E0(u8 *a, s32 r) {
     switch (a[7]) {
     case 0:
