@@ -13514,7 +13514,52 @@ void func_8006A080(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006A240);
+void func_8006A240(u8 *a)
+{
+    u8 *m = a + 0x60;
+
+    switch (a[7]) {
+    case 0:
+        a[7] = 1;
+        *(s16 *)(m + 6) = 3;
+    case 1:
+        if (a[0x2B] != 0) {
+            a[6] = 8;
+            *(s16 *)(a + 0x44) = 0;
+            return;
+        }
+        *(s16 *)(a + 0x40) = 1;
+        a[7]++;
+        return;
+    case 2:
+        if (a[0x2B] != 0) {
+            a[6] = 8;
+            *(s16 *)(a + 0x44) = 0;
+            return;
+        }
+        if (--*(s16 *)(a + 0x40) == 0) {
+            a[7]++;
+        }
+        return;
+    case 3:
+        if (a[2] == 1) {
+            *(s16 *)(a + 0x44) -= *(s16 *)(m + 0x16);
+            if (*(s16 *)(a + 0x44) < 0 || a[0x2B] != 0) {
+                *(s16 *)(a + 0x44) = 0;
+                a[0] = 2;
+                a[6]++;
+            }
+        } else {
+            *(s16 *)(a + 0x44) -= *(s16 *)(m + 0x16);
+            if (*(s16 *)(a + 0x44) < 0x46 || a[0x2B] != 0) {
+                *(s16 *)(a + 0x44) = 0;
+                a[0] = 2;
+                a[6]++;
+            }
+        }
+        break;
+    }
+}
 
 extern u8 D_1F800252;
 
@@ -13852,7 +13897,61 @@ void func_8006ACAC(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006AE28);
+void func_8006AE28(u8 *a)
+{
+    u8 *m = a + 0x60;
+    u8 s;
+
+    switch (a[4]) {
+    case 0:
+if (a[2] == 1) {
+            a[0x5F] = 0x20;
+        } else {
+            a[0x5F] = 0x10;
+        }
+        func_8006ACAC(a);
+        *(u16 *)(m + 8) = *(u16 *)(a + 0x56);
+        a[4]++;
+        *(s16 *)(m + 6) = 0;
+        *(s16 *)(m + 0xA) = 0;
+        *(s16 *)(m + 0xC) = 0;
+        a[0] = 2;
+        if (a[3] == 0) {
+            a[5] = 1;
+            func_80069688(a);
+        } else {
+            ((u8 *(*)())f_SpawnLinkedActorTrailEffect)(a, a[2] - 1);
+        }
+    case 1:
+        s = a[5];
+        switch (s) {
+        case 0:
+            func_8006A900(a);
+            if (a[2] != 1) {
+                f_UpdateActorUnscaledModelTransforms((s32)a);
+            }
+            break;
+        case 1:
+            func_8006A384(a);
+            if (a[2] != s) {
+                f_UpdateActorUnscaledModelTransforms((s32)a);
+            }
+            break;
+        case 2:
+            func_8006A080(a);
+            f_UpdateActorUnscaledModelTransforms((s32)a);
+            break;
+        }
+        a[1] = 1;
+        break;
+    case 2:
+        a[4]++;
+        break;
+    case 3:
+        func_8007AB44(a);
+        break;
+    }
+}
 
 void func_8006AFC4(u8 *a)
 {
