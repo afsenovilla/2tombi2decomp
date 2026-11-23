@@ -2929,9 +2929,96 @@ void func_80119828(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldenCrabDialogueFirstVisit);
+extern u8 D_800BF843;
+extern u8 D_800BF9E3;
+extern u8 D_80148698[];
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldenCrabDialogueRepeatVisit);
+void f_HandleGoldenCrabDialogueFirstVisit(u8 *a) {
+    switch (a[6]) {
+    case 0:
+        func_80070724(1, 0, 0x63);
+        func_80070888(D_80148698);
+        a[6]++;
+        break;
+    case 1:
+        if (D_800BF843 == 1 && func_800707E0() != 0) {
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (func_80070830() != 0) {
+            a[0x70] = 1;
+            a[7] = 0;
+            a[6]++;
+        }
+        break;
+    case 3:
+        if (f_SubmitPendingGoldenCrabs(a) != 0) {
+            if ((D_800BF9E3 & 0x70) == 0x70) {
+                a[5] = 7;
+                a[6] = 0;
+            } else {
+                a[0x70] = 1;
+                a[6]++;
+            }
+        }
+        break;
+    case 4:
+        if ((s8)a[0x70] <= 0) {
+            a[6]++;
+        }
+        break;
+    case 5:
+        func_80070798();
+        a[5] = 6;
+        a[6] = 0;
+        break;
+    }
+}
+
+extern u8 D_801486A0[];
+
+void f_HandleGoldenCrabDialogueRepeatVisit(u8 *a) {
+    s32 n;
+
+    switch (a[6]) {
+    case 0:
+        n = 1;
+        a[0x70] = n;
+        a[6] += n;
+        func_80070724(n, 0, 0x63);
+        func_80070888(D_801486A0);
+        break;
+    case 1:
+        if (D_800BF843 == 1 && (s8)a[0x70] <= 0) {
+            a[7] = 0;
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (f_SubmitPendingGoldenCrabs(a) != 0) {
+            if ((D_800BF9E3 & 0x70) == 0x70) {
+                a[5] = 7;
+                a[6] = 0;
+            } else {
+                a[6]++;
+            }
+        }
+        break;
+    case 3:
+        if (D_800BF843 == 1 && func_800707E0() != 0) {
+            a[6]++;
+        }
+        break;
+    case 4:
+        if (func_80070830() != 0) {
+            func_80070798();
+            a[5] = 6;
+            a[6] = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_StageWindmillCutsceneActor);
 
