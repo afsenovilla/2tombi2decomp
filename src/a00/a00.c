@@ -6477,7 +6477,76 @@ if (k == c) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseFallingParticleActor);
+typedef struct { s16 x, y, z, w; } Particle8;
+
+void f_UpdateKainenHouseFallingParticleActor(u8 *a)
+{
+    s32 n;
+    s32 i;
+    Particle8 *p;
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        if (D_800BF9E0 >= 0x1C) {
+            a[4] = 3;
+            break;
+        }
+        if (D_800BF9E0 < 6) {
+            M2C_FIELD(a, s16 *, 0x4E) = 7;
+            n = 7;
+        } else {
+            M2C_FIELD(a, s16 *, 0x4E) = 1;
+            n = 1;
+        }
+        p = (Particle8 *)(a + 0x50);
+        while (n > 0) {
+            p->x = M2C_FIELD(a, s16 *, 0x2C) + func_80032A44(0, 0x80);
+            p->y = M2C_FIELD(a, s16 *, 0x2E) + func_80032A44(-0x80, 0);
+            n--;
+
+            p->z = M2C_FIELD(a, s16 *, 0x30) + func_80032A44(0, 0x20);
+
+            p->w = func_80032A44(0xE0, 0x120);
+            p++;
+
+        }
+        a[4] = 1;
+    case 1:
+        g = D_800E7E80;
+        if (g[0x16B] == 1) {
+            break;
+        }
+        if (g[0x2A] >= 0xC || (M2C_FIELD(a, s32 *, 0x34) = M2C_FIELD(a, s32 *, 0x38)) == 0) {
+            a[4] = 3;
+            break;
+        }
+        p = (Particle8 *)(a + 0x50);
+        if (D_800BF9E0 < 6) {
+            for (i = 0; i < M2C_FIELD(a, s16 *, 0x4E); i++) {
+                p->x += -1 + ((func_8009A450() >> 7) & 3);
+                p->y = (s16)(p->y - 0xE) - ((func_8009A450() >> 8) & 0xF);
+                p->z += -2 + ((func_8009A450() >> 7) & 3);
+                p++;
+            }
+        } else {
+            for (i = 0; i < M2C_FIELD(a, s16 *, 0x4E); i++) {
+                p->x += -3 + ((func_8009A450() >> 7) & 7);
+                p->y = (s16)(p->y - 0xE) - ((func_8009A450() >> 8) & 0xF);
+                p->z += -4 + ((func_8009A450() >> 7) & 7);
+                p++;
+            }
+        }
+        if (func_8002B278(a) == 0) {
+            func_80031780(a);
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013C7F0);
 
