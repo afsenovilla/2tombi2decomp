@@ -17533,7 +17533,36 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007DA50);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007DC38);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007DDE0);
+void func_8007DDE0(u8 *a)
+{
+    s32 one = 1;
+    s32 v;
+
+    switch (a[4]) {
+    case 0:
+        a[0x18] = 7;
+        v = *(s32 *)(a + 0x50) + *(u16 *)(*(u8 **)(a + 0x4C) + *(s16 *)(a + 0x5E) * 4);
+        *(s32 *)(a + 0x10) = v;
+        *(s32 *)(a + 0x14) = v;
+        func_8007C0D0(a, 0);
+        a[0x46] = one;
+        a[4]++;
+        D_800BF808[0x1A] |= 8;
+        break;
+    case 1:
+        func_8007C940(a);
+        func_8007CC00(a);
+        func_8005019C(a + 0x54, a[0x18], 1, 2);
+        break;
+    case 2:
+        a[4]++;
+        break;
+    case 3:
+        D_800BF808[0x1A] &= 0xF7;
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnScriptedPresentationActor);
 
