@@ -9031,7 +9031,49 @@ s32 func_8004DBC0(s32 id)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004DC84);
+extern s32 D_800ECF58_6489;
+void f_StartActorTimedFrameSequence(u8 *actor, u16 **table, s32 index);
+void func_8004DF94(u8 *a);
+void func_8004E414(u8 *a);
+void func_8004E808(u8 *a);
+void func_8004E928(u8 *a);
+void func_8004DE04(u8 *a);
+
+u8 *func_8004DC84(s32 k, s32 mode)
+{
+    u8 *a = f_AllocateActor(NULL, 0x80, 3, 5);
+    void *fn;
+    s32 n;
+
+    if (a == NULL) {
+        return NULL;
+    }
+    if (mode == 0) {
+        *(void **)(a + 0x1C) = func_8004DE04;
+    } else if (mode == 1) {
+        *(void **)(a + 0x1C) = func_8004DF94;
+    } else if (mode == 2) {
+        *(void **)(a + 0x1C) = func_8004E414;
+    } else if (mode == 3) {
+        *(void **)(a + 0x1C) = func_8004E808;
+    } else if (mode == 4) {
+        *(void **)(a + 0x1C) = func_8004E928;
+    } else {
+        *(void **)(a + 0x1C) = func_8004DE04;
+    }
+    *(s16 *)(a + 0x60) = k;
+    n = func_8004DBC0(k);
+    *(s32 *)(a + 0x3C) = D_800ECF58_6489;
+    f_StartActorTimedFrameSequence(a, D_80017334, n);
+    if (mode != 3) {
+        u8 *s = D_800BF808;
+
+        s[2] = 1;
+        s[3] = k;
+        D_1F800137_104c = 2;
+    }
+    return a;
+}
 
 void func_8004DD90(u8 *p)
 {
