@@ -1230,7 +1230,115 @@ s32 func_8010DB44(void *arg0) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010DB68);
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+extern u8 *D_1F800248;
+extern s32 D_800ECF58_a4fb[];
+extern u8 D_8011A738[];
+extern u8 D_80117868[];
+extern u16 D_80116050[];
+extern s32 D_80116038[];
+
+void func_8010DB68(u8 *a)
+{
+    s32 s = a[4];
+    u8 *p;
+    u8 *o;
+
+    switch (s) {
+    case 0:
+        p = (u8 *)D_800ECF58_a4fb;
+        if (func_800519E0(a, 0xF, W(p, 0x94), D_80117868) == 0) {
+            W(a, 0x3C) = W(p, 0x38);
+            H(a, 0x56) = D_80116050[D_800BF870.pad1[0]];
+            func_80040CDC(a, D_8011A738, D_80116038[D_800BF870.pad1[0]]);
+            func_80041718(a, 9, 0);
+            H(a, 0x80) = 0x60;
+            H(a, 0x82) = 0xC0;
+            H(a, 0x84) = 0x80;
+            H(a, 0x86) = 0xF0;
+            a[0x70] = 1;
+            a[0x5E] = 0;
+            H(a, 0x60) = 0;
+            a[4]++;
+            a[0xB] = (a[0xB] & 0xC0) | 0x80;
+        }
+        break;
+    case 1:
+        a[1] = 1;
+        func_80077E7C(a);
+        func_80041098(a);
+        if (a[0x5E] == 0) {
+            func_8004190C(a);
+        }
+        switch (D_800BF871) {
+        case 3:
+            break;
+        case 4:
+            switch (a[5]) {
+            case 1:
+                H(a, 0x44) = 0xC00;
+                H(a, 0x48) = func_80083F50(H(a, 0x56)) >> 4;
+                H(a, 0x4C) = -func_80083E80(H(a, 0x56)) >> 4;
+                H(a, 0x4A) = -0x2000;
+                H(a, 0x50) = 0x100;
+                a[0xB] &= 0x3F;
+                a[5]++;
+            case 2:
+                W(a, 0x30) += H(a, 0x4A) << 8;
+                W(a, 0x2C) += H(a, 0x48) * H(a, 0x44);
+                H(a, 0x4A) += H(a, 0x50);
+                W(a, 0x34) += H(a, 0x4C) * H(a, 0x44);
+                if (H(a, 0x32) >= -0x4B0) {
+                    a[5]++;
+                }
+                break;
+            }
+            break;
+        case 5:
+            switch (a[5]) {
+            case 0:
+                a[0xB] &= 0x3F;
+                a[5]++;
+                o = D_1F800248;
+                H(a, 0x4E) = U(a, 0x2E) - U(o, 0x2E);
+                H(a, 0x50) = U(a, 0x32) - U(o, 0x32);
+                H(a, 0x52) = U(a, 0x36) - U(o, 0x36);
+            case 1:
+                func_80111CFC(a);
+                H(a, 0x32) += 0x14;
+                break;
+            case 2:
+                func_80111CFC(a);
+                break;
+            case 3:
+                H(a, 0x44) = 0xC00;
+                H(a, 0x48) = func_80083F50(H(a, 0x56)) >> 4;
+                H(a, 0x4C) = -func_80083E80(H(a, 0x56)) >> 4;
+                H(a, 0x4A) = -0x2000;
+                H(a, 0x50) = 0x100;
+                H(a, 0x40) = 0x1E;
+                a[5]++;
+            case 4:
+                W(a, 0x30) += H(a, 0x4A) << 8;
+                H(a, 0x4A) += H(a, 0x50);
+                W(a, 0x2C) += H(a, 0x48) * H(a, 0x44);
+                W(a, 0x34) += H(a, 0x4C) * H(a, 0x44);
+                if (--H(a, 0x40) <= 0) {
+                    a[5]++;
+                }
+                break;
+            }
+            break;
+        }
+        func_800518FC(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_8010DF90(void *arg0) {
     void *temp_v1;
@@ -1264,12 +1372,10 @@ typedef struct {
 } LVec;
 extern SVec D_1F8000C0;
 extern LVec D_1F8000A0;
-extern u8 *D_1F800248;
 extern s16 D_1F800160;
 extern s16 D_1F800164;
 extern u8 *D_1F80024C;
 extern u8 D_800BFA56;
-extern s32 D_800ECF58_a4fb[];
 extern u8 D_80117338[];
 extern u8 D_8011AF2C[];
 extern u8 D_800A3D18[];
@@ -1389,7 +1495,6 @@ void func_8010DFEC(u8 *a)
 }
 
 extern s32 D_800ECFD8;
-extern u8 D_8011A738[];
 extern s32 D_800ECF90;
 s32 func_8010E3D4(u8 *p)
 {
