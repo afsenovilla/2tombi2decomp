@@ -2786,7 +2786,70 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleWinConversationState);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011A804);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011A928);
+extern s32 D_800ECF58_a4fb[];
+extern u8 D_801485F8[];
+extern u8 D_8014C9C0[];
+extern u8 D_800BF9DE;
+
+void func_8011A928(u8 *a)
+{
+    s32 *t;
+    s32 v;
+    switch (a[4]) {
+    case 0:
+        t = D_800ECF58_a4fb;
+        if (func_800519E0(a, 0x11, t[0x3C / 4], D_801485F8) != 0) {
+            break;
+        }
+        v = t[0x50 / 4];
+        a[0xB] = 0;
+        M2C_FIELD(a, s16 *, 0x58) = 0;
+        M2C_FIELD(a, s16 *, 0x56) = 0;
+        M2C_FIELD(a, s16 *, 0x54) = 0;
+        a[0xBE] = 0;
+        M2C_FIELD(a, s32 *, 0x3C) = v;
+        func_80040CDC(a, D_8014C9C0, D_80148680);
+        if (a[3] == 0) {
+            M2C_FIELD(a, s16 *, 0x80) = 0xC8;
+            a[0] = 1;
+            M2C_FIELD(a, s16 *, 0x82) = 0x190;
+            a[0x7B] = 1;
+        } else {
+            M2C_FIELD(a, s16 *, 0x56) = 0x800;
+            a[0] = 9;
+            M2C_FIELD(a, s16 *, 0x80) = 0x50;
+            M2C_FIELD(a, s16 *, 0x82) = 0xA0;
+            a[0x7B] = 0;
+        }
+        M2C_FIELD(a, s16 *, 0x84) = 0x80;
+        M2C_FIELD(a, s16 *, 0x86) = 0x120;
+        func_80041718(a, a[0x7B], 0);
+        a[4]++;
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            f_HandleWinConversationState(a);
+            if (D_800BF9DE < 0x16 && func_80077F3C(a) != 0) {
+                func_800518FC(a);
+            }
+            break;
+        case 1:
+            func_8011A804(a);
+            break;
+        }
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u8 *D_1F800214;
 s32 func_8011AB00(u8 *a) {
@@ -2936,7 +2999,56 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleNetBridgeRaiseNpcInteraction);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011CA04);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011CBD0);
+extern u8 D_800BF89C;
+extern s32 D_800ECFA4;
+void func_8011CD14(u8 *a);
+
+void func_8011CBD0(u8 *a)
+{
+    s32 v;
+
+    switch (a[4]) {
+    case 0:
+        if (D_800BF89C >= 4) {
+            v = D_800ECFA4;
+            a[0xB] = 0x40;
+            M2C_FIELD(a, s16 *, 0x80) = 0x64;
+            M2C_FIELD(a, s16 *, 0x82) = 0xC8;
+            M2C_FIELD(a, s16 *, 0x84) = 0xC0;
+            M2C_FIELD(a, s16 *, 0x58) = 0;
+            M2C_FIELD(a, s16 *, 0x56) = 0;
+            M2C_FIELD(a, s16 *, 0x54) = 0;
+            a[0] = 1;
+            a[0x2B] = 0;
+            M2C_FIELD(a, s16 *, 0x86) = 0x150;
+            a[5] = 0;
+            M2C_FIELD(a, s32 *, 0x3C) = v;
+            a[4]++;
+        }
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            f_HandleNetBridgeRaiseNpcInteraction(a);
+            break;
+        case 1:
+            func_8011CA04(a);
+            break;
+        }
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        a[0x2B] = 0;
+        func_8011CD14(a);
+        break;
+    case 2:
+        a[4]++;
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern void *D_800ECF94;
 extern u8 D_8014BFB4[];
@@ -5308,7 +5420,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80132400);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80132548);
 
 extern s8 D_1F800160[];
-extern u8 D_800BF89C;
 void func_8013259C(void *arg0) {
     u8 temp_a0;
     u8 temp_v1;
