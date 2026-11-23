@@ -17223,11 +17223,65 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawFullscreenOverlay);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007EAE4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007ED5C);
+void func_8007ED5C(s32 sel)
+{
+    char *lines[4];
+    s32 xs[2];
+    s32 ys[2];
+    s32 *tab;
+    s32 i;
+    s32 y;
+    s32 m;
+
+    tab = (s32 *)D_800A2854;
+    lines[0] = (char *)tab[3];
+    f_CalculateCenteredTextPositions(lines, 1, xs);
+    i = 0;
+    y = 0x68;
+    f_DrawTallMenuText(xs[0], 0x50, i, (s32)lines[0], 0);
+    lines[0] = (char *)tab[4];
+    lines[1] = (char *)tab[5];
+    m = f_CalculateCenteredTextPositions(lines, 2, xs);
+loop:
+    ys[i] = y;
+    f_DrawTallMenuText(xs[i], (s16)ys[i], (sel == i) * 2, (s32)lines[i], 0);
+    y += 0x18;
+    if (++i < 2) {
+        goto loop;
+    }
+    f_DrawMenuSelectionCursor(m, ys[sel] + 4, 0);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007EE74);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007EF60);
+void func_8007EF60(s32 sel)
+{
+    char *lines[4];
+    s32 xs[4];
+    s32 ys[4];
+    s32 *tab;
+    s32 i;
+    s32 y;
+    s32 m;
+
+    tab = (s32 *)D_800A2854;
+    lines[0] = (char *)tab[9];
+    f_CalculateCenteredTextPositions(lines, 1, xs);
+    i = 0;
+    y = 0x68;
+    f_DrawTallMenuText(xs[0], 0x50, i, (s32)lines[0], 0);
+    lines[0] = (char *)tab[10];
+    lines[1] = (char *)tab[11];
+    m = f_CalculateCenteredTextPositions(lines, 2, xs);
+loop:
+    ys[i] = y;
+    f_DrawTallMenuText(xs[i], (s16)ys[i], (sel == i) * 2, (s32)lines[i], 0);
+    y += 0x18;
+    if (++i < 2) {
+        goto loop;
+    }
+    f_DrawMenuSelectionCursor(m, ys[sel] + 4, 0);
+}
 
 void func_8007F078(void)
 {
