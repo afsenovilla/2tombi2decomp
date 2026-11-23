@@ -8156,7 +8156,96 @@ void func_8013EF58(u8 *a)
     func_80027768(m, 0, y, a[0x29]);
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_CollectVisibleA00GridCellsForCamera);
+extern s32 D_800A3F90;
+extern s32 D_800A3F94;
+s32 f_GetA00GridCellValue(s32 x, s32 y);
+void f_CollectA00GridCellsInsideTriangle(u8 *a, s32 *p0, s32 *p1, s32 *p2);
+
+void f_CollectVisibleA00GridCellsForCamera(u8 *a) {
+    s32 v[6];
+    s32 ox = 0;
+    s32 oz = ox;
+    u32 ang = D_1F8000D0[0x11] & 0xFFF;
+    s16 gx, gz;
+    s32 k, s, dx, dz;
+    u16 g;
+
+    if (D_1F800137 != 0) {
+        gx = D_1F8000D0[7] / 640;
+        gz = D_1F8000D0[0xB] / 640;
+        D_8014C800 = f_GetA00GridCellValue(gx, gz);
+    } else {
+        gx = D_1F800160_71b4 / 640;
+        gz = D_1F800164_d75f / 640;
+        D_8014C800 = f_GetA00GridCellValue(gx, gz);
+    }
+    g = *(volatile u16 *)&D_8014C800 & 0xF;
+    D_8014C800 = g;
+    switch (g) {
+    case 1:
+    case 2:
+        if (ang - 0x200 > 0xC00) D_800A3F90 = 0x2F80;
+        else D_800A3F90 = 0x2580;
+        D_800A3F90 = 0x2580;
+        D_800A3F94 = 0x155;
+        break;
+    case 4:
+    case 8:
+        D_800A3F90 = 0x2D00;
+        D_800A3F94 = 0x155;
+        break;
+    }
+    switch (D_1F800207_9c67) {
+    case 1:
+        D_800A3F90 = 0x3700;
+        D_800A3F94 = 0x1C7;
+        if (D_1F800160_71b4 >= 0x2454 && ang - 0x200 > 0xC00) D_800A3F90 = 0x3E80;
+        break;
+    case 4: case 5: case 6: case 7: case 8: case 9: case 10:
+        if (ang - 0x801 < 0x7FF) {
+            ox = -(func_80083E80(-D_1F8000D0[0x11]) * 640) >> 12;
+            oz = -(func_80083F50(-D_1F8000D0[0x11]) * 640) >> 12;
+            D_800A3F90 = 0x3980;
+            D_800A3F94 = 0x13E;
+        }
+        break;
+    case 17: case 18: case 19: case 20: case 21:
+        D_800A3F90 = 0x3C00;
+        D_800A3F94 = 0x1C7;
+        break;
+    default:
+        D_800A3F90 = 0x3200;
+        D_800A3F94 = 0x1C7;
+        break;
+    }
+    k = (-D_1F8000D0[0x11] - D_800A3F94) & 0xFFF;
+    v[0] = D_1F8000D0[1] + ox;
+    v[1] = D_1F8000D0[5] + oz;
+    v[2] = v[0] + ((func_80083E80(k) * D_800A3F90) >> 12);
+    v[3] = v[1] + ((func_80083F50(k) * D_800A3F90) >> 12);
+    k = (D_800A3F94 - D_1F8000D0[0x11]) & 0xFFF;
+    v[4] = v[0] + ((func_80083E80(k) * D_800A3F90) >> 12);
+    v[5] = v[1] + ((func_80083F50(k) * D_800A3F90) >> 12);
+    s = __builtin_abs(func_80083E80(D_1F8000D0[0x10]));
+    dx = (func_80083E80(-D_1F8000D0[0x11]) * s) >> 12;
+    dz = (func_80083F50(-D_1F8000D0[0x11]) * s) >> 12;
+    dx = (dx * D_800A3F90 * 5) >> 16;
+    dz = (dz * D_800A3F90 * 5) >> 16;
+    v[2] -= dx;
+    v[3] -= dz;
+    v[4] -= dx;
+    v[0] -= dx;
+    v[5] -= dz;
+    v[1] -= dz;
+    v[0] /= 640;
+    v[1] /= 640;
+    v[2] /= 640;
+    v[3] /= 640;
+    v[4] /= 640;
+    v[5] /= 640;
+    a[6] = 0;
+    f_CollectA00GridCellsInsideTriangle(a, &v[0], &v[2], &v[4]);
+}
 
 s32 f_TestA00GridCellMask(s32 x, s32 y);
 #define GH(p, o) (*(s16 *)((u8 *)(p) + (o)))
