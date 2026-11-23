@@ -952,9 +952,208 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80115AEC);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80115BE0);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", f_UpdateWaterTempleQuestItemPickupActor);
-
 extern s32 D_800ECFB8;
+extern s8 D_800BFA33;
+extern s32 D_800ECF80;
+extern u8 D_801486EC[];
+extern u8 D_1F800207;
+extern u8 D_800BFA54;
+/* func_801161C4, inlined */
+static inline void func_801161C4_inl(u8 *a)
+{
+    if (func_80051B70(a, 0x17, 5) == 0) {
+        s16 *p = *(s16 **)(a + 0xC0);
+        *(s32 *)(a + 0x3C) = D_800ECFB8;
+        *p -= 0x64;
+        if (a[5] == 0) {
+            a[0] = 1;
+        }
+        *(s16 *)(a + 0x80) = 0x64;
+        *(s16 *)(a + 0x82) = 0xC8;
+        *(s16 *)(a + 0x84) = 0x14;
+        *(s16 *)(a + 0x86) = 0x32;
+        func_8004B354(a, 1);
+    }
+}
+/* func_80116330, inlined */
+static inline void func_80116330_inl(u8 *a) {
+    a[0xB] = 0x10;
+    a[0x47] = 0;
+    M2C_FIELD(a, s16 *, 0x5A) = 0;
+    M2C_FIELD(a, s16 *, 0x5C) = 0;
+    a[0xD] = 0;
+    M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+    func_80077B38(a, D_801486EC, 16);
+    a[0] = 1;
+    M2C_FIELD(a, s16 *, 0x80) = 0x14;
+    M2C_FIELD(a, s16 *, 0x82) = 0x28;
+    M2C_FIELD(a, s16 *, 0x84) = 0x14;
+    M2C_FIELD(a, s16 *, 0x86) = 0x28;
+    func_8004B354(a, 0);
+}
+/* func_80116430, inlined */
+static inline void func_80116430_inl(u8 *a) {
+    a[0xB] = 0x10;
+    a[0x47] = 0;
+    M2C_FIELD(a, s16 *, 0x5A) = 0;
+    M2C_FIELD(a, s16 *, 0x5C) = 0;
+    a[0xD] = 0;
+    M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+    func_80077B38(a, D_801486EC, 1);
+    M2C_FIELD(a, s16 *, 0x68) = 0xA1;
+    a[0] = 1;
+    M2C_FIELD(a, s16 *, 0x80) = 0x28;
+    M2C_FIELD(a, s16 *, 0x82) = 0x50;
+    M2C_FIELD(a, s16 *, 0x84) = 0x28;
+    M2C_FIELD(a, s16 *, 0x86) = 0x50;
+    M2C_FIELD(a, s16 *, 0x60) = M2C_FIELD(a, s16 *, 0x32);
+    func_8004B354(a, 0);
+}
+/* func_8011655C, inlined */
+static inline void func_8011655C_inl(u8 *a) {
+    a[0xB] = 0x10;
+    a[0x47] = 0;
+    M2C_FIELD(a, s16 *, 0x5A) = 0;
+    M2C_FIELD(a, s16 *, 0x5C) = 0;
+    a[0xD] = 0;
+    M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+    func_80077B38(a, D_801486EC, 7);
+    M2C_FIELD(a, s16 *, 0x68) = 0xA5;
+    a[0] = 1;
+    M2C_FIELD(a, s16 *, 0x80) = 0x28;
+    M2C_FIELD(a, s16 *, 0x82) = 0x50;
+    M2C_FIELD(a, s16 *, 0x84) = 0xA;
+    M2C_FIELD(a, s16 *, 0x86) = 0x14;
+    func_8004B354(a, 0);
+}
+/* func_80116674, inlined */
+static inline void func_80116674_inl(u8 *a) {
+    a[0xB] = 0x10;
+    a[0x47] = 0;
+    M2C_FIELD(a, s16 *, 0x5A) = 0;
+    M2C_FIELD(a, s16 *, 0x5C) = 0;
+    a[0xD] = 0;
+    M2C_FIELD(a, s32 *, 0x3C) = D_800ECF80;
+    func_80077B38(a, D_801486EC, 3);
+    M2C_FIELD(a, s16 *, 0x68) = 0xA3;
+    a[0x2A] = 0x1A;
+    M2C_FIELD(a, s16 *, 0x80) = 0x64;
+    M2C_FIELD(a, s16 *, 0x82) = 0xC8;
+    M2C_FIELD(a, s16 *, 0x84) = 0x28;
+    M2C_FIELD(a, s16 *, 0x86) = 0x50;
+    func_8004B354(a, 0);
+}
+/* func_80116704, inlined */
+static inline void func_80116704_inl(u8 *p)
+{
+    func_8007778C(p);
+    if (D_1F800207 == 0x1A) {
+        p[0] = 1;
+    } else {
+        p[0] = 2;
+    }
+    func_8004B374(p, 0);
+}
+/* func_801163E4, inlined */
+static inline void func_801163E4_inl(void *arg0) {
+    if (func_80040B48(0x2B) >= 0) {
+        func_8004D4C4(0x27, 1);
+        func_8004B0D8(arg0);
+    }
+    M2C_FIELD(arg0, s8 *, 4) = 3;
+}
+/* func_8011661C, inlined */
+static inline void func_8011661C_inl(void *arg0) {
+    if (func_80040B48(0x89) >= 0) {
+        func_8004A3D4(arg0);
+        D_800BF870.pad1[0xCC] |= 0x80;
+    }
+    M2C_FIELD(arg0, s8 *, 4) = 3;
+}
+
+void f_UpdateWaterTempleQuestItemPickupActor(u8 *a)
+{
+    u16 t;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        switch (a[3]) {
+        case 0:
+            func_801161C4_inl(a);
+            break;
+        case 1:
+            func_80116330_inl(a);
+            break;
+        case 2:
+            func_80116430_inl(a);
+            break;
+        case 3:
+            func_8011655C_inl(a);
+            break;
+        case 4:
+            func_80116674_inl(a);
+            break;
+        }
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            func_80115BE0(a);
+            break;
+        case 1:
+            if (func_8007778C(a) != 0) {
+                func_8004B374(a, 0);
+            }
+            break;
+        case 2:
+            func_8007778C(a);
+            t = (*(u16 *)(a + 0x40) + 0x40) & 0xFFF;
+            *(u16 *)(a + 0x40) = t;
+            *(s16 *)(a + 0x32) = *(u16 *)(a + 0x60) + (func_80083E80(t) >> 8);
+            func_8004B374(a, 0);
+            break;
+        case 3:
+            func_8007778C(a);
+            func_8004B374(a, 0);
+            break;
+        case 4:
+            func_80116704_inl(a);
+            break;
+        }
+        break;
+    case 2:
+        switch (a[3]) {
+        case 0:
+            func_8004D4C4(0x9E, 1);
+            func_8004B0D8(a);
+            D_800BFA33 = 2;
+            a[4] = 3;
+            break;
+        case 1:
+            func_801163E4_inl(a);
+            break;
+        case 2:
+            func_8004A3D4(a);
+            D_800BF870.pad1[0x1CE] |= 0x40;
+            a[4] = 3;
+            break;
+        case 3:
+            func_8011661C_inl(a);
+            break;
+        case 4:
+            func_8004A3D4(a);
+            D_800BFA54 = 1;
+            a[4] = 3;
+            break;
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
+
 void func_801161C4(u8 *a)
 {
     if (func_80051B70(a, 0x17, 5) == 0) {
@@ -972,7 +1171,6 @@ void func_801161C4(u8 *a)
     }
 }
 
-extern s8 D_800BFA33;
 void func_80116254(void *arg0) {
     func_8004D4C4(0x9E, 1);
     func_8004B0D8(arg0);
@@ -997,8 +1195,6 @@ s32 func_8011629C(u8 *a)
     return 1;
 }
 
-extern s32 D_800ECF80;
-extern u8 D_801486EC[];
 void func_80116330(u8 *a) {
     a[0xB] = 0x10;
     a[0x47] = 0;
@@ -1110,7 +1306,6 @@ void func_80116674(u8 *a) {
     func_8004B354(a, 0);
 }
 
-extern u8 D_1F800207;
 void func_8012485C();
 extern u8 D_800BF8DF;
 void func_80116704(u8 *p)
