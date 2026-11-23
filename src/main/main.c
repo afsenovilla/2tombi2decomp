@@ -6910,7 +6910,20 @@ s32 f_EndScriptedInteractionAudio(void) {
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_BeginScriptedInteractionAudio);
+s32 f_PlaySoundEffect();
+
+s32 f_BeginScriptedInteractionAudio(s32 flag, s32 idx)
+{
+    Bytes8_368 t = D_80015368;
+    u8 i = idx;
+
+    f_RequestStreamedAudioStop();
+    D_800BF84B = 0;
+    if (i != 0) i = idx - 1;
+    f_PlaySoundEffect(t.b[i], 0, 0);
+    D_1F800137_104c = flag;
+    return 1;
+}
 
 void func_800423FC(void *arg0) {
     if (M2C_FIELD(arg0, s16 *, 0x72) != 0) {
