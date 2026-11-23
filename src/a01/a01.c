@@ -2611,7 +2611,63 @@ void func_8011A168(void *arg0) {
     func_8004190C(arg0);
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011A27C);
+extern s32 D_800ECF58_a4fb[];
+extern u8 D_801356AC[];
+extern u8 D_801393C0_27b3[];
+extern u8 D_800A3D18[];
+extern u8 D_80135C48[];
+
+void func_8011A27C(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        if (func_800519E0(a, 0xF, D_800ECF58_a4fb[0x3C / 4], D_801356AC) != 0) {
+            break;
+        }
+        M2C_FIELD(a, s32 *, 0x3C) = D_800ECF58_a4fb[0x38 / 4];
+        func_80040CDC(a, D_801393C0_27b3, D_800A3D18);
+        func_80041718(a, 0x14, 0);
+        a[0x7B] = 0x14;
+        a[0xB] = 0x40;
+        a[0] = 9;
+        M2C_FIELD(a, s16 *, 0x80) = 0xAA;
+        M2C_FIELD(a, s16 *, 0x82) = 0x154;
+        M2C_FIELD(a, s16 *, 0x84) = 0x80;
+        M2C_FIELD(a, s16 *, 0x86) = 0xF0;
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        M2C_FIELD(a, s16 *, 0x58) = 0;
+        M2C_FIELD(a, s16 *, 0x56) = 0;
+        M2C_FIELD(a, s16 *, 0x54) = 0;
+        if (a[3] == 0) {
+            M2C_FIELD(a, s32 *, 0x2C) = 0x30400000;
+            M2C_FIELD(a, s32 *, 0x30) = 0xEF520000;
+            M2C_FIELD(a, s32 *, 0x34) = 0x39C30000;
+            M2C_FIELD(a, s16 *, 0x56) = 0xC00;
+            func_800416A8(a, -1, 0);
+            func_80041718(a, 8, 0);
+            func_80040D68(a, D_80135C48);
+            a[0x70] = 2;
+        }
+        a[4]++;
+        break;
+    case 1:
+        if (a[3] == 0) {
+            func_8011A168(a);
+        }
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 u8 *func_8011A43C(s32 a, s32 b) {
     u8 *p = func_8007A980(3, 9, 0);
@@ -2629,7 +2685,6 @@ u8 *func_8011A43C(s32 a, s32 b) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011A4AC);
 
-extern s32 D_800ECF58_a4fb[];
 extern u8 D_80135A0C[];
 extern u8 D_8013995C[];
 extern u8 D_80135D88[];
@@ -2819,7 +2874,6 @@ extern u8 D_800A3CF0[];
 extern u8 D_801360FC[];
 extern u8 D_800ECF58_742e[];
 extern u8 D_8001B4DC[];
-extern u8 D_800A3D18[];
 extern u8 D_80136084[];
 /* func_8011ADA0, inlined */
 static inline void inl_8011ADA0(u8 *a) {
@@ -3546,7 +3600,6 @@ void func_8011E1D4(void *arg0) {
     }
 }
 
-extern u8 D_801393C0_27b3[];
 void func_8011E324(AreaPartsOwner *a) {
     switch (a->pad[4]) {
     case 0:
