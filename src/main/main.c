@@ -16892,7 +16892,100 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007413C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800741DC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_PlaySoundEffect);
+typedef struct { u8 type; u8 a; u8 b; u8 c; s8 d; u8 e; s8 vol; u8 pad; } SfxDef_4D18;
+extern SfxDef_4D18 D_800A4D18[];
+extern SfxDef_4D18 *D_800A4EF8[];
+void f_PlaySequencedMusic(s32 arg);
+
+s32 f_PlaySoundEffect(id, pitch, voladj)
+    u8 id;
+    s8 pitch;
+    s8 voladj;
+{
+    SfxDef_4D18 *d;
+    u8 type;
+    s16 flag;
+    s16 vol;
+    s16 p;
+    u8 *g;
+    u8 n = id;
+
+    if ((s8)id >= 0) {
+        if ((u8)n >= 0x70) {
+            switch ((u8)n) {
+            case 0x70:
+                f_PlaySequencedMusic(2);
+                goto ret0;
+            case 0x71:
+                f_PlaySequencedMusic(3);
+                goto ret0;
+            case 0x72:
+                f_PlaySequencedMusic(4);
+                goto ret0;
+            case 0x73:
+                f_PlaySequencedMusic(5);
+                goto ret0;
+            case 0x74:
+                f_PlaySequencedMusic(6);
+                goto ret0;
+            case 0x75:
+                f_PlaySequencedMusic(7);
+                goto ret0;
+            case 0x79:
+                f_PlaySequencedMusic(0xD);
+                goto ret0;
+            case 0x76:
+            case 0x7A:
+                f_PlaySequencedMusic(0xA);
+                goto ret0;
+            case 0x77:
+            case 0x7B:
+                f_PlaySequencedMusic(0xB);
+                goto ret0;
+            case 0x78:
+            case 0x7C:
+                f_PlaySequencedMusic(0xC);
+                goto ret0;
+            case 0x7F:
+                f_StopNonReservedSequencedMusic();
+                goto ret0;
+            }
+            goto ret0;
+        }
+        d = &D_800A4D18[(u8)n];
+        type = d->type;
+        if (type != 4 && D_1F800137_104c != 0) {
+            type = 1;
+        }
+        flag = 0;
+    } else {
+        if ((u8)n >= 0xE1) {
+        ret0:
+            return 0;
+        }
+        d = D_800A4EF8[D_800BF870.unk0];
+        d += id & 0x7F;
+        type = d->type;
+        if (type != 4 && D_1F800137_104c != 0) {
+            type = 1;
+        }
+        flag = 0x80;
+    }
+    g = D_800FB160_9a03;
+    p = d->vol + voladj;
+    if (g[5] == 0) {
+        vol = 0;
+    } else {
+        p = p * g[5];
+        vol = p / 9;
+        if (vol < 0) {
+            vol = 0;
+        } else if (vol >= 0x80) {
+            vol = 0x7F;
+        }
+    }
+    return f_QueueSoundEffectVoice(type, d->a, d->b, d->c | flag, d->d + pitch, d->e, vol, vol);
+}
 
 void f_PlaySoundEffectWithPitchOffset(s32 arg0, s8 arg1) {
     f_PlaySoundEffect(arg0 & 0xFF, arg1, 0);
