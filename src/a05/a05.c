@@ -5724,7 +5724,89 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80138404);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801384F8);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80138758);
+typedef struct { s16 x, y, z, pad; s16 u, v, w, pad2; } Ent16;
+extern Ent16 D_80140298[];
+
+void func_80138758(u8 *a)
+{
+    u32 n;
+    s16 k;
+    u8 *e;
+    Ent16 *t;
+    s16 w;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        a[5] = 0x3C;
+        *(s32 *)(a + 0x50) = 0;
+        *(u32 *)(a + 0x54) = 0;
+        a[6] = 0;
+    case 1:
+        n = *(u32 *)(a + 0x54) + 1;
+        *(u32 *)(a + 0x54) = n;
+        if (n < 0x1B8) {
+            break;
+        }
+        if (n >= 0x1D6) {
+            if (n >= 0x1F8) {
+                a[4] = 2;
+            }
+        }
+        switch (*(u32 *)(a + 0x54)) {
+        case 0x1B8:
+            k = 0;
+            break;
+        case 0x1C2:
+            k = 1;
+            break;
+        case 0x1C5:
+            k = 2;
+            break;
+        case 0x1D0:
+            k = 3;
+            break;
+        case 0x1DA:
+            k = 4;
+            break;
+        case 0x1DF:
+            k = 5;
+            break;
+        case 0x1E4:
+            k = 6;
+            break;
+        case 0x1E8:
+            k = 7;
+            break;
+        case 0x1EC:
+            k = 8;
+            break;
+        default:
+            k = -1;
+            break;
+        }
+        if (k >= 0) {
+            e = func_800310F4(0x610, -0x1E);
+            if (e != NULL) {
+                t = &D_80140298[k];
+                *(s16 *)(e + 0x2C) = t->x;
+                *(s16 *)(e + 0x2E) = t->y;
+                *(s16 *)(e + 0x30) = t->z;
+                *(s16 *)(e + 0x48) = t->u;
+                *(s16 *)(e + 0x4A) = t->v;
+                w = t->w;
+                e[0x28] |= 0x80;
+                *(s16 *)(e + 0x32) = -0x12C;
+                *(s16 *)(e + 0x4C) = w;
+            }
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624();
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80138904);
 
