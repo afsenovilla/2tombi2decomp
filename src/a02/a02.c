@@ -2536,7 +2536,45 @@ void func_80117C0C(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80117C3C);
+typedef struct { s16 w, h; } BoxWH;
+extern s16 D_80129C20[];
+extern BoxWH D_80129C40[];
+
+void func_80117C3C(u8 *a)
+{
+    s16 *t;
+    BoxWH *b;
+    s16 w;
+
+    switch (a[4]) {
+    case 0:
+        t = D_80129C20;
+        if (func_80051B70(a, 0xC, t[a[3]]) != 0) {
+            break;
+        }
+        a[0] = 1;
+        a[0x29] = 0;
+        a[4]++;
+        b = (BoxWH *)(((t[a[3]] - 0xB) << 2) + (s32)D_80129C40);
+        w = b->w;
+        M2C_FIELD(a, s16 *, 0x80) = w;
+        M2C_FIELD(a, s16 *, 0x82) = w * 2;
+        w = b->h;
+        M2C_FIELD(a, s16 *, 0x84) = w;
+        M2C_FIELD(a, s16 *, 0x86) = w;
+        break;
+    case 1:
+        if (func_8007778C(a) != 0) {
+            func_800517F8(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80117D64);
 
