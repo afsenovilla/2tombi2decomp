@@ -4568,7 +4568,51 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80120C34);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80120DA0);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80120F00);
+#define RH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+
+void func_80120F00(u8 *a) {
+    switch (a[6]) {
+    case 0:
+        RH(a, 0x40) = (func_8009A450() & 3) + 2;
+        RH(a, 0x58) = 0;
+        if (a[0xBE] == 0) {
+            RH(a, 0x64) = (RH(a, 0x60) + 0x200) & 0xFFF;
+            RH(a, 0x66) = (RH(a, 0x60) - 0x200) & 0xFFF;
+            RH(a, 0x68) = RH(a, 0x60) & 0xFFF;
+        } else {
+            RH(a, 0x64) = (RH(a, 0x60) + 0xA00) & 0xFFF;
+            RH(a, 0x66) = (RH(a, 0x60) + 0x600) & 0xFFF;
+            RH(a, 0x68) = (RH(a, 0x60) + 0x800) & 0xFFF;
+        }
+        a[6]++;
+        break;
+    case 1:
+        if (RH(a, 0x64) == (RH(a, 0x56) = func_800776F8(RH(a, 0x64), RH(a, 0x56), 0x80))) {
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (RH(a, 0x66) == (RH(a, 0x56) = func_800776F8(RH(a, 0x66), RH(a, 0x56), 0x80))) {
+            a[6]++;
+        }
+        break;
+    case 3:
+        if (RH(a, 0x68) == (RH(a, 0x56) = func_800776F8(RH(a, 0x68), RH(a, 0x56), 0x80))) {
+            if (--RH(a, 0x40) == 0) {
+                a[6]++;
+            } else {
+                a[6] = 1;
+            }
+        }
+        break;
+    case 4:
+        a[5] = 4;
+        a[6] = 0;
+        a[7] = 0;
+        break;
+    }
+    func_801208B4(a);
+}
 
 extern s16 D_1F8001A4;
 extern u8 D_80137234[];
