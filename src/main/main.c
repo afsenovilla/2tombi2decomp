@@ -13373,7 +13373,90 @@ void func_80069BEC(u8 *a, s32 flag)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80069CD8);
+extern s32 D_1F800280;
+extern int rcos(int a);
+extern int rsin(int a);
+
+void func_80069CD8(u8 *a, s32 b)
+{
+    u8 *q = (u8 *)D_1F800280;
+    u8 *m = a + 0x60;
+    u8 *p = (u8 *)b;
+    s16 r;
+    s32 dz;
+    s32 dx;
+    u16 x;
+    u16 y;
+    u16 z;
+    s16 d;
+    u16 v;
+    s32 c;
+    s32 sn;
+
+    if (q[0xC] == 4) {
+        switch (q[2]) {
+        case 23:
+            *(s16 *)(m + 2) -= *(s16 *)(q + 0x4A) >> 8;
+            if (*(s16 *)(m + 2) < -*(s16 *)(q + 0x84)) {
+                *(s16 *)(m + 2) = -*(s16 *)(q + 0x84);
+            }
+            *(u16 *)(a + 0x2E) = *(u16 *)(p + 0x2C) + *(u16 *)(m + 0);
+            *(u16 *)(a + 0x32) = *(u16 *)(p + 0x30) + *(u16 *)(m + 2);
+            *(u16 *)(a + 0x36) = *(u16 *)(p + 0x34) + *(u16 *)(m + 4);
+            break;
+        case 2:
+        case 4:
+        case 7:
+            r = (rsin(*(s16 *)(p + 0xC)) * 0x6E) >> 12;
+            dz = (rsin(*(s16 *)(q + 0x56)) * r) >> 12;
+            dx = (rcos(*(s16 *)(q + 0x56)) * r) >> 12;
+            x = *(u16 *)(p + 0x2C) - dx;
+            z = *(u16 *)(p + 0x34) + dz;
+            y = *(u16 *)(p + 0x30) + ((rcos(*(s16 *)(p + 0xC)) * 0x6E) >> 12);
+            switch (a[0x46] >> 1) {
+            case 0:
+            case 1:
+                c = (rcos(*(s16 *)(m + 0x18) + 0x800) * (*(s16 *)(a + 0x80) + *(s16 *)(q + 0x80))) >> 12;
+                sn = (rsin(*(s16 *)(m + 0x18) + 0x800) * (*(s16 *)(a + 0x80) + *(s16 *)(q + 0x80))) >> 12;
+                *(u16 *)(a + 0x2E) = x + c;
+                *(u16 *)(a + 0x32) = y;
+                *(u16 *)(a + 0x36) = z - sn;
+                break;
+            case 2:
+            case 3:
+                *(u16 *)(a + 0x2E) = x;
+                *(u16 *)(a + 0x36) = z;
+                *(u16 *)(a + 0x32) = *(u16 *)(a + 0x84) + (y + (*(u16 *)(q + 0x86) - *(u16 *)(q + 0x84)));
+                break;
+            }
+            break;
+        case 8:
+            if (D_800BF870.unk0 == 0xB) {
+                d = *(u16 *)(a + 0x2E) - *(u16 *)(p + 0x2C);
+            } else {
+                d = *(u16 *)(a + 0x36) - *(u16 *)(p + 0x34);
+            }
+            if (D_800BF870.unk0 == 0xC && q[3] == 0) {
+                v = (u32)-(rsin(*(s16 *)(p + 0xC)) * d) >> 12;
+            } else {
+                v = (u32)(rsin(*(s16 *)(p + 0xC)) * d) >> 12;
+            }
+            *(u16 *)(a + 0x2E) = *(u16 *)(p + 0x2C) + *(u16 *)(m + 0);
+            *(u16 *)(a + 0x32) = *(u16 *)(p + 0x30) + v + (u16)(*(u16 *)(a + 0x84) + 0x40);
+            *(u16 *)(a + 0x36) = *(u16 *)(p + 0x34) + *(u16 *)(m + 4);
+            break;
+        default:
+            *(u16 *)(a + 0x2E) = *(u16 *)(p + 0x2C) + *(u16 *)(m + 0);
+            *(u16 *)(a + 0x32) = *(u16 *)(p + 0x30) + *(u16 *)(m + 2);
+            *(u16 *)(a + 0x36) = *(u16 *)(p + 0x34) + *(u16 *)(m + 4);
+            break;
+        }
+    } else {
+        *(u16 *)(a + 0x2E) = *(u16 *)(p + 0x2C) + *(u16 *)(a + 0x60);
+        *(u16 *)(a + 0x32) = *(u16 *)(p + 0x30) + *(u16 *)(m + 2);
+        *(u16 *)(a + 0x36) = *(u16 *)(p + 0x34) + *(u16 *)(m + 4);
+    }
+}
 
 extern u8 D_1F80027B;
 extern u8 D_1F80023A;
@@ -13590,8 +13673,6 @@ s32 func_8006A8C8(s32 arg0) {
     return temp_v0;
 }
 
-extern int rcos(int a);
-extern int rsin(int a);
 
 void func_8006A900(u8 *a)
 {
@@ -17383,7 +17464,6 @@ extern u8 D_1F800259;
 extern u8 D_1F80025A;
 extern u8 D_1F80025B;
 extern s32 D_1F800214_f5da;
-extern s32 D_1F800280;
 extern u8 D_1F800233_33a2;
 extern u8 D_1F80023B_0a71;
 void f_SetDoubleBufferedClearColor(u8 r, u8 g, u8 b);
