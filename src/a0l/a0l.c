@@ -2040,8 +2040,6 @@ s32 func_801122B4(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80112660);
-
 typedef struct {
     s16 x, y, w, h;
 } Rect16;
@@ -2055,8 +2053,102 @@ typedef struct {
     Rect16 slice;
     s32 isdone;
 } DecEnv;
+typedef struct {
+    u32 unk0;
+    u8 *buf;
+    u32 unk8;
+} MovieDef;
+extern MovieDef D_8011A6AC[];
 extern DecEnv D_1F800000;
+extern u8 *D_1F800138;
 extern u8 D_1F800135;
+extern u8 D_1F80019C;
+extern u8 D_1F80019D;
+extern s32 D_1F800034;
+extern s16 D_800E809C;
+extern char D_80109180[];
+extern char D_80109198[];
+extern char D_801091C4[];
+void func_801129D4(void);
+
+s32 func_80112660(s32 idx)
+{
+    u8 buf[0x18];
+    u8 c;
+    s32 n;
+    u8 *p;
+    u16 t;
+    u8 *p_f;
+
+    if (D_1F80019D != 0) {
+        *(s16 *)(D_1F800138 + 0x4E) = 7;
+    }
+    switch (*(u16 *)(D_1F800138 + 0x4E)) {
+    case 0:
+        p = D_1F800138;
+        p[0x69] = idx;
+        c = 0x80;
+        (MEMBER_AT(s16, p, 0x4E))++;
+        do {
+        } while (func_80089BAC(0xE, &c, 0) == 0);
+        break;
+    case 1:
+    case 2:
+    case 3:
+        (*(s16 *)(D_1F800138 + 0x4E))++;
+        break;
+    case 4:
+        func_8008B8F0(buf, D_8011A6AC[idx].unk0);
+        p_f = D_1F800138;
+        t = *(u16 *)(p_f + 0x4E);
+        D_1F80019C = 1;
+        *(s16 *)(p_f + 0x4E) = t + 1;
+        func_80075A30();
+        break;
+    case 5:
+        func_80112AE0(&D_1F800000, 0, 0, 0, 0x100);
+        func_80112BA0((s32)buf, (s32)func_801129D4);
+        if (func_80112C40(&D_1F800000, (s16)D_8011A6AC[idx].unk8) == -1) {
+            func_8009A730(D_80109180);
+            *(s16 *)(D_1F800138 + 0x4E) = 7;
+            return 0;
+        }
+        (*(s16 *)(D_1F800138 + 0x4E))++;
+    case 6:
+        func_8009C784(D_1F800000.vlcbuf[D_1F800000.vlcid], 0);
+        func_8009C800(D_1F800000.imgbuf[D_1F800000.imgid], D_1F800000.slice.w * D_1F800000.slice.h / 2);
+        if (func_80112C40(&D_1F800000, (s16)D_8011A6AC[idx].unk8) == -1) {
+            func_8009A730(D_80109198);
+            *(s16 *)(D_1F800138 + 0x4E) = 7;
+        }
+        n = 0x800000;
+        while (D_1F800000.isdone == 0) {
+            if (--n == 0) {
+                func_8009A730(D_801091C4);
+                D_1F800000.isdone = 1;
+                D_1F800000.rectid = D_1F800135;
+                D_1F800000.slice.x = D_1F800000.rect[D_1F800000.rectid].x;
+                D_1F800000.slice.y = D_1F800000.rect[D_1F800000.rectid].y;
+            }
+        }        D_1F800034 = 0;
+        D_1F80019C = 2;
+        *(volatile s16 *)&D_800E809C = 1;
+        break;
+    case 7:
+        func_8001CF00(0);
+        func_8009C820(0);
+        func_8009C8BC(0);
+        func_8008CD40();
+        func_8008CCE0();
+        do {
+        } while (func_80089E1C(9, 0, 0) == 0);
+        D_1F80019C = 0;
+        D_1F80019D = 0;
+        return 1;
+    }
+    return 0;
+}
+
 void func_801129D4(void)
 {
     Rect16 r;
@@ -2086,13 +2178,6 @@ typedef struct {
     u16 width;
     u16 height;
 } StHeader;
-typedef struct {
-    u32 unk0;
-    u8 *buf;
-    u32 unk8;
-} MovieDef;
-extern MovieDef D_8011A6AC[];
-extern u8 *D_1F800138;
 void func_80112AE0(DecEnv *d, s16 x0, s16 y0, s16 x1, s16 y1)
 {
     u8 *b;

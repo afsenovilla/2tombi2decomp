@@ -1528,7 +1528,49 @@ AreaPolyFT4 *func_80112F3C(AreaPolyFT4 *p, s32 x, s32 y, s32 w, s32 h, s16 c, s1
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80113078);
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80113594);
+extern u8 D_8011B030[];
+
+void func_80113594(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+    void *p;
+
+    switch (a[4]) {
+    case 0:
+        *(s16 *)(a + 0x48) = 0xB0;
+        *(s16 *)(a + 0x4A) = 0xB0;
+        a[4] = 1;
+        a[5] = 10;
+    case 1:
+        p = *(void **)(a + 0x38);
+        *(void **)(a + 0x34) = p;
+        if (p == NULL) {
+            *(void **)(a + 0x38) = D_8011B030;
+            *(void **)(a + 0x34) = D_8011B030;
+        }
+        if (o != NULL) {
+            if (o[4] >= 2) {
+                a[4] = 2;
+                break;
+            }
+            *(s16 *)(a + 0x2C) = *(s16 *)(o + 0x2E);
+            *(s16 *)(a + 0x2E) = *(s16 *)(o + 0x32);
+            *(s16 *)(a + 0x30) = *(s16 *)(o + 0x36);
+        } else {
+            u8 c = a[5]--;
+            if (c == 0) {
+                a[4] = 2;
+                break;
+            }
+        }
+        func_8002B278(a);
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u8 D_8011CE48[];
 extern u8 D_8011CE30[];
