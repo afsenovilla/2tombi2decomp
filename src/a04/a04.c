@@ -882,7 +882,59 @@ void func_80110F88(s32 arg0, M2C_UNK arg1) {
     }
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80110FD8);
+extern u8 D_8013FF3C[];
+
+void func_80110FD8(u8 *a, u8 *b)
+{
+    s32 k;
+    s32 v;
+
+    if (func_80022F04() == 0) {
+        return;
+    }
+    k = D_8013FF3C[a[2]];
+    switch (a[2]) {
+    case 0:
+        k |= 2;
+        break;
+    case 1:
+    case 4:
+    case 7:
+    case 10:
+        k |= 1;
+        break;
+    case 2:
+    default:
+        k = 0;
+        break;
+    case 3:
+        k |= 3;
+        break;
+    case 5:
+    case 6:
+        k |= 4;
+        break;
+    case 8:
+    case 9:
+        k |= 5;
+        break;
+    }
+    v = k & 0xF;
+    if (a[0x5E] != 0) {
+        k |= 8;
+        v = k & 0xF;
+    }
+    if (v == 2) {
+        a[0] = v;
+        a[4] = v;
+        a[5] = v;
+        *(u8 **)(b + 0x10) = a;
+        b[4] = v;
+        b[5] = 0;
+        b[6] = 0;
+    }
+    D_1F800182_5650 = 0;
+}
 
 void func_801110B8(u8 *a, u8 *b) {
     if (func_80022F04(a, b) != 0) {

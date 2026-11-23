@@ -4079,7 +4079,30 @@ void func_8012DF8C(void *arg0) {
     M2C_FIELD(arg0, s8 *, 5) = 0;
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012DFA0);
+s32 func_8012DFA0(u8 *a)
+{
+    if (D_1F800207_9c67 >= 10) {
+        goto ret0;
+    }
+    switch (D_1F800207_9c67) {
+    case 8:
+        if (a[0x2A] < 6) {
+            goto ret0;
+        }
+        break;
+    case 4:
+    case 5:
+    case 7:
+    ret0:
+        return 0;
+    case 6:
+        if (a[0x2A] != 6) {
+            return 0;
+        }
+        break;
+    }
+    return 1;
+}
 
 void func_8012E024(u8 *a) {
     switch (a[4]) {
@@ -5404,7 +5427,63 @@ void func_80133CCC(void *arg0) {
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80133DA4);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80133E8C);
+extern u8 D_800BFA08;
+void func_8013466C(void *arg0);
+void func_8011318C(s32 i);
+void func_80114838(s32 i);
+
+u8 *func_80133E8C(u8 *a, s16 k)
+{
+    u8 *e = NULL;
+    s32 f = 0;
+
+    switch (k) {
+    case 4 ... 6:
+        if (!((D_800BF9C4 >> (k - 4)) & 1)) {
+            e = func_8007A980(3, 2, 0);
+            f = 0x80;
+        }
+        break;
+    case 12 ... 15:
+        if (((s32 (*)(s32))func_80114838)(a[0x5E]) != 0) {
+            break;
+        }
+    case 8 ... 11:
+        e = func_8007A980(3, 2, 0);
+        f = 0x80;
+        break;
+    case 16 ... 20:
+        if (((s32 (*)(s32))func_8011318C)(a[0x5E]) == 0) {
+            e = func_8007A980(0, 2, 0);
+        }
+        break;
+    case 24:
+        if (D_800BF870.pad1[0x3C] == 1) {
+            if (!(D_800BF870.pad1[0x197] & 2)) {
+                e = func_8007A980(0, 2, 0);
+            }
+        }
+        break;
+    case 25:
+        if (!(D_800BFA08 & 4)) {
+            e = func_8007A980(0, 2, 0);
+        }
+        break;
+    case 26:
+        if (!(D_800BFA08 & 8)) {
+            e = func_8007A980(0, 2, 0);
+        }
+        break;
+    }
+    if (e != NULL) {
+        e[2] = 0x37;
+        e[3] = k | f;
+        *(void **)(e + 0x1C) = func_8013466C;
+        e[0x5E] = a[0x5E];
+        *(u8 **)(e + 0x10) = a;
+    }
+    return e;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80134000);
 
