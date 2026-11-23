@@ -376,7 +376,87 @@ done:
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8010C7F8);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8010CAE8);
+extern u8 *D_1F800184_6cc7;
+extern s16 D_1F800188;
+extern s16 D_1F80018A;
+extern s16 D_1F800196;
+static inline void land_inl(u8 *p, s32 y)
+{
+    M2C_FIELD(p, s32 *, 0x30) = y << 16;
+    func_80022C78(p);
+}
+
+s32 func_8010CAE8(u8 *a, u8 *b, u8 *c) {
+    s16 dx, dz, dy, e, f;
+    u16 h, bh, ah;
+    u16 r;
+    s32 ang, s, t, k, m;
+
+    dx = FU16(a, 0x2E) - FU16(c, 0x2C);
+    dz = FU16(a, 0x36) - FU16(c, 0x34);
+    r = func_80084080(dx * dx + dz * dz);
+    if (r > F16(a, 0x80) + F16(b, 0x80)) {
+        return 0;
+    }
+    dy = FU16(a, 0x32) - FU16(c, 0x30);
+    ah = FU16(a, 0x84); bh = FU16(b, 0x84); h = ah + bh;
+    if ((u16)(dy + h) > F16(a, 0x86) + F16(b, 0x86)) {
+        return 0;
+    }
+    if (dy < 0) {
+        dy = -dy;
+        e = h;
+        f = -h;
+    } else {
+        f = e = (FU16(b, 0x86) - bh) + (FU16(a, 0x86) - ah);
+    }
+    ang = func_80085690(-dz, dx);
+    s = F16(a, 0x80) + F16(b, 0x80) - (s16)r;
+    k = e - dy;
+    D_1F80009C = ang;
+    if (s < k || s < 3) {
+        m = (func_80083F50(ang) * (F16(a, 0x80) + F16(b, 0x80))) >> 12;
+        t = func_80083E80(D_1F80009C) * (F16(a, 0x80) + F16(b, 0x80));
+        F16(a, 0x2E) = FU16(c, 0x2C) + m;
+        F16(a, 0x36) = FU16(c, 0x34) - (t >> 12);
+        if (k >= 0x92) {
+            a[0x60] = 1;
+        }
+        a[0x5F] = func_80077768((s16)D_1F80009C, F16(a, 0x140), 1) + 2;
+        if (b[0x5E] >= 2 && a[4] == 1 && a[5] != 0x13) {
+            s32 d = D_1F80009C;
+            a[5] = 0x13;
+            a[6] = 0;
+            a[7] = 0;
+            a[0x2B] = d >> 4;
+        }
+        return 1;
+    }
+    if (f <= 0) {
+        if (a[0x145] & 1) {
+            return 0;
+        }
+        land_inl(a, M2C_FIELD(c, s32 *, 0x30) + f);
+        if ((s16)r < 0x51) {
+            s16 v;
+            D_1F80018E_814b = 1;
+            D_1F800184_6cc7 = b;
+            D_1F800188 = MEMBER_AT(u16, c, 0x2C);
+            D_1F80018A = FU16(c, 0x34);
+            D_1F800196 = D_1F80018C_67a7 = (FU16(b, 0x56) + FU16(*(u8 **)(b + 0xC4), 0xA) + 0x400) & 0xFFF;
+        }
+        return 2;
+    }
+    if (D_1F800098 == 0) {
+        s32 y = M2C_FIELD(c, s32 *, 0x30) + f;
+        D_1F800253 = 4;
+        M2C_FIELD(a, s32 *, 0x30) = y << 16;
+        if (F16(a, 0x4A) < 0) {
+            F16(a, 0x4A) = 0;
+        }
+    }
+    return 3;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8010CE50);
 

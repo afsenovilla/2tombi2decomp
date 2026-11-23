@@ -265,7 +265,123 @@ u8 func_8010BE54(u8 *a, s32 f)
     return a[0x2B];
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010BFAC);
+extern s32 D_1F800098;
+#define F16(p, o) M2C_FIELD(p, s16 *, o)
+#define FU16(p, o) M2C_FIELD(p, u16 *, o)
+
+s32 func_8010BFAC(u8 *a, u8 *b, u8 *c) {
+    s16 dx, dz, dy, e, f, v;
+    u16 h, bh, ah;
+    u16 r;
+    s32 ang, s, t, m;
+
+    if (F16(b, 0x62) == 0) {
+        return func_8001EC3C(a, b);
+    }
+    dx = FU16(a, 0x2E) - FU16(c, 0x2C);
+    dz = FU16(a, 0x36) - FU16(c, 0x34);
+    r = func_80084080(dx * dx + dz * dz);
+    if (r > F16(a, 0x80) + F16(b, 0x80)) {
+        return 0;
+    }
+    dy = FU16(a, 0x32) - FU16(c, 0x30);
+    ah = FU16(a, 0x84); bh = FU16(b, 0x84); h = ah + bh;
+    if ((u16)(dy + h) > F16(a, 0x86) + F16(b, 0x86)) {
+        return 0;
+    }
+    if (dy < 0) {
+        dy = -dy;
+        e = h;
+        f = -h;
+    } else {
+        f = e = (FU16(b, 0x86) - bh) + (FU16(a, 0x86) - ah);
+    }
+    ang = func_80085690(-dz, dx);
+    s = F16(a, 0x80) + F16(b, 0x80) - (s16)r;
+    D_1F80009C_baed = ang;
+    if (s < e - dy || s < 3) {
+        m = (func_80083F50(ang) * (F16(a, 0x80) + F16(b, 0x80))) >> 12;
+        t = func_80083E80(D_1F80009C_baed) * (F16(a, 0x80) + F16(b, 0x80));
+        F16(a, 0x2E) = FU16(c, 0x2C) + m;
+        MEMBER_AT(s16, a, 0x36) = FU16(c, 0x34) - (t >> 12);
+        a[0x60] = 1;
+        a[0x5F] = func_80077768((s16)D_1F80009C_baed, F16(a, 0x140), 1) + 2;
+        if (func_80077768(F16(a, 0x56), (s16)D_1F80009C_baed, 0) != 0) {
+            if (b[0x5F] == 1) {
+                if (a[4] == 1 && a[5] != 0x13) {
+                    s32 d = D_1F80009C_baed;
+                    a[5] = 0x13;
+                    a[6] = 0;
+                    a[7] = 0;
+                    a[0x2B] = d >> 4;
+                }
+            } else if (a[0x165] != 0) {
+                if (D_1F800098 != 1) {
+                    goto ret1;
+                }
+                if (F16(a, 0x44) < 0) {
+                    dx = -F16(a, 0x44);
+                } else {
+                    dx = F16(a, 0x44);
+                }
+                if (dx <= 0x1A00) {
+                    goto ret1;
+                }
+                if (a[4] != 1) {
+                    goto ret1;
+                }
+                if (a[5] != 0x13) {
+                    s32 d2 = D_1F80009C_baed;
+                    a[5] = 0x13;
+                    a[6] = 0;
+                    a[7] = 0;
+                    a[0x2B] = d2 >> 4;
+                    D_1F80009C_baed = (D_1F80009C_baed - 0x400) & 0xFFF;
+                    if (D_1F80009C_baed < 0x800) {
+                        b[0x2B] = 2;
+                    } else {
+                        b[0x2B] = 3;
+                    }
+                }
+            }
+        }
+    ret1:
+        return 1;
+    }
+    if (a[0x145] & 1) {
+        return 0;
+    }
+    a[0x29] = 1;
+    M2C_FIELD(a, s32 *, 0x30) = (M2C_FIELD(c, s32 *, 0x30) + f) << 16;
+    F16(b, 0x44) = F16(a, 0x44);
+    b[0x29] = 1;
+    if (F16(b, 0x62) != 0 && !(a[0] & 4) && a[0x145] == 2 && a[4] < 2) {
+        if (func_80055844() != 0) {
+            a[0x145] = 0;
+            b[0x5E] = 2;
+            a[0x148] = 0;
+            F16(a, 0x50) = 0;
+            a[5] = 0x17;
+            a[6] = 0;
+            a[7] = 0;
+            goto done;
+        }
+        if (a[5] != 0x17 || F16(a, 0x4A) > 0x2C00) {
+            a[0x145] = 0;
+            b[0x5E] = 1;
+            a[0x148] = 0;
+            F16(a, 0x50) = 0;
+            a[5] = 0x17;
+            a[6] = 0;
+            a[7] = 0;
+            goto done;
+        }
+    }
+    func_80022C78(a);
+    b[0x5E] = 0;
+done:
+    return 2;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010C410);
 
