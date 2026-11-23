@@ -4249,7 +4249,90 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeTableDrivenInteriorEffect);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeLinkedWindmillInteriorEffect);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleInteriorEffectActor);
+extern u8 D_800BF816;
+extern u8 D_800BF8BC;
+
+void f_HandleInteriorEffectActor(u8 *a)
+{
+    u8 *g;
+    u8 *c;
+    s32 i;
+    u8 *p;
+    u8 *g_f;
+
+    switch (a[4]) {
+    case 0:
+        switch (a[3]) {
+        case 0 ... 2:
+            func_801296E0(a);
+            break;
+        case 3:
+            f_InitializeTableDrivenInteriorEffect(a);
+            break;
+        case 4:
+            f_InitializeLinkedWindmillInteriorEffect(a);
+            break;
+        }
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            g = D_800E7E80;
+            if (g[0x2A] == 0x1F) {
+                if (M2C_FIELD(g, s16 *, 0x36) < 0x2206) {
+                    a[1] = 1;
+                }
+            } else if ((u8)(g[0x2A] - 0x1A) < 5 && g[0x147] == 1) {
+                a[1] = g[0x147];
+            } else {
+                func_8007778C(a);
+            }
+            if (a[1] != 0) {
+                c = M2C_FIELD(a, u8 **, 0xC0);
+                M2C_FIELD(c, s16 *, 0xC) += 0x10;
+                func_800517F8(a);
+            }
+            break;
+        case 1:
+            g_f = D_800E7E80;
+            if ((u32)(g_f[0x2A] - 0x17) < 5 && g_f[0x147] == 1) {
+                a[1] = g_f[0x147];
+                c = M2C_FIELD(a, u8 **, 0xC0);
+                M2C_FIELD(c, s16 *, 0xC) += 0x10;
+                func_800517F8(a);
+            }
+            break;
+        case 2:
+            f_UpdateKainenHouseRotatingEffect(a);
+            break;
+        case 3:
+            f_UpdateWindmillInteriorEffect(a);
+            break;
+        case 4:
+            if (D_800BF816 == 0 || D_800BF8BC == 0xFF) {
+                a[4] = 3;
+                break;
+            }
+            if (a[5] == 0) {
+                for (i = 0; i < a[8]; i++) {
+                    p = *(u8 **)(a + i * 4 + 0xC0);
+                    if (M2C_FIELD(p, s16 *, 8) < -0x7F) {
+                        M2C_FIELD(p, s16 *, 8) += 0x10;
+                    }
+                }
+            }
+            a[1] = 1;
+            func_80051C8C(a);
+            break;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateCurvedSupportGeometry);
 

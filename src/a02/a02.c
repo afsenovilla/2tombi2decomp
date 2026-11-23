@@ -3546,7 +3546,103 @@ void func_8011E76C(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011E7C8);
+extern u8 D_8012AF40[];
+extern u8 D_8012B0C8[];
+extern u8 D_8012B130[];
+extern u8 D_8012B100[];
+extern u8 D_8012AF14[];
+void func_8011EF70(void *arg0);
+void func_8011EFC8(u8 *a);
+
+void func_8011E7C8(u8 *a)
+{
+    u8 *g;
+    u8 *p;
+    u8 *t;
+
+    switch (a[4]) {
+    case 0:
+        g = (u8 *)&D_800BF870;
+        switch (g[0x8D]) {
+        case 0:
+            if (g[0x194] != 0) {
+                func_80040CDC(a, D_80139240_0000, D_8012AF40);
+                func_80041718(a, 0, 0);
+                M2C_FIELD(a, s16 *, 0x2E) = 0xCBA;
+                M2C_FIELD(a, s16 *, 0x36) = 0x1388;
+                M2C_FIELD(a, s16 *, 0x56) = 0xC00;
+                a[0x5E] = 0xFF;
+                a[5] = 3;
+            } else {
+                func_80040CDC(a, D_80139240_0000, D_8012B0C8);
+                func_80041718(a, 0x11, 0);
+                M2C_FIELD(a, s16 *, 0x56) = 0x800;
+                p = func_8006FDE8(a, 1);
+                D_800BF844_3cf3 = p;
+                if (p != NULL) {
+                    p[0x5E] = 2;
+                    M2C_FIELD(p, s16 *, 0x60) = 0x40;
+                    M2C_FIELD(p, s16 *, 0x62) = 0x20;
+                    M2C_FIELD(p, s16 *, 0x56) = M2C_FIELD(a, s16 *, 0x56);
+                }
+                a[0x5E] = 3;
+            }
+            break;
+        case 1:
+            if (g[0x290] != 0) {
+                func_80040CDC(a, D_80139240_0000, D_8012B0C8);
+                a[0x5E] = 1;
+            } else {
+                func_80040CDC(a, D_80139240_0000, D_8012B130);
+                a[0x5E] = 0;
+            }
+            func_80041718(a, 0x13, 0);
+            break;
+        case 0xFF:
+            func_80040CDC(a, D_80139240_0000, D_8012B100);
+            func_80041718(a, 0, 0);
+            a[0x5E] = 2;
+            t = D_8012AF14;
+            M2C_FIELD(a, u8 **, 0x14) = t;
+            a[0x5F] = D_8012AF14[0];
+            a[0x7B] = t[2];
+            break;
+        }
+        a[4]++;
+        break;
+    case 1:
+        if (a[0x5E] != 0xFF) {
+            a[1] = 1;
+            func_80077E7C(a);
+        }
+        func_80041098(a);
+        func_8004190C(a);
+        switch (a[5]) {
+        case 0:
+            func_8011EF70(a);
+            break;
+        case 1:
+            func_8011EFC8(a);
+            break;
+        case 2:
+            func_8011EAD4(a);
+            break;
+        case 3:
+            func_8011ECC8(a);
+            break;
+        }
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011EAD4);
 
@@ -3691,9 +3787,53 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80120144);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801202DC);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801203F0);
-
 extern u8 D_8012B504[];
+void func_80120564(u8 *a);
+void func_80120610(u8 *a);
+void func_8012067C(u8 *a);
+
+void func_801203F0(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        func_80040CDC(a, D_80139240_0000, D_8012B504);
+        func_80041718(a, 0, 0);
+        if (D_800BF901 < 2) {
+            a[0x5E] = 0;
+        } else if (D_800BF901 == 0xFF) {
+            a[0x5E] = 2;
+        } else {
+            a[0x5E] = 1;
+        }
+        a[4]++;
+        break;
+    case 1:
+        a[1] = 1;
+        func_80077E7C(a);
+        func_80041098(a);
+        func_8004190C(a);
+        switch (a[5]) {
+        case 0:
+            func_80120564(a);
+            break;
+        case 1:
+            func_80120610(a);
+            break;
+        case 2:
+            func_8012067C(a);
+            break;
+        }
+        func_800518FC(a);
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
+
 extern u8 D_8012B5C8[];
 void func_80120564(u8 *a) {
     GameState *g;
