@@ -5415,7 +5415,118 @@ void func_8012ABB4(u8 *a) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012AC84);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012AF08);
+#define FH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define FU(p, o) (*(u16 *)((u8 *)(p) + (o)))
+typedef struct { s32 x, y, z; } V3W;
+typedef union { V3W w; s16 h[6]; } V3U;
+extern u8 D_800BF9FA;
+
+void func_8012AF08(u8 *a) {
+    V3U v;
+    s32 r, r1, r2, k, k1;
+    s32 one = 1;
+    s32 n;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 0x15) == 0) {
+            FH(a, 0x2E) = 0x4DAB;
+            FH(a, 0x32) = -0x1A40;
+            FH(a, 0x36) = 0x2342;
+            FH(a, 0x80) = 0x118;
+            FH(a, 0x82) = 0x230;
+            FH(a, 0x84) = 0xBB8;
+            FH(a, 0x58) = 0;
+            FH(a, 0x56) = 0;
+            FH(a, 0x54) = 0;
+            a[0] = one;
+            a[0x29] = 0;
+            a[0x2B] = 0;
+            FH(a, 0x86) = 0xC26;
+            a[4]++;
+        }
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            func_80077870(a);
+            if (D_800BF9FA == 0x1B) {
+                v.w = *(V3W *)(a + 0x2C);
+                v.h[3] -= 0xC8;
+                func_8003116C(0x208, a + 0x2C, -0x32);
+                FH(a, 0x42) = 0;
+                FH(a, 0x40) = 0;
+                FH(a, 0x60) = 0;
+                func_800725D4(a + 0x62);
+                a[5]++;
+            }
+            break;
+        case 1:
+        case 2:
+            a[1] = 1;
+            func_80077EBC(a);
+        case 3:
+            if (FH(a, 0x60) < 9) {
+                if (FH(a, 0x60) < 5) {
+                    FH(a, 0x62) = 0xFF - (FH(a, 0x60) >> 1);
+                } else {
+                    FH(a, 0x62) = -1;
+                }
+                if (!(FU(a, 0x60) & 3)) {
+                    v.h[1] = FH(a, 0x2E);
+                    k1 = FU(a, 0x32) - 0x64;
+                    k1 -= (FH(a, 0x60) >> 2) * 0x46;
+                    v.h[3] = k1;
+                    v.h[5] = FH(a, 0x36);
+                    func_8003116C(0x206, &v, -0xA);
+                }
+                FH(a, 0x60)++;
+            }
+            if (--FH(a, 0x40) <= 0) {
+                r = func_8009A450() & 3;
+                k = (a[5] >> 1) + 2;
+                n = r + k;
+                while (n != 0) {
+                    r1 = func_80070698(0x80) - 0x12C;
+                    v.h[1] = FH(a, 0x2E) + r1;
+                    r2 = (func_8009A450() & 0x1FF) - 0x64;
+                    v.h[3] = FH(a, 0x32) - r2;
+                    n--;
+                    v.h[5] = FH(a, 0x36) + func_80070698(0x200);
+                    func_80027144(*(s32 *)(*(u8 **)(a + 0xC0) + 0x40), &v, (func_8009A450() & 0x3FF) | 0x800, 8);
+                    func_8003116C(0x205, &v, -0xA);
+                }
+                FH(a, 0x40) = (func_8009A450() & 3) + 2;
+                if (!(++FH(a, 0x42) & 0xF)) {
+                    FH(a, 0x42) = 0;
+                    FH(a, 0x40) = 0;
+                    FH(a, 0x60) = 0;
+                    D_800BF9FA = a[5] + 0x1B;
+                    if (++a[5] == 3) {
+                        v.w = *(V3W *)(a + 0x2C);
+                        v.h[3] -= 0xC8;
+                        func_8003116C(0x208, &v, -0x32);
+                        func_80111BE0();
+                    }
+                }
+            }
+            break;
+        case 4:
+            FH(a, 0x62) = -2;
+            a[4] = 3;
+            break;
+        }
+        if (a[1] != 0) {
+            func_800517F8(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 u8 *func_8012B2D8(void) {
     u8 *p = func_8007A980(1, 4, 0);
@@ -5525,7 +5636,6 @@ u8 *func_8012C2B4(void) {
 
 #define FPV(p, o) (*(u8 * volatile *)((u8 *)(p) + (o)))
 #define F32(p, o) M2C_FIELD(p, s32 *, o)
-extern u8 D_800BF9FA;
 void func_8012C304(u8 *a) {
     u8 *e;
 

@@ -2935,7 +2935,94 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldenCrabDialogueRepeatVisit);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_StageWindmillCutsceneActor);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ApplyWindmillCutsceneTransition);
+#define WH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+extern u8 *D_1F800214;
+#define SP214 D_1F800214
+extern u8 D_800BF9DE;
+extern u8 D_8014886C[];
+
+s32 f_ApplyWindmillCutsceneTransition(u8 *a) {
+    u8 *t = D_800E7E80;
+    u8 st = D_800BF9DE;
+    s32 k;
+    u8 *d;
+
+    if (a[7] == st) {
+        return 0;
+    }
+    a[7] = st;
+    switch (st) {
+    case 4:
+        func_80054D14(t, 0xB4, 0);
+        func_80041768(SP214, 4, 0);
+        return 0;
+    case 5:
+        k = 0xA00;
+        WH(t, 0x56) = k;
+        func_80054D14(t, 0xB9, 0);
+        func_80041768(SP214, 8, 0);
+        WH(SP214, 0x56) = k;
+        break;
+    case 7:
+        WH(t, 0x56) = 0x400;
+        WH(SP214, 0x56) = 0x400;
+        WH(SP214, 0x52) = WH(t, 0x36) + 10;
+        func_80054DAC(t, 0xB4, 0);
+        return 0;
+    case 9:
+    case 11:
+        func_80041718(SP214, 4, 0);
+        func_80054DAC(t, 0xB4, 0);
+        return 0;
+    case 12:
+        func_800708B4(1);
+        func_80041768(SP214, 8, 0);
+        return 1;
+    case 13:
+        func_80041768(a, 8, 0);
+        func_800707B0();
+        return 1;
+    case 16:
+        func_800708B4(2);
+        WH(a, 0x4A) = 0;
+        func_80041768(a, 9, 2);
+        if (func_80070870() <= 0) {
+            func_800707B0();
+        }
+        return 1;
+    case 18:
+        d = D_8014886C;
+        WH(a, 0x2E) = WH(d, 0xC);
+        WH(a, 0x32) = WH(d, 0xE);
+        WH(a, 0x36) = WH(d, 0x10);
+        WH(a, 0x56) = 0;
+        WH(t, 0x2E) = 0x4FC2;
+        WH(t, 0x32) = -0xA4C;
+        WH(t, 0x36) = 0x1A00;
+        WH(t, 0x56) = 0x400;
+        break;
+    case 19:
+        WH(SP214, 0x56) = 0x400;
+        break;
+    case 20:
+        WH(t, 0x56) = 0x800;
+        WH(SP214, 0x56) = 0x800;
+        WH(SP214, 0x52) = WH(t, 0x36) + 0x5A;
+        func_80041718(a, 4, 0);
+        func_80041718(SP214, 3, 0);
+        func_80054D14(t, 0xC1, 0);
+        func_8006CBA8(t + 0x2C);
+        D_800E8008[0x64] = 1;
+        WH(D_800E8008, 0x6E) = 0x180;
+        WH(D_800E8008, 0x70) = 0x240;
+        break;
+    case 21:
+        func_80074590(0x72, 0, 0);
+        a[0x70] = 1;
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RunWinsWindmillCutscene);
 
@@ -2946,7 +3033,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011A804);
 extern s32 D_800ECF58_a4fb[];
 extern u8 D_801485F8[];
 extern u8 D_8014C9C0[];
-extern u8 D_800BF9DE;
 void func_8011A928(u8 *a)
 {
     s32 *t;
@@ -3007,7 +3093,6 @@ void func_8011A928(u8 *a)
     }
 }
 
-extern u8 *D_1F800214;
 s32 func_8011AB00(u8 *a) {
     u8 *t = D_1F800214;
 
