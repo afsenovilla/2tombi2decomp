@@ -3028,7 +3028,116 @@ s32 func_8011D8AC(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011D910);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleFeedChicksSceneActor);
+void func_8012185C(void *arg0);
+void func_8012175C(u8 *a);
+void func_801217F4(u8 *a);
+
+void f_HandleFeedChicksSceneActor(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        f_InitializeFeedChicksSceneActor(a);
+        return;
+    case 1:
+        func_8007778C(a);
+        if (a[0x2B] != 0) {
+            a[0x2B]--;
+        } else {
+            switch (a[5]) {
+            case 0:
+                func_80076D68(a);
+                if (a[3] == 3 || (D_800BF809 == 0 && D_1F800137 == 0)) {
+                    if (a[3] & 1) {
+                        f_UpdateFeedChicksActorEndpointTransit(a);
+                    } else {
+                        f_UpdateFeedChicksActorSplinePatrol(a);
+                    }
+                    func_8012185C(a);
+                }
+                break;
+            case 1:
+                if (a[3] == 3) {
+                    func_8011F088(a);
+                    func_8012185C(a);
+                } else if (D_800BF809 == 0 && D_1F800137 == 0) {
+                    f_UpdateFeedChicksActorRoaming(a);
+                    func_8012185C(a);
+                }
+                break;
+            case 2:
+                if (D_800BF809 == 0) {
+                    f_UpdateFeedChicksActorTombaReaction(a);
+                }
+                break;
+            case 3:
+                if (a[3] == 3 || (D_800BF809 == 0 && D_1F800137 == 0)) {
+                    f_UpdateFeedChicksActorRecoveryOrExit(a);
+                    func_80076D68(a);
+                    func_80076D68(a);
+                    func_80076D68(a);
+                }
+                break;
+            case 4:
+                func_8011FC78(a);
+                func_8012185C(a);
+                break;
+            case 5:
+                func_80076D68(a);
+                func_80120C50(a);
+                break;
+            }
+        }
+        a[0x29] = 0;
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        break;
+    case 2:
+        func_8007778C(a);
+        switch (a[5]) {
+        case 0:
+        case 4:
+        case 5:
+        case 6:
+            if (D_800BF809 == 0 && D_1F800137 == 0) {
+                func_801206F4(a);
+            }
+            break;
+        case 1:
+            func_8012175C(a);
+            break;
+        case 11:
+            func_801217F4(a);
+            if (func_80080750(a, 0, 0) != 0) {
+                a[4] = 3;
+                return;
+            }
+            a[5] = 2;
+        case 2:
+        case 7:
+        case 8:
+            func_80120A64(a);
+            break;
+        case 3:
+        case 9:
+        case 10:
+            break;
+        }
+        a[0x29] = 0;
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        break;
+    case 3:
+        if (a[0x1B] & 0x40) {
+            a[0x1B] &= ~0x40;
+        } else {
+            M2C_FIELD(M2C_FIELD(a, u8 **, 0x10), s32 *, 0xC) = 0;
+            func_8007A624(a);
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeFeedChicksSceneActor);
 
@@ -3730,7 +3839,65 @@ void func_801261FC(u8 *a) {
     func_80125C4C(a);
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80126264);
+extern u8 D_800BF8F1;
+void func_80127420(void *arg0);
+
+void func_80126264(u8 *a)
+{
+    s32 r;
+    s32 k;
+
+    switch (a[4]) {
+    case 0:
+        f_InitializeNestChickActor(a);
+        break;
+    case 1:
+        func_8007778C(a);
+        switch (a[5]) {
+        case 0:
+            func_80127420(a);
+            break;
+        case 1:
+            func_801266C8(a);
+            break;
+        case 2:
+            func_8012681C(a);
+            break;
+        case 3:
+            f_UpdateNestChickQuestState(a);
+            break;
+        }
+        func_80077B5C(a);
+        break;
+    case 2:
+        k = a[5];
+        if (k < 4) if (k >= 2) {
+            if (D_800BF8F1 == 0) {
+                r = func_80040B48(0x3D);
+            } else {
+                r = func_80040C00(0x3C);
+            }
+            if (r >= 0) {
+                func_8004D4C4(a[0x5E] == 0 ? 0x39 : 0x38, 1);
+                func_8004B0D8(a);
+                a[0x5E] |= 8;
+                if (a[3] == 1) {
+                    a[0x5E] <<= 4;
+                    D_800BF870.pad1[0x181] &= 0xF;
+                } else {
+                    D_800BF870.pad1[0x181] &= 0xF0;
+                }
+                D_800BF870.pad1[0x181] |= a[0x5E];
+            }
+            a[4] = 3;
+        }
+        func_8007778C(a);
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeNestChickActor);
 
@@ -4758,7 +4925,88 @@ s32 func_8012E87C(void *arg0) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownBarrelChildTransforms);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleTownBarrelSeesawController);
+extern u8 D_800BF9D2;
+u8 *func_80146348(u8 *a, void *b);
+
+void f_HandleTownBarrelSeesawController(u8 *a)
+{
+    u16 f;
+
+    switch (a[4]) {
+    case 0:
+        f_InitializeTownBarrelSeesawController(a);
+        break;
+    case 1:
+        if (func_80130AC4(a) != 0) {
+            a[1] = 1;
+            func_80077EBC(a);
+        }
+        switch (a[5]) {
+        case 0:
+            func_8012F494(a);
+            break;
+        case 1:
+            if (D_1F800137 == 0) {
+                f_UpdateBarrelSeesawRide(a);
+            }
+            break;
+        case 2:
+            f_RotateSelectedTownBarrel(a);
+            break;
+        case 3:
+            func_80130524(a);
+            break;
+        case 4:
+            f_BeginScriptedBarrelRotation(a);
+            break;
+        case 5:
+            func_8018C820(a);
+            break;
+        }
+        f_TriggerBarrelLinkedSegments(a);
+        func_801316CC(a);
+        if (D_800BF9D2 == 0) {
+            if (!(M2C_FIELD(a, u16 *, 0x78) & 1)) {
+                M2C_FIELD(a, u16 *, 0x78) = 5;
+                a[5] = 4;
+                a[6] = 0;
+            }
+        } else if (D_800BF9D2 == 0xFF) {
+            if (!(M2C_FIELD(a, u16 *, 0x78) & 1)) {
+                M2C_FIELD(a, s16 *, 0x78) = -0x7FFB;
+                a[5] = 4;
+                a[6] = 0;
+            }
+        } else {
+            f = M2C_FIELD(a, u16 *, 0x78);
+            if (f & 1) {
+                if (f & 0x8000) {
+                    M2C_FIELD(a, s16 *, 0x78) = -0x7FFE;
+                } else {
+                    M2C_FIELD(a, u16 *, 0x78) = 2;
+                }
+                if (M2C_FIELD(a, s16 *, 0x48) > 0) {
+                    M2C_FIELD(a, s16 *, 0x4E) = -0x80;
+                } else if (M2C_FIELD(a, s16 *, 0x48) < 0) {
+                    M2C_FIELD(a, s16 *, 0x4E) = 0x80;
+                }
+            }
+        }
+        if (a[3] == 0) {
+            func_80146348(a, M2C_FIELD(a, u8 **, 0xC8));
+        }
+        if (a[1] != 0) {
+            f_UpdateTownBarrelChildTransforms(a);
+        }
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeTownBarrelSeesawController);
 
@@ -4845,7 +5093,6 @@ void f_ApplyBarrelSeesawContactImpulse(u8 *a) {
     M2C_FIELD(a, s16 *, 0x6C) = t;
 }
 
-extern u8 D_800BF9D2;
 void f_RestoreTownBarrelOrientations(void *arg0) {
     s16 temp_v0;
 
