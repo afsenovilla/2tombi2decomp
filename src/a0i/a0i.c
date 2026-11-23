@@ -1354,7 +1354,118 @@ void func_8010C160(u8 *a)
     func_8010C440(a, &v0, &v1, &v2);
 }
 
-INCLUDE_ASM("asm/a0i/nonmatchings/a0i", func_8010C440);
+typedef struct {
+    s16 vx, vy;
+} T2Pt16;
+extern s32 D_800ECF58[];
+typedef struct { u8 pad0[0x10]; s16 list[1]; } TriGrid;
+#define TRI_ROW(L, R, N)                                                 \
+    {                                                                    \
+        s32 xe = (R) >> 16;                                              \
+        s32 xs = (L) >> 16;                                              \
+        s32 x;                                                           \
+        if (y >= 0 && y < *(s16 *)(g + 0xA)) {                          \
+            s16 *cell;                                                   \
+            if (xe >= *(s16 *)(g + 8)) {                                 \
+                xe = *(s16 *)(g + 8) - 1;                                \
+            }                                                            \
+            x = xs;                                                      \
+            if (x < 0) {                                                 \
+                x = 0;                                                   \
+            }                                                            \
+            cell = (s16 *)D_800ECF58[8];                                 \
+            cell += 2;                                                   \
+            cell += x * *(s16 *)(g + 0xA) + y;                           \
+            while (x <= xe) {                                            \
+                if (*cell != -1) {                                       \
+                    u8 n = g[6];                                         \
+                    if (n < 0xFE) {                                      \
+                        g[6] = n + 1;                                    \
+                        ((TriGrid *)g)->list[n] = *cell;                  \
+                    }                                                    \
+                }                                                        \
+                x++;                                                     \
+                cell += *(s16 *)(g + 0xA);                               \
+            }                                                            \
+        }                                                                \
+    }
+
+void func_8010C440(u8 *g, T2Pt16 *p0, T2Pt16 *p1, T2Pt16 *p2)
+{
+    s32 x0, y0, x1, y1, x2, y2, t;
+    s32 dx01, dx02, dy01, dy02;
+    s32 l, r, s01, s12, s02, cross, y;
+
+    x0 = p0->vx;
+    y0 = p0->vy;
+    x1 = p1->vx;
+    y1 = p1->vy;
+    x2 = p2->vx;
+    y2 = p2->vy;
+    if (y1 == y0 && y1 == y2) {
+        return;
+    }
+    if (y1 < y0) {
+        t = x0; x0 = x1; x1 = t;
+        t = y0; y0 = y1; y1 = t;
+    }
+    if (y2 < y0) {
+        t = x0; x0 = x2; x2 = t;
+        t = y0; y0 = y2; y2 = t;
+    }
+    if (y2 < y1) {
+        t = x1; x1 = x2; x2 = t;
+        t = y1; y1 = y2; y2 = t;
+    }
+    dx01 = x1 - x0;
+    dx02 = x2 - x0;
+    dy01 = y1 - y0;
+    dy02 = y2 - y0;
+    if (y1 == y0) {
+        if (x0 < x1) {
+            l = x0 << 16;
+            r = x1 << 16;
+        } else {
+            l = x1 << 16;
+            r = x0 << 16;
+        }
+        s01 = 0;
+    } else {
+        r = l = x0 << 16;
+        s01 = (dx01 << 16) / dy01;
+    }
+    r += 0x10000;
+    if (y1 == y2) {
+        s12 = 0;
+    } else {
+        s12 = ((x2 - x1) << 16) / (y2 - y1);
+    }
+    s02 = (dx02 << 16) / dy02;
+    cross = -dy02 * dx01 + dx02 * dy01;
+    if (cross > 0) {
+        for (y = y0; y < y1; y++) {
+            TRI_ROW(l, r, 0);
+            l += s01;
+            r += s02;
+        }
+        for (; y <= y2; y++) {
+            TRI_ROW(l, r, 1);
+            l += s12;
+            r += s02;
+        }
+    } else {
+        for (y = y0; y < y1; y++) {
+            TRI_ROW(l, r, 2);
+            r += s01;
+            l += s02;
+        }
+        for (; y <= y2; y++) {
+            TRI_ROW(l, r, 3);
+            l += s02;
+            r += s12;
+        }
+    }
+}
 
 extern u16 *D_800ECF78;
 void func_8010C980(u8 *a)
