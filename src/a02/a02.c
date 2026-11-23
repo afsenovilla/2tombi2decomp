@@ -3112,7 +3112,108 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011AEF0);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011B1FC);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011B5C4);
+typedef struct { s16 a, b, c, d, e; } PartInit10;
+extern s16 D_800ED098;
+extern PartInit10 D_8012A160[];
+extern u8 D_8012A194[];
+
+void func_8011B5C4(u8 *a)
+{
+    s32 i;
+    PartInit10 *t;
+    s16 *p;
+    s32 rs_k16 = 5;
+
+    switch (a[4]) {
+    case 0:
+        a[8] = rs_k16;
+        if (D_800ED098 < 5) {
+            a[4] = 3;
+            break;
+        }
+        a[9] = 5;
+        a[0xD] = 0;
+        a[0xB] = 0;
+        a[4]++;
+        for (i = 0; i < a[8]; i++) {
+            p = func_8007AAE8();
+            *(s16 **)(a + i * 4 + 0xC0) = p;
+            p[3] = D_8012A160[i].a;
+            p[0] = D_8012A160[i].b;
+            p[1] = D_8012A160[i].c;
+            p[2] = D_8012A160[i].d;
+            p[4] = 0;
+            p[5] = 0;
+            p[6] = 0;
+            func_80051B04(p, 0xC, D_8012A160[i].e);
+        }
+        a[0] = 1;
+        M2C_FIELD(a, s16 *, 0x80) = 0x12C;
+        M2C_FIELD(a, s16 *, 0x82) = 0x258;
+        M2C_FIELD(a, s16 *, 0x84) = 0xB4;
+        M2C_FIELD(a, s16 *, 0x86) = 0x168;
+        M2C_FIELD(a, s16 *, 0x58) = 0;
+        M2C_FIELD(a, s16 *, 0x56) = 0;
+        M2C_FIELD(a, s16 *, 0x54) = 0;
+        switch (a[3]) {
+        case 0:
+            M2C_FIELD(a, s16 *, 0x2E) = 0x38A4;
+            M2C_FIELD(a, s16 *, 0x32) = -0xD3E;
+            M2C_FIELD(a, s16 *, 0x36) = 0x2D82;
+            break;
+        case 1:
+            if (D_800BF871 == 8) {
+                M2C_FIELD(a, s16 *, 0x2E) = 0x38A4;
+                a[5] = 2;
+            } else {
+                M2C_FIELD(a, s16 *, 0x2E) = 0x2C00;
+            }
+            M2C_FIELD(a, s16 *, 0x32) = -0xD3E;
+            M2C_FIELD(a, s16 *, 0x36) = 0x2D82;
+            break;
+        }
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            func_8011AC40(a);
+            break;
+        case 1:
+            switch (a[5]) {
+            case 0:
+                if (func_8007778C(a) != 0 && a[0x2B] != 0) {
+                    a[0x2B] = 0;
+                    D_800E7E80[0] = 2;
+                    func_80040CDC(a, 0, D_8012A194);
+                    a[0x70] = 2;
+                    a[6] = 0;
+                    a[5]++;
+                }
+                break;
+            case 1:
+                a[1] = 1;
+                func_80077EBC(a);
+                func_8011AEF0(a);
+                break;
+            case 2:
+                a[1] = 1;
+                func_80077EBC(a);
+                func_8011B1FC(a);
+                break;
+            }
+            break;
+        }
+        if (a[1] != 0) {
+            func_800517F8(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_8011B5C4();
 void func_8011B8AC(s32 arg0, s8 arg1) {
@@ -5426,7 +5527,6 @@ void func_80127860(u8 *p) {
 
 typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner;
 typedef struct { s16 v[4]; } PartInit;
-extern s16 D_800ED098;
 extern PartInit D_80138A08[];
 s32 func_801278D8(PartsOwner *a)
 {
