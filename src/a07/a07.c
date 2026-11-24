@@ -4391,7 +4391,135 @@ do {
     return f;
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012CDF4);
+extern s32 D_1F800084;
+extern s32 D_1F800088;
+extern s32 D_1F80008C_f832;
+#define T2_lddp(r0) __asm__ volatile("mtc2 %0, $8" : : "r"(r0))
+#define T2_ldrgb(r0) __asm__ volatile("mtc2 %0, $6" : : "r"(r0))
+#define T2_dpcs() __asm__ volatile("nop; nop; .word 0x4A780010")
+#define T2_strgb(r0) __asm__ volatile("swc2 $22, 0( %0 )" : : "r"(r0) : "memory")
+
+u32 *func_8012CDF4(u32 *f, u32 *ot, s32 n, s32 dp)
+{
+    s32 rgb;
+    T2PolyGT3 *p = D_800BF544;
+    s32 *otz = (s32 *)0x1F800004;
+    u32 c;
+    u32 mode;
+    s32 b;
+    s32 d0, d1, d2;
+    u32 *o;
+
+    rgb = 0x34808080;
+    T2_ldrgb(&rgb);
+    while (n-- != 0) {
+        T2_ldv3t(f);
+        p->rgb0 = f[0];
+        T2_rtpt();
+        p->uv0 = f[2];
+        p->uv1 = f[3];
+        c = f[1];
+        T2_stflg((s32 *)0x1F800000);
+        if (*(s32 *)0x1F800000 >= 0) {
+            T2_nclip();
+            p->rgb1 = c & 0xF0F0F0;
+            T2_stopz((s32 *)0x1F800000);
+            if (*(s32 *)0x1F800000 > 0) {
+                T2_stsxy3_gt3(p);
+                if ((p->x0 < 320 || p->x1 < 320 || p->x2 < 320) && (p->y0 < 240 || p->y1 < 240 || p->y2 < 240)) {
+                    __asm__ volatile("nop");
+                    p->rgb2 = (c << 4) & 0xF0F0F0;
+                    T2_stsz1(&D_1F800084);
+                    T2_stsz2(&D_1F800088);
+                    T2_stsz3(&D_1F80008C_f832);
+                    mode = (c >> 24) & 3;
+                    switch (mode) {
+                    case 1:
+                    case 3:
+                        if (D_1F800084 > D_1F800088) {
+                            b = D_1F80008C_f832;
+                            if (b < D_1F800084) {
+                                b = D_1F800084;
+                            }
+                            *otz = b >> 2;
+                        } else {
+                            b = D_1F80008C_f832;
+                            if (b < D_1F800088) {
+                                b = D_1F800088;
+                            }
+                            *otz = b >> 2;
+                        }
+                        break;
+                    case 2:
+                        if (D_1F800084 < D_1F800088) {
+                            b = D_1F80008C_f832;
+                            if (D_1F800084 < b) {
+                                b = D_1F800084;
+                            }
+                            *otz = b >> 2;
+                        } else {
+                            b = D_1F80008C_f832;
+                            if (D_1F800088 < b) {
+                                b = D_1F800088;
+                            }
+                            *otz = b >> 2;
+                        }
+                        break;
+                    default:
+                        T2_avsz3();
+                        T2_stotz(otz);
+                        break;
+                    }
+                    b = *otz >> 10;
+                    *otz = (*otz >> b) + (b << 9);
+                    if ((u32)(*otz - 4) >= 0x7FC) {
+                        *otz = -1;
+                    }
+                    if (*otz >= 0) {
+                        p->uv2 = ((u16 *)f)[0x11];
+                        if (dp != 0) {
+                            d0 = d1 = d2 = dp;
+                        } else {
+                            d0 = func_80078240(((s16 *)f)[8] - D_1F800160, ((s16 *)f)[9] - D_1F800162, ((s16 *)f)[10] - D_1F800164) * 2;
+                            d1 = func_80078240(((s16 *)f)[12] - D_1F800160, ((s16 *)f)[13] - D_1F800162, ((s16 *)f)[11] - D_1F800164) * 2;
+                            d2 = func_80078240(((s16 *)f)[14] - D_1F800160, ((s16 *)f)[15] - D_1F800162, ((s16 *)f)[16] - D_1F800164) * 2;
+                            if (d0 > 0x4000) {
+                                d0 = 0x4000;
+                            }
+                            if (d1 > 0x4000) {
+                                d1 = 0x4000;
+                            }
+                            if (d2 > 0x4000) {
+                                d2 = 0x4000;
+                            }
+                        }
+                        T2_lddp(d0);
+                        T2_ldrgb(p->rgb0);
+                        T2_dpcs();
+                        T2_strgb(&p->rgb0);
+                        T2_lddp(d1);
+                        T2_ldrgb(p->rgb1);
+                        T2_dpcs();
+                        T2_strgb(&p->rgb1);
+                        T2_lddp(d2);
+                        T2_ldrgb(p->rgb2);
+                        T2_dpcs();
+                        T2_strgb(&p->rgb2);
+                        do {
+                            o = ot + *otz;
+                            p->tag = *o | 0x09000000;
+                            *o = (u32)p;
+                        } while (0);
+                        p++;
+                    }
+                }
+            }
+        }
+        f += 9;
+    }
+    D_800BF544 = p;
+    return f;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012D2B4);
 
