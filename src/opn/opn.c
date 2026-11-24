@@ -756,4 +756,202 @@ void func_8018CDC4(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018CE40);
+typedef struct { u8 pad0[0x3A]; s16 fx; u8 pad3C[2]; s16 fy; u8 pad40[2]; s16 fz; u8 pad44[0x20]; u8 mode; u8 pad65[7]; s16 dist; } OpnCamState2;
+extern OpnCamState2 D_800E8008_0335;
+extern u8 D_800BF809;
+extern u8 D_800BF830;
+extern u8 D_800BF80F;
+extern u8 D_800BF822;
+extern u8 D_800BF808[];
+extern u8 D_8001B860[];
+extern u8 *D_80149E50[];
+extern u16 D_1F800160;
+extern u16 D_1F800162;
+extern u16 D_1F800164;
+
+void func_8018CE40(u8 *a)
+{
+    OpnCamState2 *cam;
+    u8 *o;
+
+    if (D_800BF809 != 0) {
+        return;
+    }
+    cam = &D_800E8008_0335;
+    o = *(u8 **)(a + 0x10);
+    switch (a[6]) {
+    case 0:
+        func_80040CDC(a, D_8001B860, D_80149E50[D_800BF830]);
+        a[0x70] = 2;
+        a[6]++;
+        break;
+    case 1:
+        if (a[0x70] == 0) {
+            H(a, 0x40) = 0x1E;
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (H(a, 0x40) != 0) {
+            H(a, 0x40)--;
+        } else {
+            func_80041768(a, 0, 4);
+            a[7] = 0;
+            a[6]++;
+        }
+        break;
+    case 3:
+        switch (a[7]) {
+        case 0:
+            if (func_80041438(a, 0x200, 0x140) != 0) {
+                H(a, 0x40) = 0x14;
+                a[7]++;
+            }
+            break;
+        case 2:
+            if (func_80041438(a, 0xA00, 0x140) != 0) {
+                func_800440E4(D_800E7E80, 0xB8, 4);
+                H(a, 0x40) = 0x14;
+                a[7]++;
+            }
+            break;
+        case 4:
+            if (func_80041438(a, 0x400, 0x140) != 0) {
+                H(a, 0x40) = 0x14;
+                a[7]++;
+            }
+            break;
+        case 6:
+            if (func_80041438(a, 0xC00, 0x140) != 0) {
+                a[7]++;
+            }
+            break;
+        case 7:
+            if (func_80041FCC(o) != 0) {
+                func_800440E4(D_800E7E80, 2, 4);
+                a[0x70] = 2;
+                a[6]++;
+            }
+            break;
+        case 1:
+        case 3:
+        case 5:
+            if (--H(a, 0x40) == 0) {
+                a[7]++;
+            }
+            break;
+        }
+        break;
+    case 4:
+        if (a[0x70] == 0) {
+            a[7] = 0;
+            a[6]++;
+        }
+        break;
+    case 5:
+        switch (a[7]) {
+        case 0:
+            a[7]++;
+            cam->fx = H(a, 0x2E);
+            cam->fy = H(a, 0x32);
+            cam->fz = H(a, 0x36);
+            break;
+        case 1:
+            cam->dist -= 0x30;
+            if (cam->dist < -0x64) {
+                D_800BF80F = 4;
+                a[7]++;
+            }
+            break;
+        case 2:
+            cam->dist -= 0x30;
+            if (cam->dist < -0xC8) {
+                cam->dist = -0xC8;
+            }
+            if (D_800BF808[7] == 0) {
+                D_800BF808[7] = 3;
+                a[7]++;
+                cam->mode = 9;
+            }
+            break;
+        case 3:
+            a[1] = 0;
+            if (D_800BF9ED == 0x3C) {
+                func_80074590(0x74, 0, 0);
+                a[0x70] = 1;
+                a[7]++;
+            }
+            break;
+        case 4:
+            a[1] = 0;
+            if (a[0x70] == 0) {
+                D_800BF9ED = 0x46;
+                a[7]++;
+            }
+            break;
+        case 5:
+            a[1] = 0;
+            if (D_800BF9ED == 0x50) {
+                cam->mode = 1;
+                cam->dist = 0x400;
+                H(a, 0x40) = 0x3C;
+                H(a, 0x56) = 0x800;
+                a[7]++;
+                func_80041768(a, 8, 4);
+            }
+            break;
+        case 6:
+            if (--H(a, 0x40) == 0) {
+                cam->fx = D_1F800160;
+                cam->fy = D_1F800162;
+                cam->fz = D_1F800164;
+                a[0x70] = 2;
+                a[7] = 0;
+                a[6]++;
+            }
+            break;
+        }
+        break;
+    case 6:
+        if (a[0x70] == 0) {
+            *(u8 **)(a + 0x14) = func_8018C7D8(a);
+            a[0x70] = 2;
+            a[6]++;
+        }
+        break;
+    case 7:
+        if (a[0x70] == 0) {
+            func_80041768(a, 0xB, 4);
+            a[6]++;
+        }
+        break;
+    case 8:
+        if (a[0x79] == 1) {
+            func_80041768(a, 0, 4);
+            (*(u8 **)(a + 0x14))[5]++;
+            a[6]++;
+        }
+        break;
+    case 9:
+        if (D_800BF822 & 1) {
+            a[6]++;
+        }
+        break;
+    case 10:
+        if (D_800BF822 == 0) {
+            func_80041768(a, 2, 4);
+            a[0x70] = 2;
+            a[6]++;
+        }
+        break;
+    case 11:
+        if (a[0x70] == 0xFF) {
+            D_800BF89C = 3;
+            func_80070798(o);
+        }
+        break;
+    }
+    func_80041098(a);
+    func_80070E60(a);
+    func_8004190C(a);
+}
