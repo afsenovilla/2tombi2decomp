@@ -5135,7 +5135,29 @@ void func_801297E8(u8 *p)
     p[0x47] = 0;
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012983C);
+#define F32(p, o) M2C_FIELD(p, s32 *, o)
+#define FP(p, o) (*(u8 **)((u8 *)(p) + (o)))
+
+void func_8012983C(u8 *a) {
+    u8 *e;
+    u8 *g;
+
+    a[1] = 1;
+    switch (a[5]) {
+    case 0:
+        g = D_800E7E80;
+        func_8004BD64(a, 0, FP(g, 0xDC), FP(g, 0xD0), 0);
+        break;
+    case 1:
+        e = FP(a, 0x10);
+        F16(a, 0x2E) = (F32(FP(e, 0xD0), 0x2C) + F32(FP(e, 0xDC), 0x2C)) / 2;
+        F16(a, 0x32) = (F32(FP(e, 0xD0), 0x30) + F32(FP(e, 0xDC), 0x30)) / 2 - 0x28;
+        F16(a, 0x36) = (F32(FP(e, 0xD0), 0x34) + F32(FP(e, 0xDC), 0x34)) / 2;
+        break;
+    case 2:
+        break;
+    }
+}
 
 void func_80129924(u8 *p)
 {
