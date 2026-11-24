@@ -2996,7 +2996,60 @@ s32 func_8011EF28(void *arg0) {
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011EF34);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011EFF8);
+extern u8 D_800A3D18_ed09[];
+extern u8 D_80133900[];
+s32 f_CompleteUseTheSeesawEventIfResolved(void);
+
+s32 func_8011EFF8(u8 *a) {
+    u8 *t;
+
+    a[1] = 1;
+    func_80077E7C(a);
+    switch (a[6]) {
+    case 0:
+        a[0] = 3;
+        a[0x47] = *(u16 *)(a + 0x56) >> 4;
+        func_80040D68(a, D_800A3D18_ed09);
+        a[0x70] = 2;
+        a[6]++;
+        break;
+    case 1:
+        if (a[0x70] == 0xFF) {
+            if (f_CompleteUseTheSeesawEventIfResolved() == 0) {
+                func_80040D68(a, &D_80133900);
+            } else {
+                t = *(u8 **)(a + 0x14);
+                func_80040D68(a, *(void **)(t + 0xC));
+                a[0x7A] = t[0x10];
+            }
+            a[0x70] = 2;
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (a[0x70] == 0xFF) {
+            a[6]++;
+        }
+        break;
+    case 3:
+        if (func_80041438(a, a[0x47] << 4, 0x100) != 0) {
+            func_8006E1E4();
+            func_80042310();
+            *(s16 *)(a + 0x40) = 0x14;
+            a[6]++;
+        }
+        break;
+    case 4:
+        if (--*(s16 *)(a + 0x40) <= 0) {
+            a[0] = 9;
+            return 1;
+        }
+        break;
+    }
+    func_80041098(a);
+    func_8004190C(a);
+    return 0;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011F190);
 
