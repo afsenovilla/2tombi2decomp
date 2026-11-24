@@ -10951,7 +10951,79 @@ void func_800543C0(u8 *a)
     f_ProbeActorTerrainAlongFacing(a, 0, (s16)d);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaGroundTerrainContact);
+extern u16 D_1F80019E;
+extern u16 D_1F8001A4;
+extern u16 D_1F8001A8;
+
+s32 f_ResolveTombaGroundTerrainContact(u8 *a)
+{
+    s32 alt = 0;
+    u16 half;
+    s32 z;
+    s16 zz;
+    s32 x;
+    u8 r;
+    u16 f;
+
+    *(u16 *)(a + 0x16C) = 0;
+    *(u16 *)(a + 0x6A) = 0;
+    if (a[0x16B] != 0) {
+        goto end;
+    }
+    if (a[0x29] != 0) {
+        goto end;
+    }
+    if (*(s16 *)(a + 0x17E) >= 0) {
+        half = *(u16 *)(a + 0x80);
+    } else {
+        half = *(s16 *)(a + 0x80) / 2;
+    }
+    if (a[0x78] != 0) {
+        u8 *l = *(u8 **)(a + 0x10);
+        z = (*(s16 *)(l + 0x86) - *(s16 *)(l + 0x84)) - (*(s16 *)(a + 0x32) - *(s16 *)(l + 0x32));
+    } else {
+        z = *(s16 *)(a + 0x62);
+    }
+    if (a[0x61] != 0) {
+        r = a[0x29] = f_ProbeActorTerrainAlongFacing((s32)a, 0, (s16)z);
+test:
+        if (r != 0) {
+            goto found;
+        }
+        goto end;
+    }
+    zz = z;
+    if ((a[0x29] = f_ProbeActorTerrainAlongFacing((s32)a, 0, zz)) != 0) {
+        goto found;
+    }
+    alt = 1;
+    if ((a[0x29] = f_ProbeActorTerrainAlongFacing((s32)a, (s16)half, zz)) != 0) {
+        goto found;
+    }
+    r = a[0x29] = f_ProbeActorTerrainAlongFacing((s32)a, (s16)-half, zz);
+    goto test;
+found:
+    D_1F80019E = D_1F8001A4;
+    f = *(u16 *)D_1F8001A6;
+    *(u16 *)(a + 0x6A) = f;
+    if (alt == 1 && (f & 0x8000) && ((f & 0xF00) == 0x100 || (f & 0xF00) == 0x200)) {
+        *(u16 *)(a + 0x6A) = 0;
+    }
+    a[0x29] &= 1;
+    if (a[0x29] != 0) {
+        *(u16 *)(a + 0x50) = 0;
+        a[0x29] |= 0x80;
+        if (alt == 0) {
+            *(u16 *)(a + 0x16C) = D_1F8001A8;
+        } else {
+            *(u16 *)(a + 0x16C) = 0;
+        }
+        f_ApplyTerrainProfileOrientationToActor(a);
+        *(u16 *)(a + 0x142) = D_1F8001A2;
+    }
+end:
+    return a[0x29];
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaForwardTerrainContact);
 
@@ -13522,8 +13594,6 @@ extern GsArea_762C D_800BF870_762c;
 typedef struct { u8 pad0[0x3A]; u16 x; u8 pad3C[2]; u16 y; u8 pad40[2]; u16 z; u8 pad44[0x20]; u8 u64; } Cam_762C;
 extern Cam_762C D_800E8008_a455;
 extern u8 D_800BFAD7;
-extern u16 D_1F80019E;
-extern u16 D_1F8001A4;
 void func_8006762C(u8 *a)
 {
     s32 pad[4];
