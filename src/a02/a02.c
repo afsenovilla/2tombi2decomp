@@ -1941,7 +1941,52 @@ void func_80113D08(u8 *a) {
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80113E4C);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80114024);
+void func_80114024(u8 *a) {
+    u8 *g;
+    u16 v;
+    u8 *p0;
+    u8 *p1;
+    u8 *p2;
+    u8 *p3;
+
+    f_UpdateCoalMiningTownInteriorDoorPartTransition(a, FP(a, 0xC4));
+    p0 = FP(a, 0xC4);
+    p1 = FP(a, 0xC8);
+    p3 = FP(a, 0xD0);
+    p2 = FP(a, 0xCC);
+    v = M2C_FIELD(p0, u16 *, 0xA);
+    M2C_FIELD(p1, s16 *, 0xA) = v;
+    M2C_FIELD(p2, s16 *, 0xA) = v;
+    M2C_FIELD(p3, s16 *, 0xA) = v;
+    switch (a[6]) {
+    case 0:
+        g = D_800BF808_1760;
+        if (g[0xE] != 0 && g[7] == 0) {
+            a[6] = 1;
+            M2C_FIELD(FP(a, 0xC4), s32 *, 0x40) = 0;
+            M2C_FIELD(FP(a, 0xCC), s32 *, 0x40) = 0;
+        }
+        break;
+    case 1:
+        if (D_800BF80F != 0) {
+            func_80051B04(FP(a, 0xC4), 0xC, M2C_FIELD(FP(a, 0xC4), u16 *, 0x38));
+            func_80051B04(FP(a, 0xCC), 0xC, M2C_FIELD(FP(a, 0xCC), u16 *, 0x38));
+            a[6] += 2;
+        } else if (a[5] >= 6) {
+            a[6] = 2;
+            func_80051B04(FP(a, 0xC4), 0xC, M2C_FIELD(FP(a, 0xC4), u16 *, 0x38));
+            func_80051B04(FP(a, 0xCC), 0xC, M2C_FIELD(FP(a, 0xCC), u16 *, 0x38));
+        }
+        break;
+    case 2:
+        if (a[5] < 6) {
+            M2C_FIELD(FP(a, 0xC4), s32 *, 0x40) = 0;
+            M2C_FIELD(FP(a, 0xCC), s32 *, 0x40) = 0;
+            a[6]--;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateCoalMiningTownInteriorSceneryAssemblyActor);
 
