@@ -8703,7 +8703,244 @@ s32 func_80127DC4(u8 *a) {
     return 0;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaMudballSurpriseCarrierActor);
+typedef struct { s16 h0; s16 h2; u8 b4; u8 pad5; s16 h6; s16 h8; } MudEnt;
+extern MudEnt D_8013766C[];
+extern u8 D_80040558[];
+static inline void mud_sync(u8 *a) {
+    u8 *c = P(P(a, 0x10), 0xC0);
+
+    H(a, 0x88) = 0;
+    H(a, 0x8A) = U(c, 0x3A) - 0x28;
+    H(a, 0x8C) = 0;
+    func_80051D90(c, a + 0x88, a + 0x90);
+    H(a, 0x2E) = H(a, 0x90);
+    H(a, 0x32) = H(a, 0x92);
+    H(a, 0x36) = H(a, 0x94);
+    func_800517F8(a);
+}
+
+void f_UpdatePipeAreaMudballSurpriseCarrierActor(u8 *a)
+{
+    GameState *g;
+    MudEnt *t;
+    u8 *p;
+    s32 r;
+    s32 k;
+    s32 n;
+    u8 *a_p = a;
+    u8 *p_f;
+    u8 *p_f_f;
+
+    switch (a_p[4]) {
+    case 0:
+        if (func_80051B70(a_p, 0xC, 5) != 0) {
+            break;
+        }
+        a_p[0xD] |= 4;
+        P(a_p, 0xC0)[0x3F] = 0x10;
+        H(P(a_p, 0xC0), 2) = 0x2C8;
+        if (a_p[3] == 3) {
+            H(a_p, 0x56) = -0x400;
+        } else if (a_p[3] == 9) {
+            H(a_p, 0x56) = 0x200;
+        } else {
+            H(a_p, 0x56) = 0;
+        }
+        H(a_p, 0x54) = 0;
+        H(a_p, 0x58) = 0;
+        a_p[0] = 1;
+        H(a_p, 0x80) = 0x82;
+        H(a_p, 0x82) = 0x104;
+        H(a_p, 0x84) = 0x19;
+        a_p[0x29] = 0;
+        a_p[0x2B] = 0;
+        a_p[0x5E] = 0;
+        H(a_p, 0x86) = 0x32;
+        a_p[4]++;
+        __asm__ volatile("");
+        g = &D_800BF870;
+        if (g->pad1[2] != 0) {
+            a_p[0xBF] = 2;
+        } else {
+            t = D_8013766C;
+            if (func_8004D7EC(t[a_p[3]].h2, 1) == 0) {
+                if (a_p[3] == 2) {
+                W(a_p, 0x14) = func_8004CC64(a_p, 0);
+                a_p[0xBF] = 2;
+            } else if (a_p[3] == 4) {
+                W(a_p, 0x14) = func_8004CC64(a_p, 1);
+                a_p[0xBF] = 3;
+            } else if (a_p[3] == 6) {
+                W(a_p, 0x14) = func_8004CC64(a_p, 2);
+                a_p[0xBF] = 3;
+            } else {
+                p = func_80072DDC(a_p, 2, 2, 8);
+                if (p != NULL) {
+                    P(p, 0x1C) = D_80040558;
+                    H(p, 0x88) = 0;
+                    H(p, 0x8A) = 0x2C8;
+                    H(p, 0x8C) = 0;
+                    p[0x5E] = 2;
+                    H(p, 0xE) = t[a_p[3]].h2;
+                    p[3] = t[a_p[3]].b4;
+                    H(p, 0x68) = t[a_p[3]].h6;
+                    H(p, 0x60) = t[a_p[3]].h8;
+                    if (H(p, 0x68) == 0) {
+                        H(p, 0x62) = 1;
+                    } else {
+                        H(p, 0x62) = 4;
+                    }
+                    H(p, 0x64) = 2;
+                    p[0x2A] = 0;
+                }
+                P(a_p, 0x14) = p;
+                a_p[0xBF] = 0;
+            }
+            } else {
+                g->pad1[0x18B] &= 0xE3;
+                a_p[0xBF] = 1;
+                W(a_p, 0x14) = 0;
+            }
+        }
+        mud_sync(a_p);
+        break;
+    case 1:
+        H(a_p, 0x4A) = H(P(a_p, 0x10), 0x4A);
+        switch (a_p[5]) {
+        case 0:
+            if (a_p[0x29] != 0) {
+                P(a_p, 0x10)[0xBF] = 1;
+                a_p[5]++;
+            } else if (a_p[0x5E] != 0) {
+                P(a_p, 0x10)[0xBF] = 1;
+                a_p[5] = 2;
+            }
+            break;
+        case 1:
+            if (a_p[0x29] != 0) {
+                P(a_p, 0x10)[0xBF] = 1;
+                if (a_p[0x29] == 1) {
+                    u8 *e = D_800E7E80;
+                    if (e[0x145] == 0) {
+                        W(e, 0x30) += H(P(a_p, 0x10), 0x4A) << 8;
+                    }
+                }
+            } else {
+                P(a_p, 0x10)[0xBF] = 0;
+                a_p[5] = 0;
+            }
+            break;
+        case 2:
+            if (a_p[0x5E] != 0) {
+                P(a_p, 0x10)[0xBF] = 1;
+            } else {
+                P(a_p, 0x10)[0xBF] = 0;
+                a_p[5] = 0;
+            }
+            break;
+        }
+        a_p[0x29] = 0;
+        mud_sync(a_p);
+        if (func_800778E4(a_p, 0x2C8) == 0) {
+            func_80077EBC(a_p);
+        }
+        if ((k = a_p[0xBF]) == 0) {
+            if (func_8004D7EC(D_8013766C[a_p[3]].h2, 1) != 0) {
+                a_p[0xBF] = 1;
+                W(a_p, 0x14) = 0;
+            }
+        } else if (k == 1) {
+            p_f = P(a_p, 0x10);
+            if (p_f[0x46] != 0 || H(p_f, 0x4A) == 0) {
+                break;
+            }
+            switch (a_p[3]) {
+            case 1:
+                r = 0;
+                n = 2;
+                if (H(a_p, 0x32) >= -0x7CF) {
+                    g = &D_800BF870;
+                    if (!((g->pad1[0x18B] >> n) & 1)) {
+                        r = func_80112948(a_p);
+                        g->pad1[0x18B] |= 4;
+                        a_p[0xBF] = 2;
+                    }
+                }
+                W(a_p, 0x14) = r;
+                break;
+            case 2:
+                r = 0;
+                n = 3;
+                if (H(a_p, 0x32) >= -0x7CF) {
+                    g = &D_800BF870;
+                    if (!((g->pad1[0x18B] >> n) & 1)) {
+                        r = func_80112948(a_p);
+                        g->pad1[0x18B] |= 8;
+                        a_p[0xBF] = 2;
+                    }
+                }
+                W(a_p, 0x14) = r;
+                break;
+            case 4:
+                r = 0;
+                n = 4;
+                if (H(a_p, 0x32) >= -0x7CF) {
+                    g = &D_800BF870;
+                    if (!((g->pad1[0x18B] >> n) & 1)) {
+                        r = func_80112948(a_p);
+                        g->pad1[0x18B] |= 0x10;
+                        a_p[0xBF] = 2;
+                    }
+                }
+                W(a_p, 0x14) = r;
+                break;
+            }
+        } else if (k == 2) {
+            p_f = P(a_p, 0x14);
+            if (p_f == NULL) {
+                break;
+            }
+            if (p_f[4] == 2) {
+                switch (a_p[3]) {
+                case 1:
+                    { GameState *g1 = &D_800BF870; g1->pad1[0x18B] &= 0xFB; }
+                    break;
+                case 2:
+                    { GameState *g2 = &D_800BF870; g2->pad1[0x18B] &= 0xF7; }
+                    break;
+                case 4:
+                    { GameState *g3 = &D_800BF870; g3->pad1[0x18B] &= 0xEF; }
+                    break;
+                }
+                a_p[0xBF] = 1;
+            } else {
+                H(p_f, 0x2E) = H(a_p, 0x2E);
+                H(P(a_p, 0x14), 0x32) = H(a_p, 0x32) + 0x2B8;
+                H(P(a_p, 0x14), 0x36) = H(a_p, 0x36);
+            }
+        } else if (k == 3) {
+            p_f_f = P(a_p, 0x14);
+            if (p_f_f != NULL && p_f_f[4] == 2) {
+                switch (a_p[3]) {
+                case 4:
+                    { GameState *g4 = &D_800BF870; g4->pad1[0x19E] |= 1; }
+                    break;
+                case 6:
+                    { GameState *g5 = &D_800BF870; g5->pad1[0x19E] |= 2; }
+                    break;
+                }
+                func_80040B48(0x4C);
+                a_p[0xBF] = 1;
+            }
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a_p);
+        break;
+    }
+}
 
 void func_8012866C(u8 *a) {
     s16 *v = D_1F8000C0_65b0;
