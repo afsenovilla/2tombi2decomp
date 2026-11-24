@@ -2819,12 +2819,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011638C);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80116620);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80116740);
-
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80116994);
-
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80117188);
-
 #define FH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define FU(p, o) (*(u16 *)((u8 *)(p) + (o)))
 extern u8 *D_800ECFC4;
@@ -2836,7 +2830,6 @@ extern u8 D_80135BF8[];
 extern u8 D_80135C08[];
 extern u8 D_80135C18[];
 extern u8 D_80135C28[];
-s32 func_80117188();
 /* func_801199DC, inlined */
 static inline void inl_801199DC(u8 *a, s32 k, s32 f) {
     u8 *b;
@@ -2901,6 +2894,39 @@ static inline s32 a01_target_y(u8 *a) {
     }
     return y;
 }
+
+s32 func_80116740(u8 *a, s32 k, s32 n) {
+    s32 r = 0;
+    u8 *q = a + 0x60;
+    s32 y;
+
+    switch (a[7]) {
+    case 0:
+        inl_801199DC(a, k, 4);
+        FH(a, 0x42) = n;
+        a[7]++;
+    case 1:
+        FH(a, 0x58) += func_80083E80(-FH(a, 0x58)) >> 5;
+        FH(a, 0x4E) += -FH(a, 0x4E) >> 2;
+        y = a01_target_y(a);
+        y += func_80083F50(FH(q, 0x10)) >> 5;
+        FH(q, 0x10) += func_8009A450() >> 9;
+        FH(a, 0x32) += (y - FH(a, 0x32)) >> 4;
+        if (FH(a, 0x42)-- <= 0) {
+            r = 1;
+        }
+        break;
+    }
+    return r;
+}
+
+INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80116994);
+
+INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80117188);
+
+#define FH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define FU(p, o) (*(u16 *)((u8 *)(p) + (o)))
+s32 func_80117188();
 static inline void a01_turn(u8 *a) {
     u8 *q = a + 0x60;
     s32 v;
@@ -5009,7 +5035,77 @@ void f_UpdateGranPostPipeAreaDialogue(u8 *a) {
     func_8004190C(a);
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011F2A4);
+extern u8 D_800A3E38[];
+extern u8 D_800BFADF;
+extern u8 D_80136B58[];
+extern u8 D_80136BA8[];
+extern u8 D_80136BF8[];
+extern u8 D_80136C08[];
+
+void func_8011F2A4(u8 *a) {
+    GameState *g;
+
+    switch (a[5]) {
+    case 0:
+        if (D_1F800207_9c67 == 0xA && D_1F800160_71b4 >= 0x4B64 && func_8005308C() != 0) {
+            func_80042354(1, 1);
+            func_80040D68(a, D_80136B58);
+            a[0x70] = 2;
+            a[5]++;
+        }
+        break;
+    case 1:
+        if (a[0x70] == 0xFF) {
+            g = &D_800BF870;
+            if (g->pad1[0x189] == 0x15) {
+                g->pad1[0x189] = 0x16;
+                func_80040D68(a, D_80136BA8);
+                a[5] = 2;
+            } else if (g->itemCounts[0x2B] == 0) {
+                func_80040D68(a, D_80136BF8);
+                a[5] = 3;
+            } else {
+                func_80040D68(a, D_80136C08);
+                a[5] = 4;
+            }
+            a[0x70] = 2;
+        }
+        break;
+    case 2:
+        if (a[0x70] == 0xFF) {
+            if (D_800BFADF == 0) {
+                func_80040D68(a, D_800A3E38);
+                a[5] = 3;
+            } else {
+                func_80040D68(a, D_80136C08);
+                a[5] = 4;
+            }
+            a[0x70] = 2;
+        }
+        break;
+    case 3:
+        if (a[0x70] == 0xFF && (D_1F800207_9c67 != 0xA || D_1F800160_71b4 < 0x4B64)) {
+            a[5] = 0;
+        }
+        break;
+    case 4:
+        if (a[0x70] == 0xFF) {
+            a[5] = 0;
+            a[0xBF] = 1;
+        }
+        break;
+    }
+    if (a[5] == 0) {
+        func_8007778C(a);
+    } else {
+        a[1] = 1;
+        func_80077E7C(a);
+    }
+    if (a[1] != 0) {
+        func_80041098(a);
+        func_8004190C(a);
+    }
+}
 
 #define FH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern u8 D_800BF9FA;
@@ -5282,7 +5378,6 @@ void func_80120508(u8 *a)
     }
 }
 
-extern u8 D_800A3E38[];
 extern u8 D_800A3E28[];
 void f_ReturnThirstyMinerToIdleScript(u8 *a) {
     if (a[0x71] == 0xFF) {
