@@ -2487,7 +2487,72 @@ void func_80115B88(s32 arg0) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnFishermensTownActorsFromPlacementTable);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80116094);
+#define GS1(o) (g1[o])
+#define GS2(o) (g2[o])
+#define GS3(o) (g3[o])
+#define GS4(o) (g4[o])
+#define W_d1fb(p, o) (*(s32 *)((u8 *)(p) + (o)))
+extern u8 D_1F800230;
+extern u8 D_1F80019A;
+extern u8 D_800BF830;
+extern u8 D_800BF80F;
+
+void func_80116094(u8 *a) {
+    u8 *t = D_800E7E80;
+    u8 *s = D_800BF808_1760;
+    u8 *g1;
+    u8 *g2;
+    u8 *g3;
+    u8 *g4;
+
+    if (s[0xE] == 0) {
+        g1 = (u8 *)&D_800BF870;
+        if (GS1(0x16F) == 0 && (GS1(0x162) == 0 || GS1(0x162) == 0xFF)) {
+            if (func_8005308C() != 0 && s[0x28] == 0xFF) {
+                if (t[0x164] == 0) {
+                    t[4] = 4;
+                    t[5] = 0x21;
+                    t[6] = 0;
+                    func_80054D14(t, 2, 6);
+                }
+                func_80042354(1, 3);
+                GS1(0x16F) = 0x41;
+                func_80070724(0xE, 4, 0x19);
+            }
+        }
+        g2 = (u8 *)&D_800BF870;
+        if (GS2(0x16F) & 0x40) {
+            if (D_1F800137 == 0) {
+                GS2(0x16F) &= 0xBF;
+            }
+            D_1F800230 = 1;
+        }
+        g3 = (u8 *)&D_800BF870;
+        if (GS3(0x85) == 0 && GS3(0x179) == 0 && t[0x2A] == 0x1F && H_f12c(t, 0x36) < 0x1ACD && H_f12c(t, 0x32) < -0xF9F) {
+            if (func_8005308C() != 0 && D_800BF830 == 0xFF) {
+                func_80042354(1, 2);
+                GS3(0x179) = 1;
+                func_80070724(0, 5, 9);
+            } else {
+                H_f12c(t, 0x36) = 0x1ACC;
+            }
+        }
+        g4 = (u8 *)&D_800BF870;
+        if (GS4(0x46) == 0 && D_1F80019A != 1 && GS4(0x2C) >= 4 && D_800BF80F == 0) {
+            func_80040B48(2);
+        }
+    } else if (s[0xF] == 0) {
+        if (H_f12c(t, 0x36) >= 0x140B) {
+            W_d1fb(t, 0x34) = 0x140A0000;
+            D_1F800164_d75f = H_f12c(t, 0x36);
+        }
+    } else if (s[0xF] == 1) {
+        if (H_f12c(t, 0x36) < 0x226) {
+            W_d1fb(t, 0x34) = 0x2260000;
+            D_1F800164_d75f = H_f12c(t, 0x36);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateFishermensTownAmbientAudio);
 
@@ -4550,7 +4615,6 @@ u8 *func_8011C610(s32 a, u8 b) {
 #define NH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define NW(p, o) (*(s32 *)((u8 *)(p) + (o)))
 extern s8 D_800BF9EB;
-extern u8 D_800BF830;
 extern u8 *D_800BF860;
 extern u8 D_80148924[];
 extern u8 D_80148974[];
