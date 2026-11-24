@@ -5418,7 +5418,93 @@ void func_8012AADC(void)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012AB30);
+typedef struct {
+    s32 vx, vy;
+} T2Pt32;
+typedef struct {
+    u8 pad0[2];
+    s16 x;
+    u8 pad4[6];
+    s16 y;
+    u8 padC[0x14];
+    s16 rx;
+    u16 ry;
+} T2CamD0;
+extern T2CamD0 D_1F8000D0_3bb0;
+extern s32 D_800A3F90;
+extern s32 D_800A3F94;
+extern u16 *D_800ECFA4_f863;
+extern u16 *D_800ECF78;
+void func_8012AEC0(u8 *a, s32 *p0, s32 *p1, s32 *p2);
+
+void func_8012AB30(u8 *a)
+{
+    T2Pt32 v0, v1, v2;
+    T2CamD0 *c;
+    u16 *tb;
+    u16 x;
+    s32 k;
+    s32 ang, r, dx, dz;
+    u16 t;
+
+    if (D_800BF871 < 9) {
+        k = 0;
+    } else if (D_800BF871 < 18) {
+        k = 1;
+    } else {
+        k = 2;
+    }
+    switch (k) {
+    case 0:
+        *(u16 **)(a + 0xC) = D_800ECF78;
+        break;
+    case 1:
+        *(u16 **)(a + 0xC) = D_800ECF78;
+        break;
+    case 2:
+        *(u16 **)(a + 0xC) = D_800ECF78;
+        break;
+    }
+    c = &D_1F8000D0_3bb0;
+    tb = *(u16 **)(a + 0xC);
+    x = tb[0];
+    *(u16 *)(a + 8) = x;
+    x = tb[1];
+    MEMBER_AT(u16, a, 0xA) = x;
+    D_800A3F90 = 0x3E80;
+    t = c->ry;
+    D_800A3F94 = 0x1C7;
+    ang = (-(s16)t - D_800A3F94) & 0xFFF;
+    v0.vx = c->x;
+    v0.vy = c->y;
+    r = func_80083E80(ang);
+    v1.vx = v0.vx + ((r * D_800A3F90) >> 12);
+    v1.vy = v0.vy + ((func_80083F50(ang) * D_800A3F90) >> 12);
+    ang = (D_800A3F94 - (s16)c->ry) & 0xFFF;
+    v2.vx = v0.vx + ((func_80083E80(ang) * D_800A3F90) >> 12);
+    v2.vy = v0.vy + ((func_80083F50(ang) * D_800A3F90) >> 12);
+    v0.vx -= (func_80083E80(-(s16)c->ry) * 1600) >> 12;
+    v0.vy -= (func_80083F50(-(s16)c->ry) * 1600) >> 12;
+    r = abs(func_80083E80(c->rx));
+    dx = (func_80083E80(-(s16)c->ry) * r) >> 12;
+    dz = (func_80083F50(-(s16)c->ry) * r) >> 12;
+    dx = (dx * D_800A3F90 * 5) >> 16;
+    dz = (dz * D_800A3F90 * 5) >> 16;
+    v1.vx -= dx;
+    v1.vy -= dz;
+    v2.vx -= dx;
+    v0.vx -= dx;
+    v2.vy -= dz;
+    v0.vy -= dz;
+    v0.vx /= 640;
+    v0.vy /= 640;
+    v1.vx /= 640;
+    v1.vy /= 640;
+    v2.vx /= 640;
+    v2.vy /= 640;
+    a[6] = 0;
+    func_8012AEC0(a, &v0, &v1, &v2);
+}
 
 #define GH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 typedef struct { u8 pad[0x10]; u16 cells[1]; } GridCellList;
@@ -5484,7 +5570,6 @@ void func_8012AEC0(u8 *a, s32 *p0, s32 *p1, s32 *p2) {
     }
 }
 
-extern u16 *D_800ECF78;
 void func_8012B3E8(u8 *a)
 {
     u16 *p = D_800ECF78;
