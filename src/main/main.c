@@ -15740,7 +15740,47 @@ s16 f_ClampSignedCameraDelta(s16 arg0, s16 arg1) {
     return var_v1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ApproachFixedPosition3D);
+s32 f_ApproachFixedPosition3D(u8 *a, u8 *b, s32 lim)
+{
+    s32 n = 0;
+    u16 t;
+    u16 d;
+
+    t = *(u16 *)(b + 2);
+    d = t - *(u16 *)(a + 2);
+    if ((u16)(d + 10) >= 21) {
+        if (lim != 0) {
+            d = f_ClampSignedCameraDelta(d, lim);
+        }
+        *(s32 *)(a + 0) += (d << 16) >> 3;
+    } else {
+        *(u16 *)(a + 2) = t;
+        n = 1;
+    }
+    t = *(u16 *)(b + 6);
+    d = t - *(u16 *)(a + 6);
+    if ((u16)(d + 10) >= 21) {
+        if (lim != 0) {
+            d = f_ClampSignedCameraDelta(d, lim);
+        }
+        *(s32 *)(a + 4) += (d << 16) >> 3;
+    } else {
+        *(u16 *)(a + 6) = t;
+        n++;
+    }
+    t = *(u16 *)(b + 0xA);
+    d = t - *(u16 *)(a + 0xA);
+    if ((u16)(d + 10) >= 21) {
+        if (lim != 0) {
+            d = f_ClampSignedCameraDelta(d, lim);
+        }
+        *(s32 *)(a + 8) += (d << 16) >> 3;
+    } else {
+        *(u16 *)(a + 0xA) = t;
+        n++;
+    }
+    return n == 3;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_RebuildCameraViewTransform);
 
