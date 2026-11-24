@@ -7219,7 +7219,92 @@ void func_8011EAD4(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011ECC8);
+extern u8 D_800BFA04;
+extern u8 *D_1F800214;
+s32 func_8011F028(u8 *a);
+
+void func_8011ECC8(u8 *a)
+{
+    u8 *p;
+
+    if (a[6] >= 4) {
+        func_8006CBA8(a + 0x2C);
+    }
+    switch (a[6]) {
+    case 0:
+        if (D_800BFA04 >= 3) {
+            a[0x70] = 1;
+            a[6]++;
+        }
+        break;
+    case 1:
+        if (D_800BFA04 < 4) {
+            break;
+        }
+        a[0] = 2;
+        a[0x70] = 1;
+        a[0x5E] = 0;
+        S(a, 0x40) = 0x11;
+        a[6]++;
+        break;
+    case 2:
+        if (--S(a, 0x40) <= 0 && func_8011F028(a) != 0) {
+            a[6]++;
+        }
+        break;
+    case 3:
+        if (a[0x71] == 0) {
+            a[0x70] = 1;
+            a[6]++;
+        }
+        break;
+    case 5:
+        p = D_1F800214;
+        S(p, 0x56) = func_80085690(S(p, 0x36) - S(a, 0x36), S(a, 0x2E) - S(p, 0x2E)) & 0xFFF;
+        D_800E7ED6 = func_80085690(D_1F800164 - S(a, 0x36), S(a, 0x2E) - D_1F800160) & 0xFFF;
+    case 4:
+        if (a[0x71] == 0) {
+            a[0x70] = 1;
+            a[6]++;
+        }
+        break;
+    case 6:
+        if (a[0x71] == 0) {
+            u8 *q = D_800E7E80;
+            S(a, 0x40) = 0x14;
+            S(a, 0x48) = func_80083F50(S(q, 0x56));
+            S(a, 0x4C) = -func_80083E80(S(q, 0x56));
+            a[6]++;
+        }
+        break;
+    case 7:
+        p = D_1F800214;
+        {
+            u8 *t = D_800E7E80;
+            U(p, 0x52) -= S(a, 0x4C) >> 9;
+            U(t, 0x36) -= S(a, 0x4C) >> 9;
+            U(p, 0x4E) -= S(a, 0x48) >> 9;
+            U(t, 0x2E) -= S(a, 0x48) >> 9;
+        }
+        if (--S(a, 0x40) == 0) {
+            a[0x70] = 1;
+            a[6]++;
+        }
+        break;
+    case 8:
+        if (a[0x71] == 0xFF) {
+            a[0] = 1;
+            func_8006E1E4();
+            {
+                u8 *h = (u8 *)&D_800BF870;
+                h[0x194]++;
+            }
+            a[5] = 2;
+            a[6] = 0;
+        }
+        break;
+    }
+}
 
 void func_8011EF70(void *arg0) {
     if (M2C_FIELD(arg0, u8 *, 0x2B) == 3) {
@@ -8074,7 +8159,6 @@ extern u8 D_8012BDC4;
 extern u8 D_8012BE74;
 void func_8011B8AC(s32 arg0, s8 arg1);
 void *func_8011FFFC(void);
-extern u8 *D_1F800214;
 static inline void func_80120F70_aim(u8 *a, u8 *e, s32 z, s32 x) {
     u8 *o = D_1F800214;
 
