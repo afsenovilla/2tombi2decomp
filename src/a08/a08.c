@@ -6030,9 +6030,95 @@ void func_8012C928(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012CA40);
-
 extern u8 D_8014005C[];
+extern u8 D_8014159C[];
+extern u8 D_80148790[];
+extern u8 D_800A3D90_b2d8[];
+extern u8 D_80145EF8[];
+void func_8012D000(u8 *a);
+void func_8012D144(u8 *a);
+
+void func_8012CA40(u8 *a)
+{
+    u8 *g;
+    u8 *st;
+
+    switch (a[4]) {
+    case 0:
+        g = D_800ECF58;
+        if (func_800519E0(a, 0xF, *(s32 *)(g + 0x6C), D_8014159C) != 0) {
+            break;
+        }
+        *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x38);
+        func_80040CDC(a, D_80148790, D_800A3D90_b2d8);
+        st = (u8 *)&D_800BF870;
+        if (st[0xA5] == 0xFF) {
+            func_80051B04(*(u8 **)(a + 0xC0), 0x1B, 0xF);
+            func_80041718(a, 0, 0);
+            a[0x5E] = 5;
+        } else {
+            func_80041718(a, 0xB, 0);
+            if (st[0xA4] == 0xFF) {
+                if (st[0x296] != 0) {
+                    a[0x5E] = 4;
+                } else {
+                    a[0x5E] = 3;
+                }
+            } else if (st[0xA4] != 0) {
+                a[0x5E] = 1;
+            } else {
+                a[0x5E] = 0;
+            }
+        }
+        a[0] = 9;
+        *(s16 *)(a + 0x80) = 0x8C;
+        *(s16 *)(a + 0x82) = 0x118;
+        *(s16 *)(a + 0x84) = 0x78;
+        *(s16 *)(a + 0x86) = 0xF0;
+        *(s16 *)(a + 0x56) = 0x6D2;
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x58) = 0;
+        a[4]++;
+        if (D_1F800207 == 0x27) {
+            a[5] = 3;
+            func_80040D68(a, D_80145EF8);
+            a[0x70] = 1;
+            a[0] = 2;
+        }
+        break;
+    case 1:
+        func_8007778C(a);
+        func_80041098(a);
+        func_8004190C(a);
+        switch (a[5]) {
+        case 0:
+            func_8012CF20(a);
+            break;
+        case 1:
+            func_8012D000(a);
+            break;
+        case 2:
+            func_8012D060(a);
+            break;
+        case 3:
+            func_8012D144(a);
+            break;
+        }
+        a[0x2B] = 0;
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
+
 extern s32 D_800ECF90;
 
 void func_8012CCD4(u8 *a)
@@ -7628,7 +7714,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013924C);
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80139458);
 
 extern u8 D_80141434[];
-extern u8 D_80148790[];
 void f_UpdateWaterTempleMermaidAndGearNpcActor(u8 *a)
 {
     u8 *g;
@@ -8344,7 +8429,6 @@ s32 func_8013C860(u8 *p)
 }
 
 extern u8 D_80141614[];
-extern u8 D_800A3D90_b2d8[];
 void func_8013CAC0(void *arg0);
 void func_8013CB14(u8 *a);
 void func_8013CB70(u8 *p);
