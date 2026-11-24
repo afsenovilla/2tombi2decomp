@@ -345,7 +345,75 @@ void f_DispatchCircusMovingActorContacts(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", f_DispatchCircusActorContacts);
+extern u8 **D_1F800148;
+extern u8 D_1F800150;
+
+void f_DispatchCircusActorContacts(u8 *a)
+{
+    u8 **l = D_1F800148;
+    u8 *b;
+
+    D_1F800182 = D_1F800150;
+    while (D_1F800182 != 0) {
+        b = *l;
+        D_1F800182--;
+        l++;
+        if (b[0] & 1) {
+            switch (b[2]) {
+            case 14:
+            case 15:
+                func_8010B944(a, b);
+                break;
+            case 12:
+                func_80020868(a, b);
+                break;
+            case 23:
+                func_8010C0B8(a, b);
+                break;
+            case 18:
+                func_8002311C(a, b);
+                break;
+            case 24:
+                func_80020B08(a, b);
+                break;
+            case 31:
+                func_80023764(a, b);
+                break;
+            case 74:
+                func_8010AFFC(a, b);
+                break;
+            case 54:
+                func_8010BE08(a, b);
+                break;
+            case 9:
+            case 36:
+            case 50:
+                func_8010BF14(a, b);
+                break;
+            case 76:
+                func_8010A8F0(a, b);
+                break;
+            case 103:
+                {
+                    s16 dx = *(u16 *)(a + 0x2E) - *(u16 *)(b + 0x2E);
+                    s16 dz = *(u16 *)(a + 0x36) - *(u16 *)(b + 0x36);
+                    s32 d = func_80084080(dx * dx + dz * dz);
+
+                    if ((u16)d <= *(s16 *)(a + 0x80) + 0xC8
+                        && (u16)(*(u16 *)(a + 0x84) + (*(u16 *)(a + 0x32) - *(u16 *)(b + 0x32) + 0x140)) <= *(s16 *)(a + 0x86) + 0x140) {
+                        b[0x29] = 1;
+                        func_8001F830(a, b);
+                    }
+                    func_8010BC9C(a, b);
+                }
+                break;
+            case 81:
+                func_8010ABE4(a, b);
+                break;
+            }
+        }
+    }
+}
 
 extern s8 D_1F800182_85c9[];
 extern int rcos(int a);
@@ -419,8 +487,6 @@ void func_8010CA60(u8 *a, u8 *b)
     }
 }
 
-extern u8 **D_1F800148;
-extern u8 D_1F800150;
 void f_DispatchCircusSupportContacts(u8 *a)
 {
     u8 **l = D_1F800148;
