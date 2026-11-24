@@ -17556,7 +17556,73 @@ void func_8006BDF0(u8 *a, s32 quiet)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006BE88);
+extern u16 D_800E7ED6;
+void func_8006C608(u8 *a);
+void func_8007AB20(void);
+
+void func_8006BE88(u8 *a)
+{
+    s16 v[6];
+    s32 r;
+    s32 r2;
+    s32 i;
+    s32 ang;
+    u8 *e;
+
+    if (a[0x2B] >= 2) {
+        return;
+    }
+    r = f_ClassifyActorDirectionalTerrainAlongFacing(a, 0, 0x5A);
+    if (r > 0 || (r2 = f_ClassifyActorDirectionalTerrainAlongFacing(a, 0, 0)) > 0) {
+        D_800E807E = 4;
+        a[0x2B] = 3;
+        v[1] = *(u16 *)(a + 0x2E);
+        v[3] = *(u16 *)(a + 0x32) + 0x5A;
+        v[5] = *(u16 *)(a + 0x36);
+        f_SpawnTransientEffectAtFixedPosition(a[2] + 0xC, v, -0x50);
+        f_SpawnImpactTransientEffect(2, v, a[0x5E], a + 0x68);
+        f_PlaySoundEffect(0x32, 0, 0);
+        if (a[0x5E] != 0) {
+            i = 0;
+            ang = D_800E7ED6;
+            do {
+                e = ((u8 *(*)(void))func_8007AB20)();
+                if (e == NULL) {
+                    return;
+                }
+                *(u16 *)(e + 0x2E) = *(u16 *)(a + 0x2E);
+                *(u16 *)(e + 0x32) = *(u16 *)(a + 0x32) + 0x5A;
+                *(u16 *)(e + 0x36) = *(u16 *)(a + 0x36);
+                *(void **)(e + 0x1C) = func_8006C608;
+                e[2] = 10;
+                e[3] = i;
+                if (a[2] != 7) {
+                    e[0x5E] = 1;
+                } else {
+                    e[0x5E] = 0;
+                }
+                *(u16 *)(e + 0x56) = ang + i * 0x800;
+            } while (++i < 2);
+        }
+        return;
+    }
+    if (r == -1 || r2 == -1) {
+        if ((*(u16 *)D_1F8001A6 & 0xF00) == 0x100 || (*(u16 *)D_1F8001A6 & 0xF00) == 0x200) {
+            a[0x2B] = 3;
+            if (D_800BF870.unk0 == 0) {
+                func_8010CAEC(a);
+            } else if (D_800BF870.unk0 == 4) {
+                func_801162E8(a);
+            } else if (D_800BF870.unk0 == 6) {
+                func_801147CC(a);
+            } else if (D_800BF870.unk0 == 8) {
+                func_8011370C(a);
+            } else if (D_800BF870.unk0 == 14) {
+                func_8010B4F4(a);
+            }
+        }
+    }
+}
 
 typedef struct { u8 pad[0x30]; s32 y; } ActorY_C0C4;
 extern ActorY_C0C4 D_800E7E80_1c87;
