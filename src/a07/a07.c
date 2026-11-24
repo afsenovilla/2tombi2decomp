@@ -3784,7 +3784,51 @@ s32 func_80120C30(u8 *p)
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80120C7C);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80120D64);
+void func_80120EC8(void *arg0);
+void func_80120F38(u8 *p);
+void func_80120FA4(void *arg0);
+
+void func_80120D64(u8 *a)
+{
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        func_80040CDC(a, D_8014005C_9175, D_800A3CD0);
+        g = (u8 *)&D_800BF870;
+        if (*(u16 *)(g + 0x5E6) & 0x80) {
+            *(s16 *)(a + 0x32) -= 0x19;
+        }
+        func_80041718(a, 0x17, 0);
+        a[0x5E] = g[0x9F];
+        a[4]++;
+        break;
+    case 1:
+        a[1] = 1;
+        func_80077E7C(a);
+        func_80041098(a);
+        func_8004190C(a);
+        switch (a[5]) {
+        case 0:
+            func_80120EC8(a);
+            break;
+        case 1:
+            func_80120F38(a);
+            break;
+        case 2:
+            func_80120FA4(a);
+            break;
+        }
+        func_800518FC(a);
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern M2C_UNK D_80133EF8;
 extern M2C_UNK D_80133FB8;
