@@ -113,11 +113,22 @@ def lines_of(words, rel, j_base):
         elif w >> 26 == 2:
             tgt = j_base(w)
             txt, key = "j +0x%x" % tgt, "j T"
-        out.append((txt, key, None if tgt is None else tgt // 4))
+        out.append((txt, key, None if tgt is None else tgt // 4, i in rel))
     return out
 
 
-def render(obj, name, want, prog, addr, show_all=False, width=52):
+IMM = re.compile(r"(,|\s)(-?0x[0-9a-f]+|-?\d+)(\(|$)")
+
+
+def bare(txt):
+    """an instruction's text with its relocation note and immediate dropped (--real)."""
+    return IMM.sub(r"\1R\3", re.sub(r"\s*\{[^}]*\}$", "", txt), count=1)
+
+
+def render(obj, name, want, prog, addr, show_all=False, width=52, real=False):
+    """real: relocation-only differences are hidden (a word whose only difference from its retail line is the
+    immediate of a relocated field on either side: `lui v0,0x0 {D}` against `lui v0,0x1f80`, an alias name, a
+    scratchpad address retail has as a constant)."""
     words, rel, off = obj_function(obj, name)
     ours = lines_of(words, rel, lambda w: ((w & 0x3FFFFFF) << 2) - off)
     rwords = list(struct.unpack("<%dI" % (len(want) // 4), want))
@@ -142,6 +153,9 @@ def render(obj, name, want, prog, addr, show_all=False, width=52):
             mark = " " if tag == "equal" else ("|" if a and b else ("<" if a else ">"))
             if mark == " " and ours[a[0]][2] is not None and target(ours[a[0]][2]) != theirs[b[0]][2]:
                 mark = "|"    # a branch to a line that does not correspond
+            if real and mark == "|" and a and b and (ours[a[0]][3] or theirs[b[0]][3]) and \
+                    ours[a[0]][2] is None and bare(a[1]) == bare(b[1]):
+                mark = " "    # only the relocated field differs (one side has no relocation there, an alias)
             rows.append((mark, a, b))
     nd = sum(1 for r in rows if r[0] != " ")
     keep = set(range(len(rows))) if show_all else {j for i, r in enumerate(rows) if r[0] != " "
@@ -168,6 +182,7 @@ def main():
     ap.add_argument("--prog", default="main")
     ap.add_argument("--all", action="store_true")
     ap.add_argument("--width", type=int, default=52)
+    ap.add_argument("--real", action="store_true", help="hide relocation-only differences")
     a, rest = ap.parse_known_args()
     import cc, ccheck
     binary, delta, syms = ccheck.prog_info(a.prog)
@@ -179,7 +194,7 @@ def main():
     try:
         cc.compile_c(os.path.abspath(a.src), d + "/a.o")
         print(render(d + "/a.o", a.func, binary[addr - delta: addr - delta + sizes[a.func]], a.prog, addr, a.all,
-                     a.width))
+                     a.width, a.real))
     except cc.CompileError as e:
         sys.exit("compile error: %s" % e)
     finally:

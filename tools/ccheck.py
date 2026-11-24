@@ -138,6 +138,34 @@ def argcount_warnings(src, prog):
                     text.count("\n", 0, cm.start()) + 1, n, c, where, k))
 
 
+def protos_differ(a, d):
+    """the scratch compiled as tools/install_c.py installs it (prototypes dropped): {function: its bytes}, empty
+    when dropping changes nothing in the text. install_c drops the scratch's prototypes of callees the target
+    declares or leaves undeclared, so a narrow parameter type (u8 / s16) in a scratch prototype can make ccheck say
+    OK while the installed C differs."""
+    import install_c
+    tp = os.path.join(ROOT, "src", a.prog, a.prog + ".c")
+    keep = set(re.findall(r"(?m)^[\w][\w \*]*?\b(\w+)\s*\([^;{}]*\)\s*\{", open(tp).read())) \
+        if os.path.exists(tp) else set()
+    src = open(a.src).read()
+    dropped = install_c.drop_prototypes(src, keep)
+    if dropped == src:
+        return {}
+    d2 = os.path.join(d, "np")
+    os.makedirs(d2, exist_ok=True)
+    src2 = os.path.join(d2, os.path.basename(a.src))
+    open(src2, "w").write(dropped)
+    try:
+        text2, funcs2, _ = compile_c(src2, a, d2)
+    except SystemExit:
+        print("warning: the scratch does not compile with its prototypes dropped (--no-protos): install_c "
+              "will fail or change it")
+        return {}
+    except Exception:
+        return {}
+    return {n: text2[o:o + sz] for n, o, sz in funcs2}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("src")
@@ -151,11 +179,16 @@ def main():
     ap.add_argument("--no-protos", action="store_true",
                     help="drop the prototypes as tools/install_c.py does (kept: functions used as values or defined "
                          "in the scratch or in src/<prog>/<prog>.c)")
+    ap.add_argument("--skip-protos-check", action="store_true",
+                    help="do not compile the scratch a second time with its prototypes dropped (the default warns "
+                         "when that compile differs: install_c would produce different code)")
     ap.add_argument("-v", action="store_true")
     ap.add_argument("--all", action="store_true", help="also check the INCLUDE_ASM functions (sanity test)")
     ap.add_argument("--func", action="append", help="check only these functions (repeatable)")
     ap.add_argument("--sbs", action="store_true", help="side-by-side diff of each DIFF function (tools/sbs.py)")
     ap.add_argument("--sbs-all", action="store_true", help="with --sbs: print the equal lines too")
+    ap.add_argument("--real", dest="sbs_real", action="store_true",
+                    help="with --sbs: hide relocation-only differences (tools/sbs.py --real)")
     a, rest = ap.parse_known_args()
     a.cflags = rest
     binary, delta, syms = prog_info(a.prog)
@@ -172,6 +205,7 @@ def main():
         a.src = src2
     argcount_warnings(a.src, a.prog)
     text, funcs, rel = compile_c(a.src, a, d)
+    np_bytes = protos_differ(a, d) if not a.no_protos and not a.skip_protos_check else {}
     bad = 0
     asm_included = {n[:-len(".NON_MATCHING")] for n, _, _ in funcs if n.endswith(".NON_MATCHING")}
     if not a.all:   # INCLUDE_ASM functions are the retail bytes by construction: only the C ones are checked
@@ -223,6 +257,12 @@ def main():
                 abs(size - want_size) // 4, abs(size - want_size) // 4, "extra" if size > want_size else "short")
         print("%s %s %08X (%d bytes)%s%s%s" % ("OK  " if ok else "DIFF", name, addr, size,
                                              "" if ok else ", %d words differ" % len(diffs), aligned, order))
+        if name in np_bytes and np_bytes[name] != got:
+            print("warning: %s compiles differently with the scratch's prototypes dropped (--no-protos): "
+                  "install_c will produce different code (%s); drop narrow prototypes, cast at the call" % (
+                      name, "%d bytes there" % len(np_bytes[name]) if len(np_bytes[name]) != size else
+                      "first difference at +0x%X" % next(i for i in range(0, size, 4)
+                                                         if np_bytes[name][i:i + 4] != got[i:i + 4])))
         if a.v:
             for i, g, w in diffs:
                 if i < 0:
@@ -232,7 +272,8 @@ def main():
         if a.sbs and not ok:
             import sbs
             n = want_size or size
-            print(sbs.render(d + "/a.o", name, binary[addr - delta: addr - delta + n], a.prog, addr, a.sbs_all))
+            print(sbs.render(d + "/a.o", name, binary[addr - delta: addr - delta + n], a.prog, addr, a.sbs_all,
+                             real=a.sbs_real))
     subprocess.run(["rm", "-rf", d])
     sys.exit(1 if bad else 0)
 

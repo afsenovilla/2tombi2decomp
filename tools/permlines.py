@@ -53,8 +53,9 @@ def indent_at(lines, pos, last):
 
 def regions(lines, first, last):
     """{boundary k (before line k): region} for first..last+1: the stack of open blocks and the case segment at
-    that point. A marked line moves only to a boundary of its own region: never across a case label, out of its
-    enclosing block or into another one."""
+    that point. A marked line moves only to a boundary of its own region: never across a case label, a `break;` /
+    `return` / `continue;` / `goto` (it would be dead code after it), out of its enclosing block or into another
+    one."""
     out, stack, case = {}, [("f", 0)], {("f", 0): 0}
     for k in range(first, last + 2):
         top = stack[-1]
@@ -69,6 +70,8 @@ def regions(lines, first, last):
                 stack.append((k, j))
             elif ch == "}" and len(stack) > 1:
                 stack.pop()
+        if re.match(r"^\s*(break|continue|return\b[^;]*|goto\s+\w+)\s*;\s*$", code):
+            case[stack[-1]] = case.get(stack[-1], 0) + 1      # nothing moves past a jump (dead code after it)
     return out
 
 

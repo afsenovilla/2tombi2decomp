@@ -133,7 +133,7 @@ def main():
             calls_of[(prog, n)] = callees
             size = inf.funcs[n][1]
             k = keys.get((prog, n))
-            rows.append({"prog": prog, "name": n, "addr": "%08X" % inf.funcs[n][0], "size": size,
+            rows.append({"prog": prog, "name": n, "addr": "%08X" % inf.funcs[n][0], "size": size, "size_hex": "%#x" % size,
                          "callees": len(callees), "pend": pend, "ext": ext,
                          "jalr": len(re.findall(r"\bjalr\s", t)),
                          "jt": len(set(re.findall(r"%hi\((jtbl_\w+)\)", t))),

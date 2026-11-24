@@ -248,6 +248,58 @@ def build_errors(out):
     return keep
 
 
+def link_diff(prog):
+    """the first byte where build/<prog>.bin differs from the retail file, as `first difference at 0xADDR
+    (FUNC+0xOFF)` from build/<prog>.map, or None."""
+    try:
+        import libsweep
+        retail, delta = libsweep.prog_bytes(prog)
+        ours = open(os.path.join(ROOT, "build", prog + ".bin"), "rb").read()
+    except (OSError, AttributeError):
+        return None
+    n = min(len(ours), len(retail))
+    off = next((i for i in range(n) if ours[i] != retail[i]), None)
+    if off is None:
+        return "the linked file is %#x bytes, retail %#x" % (len(ours), len(retail)) if len(ours) != len(retail) \
+            else None
+    off &= ~3
+    addr = off + delta
+    syms = []
+    mp = os.path.join(ROOT, "build", prog + ".map")
+    if os.path.exists(mp):
+        for m in re.finditer(r"(?m)^\s+0x([0-9a-f]{8})\s+([A-Za-z_]\w*)\s*$", open(mp).read()):
+            syms.append((int(m.group(1), 16), m.group(2)))
+    best = max((x for x in syms if x[0] <= addr), default=None)
+    at = " (%s+0x%X)" % (best[1], addr - best[0]) if best else ""
+    import struct
+    return "first difference at 0x%08X%s: ours %08X, retail %08X" % (
+        addr, at, struct.unpack("<I", ours[off:off + 4].ljust(4, b"\0"))[0],
+        struct.unpack("<I", retail[off:off + 4].ljust(4, b"\0"))[0])
+
+
+NARROW = re.compile(r"^\s*(const\s+)?(volatile\s+)?(u8|s8|u16|s16|char|short|unsigned char|signed char|"
+                    r"unsigned short|signed short|short int|unsigned short int)\s*\w*\s*$")
+
+
+def narrow_params(p, name):
+    """True when the prototype line p of name has a parameter narrower than int (u8 / s16 / char / short, not a
+    pointer): with it, every other call in the target converts its argument (andi / sll+sra)."""
+    m = re.search(r"\b%s\s*\(([^()]*)\)\s*;" % re.escape(name), p)
+    if not m:
+        return False
+    return any(NARROW.match(x) for x in m.group(1).split(","))
+
+
+def types_first(extra):
+    """the kept declarations with the type definitions (typedef / struct / union / enum) first, each group in its
+    own order: a prototype goes after the typedefs it uses."""
+    def isty(p):
+        q = p.lstrip()
+        return q.startswith("typedef") or (q.startswith(("struct", "union", "enum")) and
+                                           ("{" in q or re.match(r"(struct|union|enum)\s+\w+\s*;", q)))
+    return [p for p in extra if isty(p)] + [p for p in extra if not isty(p)]
+
+
 def drop_prototypes(text, keep=()):
     """The scratch with its top-level prototypes dropped as install() drops them: kept are the ones of functions
     used as values, defined in the scratch itself or named in keep (functions the target defines)."""
@@ -569,6 +621,23 @@ def install(a):
                 print("warning: %s calls %s with %s argument(s), the %s has %d" %
                       (where, n, "/".join(map(str, sorted(set(few)))), "prototype" if n not in dict(funcs)
                        else "definition", k))
+    # a prototype with a parameter narrower than int (u8 / s16) of a callee the target calls elsewhere and does not
+    # define: it would change those other calls (argument conversions): K&R `T f();` instead (round 10 pitfall)
+    for i, p in enumerate(extra):
+        pr = proto(p)
+        if pr and narrow_params(p, pr[0]) and pr[0] not in later and not heads(t, re.escape(pr[0])) and \
+                calls(t, pr[0]):
+            if re.search(r"(?m)^[^\n;{}()=]*\b%s\s*\([^;{}]*\)\s*;" % re.escape(pr[0]), t):
+                print("prototype %s has a parameter narrower than int; the target declares %s already: dropped" % (
+                    p.strip(), pr[0]))
+                extra[i] = ""
+                continue
+            new = re.sub(r"\(([^()]*)\)\s*;\s*$", "();", p.strip())
+            print("prototype %s has a parameter narrower than int and the target calls %s elsewhere: K&R %s "
+                  "(cast at the call if the narrow conversion matters)" % (p.strip(), pr[0], new))
+            extra[i] = new
+    extra = [p for p in extra if p]
+    extra = types_first(extra)
     # static helpers after every declaration (they use the externs / types / prototypes above them)
     extra = [p for p in extra if not (p.endswith("}") and is_static(p))] + \
         [p for p in extra if p.endswith("}") and is_static(p)]
@@ -629,6 +698,10 @@ def install(a):
             why = "does not build: %s" % errs[0].strip()
         elif "DIFF" in r.stdout:
             why = "linked build DIFF (compiles, other bytes), restored"
+            where = link_diff(a.prog)
+            if where:
+                print(where)
+                why += "; " + where
         if len(funcs) < 2:
             if not errs:
                 print(r.stdout + r.stderr[-2500:])

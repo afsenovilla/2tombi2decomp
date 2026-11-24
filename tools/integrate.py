@@ -180,6 +180,20 @@ def link_check(ref, jobs):
     return bad
 
 
+def stale_tmp(hours=2):
+    """leftovers of killed tool runs: build/tmp_regswap_* and tempfile's build/tmpXXXXXXXX untouched for more
+    than `hours`."""
+    now = time.time()
+    for p in glob.glob(os.path.join(ROOT, "build", "tmp_regswap_*")) + \
+            [q for q in glob.glob(os.path.join(ROOT, "build", "tmp*")) if re.fullmatch(r"tmp\w{8}", os.path.basename(q))]:
+        try:
+            if now - os.path.getmtime(p) > hours * 3600:
+                shutil.rmtree(p, ignore_errors=True) if os.path.isdir(p) else os.remove(p)
+                print("removed stale %s" % os.path.relpath(p, ROOT))
+        except OSError:
+            pass
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--since", help="check that every commit of REF..HEAD links (temporary worktree)")
@@ -189,6 +203,7 @@ def main():
     ap.add_argument("-j", type=int, default=os.cpu_count())
     a = ap.parse_args()
     a.since = a.since or a.only_since
+    stale_tmp()
     t0 = time.time()
     ok_all = True
     if not a.only_since:
