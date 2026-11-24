@@ -5915,7 +5915,87 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateTriangleGearRewardPresentation);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateEarthPigBagRewardPresentation);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012B1B4);
+extern u8 D_800BFA29;
+
+void func_8012B1B4(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        switch (a[3]) {
+        case 0:
+            func_8012ACC0(a);
+            break;
+        case 1:
+            if (func_80051B70(a, 0xC, 0x1F) != 0) {
+                break;
+            }
+            *(s16 *)(a + 0x80) = 0x64;
+            *(s16 *)(a + 0x82) = 0xC8;
+            *(s16 *)(a + 0x86) = 0xC8;
+            *(s16 *)(a + 0x84) = 0x64;
+            *(s16 *)(a + 0x58) = 0;
+            *(s16 *)(a + 0x56) = 0;
+            *(s16 *)(a + 0x54) = 0;
+            if (D_800BFA29 >= 0xA) {
+                a[5] = 0xA;
+                a[0] = 1;
+                *(s16 *)(a + 0x56) = 0x800;
+                a[0x28] |= 0x80;
+            } else {
+                *(s16 *)(a + 0x56) = 0x9C4;
+                a[0] = 2;
+                *(s16 *)(a + 0x2E) = 0x1568;
+                *(s16 *)(a + 0x32) = -0x101A;
+                *(s16 *)(a + 0x36) = 0x34B2;
+                a[5] = 0;
+            }
+            *(s16 *)(a + 0x68) = 0x1A;
+            break;
+        }
+        a[4]++;
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            f_UpdateTriangleGearRewardPresentation(a);
+            break;
+        case 1:
+            f_UpdateEarthPigBagRewardPresentation(a);
+            break;
+        }
+        break;
+    case 2:
+        switch (a[3]) {
+        case 0:
+            D_800BF9D6 = 0xA;
+            func_80040C00(0x24);
+            func_8004A3D4(a);
+            a[4] = 3;
+            break;
+        case 1:
+            switch (a[6]) {
+            case 0:
+                a[6] = 1;
+                func_80040B48(0x29);
+                D_800BFA29 = 0xB;
+                func_8004A3D4(a);
+                D_1F800137 = 2;
+                break;
+            case 1:
+                if (func_80042728()) {
+                    D_1F800137 = 0;
+                    a[4] = 3;
+                }
+                break;
+            }
+            break;
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_8012B1B4();
 u8 *func_8012B3FC(void *a0)
