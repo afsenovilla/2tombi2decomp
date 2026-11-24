@@ -1914,10 +1914,59 @@ void func_80111564(u8 *a)
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80111670);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_801117C8);
+#define gte_ldv0m(p) __asm__ volatile("lwc2	$0, %0;" "lwc2	$1, %1" : : "m"(((s32 *)(p))[0]), "m"(((s32 *)(p))[1]))
+typedef struct { u8 a, b, c, d; } Ent;
+extern u32 *D_800BF544_5fe3;
+extern u32 *D_800ED8C8;
+extern s32 D_1F800080_e4a3;
+
+void func_801117C8(u8 *a0)
+{
+    u8 *a = a0;
+    u32 *p = D_800BF544_5fe3;
+    s32 *sz = &D_1F800080_e4a3;
+    s16 v[4];
+    Ent *e;
+    s32 i;
+    s32 ang;
+    s32 r, s, c;
+    u32 *ot;
+    u8 *base;
+
+    func_800329E0(6);
+    base = a + 0x34;
+    gte_ldv0m(a + 0x2C);
+    if (func_800317CC(-0x14) == 0) {
+        e = (Ent *)base;
+        for (i = 0; i < 0x15; i++) {
+            r = e[i].c << 4;
+            s = func_80083F50(i * 0xC3) * e[i].b;
+            c = func_80083E80(i * 0xC3) * e[i].b;
+            v[0] = H(a, 0x2C) + ((s * r) >> 19);
+            v[2] = H(a, 0x30) + ((c * r) >> 19);
+            v[1] = H(a, 0x2E) - ((func_80083E80(r) * e[i].a) >> 8);
+            gte_ldv0(v);
+            gte_rtps();
+            gte_stsxy(p + 2);
+            do {
+                p[1] = e[i].d | 0x68000000;
+            } while (0);
+            ot = &D_800ED8C8[*sz];
+            do {
+                p[0] = *ot | 0x02000000;
+            } while (0);
+            do {
+                do {
+                    *ot = (u32)p;
+                } while (0);
+            } while (0);
+            p += 3;
+        }
+        D_800BF544_5fe3 = p;
+    }
+}
 
 extern u8 *D_800ECF88;
-typedef struct { u8 a, b, c, d; } Ent;
 
 void func_80111980(u8 *a)
 {
@@ -2096,7 +2145,51 @@ void func_80112244(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80112384);
+void func_80112384(u8 *a0)
+{
+    u8 *a = a0;
+    u32 *p = D_800BF544_5fe3;
+    s32 *sz = &D_1F800080_e4a3;
+    s16 v[4];
+    Ent *e;
+    s32 i;
+    s32 ang;
+    s32 r, s, c;
+    u32 *ot;
+    u8 *base;
+
+    func_800329E0(6);
+    base = a + 0x34;
+    gte_ldv0m(a + 0x2C);
+    if (func_800317CC(-0x14) == 0) {
+        e = (Ent *)base;
+        for (i = 0; i < 0x15; i++) {
+            r = e[i].c << 4;
+            s = func_80083F50(i * 0xC3) * e[i].b;
+            c = func_80083E80(i * 0xC3) * e[i].b;
+            v[0] = H(a, 0x2C) + ((s * r) >> 21);
+            v[2] = H(a, 0x30) + ((c * r) >> 21);
+            v[1] = H(a, 0x2E) - ((func_80083E80(r) * e[i].a) >> 9);
+            gte_ldv0(v);
+            gte_rtps();
+            gte_stsxy(p + 2);
+            do {
+                p[1] = e[i].d | 0x68000000;
+            } while (0);
+            ot = &D_800ED8C8[*sz];
+            do {
+                p[0] = *ot | 0x02000000;
+            } while (0);
+            do {
+                do {
+                    *ot = (u32)p;
+                } while (0);
+            } while (0);
+            p += 3;
+        }
+        D_800BF544_5fe3 = p;
+    }
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8011253C);
 
@@ -2399,7 +2492,6 @@ typedef struct {
     u8 u3, v3;
     u16 pad2;
 } AreaPolyFT4;
-extern u32 *D_800ED8C8;
 AreaPolyFT4 *func_801130A0(AreaPolyFT4 *p, s32 x, s32 y, s32 w, s32 h, s16 c, s16 cy) {
     u32 rgbc;
     u16 clut;
