@@ -3034,7 +3034,77 @@ void func_80118280(u8 *a, s32 i) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80118354);
+typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner80118354;
+typedef struct { u8 b0; u8 b1; s16 v[6]; s16 idx; } PartInit80118354;
+extern u8 *D_800ECFD0;
+extern PartInit80118354 D_80129C6C[];
+void func_801255C0(s32 arg0);
+
+void func_80118354(PartsOwner80118354 *a) {
+    s32 i;
+    u8 *base;
+    s32 *offs;
+    PartInit80118354 *e;
+    u8 *q;
+
+    switch (a->pad[4]) {
+    case 0:
+        a->pad[8] = 0xE;
+        if (D_800ED098 < a->pad[8]) {
+            a->pad[4] = 3;
+            break;
+        }
+        a->pad[9] = a->pad[8];
+        a->pad[0] = 1;
+        a->pad[4]++;
+        base = D_800ECFD0;
+        a->pad[0xD] = 4;
+        i = 0;
+        a->pad[0xB] = 0;
+        offs = (s32 *)(base + 4);
+        for (; i < a->pad[8]; i++) {
+            q = func_8007AAE8();
+            a->parts[i] = q;
+            *(s16 *)(q + 6) = -1;
+            q[0x3E] = D_80129C6C[i].b0;
+            q[0x3F] = 0x1E;
+            *(s16 *)(q + 0) = D_80129C6C[i].v[0];
+            *(s16 *)(q + 2) = D_80129C6C[i].v[1];
+            *(s16 *)(q + 4) = D_80129C6C[i].v[2];
+            *(s16 *)(q + 8) = D_80129C6C[i].v[3];
+            *(s16 *)(q + 0xA) = D_80129C6C[i].v[4];
+            *(s16 *)(q + 0xC) = D_80129C6C[i].v[5];
+            *(u8 **)(q + 0x40) = base + offs[D_80129C6C[i].idx];
+            *(s16 *)(q + 0x38) = D_80129C6C[i].idx;
+        }
+        *(s16 *)(a->pad + 0x80) = 0x23A;
+        *(s16 *)(a->pad + 0x82) = 0x474;
+        *(s16 *)(a->pad + 0x84) = 0x80;
+        *(s16 *)(a->pad + 0x86) = 0xD2;
+        func_80051C8C(a);
+        break;
+    case 1:
+        a->pad[1] = 1;
+        func_80077EBC(a);
+        switch (a->pad[5]) {
+        case 0:
+            if (D_800BF8BE == 0xFF) {
+                a->pad[5] = 1;
+                *(s16 *)(a->pad + 0x40) = 0;
+            }
+            break;
+        case 1:
+            func_801255C0(0xC);
+            break;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u8 D_800A3CC0[];
 extern s16 D_80129D4C[];
