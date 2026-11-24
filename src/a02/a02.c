@@ -1618,7 +1618,48 @@ s32 func_801108A0(u8 *a, u8 *b, u8 *c)
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80110AB8);
+#define L(p, o) (*(s32 *)((p) + (o)))
+
+s32 func_80110AB8(u8 *a, u8 *b, u8 *c)
+{
+    s32 r;
+    s32 w;
+    u16 d;
+
+    r = 0x32;
+    if (a[0xD] & 0x10) {
+        r = 0x5A;
+    }
+    if ((u16)(U(a, 0x32) - U(c, 0x30) + (U(a, 0x84) + U(b, 0x84))) > S(a, 0x86) + S(b, 0x86)) {
+        return 0;
+    }
+    w = U(b, 0x80);
+    d = U(a, 0x2E) - U(c, 0x2C) + (r + w);
+    if (d > r * 2 + S(b, 0x82)) {
+        return 0;
+    }
+    if ((u16)(r + (U(a, 0x36) - U(c, 0x34) + 0x8C)) > r * 2 + 0x118) {
+        return 0;
+    }
+    if (S(a, 0x2E) > L(c, 0x2C) + S(b, 0x80)) {
+        U(a, 0x2E) = U(c, 0x2C) + U(b, 0x80);
+    }
+    d = U(a, 0x2E) - U(*(u8 **)(b + 0xE8), 0x2C) + 0x8C;
+    if (d < 0x119) {
+        if (S(a, 0x36) < S(c, 0x34) - 0x8C) {
+            U(a, 0x36) = U(c, 0x34) - 0x8C;
+        }
+    } else if (S(a, 0x36) > S(c, 0x34) + 0x8C) {
+        U(a, 0x36) = U(c, 0x34) + 0x8C;
+    } else if (S(a, 0x36) < S(c, 0x34) - 0x8C) {
+        U(a, 0x36) = U(c, 0x34) - 0x8C;
+    }
+    U(a, 0x2E) -= 10;
+    if (S(a, 0x32) >= S(c, 0x30) - S(b, 0x84) - S(a, 0x84)) {
+        U(a, 0x32) = U(c, 0x30) - U(b, 0x84) - U(a, 0x84);
+        func_80022C78(a);
+    }
+}
 
 #define U(p, o) (*(u16 *)((p) + (o)))
 #define S(p, o) (*(s16 *)((p) + (o)))
