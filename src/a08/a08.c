@@ -5033,7 +5033,6 @@ static inline void tri_span_8012AEC0(u8 *a, s32 y, s32 l, s32 r) {
         }
     }
 }
-
 void func_8012AEC0(u8 *a, s32 *p0, s32 *p1, s32 *p2) {
     s32 x0 = p0[0], y0 = p0[1];
     s32 x1 = p1[0], y1 = p1[1];

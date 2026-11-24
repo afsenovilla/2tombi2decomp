@@ -6522,7 +6522,6 @@ s32 f_ApplyActorScriptTransition(u8 *a)
 
 extern s32 (*D_800A3B78[])(u8 *);
 #define SCRIPT_APPLY(a, k) ((s32 (*)(u8 *, s32))f_ApplyActorScriptTransition)(a, k)
-
 s32 f_RunActorScriptInterpreter(u8 *a)
 {
     s32 r;
@@ -6942,7 +6941,6 @@ s32 f_EndScriptedInteractionAudio(void) {
 }
 
 s32 f_PlaySoundEffect();
-
 s32 f_BeginScriptedInteractionAudio(s32 flag, s32 idx)
 {
     Bytes8_368 t = D_80015368;
@@ -7850,7 +7848,6 @@ extern s16 D_1F8001C2;
 extern s16 D_1F8001C6;
 extern u16 *D_1F8001E0;
 void f_SelectAreaPlaneCollisionTables(u8 i);
-
 s32 f_ResolveActorAreaPlanePosition(u8 *a)
 {
     s32 r;
@@ -8041,7 +8038,6 @@ s32 func_8004960C(u8 *a, s32 b)
 }
 
 extern u8 *D_1F8001E8;
-
 void f_ApplyTerrainProfileOrientationToActor(u8 *a)
 {
     s8 *p = (s8 *)D_1F8001E8;
@@ -10122,7 +10118,6 @@ void f_UpdateActorScaledOffsetModelTransforms(u8 *a)
 }
 
 s32 f_AllocateActorModelPart(void);
-
 s32 f_InitializeMultiPartActorModel(u8 *a, s32 n, u8 *base, u16 *def)
 {
     s32 i;
@@ -17099,7 +17094,6 @@ typedef struct { u8 type; u8 a; u8 b; u8 c; s8 d; u8 e; s8 vol; u8 pad; } SfxDef
 extern SfxDef_4D18 D_800A4D18[];
 extern SfxDef_4D18 *D_800A4EF8[];
 void f_PlaySequencedMusic(s32 arg);
-
 s32 f_PlaySoundEffect(id, pitch, voladj)
     u8 id;
     s8 pitch;
@@ -17643,7 +17637,6 @@ static inline void SkelAnimStartFrame(u8 *a)
         }
     }
 }
-
 s32 f_AdvanceActorSkeletalAnimation(u8 *a)
 {
     u16 t = *(u16 *)(a + 0xE);

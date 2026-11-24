@@ -1362,7 +1362,6 @@ static inline void tri_span_70a8(u8 *a, s32 y, s32 l, s32 r) {
         }
     }
 }
-
 void func_801170A8(u8 *a, s32 *p0, s32 *p1, s32 *p2) {
     s32 x0 = p0[0], y0 = p0[1];
     s32 x1 = p1[0], y1 = p1[1];
@@ -1937,7 +1936,6 @@ void func_8011A554(void *arg0) {
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011A6C4);
 
 extern u8 D_800BF871;
-
 void func_8011A8A0(u8 *a)
 {
 

@@ -1453,7 +1453,6 @@ typedef struct { u8 pad0[0x10]; s16 list[1]; } TriGrid;
             }                                                            \
         }                                                                \
     }
-
 void func_8010BFBC(u8 *g, T2Pt16 *p0, T2Pt16 *p1, T2Pt16 *p2)
 {
     s32 x0, y0, x1, y1, x2, y2, t;

@@ -8160,7 +8160,6 @@ extern s32 D_800A3F90;
 extern s32 D_800A3F94;
 s32 f_GetA00GridCellValue(s32 x, s32 y);
 void f_CollectA00GridCellsInsideTriangle(u8 *a, s32 *p0, s32 *p1, s32 *p2);
-
 void f_CollectVisibleA00GridCellsForCamera(u8 *a) {
     s32 v[6];
     s32 ox = 0;
@@ -8275,7 +8274,6 @@ static inline void tri_span(u8 *a, s32 y, s32 l, s32 r) {
         }
     }
 }
-
 void f_CollectA00GridCellsInsideTriangle(u8 *a, s32 *p0, s32 *p1, s32 *p2) {
     s32 x0 = p0[0], y0 = p0[1];
     s32 x1 = p1[0], y1 = p1[1];

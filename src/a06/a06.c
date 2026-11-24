@@ -5404,7 +5404,6 @@ static inline s32 inl_80131650(u8 *p)
     }
     return 0;
 }
-
 void func_80130F1C(u8 *a)
 {
     u8 c;
@@ -6527,7 +6526,69 @@ void func_8013D6BC(s32 arg0) {
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013D6D8);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013DA8C);
+#define GH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+typedef struct { u8 pad[0x10]; u16 cells[1]; } A00CellList;
+static inline void tri_span(u8 *a, s32 y, s32 l, s32 r) {
+    s32 x;
+    s16 *p;
+    s32 off;
+
+    if (y >= 0 && y < GH(a, 0xA)) {
+        if (r >= GH(a, 8)) r = GH(a, 8) - 1;
+        x = l;
+        if (x < 0) x = 0;
+        p = (s16 *)D_800ECF58[8];
+        p += 2;
+        off = x * GH(a, 0xA) + y;
+        while (p += off, x <= r) {
+            if (*p != -1 && (s16)func_8013E090(x, y) != 0) {
+                u8 n = a[6];
+                if (n < 0xFE) {
+                    a[6] = n + 1;
+                    ((A00CellList *)a)->cells[n] = *p;
+                }
+            }
+            off = GH(a, 0xA);
+            x++;
+        }
+    }
+}
+void func_8013DA8C(u8 *a, s32 *p0, s32 *p1, s32 *p2) {
+    s32 x0 = p0[0], y0 = p0[1];
+    s32 x1 = p1[0], y1 = p1[1];
+    s32 x2 = p2[0], y2 = p2[1];
+    s32 t, dx1, dx2, dy1, dy2;
+    s32 xl, xr, y;
+    s32 sl1, sl2, sl3;
+
+    if (y1 == y0 && y1 == y2) return;
+    if (y1 < y0) { t = x0; x0 = x1; x1 = t; t = y0; y0 = y1; y1 = t; }
+    if (y2 < y0) { t = x0; x0 = x2; x2 = t; t = y0; y0 = y2; y2 = t; }
+    if (y2 < y1) { t = x1; x1 = x2; x2 = t; t = y1; y1 = y2; y2 = t; }
+    dx1 = x1 - x0;
+    dx2 = x2 - x0;
+    dy1 = y1 - y0;
+    dy2 = y2 - y0;
+    if (y1 == y0) {
+        if (x0 < x1) { xl = x0 << 16; xr = x1 << 16; }
+        else { xl = x1 << 16; xr = x0 << 16; }
+        sl1 = 0;
+    } else {
+        xl = xr = x0 << 16;
+        sl1 = (dx1 << 16) / dy1;
+    }
+    xr += 0x10000;
+    if (y1 == y2) sl2 = 0;
+    else sl2 = ((x2 - x1) << 16) / (y2 - y1);
+    sl3 = (dx2 << 16) / dy2;
+    if (-dy2 * dx1 + dx2 * dy1 > 0) {
+        for (y = y0; y < y1; y++) { tri_span(a, y, xl >> 16, xr >> 16); xl += sl1; xr += sl3; }
+        for (; y <= y2; y++) { tri_span(a, y, xl >> 16, xr >> 16); xl += sl2; xr += sl3; }
+    } else {
+        for (y = y0; y < y1; y++) { tri_span(a, y, xl >> 16, xr >> 16); xr += sl1; xl += sl3; }
+        for (; y <= y2; y++) { tri_span(a, y, xl >> 16, xr >> 16); xl += sl3; xr += sl2; }
+    }
+}
 
 u32 func_8013E090(s32 x, u32 y)
 {

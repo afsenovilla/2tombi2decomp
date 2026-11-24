@@ -5,7 +5,60 @@
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_0x8010a32c);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010A530);
+extern s8 D_800BF808_c1f7[];
+extern u16 D_800E7E68;
+typedef struct { u8 pad[0x104]; u8 *s[6]; } TrolleyMenuText;
+extern TrolleyMenuText D_800A2854;
+typedef struct { s16 x, y, w, h; } TrolleyMenuRect;
+s32 func_8010A530(void) {
+    u8 *strs[4];
+    s32 ys[4];
+    s32 xs[4];
+    TrolleyMenuRect r;
+    s32 i;
+    s32 k;
+    u8 sel;
+
+    if (D_800E7E68 & 0x4000) {
+        return *(u8 *)D_800BF808_c1f7 + 1;
+    }
+    if (D_800E7E68 & 0x40) {
+        if (*(u8 *)D_800BF808_c1f7 == 0) {
+            *(u8 *)D_800BF808_c1f7 = *(u8 *)D_800BF808_c1f7 + 1;
+            func_80074590(0x15, 0, 0);
+        }
+    } else if (D_800E7E68 & 0x10) {
+        if (*(u8 *)D_800BF808_c1f7 != 0) {
+            *(u8 *)D_800BF808_c1f7 = *(u8 *)D_800BF808_c1f7 - 1;
+            func_80074590(0x15, 0, 0);
+        }
+    }
+    strs[0] = D_800A2854.s[0];
+    func_800793C4(strs, 1, xs);
+    i = 0;
+    func_80079374((s16)xs[0], 0x70, i, strs[0], 0);
+    r.y = 0x6C;
+    ys[0] = 0x84;
+    ys[1] = 0x98;
+    r.x = xs[0] - 0x10;
+    r.w = (0xA0 - xs[0]) * 2 + 0x20;
+    strs[0] = D_800A2854.s[1];
+    strs[1] = D_800A2854.s[2];
+    k = func_800793C4(strs, 2, xs);
+loop:
+    do {
+        sel = *(u8 *)D_800BF808_c1f7;
+        func_80079374((s16)xs[i], (s16)ys[i], (sel == i) * 2, strs[i], 0);
+    } while (0);
+    i++;
+    if (i < 2) {
+        goto loop;
+    }
+    func_8007E998(k, ys[*(u8 *)D_800BF808_c1f7] + 4, 0);
+    r.h = 0x40;
+    func_8005019C(&r, 0, 1, 1);
+    return 0;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010A704);
 
@@ -5640,7 +5693,6 @@ static inline void tri_span_80136788(u8 *a, s32 y, s32 l, s32 r) {
         }
     }
 }
-
 void func_80136788(u8 *a, s32 *p0, s32 *p1, s32 *p2) {
     s32 x0 = p0[0], y0 = p0[1];
     s32 x1 = p1[0], y1 = p1[1];
