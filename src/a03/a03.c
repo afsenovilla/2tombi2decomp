@@ -983,7 +983,80 @@ void func_801109D4(TrkPartList *a)
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", func_80110B00);
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyTrailActor);
+extern s32 D_1F800080;
+
+void f_UpdateTrolleyTrailActor(u8 *a)
+{
+    s32 *z = &D_1F800080;
+    s32 *flg = z;
+    u8 *b = a + 0x2C;
+    s32 i;
+    s32 t, e;
+    u8 *d;
+    u8 *q;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        a[5] = 0x10;
+    case 1:
+        i = 15;
+    loop:
+        do {
+            d = b + i * 4;
+            i--;
+            q = b + i * 4;
+            *(u16 *)(d + 0x10) = *(u16 *)(q + 0x10);
+            *(u16 *)(d + 0x12) = *(u16 *)(q + 0x12);
+        } while (0);
+        if (i > 0) {
+            goto loop;
+        }
+        func_800329E0(6);
+        gte_ldv0(a + 0x2C);
+        gte_rtps();
+        gte_stflg(flg);
+        if (*flg < 0) {
+            goto zero;
+        }
+        {
+            gte_stsz(z);
+            t = *z >> 2;
+            e = t >> 10;
+            do {
+                *z = (t >> e) + (e << 9);
+            } while (0);
+            if ((u32)(*z - 4) >= 0x7FC) {
+                *z = -1;
+            }
+            if (*z <= 0) {
+            zero:
+                *(s32 *)(b + 0x10) = 0;
+            } else {
+                gte_stsxy(b + 0x10);
+            }
+        }
+        *(u16 *)(a + 0x2C) += *(u16 *)(b + 8);
+        *(u16 *)(a + 0x2E) += *(u16 *)(b + 0xA);
+        *(u16 *)(a + 0x30) += *(u16 *)(b + 0xC);
+        *(u16 *)(b + 0xA) += 2;
+        if (a[5] == 0x10) {
+            for (i = 1; i < 0x10; i++) {
+                *(s32 *)(b + i * 4 + 0x10) = *(s32 *)(b + 0x10);
+            }
+        }
+        if (--a[5] != 0) {
+            a[1] = 1;
+        } else {
+            a[4] = 2;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 typedef struct { u16 a, b; } U16Pair_1158;
 extern U16Pair_1158 D_8011BC28;
