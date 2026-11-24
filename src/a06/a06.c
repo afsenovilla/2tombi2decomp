@@ -5513,7 +5513,76 @@ void func_80127928(u8 *a)
     func_8004190C(a);
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80127C28);
+extern u8 D_800ECF58_742e[];
+extern u8 D_80141F80[];
+extern u8 D_800A3D18[];
+
+void func_80127C28(u8 *a)
+{
+    u8 *g;
+    u8 *st;
+
+    switch (a[4]) {
+    case 0:
+        g = D_800ECF58_742e;
+        if (func_800519E0(a, 0xF, *(s32 *)(g + 0x3C), D_80141F80) != 0) {
+            break;
+        }
+        *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x38);
+        func_80040CDC(a, D_8014D014, D_800A3D18);
+        *(s16 *)(a + 0x80) = 0x78;
+        *(s16 *)(a + 0x82) = 0xF0;
+        *(s16 *)(a + 0x84) = 0x80;
+        *(s16 *)(a + 0x86) = 0xE0;
+        a[0xB] = 0;
+        a[0] = 1;
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        a[0x7B] = 0x10;
+        func_80041718(a, 0x10, 1);
+        a[0x2A] = 0xE;
+        *(s32 *)(a + 0x2C) = 0x23800000;
+        *(s32 *)(a + 0x30) = 0xF3120000;
+        *(s32 *)(a + 0x34) = 0x34B80000;
+        func_8004766C(a);
+        *(s16 *)(a + 0x56) = 0xC00;
+        st = (u8 *)&D_800BF870;
+        *(s16 *)(a + 0x58) = 0;
+        *(s16 *)(a + 0x54) = 0;
+        if (st[0x163] == 1) {
+            st[0x163] = 2;
+        }
+        a[4]++;
+        break;
+    case 1:
+        func_80127928(a);
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        a[0x2B] = 0;
+        a[0x5F] = 0;
+        a[0x29] = 0;
+        break;
+    case 2:
+        if (func_8007778C(a)) {
+            func_800518FC(a);
+        }
+        switch (a[5]) {
+        case 2:
+        case 3:
+            a[5] = 4;
+            *(s16 *)(a + 0x84) = 0x80;
+            a[4] = 1;
+            a[0] = 1;
+            *(s16 *)(a + 0x86) = 0xE0;
+            break;
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 typedef struct { s16 p0, x, p4, y, p8, z; } HV;
 extern u8 *D_1F800214;
@@ -6817,9 +6886,7 @@ void func_801379D4(u8 *a)
     func_8004190C(a);
 }
 
-extern u8 D_800ECF58_742e[];
 extern u8 D_80141E18[];
-extern u8 D_800A3D18[];
 
 void func_80137C9C(u8 *a)
 {
