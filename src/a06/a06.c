@@ -4491,7 +4491,25 @@ void func_80122CAC(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80122D64);
+extern u8 D_800BFA1D;
+
+void func_80122D64(u8 *a) {
+    if (func_80051B70(a, 0xC, 0x2B) == 0) {
+        a[0] = 1;
+        M2C_FIELD(a, s16 *, 0x80) = 0xE0;
+        M2C_FIELD(a, s16 *, 0x82) = 0x1C0;
+        M2C_FIELD(a, s16 *, 0x84) = 0x10;
+        M2C_FIELD(a, s16 *, 0x86) = 0x40;
+        M2C_FIELD(a, s16 *, 0x54) = 0;
+        M2C_FIELD(a, s16 *, 0x56) = 0x800;
+        M2C_FIELD(a, s16 *, 0x58) = 0;
+        a[4]++;
+        if (D_800BFA1D & 4) {
+            a[5] = 1;
+            M2C_FIELD(a, s16 *, 0x32) += 0x40;
+        }
+    }
+}
 
 void func_80122E00(void *arg0) {
     if (M2C_FIELD(arg0, u8 *, 5) == 0) {
