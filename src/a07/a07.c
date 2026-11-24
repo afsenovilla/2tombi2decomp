@@ -4246,7 +4246,39 @@ s32 func_8012AB5C(void)
     return 2;
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012AB88);
+#define S32(o) (*(s32 *)(a + (o)))
+
+void func_8012AB88(u8 *a, void *b) {
+    switch (a[5]) {
+    case 0:
+        I16(0x4A) = -0x2800;
+        a[5] = 1;
+        I16(0x50) = 0x200;
+        func_8004B354(a, b);
+        a[0xB] = 0x10;
+        break;
+    case 1:
+        S32(0x30) += I16(0x4A) << 8;
+        W16(0x4A) += W16(0x50);
+        if (I16(0x4A) > 0) {
+            a[0] = 1;
+            a[5]++;
+        }
+        break;
+    case 2:
+        S32(0x30) += I16(0x4A) << 8;
+        if (I16(0x4A) < 0x3000) {
+            W16(0x4A) += W16(0x50);
+        }
+        if (a[0x29] == 0 && f_TestCircusActorGroundContact(a) == 0) {
+            break;
+        }
+        I16(0x4A) = 0;
+        a[5]++;
+        break;
+    }
+    func_8004B374(a, b);
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012ACC0);
 
