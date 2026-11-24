@@ -137,6 +137,15 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
 - include/actor.h: `typedef struct Actor` (the common actor fields by offset, types from a census of the matched C);
   `tools/decomp.py NAME --actor [--actor-args 0,1]` (also statemachine.py / dispatch.py `--actor`) drafts with arg0
   as `Actor *`: far fewer casts, same scores; matched C is not rewritten to use it.
+- `python3 -I tools/npcsm.py --list [PROGS] [--all]` / `tools/npcsm.py PROG NAME|ALL [--install]`: the NPC actor
+  state machines (func_8007A624 + an init call, `switch (a[4])` skeleton; 139 pending 2026-11-24): drafts in
+  build/npcsm/<prog>/ restructured into the skeleton, ccheck'd, permlines over the case-0 stores of near drafts
+  (`--perm-max 40 --perm-seconds 60`, `--no-perm`). A start for hand work (1 of 139 matched as drafted).
+- ccheck warns when the scratch compiles differently with its prototypes dropped (install_c's form;
+  `--skip-protos-check`); `--sbs --real` / `tools/sbs.py --real` hide relocation-only differences. install_c makes
+  narrow-parameter prototypes of callees called elsewhere K&R and prints the first differing `FUNC+0xOFF` on a link
+  DIFF. regswap: `--hacks` for the const kind; kinds emptycase / caseinc / vstore / perarm. permlines: nothing moves
+  past break / return. integrate.py removes build/tmp_regswap_* older than 2 hours; workqueue csv has size_hex.
 - `python3 -I tools/statemachine.py --list [PROGS]` / `tools/statemachine.py PROG NAME`: actor state machines (rodata
   jump tables): build/statemachine/<prog>/<name>.c with every table's cases (operand, target, calls, inlined matched
   bodies), the helpers and the closer of the dispatch.py / decomp.py drafts; write each case in full, drop the header.

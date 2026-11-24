@@ -118,8 +118,10 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
 - Search: `tools/variants.py` (several `//--` variants, `--set`, `--alts K=FILE`), `tools/permlines.py` (lines marked
   `//P`; `--exhaustive` for up to 7 lines; check that a result does not use a variable before it is set),
   `tools/regswap.py` (register-choice rewrites: declaration order, `do { } while (0)` wraps, parameter copies,
-  loads before stores, early constants, cast <-> `MEMBER_AT` member, volatile, duplicated tails, ternaries, per-path
-  locals), `tools/prio.py --prog P` (pseudo priorities and registers from the cc1 dumps next to retail's register;
+  loads before stores, cast <-> `MEMBER_AT` member, volatile reads and stores (`vstore`), duplicated tails,
+  ternaries, per-path locals, empty cases (`emptycase`), `x++` for `x = K + 1` in `case K` (`caseinc`), one store
+  per arm (`perarm`); early constants only with `--hacks`), `tools/sbs.py --real` / `ccheck --sbs --real`
+  (relocation-only differences hidden), `tools/prio.py --prog P` (pseudo priorities and registers from the cc1 dumps next to retail's register;
   `--sched` the scheduler priorities when ccheck says `order only`), `tools/hillclimb.py`, `tools/permute.py`
   (decomp-permuter),
   `tools/magicdiv.py` (divisor of a magic-number division). Hand work from a draft beats hillclimb (about 5 minutes
@@ -301,8 +303,15 @@ struct-member form of a cast access, regswap `member` toggles every one)
 **Round 10 forms**
 - NPC actor state machines (a04-a08 and likely elsewhere): case 0 init (func_800519E0 / func_80051B70 +
   func_80040CDC + a store list), case 1 dispatch on a[0x5E] / a[3] / a[5], case 2 empty, case 3 calls func_8007A624:
-  write them straight from the retail asm (2-4 minutes each). Find them: pending functions whose asm calls
-  func_8007A624 and one of func_800519E0 / func_80051B70 / func_80040CDC.
+  write them straight from the retail asm (2-4 minutes each). Find them: `python3 -I tools/npcsm.py --list
+  [PROGS]` (139 pending on 2026-11-24 over 22 programs, all with the `switch (a[4])` at the top; `--all` adds the
+  other callers of func_8007A624: 306). `tools/npcsm.py PROG NAME|ALL` drafts them in the skeleton's spelling
+  (m2c's draft restructured: case order 0 / 1 / 2 / 3, `break;` ends, `a[4]++`, never-assigned m2c temporaries
+  replaced by the case value / the head's constant, `*(T *)0x1F80xxxx` -> the linker's `D_1F80XXXX`, a global
+  read at several offsets through a `u8 *g = (u8 *)&D_X;` local) and runs permlines over the case-0 stores of a
+  draft within 40 words. The drafts are a start, not matches: 1 of 139 matched (a0f func_801183C8, 6 -> 0 by
+  the case-0 store permutation); 21 are within 40 words, most need hand work (retail evaluates a call's first
+  argument `a + 0x2C` before the stores that precede it, an `if (init(...) != 0) break;` shape, inner switches).
 - Inline flag helper: `static inline s32 f(...)` with early `return 1;` and a final `return 0;`, called as `r = f(A);
   r += f(B); if (r == 2)` (not `f(A) + f(B) == 2`, not separate r0 / r1).
 - `bne v0,X; li v0,K1 (delay); li v0,K2; L: sb v0`: one store per arm, never a local assigned per arm.
@@ -374,8 +383,17 @@ struct-member form of a cast access, regswap `member` toggles every one)
 
 - dispatch.py wrote a helper twice when another helper needed it (fixed 2026-11-23: written once, with the
   declarations); a crash on one function no longer stops the others. For state machines use statemachine.py.
-- regswap rewrites can produce invalid or semantically wrong C (MEMBER_AT with a variable offset, an unset fork
-  variable, a reused variable read after its reassignment): check every result before installing.
+- regswap rewrites can produce invalid or semantically wrong C (MEMBER_AT with a variable offset, a reused variable
+  read after its reassignment): check every result before installing. Since 2026-11-24 (6) fork never starts at
+  an assignment that reads the variable or sits in a block the later uses are outside of, and the `const` kind
+  (constants pulled into early locals, a hack) runs only with `--hacks` or an explicit `--only`.
+- ccheck compiles a scratch with prototypes a second time with them dropped (as install_c installs it) and warns
+  `install_c will produce different code` when the bytes differ (`--skip-protos-check` turns it off). install_c
+  turns a scratch prototype with a parameter narrower than int (u8 / s16) into K&R `T f();` when the target calls
+  that callee elsewhere (drops it when the target declares it), puts typedefs before prototypes, and on a link
+  DIFF prints the first differing address as `FUNC+0xOFF` (from build/<prog>.map).
+- permlines never moves a marked line past a `break;` / `return` / `continue;` / `goto` (it used to report dead
+  code after a return as an improvement).
 - prio.py names pseudos by declaration order even when array locals are not pseudos (names shifted).
 - install_c: an existing caller with another argument count after the definition is rewritten as a call through a
   cast, `((RET (*)())f)(...)` (same `jal`, same promotions as the undeclared call it was; since 2026-11-24); alias renames are

@@ -3,6 +3,49 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-24 (6): tools after round 10
+
+One tools agent, the "Tool work left" list of the round-10 entry below, in its order (about 60 minutes).
+
+- **tools/npcsm.py** (new): the NPC actor state machines. `--list [PROGS]`: pending functions whose asm calls
+  func_8007A624 and one of the init functions func_800519E0 / func_80051B70 / func_80040CDC, with size, whether
+  the `lbu x, 4(a0)` switch is at the top (`skel`) and the transform updater it calls (func_800517F8 / 80051844 /
+  800518FC). Found: **139 candidates, 0x20184 bytes**, all with the skeleton: a00 8, a01 9, a02 1, a04 15, a05 18,
+  a06 14, a07 11, a08 22, a09 3, a0a 2, a0b 3, a0c 5, a0d 5, a0e 2, a0f 4, a0g 1, a0h 1, a0i 1, a0j 2, a0k 3,
+  a0l 7, sop 2 (`--all`: 306 pending callers of func_8007A624). `PROG NAME|ALL`: m2c's draft rewritten into the
+  skeleton (case order 0, 1, 2, 3 with `break;` ends, m2c's fall-through into the empty case 2 closed, `a[4]++`,
+  m2c temporaries never assigned replaced by the case value / the head's constant, `*(void *)0x1F80xxxx` typed
+  from the asm access and named `D_1F80XXXX` as retail relocates it, a global read at several offsets through a
+  `u8 *g = (u8 *)&D_X;` local), each variant ccheck'd, then permlines over the case-0 stores of a draft within
+  40 words. Over all 139: none matched as drafted, 3 within 10 words, 18 more within 30, 38 within 100, 29 did not
+  compile (m2c types); **a0f func_801183C8 matched** after permlines moved `a[0x3C] = g[0x18]` above the two
+  other stores (installed). The near a0l family func_8010FDB4 / func_8010FC58 / func_80110548 (20 words) needs
+  retail's early `addiu a0,s0,0x2C` before the store list (not a store order: permlines cannot reach it). Hand
+  work from the drafts is still the way (AGENTS.md "Round 10 forms").
+- **ccheck.py**: a scratch whose prototypes install_c would drop is compiled a second time that way; `warning: F
+  compiles differently with the scratch's prototypes dropped (--no-protos): install_c will produce different
+  code (first difference at +0xN)` (tested with a narrow `u8` parameter prototype); `--skip-protos-check`;
+  `--sbs --real`.
+- **install_c.py**: a scratch prototype with a parameter narrower than int for a callee the target calls elsewhere
+  and does not define becomes K&R `T f();` (dropped when the target declares it); typedefs / struct definitions go
+  before the prototypes; a linked-build DIFF prints `first difference at 0xADDR (FUNC+0xOFF): ours X, retail Y`
+  (build/<prog>.bin against the disc file, symbol from build/<prog>.map). Not done: the false link DIFF of a01
+  func_80121678 (extern clash with an s8[] -> alias).
+- **regswap.py**: fork never starts at an assignment that reads the variable (`x = x + 1`) or inside a block the
+  later uses are outside of; the `const` kind (constants as early locals) only with `--hacks` or an explicit
+  `--only`; new kinds `emptycase` (`case K: break;` for missing values next to the labels), `caseinc` (`x = K + 1`
+  in `case K` of `switch (x)` -> `x++`), `vstore` (a store through a volatile lvalue: dead stores retail keeps),
+  `perarm` (`k = K1; if (c) k = K2; x = k;` -> one store per arm). Tested on a synthetic scratch (each kind
+  generated, the `x = x + 1` fork refused).
+- **sbs.py `--real`** (also `ccheck --sbs --real`): a `|` row whose only difference is the immediate of a relocated
+  field (on either side) is shown as equal. **permlines**: no move past `break;` / `return` / `continue;` /
+  `goto` (before, a0l func_80110548 "improved" 20 -> 9 by moving a store after a `return`). **workqueue**:
+  `size_hex` csv column (the printed size was already hex). **integrate.py**: removes build/tmp_regswap_* and
+  tempfile build/tmpXXXXXXXX older than 2 hours at the start.
+- Not done (time box): nearcopy concatenation mode (sop func_8010C26C = a00 func_80115598 + func_80115B88's
+  loop), permlines case-block mode / auto-marking, a reload diagnostic, regswap stores through the a0 copy /
+  per-store barriers.
+
 ## 2026-11-24 (5): tenth round
 
 All code in C: **4625 / 7011 functions (66.0 %, 41.9 % of the bytes)**, from 4486 (39.3 %). main +3, a00-a01 +14 (~11
