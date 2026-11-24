@@ -1485,7 +1485,68 @@ void func_80112C58(void) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80112D08);
+extern u8 D_800BF818;
+extern u8 *D_1F800138;
+
+s32 func_80112D08(u8 *a) {
+    switch (a[5]) {
+    case 0: {
+        u8 *g = D_800BF808_1760;
+        if (g[0x10] != 1) {
+            return 0;
+        }
+        a[3] = g[0xF] + 1;
+        func_800269BC(a);
+        a[5]++;
+        break;
+    }
+    case 1: {
+        u8 *g = D_800BF808_1760;
+        if (g[7] != 0) {
+            return 0;
+        }
+        func_800269EC(a);
+        *(s16 *)(D_1F800138 + 0x4E) = 2;
+        a[5]++;
+        g[0x10] = 2;
+        return 1;
+    }
+    case 2:
+        if (D_800BF80F != 0) {
+            return 0;
+        }
+        func_800269FC(a);
+        a[5]++;
+        break;
+    case 3:
+        if (D_800BF818 != 3) {
+            return 0;
+        }
+        func_800269BC(a);
+        a[5]++;
+        break;
+    case 4: {
+        u8 *g = D_800BF808_1760;
+        if (g[7] != 0) {
+            return 0;
+        }
+        func_80026A1C(a);
+        func_800269EC(a);
+        *(s16 *)(D_1F800138 + 0x4E) = 4;
+        g[0x10] = 4;
+        a[5]++;
+        break;
+    }
+    case 5:
+        if (D_800BF80F != 0) {
+            return 0;
+        }
+        a[5] = 0;
+        func_800269FC(a);
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", f_SpawnCoalMiningTownSceneActorsFromPlacementTable);
 
@@ -2284,7 +2345,6 @@ u8 *a;
 }
 
 extern u8 D_800BF817;
-extern u8 D_800BF818;
 typedef struct { u8 pad0[7]; u8 unk7; u8 pad8[7]; u8 unkF; u8 unk10; } AreaState808_10;
 extern AreaState808_10 D_800BF808_7eac;
 void func_80116C14(a)
