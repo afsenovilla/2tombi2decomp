@@ -15801,7 +15801,35 @@ void f_SetCameraPositionVertical(s32 arg0, void *arg1) {
     *((s32 *)D_1F8000E0) = M2C_FIELD(arg1, s32 *, 4);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ApproachCameraPositionHorizontal);
+typedef struct { u8 pad[0xC]; s32 x; s32 y; s32 z; } CamH_DA30;
+extern CamH_DA30 D_1F8000D0_8d1c;
+
+s32 f_ApproachCameraPositionHorizontal(void *unused, u8 *t)
+{
+    CamH_DA30 *c;
+    s16 d;
+    s32 r;
+
+    c = &D_1F8000D0_8d1c;
+    d = *(u16 *)(t + 2) - *(u16 *)((u8 *)c + 0xE);
+    r = 1;
+    if ((u16)(d + 10) >= 21) {
+        c->x += (f_ClampSignedCameraDelta(d, 0x1800) << 16) >> 3;
+        r = 0;
+    } else {
+        c->x = *(s32 *)(t + 0);
+    }
+    c = &D_1F8000D0_8d1c;
+    d = *(u16 *)(t + 0xA) - *(u16 *)((u8 *)c + 0x16);
+    if ((u16)(d + 10) >= 21) {
+        c->z += (f_ClampSignedCameraDelta(d, 0x1800) << 16) >> 3;
+        r = 0;
+    } else {
+        r &= 1;
+        c->z = *(s32 *)(t + 8);
+    }
+    return r;
+}
 
 s32 f_ApproachCameraPositionVertical(void *unused, u8 *t)
 {
@@ -15944,7 +15972,7 @@ void f_RestorePreviousCameraMode(void)
 }
 
 void func_8006E228(void *arg0, M2C_UNK arg1) {
-    f_ApproachCameraPositionHorizontal();
+    ((s32 (*)())f_ApproachCameraPositionHorizontal)();
     f_ApproachCameraPositionVertical(arg0, arg1);
     M2C_FIELD(arg0, u16 *, 0xE) = (u16) *(u16 *)0x1F8000E2;
     if (M2C_FIELD(arg0, u8 *, 0x76) == 0) {
@@ -15989,7 +16017,7 @@ void f_SnapCameraPositionAndRebuildView(void *cam, void *pos)
 }
 
 void f_ApproachCameraPositionAndRebuildView(void *arg0, M2C_UNK arg1) {
-    if (f_ApproachCameraPositionHorizontal() != 0) {
+    if (((s32 (*)())f_ApproachCameraPositionHorizontal)() != 0) {
         M2C_FIELD(arg0, u8 *, 0x66) = (u8) (M2C_FIELD(arg0, u8 *, 0x66) | 1);
     }
     if (f_ApproachCameraPositionVertical(arg0, arg1) != 0) {
