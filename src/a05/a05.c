@@ -1630,7 +1630,49 @@ void func_80114178(u8 *a, s32 k, s32 m, s32 flag)
     }
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801141F8);
+extern u8 D_80141AF8[];
+extern u8 D_8013C748[];
+extern u8 D_8013C768[];
+extern u8 D_8013C7C0[];
+extern u8 D_8013C810[];
+
+s32 func_801141F8(u8 *p) {
+    u8 *g;
+
+    switch (p[6]) {
+    case 0:
+        if (p[0x2B] == 3) {
+            p[6] = 1;
+            func_80042354(1, 1);
+            func_80040CDC(p, D_80141AF8, D_8013C748);
+            p[0x70] = 1;
+        }
+        break;
+    case 1:
+        func_80041098(p);
+        if (p[0x70] == 0xFF) {
+            g = (u8 *)&D_800BF870;
+            if (g[0xB4] == 0) {
+                func_80040CDC(p, D_80141AF8, D_8013C768);
+            } else if (g[0x2A8] == 0) {
+                func_80040CDC(p, D_80141AF8, D_8013C7C0);
+            } else {
+                func_80040CDC(p, D_80141AF8, D_8013C810);
+            }
+            p[0x70] = 1;
+            p[6]++;
+        }
+        break;
+    case 2:
+        func_80041098(p);
+        if (p[0x70] == 0xFF) {
+            p[6] = 0;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateKujaraHotSpringActor);
 
@@ -1652,8 +1694,6 @@ s32 func_801145A0(void *arg0) {
     return 1;
 }
 
-extern u8 D_80141AF8[];
-extern u8 D_8013C748[];
 extern u8 D_8013C83C[];
 s32 func_801145F0(u8 *p)
 {
