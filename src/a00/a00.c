@@ -3948,7 +3948,163 @@ void func_8011C090(u8 *a) {
     a[4] = 3;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleGoldenCrabAndWindmillActor);
+extern u8 D_800BF8BC;
+extern u8 D_800E7EAA;
+typedef struct {
+    s16 x, y, z;
+    u8 b;
+    u8 pad;
+} GCrabPos;
+extern GCrabPos D_80148914[];
+typedef struct {
+    s16 x, y, z, pad;
+} GCrabVec;
+static inline void gcrab_idle(u8 *a) {
+    s32 r;
+
+    if (D_800E7EAA >= 0x1A && func_80077870(a) != 0) {
+        switch (a[6]) {
+        case 0:
+            r = func_8009A450() & 7;
+            if (r == 0) {
+                a[6] = 2;
+            } else if (r < 5) {
+                a[6] = 1;
+            }
+            a[7] = 0;
+            break;
+        case 1:
+            func_8011BC3C(a);
+            break;
+        case 2:
+            func_80077B5C(a);
+            switch (a[7]) {
+            case 0:
+                func_80077B38(a, D_8014C808, 7);
+                H_f12c(a, 0x40) = (func_8009A450() & 0x1F) + 0x20;
+                a[7]++;
+                break;
+            case 1:
+                if (--H_f12c(a, 0x40) == 0) {
+                    a[6] = 0;
+                    a[7] = 0;
+                }
+                break;
+            }
+            break;
+        }
+    }
+}
+
+void f_HandleGoldenCrabAndWindmillActor(u8 *a) {
+    GCrabVec v;
+    GCrabPos *e;
+    s32 k;
+    u8 *p;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        *(s32 *)(a + 0x3C) = D_800ECF80;
+        a[0xD] = 0;
+        H_f12c(a, 0x5C) = 0;
+        a[0xB] = 0x10;
+        a[0x47] = 0;
+        H_f12c(a, 0x5A) = 0;
+        func_80077B38(a, D_8014C808, 8);
+        H_f12c(a, 0x80) = 0x32;
+        H_f12c(a, 0x82) = 0x64;
+        H_f12c(a, 0x84) = 0x46;
+        H_f12c(a, 0x86) = 0x64;
+        a[0x29] = 0;
+        H_f12c(a, 0x60) = 0;
+        H_f12c(a, 0x62) = 0;
+        k = a[3];
+        switch (k) {
+        case 0:
+        case 1:
+            e = &D_80148914[k];
+            a[0] = 1;
+            H_f12c(a, 0x2E) = e->x;
+            H_f12c(a, 0x32) = e->y;
+            H_f12c(a, 0x36) = e->z;
+            a[0x2A] = e->b;
+            break;
+        case 3:
+            if (D_800BF8BC == 0xFF) {
+                a[4] = k;
+            }
+            break;
+        }
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            gcrab_idle(a);
+            break;
+        case 1:
+            gcrab_idle(a);
+            break;
+        case 2:
+            p = *(u8 **)(a + 0x10);
+            v.x = -2;
+            v.y = 0;
+            v.z = -0x16;
+            func_8004BD64(a, 1, *(s32 *)(p + 0xDC), *(s32 *)(p + 0xDC), &v);
+            func_80077B5C(a);
+            a[1] = 1;
+            func_80077E7C(a);
+            break;
+        case 3:
+        case 7:
+        case 8:
+        case 9:
+            f_UpdateWindmillFallingActor(a);
+            func_80077B5C(a);
+            a[1] = 1;
+            func_80077E7C(a);
+            break;
+        case 4:
+        case 5:
+        case 6:
+            func_8011B738(a);
+            break;
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+            f_UpdateWindmillExplosionDebris(a);
+            break;
+        case 20:
+            if (func_8007778C(a) != 0) {
+                f_UpdateKainenHouseSceneActor(a);
+            }
+            break;
+        }
+        a[0x29] = 0;
+        break;
+    case 2:
+        a[1] = 1;
+        func_80077E7C(a);
+        switch (a[5]) {
+        case 0:
+        case 2:
+            func_8011C090(a);
+            break;
+        case 1:
+            if (a[6] == 0) {
+                a[6] = 1;
+                H_f12c(a, 0x5A) = 0;
+                func_80077B38(a, D_8014C808, 0xC);
+            }
+            break;
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void f_HandleGoldenCrabAndWindmillActor();
 void func_80135D64();
@@ -4505,7 +4661,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleFeedTheChicksController);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SelectFeedChicksNpcSpawn);
 
 extern u8 D_800BF9F3;
-extern u8 D_800E7EAA;
 void f_UpdateFeedChicksNpcPresence(u8 *a) {
     u8 x;
 
@@ -5930,7 +6085,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeTableDrivenInteriorEffect);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeLinkedWindmillInteriorEffect);
 
 extern u8 D_800BF816;
-extern u8 D_800BF8BC;
 void f_HandleInteriorEffectActor(u8 *a)
 {
     u8 *g;
