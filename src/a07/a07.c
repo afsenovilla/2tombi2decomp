@@ -2783,7 +2783,135 @@ void func_80119454(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusGearMechanismActor);
+typedef struct { s16 v[5]; } PartInit5;
+extern PartInit5 D_80133070[];
+extern u8 D_80133098[];
+
+void f_UpdateCircusGearMechanismActor(u8 *a)
+{
+    s32 i;
+    s32 n;
+    u8 *q;
+    u8 *st;
+    u8 *g;
+    u8 *st2;
+
+    switch (a[4]) {
+    case 0:
+        n = 4;
+        a[8] = n;
+        if (D_800ED098 < n) {
+            a[4] = 3;
+            break;
+        }
+        a[9] = 4;
+        a[4]++;
+        a[0xD] = 0;
+        a[0xB] = 0;
+        for (i = 0; i < a[8]; i++) {
+            q = func_8007AAE8();
+            ((u8 **)(a + 0xC0))[i] = q;
+            *(s16 *)(q + 6) = D_80133070[i].v[0];
+            *(s16 *)(((u8 **)(a + 0xC0))[i] + 0) = D_80133070[i].v[1];
+            *(s16 *)(((u8 **)(a + 0xC0))[i] + 2) = D_80133070[i].v[2];
+            *(s16 *)(((u8 **)(a + 0xC0))[i] + 4) = D_80133070[i].v[3];
+            *(s16 *)(((u8 **)(a + 0xC0))[i] + 8) = 0;
+            *(s16 *)(((u8 **)(a + 0xC0))[i] + 0xA) = 0;
+            *(s16 *)(((u8 **)(a + 0xC0))[i] + 0xC) = 0;
+            func_80051B04(((u8 **)(a + 0xC0))[i], 0xC, D_80133070[i].v[4]);
+        }
+        *(s16 *)(a + 0x58) = 0;
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x56) = 0x800;
+        break;
+    case 1:
+        if (func_8007778C(a) != 0) {
+            func_800517F8(a);
+        }
+        switch (a[5]) {
+        case 0:
+            st = (u8 *)&D_800BF870;
+            if (st[0x166] >= 0xD) {
+                if (st[0xC7] == 0) {
+                    func_80051B04(*(u8 **)(a + 0xC0), 0xC, 0x1A);
+                    a[5] = 10;
+                } else if (!(st[0x1DB] & 4)) {
+                    a[0] = 1;
+                    *(s16 *)(a + 0x80) = 0x96;
+                    *(s16 *)(a + 0x82) = 0x12C;
+                    *(s16 *)(a + 0x84) = 0xC8;
+                    *(s16 *)(a + 0x86) = 0x190;
+                    func_80051B04(*(u8 **)(a + 0xC0), 0xC, 0x1A);
+                    a[5] = 4;
+                } else {
+                    a[5] = 10;
+                }
+            } else {
+                a[5]++;
+            }
+            break;
+        case 1:
+            if (D_800BF9D6 == 0xB) {
+                D_800BF860_c64f = 0;
+                func_80074590(0x1A, 0x1B, 0);
+                func_80051B04(*(u8 **)(a + 0xC0), 0xC, 0x1A);
+                a[5]++;
+            }
+            break;
+        case 2:
+            g = D_800BF808;
+            if (*(u8 **)(g + 0x58) != 0) {
+                if (!(D_1F80017C & 0xF)) {
+                    func_80074590(0x85, 0, 0);
+                }
+                *(s16 *)(*(u8 **)(a + 0xC4) + 8) = (0xA00 - (*(u16 *)(*(u8 **)(*(u8 **)(g + 0x58) + 0x38) + 2) << 9)) & 0xFFF;
+                *(s16 *)(*(u8 **)(a + 0xC8) + 8) += 0x80;
+            }
+            if (D_800BF9D6 == 0xD) {
+                *(s16 *)(*(u8 **)(a + 0xC4) + 8) = *(s16 *)(*(u8 **)(a + 0xC8) + 8) = 0;
+                D_800BF860_c64f = 0;
+                a[5] = 10;
+            }
+            break;
+        case 4:
+            switch (a[6]) {
+            case 0:
+                if (a[0x2B] == 1) {
+                    func_80040CDC(a, 0, D_80133098);
+                    a[0x70] = 2;
+                    a[0] = 2;
+                    a[6]++;
+                }
+                a[0x2B] = 0;
+                break;
+            case 1:
+                st2 = (u8 *)&D_800BF870;
+                if (st2[0x26A] != 0) {
+                    func_80051B04(*(u8 **)(a + 0xC0), 0xC, 0x1E);
+                    st2[0x1DB] |= 4;
+                    a[6]++;
+                }
+            case 2:
+                func_80041098(a);
+                if (a[0x70] == 0xFF) {
+                    func_80042310();
+                    a[5] = 10;
+                    a[6] = 0;
+                }
+                break;
+            }
+            break;
+        case 10:
+            break;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusInteriorEntranceTransition);
 
