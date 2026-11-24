@@ -11881,7 +11881,45 @@ s32 func_80141AC4(u8 *a, s32 anim, s32 spd) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureHopAndBrake);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureVerticalLaunch);
+s32 f_UpdateTownCreatureVerticalLaunch(u8 *a) {
+    u8 *q = a + 0x60;
+    s32 res = 0;
+
+    switch (a[7]) {
+    case 0:
+        HU(q, 2) &= 0xFFFB;
+        f_UpdateTownCreatureTerrainContact(a);
+        func_801402B8(a, 0xE, 0);
+        H_f12c(a, 0x4E) = 0x300;
+        H_f12c(a, 0x50) = -0x1400;
+        a[7]++;
+    case 1:
+        if ((H_f12c(a, 0x50) += 0x100) >= -0x100) {
+            a[7]++;
+        }
+        break;
+    case 2:
+        if ((H_f12c(a, 0x50) += 0x40) >= 0) {
+            func_801402B8(a, 0x11, 8);
+            a[7]++;
+        }
+        break;
+    case 3:
+        if ((H_f12c(a, 0x50) -= 0x40) < -0x9FF) {
+            H_f12c(a, 0x50) = -0xA00;
+            H_f12c(a, 0x40) = 0x14;
+            a[7]++;
+        }
+        break;
+    case 4:
+        if (H_f12c(a, 0x40)-- <= 0) {
+            res = 1;
+        }
+        break;
+    }
+    W_d1fb(a, 0x30) += H_f12c(a, 0x50) << 8;
+    return res;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureLaunchLanding);
 
