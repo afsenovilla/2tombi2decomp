@@ -285,7 +285,18 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - `u16 spd = (s8)tbl[i];` gives `lbu; sll 24; sra 24` (an s32 local gives `lb`); `s32 y0 = *(s16 *)(a + 0x156);` keeps
   `lh` (an s16 local gives `lhu`); 4-byte records walked with a counter: `e[i].f`, not `e++`; an angle stepping per
   iteration: `i * 0xC3` in the calls; `do { n++; } while (n->w != 0);` for the delay-slot increment loop.
-- Nested-switch state machines: write them from the retail asm (statemachine.py drafts are broken for them).
+- Nested-switch state machines: write them from the retail asm (statemachine.py drafts are broken for them):
+  `tools/statemachine.py PROG NAME --cases` writes build/statemachine/<prog>/<name>.cases.txt, the retail asm cut
+  per case block (cases entering it, address range, calls, the branches leaving it and where they land: `case 9`,
+  `case 10 +0x1C` = a shared tail inside another case, `head`, `outside`).
+- "One extra move" near misses (retail `move a0,v0` our compile folds): a copy of the value in its own local used
+  by the later statements (`rr_c = rr;` right after `rr = r;`, then `if (rr_c < 0)`): regswap `keep` / `copy`
+  (the rush family went 5 -> 3 words with it). A call result first stored in a local before a shift / abs:
+  regswap `callcopy`.
+- Loop hoisting: `tools/loophoist.py FILE.c FUNC --prog P` lists gcc's movables (cc1 -dL: insn, reg, life,
+  savings, moved / not, the value) and, per loop, the constants / addresses loaded before vs inside it in ours and
+  in retail. a04 func_8013C2EC: gcc 2.8.1 hoists the constants 0x55555555 / 0x5000000 / 0x2000000 (move-insn,
+  savings 1, life 31-65), retail loads them inside the loop and hoists only the %hi of the three globals.
 
 **Switch and jump-table shapes (more)**
 - Duplicate the cases with identical code to get a jump table whose entries share a target (gcc builds the table,
@@ -356,7 +367,8 @@ struct-member form of a cast access, regswap `member` toggles every one)
   the header from the scratch first; use the target's array declarations (`D_800E7E80`, not `&D_800E7E80` with a
   new extern, which makes an alias).
 - variants.py writes `//--` separators: never leave them in src/. In `--set` values write `\&` and `\|`.
-- permlines may move `//P` lines out of their switch case (invalid C that still scores lower): check its output.
+- permlines keeps `//P` lines in their own block and case segment since 2026-11-24 (4) (it used to move them out
+  of their switch case); it prints a progress line per batch and every 15 s, `--max-seconds S` stops it.
 - regswap's splits through a narrower temporary than the store's target are left out since 2026-11-24 (`--narrowing`
   tries them, flagged NARROWING); its `__typeof__` locals must not reach src/. New kinds `callres` (a call result
   through a dead local; the dead check is a forward scan, check loops) and `abs` (abs() <-> ternaries); wrap and
@@ -388,6 +400,20 @@ struct-member form of a cast access, regswap `member` toggles every one)
   decomp.py draft (gcc merges the identical tails again).
 - regswap `pathsplit` / `fork` / `copy` rename locals: check a result for a variable used before it is set (an
   uninitialised read can happen to get the right register).
+- install_c (2026-11-24 (4)): comma-separated externs are split before the clash check; scratch static helpers
+  no installed function calls are left out; a scratch prototype of a callee with a non-int return (pointer, s16,
+  u8, ...) the target does not declare is kept, K&R (`u8 *f();`); `#include "actor.h"` is carried; calls of a
+  function the target defines (or prototypes) earlier with another parameter count go through the
+  `((RET (*)())f)(...)` cast. ccheck warns `line N calls F with K argument(s); its definition in src/... has M`
+  (the target's and main.c's definitions), and for another length prints `score N` (the aligned count that
+  regswap / variants / permlines use) next to the positional count.
+- regswap kinds since 2026-11-24 (4): `copy` (one use) / `keep` (every later use, or all but the first) only where
+  the copy dominates the use (same block or deeper, no label / case / reassignment between, no loop back edge
+  bringing another value); `callcopy` (a call inside an expression into a local, top-level or block-scoped);
+  `barrier` (`__asm__ volatile("");` between two statements); `swapif` (`if (!(c)) {B} else {A}`); `perbranch`
+  (the use after an if / else put into both arms with each arm's value, the local gone); `ptrlocal` (globals
+  through pointer locals in a block, for runs of 1-4 statements or a whole case). Multi-declarator lines
+  (`s32 a, b;`) count as locals now (they used to stop the declaration scan, so most kinds saw no locals).
 - install_c: a prototype the target has for a function used as a value (`void f(void);`) is rewritten to the
   installed definition's header (conflicting types otherwise; a02 func_8010CFAC); a prototype from a definition
   further down is K&R when some call passes fewer arguments.

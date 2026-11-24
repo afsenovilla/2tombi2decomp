@@ -147,12 +147,19 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   wraps, parameter copies, loads before the previous store, constants as early locals, cast <-> `MEMBER_AT`
   struct member, volatile re-reads, goto -> duplicated tail, ternary <-> if / else, a call result through a dead
   local, abs variants; `--max-seconds S`; narrowing splits only with `--narrowing`).
+  New kinds (2026-11-24 (4)): `copy` / `keep` (a copy in its own register, only where it dominates the uses),
+  `callcopy`, `barrier` (`__asm__ volatile("");`), `swapif`, `perbranch`, `ptrlocal`; ccheck prints `score N`
+  (regswap's aligned count) for another length and warns on calls with another argument count than the target's
+  definition. `python3 -I tools/loophoist.py FILE.c F --prog P`: gcc's loop movables (cc1 -dL; moved or not, the
+  value) and the constants loaded before vs inside each loop, ours and retail. `tools/statemachine.py PROG NAME
+  --cases`: the retail asm per case block (exits, calls) in build/statemachine/<prog>/<name>.cases.txt.
   `python3 -I tools/prio.py FILE.c [F] --prog P [--sched]`: gcc 2.8's pseudo priorities and hard registers from the
   cc1 dumps next to retail's register for each (what priority a pseudo would need); `--sched` the scheduler
   priorities per insn (ccheck says `order only` when only the order differs).
 - `python3 -I tools/pzsweep.py [--prog main,boot] [--install]`: psyz / psy-q-decomp files compiled whole under the
   library set-ups, every function compared with every pending library function of the same size (any name).
-  `tools/permlines.py ... --exhaustive`: every order of at most 7 marked lines. `tools/nearcopy.py --lib`: library
+  `tools/permlines.py ... --exhaustive`: every order of at most 7 marked lines (`//P` lines stay in their block
+  and case; `--max-seconds S`). `tools/nearcopy.py --lib`: library
   files between main and boot.
   `tools/magicdiv.py MULT --shift S [--unsigned]`: the divisor behind a magic-number multiply.
 - install_c.py renames symbols named after another program's addresses from the relocations (C copied between

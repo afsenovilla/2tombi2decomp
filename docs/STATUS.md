@@ -3,6 +3,44 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-24 (4): tools after round 9
+
+One tools agent, the "Tool work left" list of the round-9 entry below, in its order (about 60 minutes).
+
+- **regswap.py**: new kinds `keep` (a copy of a local right after one of its assignments, used by every later
+  use, or every one but the first: retail's `move a0,v0`, one value in two registers), `callcopy` (a call inside
+  a bigger expression into a local, top-level or block-scoped: the call result copied before a shift / abs),
+  `barrier` (`__asm__ volatile("");` between two statements), `swapif` (`if (!(c)) {B} else {A}`), `perbranch`
+  (the statement after an if / else that uses a local set at the end of both arms goes into each arm with that
+  arm's value, the local gone), `ptrlocal` (globals through pointer locals in a block, over 1-4 statements or a
+  whole case). `copy` / `keep` apply only where the copy dominates the use (same block or deeper, no case / label /
+  reassignment between, no loop back edge with another value; every assignment, not only the first). Multi-
+  declarator lines (`s32 a, b;`) are read as locals: they used to end the declaration scan, so on most scratches
+  the local-based kinds (decl, copy, fork, reuse, pathsplit, callres) saw only the lines above the first one.
+- **ccheck.py**: for another length it prints `score N: K word(s) short / extra, aligned` next to the positional
+  count: the number ccheck.score() gives and regswap / variants / permlines report (a0a rush.c: 443 positional, 6
+  aligned = regswap's start). A warning per call whose argument count differs from the callee's definition in
+  src/<prog>/<prog>.c or src/main/main.c.
+- **install_c.py**: comma-separated externs split before the clash check; unused scratch static helpers dropped;
+  scratch prototypes of callees with a non-int return that the target does not declare kept (K&R); `#include
+  "actor.h"` carried; calls of target functions defined earlier with another parameter count cast. Tested by a
+  round trip of a0g func_80109180 with all four in the scratch (file byte-identical but for the kept `u8
+  *func_8002300C();` and the include, linked build OK; restored) and the cast on a synthetic file.
+- **permlines.py**: `//P` lines move only inside their own block and case segment (regions()); a progress line per
+  batch and every 15 s; `--max-seconds`. a01 func_80124F14 (4f14_p.c): 15 -> 3 in 25 s.
+- **statemachine.py --cases** (and with every draft): <name>.cases.txt, the retail asm per case block with the
+  cases entering it, its range, calls and exits (`case 10 +0x1C`: a shared tail inside another case).
+- **tools/loophoist.py** FILE.c FUNC --prog P: cc1 -dL movables (insn, reg, life, savings, moved / not desirable,
+  the value) and per loop the constants / addresses loaded before vs inside, ours and retail. a04 func_8013C2EC:
+  gcc moves 0x55555555, %hi(D_800ED8C8), 0x5000000, 0x2000000 out of the loop; retail hoists only the three %hi
+  and keeps the three constants inside: the near miss is gcc 2.8.1 hoisting the constants (a compiler / flag
+  question, not a source order one; try a cc1 variant that does not move constant move-insns, or the loop's shape).
+- Near misses with the new kinds: a0a f_UpdateEvilPigRushAttack 5 -> 3 words (`rr_c = rr;` after `rr = r;`, `if
+  (rr_c < 0)`; scratch r9b/a09/rushT.regswap.c; left: retail stores the 0x6C field late from the copy, ours in the
+  first delay slot), a09 func_8010C01C 8 and a0d func_801108F0 3 unchanged (nothing installed).
+- Not done: workqueue same-overlay siblings, nearcopy pairs inside one program, prio.py name mapping, nearcopy
+  auto-variant with the scratchpad pointer-local block.
+
 ## 2026-11-24 (3): ninth round
 
 All code in C: **4486 / 7011 functions (64.0 %, 39.3 % of the bytes)**, from 4384 (37.3 %). main +16 (~8.9 KB: GPU
