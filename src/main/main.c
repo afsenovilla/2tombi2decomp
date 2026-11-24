@@ -4314,11 +4314,64 @@ s32 func_80032A88(s32 arg0) {
     return (s32) (rand() - 0x4000) >> arg0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80032AB4);
-
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80032CBC);
-
 extern s32 (*D_800A3B78[])(u8 *);
+
+void func_80032AB4(void *pos, u8 *scale)
+{
+    s32 v[3];
+
+    v[0] = scale[0] * 4;
+    v[1] = scale[1] * 4;
+    v[2] = scale[2] * 4;
+    ScaleMatrix(D_1F800000, v);
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_ldclmv(D_1F800000);
+    gte_rtir();
+    gte_stclmv(D_1F800000);
+    gte_ldclmv(D_1F800002);
+    gte_rtir();
+    gte_stclmv(D_1F800002);
+    gte_ldclmv(D_1F800004);
+    gte_rtir();
+    gte_stclmv(D_1F800004);
+    gte_ldv0(pos);
+    gte_rtv0();
+    gte_stlvnl(D_1F800014);
+    D_1F800000[5] += D_1F8000D0_42d8[15];
+    D_1F800000[6] += D_1F8000D0_42d8[16];
+    D_1F800000[7] += D_1F8000D0_42d8[17];
+    gte_SetRotMatrix(D_1F800000);
+    gte_SetTransMatrix(D_1F800000);
+}
+
+void func_80032CBC(void *pos, u8 *scale)
+{
+    s32 v[3];
+
+    v[0] = scale[0];
+    v[1] = scale[1];
+    v[2] = scale[2];
+    ScaleMatrix(D_1F800000, v);
+    gte_SetRotMatrix(D_1F8000F8);
+    gte_ldclmv(D_1F800000);
+    gte_rtir();
+    gte_stclmv(D_1F800000);
+    gte_ldclmv(D_1F800002);
+    gte_rtir();
+    gte_stclmv(D_1F800002);
+    gte_ldclmv(D_1F800004);
+    gte_rtir();
+    gte_stclmv(D_1F800004);
+    gte_ldv0(pos);
+    gte_rtv0();
+    gte_stlvnl(D_1F800014);
+    D_1F800000[5] += D_1F8000D0_42d8[15];
+    D_1F800000[6] += D_1F8000D0_42d8[16];
+    D_1F800000[7] += D_1F8000D0_42d8[17];
+    gte_SetRotMatrix(D_1F800000);
+    gte_SetTransMatrix(D_1F800000);
+}
+
 
 s32 func_80032EB8(s16 bias)
 {
@@ -8255,7 +8308,38 @@ s32 f_ClassifyActorTerrainAlongFacing(s32 arg0, s32 arg1, s32 arg2) {
     return f_ClassifyActorTerrainAtOffset(arg0, (s32) (s16) arg1, (s32) (s16) arg2, (s32) M2C_FIELD(arg0, s16 *, 0x56));
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ClassifyActorTerrainAtOffset);
+s32 f_ClassifyActorTerrainAtOffset(u8 *arg0, s16 arg1, s32 arg2, s16 arg3)
+{
+    s32 temp_a1;
+    s32 temp_lo;
+    s32 temp_s0;
+    u16 k;
+
+    temp_s0 = (s32) (-rsin(arg3) * arg1) >> 0xC;
+    temp_lo = rcos(arg3) * arg1;
+    *((s16 *)D_1F8001BE) = *(u16 *)(arg0 + 0x32) + arg2;
+    *((s16 *)D_1F8001C0) = *(u16 *)(arg0 + 0x36) + temp_s0;
+    temp_a1 = temp_lo >> 0xC;
+    *((s16 *)D_1F8001BC) = *(u16 *)(arg0 + 0x2E) + temp_a1;
+    if (f_FindTerrainCellForActorProbe(arg0, temp_a1) != 0) {
+        if (f_ResolveTerrainProbeVerticalContact() != 0) {
+            k = *(u16 *)D_1F8001A6;
+            switch (k & 0xF00) {
+            case 0x100:
+                if (D_800BF873 != 0) {
+                    *(u16 *)D_1F8001A6 = k & 0xFF;
+                    return 1;
+                }
+            case 0x600:
+            case 0x700:
+                return 2;
+            }
+            return 1;
+        }
+        return 0;
+    }
+    return 0;
+}
 
 void func_800493E8(u8 *actor, s16 a, s16 b)
 {
