@@ -7858,7 +7858,95 @@ s32 f_UpdatePipeAreaBridgeRevealCamera(u8 *a) {
     return 0;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaBridgeActor);
+void f_UpdatePipeAreaBridgeActor(u8 *a)
+{
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 4) != 0) {
+            break;
+        }
+        a[0xD] |= 4;
+        (*(u8 **)(a + 0xC0))[0x3F] = 0x10;
+        a[0] = 1;
+        a[4]++;
+        if (D_800BF873 != 0) {
+            H(*(u8 **)(a + 0xC0), 0) = 0;
+            H(a, 0x2E) = 0x4828;
+        } else {
+            H(*(u8 **)(a + 0xC0), 0) = 0x420;
+            H(a, 0x2E) = 0x4408;
+        }
+        H(a, 0x80) = 0x470;
+        H(a, 0x82) = 0x8E0;
+        H(a, 0x84) = 0x28;
+        H(a, 0x86) = 0x50;
+        H(a, 0x32) = -0x1A9A;
+        H(a, 0x36) = 0x2340;
+        __asm__ volatile("");
+        g = (u8 *)&D_800BF870;
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        a[0x5E] = 0;
+        H(a, 0x44) = 0;
+        H(a, 0x4A) = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0;
+        a[0xBF] = 0;
+        H(a, 0x60) = 0;
+        if (g[0x18A] == 0x18 || g[1] == 0xD || g[3] != 0) {
+            H(a, 0x58) = 0;
+        } else {
+            H(a, 0x58) = -0x400;
+        }
+        break;
+    case 1:
+        g = (u8 *)&D_800BF870;
+        if ((g[0x18A] == 0x18 || g[3] != 0) && H(a, 0x58) == 0) {
+            func_800517F8(a);
+            a[1] = 1;
+            func_80077EBC(a);
+            break;
+        }
+        switch (a[5]) {
+        case 0:
+            if (D_800BFA06 & 4) {
+                a[5] = 3;
+            } else {
+                a[5] = 1;
+            }
+            break;
+        case 1:
+            {
+            u8 *g1 = (u8 *)&D_800BF870;
+            if (g1[0x196] & 4) {
+                g1[0x180] |= 2;
+                a[0x5E] = 0;
+                a[5]++;
+            }
+            }
+            break;
+        case 2:
+            if (f_UpdatePipeAreaBridgeRevealCamera(a) != 0) {
+                u8 *g2 = (u8 *)&D_800BF870;
+                g2[0x180] &= 0xFD;
+                a[5]++;
+            }
+            break;
+        }
+        f_UpdatePipeAreaBridgeMotion(a);
+        a[1] = 1;
+        func_80077EBC(a);
+        func_800517F8(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern s8 D_800E807E;
 s32 func_80127DC4(u8 *a) {
