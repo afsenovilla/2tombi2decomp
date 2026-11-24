@@ -6750,7 +6750,53 @@ s32 f_SetActorAnimationIfChanged(u8 *a, s32 anim, s16 c)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004179C);
+s32 f_PlaySoundEffect();
+
+s32 func_8004179C(u8 *a)
+{
+    u8 *s;
+    u16 f;
+    s32 r;
+
+    if (*(u16 *)(a + 0x72) & 1) {
+        s = *(u8 **)D_1F800214;
+    } else {
+        s = a;
+    }
+    switch (a[0x78]) {
+    case 0:
+        if (*(s16 *)(a + 0x74) == -1) {
+            *(s16 *)(a + 0x74) = a[0x7B];
+        }
+        f_SetActorAnimationIfChanged(s, *(s16 *)(a + 0x74), *(s16 *)(a + 0x76));
+        if (!(*(u16 *)(a + 0x72) & 2)) {
+            return 1;
+        }
+        if (!(**(u16 **)(a + 0x6C) & 0x2000)) {
+            a[0x78] = 2;
+        } else {
+            a[0x78] = 1;
+        }
+        break;
+    case 1:
+        f = *(u16 *)(a + 0x66);
+        if (!(*(s16 *)(a + 0x66) & 0x8000)) {
+            if ((f & 0xFF) == (*(u8 **)(s + 0x38))[4]) {
+                f_PlaySoundEffect(a[0x68], 0, 0);
+                *(u16 *)(a + 0x66) |= 0x8000;
+            }
+        } else if ((f & 0xFF) != (*(u8 **)(s + 0x38))[4]) {
+            *(u16 *)(a + 0x66) = f & 0x7FFF;
+        }
+    case 2:
+        r = 1;
+        if (s[0x79] == r) {
+            return r;
+        }
+        break;
+    }
+    return 0;
+}
 
 s32 f_AdvanceActorAnimationAndStoreCompletion(void *arg0) {
     M2C_FIELD(arg0, s8 *, 0x79) = f_AdvanceActorSkeletalAnimation();
