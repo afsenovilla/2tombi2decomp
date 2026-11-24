@@ -1515,7 +1515,6 @@ void func_80110740(void *arg0) {
 }
 
 typedef struct { u8 a, b, c, d; } Ent;
-
 void func_801107B0(u8 *a)
 {
     Ent *e;
@@ -1561,7 +1560,6 @@ INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80110C14);
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80110DBC);
 
 extern u8 *D_800ECF88;
-
 void func_80111034(u8 *a)
 {
     Ent *e;
@@ -1675,7 +1673,6 @@ void func_80111244(u8 *a)
 
 extern s16 D_8012594C[];
 extern s32 D_80125A4C[];
-
 void func_80111418(void)
 {
     s16 *p = D_8012594C;
@@ -1722,7 +1719,6 @@ extern s32 D_1F800080_e4a3;
 extern u32 *D_800BF544_5fe3;
 extern u32 *D_800ED8C8;
 extern u32 D_80125A4C_a3af[];
-
 void func_80111708(u8 *a)
 {
     s16 *v = D_8012594C;

@@ -630,7 +630,6 @@ typedef struct { u8 a, b; } Pair;
 typedef struct { s16 x, y, z; u8 k; u8 pad; s16 w, h; } Ent12;
 extern Pair D_8010C58C[];
 extern Ent12 D_8010C590[];
-
 void func_8010A574(u8 *a)
 {
     u8 v;

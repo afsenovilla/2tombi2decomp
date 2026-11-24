@@ -2004,7 +2004,6 @@ typedef struct { s16 l0, x, l1, y, l2, z; } V3Hi;
 #define CH(o) (*(s16 *)(c + (o)))
 #define AH(o) (*(s16 *)(a + (o)))
 #define DH(o) (*(s16 *)(d + (o)))
-
 void func_80114A18(u8 *c, u8 *a)
 {
     V3Hi v;
@@ -4230,7 +4229,6 @@ extern u8 D_800E8008[];
 extern s16 D_801003F8;
 extern u8 D_80144FF0[];
 extern u8 D_80144FF8[];
-
 void func_801210CC(u8 *a)
 {
     u8 *t = D_800E7E80;
@@ -4336,7 +4334,6 @@ void func_801210CC(u8 *a)
         break;
     }
 }
-
 
 s32 func_801214C0(u8 *a)
 {
@@ -5204,7 +5201,6 @@ extern u8 D_80147B20[];
 extern u8 D_80147B38[];
 extern u8 D_80147BA0[];
 extern u8 D_80147BD0[];
-
 void func_80127928(u8 *a)
 {
     u8 *g;
@@ -6501,7 +6497,6 @@ extern u8 D_80148ECC[];
 extern u8 D_80148F74[];
 extern u8 D_80148F84[];
 extern u8 D_80148FB4[];
-
 void func_801379D4(u8 *a)
 {
     a[1] = 1;
@@ -6770,7 +6765,6 @@ extern u8 D_801494D8[];
 extern u8 D_80149570[];
 extern u8 D_801495C8[];
 extern u8 D_801495E8[];
-
 void func_80139088(u8 *a)
 {
     s16 x;
@@ -6851,7 +6845,6 @@ extern u8 D_80149608[];
 extern u8 D_80149658[];
 extern u8 D_80149688[];
 extern u8 D_801496B8[];
-
 void func_801392D8(u8 *a)
 {
     switch (a[6]) {
@@ -7006,7 +6999,6 @@ extern u8 D_8014A0D8[];
 extern u8 D_8014A160[];
 extern u8 D_8014A180[];
 extern u8 D_8014A2A0[];
-
 s32 func_8013A09C(u8 *a)
 {
     switch (a[7]) {
@@ -7067,7 +7059,6 @@ s32 func_8013A09C(u8 *a)
     }
     return 0;
 }
-
 
 s32 func_8013A250(u8 *a)
 {

@@ -11,7 +11,6 @@ extern u8 D_1F800020[];
 extern u8 D_1F800040[];
 #define H16(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define W32(p, o) (*(s32 *)((u8 *)(p) + (o)))
-
 void f_UpdateTrolleyAttachedModelTransforms(u8 *a) {
     u8 *o = *(u8 **)(a + 0x10);
     u8 *s = D_1F800000;
@@ -153,7 +152,6 @@ s32 func_80109C48(u8 *t, s32 anim, s32 blend)
 
 extern u8 D_800E7E80[];
 extern u8 D_1F800247;
-
 void f_UpdateAndDrawTrolleyRiderModel(void) {
     u8 *a = D_800E7E80;
 
@@ -254,7 +252,6 @@ extern TrkNode D_80111B48[];
 typedef struct { s32 obj; s32 idx; u8 pad8[8]; s32 a, b, c; s32 f1C; } TrkSeed_B738;
 extern TrkSeed_B738 D_8011BA48[];
 extern u8 D_800BF9F8;
-
 void func_8010B738(void) {
     CameraTarget2 c;
     TrkSeed_B738 *e;
@@ -294,7 +291,6 @@ extern s32 D_8011BB54;
 extern s32 D_8011BB58;
 extern s32 D_8011BB5C;
 typedef struct { s16 x, y, z; } TrkPos_B910;
-
 void f_CollectNearbyTrolleySeeds(void) {
     u8 *r = D_800E7E80;
     u8 *a = D_1F800208;
@@ -363,7 +359,6 @@ void f_CollectNearbyTrolleySeeds(void) {
 typedef struct TrkMat { s16 m[3][3]; s16 pad; s32 t[3]; } TrkMat;
 typedef struct { u8 pad0[0x12]; s16 h; s16 w; } TrkDims_BBB8;
 extern TrkDims_BBB8 D_8011BAEC;
-
 void func_8010BBB8(u8 *a, TrkMat *m, s32 ang) {
     TrkDims_BBB8 *d = &D_8011BAEC;
     s32 w = abs(d->w) + 0x1D;
@@ -402,7 +397,6 @@ extern s32 D_8011C0D8;
 extern s32 D_8011C0DC;
 extern s32 D_1F80020C;
 void f_UpdatePlayerTrolleyActor(u8 *a);
-
 void f_InitializeTrolleyModelAndTrackState(u8 *a) {
     u8 *t = a + 0x60;
     TrkPartDef *d = D_8011BAEC_f106;
@@ -489,7 +483,6 @@ void f_InitializeTrolleyModelAndTrackState(u8 *a) {
     *(s16 *)(t + 0x1A) = 0;
     t[0x13] = 0;
 }
-
 
 TrkNode *f_SampleAirborneTrolleyTrack(TrkNode *n0, s32 dist, s16 *sv, TrkMat *m) {
     TrkNode *n = n0;
@@ -749,7 +742,6 @@ void f_UpdateTrolleyMovementAndCamera(u8 *a) {
 extern s8 D_800BF80D;
 extern u8 *D_8011BB60;
 u8 *func_8007E038(s32, s32);
-
 void f_UpdateTrolleyCourseProgressActor(u8 *a) {
     s32 y;
 
@@ -959,7 +951,6 @@ typedef struct {
     u32 *tbl;
     u16 list[1];
 } TrkPartList;
-
 void func_801109D4(TrkPartList *a)
 {
     u16 *p;
@@ -997,7 +988,6 @@ INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyTrailActor);
 typedef struct { u16 a, b; } U16Pair_1158;
 extern U16Pair_1158 D_8011BC28;
 extern u8 D_8011BC2C[];
-
 void func_80111158(u8 *a) {
     u8 *o = *(u8 **)(a + 0x10);
     u8 *t = o + 0x60;

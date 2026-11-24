@@ -2764,7 +2764,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011C3BC);
 extern u8 D_800BF9B4;
 extern u8 D_800BF841;
 #define AH(o) (*(s16 *)(a + (o)))
-
 void func_8011C4E0(u8 *a)
 {
     u8 *c = D_800E8008;
@@ -3240,7 +3239,6 @@ void func_8011D568(void *arg0) {
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011D5BC);
 
 extern u8 D_800BF80F;
-
 s32 func_8011D878(u8 *a)
 {
     u8 *t = D_800E7E80;

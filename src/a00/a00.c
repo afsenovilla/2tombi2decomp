@@ -663,7 +663,6 @@ s32 func_8010C40C(u8 *a, u8 *b) {
 
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern u8 D_80146ED0[];
-
 void f_UpdateTombaInteriorEntry(u8 *a, u8 *b) {
     u8 k;
     s32 r;
@@ -3253,7 +3252,6 @@ static inline s32 gc_submit(u8 *a) {
     } while (i < 3);
     return 0;
 }
-
 s32 f_SubmitPendingGoldenCrabs(u8 *a) {
     u8 *t = D_800E7E80;
     s16 r;
@@ -4673,7 +4671,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121978);
 
 extern u8 D_8014E4EC[];
 extern u8 D_801494B0[];
-
 void func_80121B44(u8 *a) {
     u8 k;
 
@@ -4771,7 +4768,6 @@ extern u8 D_8014967C[];
 extern u8 D_80149684[];
 extern u8 D_800BF9B5;
 extern u8 D_800E806C;
-
 s32 f_FinishStuckFishhookLineSequence(u8 *a) {
     switch (a[6]) {
     case 0:
@@ -5101,7 +5097,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801234A4);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80123C94);
 
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void f_AnimateSmallFishSuspendedMotion(u8 *a) {
     switch (a[5]) {
     case 0:
@@ -5366,7 +5361,6 @@ void func_80126264(u8 *a)
 }
 
 typedef struct { u8 pad[0xC0]; u8 *parts[2]; } NestParent;
-
 void f_InitializeNestChickActor(u8 *a) {
     NestParent *l;
     s32 m = a[3];
@@ -5716,7 +5710,6 @@ s32 func_8012894C(s32 arg0) {
 extern u8 D_8001B860[];
 extern u8 *D_80149E50[];
 extern u8 *D_800E7EB8;
-
 void f_RunA00Event4ItemUseCutscene(u8 *a) {
     switch (a[6]) {
     case 0:
@@ -7936,7 +7929,6 @@ extern s16 D_8014C4FC[];
 extern s16 D_8014C60C[];
 extern s16 D_8014C63C[];
 extern s16 D_8014C74C[];
-
 void f_ConfigureSegmentedTownActorMorph(u8 *a, s16 n, s16 sel) {
     u8 *base;
     s32 *offs;
@@ -8108,7 +8100,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleA00Warp0813Entrance);
 extern u8 D_800BF8F9;
 extern u8 D_800E7FF4;
 extern u8 D_8014AA00[];
-
 void f_HandleTinyMousesHouseEntrance(u8 *a) {
     u8 *g = D_800E7E80;
     s32 k;

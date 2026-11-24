@@ -21,7 +21,6 @@ extern u16 D_800ECF54;
 extern s16 D_1F80016C;
 extern s16 D_1F80016E;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void func_8010A32C(u8 *a, u8 *b) {
     if (++H(a, 0x42) >= 6) {
         if ((D_800ECF54 & D_1F80016C) && a[0x147] == 0) {
@@ -2894,7 +2893,6 @@ static inline s32 a01_target_y(u8 *a) {
     }
     return y;
 }
-
 s32 func_80116740(u8 *a, s32 k, s32 n) {
     s32 r = 0;
     u8 *q = a + 0x60;
@@ -2932,7 +2930,6 @@ static inline void a01_turn(u8 *a) {
     s32 v;
     if (!(FU(q, 6) & 1)) { FH(a, 0x56) += func_80083E80(FH(q, 4) - FH(a, 0x56)) >> 5; } else { v = FH(a, 0x56) - 0x800; FH(a, 0x56) += func_80083E80(FH(q, 4) - v) >> 5; }
 }
-
 s32 func_80117290(u8 *a) {
     s16 r = 0;
     u8 *q = a + 0x60;
@@ -4908,7 +4905,6 @@ extern u8 D_8013694C[];
 extern u8 D_80136974[];
 extern u8 D_801369BC[];
 extern u8 D_80136A1C[];
-
 void f_UpdateGranRemoveCappersDialogue(u8 *a) {
     u8 *p;
     u8 k;
@@ -4976,7 +4972,6 @@ void f_UpdateGranRemoveCappersDialogue(u8 *a) {
 extern u8 D_8013690C[];
 extern u8 D_80136A54[];
 extern u8 D_80136A7C[];
-
 void f_UpdateGranPostPipeAreaDialogue(u8 *a) {
     u8 *p;
 
@@ -5041,7 +5036,6 @@ extern u8 D_80136B58[];
 extern u8 D_80136BA8[];
 extern u8 D_80136BF8[];
 extern u8 D_80136C08[];
-
 void func_8011F2A4(u8 *a) {
     GameState *g;
 
@@ -6260,7 +6254,6 @@ void func_80124164(u8 *a) {
 
 typedef struct { s16 x, y; } Ofs4250;
 extern Ofs4250 D_801375A4[];
-
 void func_80124250(u8 *a) {
     s16 v[6];
     u8 *p;
@@ -6778,7 +6771,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012757C);
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaBridgeMotion);
 
 extern u8 D_80137660[];
-
 s32 f_UpdatePipeAreaBridgeRevealCamera(u8 *a) {
     u8 *g = D_800E8008;
     s32 pad[4];

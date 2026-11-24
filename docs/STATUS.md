@@ -3,6 +3,50 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-24 (3): ninth round
+
+All code in C: **4486 / 7011 functions (64.0 %, 39.3 % of the bytes)**, from 4384 (37.3 %). main +16 (~8.9 KB: GPU
+load-image packets, actor pool init, Tomba model / cling motion), a00-a01 +22 (~11.5 KB, f_ConfigureSegmentedTownActorMorph
+0x830), a02-a03 +13 (a03 from 12 % to 30 % of its bytes: trolley track sampling, models, course progress), a04-a08 +30
+(~16.7 KB: conversation / scripted-sequence state machines written from the retail asm), a09-a0l + overlays +20 (~10
+KB); nearcopy afterwards +1 (a0k). 29 / 29 byte-identical; tools/integrate.py: all 75 commits link.
+
+Findings (folded into AGENTS.md):
+- Three scratchpad globals read in a row with all `lui`s first: pointer locals in a block (`{ s16 *p0 = &D_1F800160;
+  s16 *p1 = &D_1F800162; s16 *p2 = &D_1F800164; dx = *p0 - H(a,0x2E); ... }`): took the 6-copy
+  f_UpdateEvilPigRushAttack family from ~16 lines to one instruction.
+- Strength-reduced pointer registers follow the order of the increments at the end of the loop body and of the
+  inits before the loop, not the declaration order (f_ConfigureSegmentedTownActorMorph from 61 words to 0).
+- A value stored with different constants on each path: the store with its constant in every branch (one cross-jumped
+  `sb`), never a local assigned per branch.
+- An empty `__asm__ volatile("");` between statements is a scheduler barrier that emits nothing (keeps constant
+  loads in source order in long store runs).
+- Wrong callee argument counts are common in m2c drafts: check how matched code calls the callee before blaming
+  registers (func_80051B70 takes 3; f_AllocateTemplateEffectSlot and func_80042310 none).
+- State machines with nested switches: write them from the retail asm, the statemachine.py drafts come out broken.
+- Several near misses are one `move` retail keeps and our compile folds away (the rush family, a09 func_8010C01C, a0d
+  func_801108F0): a tool idea below.
+
+Near misses (scratch in the session scratchpad r9b/<scope>/): a0a f_UpdateEvilPigRushAttack 1 instruction (6 copies
+of 0x860), a01 func_80117BCC 1, a02 func_8010B068 2 (3 copies), a05 func_8012D908 2 lines, func_8013484C 2
+instructions, a0a func_80113B78 2, a00 func_80118B10 2, a01 func_80123BF8 3, func_80124F14 3, a00 func_80120C50 3,
+a0c func_8011353C 3, main func_80021DF4 4, a07 func_80120120 5, a00 func_8013BCC8 5 (6 copies), a07 func_8012D2B4 6
+(3 copies), a03 f_UpdateTrolleyCourseOverlayActor 7, a0h func_8010A918 7, a09 func_8010C01C 8, a0k func_80117DE8 9,
+a05 func_8011105C ~10, main func_8002EF58 11, a02 func_801168A0 11, a04 func_8013C2EC (0x4DC, loop hoisting of
+constants; copy a06 func_8013E738).
+
+Tool work left: a regswap / variants kind that keeps a copy in its own register (block-scoped temporary assigned
+from the value and used later) for the "one extra move" near misses; a scheduler-barrier kind (`__asm__ volatile("")`
+between statements); "store per branch instead of a local", "swap if / else arms", "pointer local per case"; a
+loop-hoisting diagnostic from cc1's -dL dump (movables, lifetimes, moved or not); statemachine.py: per-case asm range
+and branch targets instead of broken drafts; install_c: drop unused scratch static helpers, keep scratch prototypes
+of callees with a non-int return that the target does not declare, carry `#include "actor.h"`, apply the cast
+rewrite when a callee is defined earlier with fewer parameters, split comma-separated externs before the clash check;
+ccheck: warn when a call's argument count differs from the target's definition; permlines: never move `//P` lines
+across case labels, a progress line / time budget; regswap: the copy rewrite only where the copy dominates, its score
+equal to ccheck's; prio.py name mapping; nearcopy: pairs inside one program, an auto-variant with the scratchpad
+pointer-local block; workqueue: flag same-overlay siblings (ratio >= 0.5) of new C.
+
 ## 2026-11-24 (2): tools after round 8
 
 One tools agent, the "Tool work left" list of the round-8 entry below, in its order.

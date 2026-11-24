@@ -640,7 +640,6 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010B09C);
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern u8 D_80118034[];
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void func_8010B238(u8 *a, u8 *b) {
     u8 k;
     s32 r;

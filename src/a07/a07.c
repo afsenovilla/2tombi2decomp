@@ -1626,7 +1626,6 @@ void func_80115008(u8 *a)
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801150DC);
 
 extern u8 D_800E7E81;
-
 void func_80115174(u8 *a) {
     u8 *p;
     s32 s;
@@ -2450,7 +2449,6 @@ typedef struct {
     u8 pad3C[4];
     s32 f40;
 } Sub;
-
 void func_8011AE24(u8 *a)
 {
     s16 t;
@@ -3227,7 +3225,6 @@ extern u8 D_801338B8[];
 extern u8 D_801338C0[];
 extern u8 D_801338C8[];
 extern u8 D_801338D0[];
-
 s32 func_8011E688(u8 *a)
 {
     u8 *g;
@@ -3636,7 +3633,6 @@ extern s16 D_800E7EEA;
 extern u8 D_80134030[];
 extern u8 D_801340D4[];
 extern u8 D_8013F730[];
-
 void func_801211B0(u8 *a)
 {
     u8 *t;
@@ -3860,7 +3856,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801220F8);
 #define AH(o) (*(s16 *)(a + (o)))
 #define QH(o) (*(s16 *)(q + (o)))
 #define PH(o) (*(s16 *)(p + (o)))
-
 void func_801222A4(u8 *a)
 {
     u8 *p;

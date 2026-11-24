@@ -1537,7 +1537,6 @@ extern u8 D_8013C570[];
 extern u8 D_8013C5C8[];
 extern u16 D_1F800164_7d8c;
 extern u16 D_1F800162_b816;
-
 void func_80113A6C(u8 *a)
 {
     switch (a[6]) {
@@ -1729,7 +1728,6 @@ static inline s32 func_801149A8_flag(void)
     }
     return 0;
 }
-
 s32 func_801149A8(u8 *a)
 {
     u8 k;
@@ -2290,7 +2288,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80118A9C);
 extern u8 D_800BF9EB;
 extern u8 D_8013D694[];
 extern u8 D_8013D6B4[];
-
 void func_80118C24(u8 *a)
 {
     switch (a[6]) {
@@ -2351,7 +2348,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011917C);
 
 extern u8 D_8013D7EC[];
 extern u8 D_8013D80C[];
-
 void func_80119310(u8 *a)
 {
     switch (a[6]) {
@@ -2872,7 +2868,6 @@ extern u8 D_800BF928;
 extern u8 D_8013E530[];
 extern u8 D_8013E5F0[];
 extern u8 D_8013E638[];
-
 s32 func_80120378(u8 *a)
 {
     switch (a[6]) {
@@ -3139,7 +3134,6 @@ extern u8 D_8013E970[];
 extern u8 D_8013E9B0[];
 extern u8 D_8013E9C8[];
 extern u8 D_8013EA08[];
-
 void func_801215BC(u8 *a)
 {
     switch (a[6]) {
@@ -3209,7 +3203,6 @@ extern u8 D_8013EA20[];
 extern u8 D_8013EA58[];
 extern u8 D_8013EA70[];
 extern u8 D_8013EAA8[];
-
 void func_801217E8(u8 *a)
 {
 
@@ -4191,7 +4184,6 @@ s32 func_80128040(void *arg0) {
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012809C);
 
 extern u8 D_800BF818;
-
 s32 func_801284F0(u8 *a)
 {
     u8 *t = D_800E7E80;
@@ -4814,7 +4806,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012D67C);
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012D908);
 
 #define H_d43e(o) (*(s16 *)(a + (o)))
-
 void func_8012DBA0(u8 *a)
 {
     switch (H_d43e(0x76)) {
@@ -5878,7 +5869,6 @@ typedef struct {
 extern u16 D_801003F8_af64;
 extern s16 *D_8013F49C[];
 extern u8 D_8013F4AC[][2];
-
 void func_80131824(PartActor *a)
 {
     s16 *src;

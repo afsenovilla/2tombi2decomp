@@ -3287,7 +3287,6 @@ static inline void func_80122938_inl(void *arg0) {
         M2C_FIELD(arg0, s8 *, 4) = 3;
     }
 }
-
 void func_8012282C(u8 *a)
 {
     switch (a[4]) {
@@ -7308,7 +7307,6 @@ extern u8 D_80147644[];
 extern u8 D_80147664[];
 extern u8 D_8014766C[];
 extern u8 D_801476AC[];
-
 s32 func_8013A7D4(u8 *a)
 {
     u8 *g;

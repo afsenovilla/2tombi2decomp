@@ -1156,7 +1156,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010FD30);
 
 extern s16 D_1F80018C;
 extern u8 D_800BF873;
-
 void func_8010FE90(u8 *a, u8 *b)
 {
     s32 *ang;

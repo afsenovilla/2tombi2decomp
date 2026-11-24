@@ -3,7 +3,71 @@
 #include "m2c.h"
 #include "gte.h"
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801095C8);
+extern u8 D_1F800137;
+extern u8 D_800BF840;
+extern u8 D_800E7E81;
+
+void func_801095C8(u8 *a) {
+    u8 *p;
+    s32 s;
+    s32 k;
+    s32 rs_k50;
+
+    switch (a[4]) {
+    case 0:
+        a[1] = 0;
+        *(u8 **)(a + 0x10) = NULL;
+        a[0x46] = 0xFF;
+        a[4]++;
+        break;
+    case 1:
+        if (D_1F800137 != 0) {
+            if (*(u8 **)(a + 0x10) != NULL) {
+                p = *(u8 **)(a + 0x10);
+                if (p[4] < 2) {
+                    p[4] = 3;
+                }
+                *(u8 **)(a + 0x10) = NULL;
+            }
+            func_8006F04C();
+        } else {
+            func_8006F04C();
+            if (D_800E7E81 == 0) {
+                return;
+            }
+            k = D_800BF840;
+            if ((k & 0x40) && func_8006EFF4(s = k & 0xF) == 0) {
+                if (*(u8 **)(a + 0x10) == NULL) {
+                    *(u8 **)(a + 0x10) = func_8007E038(s, 0);
+                    func_8006F02C(s);
+                    a[0x46] = s;
+                } else if ((p = *(u8 **)(a + 0x10))[4] >= 2) {
+                    *(u8 **)(a + 0x10) = NULL;
+                } else if (a[0x46] != s) {
+                    p[4] = 3;
+                    *(u8 **)(a + 0x10) = NULL;
+                }
+            } else {
+                if (*(u8 **)(a + 0x10) != NULL) {
+                    p = *(u8 **)(a + 0x10);
+                    if (p[4] < 2) {
+                        p[4] = 3;
+                    }
+                    *(u8 **)(a + 0x10) = NULL;
+                }
+            }
+        }
+        break;
+    case 2:
+        rs_k50 = 3;
+        a[4] = rs_k50;
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+    D_800BF840 = 0;
+}
 
 void func_801095C8();
 u8 *func_80109788(void)
@@ -19,11 +83,9 @@ u8 *func_80109788(void)
     return a;
 }
 
-extern u8 D_1F800137;
 extern s32 D_1F80009C_baed;
 extern s16 D_1F80018E;
 extern u8 *D_1F800184;
-extern u8 D_800BF840;
 extern u16 D_1F80008C;
 extern u8 D_1F800137;
 void func_801097DC(u8 *a, u8 *b)
@@ -86,7 +148,6 @@ void func_8010996C(u8 *a, u8 *b)
 }
 
 extern s16 D_1F80018C;
-
 void func_80109AC8(u8 *a, u8 *b)
 {
     s32 *ang;
@@ -1909,7 +1970,6 @@ extern s16 D_800ED098;
 extern u16 D_801003F8;
 extern s16 *D_8011CB1C[];
 extern u8 D_8011CB30[][2];
-
 void func_8011133C(PartActor *a)
 {
     s16 *src;

@@ -3452,7 +3452,6 @@ void func_8002C548(u8 *a)
     }
 }
 
-
 void func_8002C6AC(u8 *a)
 {
     func_80027CB4(a);
@@ -4426,7 +4425,6 @@ s32 func_80032A88(s32 arg0) {
     return (s32) (rand() - 0x4000) >> arg0;
 }
 
-
 void func_80032AB4(void *pos, u8 *scale)
 {
     s32 v[3];
@@ -4482,7 +4480,6 @@ void func_80032CBC(void *pos, u8 *scale)
     gte_SetRotMatrix(D_1F800000);
     gte_SetTransMatrix(D_1F800000);
 }
-
 
 s32 func_80032EB8(s16 bias)
 {
@@ -5511,7 +5508,6 @@ void func_8003A5E4(u8 *a, u8 *b)
 }
 
 typedef struct ActorY36 { u8 pad0[0x36]; s16 y; } ActorY36;
-
 void func_8003A790(u8 *a)
 {
     s32 i;
@@ -5613,7 +5609,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ProjectAndQueueFourVertexPrimitive);
 
 extern u8 D_1F800247;
 void f_DrawActorModelByRenderMode(u8 *a);
-
 void f_UpdateAndDrawTombaModel(void) {
     u8 *a = D_800E7E80_f78d;
 
@@ -6762,7 +6757,6 @@ s32 f_StartEvent(s32 ev)
     D_800ED058_93c7[0x15] += 1;
     return 1;
 }
-
 
 s32 f_UpdateEvent(s32 ev)
 {
@@ -13583,7 +13577,6 @@ static inline void PlaceOnSupport_271C(u8 *a, u8 *s, s16 ang, s32 r0)
     *(u16 *)(a + 0x2E) = *(u16 *)(s + 0x2C) + ((rcos(ang) * r) >> 12);
     *(u16 *)(a + 0x36) = *(u16 *)(s + 0x34) - ((rsin(ang) * r) >> 12);
 }
-
 s32 func_8006271C(u8 *a, s32 f)
 {
     u8 *s = *(u8 **)(a + 0x10);
@@ -13658,7 +13651,6 @@ detach:
     f_DetachTombaFromSupport(a, 0);
     return 0;
 }
-
 
 void f_UpdateTombaClingVerticalMotion(u8 *a, u8 *b, s32 f)
 {
@@ -18505,7 +18497,6 @@ void func_80073CD8(u8 *a)
 }
 
 void func_8004C930();
-
 u8 *func_8007413C(u8 *a)
 {
     u8 *p = f_AllocateActor(a, 0, 5, 4);
@@ -19939,7 +19930,6 @@ extern u8 D_800ED8C4;
 extern u8 D_800F2410_a6e3[];
 extern u8 D_800F26C8_05e2[];
 extern u8 D_800F2738_371f[];
-
 void func_800798F8(void)
 {
     s32 i;
@@ -21610,7 +21600,6 @@ extern u8 D_1F80027A_3214[];
 extern u16 D_1F80017C_7f8c[];
 extern u16 D_1F8001A4_b8b0[];
 s32 f_TestAndQueueActorForRender();
-
 void func_80080424(u8 *a)
 {
     s32 draw = 0;

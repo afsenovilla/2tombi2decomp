@@ -1913,7 +1913,6 @@ void func_80111564(u8 *a)
 }
 
 typedef struct { u8 a, b, c, d; } Ent;
-
 void func_80111670(u8 *a)
 {
     Ent *e;
@@ -1957,7 +1956,6 @@ void func_80111670(u8 *a)
 extern u32 *D_800BF544_5fe3;
 extern u32 *D_800ED8C8;
 extern s32 D_1F800080_e4a3;
-
 void func_801117C8(u8 *a0)
 {
     u8 *a = a0;
@@ -2005,7 +2003,6 @@ void func_801117C8(u8 *a0)
 }
 
 extern u8 *D_800ECF88;
-
 void func_80111980(u8 *a)
 {
     Ent *e;

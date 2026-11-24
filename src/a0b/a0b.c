@@ -1342,7 +1342,6 @@ INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801110BC);
 
 extern u8 *D_800ECF88;
 typedef struct { u8 a, b, c, d; } Ent;
-
 void func_801113B4(u8 *a)
 {
     Ent *e;

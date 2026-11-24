@@ -2107,7 +2107,6 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80112D10);
 #define W_211f(p, o) (*(u32 *)((u8 *)(p) + (o)))
 typedef struct { u8 v[6][4]; } Tab64;
 extern Tab64 D_801091F8;
-
 void func_80113068(u8 *a)
 {
     Tab64 t = D_801091F8;
@@ -2168,7 +2167,6 @@ void func_80113068(u8 *a)
 
 extern s16 D_80129854[];
 extern s32 D_80129954[];
-
 void func_80113330(void)
 {
     s16 *p = D_80129854;
@@ -2217,7 +2215,6 @@ extern u32 *D_800ED8C8;
 extern u32 D_80129954_592f[];
 #define gte_SetRotMatrix(r0) __asm__ volatile("lw	$12, 0( %0 );" "lw	$13, 4( %0 );" "ctc2	$12, $0;" "ctc2	$13, $1;" "lw	$12, 8( %0 );" "lw	$13, 12( %0 );" "lw	$14, 16( %0 );" "ctc2	$12, $2;" "ctc2	$13, $3;" "ctc2	$14, $4" : : "r"(r0) : "$12", "$13", "$14")
 #define gte_SetTransMatrix(r0) __asm__ volatile("lw	$12, 20( %0 );" "lw	$13, 24( %0 );" "ctc2	$12, $5;" "lw	$14, 28( %0 );" "ctc2	$13, $6;" "ctc2	$14, $7" : : "r"(r0) : "$12", "$13", "$14")
-
 void func_801135EC(u8 *a)
 {
     s16 *v = D_80129854;
@@ -3214,7 +3211,6 @@ typedef struct {
     s32 f40;
 } Sub;
 extern u16 D_1F8000F2;
-
 void func_80117A64(u8 *a)
 {
     s16 t;

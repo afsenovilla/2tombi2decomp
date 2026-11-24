@@ -272,6 +272,21 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - Functions with no frame and `or t0,zero,a0` moves (gcc emits addu) are hand-written assembly: mark them, do not
   try to match them.
 
+**Round 9 forms**
+- Three scratchpad globals read in a row, retail loading all `lui`s first: pointer locals in a block `{ s16 *p0 =
+  &D_1F800160; s16 *p1 = &D_1F800162; s16 *p2 = &D_1F800164; dx = *p0 - H(a,0x2E); ... }`.
+- Strength-reduced pointer registers follow the order of the pointer increments at the end of the loop body and of
+  their inits before the loop (not the declaration order): permlines on the init lines.
+- A value stored with different constants per path: write the store with its constant in every branch.
+- `__asm__ volatile("");` between statements: a scheduler barrier that emits nothing.
+- Check callee argument counts against matched callers before blaming registers (m2c invents arguments; a `li a0`
+  that moved into a delay slot means the call has none). An s16-returning pending callee: call it through
+  `((s16 (*)(u8 *))f)(a)`.
+- `u16 spd = (s8)tbl[i];` gives `lbu; sll 24; sra 24` (an s32 local gives `lb`); `s32 y0 = *(s16 *)(a + 0x156);` keeps
+  `lh` (an s16 local gives `lhu`); 4-byte records walked with a counter: `e[i].f`, not `e++`; an angle stepping per
+  iteration: `i * 0xC3` in the calls; `do { n++; } while (n->w != 0);` for the delay-slot increment loop.
+- Nested-switch state machines: write them from the retail asm (statemachine.py drafts are broken for them).
+
 **Switch and jump-table shapes (more)**
 - Duplicate the cases with identical code to get a jump table whose entries share a target (gcc builds the table,
   then cross-jumps the blocks); `case 1: d = X; break; case 2: d = X; break; default: d = X;` gives separate tree
