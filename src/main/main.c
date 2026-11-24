@@ -14036,7 +14036,63 @@ void func_80067CA4(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80067DA8);
+typedef struct {
+    s16 x, y, w, h;
+} Rect_7DA8;
+extern u16 D_800A4800[];
+extern u16 D_800A4840[];
+extern u16 D_800A4880[];
+extern u16 D_800A48C0[];
+extern u16 D_800A4900[];
+extern u16 D_800A4940[];
+extern u16 D_800A4980[];
+extern u16 D_800A49A0[];
+extern u16 D_800A49C0[];
+
+void func_80067DA8()
+{
+    Rect_7DA8 r;
+    u16 *a, *b, *c, *d, *e;
+
+    switch (D_800BF88D) {
+    case 0:
+        a = D_800A4800;
+        b = a + 0x10;
+        c = D_800A48C0;
+        d = c + 0x10;
+        e = D_800A4980;
+        break;
+    case 1:
+        a = D_800A4840;
+        b = a + 0x10;
+        c = D_800A4900;
+        d = c + 0x10;
+        e = D_800A49A0;
+        break;
+    case 2:
+        a = D_800A4880;
+        b = a + 0x10;
+        c = D_800A4940;
+        d = c + 0x10;
+        e = D_800A49C0;
+        break;
+    default:
+        return;
+    }
+    r.w = 0x10;
+    r.h = 1;
+    r.x = 0x1F0;
+    r.y = 0x1E2;
+    LoadImage(&r, a);
+    r.y = 0x1E5;
+    LoadImage(&r, b);
+    r.y = 0x1C9;
+    LoadImage(&r, c);
+    r.y = 0x1D0;
+    LoadImage(&r, d);
+    r.y = 0x1B3;
+    LoadImage(&r, e);
+}
 
 void f_ApplyTombaClothesAppearanceAndPhysics(u8 *a)
 {
