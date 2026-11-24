@@ -11547,7 +11547,71 @@ void func_800531DC(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800532A0);
+extern u8 D_800A4478[];
+
+s32 func_800532A0(u8 *a)
+{
+    u16 f = *(u16 *)(a + 0x6A);
+    s32 sw = f & 0xF00;
+    s32 hi = f >> 12;
+    s16 v;
+    s32 neg;
+    s32 h;
+    u8 k;
+
+    switch ((s32)((u32)sw >> 8)) {
+    case 0:
+        v = *(s16 *)(a + 0x142);
+        neg = (u32)v >> 31;
+        do {
+            h = hi;
+        } while (0);
+        if (h == 2) {
+            if (a[0x147] == 0) {
+                if (*(s16 *)(a + 0x44) > 0) {
+                    *(s16 *)(a + 0x44) = *(s16 *)(a + 0x44) >> 1;
+                }
+            } else {
+                a[0x16A] = neg + 4;
+            }
+        } else if (h == 3) {
+            if (abs(*(s16 *)(a + 0x44)) >= 0x1500 || abs(v) >= 0xF0) {
+                a[0x16A] = neg + 0xE;
+            }
+        }
+        break;
+    case 1 ... 3:
+        if (hi == 3 && D_800BF870.unk0 == 4) {
+            a[0x16A] = 6;
+        }
+        break;
+    case 5:
+        h = hi;
+        if (h == 3) {
+            if (D_800BF870.unk0 == 4) {
+                a[0x16A] = 6;
+            }
+        } else if (h == 4) {
+            if (*(u16 *)(a + 0x17E) & 0x30) {
+                a[0x16A] = 8;
+            }
+        }
+        break;
+    }
+    k = D_800A4478[(a[0x16A] & 0xE) >> 1];
+    if (k != 0) {
+        if (a[5] != k) {
+            a[5] = k;
+            a[6] = 0;
+            a[7] = 0;
+            return 1;
+        }
+        if (a[5] == 0x33) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 s32 func_8005344C(void *arg0) {
     if ((D_800BF870.unk0 == 4) && !(M2C_FIELD(&D_800BF870, u16 *, 0x5E6) & 0x10) && ((M2C_FIELD(arg0, u16 *, 0x6A) & 0xF00) == 0x500)) {
