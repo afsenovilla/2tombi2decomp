@@ -2824,7 +2824,65 @@ void func_800286CC(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800288AC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80028B70);
+extern s32 D_1F800000[];
+extern s16 D_1F800002[];
+extern s16 D_1F800004[];
+extern s32 D_1F800014[];
+extern s32 D_1F8000D0_42d8[];
+extern u8 D_800A203C[];
+extern u8 D_8009F05C[];
+extern void (*D_800A4AA0[])(u8 *);
+extern s32 (*D_800A3B78[])(u8 *);
+extern u8 D_800A1CD4[];
+void func_80028B70(u8 *a)
+{
+    s32 *z = (s32 *)D_1F800090;
+    s32 pad[4];
+    s32 v[3];
+    u8 *pos;
+    u8 *p;
+    u8 *m;
+    s32 b;
+
+    p = *(u8 **)(a + 0x3C);
+    if (p != NULL) {
+        b = p[0];
+        if (b & 0x80) {
+            *(s32 *)(a + 0x40) = 0;
+            b &= 0x7F;
+        } else {
+            *(u8 **)(a + 0x40) = p + 1;
+        }
+        m = (*(u8 ***)(a + 0x50))[b];
+        gte_ldfcdir(0, 0, 0);
+        *z = 0;
+        RotMatrix_gte((s16 *)(a + 0x48), D_1F800000);
+        v[0] = D_800A1CD4[0] * 4;
+        v[1] = D_800A1CD4[1] * 4;
+        v[2] = D_800A1CD4[2] * 4;
+        ScaleMatrix(D_1F800000, v);
+        pos = a + 0x2C;
+        gte_SetRotMatrix(D_1F8000F8);
+        gte_ldclmv(D_1F800000);
+        gte_rtir();
+        gte_stclmv(D_1F800000);
+        gte_ldclmv(D_1F800002);
+        gte_rtir();
+        gte_stclmv(D_1F800002);
+        gte_ldclmv(D_1F800004);
+        gte_rtir();
+        gte_stclmv(D_1F800004);
+        gte_ldv0(pos);
+        gte_rtv0();
+        gte_stlvnl(D_1F800014);
+        D_1F800000[5] += D_1F8000D0_42d8[15];
+        D_1F800000[6] += D_1F8000D0_42d8[16];
+        D_1F800000[7] += D_1F8000D0_42d8[17];
+        gte_SetRotMatrix(D_1F800000);
+        gte_SetTransMatrix(D_1F800000);
+        f_DrawPackedGouraudQuadStream(m, 0, *(s16 *)(a + 0x32), 0);
+    }
+}
 
 typedef struct { void *p0; void *p4; u16 *p8; } FxDef_8E30;
 extern FxDef_8E30 D_800A20B4[];
@@ -3065,12 +3123,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80029F6C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002A584);
 
-extern s32 D_1F800000[];
-extern s16 D_1F800002[];
-extern s16 D_1F800004[];
-extern s32 D_1F800014[];
-extern s32 D_1F8000D0_42d8[];
-extern u8 D_800A1CD4[];
 extern u8 D_800A1FC4[];
 extern u8 D_8009FB0C[];
 /* f_SetEffectRenderTransform, inlined */
@@ -3131,7 +3183,6 @@ void func_8002A834(u8 *a0)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002AB5C);
 
-extern u8 D_800A203C[];
 extern u8 D_8009FAE8[];
 extern u8 D_800A1CCC[];
 extern s8 D_1F800094[];
@@ -3228,7 +3279,6 @@ void func_8002BC9C(u8 *a)
     }
 }
 
-extern u8 D_8009F05C[];
 void func_8002C138(u8 *a)
 {
     s16 rot[4];
@@ -3349,7 +3399,17 @@ void func_8002C548(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002C6AC);
+
+void func_8002C6AC(u8 *a)
+{
+    func_80027CB4(a);
+    if (*(s32 *)(a + 0x54) != 0) {
+        *(s32 *)D_1F800090 = 0;
+        gte_ldfcdir(0, 0, 0);
+        SetRT_C138(a + 0x2C, a + 0x50, (s16 *)(a + 0x48));
+        f_DrawPackedGouraudQuadStream(*(s32 *)(a + 0x54), *(s32 *)(a + 0x58), -10, 0);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002C920);
 
@@ -4132,7 +4192,6 @@ void func_80031D24(void *pos, u8 *scale, s16 *rot)
     gte_SetTransMatrix(D_1F800000);
 }
 
-extern void (*D_800A4AA0[])(u8 *);
 void func_80031F84(void *pos, u8 *scale, s16 *rot)
 {
     s32 v[3];
@@ -4314,7 +4373,6 @@ s32 func_80032A88(s32 arg0) {
     return (s32) (rand() - 0x4000) >> arg0;
 }
 
-extern s32 (*D_800A3B78[])(u8 *);
 
 void func_80032AB4(void *pos, u8 *scale)
 {
@@ -5399,9 +5457,50 @@ void func_8003A5E4(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003A790);
-
 typedef struct ActorY36 { u8 pad0[0x36]; s16 y; } ActorY36;
+
+void func_8003A790(u8 *a)
+{
+    s32 i;
+
+    switch (a[5]) {
+    case 0:
+        for (i = 0; i < a[8]; i++) {
+            func_8003A290(a, ((PartOwner *)a)->parts[i]);
+        }
+        ((ActorY36 *)a)->y -= 0x10;
+        if (((ActorY36 *)a)->y < D_801003F8 + 8) {
+            ((ActorY36 *)a)->y = D_801003F8 + 8;
+            a[0x5E] = 1;
+        }
+        break;
+    case 1:
+        a[5]++;
+        *(s16 *)(a + 0x40) = 0x3C;
+        for (i = 0; i < a[8]; i++) {
+            ((PartOwner *)a)->parts[i][0x3E] = 0;
+        }
+    case 2:
+        if (--*(s16 *)(a + 0x40) == -1) {
+            for (i = 0; i < a[8]; i++) {
+                ((PartOwner *)a)->parts[i][0x3E] = 0;
+            }
+            a[0x5E] = 2;
+            a[5]++;
+        } else {
+            for (i = 0; i < a[8]; i++) {
+                func_8003A3E8(a, ((PartOwner *)a)->parts[i]);
+            }
+        }
+        break;
+    case 3:
+        for (i = 0; i < a[8]; i++) {
+            func_8003A5E4(a, ((PartOwner *)a)->parts[i]);
+        }
+        break;
+    }
+}
+
 void func_8003A9A0(u8 *a)
 {
     s32 i;
