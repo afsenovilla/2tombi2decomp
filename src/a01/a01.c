@@ -5648,7 +5648,94 @@ s32 func_8011FC88(u8 *a) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_HandleThirstyMinerInteraction);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011FEF8);
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+u8 *func_8007DEF8();
+
+s32 func_8011FEF8(u8 *a) {
+    u8 *t = D_800BF844;
+    u8 *e;
+    u8 *c;
+    s16 s;
+    s32 k;
+
+    switch (a[0x78]) {
+    case 0:
+        a[0x7A] = 1;
+        *(u8 **)(a + 0x10) = func_8007DEF8(6, 1, 0);
+        H(a, 0x4A) = -0x4000;
+        H(a, 0x50) = 0x400;
+        a[0xBF] = 0xFF;
+        a[0x78]++;
+        break;
+    case 1:
+        if ((H(a, 0x4A) += H(a, 0x50)) >= 0x4000) {
+            H(a, 0x4A) = 0x4000;
+            a[0x78]++;
+        }
+    case 2:
+        if (t == NULL) {
+            return 0;
+        }
+        W(t, 0x30) += H(a, 0x4A) << 8;
+        __asm__ volatile("");
+        k = D_1F80017C;
+        H(t, 0x54) += 0x188;
+        if (k & 1) {
+            e = func_8003116C(8, t + 0x2C, -0xA);
+            if (e != NULL) {
+                e[0x28] |= 0x80;
+                H(e, 0x2E) += 0x30;
+                s = func_80083F50(H(t, 0x54)) >> 6;
+                H(e, 0x2E) -= s + (s >> 1);
+                s = func_80083E80(H(t, 0x54)) >> 6;
+                H(e, 0x30) -= s + (s >> 1);
+            }
+        }
+        if (H(t, 0x32) < -0x1770) {
+            return 0;
+        }
+        H(t, 0x32) = -0x1770;
+        e = func_800310F4(0x20, 0);
+        if (e != NULL) {
+            e[0x28] |= 0x80;
+            H(e, 0x50) = H(t, 0x2E);
+            e += 0x50;
+            H(e, 8) = H(t, 0x2E);
+            H(e, 2) = H(t, 0x32) + 0x30;
+            s = func_80083F50(H(t, 0x54)) >> 6;
+            H(e, 2) -= s + (s >> 1);
+            H(e, 0xA) = H(e, 2) + 0x64;
+            H(e, 4) = H(t, 0x36);
+            s = func_80083E80(H(t, 0x54)) >> 6;
+            H(e, 4) -= s + (s >> 1);
+            H(e, 0xC) = H(e, 4) - 0x190;
+            func_80074590(7, 0, 0);
+        }
+        func_80051B04(*(u8 **)(t + 0xC0), 1, 0);
+        H(a, 0x40) = 0;
+        a[0x78]++;
+        break;
+    case 3:
+        if (++H(a, 0x40) < 0x14) {
+            return 0;
+        }
+        *(s32 *)(a + 0x14) = 0;
+        a[0x78]++;
+        break;
+    case 4:
+        c = *(u8 **)(a + 0x10);
+        if (c != NULL) {
+            if (c[4] != 2) {
+                return 0;
+            }
+            c[4] = 3;
+            *(u8 **)(a + 0x10) = NULL;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 void func_80120200(u8 *a) {
     u8 *p = FP(a, 0x14);
