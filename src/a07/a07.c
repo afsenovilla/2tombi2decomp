@@ -1580,7 +1580,28 @@ void func_80113394(u8 *a, s32 ang) {
     a[0x66] |= 1;
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80113470);
+#define U(p, o) (*(u16 *)((p) + (o)))
+#define S(p, o) (*(s16 *)((p) + (o)))
+extern u8 D_800BF817;
+extern u8 *D_80131D88[];
+
+void func_80113470(u8 *t, s32 i)
+{
+    u8 *p;
+    u32 o;
+
+    o = U(t, 0x6A) & 0xF0;
+    p = D_80131D88[D_800BF817];
+    p = p + i * 8 + (o >> 1);
+    U(t, 0x2E) = U(p, 0);
+    if (S(t, 0x17E) < 0) {
+        U(t, 0x32) = U(p, 2) + 0x46;
+    } else {
+        U(t, 0x32) = U(p, 2);
+    }
+    U(t, 0x36) = U(p, 4);
+    U(t, 0x56) = U(p, 6);
+}
 
 typedef struct {
     s16 a;
