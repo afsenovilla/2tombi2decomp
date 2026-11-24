@@ -2491,7 +2491,38 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80116094);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateFishermensTownAmbientAudio);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801167AC);
+void func_801167AC(u8 *a) {
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        f_SpawnFishermensTownActorsFromPlacementTable(a, 0);
+        g = D_800BF808_1760;
+        if (g[0xE] != 0 && g[0xF] == 2) {
+            a[3] = g[0xF] + 1;
+            f_SpawnFishermensTownActorsFromPlacementTable(a, 3);
+            a[5] = 3;
+        }
+        func_8004D8D8(0, 0);
+        func_80115B88(0);
+        func_8013EDD0();
+        break;
+    case 1:
+        if (func_80026AD0(a) != 0) {
+            f_SpawnFishermensTownActorsFromPlacementTable(a, a[3]);
+        }
+        func_80116094(a);
+        func_80026A68(a);
+        func_80115B88(1);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007ADD0(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", block);
 
