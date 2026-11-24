@@ -2287,7 +2287,38 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80117D4C);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80117FE0);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80118184);
+extern u8 *D_800BF864_ee3c;
+
+void func_80118184(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        if (a[3] == 0) {
+            s16 *p = (s16 *)(a + 0x60);
+            p[0] = 0;
+            p[1] = 0x299F;
+            p[2] = -0xC80;
+            D_800BF864_ee3c = a;
+        }
+        a[4]++;
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            func_8011793C(a);
+            func_80117D4C(a);
+            break;
+        case 1:
+            func_80117FE0(a);
+            break;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern void *D_800BF864;
 void func_80118270(void *arg0) {
