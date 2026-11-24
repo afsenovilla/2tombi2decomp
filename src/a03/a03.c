@@ -288,7 +288,77 @@ loop: {
     if (i < 5) goto loop;
 }
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_CollectNearbyTrolleySeeds);
+extern u8 *D_1F800208;
+extern TrkNode *D_8011BB50;
+extern s32 D_8011BB54;
+extern s32 D_8011BB58;
+extern s32 D_8011BB5C;
+typedef struct { s16 x, y, z; } TrkPos_B910;
+
+void f_CollectNearbyTrolleySeeds(void) {
+    u8 *r = D_800E7E80;
+    u8 *a = D_1F800208;
+    TrkPos_B910 p;
+    TrkNode *cur;
+    u8 *t;
+    s32 i;
+
+    f_UpdateTrolleyAttachedModelTransforms(r);
+    {
+        s16 x = *(s16 *)(((PartOwner *)r)->parts[1] + 0x2C);
+        cur = *(TrkNode **)(a + 0x60);
+        p.x = x;
+    }
+    p.y = *(s16 *)(((PartOwner *)r)->parts[1] + 0x30);
+    p.z = *(s16 *)(((PartOwner *)r)->parts[1] + 0x34);
+    t = a + 0x60;
+    p.x -= (cur->m[0][2] * *(s16 *)(t + 0xA)) >> 12;
+    p.y -= (cur->m[1][2] * *(s16 *)(t + 0xA)) >> 12;
+    p.z -= (cur->m[2][2] * *(s16 *)(t + 0xA)) >> 12;
+    if (D_8011BB50 != cur) {
+        D_8011BB5C = 0;
+    }
+    if (!(*(s16 *)(r + 0x17E) & 0x8200)) {
+        if (++D_8011BB5C < 3) {
+            for (i = 0; i < 5; i++) {
+                TrkNode *n = &D_80111B48[D_8011BA48[i].idx];
+                u8 *o = (u8 *)D_8011BA48[i].obj;
+                if (o != NULL) {
+                    if (n == cur) {
+                        s32 dx = *(s16 *)(o + 0x2C) - p.x;
+                        s32 dy = *(s16 *)(o + 0x2E) - p.y;
+                        s32 dz = *(s16 *)(o + 0x30) - p.z;
+                        s32 d = (u16)func_80077FB0(dx * dx + dy * dy + dz * dz);
+                        if (!(t[0x12] & 1)) {
+                            d >>= 2;
+                        }
+                        if (d < 150) {
+                            if (D_8011BA48[i].f1C == 0) {
+                                u8 *s = func_800310F4(0x1F, 0);
+                                if (s != NULL) {
+                                    *(s16 *)(s + 0x2C) = *(s16 *)((u8 *)D_8011BA48[i].obj + 0x2C);
+                                    *(s16 *)(s + 0x2E) = *(s16 *)((u8 *)D_8011BA48[i].obj + 0x2E);
+                                    *(s16 *)(s + 0x30) = *(s16 *)((u8 *)D_8011BA48[i].obj + 0x30);
+                                }
+                                D_8011BA48[i].f1C = 1;
+                                ((u8 *)D_8011BA48[i].obj)[4] = 2;
+                                func_8004ED0C(0x36, 2);
+                                r[0x2B] |= 1 << i;
+                            }
+                        } else {
+                            D_8011BA48[i].f1C = 0;
+                        }
+                    } else {
+                        D_8011BA48[i].f1C = 0;
+                    }
+                }
+            }
+        }
+    }
+    D_8011BB50 = *(TrkNode **)t;
+    D_8011BB54 = *(s16 *)(t + 0xE);
+    D_8011BB58 = *(s16 *)(t + 0x16);
+}
 
 typedef struct TrkMat { s16 m[3][3]; s16 pad; s32 t[3]; } TrkMat;
 typedef struct { u8 pad0[0x12]; s16 h; s16 w; } TrkDims_BBB8;
@@ -330,7 +400,6 @@ typedef struct { s32 a, b; } TrkPair_BDEC;
 extern TrkPair_BDEC D_8011BCD8[];
 extern s32 D_8011C0D8;
 extern s32 D_8011C0DC;
-extern u8 *D_1F800208;
 extern s32 D_1F80020C;
 void f_UpdatePlayerTrolleyActor(u8 *a);
 
