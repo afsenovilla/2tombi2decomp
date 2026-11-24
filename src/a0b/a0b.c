@@ -1334,7 +1334,187 @@ INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_8010F544);
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", f_UpdateLastEvilPigProjectileAttack);
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_8010FC1C);
+extern u8 D_800BF808_1760[];
+extern u8 D_800ECF58_742e[];
+extern u8 D_8011A634[];
+extern u8 D_8011A574[];
+extern u8 D_80124F20[];
+extern u8 D_8002AB5C[];
+void func_8010EF30();
+void func_80110118();
+extern s32 D_1F800254;
+static inline s32 set_pos(u8 *a, s16 *v)
+{
+    H(a, 0x2E) = v[0];
+    H(a, 0x32) = v[1];
+    H(a, 0x36) = v[2];
+    return func_801175B8(a, 1, 0);
+}
+
+void func_8010FC1C(u8 *a)
+{
+    u8 *pl = D_800E7E80;
+    u8 *t;
+    u8 *p;
+
+    switch (a[4]) {
+    case 0:
+        switch (a[5]) {
+        case 0:
+            t = D_800ECF58_742e;
+            if (func_800519E0(a, 0x11, *(void **)(t + 0x48), D_8011A634) != 0) {
+                break;
+            }
+            H(a, 0x80) = 0x5A;
+            H(a, 0x82) = 0xB4;
+            H(a, 0x84) = 0xAA;
+            H(a, 0x86) = 0x10E;
+            a[0x1B] = 0;
+            H(a, 0x58) = 0;
+            H(a, 0x56) = 0;
+            H(a, 0x54) = 0;
+            a[0x47] = 0;
+            H(a, 0x40) = 0;
+            a[0x29] = 0;
+            a[0x5E] = 0;
+            a[1] = 0;
+            a[0x1A] = 0x80;
+            a[0x19] = 0x80;
+            a[0x18] = 0x80;
+            a[0xD] |= 1;
+            p = func_8007A980(0, 6, 1);
+            if (p != NULL) {
+                *(void **)(p + 0x1C) = func_8010EF30;
+                p[0xB] = 0x20;
+                *(u8 **)(p + 0x10) = a;
+                *(void **)(p + 0x18) = D_8002AB5C;
+                p[0x28] |= 0x80;
+            }
+            *(void **)(a + 0x3C) = *(void **)(t + 0x4C);
+            D_1F80024C_2bfb = a;
+            if (D_800BFA1A & 2) {
+                *(void **)(a + 0x7C) = D_80124F20;
+                a[5]++;
+                break;
+            }
+            a[0] = 8;
+            a[0xBE] = 0;
+            func_80040CDC(a, D_80124F20, D_8011A574);
+            a[0x7B] = 0;
+            *(void **)(a + 0x1C) = func_80110118;
+            a[5] = 0;
+            func_80041718(a, 0, 0);
+            D_1F800254 = set_pos(a, D_801197E0);
+            break;
+        case 1:
+            a[4] = 1;
+            a[5] = 0;
+            a[6] = 0;
+            a[7] = 0;
+            H(a, 0x64) = 0;
+            H(a, 0x66) = 0;
+            H(a, 0x68) = 0;
+            H(a, 0x6A) = 0;
+            H(a, 0x6C) = 0;
+            H(a, 0x6E) = 3;
+            a[0x2A] = 0;
+            func_80041718(a, 0, 0);
+            a[0] = 2;
+            H(a, 0x56) = func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f);
+            break;
+        }
+        break;
+    case 1:
+        a[1] = 1;
+        H(a, 0x80) = 0x5A;
+        H(a, 0x82) = 0xB4;
+        H(a, 0x84) = 0xAA;
+        H(a, 0x86) = 0x10E;
+        if (a[0x2B] != 0) {
+            a[0x2B]--;
+        } else {
+            if (D_800BF809 == 0) {
+                func_8004190C(a);
+            }
+            switch (a[5]) {
+            case 0:
+                {
+                    u8 *g = D_800BF808_1760;
+                    if (((s8 *)g)[5] != 0 || g[1] != 0) {
+                        break;
+                    }
+                }
+                switch (a[6]) {
+                case 0:
+                    a[6]++;
+                case 1:
+                    func_8010CA34(a);
+                    if (func_8010C948(a) != 0) {
+                        a[1] = 1;
+                        a[0] = 2;
+                        a[5] = 1;
+                        a[6] = 1;
+                        func_80041768(a, 3, 4);
+                    }
+                    a[7] = 0;
+                    break;
+                }
+                H(a, 0x56) = func_800776F8((s16)func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f), H(a, 0x56), 0x80);
+                break;
+            case 1:
+                func_8010D1F0(a);
+                break;
+            case 2:
+                func_8010D884(a);
+                break;
+            case 3:
+                func_8010E0E8(a);
+                break;
+            case 4:
+                if (D_800BF809 != 0) {
+                    break;
+                }
+                switch (a[6]) {
+                case 0:
+                    func_80041768(a, 0xA, 4);
+                    H(a, 0x40) = (func_8009A450() & 0x30) + 0x28;
+                    a[6]++;
+                    break;
+                case 1:
+                    if (--H(a, 0x40) == 0) {
+                        func_80041768(a, 0, 0xA);
+                        a[5] = 0;
+                        a[6] = 0;
+                        H(a, 0x64) = 0;
+                    }
+                    H(a, 0x56) = func_800776F8((s16)func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f), H(a, 0x56), 0x80);
+                    break;
+                }
+                break;
+            case 5:
+                func_8010F544(a);
+                break;
+            case 6:
+                f_UpdateLastEvilPigProjectileAttack(a);
+                break;
+            }
+        }
+        if (a[1] != 0) {
+            func_80077E7C(a);
+            func_800518FC(a);
+        }
+        a[0x5F] = 0;
+        a[0x5E] = 0;
+        a[0x29] = 0;
+        break;
+    case 2:
+        func_8010E22C(a, pl);
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80110118);
 
