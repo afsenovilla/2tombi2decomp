@@ -13577,7 +13577,120 @@ void func_800624B4(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006271C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaClingVerticalMotion);
+extern u8 D_800A4700[];
+
+void f_UpdateTombaClingVerticalMotion(u8 *a, u8 *b, s32 f)
+{
+    u16 y;
+    u16 spd;
+    s32 y0;
+    s32 k;
+
+    if (f == 3) {
+        if (f_ResolveTombaGroundTerrainContact(a) & 1) {
+            *(s16 *)(a + 0x4A) = 0;
+            *(s16 *)(a + 0x50) = 0;
+            a[0x148] = 0;
+            b[0x29] = 0;
+            a[0x164] = 0;
+            *(s32 *)(a + 0x158) = 0;
+            a[5] = 0;
+            a[6] = 0;
+            f_SetTombaAnimationIfChanged(a, 2, 3);
+        }
+        return;
+    }
+    if (f & 4) {
+        *(s16 *)(a + 0x4A) += 4;
+        if (*(s16 *)(a + 0x4A) >= 0x1E) {
+            *(s16 *)(a + 0x4A) = 0x1E;
+        }
+        spd = *(u16 *)(a + 0x4A);
+    } else {
+        s32 i;
+
+        if (a[0x165] != 0) {
+            i = (f & 1) + 3;
+        } else {
+            i = f & 1;
+        }
+        spd = (s8)D_800A4700[i];
+    }
+    if (!(f & 1)) {
+        do {
+            y = *(u16 *)(a + 0x156);
+        } while (0);
+        *(s16 *)(a + 0x6A) = 0;
+        y0 = *(s16 *)(a + 0x156);
+        if (b[2] == 0x17 && b[0x47] != 2) {
+            if (f & 2) {
+                y -= 0x30;
+                *(u16 *)(a + 0x156) = y - (*(s16 *)(b + 0x4A) >> 8);
+            } else {
+                *(u16 *)(a + 0x156) = y + (spd - (*(s16 *)(b + 0x4A) >> 8));
+            }
+        } else {
+            *(u16 *)(a + 0x156) += spd;
+        }
+        if (f_ResolveTombaOverheadTerrainContact(a, 1) != 0) {
+            *(s16 *)(a + 0x156) = y0;
+        }
+        if (*(s16 *)(a + 0x156) < -*(s16 *)(b + 0x84)) {
+            *(s16 *)(a + 0x156) = -*(s16 *)(b + 0x84);
+        }
+        return;
+    }
+    y = *(u16 *)(a + 0x156) + spd;
+    do {
+        *(u16 *)(a + 0x156) = y;
+    } while (0);
+    if ((f & 0x80) || (b[2] == 0x17 && b[0x47] != 2)) {
+        k = 0;
+        if (*(s16 *)(a + 0x17E) < 0) {
+            k = 0x50;
+        }
+        if ((s16)y > k + (*(s16 *)(b + 0x86) - *(s16 *)(b + 0x84)) + *(s16 *)(a + 0x68)) {
+            *(s16 *)(a + 0x4A) = 0;
+            *(s16 *)(a + 0x50) = 0;
+            a[0x148] = 0;
+            b[0x29] = 0;
+            a[0x164] = 0;
+            *(s32 *)(a + 0x158) = 0;
+            *(s16 *)(a + 0x44) = 0;
+            *(u16 *)(a + 0x156) += 0x2C;
+            f_DetachTombaFromSupport(a, 0);
+            if (b[2] == 0x17) {
+                *(u16 *)(a + 0x4A) = *(u16 *)(b + 0x4A);
+                y = *(u16 *)(a + 0x156) + 0x2C;
+                *(u16 *)(a + 0x156) = y;
+                if (*(u16 *)(a + 0x17E) & 0x60) {
+                    *(u16 *)(a + 0x156) = y + ((*(u16 *)(b + 0x4A) & 0x1F00) >> 5);
+                }
+            }
+            return;
+        }
+    } else if (*(s16 *)(b + 0x86) - *(s16 *)(b + 0x84) < *(s16 *)(a + 0x156)) {
+        *(u16 *)(a + 0x156) = *(u16 *)(b + 0x86) - *(u16 *)(b + 0x84);
+    }
+    if (!(f & 0x40) && (f_ResolveTombaGroundTerrainContact(a) & 1)) {
+        b[0x29] = 0;
+        a[0x164] = 0;
+        *(s32 *)(a + 0x158) = 0;
+        a[6] = 0;
+        a[7] = 0;
+        if (f == 0x85) {
+            a[0x147] = 1 - a[0x147];
+            f_ResetTombaControlState(a);
+            a[5] = 0x35;
+            return;
+        }
+        *(s16 *)(a + 0x4A) = 0;
+        *(s16 *)(a + 0x50) = 0;
+        a[0x148] = 0;
+        a[5] = 0;
+        f_SetTombaAnimationIfChanged(a, 2, 3);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80062D8C);
 
