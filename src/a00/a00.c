@@ -4776,7 +4776,22 @@ s32 func_8011D8AC(u8 *a) {
     return 0;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011D910);
+void f_HandleKainenNpcActor();
+
+u8 *func_8011D910(u8 *a0, s32 a1) {
+    u8 *r;
+
+    if ((r = func_8007A980(3, 9, 0)) == NULL) {
+        return NULL;
+    }
+    r[2] = 6;
+    r[3] = a1;
+    *(void **)(r + 0x1C) = f_HandleKainenNpcActor;
+    if (r[3] == 0) {
+        *(void **)(r + 0x10) = a0 + 0x60;
+    }
+    return r;
+}
 
 void func_8012185C(void *arg0);
 void func_8012175C(u8 *a);
