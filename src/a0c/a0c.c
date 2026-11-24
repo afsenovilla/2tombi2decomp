@@ -3807,7 +3807,26 @@ u8 *f_SpawnGhostEvilPigRicochetProjectile(u8 *a, s32 k)
     return p;
 }
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8011836C);
+void func_8011836C(u8 *a)
+{
+    s32 dx, dy, dz, s, c;
+    {
+        s16 *p0 = &D_1F800160_71b4;
+        s16 *p1 = &D_1F800162_b816_b4b8;
+        s16 *p2 = &D_1F800164_d75f;
+        dx = *p0 - H(a, 0x2E);
+        dy = *p1 - H(a, 0x32);
+        dz = *p2 - H(a, 0x36);
+    }
+    s = func_80083F50(-H(a, 0x56));
+    c = func_80083E80(-H(a, 0x56));
+
+    H(a, 0x64) = func_800776F8((s16)func_80085690(dy, (s * dx + c * dz) >> 12), H(a, 0x64), 0x40);
+    H(a, 0x44) += 0xE0;
+    if (H(a, 0x44) > 0x1800) {
+        H(a, 0x44) = 0x1800;
+    }
+}
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", f_UpdateGhostEvilPigGraspActor);
 
