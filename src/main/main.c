@@ -5183,7 +5183,34 @@ s32 func_8003A1E4(u8 *a, u8 *b)
     return -((v - (s32)b) * 12) + 6;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003A290);
+void func_8003A290(u8 *a, u8 *b)
+{
+    switch (b[0x3E]) {
+    case 0:
+        b[0x3E] = 1;
+        *(s16 *)(b + 0x16) = (func_8003A1E4(a, b) * 16) / 24;
+        *(s16 *)(b + 0x10) = 0;
+        *(s16 *)(b + 0x12) = (rand() & 0xF) - 0xC0;
+        *(s16 *)(b + 0x8) = (rand() & 0x3F) << 6;
+    case 1:
+        *(s16 *)(b + 0x0) = *(s16 *)(b + 0x10) >> 4;
+        *(s16 *)(b + 0x10) += *(s16 *)(b + 0x16);
+        *(s16 *)(b + 0x2) += *(s16 *)(b + 0x12) >> 4;
+        *(s16 *)(b + 0x12) += 0x10;
+        *(s16 *)(b + 0x8) += 0x80;
+        if (*(s16 *)(b + 0x2) >= 0) {
+            *(s16 *)(b + 0x0) = func_8003A1E4(a, b);
+            *(s16 *)(b + 0x8) = 0;
+            b[0x3E]++;
+        }
+        break;
+    case 2:
+        if (b[0x3F] == 0) {
+            a[5]++;
+        }
+        break;
+    }
+}
 
 extern u8 D_800E7E81;
 void func_8003A3E8(void *a, u8 *s)
