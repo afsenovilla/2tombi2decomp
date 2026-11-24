@@ -4825,7 +4825,54 @@ void func_80119390(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80119510);
+extern u8 D_800E8008[];
+extern u8 D_80129E00[];
+extern u8 D_80129E0C[];
+s32 func_80119E68();
+
+void func_80119510(u8 *a)
+{
+    u8 *cam = D_800E8008;
+    u8 *e;
+
+    switch (a[6]) {
+    case 0:
+        S(a, 0x60) = 0x48;
+        func_80119E68(a, 2);
+        S(a, 0x42) = 6;
+        func_8006CC1C(cam, D_80129E0C, 0x1E);
+        a[6]++;
+        break;
+    case 1:
+        if (func_8006CDCC(cam) != 0) {
+            cam[0x76] = 1;
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (!(D_1F80017C & 7)) {
+            func_80074590(0x87, 0, 0);
+            e = func_8003116C(0x302, a + 0x2C, -0x28);
+            if (e != NULL) {
+                e[0x28] |= 0x80;
+            }
+        }
+        if (func_80076D68(a) == 1) {
+            if (--S(a, 0x42) == 0) {
+                cam[0x76] = 0;
+                func_8006CC1C(cam, D_80129E00, 0x1E);
+                a[6]++;
+            }
+        }
+        break;
+    case 3:
+        if (func_8006CDCC(cam) != 0) {
+            a[5] = 0;
+            a[6] = 1;
+        }
+        break;
+    }
+}
 
 extern u8 *D_800BF844_3cf3;
 
@@ -5390,7 +5437,6 @@ void func_8011AC0C(void *arg0) {
 }
 
 typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner8011AC40;
-extern u8 D_800E8008[];
 #define AC40_I16(o) (*(s16 *)(a->pad + (o)))
 #define AC40_W16(o) (*(u16 *)(a->pad + (o)))
 #define AC40_S32(o) (*(s32 *)(a->pad + (o)))
