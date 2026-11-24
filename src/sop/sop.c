@@ -1023,7 +1023,52 @@ s32 func_8010B8AC(u8 *a)
 
 INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010B990);
 
-INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010BAF8);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+
+void func_8010BAF8(u8 *a)
+{
+    u8 *q;
+    s32 s;
+
+    if (func_8007778C(a) == 0) {
+        a[4] = 3;
+    }
+    s = a[5];
+    switch (s) {
+    case 0:
+        a[5] = 1;
+        q = func_8010B44C(*(u8 **)(a + 0x10));
+        H(q, 0x2E) = H(a, 0x2E);
+        H(q, 0x32) = H(a, 0x32);
+        H(q, 0x36) = H(a, 0x36);
+    case 1:
+        if (D_800BF9B4 == 3) {
+            H(a, 0x40) = 0xA;
+            a[5]++;
+        }
+        goto follow;
+    case 2:
+        if (--H(a, 0x40) == 0) {
+            H(a, 0x4A) = -0x4000;
+            H(a, 0x50) = 0x400;
+            a[5]++;
+        }
+    follow:
+        q = *(u8 **)(a + 0x10);
+        H(a, 0x2E) = H(*(u8 **)(q + 0xDC), 0x2C);
+        H(a, 0x32) = H(*(u8 **)(q + 0xDC), 0x30) + 0x14;
+        H(a, 0x36) = H(*(u8 **)(q + 0xDC), 0x34) - 0x3C;
+        break;
+    case 3:
+        H(a, 0x5A) += 0x80;
+        *(s32 *)(a + 0x30) += H(a, 0x4A) << 8;
+        H(a, 0x4A) += H(a, 0x50);
+        if (a[1] == 0 || H(a, 0x4A) == 0) {
+            a[4] = s;
+        }
+        break;
+    }
+}
 
 extern s32 D_800ECF80;
 extern M2C_UNK D_8010D490;
