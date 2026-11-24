@@ -10866,7 +10866,73 @@ void f_ResetTombaControlState(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaOverheadTerrainContact);
+#define PROBE_800493E8 ((s32 (*)(u8 *, s32, s32))func_800493E8)
+
+s32 f_ResolveTombaOverheadTerrainContact(u8 *a, s32 b)
+{
+    s16 z;
+    s32 x;
+    s32 r;
+    u8 *p;
+    s32 xx;
+    s32 zz;
+    s16 z1;
+    u8 v;
+
+    D_1F800253 &= 4;
+    if (a[0x16B] != 0) {
+        return 0;
+    }
+    z = -0x82;
+    if (a[0x145] != 0) {
+        z = -0x5A;
+        if (*(s16 *)(a + 0x4A) < -0x2700) {
+            z = -0x78;
+        }
+    }
+    x = 0x38;
+    if (*(s16 *)(a + 0x17E) < 0) {
+        z = z / 2;
+        x = 0x1C;
+    }
+    if (!(b & 1)) {
+        z1 = z;
+        r = PROBE_800493E8(a, x, z1);
+        if (r == 0) {
+            r = PROBE_800493E8(a, -x, z1);
+        }
+    } else {
+        r = PROBE_800493E8(a, 0, z);
+    }
+    if (r == 0) {
+        return 0;
+    }
+hit:
+    if (r == 2) {
+        if ((*(u16 *)D_1F8001A6 & 0xF00) == 0x100) {
+            D_1F800253 = 1;
+        }
+        return 0;
+    }
+    if ((a[0x145] & 1) && *(s16 *)(a + 0x4A) < 0) {
+        *(s16 *)(a + 0x4A) = 0;
+    }
+    if (!(b & 2)) {
+        if (*(s16 *)D_1F8001A6 & 0x8000) {
+            if (D_800BF873 == 0) {
+                if (!(*(u16 *)(a + 0x17E) & 0x200)) {
+                    f_TryApplyTombaActorDamage(a, 0, 1, 1);
+                }
+                D_1F800253 = 2;
+            } else {
+                D_1F800253 = 3;
+            }
+        } else {
+            D_1F800253 = 3;
+        }
+    }
+    return 1;
+}
 
 void func_800543C0(u8 *a)
 {
@@ -11203,7 +11269,43 @@ void f_AdvanceTombaAlongMovementVector(u8 *t, s32 noY)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaLostGroundSupportMotion);
+void f_DetachTombaFromSupport(u8 *a, s32 keep);
+
+void f_UpdateTombaLostGroundSupportMotion(u8 *a, s32 b)
+{
+    u8 *g;
+
+    if ((a[0x29] | a[0x145]) != 0) {
+        if (*(s16 *)(a + 0x50) > 0x1400) {
+            func_8005314C(a);
+        }
+        *(s16 *)(a + 0x50) = 0;
+        a[0x148] = 0;
+        return;
+    }
+    g = D_800BF808;
+    if (((s8 *)g)[5] == 0 && g[0x40] != 0) {
+        f_DetachTombaFromSupport(a, 0);
+        return;
+    }
+    *(s16 *)(a + 0x50) += 0x800;
+    if (*(s16 *)(a + 0x50) > 0x3E00) {
+        *(s16 *)(a + 0x50) = 0x3E00;
+    }
+    if (*(s16 *)(a + 0x50) >= 0x1E00) {
+        a[0x148] = 1;
+        if (b == 0 && a[0x146] != 4) {
+            f_DetachTombaFromSupport(a, 0);
+            if (*(u16 *)(a + 0x17E) & 0x40) {
+                *(s16 *)(a + 0x4A) = *(s16 *)(a + 0x50) / 4;
+            } else {
+                *(s16 *)(a + 0x4A) = *(s16 *)(a + 0x50);
+            }
+            *(s16 *)(a + 0x50) = 0;
+        }
+    }
+    *(s32 *)(a + 0x30) += *(s16 *)(a + 0x50) << 8;
+}
 
 extern s16 D_800A45A0[];
 extern s16 D_800A4588[];
