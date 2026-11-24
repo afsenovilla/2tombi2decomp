@@ -2769,7 +2769,54 @@ void func_8011B3B8(u8 *a) {
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011B480);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011B650);
+extern u8 D_800BF9D5;
+extern PartInit D_8013313C[];
+u8 *func_8007AAE8();
+
+void func_8011B650(PartsOwner *a)
+{
+    s32 i;
+    u8 *q;
+    s32 k;
+
+    a->pad[8] = 3;
+    k = 3;
+    if (D_800ED098 < k) {
+        a->pad[4] = k;
+        return;
+    }
+    a->pad[9] = k;
+    a->pad[0xD] = 0;
+    a->pad[0xB] = 0;
+    *(s16 *)(a->pad + 0x54) = 0;
+    *(s16 *)(a->pad + 0x56) = 0;
+    *(s16 *)(a->pad + 0x58) = 0;
+    if (D_800BF9D5 < 3) {
+        *(void **)(a->pad + 0x14) = func_8011718C(a);
+        a->pad[0] = 1;
+    } else {
+        a->pad[5] = k;
+        a->pad[0] = 2;
+    }
+    *(s16 *)(a->pad + 0x80) = 0x12C;
+    *(s16 *)(a->pad + 0x82) = 0x258;
+    *(s16 *)(a->pad + 0x84) = 0x1C2;
+    *(s16 *)(a->pad + 0x86) = 0x258;
+    for (i = 0; i < a->pad[8]; i++) {
+        q = func_8007AAE8();
+        a->parts[i] = q;
+        *(s16 *)(q + 6) = D_8013313C[i].v[0];
+        *(s16 *)(a->parts[i] + 0) = D_8013313C[i].v[1];
+        *(s16 *)(a->parts[i] + 2) = D_8013313C[i].v[2];
+        *(s16 *)(a->parts[i] + 4) = D_8013313C[i].v[3];
+        *(s16 *)(a->parts[i] + 8) = 0;
+        *(s16 *)(a->parts[i] + 0xA) = 0;
+        *(s16 *)(a->parts[i] + 0xC) = 0;
+        func_80051B04(a->parts[i], 0xC, i + 0x17);
+    }
+    a->pad[0x2B] = 0;
+    a->pad[4]++;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusClothesLockerActor);
 
@@ -2779,7 +2826,7 @@ void func_8011BAB4(void *arg0) {
     temp_v1 = M2C_FIELD(arg0, u8 *, 4);
     switch (temp_v1) {                              /* irregular */
     case 0:
-        func_8011B650();
+        ((void (*)())func_8011B650)();
         return;
     case 1:
         f_UpdateCircusClothesLockerActor();
