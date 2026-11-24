@@ -4590,7 +4590,100 @@ void func_8011C998(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateAnemoneCaptureSequence);
+extern u8 D_800BF80F;
+s16 func_8011D540();
+void func_8011DFEC(u8 *a);
+
+void f_UpdateAnemoneCaptureSequence(u8 *a) {
+    u8 *p = *(u8 **)(a + 0x10);
+    s32 one;
+
+    if (a[0xBF] == 0 && p != NULL && a[0x2B] == 0 && p[0x2B] != 0) {
+        *(u8 **)(a + 0x10) = NULL;
+        func_8011DE34(a, 0, 0xC, 3);
+        a[0x5E] = 0;
+        QH(a, 0x60) = 0;
+        QH(a, 0x62) = 0x3C;
+        QH(a, 0x64) = 0;
+        a[5] = 0;
+        a[6] = 0;
+        return;
+    }
+    switch (a[6]) {
+    case 0:
+        func_8011CF9C(a, 1);
+        a[6]++;
+        break;
+    case 1:
+        if (QH(a, 0x6A) == 1) {
+            a[6]++;
+        }
+    case 2:
+        if (a[0x2B] != 0) {
+            a[6] = 3;
+            a[0x5E]++;
+        }
+        break;
+    case 3:
+        if (func_8011D540(a) != 0) {
+            a[0] = 3;
+            QH(a, 0x72) = 1;
+            if (QH(a, 0x6C) < 3) {
+                func_8011DE34(a, 0x10, 4, 3);
+            } else {
+                func_8011DE34(a, 0x11, 4, 3);
+            }
+            QH(a, 0x40) = 4;
+            a[6]++;
+        }
+        break;
+    case 4:
+        if (QH(a, 0x6A) == 1 && --QH(a, 0x40) == 0) {
+            QH(a, 0x40) = 9;
+            func_8011DE34(a, 0x12, 2, 3);
+            a[6]++;
+        }
+        break;
+    case 5:
+        if (--QH(a, 0x40) == 0) {
+            a[0xBF] = 1;
+            QH(a, 0x72) = 0;
+            p[4] = 3;
+            *(u8 **)(a + 0x10) = NULL;
+            func_80074590(8, 0x12, 0);
+        }
+        if (QH(a, 0x6A) == 1) {
+            func_8011DE34(a, 0x13, 0, 3);
+            a[6]++;
+        }
+        break;
+    case 6:
+        if ((one = QH(a, 0x6A)) == 1) {
+            if (D_800BF80F == 0) {
+                func_8011DE34(a, 0xA, 4, 3);
+                if (func_80040B48(0x65) >= 0) {
+                    D_800BF870.pad1[0x17B] |= one << (a[3] * 2);
+                    a[0] = one;
+                    a[3] |= 0x80;
+                }
+                func_8011DFEC(a);
+                a[6]++;
+            } else {
+                func_8011DE34(a, 0, 0x10, 3);
+                QH(a, 0x62) = 0x3C;
+                QH(a, 0x60) = 0;
+                QH(a, 0x64) = 0;
+                QH(a, 0x6C) = 0xFF;
+                a[0x5E] = 0;
+                a[0x2B] = 0;
+                a[0xBF] = 0;
+                a[5] = 0;
+                a[6] = 0;
+            }
+        }
+        break;
+    }
+}
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
@@ -7187,7 +7280,6 @@ s32 f_UpdatePipeAreaBridgeRevealCamera(u8 *a) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaBridgeActor);
 
-extern u8 D_800BF80F;
 extern s8 D_800E807E;
 s32 func_80127DC4(u8 *a) {
     switch (a[7]) {
