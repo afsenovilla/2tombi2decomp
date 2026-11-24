@@ -7824,7 +7824,43 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTerrainProbeVerticalContact);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_EvaluateTerrainVerticalSurface);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800459D0);
+extern s16 D_1F8001C2;
+extern u16 *D_1F8001E0;
+extern s16 *D_1F8001EC;
+
+s32 func_800459D0(s16 k)
+{
+    s32 hi, lo;
+    s32 y;
+    s16 v;
+
+    if (D_1F8001EC[2] > 0) {
+        hi = D_1F8001EC[1] + D_1F8001EC[2];
+        lo = D_1F8001EC[1];
+    } else {
+        hi = D_1F8001EC[1];
+        lo = hi + D_1F8001EC[2];
+    }
+    y = *(s16 *)D_1F8001BE;
+    if (hi < y) {
+zero:
+        return 0;
+    }
+    if (y >= lo - 0x80) {
+        if (*D_1F8001E0 & 8) {
+            v = D_1F8001EC[1] + ((D_1F8001EC[2] * D_1F8001C2) >> 6);
+        } else {
+            v = D_1F8001EC[1] + (D_1F8001EC[2] * (D_1F8001C2 - k)) / (s16)(k ^ 0x3F);
+        }
+        if (v < *(s16 *)D_1F8001BE) {
+            goto zero;
+        }
+        *(s16 *)D_1F8001C4 = v - *(u16 *)D_1F8001BE;
+        *(u16 *)D_1F8001A6 = D_1F8001EC[0];
+        return 1;
+    }
+    return -1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80045B30);
 
@@ -7844,9 +7880,7 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTerrainProbeSurfaceBySideMask
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ClassifyActorDirectionalTerrainContact);
 
-extern s16 D_1F8001C2;
 extern s16 D_1F8001C6;
-extern u16 *D_1F8001E0;
 void f_SelectAreaPlaneCollisionTables(u8 i);
 s32 f_ResolveActorAreaPlanePosition(u8 *a)
 {
