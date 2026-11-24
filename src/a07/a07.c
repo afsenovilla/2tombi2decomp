@@ -2619,7 +2619,40 @@ u8 *func_80119418(void *a0)
     return r;
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80119454);
+void func_80119454(u8 *a)
+{
+    u8 *p = *(u8 **)(a + 0x10);
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 0x29) != 0) {
+            break;
+        }
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x58) = 0;
+        a[4]++;
+        *(s16 *)(a + 0x2E) = *(s16 *)(p + 0x2E);
+        *(s16 *)(a + 0x32) = *(s16 *)(p + 0x32) + 0xCD;
+        *(s16 *)(a + 0x36) = *(s16 *)(p + 0x36);
+    case 1:
+        if (p[4] == 3) {
+            a[4] = 3;
+            break;
+        }
+        *(s16 *)(a + 0x2E) = *(s16 *)(p + 0x2E);
+        *(s16 *)(a + 0x32) = *(s16 *)(p + 0x32) + 0xCD;
+        *(s16 *)(a + 0x36) = *(s16 *)(p + 0x36);
+        a[1] = 1;
+        func_800517F8(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusGearMechanismActor);
 

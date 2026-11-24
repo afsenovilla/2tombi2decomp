@@ -4864,7 +4864,44 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012C44C);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012C628);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012C858);
+void func_8012C858(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        switch (a[5]) {
+        case 0:
+            if (func_80051B70(a, 0xC, 0x2B) != 0) {
+                break;
+            }
+            a[0xD] |= 4;
+            (*(u8 **)(a + 0xC0))[0x3F] = 0x60;
+            *(s16 *)(a + 0x54) = 0;
+            *(s16 *)(a + 0x56) = -0x177;
+            *(s16 *)(a + 0x58) = 0;
+            a[5]++;
+            break;
+        case 1:
+            if (func_8012C44C(a)) {
+                a[4] = 1;
+                a[5] = 0;
+                a[6] = 0;
+            }
+            goto common;
+        }
+        break;
+    case 1:
+        func_8012C628(a);
+    common:
+        func_8007778C(a);
+        func_800517F8(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012C978);
 
