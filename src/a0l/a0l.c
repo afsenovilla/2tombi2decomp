@@ -1318,7 +1318,71 @@ void func_8010D590(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010D8F0);
+extern u8 D_800ECF58_6b74_80a7[];
+extern u8 D_800A4BC8[];
+extern u16 D_80115CB4[];
+extern u8 *D_80115C9C[];
+extern u8 D_8011B154[];
+extern s16 D_1F800160;
+extern s16 D_1F800164;
+
+void func_8010D8F0(u8 *a)
+{
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        g = D_800ECF58_6b74_80a7;
+        if (func_800519E0(a, 0xC, *(s32 *)(g + 0x48), D_800A4BC8) != 0) {
+            break;
+        }
+        *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x4C);
+        H(a, 0x56) = D_80115CB4[D_800BF870.pad1[0]];
+        func_80040CDC(a, D_8011B154, D_80115C9C[D_800BF870.pad1[0]]);
+        func_80041718(a, 0, 0);
+        H(a, 0x80) = 0x8C;
+        H(a, 0x82) = 0x118;
+        H(a, 0x84) = 0x88;
+        H(a, 0x86) = 0x110;
+        a[0x70] = 1;
+        H(a, 0xB8) = 0xC00;
+        H(a, 0xBA) = 0xC00;
+        H(a, 0xBC) = 0xC00;
+        H(a, 0x50) = 0;
+        H(a, 0x60) = 0;
+        a[4]++;
+        break;
+    case 1:
+        a[1] = 1;
+        func_80077E7C(a);
+        func_80041098(a);
+        if (D_800BF841 == 0) {
+            *(s32 *)(a + 0x30) += func_80083E80(H(a, 0x50) += 0x40) << 5;
+            func_8004190C(a);
+        }
+        switch (D_800BF871) {
+        case 3:
+            break;
+        case 4:
+            if (a[5] == 1) {
+                if ((H(a, 0x32) -= 8) < -0x833) {
+                    a[5]++;
+                }
+            }
+            break;
+        case 5:
+            H(a, 0x56) = func_80085690(H(a, 0x36) - D_1F800164, D_1F800160 - H(a, 0x2E)) & 0xFFF;
+            break;
+        }
+        func_800518FC(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_8010DB44(void *arg0) {
     void *temp_v1;
@@ -1469,8 +1533,6 @@ typedef struct {
 } LVec;
 extern SVec D_1F8000C0;
 extern LVec D_1F8000A0;
-extern s16 D_1F800160;
-extern s16 D_1F800164;
 extern u8 *D_1F80024C;
 extern u8 D_800BFA56;
 extern u8 D_80117338[];
@@ -1799,7 +1861,6 @@ void func_8010F34C(u8 *a)
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010F56C);
 
-extern u8 D_800ECF58_6b74_80a7[];
 extern u8 D_801177F0[];
 extern u8 D_8011A738_e3cb_78c6[];
 
