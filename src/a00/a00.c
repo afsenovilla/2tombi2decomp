@@ -4518,9 +4518,63 @@ void func_80121918(s32 a, s32 b, s32 c) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121978);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121B44);
-
 extern u8 D_8014E4EC[];
+extern u8 D_801494B0[];
+
+void func_80121B44(u8 *a) {
+    u8 k;
+
+    switch (a[5]) {
+    case 0:
+        a[0] = 9;
+        H_f12c(a, 0x80) = 0x50;
+        H_f12c(a, 0x82) = 0xA0;
+        H_f12c(a, 0x84) = 0x80;
+        H_f12c(a, 0x86) = 0xE0;
+        a[0xB] = 0;
+        a[5]++;
+        func_80077CFC(a, D_8014E4EC, 4, 4);
+        H_f12c(a, 0x56) = 0xC00;
+        a[0x5E] = 0;
+        break;
+    case 1:
+        k = a[0x2B];
+        if (k == 3) {
+            func_80042354(1, 1);
+            if (a[0x5E] == 0) {
+                a[5]++;
+                func_80077CFC(a, D_8014E4EC, 9, 4);
+                a[0x5E] = 1;
+            } else {
+                a[5] = k;
+            }
+        }
+        break;
+    case 2:
+        H_f12c(a, 0x32) += 0x50;
+        H_f12c(a, 0x36) += 0x50;
+        if (a[0x79] != 0) {
+            a[5]++;
+        }
+        break;
+    case 3:
+        a[5]++;
+        func_80040CDC(a, D_8014E4EC, D_801494B0);
+        a[0x70] = 1;
+        break;
+    case 4:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[5] = 1;
+            func_80042310();
+        }
+        break;
+    }
+    func_8004190C(a);
+    func_8007778C(a);
+    func_800518FC(a);
+}
+
 extern u8 D_801494D0[];
 void func_80121CF8(u8 *a)
 {
@@ -4559,7 +4613,57 @@ void func_80121CF8(u8 *a)
     func_800518FC(a);
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_FinishStuckFishhookLineSequence);
+extern u8 D_8014959C[];
+extern u8 D_8014967C[];
+extern u8 D_80149684[];
+extern u8 D_800BF9B5;
+extern u8 D_800E806C;
+
+s32 f_FinishStuckFishhookLineSequence(u8 *a) {
+    switch (a[6]) {
+    case 0:
+        H_f12c(a, 0x40) = 0x41;
+        a[6]++;
+    case 1:
+        if (--H_f12c(a, 0x40) == -1) {
+            func_80077C40(a, D_8014E4EC, 7);
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (D_800BF9B5 == 4 && a[0x79] != 0) {
+            a[0x47] = 0;
+            a[6]++;
+        }
+        break;
+    case 3:
+        a[6]++;
+        func_80040CDC(a, D_8014E4EC, D_8014959C);
+        a[0x70] = 1;
+        break;
+    case 4:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[6]++;
+            if (D_800BFAF9 == 0) {
+                func_80040CDC(a, D_8014E4EC, D_8014967C);
+            } else {
+                func_80040CDC(a, D_8014E4EC, D_80149684);
+            }
+            a[0x70] = 1;
+        }
+        break;
+    case 5:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            func_80042310();
+            D_800E806C = 0;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 extern u8 D_80149754[];
 extern u8 D_80149774[];
@@ -4686,7 +4790,6 @@ s32 func_80122F5C(s32 a) {
     return 1;
 }
 
-extern u8 D_800BF9B5;
 extern u8 D_801494FC[];
 s32 func_80122FAC(u8 *a) {
     s32 one = 1;
@@ -5378,11 +5481,62 @@ s32 func_8012894C(s32 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RunA00Event4ItemUseCutscene);
-
-#define CGH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern u8 D_8001B860[];
 extern u8 *D_80149E50[];
+extern u8 *D_800E7EB8;
+
+void f_RunA00Event4ItemUseCutscene(u8 *a) {
+    switch (a[6]) {
+    case 0:
+        func_80040CDC(a, D_8001B860, D_80149E50[D_800BF830]);
+        a[0x70] = 2;
+        a[6]++;
+        break;
+    case 1:
+        if (a[0x70] == 0) {
+            *(u8 **)(a + 0x10) = NULL;
+            a[0x70] = 1;
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (*(u8 **)(a + 0x10) != NULL) {
+            func_800440E4(D_800E7E80, 0xBD, 4);
+            H_f12c(a, 0x40) = 0x28;
+            a[6]++;
+        }
+        break;
+    case 3:
+        if (--H_f12c(a, 0x40) == 0) {
+            func_80040C00(4);
+            func_800440E4(D_800E7E80, 0xBE, 4);
+            a[6]++;
+        }
+        break;
+    case 4:
+        if (D_800E7EB8[4] == 2) {
+            func_80074810(3, 0);
+            a[6]++;
+        }
+    case 5:
+        if (D_800BF80E != 0) {
+            func_800440E4(D_800E7E80, 2, 4);
+            a[0x70] = 2;
+            a[6] = 6;
+        }
+        break;
+    case 6:
+        if (a[0x70] == 0xFF) {
+            func_80070798();
+        }
+        break;
+    }
+    func_80041098(a);
+    func_80070E60(a);
+    func_8004190C(a);
+}
+
+#define CGH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern u8 D_800BF9DD;
 void f_RunNetBridgeCogInstallationCutscene(u8 *a) {
     u8 *g;
