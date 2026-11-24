@@ -394,7 +394,65 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010A228);
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", f_UpdateEvilPigInteriorEntranceDoorSequence);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010A5D8);
+typedef struct { s16 x, y, z; u8 b6, b7; s16 h8, hA; } DoorEnt;
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+extern u8 D_8010E160[];
+extern DoorEnt D_8010E164[];
+
+void func_8010A5D8(u8 *a)
+{
+    u8 *t;
+    u8 k;
+
+    switch (a[4]) {
+    case 0:
+        t = D_8010E160;
+        if (func_80051B70(a, 0xC, t[a[3] * 2]) != 0) {
+            break;
+        }
+        a[0xBF] = 1;
+        H(a, 0x50) = 0;
+        a[4]++;
+        a[0x28] |= 0x80;
+        H(a, 0x5A) = H(a, 0x56);
+        k = t[a[3] * 2 + 1];
+        if (k != 0) {
+            a[0x2A] = k;
+            H(a, 0x60) = D_8010E164[a[3]].x - H(a, 0x2E);
+            H(a, 0x62) = D_8010E164[a[3]].y;
+            H(a, 0x64) = D_8010E164[a[3]].z - H(a, 0x36);
+            a[0x5F] = D_8010E164[a[3]].b6;
+            H(a, 0x82) = D_8010E164[a[3]].h8;
+            H(a, 0x80) = H(a, 0x82) / 2;
+            H(a, 0x86) = D_8010E164[a[3]].hA;
+            H(a, 0x84) = H(a, 0x86) / 2;
+            a[0] = 1;
+        }
+        a[0x29] = 0;
+        if (a[3] == 0) {
+            a[0x46] = 0;
+            a[0xBF] = 1;
+            H(a, 0x50) = -0x400;
+            func_80072EFC(a);
+            a[0] = 2;
+        }
+        break;
+    case 1:
+        if (a[3] == 0) {
+            f_UpdateEvilPigInteriorEntranceDoorSequence(a);
+        }
+        if (func_8007778C(a) != 0) {
+            func_800517F8(a);
+        }
+        a[0x29] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 typedef union {
     u8 b[0xC0];
