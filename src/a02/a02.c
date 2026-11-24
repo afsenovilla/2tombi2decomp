@@ -2925,7 +2925,85 @@ void func_80117C3C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80117D64);
+typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner80117D64;
+extern s16 D_800ED098;
+#define D64_I16(o) (*(s16 *)(a->pad + (o)))
+#define D64_W16(o) (*(u16 *)(a->pad + (o)))
+
+void func_80117D64(PartsOwner80117D64 *a) {
+    switch (a->pad[4]) {
+    case 0:
+        a->pad[8] = 1;
+        if (D_800ED098 <= 0) {
+            a->pad[4] = 3;
+            break;
+        }
+        D64_I16(0x80) = 0x50;
+        D64_I16(0x82) = 0xA0;
+        a->pad[9] = 1;
+        a->pad[0] = 1;
+        a->pad[0xD] = 0;
+        a->pad[0xB] = 0;
+        a->pad[0x29] = 0;
+        D64_I16(0x84) = 0xC4;
+        D64_I16(0x86) = 0xC4;
+        a->pad[4]++;
+        a->parts[0] = func_8007AAE8();
+        *(s16 *)(a->parts[0] + 6) = -1;
+        *(s16 *)(a->parts[0] + 0) = 0;
+        *(s16 *)(a->parts[0] + 2) = 0;
+        *(s16 *)(a->parts[0] + 4) = 0;
+        *(s16 *)(a->parts[0] + 8) = 0;
+        *(s16 *)(a->parts[0] + 0xA) = 0;
+        *(s16 *)(a->parts[0] + 0xC) = 0;
+        D64_I16(0xB8) = 0x1000;
+        D64_I16(0xBA) = 0x1000;
+        D64_I16(0xBC) = 0x1000;
+        *(s16 *)(a->parts[0] + 0x38) = 0x1000;
+        *(s16 *)(a->parts[0] + 0x3A) = 0x1000;
+        *(s16 *)(a->parts[0] + 0x3C) = 0x1000;
+        D64_W16(0x60) = D64_W16(0x32);
+        a->pad[0x2B] = 0;
+        if (a->pad[3] == 0) {
+            a->pad[5] = 2;
+            func_80051B04(a->parts[0], 0xC, 0xE);
+        } else {
+            func_80051B04(a->parts[0], 0xC, 0x27);
+        }
+        break;
+    case 1:
+        if (func_8007778C(a) == 0) {
+            break;
+        }
+        switch (a->pad[5]) {
+        case 0:
+            if (a->pad[0x2B] != 0) {
+                a->pad[0] = 3;
+                D64_I16(0x40) = 8;
+                a->pad[5]++;
+                func_80074590(0x88, 0, 0);
+            }
+            break;
+        case 1:
+            if (--D64_I16(0x40) == 0) {
+                a->pad[0x2B] = 2;
+                a->pad[0] = 2;
+                a->pad[5]++;
+            }
+            D64_W16(0xBA) -= 0x1D0;
+            break;
+        case 2:
+            break;
+        }
+        func_80051844(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80117FC0);
 
@@ -3058,7 +3136,6 @@ s32 func_80118860(void) {
 }
 
 typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner80118880;
-extern s16 D_800ED098;
 extern u8 *D_800ECFC8;
 extern s32 D_800ECFCC;
 extern u8 D_8012A114[];
