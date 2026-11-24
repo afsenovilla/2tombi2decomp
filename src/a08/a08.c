@@ -8016,7 +8016,44 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013CF34);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013D178);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013D3C0);
+extern u8 D_80141814[];
+extern u8 D_80149E30[];
+
+void func_8013D3C0(u8 *a)
+{
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        g = D_800ECF58;
+        if (func_800519E0(a, 7, *(s32 *)(g + 0x84), D_80141814) != 0) {
+            break;
+        }
+        *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x88);
+        func_80051B04(*(u8 **)(a + 0xD8), 0x21, 7);
+        func_80040CDC(a, D_80149E30, D_800A3D18);
+        func_80041718(a, 0, 0);
+        a[0] = 2;
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x56) = 0x568;
+        *(s16 *)(a + 0x58) = 0;
+        a[4]++;
+        break;
+    case 1:
+        func_8013D178(a);
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_8013D4EC(void *arg0) {
     u16 temp_v0;
