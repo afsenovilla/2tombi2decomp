@@ -4101,7 +4101,80 @@ void func_8012807C(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801280AC);
+void func_801280AC(u8 *a)
+{
+    s32 k;
+
+    switch (a[4]) {
+    case 0:
+        func_801282A8(a);
+        break;
+    case 1:
+        func_80116B48(a);
+        if (!(a[3] & 0x80)) {
+            *(s16 *)(a + 0x6A) = func_80129C44(a, 3);
+            if (!(a[0x5E] & 2) && !(*(u16 *)(a + 0x7E) & 2) && (s16)func_80128EEC(a) != 0) {
+                func_80129A88(a);
+                a[0x5E] = 2;
+                *(s16 *)(a + 0x6C) = 0xFF;
+                *(s16 *)(a + 0x7E) = 0;
+                a[5] = 2;
+                a[6] = 0;
+            }
+            switch (a[5]) {
+            case 0:
+                func_80128414(a);
+                break;
+            case 1:
+                func_801285BC(a);
+                break;
+            case 2:
+                f_UpdateSeaAnemoneFreezeSequence(a);
+                break;
+            }
+        }
+        if (a[1] != 0) {
+            func_80129628(a);
+            if (*(s16 *)(a + 0x72) != 0) {
+                func_8012948C(a);
+            }
+        }
+        break;
+    case 2:
+        func_8007778C(a);
+        /* the empty cases need distinct labels (dead stores) for retail's 7-entry jump table */
+        switch (a[5]) {
+        case 5:
+            func_80129D0C(a);
+            break;
+        case 0:
+            k = 0;
+            break;
+        case 1:
+            k = 1;
+            break;
+        case 2:
+            k = 2;
+            break;
+        case 3:
+            k = 3;
+            break;
+        case 4:
+            k = 4;
+            break;
+        case 6:
+            k = 6;
+            break;
+        }
+        if (a[1] != 0) {
+            func_80129628(a);
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801282A8);
 
