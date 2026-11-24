@@ -11726,7 +11726,71 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8014047C);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80140544);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureTerrainContact);
+#define HU(p, o) (*(u16 *)((u8 *)(p) + (o)))
+extern u16 D_1F8001A0_6940;
+
+s32 f_UpdateTownCreatureTerrainContact(u8 *a) {
+    u8 *q;
+    s16 res;
+    s32 r;
+
+    res = 0;
+    q = a + 0x60;
+    if (func_8004766C(a) == 0) {
+        return 0;
+    }
+    if (a[0x2A] == 0xC && H_f12c(a, 0x36) < 0x58C) {
+        H_f12c(a, 0x36) = 0x58C;
+    }
+    if ((r = func_8004954C(a, 0x50, -0x1E)) == 1) {
+        res |= 2;
+        if (HU(q, 2) & r) {
+            a[0x5F] = 2;
+        } else {
+            a[0x5F] = 3;
+        }
+    }
+    if (a[0x29] == 0) {
+        r = func_80049250(a, 0, 0x50);
+        if (r & 1) {
+            {
+                u16 t1 = D_1F8001A6;
+                u16 t2 = D_1F8001A4;
+                HU(q, 8) = t1;
+                HU(q, 0xA) = t2;
+            }
+            a[0x29] = 1;
+            func_80049674(a);
+            HU(q, 0) = D_1F8001A0_6940;
+            if (HU(q, 2) & 1) {
+                H_f12c(a, 0x58) = (0x1000 - D_1F8001A2) & 0xFFF;
+            } else {
+                H_f12c(a, 0x58) = D_1F8001A2;
+            }
+        } else if (r != 0) {
+            {
+                u16 t1 = D_1F8001A6;
+                u16 t2 = D_1F8001A4;
+                HU(q, 8) = t1;
+                HU(q, 0xA) = t2;
+            }
+        } else {
+            func_80049760(a);
+            HU(q, 0) = D_1F8001A0_6940;
+        }
+    } else {
+        func_80049760(a);
+        HU(q, 0) = D_1F8001A0_6940;
+    }
+    if (!(HU(q, 2) & 4)) {
+        if (HU(q, 2) & 1) {
+            H_f12c(a, 0x56) = (D_1F8001A0_6940 - 0x800) & 0xFFF;
+        } else {
+            H_f12c(a, 0x56) = D_1F8001A0_6940;
+        }
+    }
+    return res;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureFaceTomba);
 
