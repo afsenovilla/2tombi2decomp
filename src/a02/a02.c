@@ -5445,7 +5445,46 @@ void func_8011EFC8(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011F028);
+u8 *func_8006FDE8();
+
+s32 func_8011F028(u8 *a) {
+    u8 *e;
+    u8 *p;
+    u8 one;
+    s32 x;
+    s32 y;
+    s32 z;
+
+    e = func_8006FDE8(a, 2);
+    if (e == NULL) {
+        return 0;
+    }
+    one = 1;
+    x = 0xD34;
+    y = -0x7A1;
+    z = 0x17A2;
+    *(u8 **)(a + 0x14) = e;
+    e[5] = one;
+    *(s16 *)(e + 0x2E) = x;
+    *(s16 *)(e + 0x32) = y;
+    *(s16 *)(e + 0x36) = z;
+    *(s16 *)(e + 0x60) = 0;
+    p = func_8006FB0C(a, 0x4B);
+    if (p == NULL) {
+        e[4] = 3;
+        *(u8 **)(a + 0x14) = NULL;
+        return 0;
+    }
+    D_800BF844_3cf3 = p;
+    p[5] = one;
+    *(s16 *)(p + 0x2E) = x;
+    *(s16 *)(p + 0x32) = y;
+    *(s16 *)(p + 0x36) = z;
+    *(s16 *)(p + 0x54) = 0x400;
+    *(s16 *)(p + 0x60) = 0;
+    p[0x5F] |= 1;
+    return 1;
+}
 
 s32 func_8011F10C(void *arg0) {
     D_800BF844 = M2C_FIELD(arg0, s32 *, 0x14);
