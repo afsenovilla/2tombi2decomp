@@ -2779,11 +2779,49 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80116994);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80117188);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80117290);
-
 #define FH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define FU(p, o) (*(u16 *)((u8 *)(p) + (o)))
-#define FW(p, o) (*(s32 *)((u8 *)(p) + (o)))
+extern u8 *D_800ECFC4;
+extern u8 D_80139B24[];
+extern s16 D_1F800160_71b4;
+extern s16 D_1F800164_d75f;
+extern s16 D_800E7FFE;
+extern u8 D_80135BF8[];
+extern u8 D_80135C08[];
+extern u8 D_80135C18[];
+extern u8 D_80135C28[];
+s32 func_80117188();
+/* func_801199DC, inlined */
+static inline void inl_801199DC(u8 *a, s32 k, s32 f) {
+    u8 *b;
+    s32 *t;
+    s32 s;
+
+    if (a[0x46] != k) {
+        a[0x46] = k;
+        b = D_800ECFC4;
+        t = (s32 *)(b + 4);
+        switch (k) {
+        case 5:
+            s = 0x13;
+            break;
+        case 0xD:
+        case 0xF:
+        case 0x11:
+            s = 0x12;
+            break;
+        default:
+            s = 1;
+            break;
+        }
+        M2C_FIELD(M2C_FIELD(a, u8 **, 0xC4), u8 **, 0x40) = b + t[s];
+        if (!(f & 0xFF)) {
+            func_80077C40(a, D_80139B24, k);
+        } else {
+            func_80077CFC(a, D_80139B24, k, (u8)f);
+        }
+    }
+}
 static inline s32 a01_target_y(u8 *a) {
     u8 *p = a + 0x2C;
     s32 v, y;
@@ -2822,6 +2860,60 @@ static inline void a01_turn(u8 *a) {
     s32 v;
     if (!(FU(q, 6) & 1)) { FH(a, 0x56) += func_80083E80(FH(q, 4) - FH(a, 0x56)) >> 5; } else { v = FH(a, 0x56) - 0x800; FH(a, 0x56) += func_80083E80(FH(q, 4) - v) >> 5; }
 }
+
+s32 func_80117290(u8 *a) {
+    s16 r = 0;
+    u8 *q = a + 0x60;
+    u8 *t;
+    s32 y, old, d;
+
+    switch (a[7]) {
+    case 0:
+        FH(a, 0x54) = 0;
+        inl_801199DC(a, 2, 6);
+        a[7]++;
+    case 1:
+        FH(a, 0x4E) += (0x70 - FH(a, 0x4E)) / 16;
+        y = a01_target_y(a);
+        y += func_80083F50(FH(q, 0x10)) >> 5;
+        old = FH(a, 0x32);
+        FH(q, 0x10) += func_8009A450() >> 9;
+        FH(a, 0x32) += (y - FH(a, 0x32)) / 32;
+        FH(a, 0x58) = (FH(a, 0x32) - old) * 16;
+        a01_turn(a);
+        r = ((s16 (*)(u8 *))func_80117188)(a);
+        if (r != 0) {
+            return r;
+        }
+    default:
+        if (--FH(a, 0x42) <= 0) {
+            d = func_800781E0(FH(a, 0x2E) - D_1F800160_71b4, FH(a, 0x36) - D_1F800164_d75f);
+            if ((D_800E7FFE & 0x8200) || d > 0x640) {
+                r = 0;
+            } else {
+                if (d >= 0x385) {
+                    t = D_80135BF8;
+                } else if (d >= 0x12D) {
+                    t = D_80135C08;
+                } else {
+                    t = D_80135C18;
+                }
+                r = t[(func_8009A450() >> 8) & 0xF];
+            }
+            if (r == 0) {
+                r = 1;
+            } else {
+                r = D_80135C28[func_8009A450() & 0xF];
+            }
+        }
+        break;
+    }
+    return r;
+}
+
+#define FH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define FU(p, o) (*(u16 *)((u8 *)(p) + (o)))
+#define FW(p, o) (*(s32 *)((u8 *)(p) + (o)))
 s32 func_801175D0(u8 *a) {
     s32 ret = 0;
     u8 *q = a + 0x60;
@@ -2902,42 +2994,9 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80118070);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80118F90);
 
-extern u8 *D_800ECFC4;
-extern u8 D_80139B24[];
 typedef struct {
     s16 x, y, z;
 } SV3;
-/* func_801199DC, inlined */
-static inline void inl_801199DC(u8 *a, s32 k, s32 f) {
-    u8 *b;
-    s32 *t;
-    s32 s;
-
-    if (a[0x46] != k) {
-        a[0x46] = k;
-        b = D_800ECFC4;
-        t = (s32 *)(b + 4);
-        switch (k) {
-        case 5:
-            s = 0x13;
-            break;
-        case 0xD:
-        case 0xF:
-        case 0x11:
-            s = 0x12;
-            break;
-        default:
-            s = 1;
-            break;
-        }
-        M2C_FIELD(M2C_FIELD(a, u8 **, 0xC4), u8 **, 0x40) = b + t[s];
-        if (!(f & 0xFF)) {
-            func_80077C40(a, D_80139B24, k);
-        } else {
-            func_80077CFC(a, D_80139B24, k, (u8)f);
-        }
-    }
-}
 /* func_80119AAC, inlined */
 static inline void inl_80119AAC(u8 *a) {
     SV3 p;
@@ -3113,8 +3172,6 @@ s32 func_80119B80(s32 arg0, s32 arg1) {
     return (u32) (((arg1 - func_800782B0(arg0 + 0x2C, *((s16 *)D_1F800160), *((s16 *)D_1F800164))) + 0x400) & 0xFFF) >= 0x801U;
 }
 
-extern s16 D_1F800160_71b4;
-extern s16 D_1F800164_d75f;
 s32 func_80119BCC(u8 *a) {
     u8 *q = a + 0x60;
     s32 h = M2C_FIELD(q, u16 *, 4);
@@ -3139,10 +3196,6 @@ s32 func_80119E28(void) {
     return D_80135BE8[(func_8009A450() >> 8) & 0xF];
 }
 
-extern s16 D_800E7FFE;
-extern u8 D_80135BF8[];
-extern u8 D_80135C08[];
-extern u8 D_80135C18[];
 s32 func_80119E60(u8 *a) {
     s32 d = func_800781E0(M2C_FIELD(a, s16 *, 0x2E) - D_1F800160_71b4, M2C_FIELD(a, s16 *, 0x36) - D_1F800164_d75f);
     u8 *t;
@@ -6500,7 +6553,84 @@ void func_8012ABB4(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012AC84);
+void func_8012AC84(u8 *a) {
+    s32 i, k, n;
+    u8 *e;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 0) == 0) {
+            FH(a, 0x80) = 0x160;
+            FH(a, 0x82) = 0x2C0;
+            FH(a, 0x84) = 0xA2;
+            FH(a, 0x86) = 0x144;
+            FH(a, 0x2E) = 0x3040;
+            FH(a, 0x32) = -0x17DF;
+            a[0] = 1;
+            a[0x29] = 0;
+            FH(a, 0x36) = 0x2A00;
+            a[3] = 0;
+            FH(a, 0x54) = 0;
+            FH(a, 0x56) = 0;
+            FH(a, 0x58) = 0;
+            a[4]++;
+            func_800517F8(a);
+            FH(a, 0x40) = 0x1E;
+        }
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            break;
+        case 1:
+            if (--FH(a, 0x40) != -1) {
+                break;
+            }
+            a[5]++;
+            break;
+        case 6:
+            a[4] = 3;
+        case 2:
+        case 4:
+            a[5]++;
+            i = 0;
+            n = func_800270F8(*(s32 *)(*(u8 **)(a + 0xC0) + 0x40));
+            for (; i < n; i++) {
+                if (i >= 8) {
+                    break;
+                }
+                e = func_8007B26C();
+                if (e != NULL) {
+                    e[1] = 0;
+                    e[2] = (*(u8 *)&D_1F80017C + i) & 7;
+                    FH(e, 0xC) = 0x2000;
+                    FH(e, 0x1E) = FH(a, 0x2E);
+                    FH(e, 0x22) = FH(a, 0x32) + 0xA0;
+                    FH(e, 0x26) = FH(a, 0x36) + (i - 4) * 0x32;
+                    func_80027058(e, *(s32 *)(*(u8 **)(a + 0xC0) + 0x40), i);
+                }
+            }
+            func_80074590(0xC, 0, 0);
+            break;
+        case 3:
+        case 5:
+            a[5]++;
+            break;
+        }
+        if (D_1F800207_9c67 == 0xF || D_1F800207_9c67 == 0x11) {
+            a[1] = 1;
+            func_80077EBC(a);
+        } else {
+            func_80077870(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 #define FH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define FU(p, o) (*(u16 *)((u8 *)(p) + (o)))
