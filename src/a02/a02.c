@@ -5788,7 +5788,68 @@ void func_8011BACC(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011BC0C);
+extern u8 D_800BF9FA;
+
+void func_8011BC0C(u8 *a)
+{
+    u8 *p;
+    u8 *h;
+
+    switch (a[3]) {
+    case 0:
+        switch (D_800BF9FA) {
+        case 1:
+            func_8011BACC(a);
+            break;
+        case 2:
+            p = *(u8 **)(a + 0x10);
+            S(a, 0x58) = 0;
+            goto pos;
+        case 3:
+            a[4] = D_800BF9FA;
+            break;
+        }
+        break;
+    case 1:
+        h = (u8 *)&D_800BF870;
+        switch (h[0x18A]) {
+        case 3:
+            func_8011BACC(a);
+            break;
+        case 4:
+            p = *(u8 **)(a + 0x10);
+            S(a, 0x56) = 0xA00;
+            S(a, 0x58) = 0;
+        pos:
+            S(a, 0x2E) = (L(*(u8 **)(p + 0xD0), 0x2C) + L(*(u8 **)(p + 0xDC), 0x2C)) / 2;
+            S(a, 0x2E) += (func_80083F50(S(p, 0x56)) << 6) >> 12;
+            S(a, 0x36) = (L(*(u8 **)(p + 0xD0), 0x34) + L(*(u8 **)(p + 0xDC), 0x34)) / 2;
+            S(a, 0x36) -= (func_80083E80(S(p, 0x56)) << 6) >> 12;
+            S(a, 0x32) = (L(*(u8 **)(p + 0xD0), 0x30) + L(*(u8 **)(p + 0xDC), 0x30)) / 2 + 0x60;
+            break;
+        case 5:
+            switch (a[5]) {
+            case 0:
+                S(a, 0x2E) = 0x2788;
+                S(a, 0x32) = -0x729;
+                S(a, 0x36) = 0x216D;
+                a[5]++;
+                break;
+            case 1:
+                S(a, 0x58) += 0xA0;
+                if (S(a, 0x58) >= 0x400) {
+                    S(a, 0x58) = 0x400;
+                    D_800BF844_3cf3 = a;
+                    h[0x18E] = 1;
+                    h[0x18A] = 6;
+                }
+                break;
+            }
+            break;
+        }
+        break;
+    }
+}
 
 extern u16 D_8012A208[];
 void func_8011BE48(u8 *a) {
@@ -5913,7 +5974,6 @@ void func_8011C100(u8 *a)
     }
 }
 
-extern u8 D_800BF9FA;
 #define S32(o) (*(s32 *)(a + (o)))
 void f_UpdateFreedCharlesSequence(u8 *a) {
     s32 dx;
