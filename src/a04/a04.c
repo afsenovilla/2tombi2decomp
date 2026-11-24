@@ -2693,7 +2693,46 @@ void func_8011B618(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011B674);
+void func_8011B674(u8 *a)
+{
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 0x2F) != 0) {
+            break;
+        }
+        *(s16 *)(a + 0x88) = -0x5A;
+        *(s16 *)(a + 0x8A) = 0x4B;
+        *(s16 *)(a + 0x80) = 0x3C;
+        *(s16 *)(a + 0x82) = 0x78;
+        *(s16 *)(a + 0x84) = 0x96;
+        *(s16 *)(a + 0x8C) = 0;
+        *(s16 *)(a + 0x86) = 0x64;
+        a[0x29] = 0;
+        *(s16 *)(a + 0x58) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x54) = 0;
+        func_800517F8(a);
+        a[4]++;
+        break;
+    case 1:
+        if (D_800BFA00 == 2) {
+            a[4] = 3;
+            break;
+        }
+        g = D_800E7E80;
+        if (g[0x6E] == 0) {
+            a[1] = g[1];
+            func_80051614(a, a + 0x88, 0, 0);
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 u8 *func_8011B79C(void) {
     u8 *p = func_8007A980(1, 3, 1);
@@ -2786,7 +2825,40 @@ u8 *func_8011C364(s32 a, s32 b) {
     return p;
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011C3BC);
+void func_8011C3BC(u8 *a)
+{
+    u8 *p = *(u8 **)(a + 0x10);
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 0x32) != 0) {
+            break;
+        }
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x58) = 0;
+        a[4]++;
+        *(s16 *)(a + 0x2E) = *(s16 *)(p + 0x2E);
+        *(s16 *)(a + 0x32) = *(s16 *)(p + 0x32) + 0xCD;
+        *(s16 *)(a + 0x36) = *(s16 *)(p + 0x36);
+    case 1:
+        if (D_800BF816 == 0) {
+            a[4] = 3;
+            break;
+        }
+        *(s16 *)(a + 0x2E) = *(s16 *)(p + 0x2E);
+        *(s16 *)(a + 0x32) = *(s16 *)(p + 0x32) + 0xCD;
+        *(s16 *)(a + 0x36) = *(s16 *)(p + 0x36);
+        a[1] = 1;
+        func_800517F8(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u8 D_800BF9B4;
 extern u8 D_800BF841;
