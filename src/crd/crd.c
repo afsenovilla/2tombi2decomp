@@ -647,7 +647,68 @@ void func_8018D26C(CrdMenu *unused)
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018D418);
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018D74C);
+typedef struct { s32 w[15]; } CrdEntry;
+typedef struct { s16 n; s16 pad; CrdEntry e[15]; } CrdList;
+extern CrdEntry D_800BED90[][15];
+extern u8 *D_800A2930;
+extern u8 *D_800A2934_4db7;
+extern u8 *D_800A294C;
+extern u8 *D_800A2950_0a39;
+
+void func_8018D74C(u8 *a)
+{
+    CrdList *list = *(CrdList **)(a + 8);
+    s32 i;
+    s32 n;
+    CrdEntry *e;
+
+    list->n = 0;
+    for (i = 0; i < 15; i++) {
+        func_8009A420(&list->e[i], 0, 0x3C);
+    }
+    e = D_800BED90[a[0x46]];
+    if (!(a[0x3C] & 1)) {
+        for (i = 0; i < (a + a[0x46])[0x4E]; i++, e++) {
+            if ((*(s32 *)e & 0xFFFF00) == 0x10100) {
+                list->e[list->n] = *e;
+                list->n++;
+            }
+        }
+        if (list->n != 0) {
+            CRD_MSG2(0x3F, D_800A2950_0a39);
+            n = 0xA;
+        } else {
+            CRD_MSG(0x3E, D_800A294C);
+            a[3] = 1;
+            n = 0xE;
+        }
+    } else {
+        for (i = 0; i < (a + a[0x46])[0x4E]; i++, e++) {
+            if (((u8 *)e)[1] == 1) {
+                list->e[list->n] = *e;
+                list->n++;
+            }
+        }
+        if (list->n != 0) {
+            CRD_MSG2(0x38, D_800A2934_4db7);
+            n = 6;
+        } else {
+            CRD_MSG(0x37, D_800A2930);
+            a[3] = 1;
+            n = 0xE;
+        }
+    }
+    a[0] = n;
+    a[2] = 0;
+    a[1] = 0;
+    a[0x47] = 0;
+    for (i = 0; i < list->n; i++) {
+        if ((a + a[0x46])[0x48] == ((u8 *)&list->e[i])[0]) {
+            a[0x47] = i;
+            break;
+        }
+    }
+}
 
 void func_8018DB28(u8 *a)
 {
