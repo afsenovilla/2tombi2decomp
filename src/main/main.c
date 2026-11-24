@@ -10631,7 +10631,62 @@ void func_8004DD90(u8 *p)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004DE04);
+typedef struct { u8 pad0[9]; u8 u9; } Flags058_DE04;
+extern Flags058_DE04 D_800ED058_de04;
+extern u8 D_800BF87F;
+
+void func_8004DE04(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        a[0xB] = 0x10;
+        a[4] = 1;
+        a[0xD] = 0;
+        a[0x47] = 0;
+        *(s16 *)(a + 0x5A) = 0;
+        *(s16 *)(a + 0x5C) = 0;
+        switch (*(s16 *)(a + 0x60)) {
+        case 0x5C:
+            *(s16 *)(a + 0x42) = 4;
+            break;
+        case 0x5B:
+            *(s16 *)(a + 0x42) = 8;
+            break;
+        case 0x5A:
+            *(s16 *)(a + 0x42) = 0x10;
+            break;
+        case 0x59:
+            *(s16 *)(a + 0x42) = 0x10;
+            break;
+        }
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            if (f_UpdateUsedItemAttachmentPresentation(a) != 0) {
+                a[5]++;
+            }
+            break;
+        case 1:
+            func_8004DD90(a);
+            break;
+        }
+        if (*(s16 *)(a + 0x60) == 0x59) {
+            f_AddEvilPigRobePower(D_800BF87F);
+        }
+        a[1] = 1;
+        D_800ED058_de04.u9 |= 2;
+        break;
+    case 2:
+        a[4]++;
+        D_1F800137_104c = 0;
+        D_800ED058_de04.u9 &= 0xFD;
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 typedef struct { u8 pad0[9]; u8 u9; } Flags058_DF94;
 extern Flags058_DF94 D_800ED058_c3b3;
@@ -10853,7 +10908,49 @@ void func_8004E808(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004E928);
+void func_8004E928(u8 *a)
+{
+    s16 h;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        a[0xB] = 0x10;
+        a[0xD] = 0;
+        a[0x47] = 0;
+        *(s16 *)(a + 0x5A) = 0;
+        *(s16 *)(a + 0x5C) = 0;
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            if (f_UpdateUsedItemAttachmentPresentation(a) != 0) {
+                a[5]++;
+            }
+            break;
+        case 1:
+            switch (*(s16 *)(a + 0x60)) {
+            case 0x5E:
+                f_AddEvilPigRobePower(D_800BF87F >> 1);
+                break;
+            case 0x5D:
+                f_AddEvilPigRobePower(D_800BF87F);
+                break;
+            }
+            a[4] = 2;
+            break;
+        }
+        a[1] = 1;
+        break;
+    case 2:
+        a[4]++;
+        D_1F800137_104c = 0;
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 s16 f_MeasureEncodedMessageLine(u8 *msg, u8 *len)
 {
