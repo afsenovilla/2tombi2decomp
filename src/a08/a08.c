@@ -6268,7 +6268,142 @@ void func_8012B3E8(u8 *a)
     *(u16 *)(a + 0xA) = t;
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012B414);
+extern u8 D_8014184C[];
+extern u8 D_800BF9F3;
+extern u8 D_80149D08[];
+extern u8 D_800BF8F4;
+extern u8 D_800BFA47;
+
+void func_8012B414(u8 *a)
+{
+    u8 *g;
+    s16 r;
+
+    switch (a[4]) {
+    case 0:
+        g = D_800ECF58;
+        if (func_800519E0(a, 0xF, *(s32 *)(g + 0x90), D_8014184C) != 0) {
+            break;
+        }
+        *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x94);
+        a[0xB] = 0;
+        a[4]++;
+        if (a[3] == 0) {
+            a[0x5E] = D_800BF9F3 & 4;
+        } else {
+            a[0x5E] = (D_800BF9F3 >> 4) & 4;
+        }
+        if (a[0x5E] == 0) {
+            func_80077E20(a, 0x40, 0x80, 0x8A);
+        } else {
+            func_80077E20(a, 0x8A, 0x60, 0x50);
+        }
+        *(s16 *)(a + 0x56) = 0x800;
+        *(s16 *)(a + 0xBC) = 0x800;
+        *(s16 *)(a + 0xBA) = 0x800;
+        *(s16 *)(a + 0xB8) = 0x800;
+        func_80077C40(a, D_80149D08, 1);
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x58) = 0;
+        *(s16 *)(a + 0x40) = a[3] << 4;
+        func_800518FC(a);
+        if (a[3] == 0 && D_800BF8F4 != 0xFF) {
+            a[5] = 1;
+        }
+        *(s16 *)(a + 0x62) = *(s16 *)(a + 0x32);
+        break;
+    case 1:
+        a[1] = 1;
+        func_80077E7C(a);
+        r = func_80076D68(a);
+        *(s16 *)(a + 0x60) = r;
+        switch (a[5]) {
+        case 0:
+            if (D_800BFA4E == 10) {
+                a[5] = 2;
+                a[6] = 0;
+                *(s16 *)(a + 0x40) = func_8009A450() & 0xF;
+                break;
+            }
+            switch (a[6]) {
+            case 0:
+                if (--*(s16 *)(a + 0x40) > 0) {
+                    break;
+                }
+                if (func_8009A450() & 1) {
+                    func_80077CFC(a, D_80149D08, 2, 2);
+                    *(s16 *)(a + 0x40) = ((func_8009A450() >> 3) & 3) + 1;
+                    a[6]++;
+                } else {
+                    *(s16 *)(a + 0x40) = func_8009A450() & 0xFF;
+                }
+                break;
+            case 1:
+                if (r == 1) {
+                    if (--*(s16 *)(a + 0x40) > 0) {
+                        break;
+                    }
+                    func_80077CFC(a, D_80149D08, 1, 2);
+                    *(s16 *)(a + 0x40) = func_8009A450() & 0xFF;
+                    a[6] = 0;
+                }
+                break;
+            }
+            break;
+        case 1:
+            if (D_1F800137 == 0) {
+                D_800BFA47 = 0x81;
+                func_80040C00(0x40);
+                a[5] = 0;
+            }
+            break;
+        case 2:
+            func_80076D68(a);
+            switch (a[6]) {
+            case 0:
+                if (--*(s16 *)(a + 0x40) > 0) {
+                    break;
+                }
+                func_80077CFC(a, D_80149D08, 0, 4);
+                a[6]++;
+                break;
+            case 1:
+                *(s16 *)(a + 0x32) -= 6;
+                if (*(s16 *)(a + 0x32) <= *(s16 *)(a + 0x62) - 0x40) {
+                    *(s16 *)(a + 0x32) = *(s16 *)(a + 0x62) - 0x40;
+                }
+                if (D_800BFA4E == 0xF) {
+                    *(s16 *)(a + 0x40) = func_8009A450() & 0xF;
+                    a[6]++;
+                }
+                break;
+            case 2:
+                if (--*(s16 *)(a + 0x40) > 0) {
+                    break;
+                }
+                a[6]++;
+                break;
+            case 3:
+                *(s16 *)(a + 0x32) += 6;
+                if (*(s16 *)(a + 0x32) >= *(s16 *)(a + 0x62)) {
+                    *(s16 *)(a + 0x32) = *(s16 *)(a + 0x62);
+                    a[5] = 0;
+                    a[6] = 0;
+                    func_80077CFC(a, D_80149D08, 1, 8);
+                }
+                break;
+            }
+            break;
+        }
+        func_800518FC(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 typedef struct { s16 x0; s16 id; u8 k; u8 p5; s16 v6; s16 v8; } Entry10;
 extern Entry10 D_80145AA0[];
