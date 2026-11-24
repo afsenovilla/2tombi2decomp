@@ -2,7 +2,50 @@
 #include "game.h"
 #include "m2c.h"
 
-INCLUDE_ASM("asm/game/nonmatchings/game", func_8010637C);
+extern u8 *D_1F800138_5432;
+extern u16 D_1F800198;
+extern u8 D_1F800206;
+extern u8 D_1F800236;
+extern u8 D_1F800234;
+extern u8 D_1F80019A;
+extern u8 D_1F800134;
+extern u8 D_800BE0E4;
+s32 func_801086E0(void);
+void func_80108720(void);
+void func_80108784(void);
+
+void func_8010637C(void)
+{
+    u8 *p;
+
+    D_1F800206 = 0;
+    D_1F800236 = 0;
+    D_1F800234 = 0;
+    D_1F80019A = 2;
+    p = D_1F800138_5432;
+    D_1F800198 = 0;
+    D_800BE0E4 = 0;
+    *(u16 *)(p + 0x48) = D_1F800134;
+    *(u16 *)(p + 0x4A) = 0;
+    *(u16 *)(p + 0x4C) = 0;
+    *(u16 *)(p + 0x4E) = 0;
+    *(u16 *)(p + 0x50) = 0;
+    while (1) {
+        switch (*(u16 *)(D_1F800138_5432 + 0x48)) {
+        case 0:
+            func_801086E0();
+            break;
+        case 1:
+            func_80108720();
+            break;
+        case 2:
+            func_80108784();
+            break;
+        }
+        D_1F800198++;
+        func_80051F80(1);
+    }
+}
 
 INCLUDE_ASM("asm/game/nonmatchings/game", func_80106478);
 
@@ -10,8 +53,6 @@ INCLUDE_ASM("asm/game/nonmatchings/game", func_80106A24);
 
 INCLUDE_ASM("asm/game/nonmatchings/game", func_80106B98);
 
-extern u8 *D_1F800138_5432;
-extern u8 D_1F800236;
 extern u8 D_800BF808[];
 extern s16 D_800E7FEE;
 extern u8 D_800BF880;
@@ -295,7 +336,6 @@ void func_801079AC(void)
     func_80074BF8(8);
 }
 
-extern u8 D_1F800234;
 extern u8 D_1F80019B;
 extern u8 D_800452C0[];
 /* func_80108E58, inlined */
@@ -512,7 +552,6 @@ s32 func_801086E0(void) {
 
 extern u8 D_1F8001FF;
 extern s16 D_1F800278;
-extern u8 D_1F800206;
 void func_80108720(void)
 {
     u8 *p = D_1F800138_5432;
