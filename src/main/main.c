@@ -4318,7 +4318,50 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80032AB4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80032CBC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80032EB8);
+extern s32 (*D_800A3B78[])(u8 *);
+
+s32 func_80032EB8(s16 bias)
+{
+    s32 *flag = &D_1F800080;
+    s32 *otz = (s32 *)D_1F800084;
+    s32 *sxy = (s32 *)D_1F80008C;
+    s32 e;
+
+    gte_rtps();
+    gte_stflg(flag);
+    if (*flag < 0) {
+        goto ret1;
+    }
+    gte_stsz(flag);
+    if (*flag > 0) {
+        goto cont;
+    }
+ret1:
+    return 1;
+big:
+    *flag = 0x7FD;
+    goto test;
+cont:
+    *flag = (*flag >> 2) + bias;
+    if (*flag < 4) {
+        *flag = 4;
+    }
+    e = *flag >> 10;
+    *flag = (*flag >> e) + (e << 9);
+    if (*flag >= 0x7FE) {
+        goto big;
+    }
+    if (*flag < 4) {
+        *flag = -1;
+    }
+test:
+    if (*flag < 0) {
+        return 1;
+    }
+    gte_stsxy(sxy);
+    gte_stopz(otz);
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80032F98);
 
@@ -6462,7 +6505,31 @@ s32 f_StartEvent(s32 ev)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateEvent);
+
+s32 f_UpdateEvent(s32 ev)
+{
+    u8 *g;
+    s32 r;
+
+    if (D_800E7FEE == 0) {
+        return -1;
+    }
+    g = (u8 *)&D_800BF870;
+    if (g[ev + 0x44] == 0) {
+        *(u16 *)(g + 0x38) += 1;
+    }
+    if (g[ev + 0x44] != 0xFF) {
+    g[ev + 0x44] = 0xFF;
+    *(u16 *)(g + 0x3A) += 1;
+    r = f_GetEventAPReward(ev, 1);
+    *(s32 *)(g + 4) += r;
+    D_800ED058_93c7[D_800ED058_93c7[0x15] + 0x16] = ev;
+    D_800ED058_93c7[D_800ED058_93c7[0x15] + 0x1C] = 1;
+    D_800ED058_93c7[0x15] += 1;
+    return 1;
+    }
+    return 0;
+}
 
 extern u8 D_800BF80E_58ec;
 extern s32 D_1F800184;
@@ -6616,7 +6683,6 @@ s32 f_ApplyActorScriptTransition(u8 *a)
     return r;
 }
 
-extern s32 (*D_800A3B78[])(u8 *);
 #define SCRIPT_APPLY(a, k) ((s32 (*)(u8 *, s32))f_ApplyActorScriptTransition)(a, k)
 s32 f_RunActorScriptInterpreter(u8 *a)
 {
@@ -17956,7 +18022,25 @@ void func_80073CD8(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007413C);
+void func_8004C930();
+
+u8 *func_8007413C(u8 *a)
+{
+    u8 *p = f_AllocateActor(a, 0, 5, 4);
+
+    if (p != NULL) {
+        *(void **)(p + 0x1C) = func_8004C930;
+        *(u16 *)(p + 0x2E) = *(u16 *)(a + 0x2E);
+        *(u16 *)(p + 0x32) = *(u16 *)(a + 0x32) - *(s16 *)(a + 0x84) / 2;
+        *(u16 *)(p + 0x36) = *(u16 *)(a + 0x36);
+        {
+            u8 k = a[3];
+            p[0x28] |= 0x80;
+            p[3] = k + 0x2B;
+        }
+    }
+    return p;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800741DC);
 
