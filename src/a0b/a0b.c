@@ -570,7 +570,15 @@ void func_8010BDF4(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x44) = (s16) -var_v1;
 }
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_8010BE38);
+u8 *func_8010BE38(void) {
+    u8 *p = func_8007A980(2, 3, 1);
+    if (p != NULL) {
+    M2C_FIELD(p, void **, 0x1C) = func_80114608;
+    p[2] = 0;
+    p[0x28] |= 0x80;
+    return p;
+    }
+}
 
 typedef struct { u16 lo; u16 hi; } Fix;
 typedef struct {
