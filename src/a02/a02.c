@@ -1300,7 +1300,45 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801108A0);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80110AB8);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80110C7C);
+#define U(p, o) (*(u16 *)((p) + (o)))
+#define S(p, o) (*(s16 *)((p) + (o)))
+#define L(p, o) (*(s32 *)((p) + (o)))
+
+s32 func_80110C7C(u8 *a, u8 *b, u8 *c)
+{
+    s32 r;
+    s16 x;
+    s32 w;
+
+    r = 0x32;
+    if (a[0xD] & 0x10) {
+        r = 0x5A;
+    }
+    if ((u16)(U(a, 0x32) - (u16)L(c, 0x30) + (U(a, 0x84) + U(b, 0x84))) > S(a, 0x86) + S(b, 0x86)) {
+        return 0;
+    }
+    w = U(b, 0x80);
+    if ((u16)(U(a, 0x36) - (u16)L(c, 0x34) + (r + w)) > r * 2 + S(b, 0x82)) {
+        return 0;
+    }
+    if ((u16)(r + (U(a, 0x2E) - (u16)L(c, 0x2C) + 0x8C)) > r * 2 + 0x118) {
+        return 0;
+    }
+    x = U(a, 0x2E);
+    if (x < L(c, 0x2C) - 0x8C) {
+        U(a, 0x2E) = (u16)L(c, 0x2C) - 0x8C;
+    } else if (S(a, 0x36) < L(c, 0x34) + (s16)w - 0x118 && L(c, 0x2C) + 0x8C < x) {
+        U(a, 0x2E) = (u16)L(c, 0x2C) + 0x8C;
+    }
+    if (L(c, 0x34) + S(b, 0x80) < S(a, 0x36)) {
+        U(a, 0x36) = (u16)L(c, 0x34) + U(b, 0x80);
+    }
+    U(a, 0x36) -= 10;
+    if (S(a, 0x32) >= L(c, 0x30) - S(b, 0x84) - S(a, 0x84)) {
+        U(a, 0x32) = (u16)L(c, 0x30) - U(b, 0x84) - U(a, 0x84);
+        func_80022C78(a);
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80110E20);
 
