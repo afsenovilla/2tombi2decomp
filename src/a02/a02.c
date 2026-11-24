@@ -1704,7 +1704,37 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80110E20);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80111184);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801114B0);
+void func_801114B0(u8 *a, u8 *b)
+{
+    s16 dx, dz;
+    u8 *q;
+    s32 ang;
+    s32 s;
+    s32 c;
+
+    if (b[3] == 2) {
+        func_8001EC3C(a, b);
+        return;
+    }
+    func_8001EC3C(a, b);
+    if (b[0x47] == 0) {
+        return;
+    }
+    q = *(u8 **)(b + 0xC4);
+    dx = U(a, 0x2E) - U(q, 0x2C);
+    dz = U(a, 0x36) + 0x50 - U(q, 0x34);
+    if ((u16)func_80084080(dx * dx + dz * dz) > S(a, 0x80) + 0x78) {
+        return;
+    }
+    if ((u16)(U(a, 0x32) - U(*(u8 **)(b + 0xC4), 0x30) + (U(a, 0x84) + U(b, 0x84))) > S(a, 0x86) + S(b, 0x86)) {
+        return;
+    }
+    ang = func_80085690(-dz, dx);
+    s = (func_80083F50(ang) * (S(a, 0x80) + 0x78)) >> 12;
+    c = func_80083E80(ang) * (S(a, 0x80) + 0x78);
+    U(a, 0x2E) = U(*(u8 **)(b + 0xC4), 0x2C) + s;
+    U(a, 0x36) = U(*(u8 **)(b + 0xC4), 0x34) - ((c >> 12) + 0x50);
+}
 
 extern u8 *D_1F800080;
 void func_80111640(u8 *a, u8 *b)
