@@ -11433,7 +11433,19 @@ s32 func_80145E20(u8 *a) {
     return r;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80145EA4);
+s32 func_80145EA4(u8 *a) {
+    u8 *q = a + 0x60;
+    s32 h = M2C_FIELD(a, u16 *, 0x60);
+    s8 r;
+
+    r = (u32)((h - func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f) + 0x400) & 0xFFF) > 0x800;
+    if (M2C_FIELD(q, u16 *, 2) & 1) {
+        if (!r) return 1;
+    } else {
+        if (r) return 1;
+    }
+    return 0;
+}
 
 extern s8 D_1F800160[];
 extern s8 D_1F800164[];

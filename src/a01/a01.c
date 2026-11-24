@@ -3749,7 +3749,19 @@ s32 func_80119BCC(u8 *a) {
     return r;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80119C4C);
+s32 func_80119C4C(u8 *a) {
+    u8 *q = a + 0x60;
+    s32 h = M2C_FIELD(q, u16 *, 4);
+    s8 r;
+
+    r = (u32)((h - func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f) + 0x400) & 0xFFF) > 0x800;
+    if (M2C_FIELD(q, u16 *, 6) & 1) {
+        if (!r) return 1;
+    } else {
+        if (r) return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80119CD4);
 
