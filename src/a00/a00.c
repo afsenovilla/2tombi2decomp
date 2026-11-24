@@ -1642,7 +1642,144 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveA00PlatformPairContacts);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaQuestAndSpecialContacts);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveTombaActorContacts);
+typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner;
+extern u8 *D_1F800184_6cc7;
+extern s16 D_1F80018E;
+/* func_80114F94, inlined */
+static inline void inl_80114F94(u8 *a, u8 *b) {
+    b[0x29] = 0;
+    if (a[0x16B] != 0) {
+        if (D_1F800184_6cc7 == b) {
+            f_ResolveTombaSelectedCompoundContact(a, b, M2C_FIELD(b, u8 **, 0xC4));
+        }
+        return;
+    }
+    switch (func_80111E18(a, b, M2C_FIELD(b, u8 **, 0xC8))) {
+    case 2:
+        b[0x29] = 1;
+        if (D_1F80018E != 0) {
+            D_1F80018E = 0x10;
+        }
+        break;
+    case 0:
+        if ((M2C_FIELD(b, u16 *, 0x60) & 2) && func_80111E18(a, b, M2C_FIELD(b, u8 **, 0xCC)) == 2) {
+            b[0x29] = 0x81;
+            if (D_1F80018E != 0) {
+                D_1F80018E = 0x20;
+            }
+        }
+        break;
+    }
+}
+/* func_80114664, inlined */
+static inline void inl_80114664(u8 *a, u8 *b) {
+    b[0x29] = 0;
+    switch (f_ResolveTombaBoxPartContact(a, b, M2C_FIELD(b, u8 **, 0xC4), 1)) {
+    case 0:
+        break;
+    case 2:
+        goto hit;
+    }
+    switch (f_ResolveTombaBoxPartContact(a, b, M2C_FIELD(b, u8 **, 0xC0), 0)) {
+    case 0:
+        break;
+    case 2:
+    hit:
+        b[0x29] = 1;
+        break;
+    }
+}
+/* f_ResolveTombaMultipartActorContact, inlined */
+static inline void inl_ResolveTombaMultipartActorContact(u8 *a, PartsOwner *b) {
+    s32 i;
+
+    for (i = 2; i < b->pad[8] - 1; i++) {
+        if (F16(b->parts[i], 0x16) == 2) {
+            return;
+        }
+        if (i == b->pad[8] - 2 && F16(b->parts[b->pad[8] - 1], 0x16) == 0) {
+            if (func_80022E04(a, b, b->parts[i]) != 0) {
+                b->pad[0x29] = 1;
+                b->pad[0x47] = func_80077768((s16)D_1F80009C, F16(a, 0x56), 1);
+                return;
+            }
+        } else if (func_8001F650(a, b, b->parts[i]) != 0) {
+            return;
+        }
+    }
+}
+
+void f_ResolveTombaActorContacts(u8 *a) {
+    u8 **p;
+    u8 *b;
+
+    p = D_1F800148;
+    D_1F800182_5650 = D_1F800150;
+    while (D_1F800182_5650 != 0) {
+        b = *p;
+        D_1F800182_5650--;
+        p++;
+        if (b[0] & 1) {
+            switch (b[2]) {
+            case 0:
+                inl_80114F94(a, b);
+                break;
+            case 1:
+                func_8001F650(a, b, M2C_FIELD(b, u8 **, 0xC0));
+                break;
+            case 2:
+            case 4:
+            case 7:
+                func_8010EC58(a, b, M2C_FIELD(b, u8 **, 0xC0));
+                break;
+            case 3:
+                f_ResolveTombaInteractiveCylinderContact(a, b, M2C_FIELD(b, u8 **, 0xC0));
+                break;
+            case 5:
+                do {
+                    do {
+                        inl_80114664(a, b);
+                    } while (0);
+                } while (0);
+                break;
+            case 6:
+                f_ResolveTombaOnNetBridge(a, b);
+                break;
+            case 8:
+                f_ResolveTombaOrientedWallContact(a, b, M2C_FIELD(b, u8 **, 0xC0));
+                break;
+            case 14:
+            case 15:
+                func_8001FAE0(a, b);
+                break;
+            case 16:
+                inl_ResolveTombaMultipartActorContact(a, (PartsOwner *)b);
+                break;
+            case 17:
+                func_8010F034(a, b, M2C_FIELD(b, u8 **, 0xC4));
+                break;
+            case 12:
+                func_80020868(a, b);
+                break;
+            case 18:
+                func_8002311C(a, b);
+                break;
+            case 24:
+            case 44:
+                func_80020B08(a, b);
+                break;
+            case 101:
+                func_8010DCB8(a, b);
+                break;
+            case 9:
+            case 50:
+            case 75:
+                func_8001FC50(a, b);
+                break;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActiveColliderStaticContacts);
 
@@ -1818,7 +1955,6 @@ s32 func_80114528(s32 arg0, s32 arg1) {
     return func_8010EC58(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC0));
 }
 
-typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner;
 void f_ResolveTombaMultipartActorContact(u8 *a, PartsOwner *b) {
     s32 i;
 
@@ -2067,8 +2203,6 @@ void func_80114F54(s32 arg0, void *arg1) {
     }
 }
 
-extern u8 *D_1F800184_6cc7;
-extern s16 D_1F80018E;
 void func_80114F94(u8 *a, u8 *b) {
     b[0x29] = 0;
     if (a[0x16B] != 0) {
