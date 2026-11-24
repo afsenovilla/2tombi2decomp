@@ -3944,7 +3944,71 @@ void func_8011C100(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateFreedCharlesSequence);
+extern u8 D_800BF9FA;
+#define S32(o) (*(s32 *)(a + (o)))
+
+void f_UpdateFreedCharlesSequence(u8 *a) {
+    s32 dx;
+    s32 dz;
+
+    switch (a[5]) {
+    case 0:
+        switch (a[6]) {
+        case 0:
+            if (D_800BF9FE != 3) {
+                break;
+            }
+            a[0xB] &= 0x3F;
+            func_80041768(a, 0x14, 4);
+            dx = 0x24B8 - I16(0x2E);
+            dz = 0x2134 - I16(0x36);
+            I16(0x4A) = -0x2800;
+            I16(0x50) = 0x380;
+            a[6]++;
+            I16(0x48) = ((dx / 24) << 8) + dx % 24;
+            I16(0x4C) = ((dz / 24) << 8) + dz % 24;
+            break;
+        case 1:
+            if ((S32(0x2C) += I16(0x48) << 8) < 0x24B9) {
+                I16(0x2E) = 0x24B8;
+            }
+            if ((S32(0x34) += I16(0x4C) << 8) < 0x2135) {
+                I16(0x36) = 0x2134;
+            }
+        case 2:
+            W16(0x4A) += W16(0x50);
+            S32(0x30) += I16(0x4A) << 8;
+            if (I16(0x32) >= -0x744) {
+                a[0xB] = (a[0xB] & 0xC0) | 0x40;
+                func_80041768(a, 0x58, 4);
+                I16(0x32) = -0x744;
+                I16(0x4A) = -0x2800;
+                I16(0x50) = I16(0x50) * 3;
+                a[6]++;
+            }
+            break;
+        case 3:
+            D_800BF9FA = 7;
+            a[6] = 0;
+            a[5]++;
+            break;
+        }
+        break;
+    case 1:
+        if (D_800BF9FA == 10) {
+            a[0x70] = 2;
+            a[5]++;
+        }
+        break;
+    case 2:
+        if (a[0x70] == 0xFF) {
+            a[4] = 3;
+        }
+        break;
+    }
+    func_80041098(a);
+    func_8004190C(a);
+}
 
 extern s32 D_800ECF58[];
 extern u8 D_801290E0[];
@@ -5082,7 +5146,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80120F70);
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80121268);
 
 extern u8 D_80129258[];
-extern u8 D_800BF9FA;
 s32 func_80126C18(u8 *a);
 void f_UpdateGranActor(u8 *a)
 {
