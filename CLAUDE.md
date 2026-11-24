@@ -124,7 +124,8 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   targets where one match gives several.
 - `python3 -I tools/inlined.py [PROG ...] [--from P,...] [--min-cover 0.8]`: pending functions that contain an
   inlined copy of matched C (registers renamed, prologue / epilogue dropped; build/inlined.csv for all programs,
-  build/inlined_<progs>.csv for a scope; `{op:K->K2}`: constants that differ in the copy): copy the matched C as a
+  build/inlined_<progs>.csv for a scope; `{op:K->K2}`: constants that differ in the copy; `--repeats`: one block
+  several times in a pending function, build/repeats*.csv): copy the matched C as a
   `static inline` helper headed `/* NAME, inlined */` and call it (install_c.py dedupes / renames helpers).
 - `python3 -I tools/workqueue.py [PROG ...] [--top 30] [--max-size N]`: bottom-up work queue (build/queue_<progs>.csv):
   pending functions with their callees (pending count, MAIN / boot resolved), jump tables, inlined bodies

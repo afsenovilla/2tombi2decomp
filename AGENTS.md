@@ -81,7 +81,9 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
    contain a matched function inlined. Copy the matched C as a `static inline` helper (`/* NAME, inlined */`) and
    call it. Big dispatchers are usually a switch over several such handlers: `python3 -I tools/dispatch.py --list
    <progs>`, then `tools/dispatch.py PROG NAME` writes the scratch (helpers + m2c caller skeleton with the helper
-   calls in place; read its notes on shared tails), fix types and the cases, ccheck, install.
+   calls in place; read its notes on shared tails), fix types and the cases, ccheck, install. The same block several
+   times in one pending function (an unrolled loop, a helper inlined at each use): `tools/inlined.py <progs>
+   --repeats` gives each block's copies and address ranges; write it once as a `static inline` helper.
 3. **Actor state machines** (the bulk of the medium / large functions left): `switch (a[4])` with sub-switches
    on a[3] / a[5], whose cases call matched handlers. Write them whole from the plain decomp.py draft: each matched
    body as `static inline`, every case in full, the case table read from the rodata jump tables (dispatch.py drafts

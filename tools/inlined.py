@@ -26,6 +26,12 @@ is one. --csv writes every hit (default build/inlined.csv for all programs, buil
 so runs over different scopes do not overwrite each other). Pending functions holding several matched bodies at
 different places (dispatchers) are drafted by tools/dispatch.py.
 
+--repeats: pending functions that hold one block of code several times (no matched body needed: a loop body or a
+helper inlined or unrolled at each use): block length in normalised instructions, copies, register consistency
+between the copies, how many immediates differ (other offsets / constants: a helper parameter), the address range
+of each copy (build/repeats[_<progs>].csv). Write the block once as a `static inline` helper (decomp.py's draft of
+the function shows its C at the first range) and call it at each copy.
+
 Recipe: copy the matched C into the pending function's file as `static inline` (comment `/* NAME, inlined */`),
 call it where the pending code has the copy (its `return 0` / `return 1` become the caller's branches), then
 ccheck / install as usual (docs/STATUS.md, "Inlined functions").
@@ -277,9 +283,27 @@ def main():
     ap.add_argument("--top", type=int, default=60)
     ap.add_argument("--csv", default=None, help="default build/inlined.csv (all programs) or "
                                                 "build/inlined_<progs>.csv")
+    ap.add_argument("--repeats", action="store_true", help="pending functions holding one block several times")
     a = ap.parse_args()
     allp = N.progs_list()
     targets = a.progs or allp
+    if a.repeats:
+        rows = repeats(targets, max(a.min_len, 12))
+        out = os.path.join(ROOT, "build", "repeats%s.csv" % ("_" + "-".join(a.progs) if a.progs else ""))
+        os.makedirs(os.path.dirname(out), exist_ok=True)
+        with open(out, "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(["prog", "name", "size", "block_len", "copies", "regs", "const_diffs", "where"])
+            for r in rows:
+                w.writerow([r[0], r[1], r[2], r[3], len(r[4]), "%.2f" % r[5], r[6], " ".join(r[4])])
+        print("%d repeated blocks in pending functions (block of N normalised instructions x copies, best first):"
+              % len(rows))
+        for r in rows[:a.top]:
+            print("%-4s %-44s %#6x  %3d x%d r%.2f consts %d  @%s" % (r[0], r[1], r[2], r[3], len(r[4]), r[5], r[6],
+                                                                   " ".join(r[4][:4]) + (" ..." if len(r[4]) > 4
+                                                                                         else "")))
+        print("all: " + os.path.relpath(out, ROOT))
+        return
     sources = a.src.split(",") if a.src else allp
     only = set(a.names.split(",")) if a.names else None
     if a.csv is None:
@@ -311,6 +335,65 @@ def main():
     if multi:
         print("%d of them hold several matched bodies at different places (dispatchers): "
               "python3 -I tools/dispatch.py --list" % len(multi))
+
+
+def opk(key):
+    """an instruction key without its immediate (copies of one loop body with other constants still line up)."""
+    if key and key[0] in ("s", "r", "c", "c2", "c2m") or len(key) < 2:
+        return key[:2] if key and key[0] == "s" else key
+    return key[:1] + (key[1],) if key[1] in ("hi", "lo", "sp") or isinstance(key[1], str) else key[:1]
+
+
+def repeats(targets, min_len=12):
+    """pending functions holding one block of code several times (a loop body or helper inlined / unrolled at
+    each use): [(prog, name, size, block length, [(start, end) addresses], register consistency, constants that
+    differ between the first copy and the others)]. Keys without immediates; the longest block first, its
+    sub-blocks not reported again."""
+    out = []
+    for prog in targets:
+        if not os.path.isdir(os.path.join(ROOT, "asm", prog)):
+            continue
+        pn, tp = pending_names(prog)
+        for name, lines in read_funcs(prog).items():
+            if name not in pn or name in tp.by_design:
+                continue
+            nl = norm(lines)
+            keys = [opk(k) for k, _, _ in nl]
+            n = len(keys)
+            if n < 2 * min_len:
+                continue
+            grams = collections.defaultdict(list)
+            for i in range(n - K * 2 + 1):
+                grams[tuple(keys[i:i + K * 2])].append(i)
+            covered = set()
+            found = []
+            for g, pos in sorted(grams.items(), key=lambda kv: kv[1][0]):
+                pos = [p_ for p_ in pos if p_ not in covered]
+                if len(pos) < 2:
+                    continue
+                # non-overlapping occurrences, then the common extension forward
+                occ = [pos[0]]
+                for p_ in pos[1:]:
+                    if p_ >= occ[-1] + K * 2:
+                        occ.append(p_)
+                if len(occ) < 2:
+                    continue
+                L = K * 2
+                while all(o + L < n for o in occ) and len({keys[o + L] for o in occ}) == 1 and \
+                        all(occ[j] + L < occ[j + 1] for j in range(len(occ) - 1)):
+                    L += 1
+                if L < min_len:
+                    continue
+                for o in occ:
+                    covered.update(range(o, o + L))
+                blocks = [(0, 0, L)]
+                rc = min(reg_consistency(nl[occ[0]:occ[0] + L], nl[o:o + L], blocks) for o in occ[1:])
+                consts = sum(1 for o in occ[1:] for j in range(L) if nl[occ[0] + j][0] != nl[o + j][0])
+                found.append((L, ["%08X-%08X" % (nl[o][2], nl[o + L - 1][2]) for o in occ], rc, consts))
+            for L, where, rc, consts in sorted(found, key=lambda f: -f[0] * len(f[1])):
+                out.append((prog, name, len(lines) * 4, L, where, rc, consts))
+    out.sort(key=lambda r: -r[3] * len(r[4]))
+    return out
 
 
 def spans(hs):

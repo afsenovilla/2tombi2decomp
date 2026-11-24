@@ -48,6 +48,17 @@ One tools agent, the "Tool work left" list of the round-8 entry below, in its or
   (they truncate) are dropped unless `--narrowing` (then flagged NARROWING), an unknown target type is flagged;
   `--max-seconds S` stops the search (best text kept). Tried on a0b func_8010BE38 (9 off, nothing better) and
   func_80113F94 (68 -> 65 in 8 s with `--max-seconds 8`).
+- **inlined.py `--repeats`** [PROGS]: pending functions that hold one block of code several times (a loop body or a
+  helper inlined / unrolled at each use; no matched body needed): block length in normalised instructions (keys
+  without immediates), copies, register consistency, immediates that differ between the copies (helper
+  parameters), each copy's address range (build/repeats[_<progs>].csv). Under a second for a00: 98 blocks there,
+  e.g. f_ConfigureSegmentedTownActorMorph 125 instructions x2 (30 constants differ), func_801234A4 93 x2 (identical),
+  func_8013CDD4 39 x4, f_AnimateWindmillCollapseMainSequence 18 x7. It lists, it does not draft the helper: write
+  the block once as `static inline` from decomp.py's draft at the first range. Overlapping blocks of one function
+  can both be listed.
+- Not done (left for a later tools pass): install_c warning on a narrower-than-int return type with implicit-int
+  callers, a regswap "const local per use" kind, a helper draft for --repeats blocks, the loop-hoisting diff and the
+  scheduling helper (loads hoisted above a store to another global).
 
 ## 2026-11-24: eighth round (new scopes, work queue; two container restarts)
 
