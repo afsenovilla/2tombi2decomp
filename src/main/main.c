@@ -14677,7 +14677,40 @@ void func_8006625C(u8 *t)
     f_ApplyTombaStatusCommand(t, 0xB);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800662D8);
+extern s8 D_1F8000EE[];
+extern u8 D_800A47E8[];
+
+void func_800662D8(u8 *a, s32 mode)
+{
+    u8 *g;
+    u8 k;
+
+    if (*(s16 *)(a + 0x16E) == 0) {
+        mode = 0;
+    }
+    g = (u8 *)&D_800BF870;
+    switch (g[0]) {
+    case 0:
+        func_80114C5C(a, mode);
+        break;
+    case 6:
+        func_80110F28(a, mode);
+        break;
+    case 8:
+        if (g[3] != 0) {
+            g[1] = 0x11;
+        } else {
+            g[1] = 1;
+        }
+        break;
+    default:
+        k = D_800A47E8[D_800BF870.unk0];
+        if (k != 0xFF) {
+            D_800BF870.pad1[0] = k;
+        }
+        break;
+    }
+}
 
 void func_800663A8(u8 *a, s32 flag)
 {
@@ -16500,7 +16533,27 @@ void func_8006BB6C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006BD20);
+void func_8006BD20(u8 *a)
+{
+    u8 *t = (u8 *)D_800E7E80;
+    u8 *g;
+
+    if (a[2] < 8) {
+        return;
+    }
+    g = (u8 *)&D_800BF870;
+    if (g[0] == 5 && (u8)(g[1] - 1) < 3) {
+        return;
+    }
+    if (t[0x174] & 8) {
+        f_ApplyTombaStatusCommand(t, 1);
+        if (g[0x266] == 0) {
+            if (f_TryApplyTombaActorDamage(t, a, 1, 1) != 0) {
+                t[0x2B] = (*(s16 *)(t + 0x56) + 0x800) >> 4;
+            }
+        }
+    }
+}
 
 void func_8006BDF0(u8 *a, s32 quiet)
 {
@@ -17217,7 +17270,6 @@ void f_ApproachCameraPositionAndRebuildView(void *arg0, M2C_UNK arg1) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006E464);
 
-extern s8 D_1F8000EE[];
 void func_8006E8F8(void *arg0) {
     M2C_FIELD(arg0, s32 *, 0x24) = 0;
     M2C_FIELD(arg0, s32 *, 0x28) = 0;
@@ -17225,7 +17277,25 @@ void func_8006E8F8(void *arg0) {
     M2C_FIELD(arg0, s16 *, 0x56) = 0x100;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006E918);
+void func_8006E918(u8 *a)
+{
+    u8 *t = (u8 *)D_800E7E80;
+    s16 r = -*(u16 *)D_1F8000EE;
+    s16 d;
+    u16 x;
+    u16 *c;
+
+    if (*(s16 *)(t + 0x140) == *(s16 *)(t + 0x56)) {
+        d = *(u16 *)(a + 0x56);
+    } else {
+        d = -*(u16 *)(a + 0x56);
+    }
+    x = *(u16 *)(t + 0x2E) + ((rcos(*(s16 *)(t + 0x140) + *(s16 *)(a + 0x52) + d) * r) >> 12);
+    d = (rsin(*(s16 *)(t + 0x140) + *(s16 *)(a + 0x52) + d) * r) >> 12;
+    c = D_1F8000D0_fb20;
+    c[1] = x;
+    c[5] = *(u16 *)(t + 0x36) - d;
+}
 
 void f_UpdateCameraFollowTomba(void)
 {
