@@ -2060,7 +2060,41 @@ void func_8011212C(u8 *a)
     func_80027768(m_f, 0, *(s16 *)(a + 0x32), *(s16 *)(e + 0xC));
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80112244);
+void func_80112244(u8 *a)
+{
+    Ent *e;
+    s32 i;
+    u8 *base = a + 0x34;
+
+    switch (a[4]) {
+    case 0:
+        e = (Ent *)base;
+        for (i = 0; i < 0x15; i++) {
+            e[i].a = (func_8009A450() & 0x7F) + 0x20;
+            e[i].b = func_8009A450();
+            e[i].c = 0;
+            e[i].d = 0xFF;
+        }
+        a[4] = 1;
+        a[7] = 0x32;
+    case 1:
+        if (--a[7] == 0xFF) {
+            a[4] = 2;
+            break;
+        }
+        e = (Ent *)base;
+        for (i = 0; i < 0x15; i++) {
+            e[i].c += 2;
+            e[i].d -= ((func_8009A450() >> 10) & 3) + 2;
+        }
+        a[1] = 1;
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80112384);
 
