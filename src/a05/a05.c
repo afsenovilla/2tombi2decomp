@@ -2891,7 +2891,26 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80118238);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateWhosTheLiarSisterActorA);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801189B4);
+typedef struct { u8 b[5]; } Liar5;
+extern Liar5 D_8010989C;
+
+void func_801189B4(u8 *a, s32 r)
+{
+    u8 *st;
+    s32 k;
+    Liar5 t;
+    u8 w;
+
+    if (r == -1) {
+        st = (u8 *)&D_800BF870;
+        k = (st[0x14C] + 1) & 3;
+        st[0x14C] = ((func_8009A450() % 3) << 4) | k;
+        return;
+    }
+    t = D_8010989C;
+    w = func_8009A450() % 5;
+    D_800BF9BC = t.b[w] | w;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80118A9C);
 
