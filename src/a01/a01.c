@@ -6722,7 +6722,100 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80123078);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012322C);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801233A8);
+extern s32 D_800ECF90;
+extern s32 D_800ECFB4;
+extern u8 D_80135894[];
+u8 *func_8007A980();
+u8 *func_8012B654(s32 a, s32 b);
+
+void func_801233A8(u8 *a)
+{
+    s32 k;
+    u8 *p;
+    s32 t;
+
+    switch (a[4]) {
+    case 0:
+        W(a, 0x3C) = D_800ECF90;
+        func_80040CDC(a, D_801393C0_27b3, D_800A3D18);
+        if (a[3] == 0) {
+            k = 0x10;
+            a[0x7B] = 1;
+        } else {
+            k = 0xF;
+            a[0x7B] = 0;
+        }
+        if (func_800519E0(a, k, D_800ECFB4, D_80135894) != 0) {
+            break;
+        }
+        a[0xB] = 0x40;
+        a[0] = 9;
+        H(a, 0x80) = 0xAA;
+        H(a, 0x82) = 0x154;
+        H(a, 0x84) = 0x90;
+        H(a, 0x86) = 0xF0;
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        H(a, 0x58) = 0;
+        H(a, 0x56) = 0;
+        H(a, 0x54) = 0;
+        a[4]++;
+        switch (t = a[3]) {
+        case 0:
+            W(a, 0x2C) = 0x316A0000;
+            W(a, 0x30) = 0xEF520000;
+            W(a, 0x34) = 0x3D540000;
+            a[0x2A] = 0xF;
+            H(a, 0x56) = 0x400;
+            H(a, 0x40) = 0;
+            func_80051B04(*(s32 *)(a + ((a[9] - 1) << 2) + 0xC0), 1, 0x12);
+            break;
+        case 1:
+            p = func_8007A980(1, 5, 0);
+            if (p == NULL) {
+                a[4] = 2;
+                break;
+            }
+            p[2] = 3;
+            H(p, 0x2E) = 0x2FEE;
+            H(p, 0x32) = -0x1068;
+            H(p, 0x36) = 0x3F16;
+            *(void **)(p + 0x1C) = f_UpdatePipeAreaQuestPickupActor;
+            p[3] = t;
+            p[0x28] |= 0x80;
+            a[0] = 2;
+            W(a, 0x2C) = 0x30700000;
+            W(a, 0x30) = 0xEF520000;
+            W(a, 0x34) = 0x3A340000;
+            a[0x2A] = 0xF;
+            H(a, 0x56) = 0xC00;
+            W(a, 0x14) = func_8012B654(a, 1);
+            break;
+        }
+        func_80041718(a, a[0x7B], 0);
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            func_80123078(a);
+            break;
+        case 1:
+            func_8012322C(a);
+            break;
+        }
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_8012364C(u8 *a) {
     switch (a[0x78]) {
