@@ -8541,7 +8541,51 @@ void func_8013F658(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013F878);
+#define U32(p, o) M2C_FIELD(p, u32 *, o)
+
+void func_8013F878(u8 *a) {
+    u32 v;
+
+    switch (a[4]) {
+    case 0:
+        U32(a, 0x50) = 0x303030;
+        a[1] = 1;
+        U32(a, 0x58) = 0x1000;
+        U32(a, 0x5C) = 0;
+        U32(a, 0x48) = 0;
+        U32(a, 0x4C) = 0;
+        a[4] = 1;
+        a[5] = 0;
+    case 1:
+        a[1] = 1;
+        {s32 c = a[5]; if (c == 0) {
+            if (U32(a, 0x58) != 0) {
+                U32(a, 0x58) -= 0x100;
+            } else {
+                a[5] = c + 1;
+            }
+        }}
+        goto common;
+    case 2:
+        v = U32(a, 0x58);
+        a[1] = 1;
+        if (v <= 0x1000) {
+            U32(a, 0x58) = v + 0x111;
+        } else {
+            a[4] = 3;
+        }
+    common:
+        if (D_1F80017C_0fe7 & 1) {
+            if ((U32(a, 0x5C) += 0x20) >= 0xC0) {
+                U32(a, 0x5C) = 0;
+            }
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013F99C);
 
