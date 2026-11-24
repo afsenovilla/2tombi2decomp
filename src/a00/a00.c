@@ -661,7 +661,68 @@ s32 func_8010C40C(u8 *a, u8 *b) {
     return 0;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTombaInteriorEntry);
+#define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
+extern u8 D_80146ED0[];
+
+void f_UpdateTombaInteriorEntry(u8 *a, u8 *b) {
+    u8 k;
+    s32 r;
+    s32 v;
+    s16 w;
+
+    switch (a[5]) {
+    case 0:
+        k = b[0x181];
+        if (k == 0 || a[0x5F] == 0) {
+            a[0x5F] = k;
+            r = func_8010C40C(a, b);
+            if (r != 0) {
+                a[5] = r;
+                if (r == 2) {
+                    H_f12c(a, 0xE) = 10;
+                    return;
+                }
+                w = abs(H_f12c(b, 0x44));
+                if (w > 0x3800) {
+                    w = 0x3800;
+                }
+                H_f12c(a, 0xE) = D_80146ED0[w >> 11];
+                if (w > 0x800) {
+                    a[6] = 0;
+                    return;
+                }
+                a[6] = 1;
+                return;
+            }
+        }
+        break;
+    case 1:
+    case 3:
+        if (--H_f12c(a, 0xE) == 0) {
+            goto reset;
+        }
+        if (a[6] != 0) {
+            v = H_f12c(b, 0x44);
+            if (v < 0) {
+                v = -v;
+            }
+            if (v > 0x800) {
+                goto reset;
+            }
+            if (b[0x145] != 0) {
+                a[5] = 0;
+            }
+        }
+        break;
+    case 2:
+        if (--H_f12c(a, 0xE) == 0) {
+    case 4:
+        reset:
+            a[5] = 0;
+        }
+        break;
+    }
+}
 
 extern s8 D_1F800138[];
 extern s8 D_1F80019B[];
@@ -4783,7 +4844,47 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801234A4);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80123C94);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AnimateSmallFishSuspendedMotion);
+#define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
+
+void f_AnimateSmallFishSuspendedMotion(u8 *a) {
+    switch (a[5]) {
+    case 0:
+        a[5]++;
+        func_80077B38(a, D_8014C808, 3);
+        H_f12c(a, 0x40) = 0x5A;
+        H_f12c(a, 0x48) = 0x10;
+        H_f12c(a, 0x4E) = -2;
+        H_f12c(a, 0x64) = 0;
+        H_f12c(a, 0x68) = 0;
+    case 1:
+    case 3:
+        if (--H_f12c(a, 0x40) == 0) {
+            a[5]++;
+        }
+        break;
+    case 2:
+        H_f12c(a, 0x64) += H_f12c(a, 0x48);
+        H_f12c(a, 0x48) += H_f12c(a, 0x4E);
+        if ((H_f12c(a, 0x56) += 0x80) == 0x800) {
+            H_f12c(a, 0x40) = 0x5A;
+            H_f12c(a, 0x48) = -0x10;
+            H_f12c(a, 0x4E) = 2;
+            a[5]++;
+        }
+        break;
+    case 4:
+        H_f12c(a, 0x64) += H_f12c(a, 0x48);
+        H_f12c(a, 0x48) += H_f12c(a, 0x4E);
+        if ((H_f12c(a, 0x56) -= 0x80) == 0) {
+            a[5] = 1;
+            H_f12c(a, 0x40) = 0x5A;
+            H_f12c(a, 0x48) = 0x10;
+            H_f12c(a, 0x4E) = -2;
+        }
+        break;
+    }
+    func_80077B5C(a);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AnimateReleasedSmallFishBounce);
 
@@ -5369,7 +5470,55 @@ s32 func_80129100(u8 *a) {
     return 0;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseRotatingEffect);
+void f_UpdateKainenHouseRotatingEffect(u8 *a) {
+    u8 *p;
+    s32 d;
+
+    if (func_8007778C(a) != 0) {
+        switch (a[5]) {
+        case 0:
+            if (D_800BF870.pad1[0x47] == 0xFF) {
+                a[5] = 5;
+                H_f12c(a, 0x94) = 0x40;
+            } else if (D_800BF870.pad1[0x16F] >= 7) {
+                a[5] = 3;
+                H_f12c(a, 0x94) = 0x100;
+            } else {
+                a[5] = 1;
+                H_f12c(a, 0x94) = 0x200;
+            }
+            break;
+        case 1:
+            if (D_800BF9E0 >= 6) {
+                a[5]++;
+            }
+            break;
+        case 2:
+            if ((H_f12c(a, 0x94) -= 0x20) <= 0x100) {
+                H_f12c(a, 0x94) = 0x100;
+                a[5]++;
+            }
+            break;
+        case 3:
+            if (D_800BF9E0 >= 0x10) {
+                a[5]++;
+            }
+            break;
+        case 4:
+            if ((H_f12c(a, 0x94) -= 8) <= 0x40) {
+                H_f12c(a, 0x94) = 0x40;
+                a[5]++;
+            }
+            break;
+        case 5:
+            break;
+        }
+        p = *(u8 **)(a + 0xC0);
+        d = *(u16 *)(a + 0x94);
+        H_f12c(p, 0xC) += d;
+        func_800517F8(a, d);
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateWindmillInteriorEffect);
 
@@ -5844,7 +5993,60 @@ void f_UpdateKainenHouseWobbleInverted(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateKainenHouseWobbleEffect);
+void f_UpdateKainenHouseWobbleEffect(u8 *a) {
+    switch (a[5]) {
+    case 0:
+        if (D_800BF870.pad1[0x47] == 0xFF) {
+            a[5] = 5;
+            H_f12c(a, 0x50) = 0x10;
+        } else if (D_800BF870.pad1[0x16F] >= 8) {
+            a[5] = 3;
+            H_f12c(a, 0x50) = 0xC0;
+        } else {
+            a[5] = 1;
+            H_f12c(a, 0x50) = 0x100;
+        }
+        break;
+    case 1:
+        if (D_800BF9E0 >= 7) {
+            a[5]++;
+        }
+        break;
+    case 2:
+        if (H_f12c(a, 0x50) > 0xC0) {
+            H_f12c(a, 0x50) -= 0x10;
+        } else {
+            a[5]++;
+        }
+        break;
+    case 3:
+        if (D_800BF9E0 >= 0x11) {
+            a[5]++;
+        }
+        break;
+    case 4:
+        if (H_f12c(a, 0x50) > 0x10) {
+            H_f12c(a, 0x50) -= 8;
+        } else {
+            a[5]++;
+        }
+        break;
+    case 5:
+        break;
+    }
+    switch (a[3]) {
+    case 0:
+    case 1:
+        f_UpdateKainenHouseWobbleWide(a);
+        return;
+    case 2:
+        f_UpdateKainenHouseWobbleNarrow(a);
+        return;
+    case 3:
+        f_UpdateKainenHouseWobbleInverted(a);
+        return;
+    }
+}
 
 extern s16 D_8014A260[];
 extern s16 D_8014A268[];
