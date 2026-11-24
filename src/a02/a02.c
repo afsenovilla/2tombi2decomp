@@ -5056,7 +5056,52 @@ void func_8011DC88(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011DE1C);
+extern u8 D_800A3CC0_459e;
+u8 *func_80072DDC();
+void func_80123470(u8 *);
+
+void func_8011DE1C(u8 *a) {
+    u8 *p;
+
+    if (a[0x5E] == 0xFF) {
+        return;
+    }
+    if (a[0x2B] == 3) {
+        func_80041768(a, 0x22, 8);
+        func_80040D68(a, &D_800A3CC0_459e);
+        a[0x70] = 1;
+        *(u16 *)(a + 0x40) = 1;
+        a[5] = 1;
+        a[6] = 0;
+        return;
+    }
+    switch (a[6]) {
+    case 0:
+        if (*(u16 *)(*(u8 **)(a + 0x38) + 4) != 0) {
+            p = func_80072DDC(a, 0, 2, 0x20);
+            if (p != NULL) {
+                p[0] = 1;
+                p[3] = 0;
+                *(void **)(p + 0x1C) = func_80123470;
+            }
+            a[6]++;
+        }
+        break;
+    case 1:
+        if (a[0x79] == 1) {
+            func_80041768(a, 0x22, 8);
+            *(u16 *)(a + 0x40) = (func_8009A450() & 0xFF) + 0x1E;
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (--*(s16 *)(a + 0x40) < 0) {
+            func_80041768(a, 0x21, 8);
+            a[6] = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011DF98);
 
@@ -6342,7 +6387,54 @@ void func_80121DA4(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80121ED8);
+extern u8 D_800BFA1E;
+extern u8 D_8012C278;
+void func_801221EC(void *arg0);
+void func_80122264(void *arg0);
+
+void func_80121ED8(u8 *a) {
+    if (a[0x71] == 0xFF) {
+        switch (a[0x5E]) {
+        case 0:
+            D_800BFA1E = 1;
+        case 2:
+            a[0x5E]++;
+            break;
+        case 1:
+        case 3:
+            break;
+        default:
+            func_8004D4F4(*(s16 *)(a + 0x60), 1);
+            if (D_800BF870.pad1[0x94] == 0xFF) {
+                a[0x5E] = 3;
+            } else {
+                D_800BF870.pad1[0x1AD] = 1;
+                a[0x5E] = 1;
+            }
+            break;
+        }
+        func_80040D68(a, &D_8012C278);
+        *(s16 *)(a + 0x80) = 0xAA;
+        *(s16 *)(a + 0x82) = 0x154;
+        a[5] = 0;
+        a[6] = 0;
+    } else if (a[0x71] == 0) {
+        a[0x70] = 1;
+        a[6]++;
+    }
+    switch (a[0x5E]) {
+    case 0:
+        if (a[6] == 0) {
+            func_801221EC(a);
+        }
+        break;
+    case 2:
+        if (a[6] == 1) {
+            func_80122264(a);
+        }
+        break;
+    }
+}
 
 void func_80122030(u8 *a) {
     switch (a[4]) {
