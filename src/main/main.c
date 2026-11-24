@@ -3174,7 +3174,85 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80029B40);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80029F6C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002A584);
+extern int rand(void);
+s32 f_ResolveEffectEightByteStreamPayload();
+
+void func_8002A584(u8 *a)
+{
+    u8 *q = a + 0x50;
+    u8 *def = *(u8 **)(a + 0x10);
+    u8 *t;
+    u8 *e;
+    s32 i;
+    s32 z;
+    s32 dy;
+
+    switch (a[4]) {
+    case 0:
+        for (i = 0; i < 10; i++) {
+            q[i * 4 + 0] = rand();
+            q[i * 4 + 1] = rand();
+            q[i * 4 + 2] = 0;
+            q[i * 4 + 3] = rand() & 0x1F;
+        }
+        a[4] = 1;
+        if (def[2] < 4) {
+            a[5] = 2;
+        } else if (def[2] < 7) {
+            a[5] = 0;
+        } else {
+            a[5] = 1;
+        }
+    case 1:
+        t = (u8 *)D_800E7E80;
+        if ((t[0x146] & 4) || t[0x146] == 0 || def[4] >= 2 || def[0] == 1) {
+            a[4] = 2;
+            break;
+        }
+        e = *(u8 **)(t + 0xC0) + 0x18;
+        if (a[5] == 1) {
+            if (t[0x164] != 0) {
+                dy = -0xA0;
+                *(u16 *)(a + 0x2C) = *(u16 *)(e + 0x14) + ((*(s16 *)(e + 4) * dy) >> 12);
+                z = *(s16 *)(e + 0x10) * dy;
+                dy = -0x38;
+            } else {
+                dy = -0xB4;
+                *(u16 *)(a + 0x2C) = *(u16 *)(e + 0x14) + ((*(s16 *)(e + 0) * dy) >> 12);
+                z = *(s16 *)(e + 0xC) * dy;
+                dy = -0x10;
+            }
+        } else {
+            dy = -0x64;
+            *(u16 *)(a + 0x2C) = *(u16 *)(e + 0x14) + ((*(s16 *)(e + 4) * dy) >> 12);
+            z = *(s16 *)(e + 0x10) * dy;
+            dy = -0xC;
+        }
+        {
+            u16 h = *(u16 *)(e + 0x1C);
+            __asm__ volatile("");
+            *(u16 *)(a + 0x30) = h + (z >> 12);
+        }
+        *(u16 *)(a + 0x2E) = *(u16 *)(e + 0x18) + dy;
+        for (i = 0; i < 10; i++) {
+            if ((s8)(q[i * 4 + 3] -= 3) <= 0) {
+                if (a[6] == 2) {
+                    q[i * 4 + 3] = (rand() & 0xF) + 0x20;
+                } else {
+                    q[i * 4 + 3] = (rand() & 0xF) + 0x13;
+                }
+                q[i * 4 + 0] = rand();
+                q[i * 4 + 1] = rand();
+            }
+        }
+        a[1] = 1;
+        break;
+    case 2:
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 extern u8 D_800A1FC4[];
 extern u8 D_8009FB0C[];
@@ -3774,7 +3852,6 @@ extern s16 D_1F800160_f8dc;
 extern s16 D_1F800162_f8dc;
 extern s16 D_1F800164_f8dc;
 extern s32 D_8009EB7C[];
-extern int rand(void);
 /* sprite depth projection with a -0x14 depth bias, inlined */
 static inline s32 ProjZ_F8DC(void)
 {
