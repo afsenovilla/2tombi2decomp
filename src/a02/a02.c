@@ -1258,7 +1258,48 @@ s32 func_8010FAB0(u8 *a, u16 *e)
     return 4;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010FBFC);
+s32 func_8010FBFC(u8 *a, u8 *b)
+{
+    s16 m;
+    s16 dx, w, dz, adx, adz, px, pz;
+    s32 k;
+
+    m = 0;
+    if (S(a, 0x17E) < 0) {
+        m = 0x32;
+    }
+    dx = U(a, 0x2E) - U(b, 0x2E);
+    adx = dx;
+    w = m + (U(b, 0x80) + U(a, 0x80));
+    px = w;
+    if ((u16)(dx + w) > (k = S(b, 0x82) + S(a, 0x82) + m * 2)) {
+        return 0;
+    }
+    dz = U(a, 0x36) - U(b, 0x36);
+    adz = dz;
+    if ((u16)(dz + w) > k) {
+        return 0;
+    }
+    if ((u16)(U(a, 0x32) - U(b, 0x32) + (U(b, 0x84) + U(a, 0x84))) > S(a, 0x86) + S(b, 0x86)) {
+        return 0;
+    }
+    if (dx < 0) {
+        adx = -dx;
+        px = -w;
+    }
+    pz = w;
+    if (dz < 0) {
+        adz = -dz;
+        pz = -w;
+    }
+    if (w - adx < w - adz) {
+        U(a, 0x2E) = U(b, 0x2E) + px;
+        return 2;
+    } else {
+        U(a, 0x36) = U(b, 0x36) + pz;
+        return 1;
+    }
+}
 
 extern u8 **D_1F80014C;
 extern u8 D_1F800152;
