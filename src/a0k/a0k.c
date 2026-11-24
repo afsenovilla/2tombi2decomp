@@ -726,7 +726,129 @@ void func_8010B744(void)
     c->unk6E = 0xA0;
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010B760);
+typedef struct { s16 a, b, c, d; } SpeedRow8010A8D0;
+extern SpeedRow8010A8D0 D_800A455C_c872[];
+extern SpeedRow8010A8D0 D_800A4574_8b42;
+#define B8(o) (*(u8 *)(a + (o)))
+#define I16(o) (*(s16 *)(a + (o)))
+#define W16(o) (*(u16 *)(a + (o)))
+extern s32 D_8011FC18[];
+
+void func_8010B760(u8 *a) {
+    SpeedRow8010A8D0 *p;
+    u32 acc;
+    s32 four = 4;
+    u16 dec, max;
+    s32 t, step, dec2, v, ang;
+    u16 ang2;
+    u8 f;
+
+    if (B8(0x174) & 0x30) {
+        p = &D_800A4574_8b42;
+    } else {
+        p = &D_800A455C_c872[B8(0x6D)];
+    }
+    acc = (u32)(p->a * 5) >> 2;
+    dec = (u32)(p->b * 5) >> 2;
+    max = (u32)(p->c * 5) >> 2;
+    t = (p->d * 5) >> 2;
+    dec2 = t - 0x240;
+    step = t;
+    if (D_800BF808[0xE] != 0 && D_800BF808[0x45] != 0) {
+        v = 0xC0F;
+        I16(0x15E) = v;
+        max = v;
+    } else if (B8(0x165) != 0) {
+        acc = (u32)((s16)acc * 19) >> 4;
+        dec = (s16)dec * 3;
+        v = ((s16)max * 19) >> 4;
+        I16(0x15E) = v;
+        max = v;
+    } else {
+        switch ((s8)B8(0x14B)) {
+        case 1:
+            v = 0xF13;
+            break;
+        case 2:
+            v = 0x1553;
+            break;
+        case 0:
+        default:
+            v = (p->c * 5) >> 2;
+            break;
+        }
+        I16(0x15E) = v;
+    }
+    f = B8(0x147);
+    if (f & 0x80) {
+        W16(0x44) -= step;
+        if (I16(0x44) <= 0) {
+            W16(0x44) = 0;
+            if (B8(0x149) == 4) {
+                W16(0x56) = W16(0x172);
+            }
+            B8(0x149) = 2;
+        }
+        return;
+    }
+    ang = (((f & 0x7F) << 5) - D_1F8000F2 + 0x1000) & 0xFFF;
+    ang2 = ang;
+    if ((u32)(((ang - W16(0x56)) & 0xFFF) - 0x601) < 0x3FF) {
+        acc = four;
+        if (B8(0x149) == acc) {
+            W16(0x44) -= step;
+            if (I16(0x44) <= 0) {
+                W16(0x44) = max;
+                B8(0x149) = 0;
+                W16(0x56) = ang;
+            }
+            return;
+        }
+        if (I16(0x44) >= (s16)max * 3 / 4) {
+            W16(0x172) = ang;
+            B8(0x149) = acc;
+            I16(0x96) = abs(I16(0x44)) / (s16)step - 7;
+            if (I16(0x96) <= 0) {
+                I16(0x96) = 1;
+            }
+            W16(0x44) -= step;
+            return;
+        }
+        W16(0x44) -= dec;
+        if (I16(0x44) < 0) {
+            W16(0x44) = 0;
+        }
+        I16(0x56) = func_800776F8(ang, I16(0x56), 0x80, acc);
+    } else {
+        if (B8(0x149) == 2) {
+            B8(0x149) = 0;
+            W16(0x44) += acc;
+        } else if (B8(0x149) == 4) {
+            W16(0x44) -= step;
+            if (I16(0x44) <= 0) {
+                W16(0x44) = max;
+                B8(0x149) = 0;
+                W16(0x56) = ang;
+            }
+        } else {
+            if (I16(0x44) < (s16)acc) {
+                W16(0x44) = acc;
+            } else if (I16(0x15E) < I16(0x44)) {
+                W16(0x44) -= dec2;
+                if (I16(0x44) < I16(0x15E)) {
+                    W16(0x44) = I16(0x15E);
+                }
+            } else {
+                W16(0x44) += dec;
+                if (I16(0x15E) < I16(0x44)) {
+                    W16(0x44) = I16(0x15E);
+                }
+            }
+            B8(0x149) = 0;
+        }
+        I16(0x56) = func_800776F8(ang2, I16(0x56), 0x80, acc);
+    }
+}
 
 void func_8010BB48(u8 *a)
 {
@@ -2787,7 +2909,120 @@ void func_801174B0(void) {
     func_80075448(0xB, &D_8011D774, 0x10, D_800BED82);
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80117500);
+void func_80117500(u8 *a, s32 *b) {
+    s32 i;
+    s32 j;
+    s32 m;
+    s32 d;
+    s32 *v;
+    u8 *p;
+
+    switch (*(s32 *)(a + 4) & 0xF) {
+    case 1:
+        i = 0;
+        break;
+    case 2:
+        i = 1;
+        break;
+    case 4:
+        i = 2;
+        break;
+    case 8:
+        i = 3;
+        break;
+    case 3:
+        i = D_8011FC18[1] > D_8011FC18[0];
+        break;
+    case 5:
+        i = (D_8011FC18[2] > D_8011FC18[0]) * 2;
+        break;
+    case 9:
+        i = 0;
+        if (D_8011FC18[3] > D_8011FC18[0]) {
+            i = 3;
+        }
+        break;
+    case 6:
+        i = 1;
+        if (D_8011FC18[2] > D_8011FC18[1]) {
+            i = 2;
+        }
+        break;
+    case 10:
+        i = 1;
+        if (D_8011FC18[3] > D_8011FC18[1]) {
+            i = 3;
+        }
+        break;
+    case 12:
+        i = 2;
+        if (D_8011FC18[3] > D_8011FC18[2]) {
+            i = 3;
+        }
+        break;
+    case 11:
+        if (D_8011FC18[3] > D_8011FC18[0]) {
+            i = 1;
+            if (D_8011FC18[3] > D_8011FC18[1]) {
+                i = 3;
+            }
+        } else {
+            i = D_8011FC18[1] > D_8011FC18[0];
+        }
+        break;
+    case 13:
+        if (D_8011FC18[3] > D_8011FC18[0]) {
+            i = 2;
+            if (D_8011FC18[3] > D_8011FC18[2]) {
+                i = 3;
+            }
+        } else {
+            i = (D_8011FC18[2] > D_8011FC18[0]) * 2;
+        }
+        break;
+    case 14:
+        if (D_8011FC18[3] > D_8011FC18[1]) {
+            i = 2;
+            if (D_8011FC18[3] > D_8011FC18[2]) {
+                i = 3;
+            }
+        } else {
+            i = 1;
+            if (D_8011FC18[2] > D_8011FC18[1]) {
+                i = 2;
+            }
+        }
+        break;
+    case 7:
+        if (D_8011FC18[2] > D_8011FC18[0]) {
+            i = 1;
+            if (D_8011FC18[2] > D_8011FC18[1]) {
+                i = 2;
+            }
+        } else {
+            i = D_8011FC18[1] > D_8011FC18[0];
+        }
+        break;
+    case 15:
+    default:
+        m = D_8011FC18[0];
+        i = 0;
+        for (j = 1; j < 4; j++) {
+            v = &D_8011FC18[j];
+            if (m < *v) {
+                i = j;
+                m = *v;
+            }
+        }
+        break;
+    }
+    m = D_8011FC18[i];
+    p = a + i * 4;
+    d = *(s16 *)(p + 0x20) * m;
+    j = *(s16 *)(p + 0x22) * m;
+    b[0] -= d;
+    b[2] -= j;
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8011778C);
 
