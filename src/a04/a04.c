@@ -2943,7 +2943,57 @@ void func_8011C4E0(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011C784);
+extern s16 D_80141318[][3];
+extern u16 D_1F800162_b816;
+
+void func_8011C784(u8 *a)
+{
+    u8 *st;
+
+    switch (a[4]) {
+    case 0:
+        if (a[3] == 3) {
+            if (func_80051B70(a, 0xC, 0x23) != 0) {
+                break;
+            }
+            st = (u8 *)&D_800BF870;
+            if ((*(u16 *)(st + 0x5E6) >> st[0]) & 1) {
+                *(s32 *)(*(u8 **)(a + 0xC0) + 0x40) = 0;
+                st[0x144] |= 0x10;
+            }
+        } else {
+            if (func_80051B70(a, 0xC, 0) != 0) {
+                break;
+            }
+            *(s32 *)(*(u8 **)(a + 0xC0) + 0x40) = 0;
+        }
+        a[0] = 1;
+        a[4]++;
+        *(s16 *)(a + 0x80) = D_80141318[a[3]][0];
+        *(s16 *)(a + 0x82) = *(s16 *)(a + 0x80) * 2;
+        *(s16 *)(a + 0x84) = D_80141318[a[3]][1];
+        *(s16 *)(a + 0x86) = D_80141318[a[3]][2];
+        a[0x2B] = 0;
+        func_800517F8(a);
+        if (a[3] == 0 && (D_800BFE56 & 0x10)) {
+            *(s16 *)(a + 0x86) += 0x12C;
+        }
+        break;
+    case 1:
+        func_800778E4(a, (s16)(D_1F800162_b816 - *(u16 *)(a + 0x32)));
+        if (a[3] == 3) {
+            func_8011C4E0(a);
+            func_80051844(a);
+            a[0x2B] = 0;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 typedef struct { s16 x, y, z; } AreaVec3s;
 extern AreaVec3s D_80141344[];
