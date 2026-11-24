@@ -6864,7 +6864,33 @@ void func_8003FD10(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003FE00);
+void func_8003FE00(u8 *a, s32 k)
+{
+    switch (a[3]) {
+    case 0:
+        k = 0x1D;
+        break;
+    case 1:
+        k = 0x1E;
+        break;
+    case 2:
+        k = 0x1F;
+        break;
+    case 3:
+        k = 0x20;
+        break;
+    }
+    a[4] = 1;
+    if (D_800BF870.itemCounts[k] == 0) {
+        a[5] = 1;
+        f_QueueResourceMessage(0x2B, 0x41);
+    } else {
+        a[5] = 2;
+    }
+    if (a[0x5E] == 2) {
+        (*(u8 **)(a + 0x10))[0x5E] = 0;
+    }
+}
 
 extern s8 D_1F80017C[];
 void func_8003FED8(void *arg0) {
