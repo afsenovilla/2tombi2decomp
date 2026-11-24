@@ -1742,7 +1742,89 @@ void func_8010E650(u8 *a)
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", f_UpdateEndingCompletionBranchScript);
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010E8B8);
+extern u8 D_80117438[];
+extern u8 D_8011AD3C[];
+
+void func_8010E8B8(u8 *a)
+{
+    u8 *g;
+    u8 *s;
+
+    switch (a[4]) {
+    case 0:
+        g = D_800ECF58_6b74_80a7;
+        if (func_800519E0(a, 0xD, *(s32 *)(g + 0x60), D_80117438) != 0) {
+            break;
+        }
+        *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x88);
+        H(a, 0x80) = 0x50;
+        H(a, 0x82) = 0xA0;
+        H(a, 0x84) = 0xA0;
+        H(a, 0x86) = 0x120;
+        a[4]++;
+        a[0xB] = (a[0xB] & 0xC0) | 0x80;
+        s = (u8 *)&D_800BF870;
+        switch (s[1]) {
+        case 3:
+            if (s[0xC9] == 0xFF) {
+                u8 *p = D_800BF808;
+                W(p, 0x54)++;
+            }
+            if (s[0xCA] == 0xFF) {
+                u8 *p = D_800BF808;
+                W(p, 0x54)++;
+            }
+            if (s[0xCC] == 0xFF) {
+                u8 *p = D_800BF808;
+                W(p, 0x54)++;
+            }
+            if (s[0xCD] == 0xFF) {
+                u8 *p = D_800BF808;
+                W(p, 0x54)++;
+            }
+            {
+                u8 *p = D_800BF808;
+                W(p, 0x50) = H(s, 0x3A) - W(p, 0x54);
+            }
+            func_80077C40(a, D_8011AD3C, 0);
+            break;
+        case 4:
+            func_80077C40(a, D_8011AD3C, 0);
+            H(a, 0x56) = func_800782B0(a + 0x2C, D_1F800160, D_1F800164);
+            break;
+        case 5:
+            func_80077C40(a, D_8011AD3C, 1);
+            H(a, 0x56) = func_800782B0(a + 0x2C, D_1F800160, D_1F800164);
+            break;
+        }
+        break;
+    case 1:
+        switch (D_800BF871) {
+        case 3:
+            f_UpdateEndingCompletionBranchScript(a);
+            break;
+        case 4:
+        case 5:
+            if (D_800BF841 != 0) {
+                a[1] = 1;
+                func_80077E7C(a);
+                return;
+            }
+            H(a, 0x56) = func_800776F8((s16)func_800782B0(a + 0x2C, D_1F800160, D_1F800164), H(a, 0x56), 0x80);
+            break;
+        }
+        a[1] = 1;
+        func_80077E7C(a);
+        func_8004190C(a);
+        func_800518FC(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_8010EB90(u8 *a)
 {
