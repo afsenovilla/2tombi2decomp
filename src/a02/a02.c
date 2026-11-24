@@ -4778,7 +4778,69 @@ void func_8011903C(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801191B0);
+typedef struct { s16 pad0; s16 x; s16 pad4; s16 y; s16 pad8; s16 z; } V91B0;
+extern u8 D_800E8008[];
+extern u8 D_80129DE8[];
+extern u8 D_80129DF4[];
+extern u8 D_800BF901;
+s32 func_80119E68();
+
+void func_801191B0(u8 *a)
+{
+    u8 *cam = D_800E8008;
+    u8 *e;
+    s32 s;
+    V91B0 v;
+
+    switch (s = a[6]) {
+    case 0:
+        func_80119E68(a, 2);
+        S(a, 0x42) = 6;
+        func_8006CC1C(cam, D_80129DF4, 0x1E);
+        a[6]++;
+        break;
+    case 1:
+        if (func_8006CDCC(cam) != 0) {
+            cam[0x76] = 1;
+            v.x = S(a, 0x2E);
+            v.y = S(a, 0x32) - 0xB4;
+            v.z = S(a, 0x36) - 0xC8;
+            e = func_8003116C(0x301, &v, -0x28);
+            if (e != NULL) {
+                *(u8 **)(a + 0x10) = e;
+                e[0x28] |= 0x80;
+                e[0x2B] = D_800BF901 >> 7;
+            }
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (!(D_1F80017C & 7)) {
+            func_80074590(0x86, 0, 0);
+        }
+        if (func_80076D68(a) == 1) {
+            if (--S(a, 0x42) == 0) {
+                func_80074590(0x2A, 0x11, 0);
+                cam[0x76] = 0;
+                func_8006CC1C(cam, D_80129DE8, 0x1E);
+                {
+                    u8 *f = *(u8 **)(a + 0x10);
+                    if (f != NULL) {
+                        f[4] = s;
+                    }
+                }
+                a[6]++;
+            }
+        }
+        break;
+    case 3:
+        if (func_8006CDCC(cam) != 0) {
+            a[5] = 0;
+            a[6] = 1;
+        }
+        break;
+    }
+}
 
 s32 func_80119D58(u8 *a, s32 b);
 s32 func_80119DEC(u8 *a);
@@ -4825,7 +4887,6 @@ void func_80119390(u8 *a) {
     }
 }
 
-extern u8 D_800E8008[];
 extern u8 D_80129E00[];
 extern u8 D_80129E0C[];
 s32 func_80119E68();
@@ -5258,7 +5319,6 @@ void func_8011A1F0(u8 *a) {
 }
 
 extern u8 D_800BF80B;
-extern u8 D_800BF901;
 s32 func_8011A280(u8 *a) {
     switch (D_800BF80B) {
     case 0x85:
