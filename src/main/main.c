@@ -4157,7 +4157,40 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800300D8);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80030264);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800308C0);
+void func_80031744(void *arg0);
+
+void func_800308C0(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+
+    switch (a[4]) {
+    case 0:
+        a[5] = 4;
+        a[4] = 1;
+        a[6] = 0x10;
+        *(u16 *)(a + 0x2C) = *(u16 *)(o + 0x2E);
+        *(u16 *)(a + 0x2E) = *(u16 *)(o + 0x32);
+        *(u16 *)(a + 0x30) = *(u16 *)(o + 0x36);
+        *(s32 *)(a + 0x34) = *(s32 *)(a + 0x38);
+    case 1:
+        if (--a[5] == 0) {
+            SpawnAt_B8F4(0x34, a + 0x2C, -0x1E);
+            func_8002343C(o);
+        }
+        if ((*(s32 *)(a + 0x34) = *(s32 *)(a + 0x38)) == 0) {
+            a[4] = 2;
+            break;
+        }
+        if (func_8002B278(a) != 0) {
+            func_80031780(a);
+        }
+        break;
+    case 2:
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80030A3C);
 
