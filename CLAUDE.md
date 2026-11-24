@@ -111,10 +111,21 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   argument count become `((RET (*)())f)(...)`; a clashing scratch macro is renamed; it says when to commit
   config/aliases_<prog>.ld too); recurring fixes are listed in docs/STATUS.md.
 - `python3 -I tools/permute.py NAME --src FILE.c`: decomp-permuter with the game's pipeline (near-misses).
+- `python3 -I tools/sibling.py [PROG ...] [--ratio 0.65] [--install]` / `tools/sibling.py --from PROG:NAME [--src
+  FILE.c] [PROGS]`: the family template method as a tool (2026-11-24 (9)): matched C (or one function, also from a
+  scratch not installed yet) put into pending siblings of other lengths too, then edited in rounds from the asm
+  alignment: immediates (relocated words excluded), lh / lhu and lb / lbu sign flips of the access at that offset,
+  stores retail has (`store+`, or `store=` another value) or does not have (`store-`), adjacent statements swapped
+  (a store before / after a call) when within 12 words; build/sibling/<prog>/[near/]<name>.c with the edits made.
+  After matching one member of a family: `sibling.py --from PROG:NAME --src scratch.c` for the others.
 - `python3 -I tools/nearcopy.py [PROG ...] [--install] [--ratio 0.8 --near]`: matched C from any program put into
   near copies (patched constants / offsets, renamed symbols); `--near` writes the closest C of the rest to
   build/nearcopy/<prog>/near/ for hand work (a `// retail diff:` line: constants only / extra or missing block at
   +off / registers / callees). `tools/dupsweep.py`: exact copies only.
+- ccheck (2026-11-24 (9)) compares every jump table the function addresses with retail's jtbl (a wrong case-to-label
+  mapping is `DIFF ..., code equal, jump table differs` with the entries, not an OK that fails the link) and warns
+  on scratch declarations of a function the program or main defines with another return type or as data
+  (`extern u8 f[];`).
 - `python3 -I tools/ccheck.py FILE.c --prog P --func F --sbs` (or `tools/sbs.py FILE.c F --prog P`): side-by-side
   diff, ours vs retail. `tools/permlines.py FILE.c F --prog P`: moves the lines marked `//P` until it matches.
   `tools/variants.py FILE.c F --prog P [--set 'k=a|b'] [--alts K=ALTS.txt]`: words off of each `//--` variant in the

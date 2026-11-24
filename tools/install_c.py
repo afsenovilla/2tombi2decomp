@@ -29,9 +29,18 @@ import ptsrc
 HEAD = r"(?m)^([\w][\w \*]*?\b(%s)\s*\([^;{}]*\)(?:\s*[^;{}()=#]+;)*)\s*\{"
 
 
+def define_spans(text):
+    """[(start, end)] of the #define lines with their backslash continuations."""
+    return [(m.start(), m.end()) for m in re.finditer(r"(?m)^[ \t]*#[ \t]*define\b(?:[^\n]*\\\n)*[^\n]*", text)]
+
+
 def heads(text, name=r"\w+"):
-    """[(name, header text, offset)] of the function definitions in text (K&R ones too)."""
-    return [(m.group(2), m.group(1), m.start()) for m in re.finditer(HEAD % name, text)]
+    """[(name, header text, offset)] of the function definitions in text (K&R ones too); a line inside a multi-line
+    #define body (`switch (x) { \\`) is not one."""
+    spans = define_spans(text) if "#define" in text else []
+    return [(m.group(2), m.group(1), m.start()) for m in re.finditer(HEAD % name, text)
+            if m.group(2) not in ("if", "while", "for", "switch", "return", "sizeof")
+            and not any(a <= m.start() < b for a, b in spans)]
 
 
 def proto_of(header):

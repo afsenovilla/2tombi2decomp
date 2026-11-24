@@ -76,7 +76,11 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
    targets from the top; its last line names the pending callees that block the most functions (MAIN's
    f_PlaySoundEffect blocks 521 pending functions over all programs, 2026-11-23).
 1. **Families**: `python3 -I tools/families.py --by-scope`: pending functions with exact copies in several programs.
-   Match one, then `python3 -I tools/nearcopy.py <progs> --install` fills the copies.
+   Match one, then `python3 -I tools/nearcopy.py <progs> --install` fills the copies. Siblings that differ in
+   constants, store lists, load signedness or the place of a store around a call (the family template method):
+   `python3 -I tools/sibling.py --from PROG:NAME [--src scratch.c] --install` right after the first member
+   matches (all programs; the scratch need not be installed yet), or `tools/sibling.py [progs] --install` over all
+   matched C (ratio 0.65, about 6 minutes for every program); its near/ files say which edits it made.
 2. **Inlined bodies**: `python3 -I tools/inlined.py <progs>` (build/inlined_<progs>.csv): pending functions that
    contain a matched function inlined. Copy the matched C as a `static inline` helper (`/* NAME, inlined */`) and
    call it. Big dispatchers are usually a switch over several such handlers: `python3 -I tools/dispatch.py --list
@@ -419,6 +423,12 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - regswap's member toggle only takes `name + literal` / `a->b + literal` bases (a variable offset never becomes
   MEMBER_AT, 2026-11-23); the reused / forked variable check is still by hand.
 - nearcopy `--near` alone implies `--ratio 0.8` (other lengths too).
+- ccheck compares jump tables since 2026-11-24 (9): a `DIFF ..., code equal, jump table differs` is a wrong
+  case-to-label mapping (an empty case: `case K: break;` vs joined with the next case, or two labels swapped);
+  it also warns when a scratch declares a function of the program / main with another return type or as data.
+- sibling.py `store+` writes `*(T *)(base + 0xOFF) = K;` with the base of a neighbouring C store; tidy the forms
+  by hand (an `a[0xB]` style) before or after install if wanted; nothing it writes is semantically checked beyond
+  the bytes.
 - statemachine.py's header and m2c's prototypes (`M2C_UNK f(M2C_UNK, ...)`) go into src/ with the install: delete
   the header from the scratch first; use the target's array declarations (`D_800E7E80`, not `&D_800E7E80` with a
   new extern, which makes an alias).

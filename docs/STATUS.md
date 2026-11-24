@@ -3,6 +3,37 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-24 (9): tools after round 11
+
+One tools agent, about 80 minutes, the "Tool work left" list of the round-11 entry in its order.
+
+- **tools/sibling.py** (new): the family template method as a tool. Candidates: matched C of any program whose
+  masked words align with a pending function at difflib ratio >= 0.65 (other lengths too), or `--from PROG:NAME
+  [--src scratch.c]` (one function, a scratch not installed yet included, against every pending function). Each
+  is compiled in the target's place and edited in rounds (beam of 3) from the alignment with retail: immediates
+  (relocated words excluded: nearcopy's patches), lh / lhu and lb / lbu sign flips of the access at that offset,
+  `store+` (a store of K retail has: `*(T *)(base + O) = K;` next to each C store), `store=` (another value for a
+  store the C has), `store-` (a store retail does not have), and adjacent statements swapped once within 12 words
+  (a store before / after a call). Matches renamed to the target's symbols (prototypes of renamed callees dropped,
+  `s32 f();` when used as a value). Over all programs (64 pending functions with a candidate, about 6 minutes):
+  **2 matched and installed**: a0k func_80109C0C (from a02 func_801106F0, a mask constant that turned lh into lhu;
+  nearcopy refused it as not constants-only) and a04 func_80131F6C (from a04 func_8012CBD4: two stores added, one
+  value changed, three constants, a store moved before a call; 15 -> 0). The rest are 12+ words off with
+  differences outside the catalogue (a07 func_80110258: retail has `if (D_1F800137 == 1) D_1F800137 = 0;` in
+  case 2, a conditional block; build/sibling/<prog>/near/ after a run). The population of siblings of matched C is
+  small (64 at ratio 0.65): the tool pays right after an agent matches the first member of a pending family
+  (`--from`).
+- **ccheck.py**: every jump table the function's code addresses is compared with retail's jtbl as offsets into
+  the function (`DIFF ..., code equal, jump table differs` + the differing entries; tested by swapping two case
+  labels of a0l func_801092E8); scratch declarations of a function src/<prog>/<prog>.c or main.c defines with
+  another return type, or as data (`extern u8 f[];`), are warned about.
+- **install_c.py**: heads() skips lines inside multi-line `#define` bodies (`switch (x) { \`) and keywords.
+- Not done (time box): install_c rewriting data-style declarations of the installed function, alias rollback
+  after NOT INSTALLED, reuse of an existing alias (a second install of a0k made `D_1F80009C_baed_759c`), prototype
+  before a helper; regswap kinds (comparison flip, variable shift, switch-value CSE breaker, scc defeater,
+  giv-base), permlines inside static inline helpers, variants.py `@@` newline; sibling.py edit kinds for a
+  conditional block on a global and for callee argument lists.
+
 ## 2026-11-24 (8): Tomba2Edit release 0.5.0 reviewed
 
 Tomba2Edit 0.5.0 (commit b3fd4a6; /opt/tomba2edit updated) has no new function names (`symbols_us.json` unchanged)

@@ -12,6 +12,12 @@ Prints OK / DIFF per function (with -v the differing words; for another length a
 that score() and so regswap / variants / permlines report; `order only` when the function has retail's
 instructions in another order: tools/prio.py --sched shows the scheduler priorities); --func NAME limits the check. --sbs prints a
 side-by-side diff of every DIFF function, ours next to retail (tools/sbs.py; --sbs-all with the equal lines too).
+Jump tables: the entries of every table the function's code addresses are compared with retail's jtbl (asm/<prog>/
+data/*.s) as offsets into the function: a wrong case-to-label mapping (an empty case sent to another label) is a
+DIFF (`code equal, jump table differs`) with the differing entries, not an OK that fails the link.
+Declarations: a scratch prototype of a function src/<prog>/<prog>.c or src/main/main.c defines with another return
+type (`void f();` for `u8 *f(...)`), or a data-style one (`extern u8 f[];`), is warned about, as calls with another
+argument count are.
 """
 import argparse, os, re, struct, subprocess, sys, tempfile
 
@@ -103,12 +109,21 @@ def score(src, prog, name, workdir=None, override=None):
         subprocess.run(["rm", "-rf", d])
 
 
+INTLIKE = {"", "int", "s32", "signed int", "long", "signed", "unsigned int", "u32", "unsigned", "unsigned long"}
+
+
+def norm_type(t):
+    """a return type without storage words, spaces normalised (`static inline u8 *` -> `u8 *`)."""
+    t = re.sub(r"\b(extern|static|inline|__inline__|register)\b", " ", t).replace("*", " * ")
+    return " ".join(t.split())
+
+
 def argcount_warnings(src, prog):
     """warn for every call in the scratch whose argument count differs from the parameter count of the callee's
     definition in src/<prog>/<prog>.c (and src/main/main.c, resident under every overlay): m2c drafts often drop
     or add arguments, which changes the scheduling around the call; install_c.py would cast such calls."""
     import install_c
-    defs = {}
+    defs, rets = {}, {}
     for f in dict.fromkeys([os.path.join(ROOT, "src", prog, prog + ".c"), os.path.join(ROOT, "src", "main", "main.c")]):
         if not os.path.exists(f):
             continue
@@ -121,8 +136,28 @@ def argcount_warnings(src, prog):
                 k = install_c.params(m.group(2))
                 if k is not None:
                     defs[n] = (k, os.path.relpath(f, ROOT))
+            m = re.match(r"(.*?)\b%s\s*\(" % re.escape(n), hh)
+            if m:
+                rets[n] = (norm_type(m.group(1)), os.path.relpath(f, ROOT))
     text = open(src).read()
     own = {n for n, _, _ in install_c.heads(text)}
+    # the scratch's declarations of functions the target program defines: another return type than the
+    # definition's (an m2c `void f();` for an s32 function, `u8` for s32) changes the code around the call and
+    # install_c drops the prototype, so the installed C differs; a data-style declaration (`extern u8 f[];`)
+    # compiles calls through a pointer
+    for m in re.finditer(r"(?m)^(?:extern\s+)?([\w][\w \*]*?)\b(\w+)\s*(\(|\[)[^;{}]*[)\]]\s*;", text):
+        n = m.group(2)
+        if n in own or n not in rets:
+            continue
+        if m.group(3) == "[":
+            print("warning: line %d declares %s as data (%s); %s defines it as a function (%s): declare a "
+                  "prototype and cast at the uses" % (text.count("\n", 0, m.start()) + 1, n, m.group(0).strip(),
+                                                      rets[n][1], rets[n][0] or "int"))
+        elif norm_type(m.group(1)) != rets[n][0] and not (
+                {norm_type(m.group(1)), rets[n][0]} <= INTLIKE):
+            print("warning: line %d declares %s returning `%s`; its definition in %s returns `%s`" % (
+                text.count("\n", 0, m.start()) + 1, n, norm_type(m.group(1)) or "int", rets[n][1],
+                rets[n][0] or "int"))
     seen = set()
     for n, (k, where) in defs.items():
         if n in own:
@@ -164,6 +199,69 @@ def protos_differ(a, d):
     except Exception:
         return {}
     return {n: text2[o:o + sz] for n, o, sz in funcs2}
+
+
+def jtbl_warnings(obj, name, off, size, want, prog, addr):
+    """Compare the jump tables the function's code reaches with retail's: ccheck masks the %hi / %lo of the table
+    address and the rodata is not compared, so a wrong case-to-label mapping (an empty case sent to another
+    label) passes as OK and fails only at link. For each table: our entries (labels inside the function, as
+    offsets) against the retail jtbl's (asm/<prog>/data/*.s). -> list of warning lines."""
+    import jtbl
+    rel = []
+    for l in subprocess.run(["mipsel-linux-gnu-objdump", "-r", obj], capture_output=True, text=True).stdout.splitlines():
+        m = re.match(r"RELOCATION RECORDS FOR \[(\S+)\]", l)
+        if m:
+            sec = m.group(1)
+            continue
+        m = re.match(r"([0-9a-f]{8})\s+(R_MIPS_\w+)\s+(\S+)", l)
+        if m:
+            rel.append((sec, int(m.group(1), 16), m.group(2), m.group(3)))
+    if not any(s_ == ".rodata" for s_, _, _, _ in rel):
+        return []
+    d = os.path.dirname(obj)
+    subprocess.run(["mipsel-linux-gnu-objcopy", "-O", "binary", "-j", ".rodata", obj, d + "/r.bin"], check=True)
+    rod = open(d + "/r.bin", "rb").read()
+    subprocess.run(["mipsel-linux-gnu-objcopy", "-O", "binary", "-j", ".text", obj, d + "/tj.bin"], check=True)
+    txt = open(d + "/tj.bin", "rb").read()
+    wd = lambda b, i: struct.unpack("<I", b[i:i + 4])[0]
+    ents = {o: wd(rod, o) for s_, o, t, sym in rel if s_ == ".rodata" and t == "R_MIPS_32" and sym == ".text"}
+    tables = jtbl.retail_tables("asm/" + prog)
+    out, hi = [], {}
+    for s_, o, t, sym in rel:
+        if s_ != ".text" or sym != ".rodata" or not off <= o < off + size:
+            continue
+        if t == "R_MIPS_HI16":
+            hi[o] = o
+            continue
+        if t != "R_MIPS_LO16" or not hi:
+            continue
+        ho = max(h for h in hi if h < o) if any(h < o for h in hi) else None
+        if ho is None:
+            continue
+        lo = lambda w: (w & 0xFFFF) - (0x10000 if w & 0x8000 else 0)
+        ours_ro = ((wd(txt, ho) & 0xFFFF) << 16) + lo(wd(txt, o))
+        i = o - off
+        if i >= len(want) or ho - off >= len(want):
+            continue
+        r_addr = ((wd(want, ho - off) & 0xFFFF) << 16) + lo(wd(want, i))
+        ret = tables.get("jtbl_%08X" % (r_addr & 0xFFFFFFFF))
+        if ret is None or ours_ro not in ents:
+            continue
+        mine = []
+        k = ours_ro
+        while k in ents and len(mine) < len(ret):
+            mine.append(ents[k] - off)
+            k += 4
+        theirs = [x - addr for x in ret]
+        bad = [(j, a_, b_) for j, (a_, b_) in enumerate(zip(mine, theirs)) if a_ != b_]
+        if len(mine) != len(theirs):
+            out.append("warning: %s: jump table jtbl_%08X has %d entries, ours %d" % (
+                name, r_addr & 0xFFFFFFFF, len(theirs), len(mine)))
+        if bad:
+            out.append("warning: %s: jump table jtbl_%08X differs from retail in %d of %d entries (passes ccheck, "
+                       "fails the link): %s" % (name, r_addr & 0xFFFFFFFF, len(bad), len(theirs), ", ".join(
+                           "[%d] ours +0x%X retail +0x%X" % b for b in bad[:6])))
+    return out
 
 
 def main():
@@ -232,7 +330,13 @@ def main():
         want_size = sizes.get(name)
         if want_size is not None and want_size != size:
             diffs.append((-1, size, want_size))
-        ok = not diffs
+        jt = []
+        if want_size is None or want_size == size:
+            try:
+                jt = jtbl_warnings(d + "/a.o", name, off, size, want, a.prog, addr)
+            except Exception as e:     # never let the check itself stop a ccheck
+                print("note: jump-table check failed: %s" % e)
+        ok = not diffs and not jt
         bad += not ok
         order = ""
         if diffs and (want_size is None or want_size == size):
@@ -256,7 +360,10 @@ def main():
                 nearcopy.aligned_off(got, binary[addr - delta: addr - delta + want_size]) +
                 abs(size - want_size) // 4, abs(size - want_size) // 4, "extra" if size > want_size else "short")
         print("%s %s %08X (%d bytes)%s%s%s" % ("OK  " if ok else "DIFF", name, addr, size,
-                                             "" if ok else ", %d words differ" % len(diffs), aligned, order))
+                                             "" if ok else ", %d words differ" % len(diffs) if diffs else ", code equal, jump table differs",
+                                             aligned, order))
+        for w_ in jt:
+            print(w_)
         if name in np_bytes and np_bytes[name] != got:
             print("warning: %s compiles differently with the scratch's prototypes dropped (--no-protos): "
                   "install_c will produce different code (%s); drop narrow prototypes, cast at the call" % (
