@@ -6300,7 +6300,47 @@ void func_80121C10(u8 *a) {
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80121C74);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80121DA4);
+extern u8 D_8012C298;
+s32 func_801222DC(u8 *a);
+u8 *func_8006FB0C();
+
+void func_80121DA4(u8 *a) {
+    u8 *g;
+    u8 *p;
+
+    switch (a[0x2B]) {
+    case 2:
+        g = D_800BF808_1760;
+        if (g[2] == 1 && func_801222DC(a)) {
+            p = func_8006FB0C(a, g[3]);
+            *(u8 **)(g + 0x3C) = p;
+            if (p != NULL) {
+                p[0x5E] = 0;
+            }
+            func_80040D68(a, &D_8012C298);
+    case 3:
+            *(s16 *)(a + 0x80) = 0;
+            *(s16 *)(a + 0x82) = 0;
+            a[0x70] = 1;
+            a[5] = 1;
+            return;
+        }
+    default:
+        if (--*(s16 *)(a + 0x40) == 0) {
+            switch (a[6]) {
+            case 0:
+                func_80041768(a, 0x17, 0xC);
+                a[6]++;
+                break;
+            case 1:
+                func_80041768(a, 3, 0xC);
+                a[6] = 0;
+                break;
+            }
+            *(s16 *)(a + 0x40) = (func_8009A450() & 0xFF) + 0x1E;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80121ED8);
 
@@ -6710,7 +6750,43 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80123470);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801236C8);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8012383C);
+extern u8 D_8012C8BC;
+extern u8 D_8012C6BC;
+
+void func_8012383C(u8 *a) {
+    u8 *p;
+
+    switch (a[0x2B]) {
+    case 2:
+        if (D_800BF808_1760[2] == 1 && (D_800BF808_1760[3] == 0x80 || D_800BF808_1760[3] == 0x92 || D_800BF808_1760[3] == 0x7F)) {
+            *(s16 *)(a + 0x60) = D_800BF808_1760[3];
+            p = func_8006FB0C(a, D_800BF808_1760[3]);
+            *(u8 **)(D_800BF808_1760 + 0x3C) = p;
+            if (p != NULL) {
+                p[0x5E] = 0;
+            }
+            func_80040D68(a, &D_8012C8BC);
+            a[0x70] = 1;
+            a[5] = 4;
+        }
+        break;
+    case 3:
+        func_80041768(a, 2, 8);
+        if (a[0x5E] == 4) {
+            func_80040D68(a, &D_800A3D08);
+        } else {
+            if (a[0x5E] == 3) {
+                func_80042354(1, 3);
+            } else {
+                func_80042354(1, 1);
+            }
+            func_80040D68(a, &D_8012C6BC);
+        }
+        a[0x70] = 1;
+        a[5] = 1;
+        break;
+    }
+}
 
 extern u8 D_800BFAFE;
 extern void *D_8012C914_7d7d[];
