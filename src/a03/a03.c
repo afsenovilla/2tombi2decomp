@@ -132,7 +132,53 @@ void func_8010B328(void) {
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdatePlayerTrolleyActor);
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010B738);
+typedef struct TrkNode {
+    s16 pos[3];
+    s16 flags;
+    u8 pad8[8];
+    s16 m[3][3];
+    u8 pad22[2];
+    union { s32 w; struct { s16 lo; s16 len; } h; } u2;
+    union { s32 w; struct { s16 lo; s16 len; } h; } u;
+    u8 pad2c[4];
+} TrkNode;
+extern TrkNode D_80111B48[];
+typedef struct { s32 obj; s32 idx; u8 pad8[8]; s32 a, b, c; s32 f1C; } TrkSeed_B738;
+extern TrkSeed_B738 D_8011BA48[];
+extern u8 D_800BF9F8;
+
+void func_8010B738(void) {
+    CameraTarget2 c;
+    TrkSeed_B738 *e;
+    s32 i;
+
+    i = 0;
+    e = D_8011BA48;
+loop: {
+        TrkNode *n = &D_80111B48[e->idx];
+        if (!((D_800BF9F8 >> i) & 1)) {
+            c.x = n->pos[0];
+            c.y = n->pos[1];
+            c.z = n->pos[2];
+            c.x += (n->m[0][0] * e->a) >> 12;
+            c.y += (n->m[1][0] * e->a) >> 12;
+            c.z += (n->m[2][0] * e->a) >> 12;
+            c.x += (n->m[0][1] * e->b) >> 12;
+            c.y += (n->m[1][1] * e->b) >> 12;
+            c.z += (n->m[2][1] * e->b) >> 12;
+            c.x += (n->m[0][2] * e->c) >> 12;
+            c.y += (n->m[1][2] * e->c) >> 12;
+            c.z += (n->m[2][2] * e->c) >> 12;
+            e->obj = func_8003116C(0x401, &c, 0, n);
+            e->f1C = 0;
+        } else {
+            e->obj = 0;
+        }
+    }
+    i++;
+    e++;
+    if (i < 5) goto loop;
+}
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_CollectNearbyTrolleySeeds);
 
@@ -267,17 +313,6 @@ void f_InitializeTrolleyModelAndTrackState(u8 *a) {
     t[0x13] = 0;
 }
 
-typedef struct TrkNode {
-    s16 pos[3];
-    s16 flags;
-    u8 pad8[8];
-    s16 m[3][3];
-    u8 pad22[2];
-    union { s32 w; struct { s16 lo; s16 len; } h; } u2;
-    union { s32 w; struct { s16 lo; s16 len; } h; } u;
-    u8 pad2c[4];
-} TrkNode;
-extern TrkNode D_80111B48[];
 
 TrkNode *f_SampleAirborneTrolleyTrack(TrkNode *n0, s32 dist, s16 *sv, TrkMat *m) {
     TrkNode *n = n0;
