@@ -7467,7 +7467,111 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80129394);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePullAndOpenGateSegmentTransform);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePullAndOpenGateSegment);
+#define C0 (*(u8 **)(a + 0xC0))
+
+void f_UpdatePullAndOpenGateSegment(u8 *a) {
+    s32 n;
+
+    if (a[0x5E] == 2) {
+        if (H(a, 0x4A) >= 0xF80) {
+            a[7] = 1;
+        }
+        if (H(a, 0x4A) > H(a, 0x50)) {
+            func_80074590(0x8B, 0, 0);
+        }
+        H(a, 0x4A) = 0;
+        a[0x5E] = 0;
+        a[6] = 0;
+        if (a[3] == 7 && !(D_800BF870.pad1[0x18C] & 1)) {
+            D_800BF870.pad1[0x18C] |= 1;
+        } else if (a[3] == 8 && !(D_800BF870.pad1[0x18C] & 2)) {
+            D_800BF870.pad1[0x18C] |= 2;
+        }
+        return;
+    }
+    switch (a[6]) {
+    case 0:
+        switch (a[7]) {
+        case 0:
+            break;
+        case 1:
+            a[7] = 2;
+            H(a, 0x7A) = 8;
+            n = *(u16 *)(C0 + 0x3A) / 320;
+            if (n == 0) {
+                n = 1;
+            } else if (n >= 5) {
+                n = 4;
+            }
+            H(a, 0x7C) = 0;
+            H(a, 0x7E) = n * 8;
+            if (H(a, 0x7E) != 0) {
+                H(a, 0x7E) = n * 8 - 8;
+            }
+        case 2:
+            H(C0, 2) = H(a, 0x78) + (D_1F80017C & 1) * 20;
+            if (--H(a, 0x7A) == 0) {
+                a[7] = 0;
+            }
+            break;
+        }
+        if (a[0x5E] == 1) {
+            H(C0, 2) = H(a, 0x78);
+            if (a[3] == 7 && !(D_800BF9FD & 1)) {
+                if (func_8005308C() == 0) {
+                    break;
+                }
+                func_80042354(1, 1);
+                func_80040B48(0xB);
+                a[6]++;
+            } else if (a[3] == 8 && !(D_800BF9FD & 2)) {
+                if (func_8005308C() == 0) {
+                    break;
+                }
+                func_80042354(1, 1);
+                func_80040B48(0xB);
+                a[6]++;
+            } else {
+                a[6]++;
+            }
+        }
+        break;
+    case 1:
+        H(a, 0x4A) = 4;
+        a[6]++;
+    case 2:
+        if ((H(a, 0x4A) *= 2) >= H(a, 0x50)) {
+            a[6]++;
+        }
+        break;
+    case 3:
+        if ((H(a, 0x4A) += H(a, 0x50)) >= 0x1F00) {
+            H(a, 0x4A) = 0x1F00;
+            a[6]++;
+        }
+        if (a[0x5E] == 0) {
+            a[6] = 5;
+        }
+        break;
+    case 4:
+        if (a[0x5E] == 0) {
+            a[6]++;
+        }
+        break;
+    case 5:
+        if ((H(a, 0x4A) -= H(a, 0x50) / 2) <= 0) {
+            H(a, 0x4A) = 0;
+            a[6] = 0;
+        }
+        if (a[0x5E] == 1) {
+            a[6] = 3;
+        }
+        break;
+    }
+    if (H(a, 0x4A) != 0) {
+        f_UpdatePullAndOpenGateSegmentTransform(a);
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_SynchronizePullAndOpenGateAssembly);
 
