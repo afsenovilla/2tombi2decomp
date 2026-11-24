@@ -8105,7 +8105,107 @@ void func_80138A64(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleA00Warp0813Entrance);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleTinyMousesHouseEntrance);
+extern u8 D_800BF8F9;
+extern u8 D_800E7FF4;
+extern u8 D_8014AA00[];
+
+void f_HandleTinyMousesHouseEntrance(u8 *a) {
+    u8 *g = D_800E7E80;
+    s32 k;
+
+    if (g[0x174] & 4) {
+        switch (a[6]) {
+        case 0:
+            if (D_800BF871 == 9) {
+                a[0] = 2;
+                H_f12c(a, 0x50) = 0x400;
+                a[6]++;
+                func_80072EFC(a);
+                H_f12c(a, 0x40) = 0xF;
+            } else {
+                a[6] = 3;
+            }
+            break;
+        case 1:
+            if (--H_f12c(a, 0x40) == -1) {
+                a[6]++;
+            }
+            break;
+        case 2:
+            if (func_80072F14(a) != 0) {
+                a[0] = 1;
+                a[6]++;
+                D_800BF871 = 0;
+            }
+            break;
+        case 3:
+            if (a[0x29] != 0 && g[0x29] != 0 && g[0x17B] == 0) {
+                if (D_1F800137 == 0) {
+                    D_1F800137 = 2;
+                }
+                if (D_800BF8F9 == 0) {
+                    func_80040B48(0x45);
+                    a[6]++;
+                } else {
+                    a[6] += 2;
+                    func_80074590(0x17, 0, 0xF);
+                }
+            }
+            break;
+        case 4:
+            if (func_80042728(g) != 0) {
+                a[6]++;
+                func_80074590(0x17, 0, 0xF);
+            }
+            break;
+        case 5:
+            if (func_80072E60(a) != 0) {
+                a[6]++;
+                D_1F800236 = 1;
+                D_800BF808[0x31] = 1;
+                D_800BF808[7] = 2;
+                H_f12c(D_800BF808, 0x32) = 0x1400;
+            }
+            break;
+        }
+    }
+    k = a[5];
+    switch (k) {
+    case 0:
+        if (!(D_800E7FF4 & 4) && D_800BF8F9 == 0 && (*(u32 *)(a + 0x28) & 0xFF00FF00)) {
+            a[5] = 1;
+        }
+        break;
+    case 1:
+        if (func_8005308C() != 0) {
+            if (!(D_800E7FF4 & 4)) {
+                a[5]++;
+                H_f12c(a, 0xB8) = H_f12c(a, 0x60);
+                H_f12c(a, 0xBA) = H_f12c(a, 0x62);
+                H_f12c(a, 0xBC) = H_f12c(a, 0x64);
+                func_80042354(1, 1);
+                func_80040CDC(a, 0, D_8014AA00);
+                a[0x70] = k;
+            } else {
+                a[5] = 0;
+                func_80040B48(0x45);
+            }
+        }
+        break;
+    case 2:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            func_80042310();
+            a[5] = 0;
+            a[0x46] = 0;
+            H_f12c(a, 0x60) = H_f12c(a, 0xB8);
+            H_f12c(a, 0x62) = H_f12c(a, 0xBA);
+            H_f12c(a, 0x64) = H_f12c(a, 0xBC);
+        }
+        break;
+    }
+    func_800735F4(a, 0x47);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleFishermensTownEntranceActor);
 
