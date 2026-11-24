@@ -168,7 +168,104 @@ void func_8010BBB8(u8 *a, TrkMat *m, s32 ang) {
     m->t[2] += (z * m->m[2][1]) >> 12;
 }
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_InitializeTrolleyModelAndTrackState);
+typedef struct { u16 v[7]; } TrkPartDef;
+extern TrkPartDef D_8011BAEC_f106[];
+extern u8 *D_800ECFA0;
+extern u8 D_80111B48_f52e[];
+typedef struct { s32 a, b; } TrkPair_BDEC;
+extern TrkPair_BDEC D_8011BCD8[];
+extern s32 D_8011C0D8;
+extern s32 D_8011C0DC;
+extern u8 *D_1F800208;
+extern s32 D_1F80020C;
+void f_UpdatePlayerTrolleyActor(u8 *a);
+
+void f_InitializeTrolleyModelAndTrackState(u8 *a) {
+    u8 *t = a + 0x60;
+    TrkPartDef *d = D_8011BAEC_f106;
+    GameState *g = &D_800BF870;
+    u8 *base;
+    s32 *offs;
+    u8 *e;
+    s32 i;
+
+    a[8] = 5;
+    a[9] = 5;
+    base = D_800ECFA0;
+    a[0xD] = 0;
+    a[0xB] = 0;
+    offs = (s32 *)(base + 4);
+    for (i = 0; i < 5; d++, i++) {
+        ((PartOwner *)a)->parts[i] = func_8007AAE8();
+        *(u16 *)(((PartOwner *)a)->parts[i] + 6) = d->v[0];
+        *(u16 *)(((PartOwner *)a)->parts[i] + 0) = d->v[1];
+        *(u16 *)(((PartOwner *)a)->parts[i] + 2) = d->v[2];
+        *(u16 *)(((PartOwner *)a)->parts[i] + 4) = d->v[3];
+        *(u16 *)(((PartOwner *)a)->parts[i] + 8) = d->v[4];
+        *(u16 *)(((PartOwner *)a)->parts[i] + 0xA) = d->v[5];
+        *(u16 *)(((PartOwner *)a)->parts[i] + 0xC) = d->v[6];
+        if (i == 0) {
+            if (g->pad1[0x97] == 0xFF && g->pad1[0x96] == g->pad1[0x97]) {
+                *(u8 **)(((PartOwner *)a)->parts[0] + 0x40) = base + offs[3];
+            } else {
+                *(u8 **)(((PartOwner *)a)->parts[i] + 0x40) = base + offs[0];
+            }
+        } else {
+            *(u8 **)(((PartOwner *)a)->parts[i] + 0x40) = base + offs[1];
+        }
+    }
+    *(s16 *)(a + 0x54) = 0;
+    *(s16 *)(a + 0x56) = 0;
+    *(s16 *)(a + 0x58) = 0;
+    *(s16 *)(a + 0x8A) = 0;
+    *(u8 **)t = D_80111B48_f52e;
+    *(s16 *)(t + 0xC) = 0x8D0;
+    t[0x12] = 1;
+    *(s16 *)(t + 4) = 0;
+    *(s16 *)(t + 6) = 0;
+    *(s16 *)(t + 8) = 0;
+    *(s16 *)(t + 0xA) = 0;
+    *(s16 *)(t + 0x16) = 0;
+    *(s16 *)(a + 0x4A) = 0;
+    if (*(void **)(a + 0x1C) == f_UpdatePlayerTrolleyActor) {
+        D_1F800208 = a;
+        D_1F80020C = 0;
+        e = func_800310F4(0x402, -0x3C);
+        if (e != NULL) {
+            *(s32 *)(e + 0x50) = 2;
+            *(s32 *)(e + 0x54) = -0xA0;
+            *(u8 **)(e + 0x10) = a;
+        }
+        e = func_800310F4(0x402, -0x3C);
+        if (e != NULL) {
+            *(s32 *)(e + 0x50) = 4;
+            *(s32 *)(e + 0x54) = 0xA0;
+            *(u8 **)(e + 0x10) = a;
+        }
+        {
+            s32 *q0;
+            s32 *q1;
+            s32 *b;
+            i = 0;
+            b = &D_8011BCD8[0].a;
+            q1 = b + 1;
+            q0 = b;
+            do {
+                *q0 = 0;
+                *q1 = 0;
+                q1 += 2;
+                i++;
+                q0 += 2;
+            } while (i < 0x80);
+        }
+        D_8011C0D8 = 0;
+        D_8011C0DC = 0;
+    }
+    *(s16 *)(a + 0x42) = 0;
+    *(s16 *)(t + 0x18) = 0;
+    *(s16 *)(t + 0x1A) = 0;
+    t[0x13] = 0;
+}
 
 typedef struct TrkNode {
     s16 pos[3];
