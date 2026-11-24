@@ -1198,7 +1198,30 @@ void func_801113EC(u8 *a, u8 *b) {
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011146C);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011159C);
+s32 func_8011159C(u8 *a, u8 *p, s16 r, s32 f)
+{
+    s32 t = f & 0x8000;
+    s32 off = 0;
+    s32 h = f & 0x7FFF;
+    s16 dx;
+    s16 dz;
+    s32 d;
+
+    if (!t) {
+        off = 0xC8;
+    }
+    dx = *(u16 *)(a + 0x2E) - *(u16 *)(p + 0x2C);
+    dz = *(u16 *)(a + 0x36) - (*(u16 *)(p + 0x34) + off);
+    d = func_80084080(dx * dx + dz * dz);
+    if ((u16)d > *(s16 *)(a + 0x80) + r) {
+        return 0;
+    }
+    if ((u16)((*(u16 *)(a + 0x32) - *(u16 *)(p + 0x30)) + (*(u16 *)(a + 0x84) + h)) > *(s16 *)(a + 0x86) + h * 2) {
+        return 0;
+    }
+    D_1F80009C = func_80085690(-dz, dx);
+    return 1;
+}
 
 extern u8 D_1F800182_5650;
 void func_801116B8(u8 *a, u8 *b)
