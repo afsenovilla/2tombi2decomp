@@ -11792,7 +11792,44 @@ s32 f_UpdateTownCreatureTerrainContact(u8 *a) {
     return res;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureFaceTomba);
+/* func_80145EA4, inlined */
+static inline s16 inl_80145EA4(u8 *a) {
+    u8 *q = a + 0x60;
+    s32 h = M2C_FIELD(a, u16 *, 0x60);
+    s8 r;
+
+    r = (u32)((h - func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f) + 0x400) & 0xFFF) > 0x800;
+    if (M2C_FIELD(q, u16 *, 2) & 1) {
+        if (!r) return 1;
+    } else {
+        if (r) return 1;
+    }
+    return 0;
+}
+
+s32 f_UpdateTownCreatureFaceTomba(u8 *a) {
+    switch (a[6]) {
+    case 0:
+        if (!(D_800E7FFE & 0x8200) && inl_80145EA4(a)) {
+            H_f12c(a, 6) = 1;
+        } else {
+            H_f12c(a, 6) = 2;
+        }
+        break;
+    case 1:
+        if ((s16)f_UpdateTownCreatureTurnaround(a) != 0) {
+            H_f12c(a, 6) = 2;
+        }
+        break;
+    default:
+        H_f12c(a, 6) = 2;
+        goto end;
+    }
+    H_f12c(a, 0x32) += 0x10;
+    f_UpdateTownCreatureTerrainContact(a);
+end:
+    return 0;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801409C0);
 
