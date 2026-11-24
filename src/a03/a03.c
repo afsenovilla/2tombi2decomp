@@ -642,7 +642,107 @@ INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010C678);
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyRaceCamera);
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleySteeringInput);
+typedef struct {
+    u16 type;
+    u8 pad2[6];
+    u8 mag0;
+    u8 mag1;
+    u8 x;
+    u8 y;
+} TrolleyPadAnalog;
+extern TrolleyPadAnalog D_800ECF48;
+extern u16 D_800ECF54;
+extern u16 D_800E7E68;
+extern u16 D_1F800170;
+extern u16 D_1F800172;
+extern u16 D_1F800174;
+
+void f_UpdateTrolleySteeringInput(u8 *a) {
+    u8 *b = a + 0x60;
+    u8 k;
+
+    if (a[4] != 1 || (u32)(a[5] - 5) >= 2) {
+        return;
+    }
+    {
+        TrolleyPadAnalog *p = &D_800ECF48;
+
+        if ((p->y | p->x) != 0 && p->type == 7) {
+            s16 sx = (s8)p->x;
+            s16 h = (s8)p->y / 2;
+            s16 d = sx * sx + h * h;
+            s16 v = *(s16 *)(b + 0x16);
+
+            if (sx == 0) {
+                v = 0;
+            } else if (sx < 0) {
+                if (d > 10000) {
+                    v -= 2;
+                } else {
+                    v -= 1;
+                }
+                if (v < -7) {
+                    v = -7;
+                }
+            } else {
+                if (d > 10000) {
+                    v += 2;
+                } else {
+                    v += 1;
+                }
+                if (v >= 8) {
+                    v = 7;
+                }
+            }
+            *(s16 *)(b + 0x16) = v;
+            b[0x13] = 1;
+        } else {
+            if (D_800E7E68 & 0x80) {
+                k = 2;
+            } else if (D_800E7E68 & 0x20) {
+                k = 3;
+            } else if (D_800ECF54 & 0x80) {
+                k = 2;
+            } else if (D_800ECF54 & 0x20) {
+                k = 3;
+            } else {
+                k = 1;
+            }
+            switch (k) {
+            case 2:
+                if (*(s16 *)(b + 0x16) >= -6) {
+                    (*(s16 *)(b + 0x16))--;
+                }
+                break;
+            case 3:
+                if (*(s16 *)(b + 0x16) < 7) {
+                    (*(s16 *)(b + 0x16))++;
+                }
+                break;
+            case 1:
+                if (b[0x13] != k) {
+                    *(s16 *)(a + 0x42) = 3;
+                } else if (*(s16 *)(a + 0x42) > 0) {
+                    (*(s16 *)(a + 0x42))--;
+                } else {
+                    *(s16 *)(a + 0x42) = 0;
+                    if (*(s16 *)(b + 0x16) > 0) {
+                        (*(s16 *)(b + 0x16))--;
+                    } else if (*(s16 *)(b + 0x16) < 0) {
+                        (*(s16 *)(b + 0x16))++;
+                    }
+                }
+                break;
+            case 0:
+                break;
+            }
+            b[0x13] = k;
+        }
+    }
+    if ((b[0x12] & 1) && (D_800ECF54 & (D_1F800170 | D_1F800172 | D_1F800174))) {
+        b[0x12] |= 8;
+    }
+}
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateUpgradedTrolleyPhysics);
 
@@ -1240,7 +1340,6 @@ void func_801113DC(u8 *a) {
     }
 }
 
-extern u16 D_800E7E68;
 typedef struct { u8 pad[0x104]; u8 *s[6]; } TrolleyMenuText;
 extern TrolleyMenuText D_800A2854;
 typedef struct { s16 x, y, w, h; } TrolleyMenuRect;
