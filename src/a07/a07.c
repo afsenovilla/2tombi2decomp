@@ -2578,7 +2578,61 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusSeesawLaunchedActorSequenc
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80118BB4);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80118EDC);
+extern u8 D_800ECF58[];
+extern u8 D_80131C10[];
+extern u8 D_8014106C[];
+extern u8 D_800A3D18_ed09[];
+extern u8 D_800BF9D6;
+u8 *func_8012B3FC(void *a0);
+
+void func_80118EDC(u8 *a)
+{
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        g = D_800ECF58;
+        if (func_800519E0(a, 9, *(s32 *)(g + 0x7C), D_80131C10) != 0) {
+            break;
+        }
+        *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x80);
+        func_80040CDC(a, D_8014106C, D_800A3D18_ed09);
+        func_80041718(a, 0, 0);
+        if (D_800BF9D6 == 0) {
+            *(s16 *)(a + 0x2E) = 0x170C;
+            *(s16 *)(a + 0x32) = -0xDAC;
+            *(s16 *)(a + 0x36) = 0x2D26;
+            a[0x5E] = 0;
+        } else {
+            *(s16 *)(a + 0x2E) = 0x16EE;
+            *(s16 *)(a + 0x32) = -0xF8C;
+            *(s16 *)(a + 0x36) = 0x2F3A;
+            a[0x5E] = 1;
+        }
+        *(void **)(a + 0x14) = func_8012B3FC(a);
+        a[4]++;
+        break;
+    case 1:
+        switch (a[0x5E]) {
+        case 0:
+            f_UpdateCircusSeesawLaunchedActorSequence(a);
+            break;
+        case 1:
+            func_80118BB4(a);
+            break;
+        }
+        if (a[1] != 0) {
+            func_8004190C(a);
+            func_800518FC(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80119070);
 
@@ -3438,7 +3492,6 @@ void func_8011E13C(u8 *a) {
     }
 }
 
-extern u8 D_800ECF58[];
 extern u8 D_80131960[];
 extern u8 D_800A3CD0[];
 void func_8011E248(u8 *p)
@@ -3711,7 +3764,6 @@ s32 func_8011EF28(void *arg0) {
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011EF34);
 
-extern u8 D_800A3D18_ed09[];
 extern u8 D_80133900[];
 s32 f_CompleteUseTheSeesawEventIfResolved(void);
 s32 func_8011EFF8(u8 *a) {
@@ -4020,7 +4072,6 @@ s32 func_80120C30(u8 *p)
     return 0;
 }
 
-extern u8 D_800BF9D6;
 
 s32 func_80120C7C(u8 *a)
 {
