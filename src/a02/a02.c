@@ -1207,7 +1207,56 @@ void func_8010F9E4(u8 *a) {
     D_1F8001C6 = 0;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010FAB0);
+#define U(p, o) (*(u16 *)((p) + (o)))
+#define S(p, o) (*(s16 *)((p) + (o)))
+
+s32 func_8010FAB0(u8 *a, u16 *e)
+{
+    s16 m, m2;
+    s16 dx, wx, dz, wz, adx, adz, px, pz;
+
+    if (S(a, 0x17E) < 0) {
+        m = 0x14;
+        m2 = 0x28;
+    } else {
+        m = 0;
+        m2 = 0;
+    }
+    dx = U(a, 0x2E) - e[0];
+    adx = dx;
+    wx = m + (e[1] + U(a, 0x80));
+    px = wx;
+    if ((u16)(dx + wx) > (s16)e[1] * 2 + S(a, 0x82) + m2) {
+        return 0;
+    }
+    dz = U(a, 0x36) - e[2];
+    adz = dz;
+    wz = m + (e[3] + U(a, 0x80));
+    pz = wz;
+    if ((u16)(dz + wz) > (s16)e[3] * 2 + S(a, 0x82) + m2) {
+        return 0;
+    }
+    if (dx < 0) {
+        adx = -dx;
+        px = -wx;
+    }
+    if (dz < 0) {
+        adz = -dz;
+        pz = -wz;
+    }
+    if (wx - adx < wz - adz) {
+        U(a, 0x2E) = e[0] + px;
+        if (px < 0) {
+            return 3;
+        }
+        return 1;
+    }
+    U(a, 0x36) = e[2] + pz;
+    if (pz < 0) {
+        return 2;
+    }
+    return 4;
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010FBFC);
 
