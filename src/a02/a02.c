@@ -6198,7 +6198,97 @@ s32 func_80120D1C(u8 *a) {
     return 0;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80120F70);
+extern u8 D_8012BBFC;
+extern u8 D_8012BCD4;
+extern u8 D_8012BD54;
+extern u8 D_8012BD74;
+extern u8 D_8012BDC4;
+extern u8 D_8012BE74;
+void func_8011B8AC(s32 arg0, s8 arg1);
+void *func_8011FFFC(void);
+extern u8 *D_1F800214;
+static inline void func_80120F70_aim(u8 *a, u8 *e, s32 z, s32 x) {
+    u8 *o = D_1F800214;
+
+    func_80041438(a, (s16)func_80085690(*(s16 *)(a + 0x36) - z, x - *(s16 *)(a + 0x2E)), 0x120);
+    func_80041438(o, (s16)func_80085690(*(s16 *)(o + 0x36) - z, x - *(s16 *)(o + 0x2E)), 0x120);
+    func_80041438(e, (s16)func_80085690(*(s16 *)(e + 0x36) - z, x - *(s16 *)(e + 0x2E)), 0x120);
+}
+
+void func_80120F70(u8 *a) {
+    u8 *e = D_800E7E80;
+    u8 *q;
+
+    switch (a[5]) {
+    case 0:
+        if (ANIM_START(a, &D_800A3CC0_459e)) {
+            a[6] = 0;
+            a[5]++;
+        }
+        break;
+    case 1:
+        if (a[0x70] == 0xFF) {
+            switch (a[6]) {
+            case 0:
+                func_80040D68(a, &D_8012BBFC);
+                a[0x70] = 2;
+                break;
+            case 1:
+                *(s16 *)(e + 0x2E) = 0x2C24;
+                *(s16 *)(e + 0x32) = -0xD0C;
+                *(s16 *)(e + 0x36) = 0x2EE0;
+                *(u8 **)(a + 0x14) = ((u8 *(*)(u8 *, s32))func_8011B8AC)(a, 0);
+                func_80040D68(a, &D_8012BCD4);
+                a[0x70] = 2;
+                break;
+            case 2:
+                *(u8 **)(a + 0x14) = ((u8 *(*)(u8 *))func_8011FFFC)(a);
+                func_80040D68(a, &D_8012BD54);
+                a[0x70] = 2;
+                break;
+            case 3:
+                func_80040D68(a, &D_8012BD74);
+                a[0x70] = 2;
+                break;
+            case 4:
+                func_80040D68(a, &D_8012BDC4);
+                a[0x70] = 2;
+                break;
+            case 5:
+                *(s16 *)(a + 0x80) = 0x1E;
+                *(s16 *)(a + 0x82) = 0x3C;
+                func_80040D68(a, &D_8012BE74);
+                a[0x70] = 2;
+                break;
+            case 6:
+                a[4] = 3;
+                break;
+            }
+            a[6]++;
+        } else {
+            switch (a[6]) {
+            case 2:
+            case 3:
+                q = *(u8 **)(a + 0x14);
+                func_80120F70_aim(a, e, *(s16 *)(q + 0x36), *(s16 *)(q + 0x2E));
+                break;
+            case 5:
+                if (D_800BFA03 < 0xD) {
+                    q = *(u8 **)(*(u8 **)(a + 0x14) + 0x10);
+                    func_80120F70_aim(a, e, *(s16 *)(q + 0x30), *(s16 *)(q + 0x2C));
+                }
+                break;
+            }
+        }
+        a[1] = 1;
+        func_80077E7C(a);
+        break;
+    }
+    if (a[1] != 0) {
+        func_80041098(a);
+        func_8004190C(a);
+    }
+}
 
 extern u8 D_8012BFA4;
 
@@ -6860,7 +6950,6 @@ void func_801229D4(s32 arg0, s8 arg1) {
     M2C_FIELD(temp_v0, u8 *, 0x28) = (u8) (M2C_FIELD(temp_v0, u8 *, 0x28) | 0x80);
 }
 
-extern u8 *D_1F800214;
 s32 func_80122A28(u8 *a) {
     u8 *t = D_1F800214;
     s16 v[6];
