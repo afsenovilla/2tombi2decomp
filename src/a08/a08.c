@@ -7300,16 +7300,81 @@ s32 func_8013A630(u8 *a)
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013A6A8);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013A7D4);
+extern s32 D_800BF854;
+extern u8 D_800BFB04;
+extern u8 D_80148790[];
+extern u8 D_80147604[];
+extern u8 D_80147644[];
+extern u8 D_80147664[];
+extern u8 D_8014766C[];
+extern u8 D_801476AC[];
+
+s32 func_8013A7D4(u8 *a)
+{
+    u8 *g;
+
+    switch (a[6]) {
+    case 0:
+        if (D_800BF80F == 0) {
+            a[6]++;
+            func_80042354(1, 2);
+            func_80040CDC(a, D_80148790, D_80147604);
+            a[0x70] = 1;
+        }
+        break;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[6]++;
+            g = (u8 *)&D_800BF870;
+            if ((*(u16 *)(g + 0x2E) & 0x200) || (g[0x11] & 4)) {
+                func_80040CDC(a, D_80148790, D_80147664);
+                a[0xBF] = 1;
+            } else {
+                func_80040CDC(a, D_80148790, D_80147644);
+                a[0xBF] = 0;
+            }
+            a[0x70] = 1;
+        }
+        break;
+    case 2:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            if (D_800BFB04 != 0 && a[0xBF] == 0) {
+                a[6] = 0;
+                func_80040CDC(a, D_80148790, D_801476AC);
+                a[0x70] = 1;
+                return 2;
+            }
+            a[6]++;
+            func_80040CDC(a, D_80148790, D_8014766C);
+            a[0x70] = 1;
+        }
+        break;
+    case 3:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[6]++;
+            func_80042310();
+            D_1F800137 = 2;
+        }
+        break;
+    case 4:
+        if (D_800E806E == 3) {
+            a[6]++;
+            D_800BF854 = 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 extern u8 D_80141524[];
-extern u8 D_80148790[];
 extern u8 D_80147694[];
 extern u8 D_8014767C[];
 extern u8 D_801478E4[];
 extern u8 D_80147924[];
 extern u8 D_8014791C[];
-extern s32 D_800BF854;
 /* func_8013AF48, inlined */
 static inline void func_8013AF48_inl(u8 *a)
 {
