@@ -24,7 +24,7 @@ bytes of the disc; everything else is still built from the original assembly, so
 byte-identical at every step.
 
 <!-- progress:start -->
-**Whole game: 41.9 % of the code matches byte for byte** (1184212 of 2827992 bytes, 4625 of 7011 functions; 2026-11-24).
+**Whole game: 41.9 % of the code matches byte for byte** (1184576 of 2827992 bytes, 4626 of 7011 functions; 2026-11-24).
 
 | Part | Functions | Bytes | Matching (bytes) |
 |---|---:|---:|---|
@@ -32,7 +32,7 @@ byte-identical at every step.
 | 2. MAIN.EXE engine | 787 / 1169 | 171436 / 409140 | 🟩🟩🟩🟩⬜⬜⬜⬜⬜⬜ 41.9 % |
 | 3. boot + game/demo/opn/sop/crd | 123 / 153 | 47532 / 70648 | 🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 67.3 % |
 | 4a. small areas a0g-a0j | 144 / 158 | 51064 / 61632 | 🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜ 82.9 % |
-| 4b. medium areas + bosses | 731 / 1020 | 254492 / 502332 | 🟩🟩🟩🟩🟩⬜⬜⬜⬜⬜ 50.7 % |
+| 4b. medium areas + bosses | 732 / 1020 | 254856 / 502332 | 🟩🟩🟩🟩🟩⬜⬜⬜⬜⬜ 50.7 % |
 | 4c. big areas a00-a08 | 2084 / 3638 | 561552 / 1609968 | 🟩🟩🟩⬜⬜⬜⬜⬜⬜⬜ 34.9 % |
 
 <details>
@@ -62,7 +62,7 @@ byte-identical at every step.
 | A0C.BIN: area overlay | 89 / 121 | 33456 / 63832 | 🟩🟩🟩🟩🟩⬜⬜⬜⬜⬜ 52.4 % |
 | A0D.BIN: area overlay | 79 / 106 | 30616 / 57812 | 🟩🟩🟩🟩🟩⬜⬜⬜⬜⬜ 53.0 % |
 | A0E.BIN: area overlay | 84 / 114 | 30632 / 60716 | 🟩🟩🟩🟩🟩⬜⬜⬜⬜⬜ 50.5 % |
-| A0F.BIN: area overlay | 106 / 140 | 37184 / 71340 | 🟩🟩🟩🟩🟩⬜⬜⬜⬜⬜ 52.1 % |
+| A0F.BIN: area overlay | 107 / 140 | 37548 / 71340 | 🟩🟩🟩🟩🟩⬜⬜⬜⬜⬜ 52.6 % |
 | A0G.BIN: area overlay | 30 / 38 | 11268 / 16684 | 🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 67.5 % |
 | A0H.BIN: area overlay | 34 / 35 | 12768 / 13488 | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 94.7 % |
 | A0I.BIN: area overlay | 31 / 33 | 12352 / 14624 | 🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜ 84.5 % |
