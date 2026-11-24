@@ -4004,7 +4004,38 @@ void func_80031780(u8 *p)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ProjectEffectPointToScreenAndDepth);
+s32 f_ProjectEffectPointToScreenAndDepth(s16 bias)
+{
+    s32 *flag = &D_1F800080;
+    s32 *otz = (s32 *)D_1F800084;
+    s32 *sxy = (s32 *)D_1F80008C;
+    s32 e;
+
+    gte_rtps();
+    gte_stflg(flag);
+    if (*flag < 0) {
+        return 1;
+    }
+    gte_stsz(flag);
+    if (*flag <= 0) {
+        return 1;
+    }
+    *flag = (*flag >> 2) + bias;
+    if (*flag < 4) {
+        *flag = 4;
+    }
+    e = *flag >> 10;
+    *flag = (*flag >> e) + (e << 9);
+    if ((u32)(*flag - 4) >= 0x7FC) {
+        *flag = -1;
+    }
+    if (*flag < 0) {
+        return 1;
+    }
+    gte_stsxy(sxy);
+    gte_stopz(otz);
+    return 0;
+}
 
 void f_SetIdentityMatrix(s32 *m);
 void f_SetEffectRenderTransform(void *pos, u8 *scale, s16 *rot)
