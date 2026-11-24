@@ -3025,7 +3025,90 @@ void func_801215BC(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801217E8);
+extern u8 D_800BF92F;
+extern u8 D_8013EA20[];
+extern u8 D_8013EA58[];
+extern u8 D_8013EA70[];
+extern u8 D_8013EAA8[];
+
+void func_801217E8(u8 *a)
+{
+
+    switch (a[6]) {
+    case 0:
+        if (D_800BF80F == 0) {
+            s32 one = 1;
+            a[6] += one;
+            func_80042354(one, one);
+        }
+        break;
+    case 1:
+        a[6]++;
+        if (D_800BF870.pad1[0x159] < 3) {
+            func_80040CDC(a, D_80140F7C_8010, D_8013EA20);
+            if (D_800BF870.pad1[0x159] < 2) {
+                a[0x7A] = 0xB;
+            } else {
+                a[0x7A] = 0xD;
+            }
+        } else {
+            func_80040CDC(a, D_80140F7C_8010, D_8013EA70);
+            if (D_800BF870.pad1[0x159] < 9) {
+                a[0x7A] = 0xA;
+            } else {
+                a[0x7A] = 0xC;
+            }
+        }
+        a[0x70] = 1;
+        break;
+    case 2:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            D_800E806C = 8;
+            func_8006CBA8(a + 0x2C);
+            a[6]++;
+            func_80040CDC(a, D_80140F7C_8010, D_8013E8E8);
+            a[0x70] = 1;
+        }
+        break;
+    case 3:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[6]++;
+            if (D_800BF870.pad1[0x159] < 3) {
+                func_80040CDC(a, D_80140F7C_8010, D_8013EA58);
+                if (D_800BF870.pad1[0x159] < 2) {
+                    a[0x7A] = 0xC;
+                } else {
+                    a[0x7A] = 0xE;
+                }
+            } else {
+                func_80040CDC(a, D_80140F7C_8010, D_8013EAA8);
+                if (D_800BF870.pad1[0x159] < 9) {
+                    a[0x7A] = 0xB;
+                } else {
+                    a[0x7A] = 0xD;
+                }
+            }
+            a[0x70] = 1;
+        } else {
+            func_8006CBA8(a + 0x2C);
+        }
+        break;
+    case 4:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            func_80042310();
+            if (D_800BF92F == 0xFF) {
+                a[5] = 9;
+            } else {
+                a[5] = 3;
+            }
+            a[6] = 0;
+        }
+        break;
+    }
+}
 
 extern u8 D_800BFB02;
 extern M2C_UNK D_8013EAC0;
