@@ -6297,7 +6297,62 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80138C68);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80139088);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801392D8);
+extern u8 D_80149608[];
+extern u8 D_80149658[];
+extern u8 D_80149688[];
+extern u8 D_801496B8[];
+
+void func_801392D8(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        a[6]++;
+        func_80040CDC(a, D_8014D014, D_80149608);
+        a[0x70] = 1;
+        a[0x47] = 0;
+        a[0] = 2;
+        break;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            *(u16 *)(a + 0x40) = 0xB4;
+            a[0] = 9;
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (func_80041438(a, 0xC00, 0x80) != 0) {
+            a[6]++;
+            func_80041768(a, 8, 0);
+        }
+        break;
+    case 3:
+        if (--*(s16 *)(a + 0x40) == -1) {
+            a[6] = 0;
+        } else if (a[0x2B] == 3) {
+            a[6]++;
+            if (D_800BF870.pad1[0x64] == 0xFF) {
+                func_80040CDC(a, D_8014D014, D_801496B8);
+                func_80042354(1, 1);
+            } else if (D_800BF870.pad1[0x61] == 0xFF) {
+                func_80040CDC(a, D_8014D014, D_80149688);
+                func_80042354(1, 1);
+            } else {
+                func_80040CDC(a, D_8014D014, D_80149658);
+                func_80042354(1, 2);
+            }
+            a[0x70] = 1;
+        }
+        break;
+    case 4:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[6] = 0;
+            func_80042310();
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", f_RunRockCrabBalanceCameraSequence);
 
