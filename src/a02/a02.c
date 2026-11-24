@@ -4827,7 +4827,50 @@ void func_80119390(u8 *a) {
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80119510);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80119694);
+extern u8 *D_800BF844_3cf3;
+
+s32 func_80119694(u8 *a, s16 x, s16 z)
+{
+    u8 *p = D_800BF844_3cf3;
+    s16 dx;
+    s16 dz;
+    s32 ang;
+
+    switch (a[6]) {
+    case 0:
+        S(a, 0x44) = 0;
+        dx = x - U(p, 0x2E);
+        dz = z - U(p, 0x36);
+        S(a, 0x42) = func_80084080(dx * dx + dz * dz);
+        ang = -func_80085690(dz, dx) & 0xFFF;
+        S(a, 0x48) = func_80083F50(ang) >> 4;
+        S(a, 0x4C) = -func_80083E80(ang) >> 4;
+        a[6]++;
+        break;
+    case 1:
+        S(a, 0x44) += 0x80;
+        if (S(a, 0x44) >= 0x800) {
+            S(a, 0x44) = 0x800;
+            a[6]++;
+        }
+    case 2:
+        if (!(D_1F80017C & 7)) {
+            func_80074590(0x84, 0, 0);
+        }
+        L(p, 0x2C) += S(a, 0x44) * S(a, 0x48);
+        L(p, 0x34) += S(a, 0x44) * S(a, 0x4C);
+        S(a, 0x42) -= S(a, 0x44) >> 8;
+        if (S(a, 0x42) <= 0) {
+            S(p, 0x2E) = x;
+            S(p, 0x36) = z;
+            S(a, 0x44) = 0;
+            a[6] = 0;
+            return 1;
+        }
+        return 0;
+    }
+    return 0;
+}
 
 void func_80119990(void *arg0);
 void func_801199EC(u8 *a);
@@ -5036,7 +5079,6 @@ s32 func_80119DEC(u8 *a) {
 
 #define FU16(p, o) M2C_FIELD(p, u16 *, o)
 #define FP(p, o) M2C_FIELD(p, u8 **, o)
-extern u8 *D_800BF844_3cf3;
 u8 *func_8011C94C(s32 arg0, s8 arg1);
 s32 func_80119E68(u8 *a, s32 k, u8 *e) {
     u8 *t = D_800BF844_3cf3;
