@@ -1427,7 +1427,113 @@ s32 func_8010BC8C(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/a0j/nonmatchings/a0j", f_UpdateGoldenTowerPigElderActor);
+extern u8 D_8010D288[];
+extern u8 D_8010D7E4[];
+extern u8 D_8010D5F4[];
+extern u8 D_8010D6DC[];
+extern u8 D_8010D7B4[];
+extern u8 D_800BFA34;
+extern s32 D_800E7FFC;
+
+#define TALK(a, script)                                   \
+    switch (a[6]) {                                       \
+    case 0:                                               \
+        if (a[0x2B] == 3) {                               \
+            a[6]++;                                       \
+            func_80042354(1, 2);                          \
+            func_80040CDC(a, D_8010D904, script);         \
+            a[0x70] = 1;                                  \
+        }                                                 \
+        break;                                            \
+    case 1:                                               \
+        func_80041098(a);                                 \
+        if (a[0x70] == 0xFF) {                            \
+            a[6] = 0;                                     \
+            func_80042310();                              \
+        }                                                 \
+        break;                                            \
+    }
+
+void f_UpdateGoldenTowerPigElderActor(u8 *a)
+{
+    u8 *g;
+    u8 k;
+    s32 r;
+
+    switch (a[4]) {
+    case 0:
+        g = (u8 *)D_800ECF58;
+        if (func_800519E0(a, 0x10, *(s32 *)(g + 0x48), D_8010D288) != 0) {
+            break;
+        }
+        *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x38);
+        func_80077C40(a, D_8010D904, 0);
+        a[0] = 9;
+        H(a, 0x80) = 0x8C;
+        H(a, 0x82) = 0x118;
+        H(a, 0x84) = 0x50;
+        H(a, 0x86) = 0x90;
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        a[4]++;
+        k = D_800BFA34;
+        if (k == 0) {
+            a[5] = 0;
+        } else if (k == 1) {
+            a[5] = 2;
+        } else if (k == 0xFF) {
+            a[5] = 4;
+        }
+        break;
+    case 1:
+        if (!(D_800E7FFC & 0x1800000)) {
+            TALK(a, D_8010D7E4);
+        } else {
+            switch (a[5]) {
+            case 0:
+                r = func_8010BAD8(a);
+                if (r == 1) {
+                    a[5]++;
+                    D_800BFA34 = r;
+                } else if (r == 2) {
+                    a[5] = 4;
+                    D_800BFA34 = 0xFF;
+                }
+                break;
+            case 1:
+                TALK(a, D_8010D5F4);
+                break;
+            case 2:
+                r = func_8010BC8C(a);
+                if (r == 1) {
+                    a[5]++;
+                } else if (r == 2) {
+                    a[5] = 4;
+                    D_800BFA34 = 0xFF;
+                }
+                break;
+            case 3:
+                TALK(a, D_8010D6DC);
+                break;
+            case 4:
+                TALK(a, D_8010D7B4);
+                break;
+            }
+        }
+        if (func_8007778C(a) != 0) {
+            func_8004190C(a);
+            func_800518FC(a);
+        }
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
+#undef TALK
 
 s32 func_8010C1D4(void *a)
 {
