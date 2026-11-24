@@ -3968,7 +3968,90 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", f_UpdateKujaraLiftDepartureSequence);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80120C14);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80120F08);
+extern u8 D_800E800B;
+u8 *func_8007AAE8();
+
+void func_80120F08(u8 *a)
+{
+    s32 t;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 0x18) != 0) {
+            break;
+        }
+        if ((*(u8 **)(a + 0xC4) = func_8007AAE8()) == NULL) {
+            a[4] = 3;
+            break;
+        }
+        a[8] = 2;
+        a[9] = 2;
+        *(s16 *)(*(u8 **)(a + 0xC4) + 6) = -1;
+        *(s16 *)(*(u8 **)(a + 0xC4) + 0) = 0;
+        *(s16 *)(*(u8 **)(a + 0xC4) + 2) = 0;
+        *(s16 *)(*(u8 **)(a + 0xC4) + 4) = 0;
+        *(s16 *)(*(u8 **)(a + 0xC4) + 8) = 0;
+        *(s16 *)(*(u8 **)(a + 0xC4) + 0xA) = 0xC00;
+        *(s16 *)(*(u8 **)(a + 0xC4) + 0xC) = 0;
+        *(s16 *)(*(u8 **)(a + 0xC4) + 0x38) = 0x1000;
+        *(s16 *)(*(u8 **)(a + 0xC4) + 0x3A) = 0x1000;
+        *(s16 *)(*(u8 **)(a + 0xC4) + 0x3C) = 0x1000;
+        func_80051B04(*(u8 **)(a + 0xC4), 0xC, 0x17);
+        *(s16 *)(a + 0x80) = 0xA0;
+        *(s16 *)(a + 0x82) = 0x140;
+        *(s16 *)(a + 0x86) = 0xE0;
+        a[0] = 1;
+        a[0x29] = 0;
+        *(s16 *)(a + 0x84) = 0;
+        *(s16 *)(a + 0x54) = -0x60;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x58) = 0;
+        a[4]++;
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            if (a[0x29] != 0) {
+                a[5] = 1;
+            }
+            *(s16 *)(a + 0x84) = 0;
+            break;
+        case 1:
+            *(s16 *)(*(u8 **)(a + 0xC0) + 0x3A) -= 0x200;
+            if (*(u16 *)(*(u8 **)(a + 0xC0) + 0x3A) < 0x200) {
+                a[5]++;
+            }
+            if (a[0x29] == 1) {
+                t = (*(u16 *)(*(u8 **)(a + 0xC0) + 0x3A) * 7) >> 7;
+                *(s16 *)(a + 0x84) = (0xE0 - t) / 4;
+            }
+            break;
+        case 2:
+            *(s16 *)(*(u8 **)(a + 0xC0) + 0x3A) += 0x200;
+            if (*(u16 *)(*(u8 **)(a + 0xC0) + 0x3A) >= 0x1000) {
+                *(s16 *)(*(u8 **)(a + 0xC0) + 0x3A) = 0x1000;
+                a[5] = 0;
+                a[0x29] = 0;
+            }
+            if (a[0x29] == 1) {
+                t = (*(u16 *)(*(u8 **)(a + 0xC0) + 0x3A) * 7) >> 7;
+                *(s16 *)(a + 0x84) = (0xE0 - t) / 4;
+            }
+            break;
+        }
+        if (D_800E800B == 0x14) {
+            a[1] = 1;
+            func_80077EBC(a);
+        } else if (func_8007778C(a) != 0) {
+            func_80051844(a);
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_801211E4(u8 *a) {
     u8 *p = func_8007A980(2, 4, 0);
