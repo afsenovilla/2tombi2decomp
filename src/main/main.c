@@ -5006,7 +5006,39 @@ test:
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80032F98);
+extern u8 D_800A0C5C[];
+extern u8 D_8009E730[];
+extern u8 D_8009E378[];
+
+void func_80032F98(u8 *a)
+{
+    u8 *t = (u8 *)D_800E7E80;
+
+    switch (a[4]) {
+    case 0:
+        if (t[0x147] != 0) {
+            *(u8 **)(a + 0x34) = *(u8 **)(a + 0x38) = D_8009E730;
+        } else {
+            *(u8 **)(a + 0x34) = *(u8 **)(a + 0x38) = D_8009E378;
+        }
+        a[4] = 1;
+        a[6] = 0x10;
+        *(s16 *)(a + 0x32) = -0x96;
+    case 1:
+        if ((*(s32 *)(a + 0x34) = *(s32 *)(a + 0x38)) != 0) {
+            *(u16 *)(a + 0x2C) = *(u16 *)(t + 0x2E);
+            *(u16 *)(a + 0x2E) = *(u16 *)(t + 0x32);
+            *(u16 *)(a + 0x30) = *(u16 *)(t + 0x36);
+            a[1] = 1;
+            break;
+        }
+        a[4] = 2;
+    case 2:
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 void func_80033080(s32 arg0) {
     func_80027E5C();
@@ -5079,7 +5111,6 @@ u8 *f_SpawnLinkedActorSpriteRingEffect(u8 *src, void *owner, s32 v, s32 y)
     return e;
 }
 
-extern u8 D_800A0C5C[];
 extern u8 D_800A0DCC[];
 void func_80033278(u8 *a)
 {
@@ -5126,7 +5157,31 @@ void func_80033278(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80033380);
+void func_80033380(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        *(s16 *)(a + 0x2E) = -0x6A4;
+        a[4] = 1;
+        a[7] = 0xFF;
+    case 1:
+        *(s16 *)(a + 0x30) -= 0x42;
+        a[7] -= a[7] >> 2;
+        if (*(s16 *)(a + 0x30) < 0x1F4) {
+            a[4] = 2;
+            break;
+        }
+        if ((*(s32 *)(a + 0x34) = *(s32 *)(a + 0x38)) == 0) {
+            *(u8 **)(a + 0x34) = *(u8 **)(a + 0x38) = D_800A0C5C;
+        }
+        a[1] = 1;
+        break;
+    case 2:
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 extern s32 D_800A2068[];
 void func_80033450(u8 *a)
