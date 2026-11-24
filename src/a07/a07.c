@@ -4,7 +4,46 @@
 #include "gte.h"
 #include "psyq/gtemac.h"
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010A660);
+extern u8 D_1F800137;
+extern u16 D_1F80009C_efeb;
+extern s16 D_1F80018E;
+extern u8 *D_1F800184;
+extern u16 D_1F80008C;
+extern u8 D_800BF840;
+
+void func_8010A660(u8 *a, u8 *b)
+{
+    s16 ang;
+
+    if (*(u16 *)(a + 0x17E) & 0x200) {
+        return;
+    }
+    if (func_8002300C(a, b, *(s16 *)(b + 0x80) * 2) == 0) {
+        return;
+    }
+    b[0x2B] = 1;
+    if (D_1F80008C <= *(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) + 0x5A) {
+        b[0x2B] = 2;
+        ang = D_1F80009C_efeb & 0xFFF;
+        if ((*(s16 *)(a + 0x17E) & 0x8000) && D_1F800137 == 0 && !(b[0] & 2)) {
+            if (abs((s16)((ang - *(u16 *)(a + 0x56)) << 4)) < 0x2001) {
+                D_1F80018E = 0x4000;
+                D_1F800184 = b;
+                D_800BF840 = 0x4C;
+            }
+        }
+        if (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80) >= D_1F80008C) {
+            s32 s;
+            s32 c;
+
+            ang += 0x800;
+            s = (func_80083F50(ang) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80))) >> 12;
+            c = func_80083E80(ang) * (*(s16 *)(a + 0x80) + *(s16 *)(b + 0x80));
+            *(s16 *)(a + 0x2E) = *(u16 *)(b + 0x2E) + s;
+            *(s16 *)(a + 0x36) = *(u16 *)(b + 0x36) - (c >> 12);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010A7FC);
 
@@ -47,11 +86,7 @@ s32 func_8010B5BC(u8 *a)
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010B6F4);
 
-extern u8 D_1F800137;
 extern s16 D_1F80018C;
-extern s16 D_1F80018E;
-extern u8 *D_1F800184;
-extern u8 D_800BF840;
 extern u8 D_800BF873;
 void func_8010B944(u8 *a, u8 *b)
 {
@@ -95,7 +130,6 @@ void func_8010B944(u8 *a, u8 *b)
     }
 }
 
-extern u16 D_1F80008C;
 void func_8010BAD0(u8 *a, u8 *b)
 {
     s16 ang;
@@ -158,7 +192,6 @@ void func_8010BC9C(u8 *a, u8 *b)
     }
 }
 
-extern u16 D_1F80009C_efeb;
 void func_8010BE08(u8 *a, u8 *b) {
     s16 d;
     s32 ang;
