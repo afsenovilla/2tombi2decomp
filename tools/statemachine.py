@@ -3,6 +3,12 @@
 
   python3 -I tools/statemachine.py --list [PROG ...] [--top 40]
   python3 -I tools/statemachine.py PROG NAME [NAME ...] [--out build/statemachine] [--no-check] [--actor [--actor-args 0,1]]
+      [--cases]
+
+--cases (and with every draft): build/statemachine/<prog>/<name>.cases.txt, the retail asm cut per case block:
+the cases that enter it, its address range, calls, the branches / jumps leaving it with where they land (`case
+t:3`, `case t:3 +0x1C`: a shared tail inside another case, `head`, `outside`), and its asm with the other blocks'
+labels annotated. Write the nested-switch state machines case by case from it.
 
 --list: the pending functions of the programs (default a00-a08) that dispatch through rodata jump tables, with the
 number of tables / cases, the share of their calls that go to matched functions (C in src/) and the switch
@@ -119,6 +125,80 @@ def describe(prog, name, tables, calls, ins, hits, matched):
     return out
 
 
+def case_map(prog, name, jt=None, matched=None):
+    """The retail asm cut per case, to write each case from the asm when the drafts come out broken (nested
+    switches): for every block that a jump table enters, the cases that enter it, its address range, the asm lines
+    (labels written as `L<addr> (case ...)`), the branches / jumps that leave it and where they land (another case
+    block, a shared tail, the function end), and its calls. Returns the text of build/statemachine/<prog>/
+    <name>.cases.txt."""
+    matched = matched_names(prog) if matched is None else matched
+    tables, calls, ins = analyse(prog, name, jt, matched)
+    path = decomp.find_asm(prog, name)
+    lines, ins, labels = DP.parse_asm(path)
+    blocks = case_blocks(tables, ins)
+    ad_label = {}
+    for lb, ad in labels.items():
+        ad_label.setdefault(ad, lb)
+    enter = collections.defaultdict(list)           # block start -> ["jtbl_x case 3", ...]
+    for ti, (t, opnd, cases) in enumerate(tables):
+        for c, lb, ad in cases:
+            if ad is not None:
+                enter[ad].append("%d" % c if len(tables) == 1 else "T%d.%d" % (ti, c))
+    starts = sorted(blocks)
+    if not ins:
+        return ""
+    fstart, fend = ins[0][1], ins[-1][1] + 4
+
+    def where(ad):
+        """the case block (or the head before the first case) holding address ad."""
+        if ad >= fend or ad < fstart:
+            return "outside"
+        k = max([s_ for s_ in starts if s_ <= ad], default=None)
+        if k is None:
+            return "head"
+        tag = "case " + ",".join(enter[k]) if enter.get(k) else "block %08X" % k
+        return tag if ad == k else "%s +0x%X" % (tag, ad - k)
+    out = ["%s (%s): %d jump tables, %d case blocks" % (name, prog, len(tables), len(starts))]
+    for ti, (t, opnd, cases) in enumerate(tables):
+        out.append("%s%s: switch on %s; case -> target: %s" % ("T%d = " % ti if len(tables) > 1 else "", t, opnd,
+                                                               ", ".join(
+            "%d->%08X" % (c, ad) for c, lb, ad in cases if ad is not None)))
+    rng = [("head", fstart, starts[0] if starts else fend)] + \
+        [("case " + ",".join(enter[s_]) if enter.get(s_) else "block", s_, blocks[s_]) for s_ in starts]
+    for tag, b0, b1 in rng:
+        if b0 >= b1:
+            continue
+        body = [x for x in ins if b0 <= x[1] < b1]
+        exits, cl = [], []
+        for i, ad, mn, ops in body:
+            if mn == "jal":
+                t_ = ops.strip()
+                cl.append("%s%s" % (t_, "" if t_ in matched else " (asm)"))
+            elif DP.is_branch(mn) or mn in ("j", "b"):
+                lm = re.search(r"(\.L\w+)", ops)
+                if lm and lm.group(1) in labels:
+                    ta = labels[lm.group(1)]
+                    if not (b0 <= ta < b1):
+                        exits.append("%08X %s -> %s (%s)" % (ad, mn, lm.group(1), where(ta)))
+            elif mn == "jr" and "$ra" in ops:
+                exits.append("%08X jr ra (return)" % ad)
+        out.append("")
+        out.append("== %s: %08X-%08X (%d instructions)" % (tag, b0, b1, len(body)))
+        out.append("   calls: " + (", ".join(cl) or "-"))
+        out.append("   leaves: " + ("; ".join(exits) or "- (falls through)"))
+        last = None
+        for i, ad, mn, ops in body:
+            for k in range((last + 1) if last is not None else max(0, i - 3), i):
+                lm = re.match(r"\s*(\.L\w+):", lines[k]) or re.match(r"\s*jlabel\s+(\.L\w+)", lines[k])
+                if lm:
+                    out.append("   %s:%s" % (lm.group(1), "   <- " + ", ".join(enter[ad]) if enter.get(ad) else ""))
+            ops2 = re.sub(r"(\.L\w+)", lambda m_: "%s [%s]" % (m_.group(1), where(labels[m_.group(1)]))
+                          if m_.group(1) in labels and not (b0 <= labels[m_.group(1)] < b1) else m_.group(1), ops)
+            out.append("     %08X  %-7s %s" % (ad, mn, ops2.strip()))
+            last = i
+    return "\n".join(out) + "\n"
+
+
 def m2c_body(prog, name, actor=None):
     """m2c's draft (--valid-syntax); actor: the parameters typed Actor * ("0": arg0; tools/decomp.py --actor)."""
     ctx = decomp.actor_context(prog, name, actor) if actor else decomp.context()
@@ -159,6 +239,12 @@ def draft(prog, name, out_dir, do_check=True, jt=None, matched=None, actor=None)
             (name, prog, len(tables), len(calls), sum(1 for _, t in calls if t in matched)),
             " * %d matched bodies inlined" % len(I.spans(hits)) if hits else " * no matched body inlined"]
     head += [" * " + l for l in describe(prog, name, tables, calls, ins, I.spans(hits) if hits else [], matched)]
+    try:
+        cm = case_map(prog, name, jt, matched)
+        open(os.path.join(out_dir, prog, name + ".cases.txt"), "w").write(cm)
+        head.append(" * per-case retail asm (range, exits, calls): %s.cases.txt" % name)
+    except Exception as e:
+        head.append(" * case map failed: %s: %s" % (type(e).__name__, e))
     drafts = []
     if hits:
         try:
@@ -241,6 +327,7 @@ def main():
     ap.add_argument("--top", type=int, default=40)
     ap.add_argument("--out", default=OUT)
     ap.add_argument("--no-check", action="store_true")
+    ap.add_argument("--cases", action="store_true", help="only the per-case asm map (<name>.cases.txt), no drafts")
     ap.add_argument("--actor", action="store_true", help="m2c draft with arg0 typed Actor * (include/actor.h)")
     ap.add_argument("--actor-args", default="0", help="with --actor: the parameters typed Actor * (e.g. 0,1)")
     a = ap.parse_args()
@@ -252,6 +339,12 @@ def main():
     prog = a.args[0]
     jt, matched = jtbl_targets(prog), matched_names(prog)
     for name in a.args[1:]:
+        if a.cases:
+            os.makedirs(os.path.join(a.out, prog), exist_ok=True)
+            p_ = os.path.join(a.out, prog, name + ".cases.txt")
+            open(p_, "w").write(case_map(prog, name, jt, matched))
+            print("%s: %s" % (name, os.path.relpath(p_, ROOT)))
+            continue
         try:
             out, res = draft(prog, name, a.out, not a.no_check, jt, matched, a.actor_args if a.actor else None)
         except Exception as e:
