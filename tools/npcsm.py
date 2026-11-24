@@ -26,7 +26,9 @@ one of the three init functions; `skel` = it also switches on byte 4 of its firs
 PROG NAME: build/npcsm/<prog>/<name>.c, m2c's draft rewritten into the skeleton (arg0 -> `u8 *a`, M2C_FIELD on it ->
 `a[K]` / `*(T *)(a + K)`, `switch (a[4])` without the temporary, `a[4]++`, m2c's `case 3: ... /* fallthrough */
 case 2: return;` kept and also tried as `case 2: break; case 3: ...; break;`), each variant ccheck'd and the best kept
-(the others as <name>.alt<N>.c). --install runs tools/install_c.py on every draft that matches (build-checked).
+(the others as <name>.alt<N>.c). A draft at most --perm-max (40) words off then gets tools/permlines.py over the plain
+stores of case 0 (--perm-seconds 60; --no-perm skips it): retail's store order is the scheduler's, not m2c's (a0f
+func_801183C8 went 6 -> 0 this way). --install runs tools/install_c.py on every draft that matches (build-checked).
 """
 import argparse, collections, glob, os, re, subprocess, sys
 
@@ -390,6 +392,38 @@ def draft(prog, name, out_dir):
     return out, scored[0][3]
 
 
+STORE = re.compile(r"^\s+(\*\(|a\[|M2C_FIELD\(a,)[^;]*\)?\s*[-+|&]?= [^;]*;$")
+
+
+def perm_case0(path, prog, name, seconds):
+    """tools/permlines.py over the plain stores of case 0 (the init's store list: retail's order is the
+    scheduler's, not m2c's). Returns (score, best file) or None."""
+    lines = open(path).read().split("\n")
+    try:
+        i = next(k for k, l in enumerate(lines) if l == "    switch (a[4]) {")
+        j = next(k for k in range(i + 1, len(lines)) if re.match(r"    case 1:", lines[k]))
+    except StopIteration:
+        return None
+    marked = 0
+    for k in range(i, j):
+        if STORE.match(lines[k]) and "func_" not in lines[k] and "a[4]" not in lines[k]:
+            lines[k] += " //P"
+            marked += 1
+    if marked < 2:
+        return None
+    src = path[:-2] + ".perm.c"
+    open(src, "w").write("\n".join(lines))
+    r = subprocess.run([sys.executable, "-I", os.path.join(ROOT, "tools", "permlines.py"), src, name, "--prog",
+                        prog, "--max-seconds", str(seconds)], capture_output=True, text=True, cwd=ROOT)
+    mm = re.search(r"best: (\d+) words off \((.*)\)", r.stdout)
+    if not mm:
+        return None
+    best = mm.group(2)
+    if os.path.exists(best):
+        open(best, "w").write(re.sub(r" //P$", "", open(best).read(), flags=re.M))
+    return int(mm.group(1)), best
+
+
 def install(path, prog):
     r = subprocess.run([sys.executable, "-I", os.path.join(ROOT, "tools", "install_c.py"), path, "--prog", prog],
                        capture_output=True, text=True, cwd=ROOT)
@@ -402,6 +436,10 @@ def main():
     ap.add_argument("--all", action="store_true", help="with --list: also callers of func_8007A624 without init")
     ap.add_argument("--out", default=OUT)
     ap.add_argument("--install", action="store_true")
+    ap.add_argument("--no-perm", dest="perm", action="store_false",
+                    help="no tools/permlines.py pass over the case-0 stores of a near draft")
+    ap.add_argument("--perm-max", type=int, default=40, help="permlines only for drafts at most this many words off")
+    ap.add_argument("--perm-seconds", type=int, default=60)
     ap.add_argument("args", nargs="*")
     a = ap.parse_args()
     if a.list:
@@ -422,6 +460,15 @@ def main():
         except Exception as e:
             print("%-40s draft failed: %s: %s" % (n, type(e).__name__, e))
             continue
+        if not res.startswith("OK") and a.perm and path:
+            mm = re.search(r"score (\d+)", res) or re.search(r"(\d+) words? differ", res)
+            if mm and int(mm.group(1)) <= a.perm_max:
+                pr = perm_case0(path, prog, n, a.perm_seconds)
+                if pr and pr[0] == 0:
+                    os.replace(pr[1], path)
+                    res = "OK after permlines on the case-0 stores"
+                elif pr:
+                    res += " (permlines on the case-0 stores: %d, %s)" % (pr[0], os.path.relpath(pr[1], ROOT))
         line = "%-40s %s" % (n, res)
         if res.startswith("OK"):
             ok += 1

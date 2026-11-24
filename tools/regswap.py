@@ -4,7 +4,7 @@ statements, tried greedily on one function of a scratch file and scored by tools
 
   python3 -I tools/regswap.py FILE.c FUNC [--prog main] [-j N] [--rounds 4] [--out FILE.regswap.c]
       [--only decl,split,reuse,fork,copy,wrap,temp,load,const,member,volatile,goto,ternary,pathsplit,callres,abs]
-      [--skip KIND,...] [--max-perm 720] [--pairs 6] [--max-cands 3000] [--max-seconds S] [--narrowing] [--install]
+      [--skip KIND,...] [--hacks] [--max-perm 720] [--pairs 6] [--max-cands 3000] [--max-seconds S] [--narrowing] [--install]
 
 The rewrites (docs/STATUS.md "Register priority" / "Registers" recipes):
   - decl: the order of the local declarations at the top of the function body (every order when there are at
@@ -39,6 +39,14 @@ The rewrites (docs/STATUS.md "Register priority" / "Registers" recipes):
   - callres: a call result stored through memory goes through an existing local that is dead there first
     (`p->x = f(a);` -> `v = f(a); p->x = v;`; the dead check is a forward scan: check loops by hand);
   - abs: `abs(E)` <-> `E < 0 ? -E : E` / `E >= 0 ? E : -E` / `__builtin_abs`, and `if (v < 0) v = -v;` -> abs.
+  - emptycase: an empty `case K: break;` added to a switch for a missing value next to its labels (another
+    decision tree / jump table);
+  - caseinc: `x = K + 1;` inside `case K:` of `switch (x)` -> `x++;` (K - 1 -> `x--;`);
+  - vstore: one store through a volatile lvalue (a dead store retail keeps);
+  - perarm: `k = K1; if (c) k = K2; x = k;` -> `if (c) x = K2; else x = K1;` (one store per arm);
+  - fork never starts at an assignment that reads the variable or whose block does not cover the later uses
+    (the new variable would be read uninitialised); const (constants as early locals) runs only with --hacks or
+    an explicit --only.
 Every round starts with the wrap and volatile rewrites; past --max-cands every kind gets its turn (round robin).
 --max-seconds stops the search (the best text so far stays in --out).
 Every round compiles every single rewrite of the current best text (in parallel) and keeps the best one while the
@@ -207,6 +215,14 @@ def rewrites(text, func, only):
             if init:
                 assigns = [i] + assigns
             for k in assigns[1:]:
+                rhs = lines[k].split("=", 1)[1]
+                if re.search(r"(?<![\w.>])\b%s\b" % re.escape(n), rhs) or \
+                        re.match(r"\s+%s\s*[-+*/|&^]=" % re.escape(n), lines[k]):
+                    continue    # `x = x + 1` would read the new variable uninitialised
+                ik = indent(lines[k])
+                if any(indent(lines[j]) < ik and re.search(r"(?<![\w.>])\b%s\b" % re.escape(n), lines[j])
+                       for j in range(k + 1, e) if lines[j].strip()):
+                    continue    # used after the block of this assignment: other paths reach it uninitialised
                 nn = n + "_f"
                 ls = list(lines)
                 for j in range(k, e):
@@ -713,6 +729,92 @@ def rewrites(text, func, only):
                             break
                     if depth == 0 and not any(re.search(r"\bbreak\s*;", lines[j]) for j in seg):
                         ptr_block(k + 1, j2, "the case at line %d" % (k - b))
+    if "emptycase" in only or "caseinc" in only:
+        for k in range(body_start, e):
+            m = re.match(r"(\s*)switch\s*\((.*)\)\s*\{\s*$", lines[k])
+            if not m:
+                continue
+            ind, ex = m.group(1), m.group(2).strip()
+            close = next((j for j in range(k + 1, e) if lines[j] == ind + "}"), None)
+            if close is None:
+                continue
+            labs = {}
+            for j in range(k + 1, close):
+                mc = re.match(r"%s(?:    )?case (-?(?:0x[0-9A-Fa-f]+|\d+)):\s*$" % re.escape(ind), lines[j])
+                if mc:
+                    labs[int(mc.group(1), 0)] = j
+                    cind = re.match(r"\s*", lines[j]).group(0)
+            if not labs:
+                continue
+            if "emptycase" in only:
+                lo, hi = min(labs), max(labs)
+                for v in [x for x in range(lo - 1, hi + 2) if x not in labs and x >= 0][:8]:
+                    ls = list(lines)
+                    ls[close:close] = ["%scase %d:" % (cind, v), "%s    break;" % cind]
+                    out.append(("emptycase %d in the switch at line %d" % (v, k - b), join(ls)))
+            if "caseinc" in only:
+                # `x = K + 1;` inside `case K:` of `switch (x)` -> `x++;` (and K - 1 -> x--)
+                cur = None
+                for j in range(k + 1, close):
+                    mc = re.match(r"%scase (-?(?:0x[0-9A-Fa-f]+|\d+)):\s*$" % re.escape(cind), lines[j])
+                    if mc:
+                        cur = int(mc.group(1), 0)
+                        continue
+                    if re.match(r"%s(default\s*:|\w+:\s*$)" % re.escape(cind), lines[j]):
+                        cur = None
+                        continue
+                    ma = re.match(r"(\s*)%s\s*=\s*(-?(?:0x[0-9A-Fa-f]+|\d+))\s*;\s*$" % re.escape(ex), lines[j])
+                    if cur is not None and ma:
+                        v = int(ma.group(2), 0)
+                        if v in (cur + 1, cur - 1):
+                            ls = list(lines)
+                            ls[j] = "%s%s%s;" % (ma.group(1), ex, "++" if v == cur + 1 else "--")
+                            out.append(("caseinc %s at line %d" % (ex, j - b), join(ls)))
+    if "vstore" in only:
+        # a dead store retail keeps: the store through a volatile lvalue
+        for k in range(body_start, e):
+            l = lines[k]
+            if not is_stmt(l) or not is_store(l):
+                continue
+            m = re.match(r"^(\s*)\*\((\w+(?: \w+)?) \*\)(.+?)\s*=(?!=)(.*)$", l)
+            m2 = re.match(r"^(\s*)(\w+)\[([^\]]+)\]\s*=(?!=)(.*)$", l)
+            if m:
+                new = "%s*(volatile %s *)%s =%s" % (m.group(1), m.group(2), m.group(3), m.group(4))
+            elif m2 and m2.group(2) not in TYPEWORDS | KEYWORDS:
+                new = "%s*(volatile u8 *)&%s[%s] =%s" % (m2.group(1), m2.group(2), m2.group(3), m2.group(4))
+            else:
+                continue
+            ls = list(lines)
+            ls[k] = new
+            out.append(("vstore at line %d" % (k - b), join(ls)))
+    if "perarm" in only:
+        # `k = K1; if (c) k = K2; x = k;` -> `if (c) x = K2; else x = K1;` (k unused afterwards)
+        for k in range(body_start, e - 2):
+            m0 = re.match(r"^(\s*)(\w+)\s*=\s*([^;=]+);\s*$", lines[k])
+            if not m0 or m0.group(2) not in names:
+                continue
+            ind, v, k1 = m0.group(1), m0.group(2), m0.group(3).strip()
+            j = k + 1
+            m1 = re.match(r"^%sif \((.*)\) %s\s*=\s*([^;=]+);\s*$" % (re.escape(ind), re.escape(v)), lines[j])
+            if m1:
+                cond, k2, j = m1.group(1), m1.group(2).strip(), j + 1
+            else:
+                m1 = re.match(r"^%sif \((.*)\) \{\s*$" % re.escape(ind), lines[j])
+                if not (m1 and j + 2 < e and lines[j + 2] == ind + "}"):
+                    continue
+                m2 = re.match(r"^\s*%s\s*=\s*([^;=]+);\s*$" % re.escape(v), lines[j + 1])
+                if not m2:
+                    continue
+                cond, k2, j = m1.group(1), m2.group(1).strip(), j + 3
+            if j >= e:
+                continue
+            m3 = re.match(r"^%s(.+?)\s*=\s*%s;\s*$" % (re.escape(ind), re.escape(v)), lines[j])
+            if not m3 or any(re.search(r"(?<![\w.>])\b%s\b" % re.escape(v), lines[q]) for q in range(j + 1, e)):
+                continue
+            x = m3.group(1)
+            ls = lines[:k] + ["%sif (%s) {" % (ind, cond), "%s    %s = %s;" % (ind, x, k2), "%s} else {" % ind,
+                              "%s    %s = %s;" % (ind, x, k1), "%s}" % ind] + lines[j + 1:]
+            out.append(("perarm %s at line %d" % (v, k - b), join(ls)))
     return out
 
 
@@ -1082,7 +1184,10 @@ def main():
     ap.add_argument("--rounds", type=int, default=4)
     ap.add_argument("--out")
     ap.add_argument("--only", default="decl,split,reuse,fork,copy,keep,wrap,temp,load,const,member,volatile,goto,"
-                                      "ternary,pathsplit,callres,abs,callcopy,barrier,swapif,perbranch,ptrlocal")
+                                      "ternary,pathsplit,callres,abs,callcopy,barrier,swapif,perbranch,ptrlocal,"
+                                      "emptycase,caseinc,vstore,perarm")
+    ap.add_argument("--hacks", action="store_true", help="also the `const` kind (constants pulled into early "
+                    "locals): a match that needs it is usually a sign of another source shape; off by default")
     ap.add_argument("--skip", default="", help="kinds left out of --only")
     ap.add_argument("--max-cands", type=int, default=3000, help="rewrites compiled per round at most")
     ap.add_argument("--max-perm", type=int, default=720)
@@ -1099,6 +1204,8 @@ def main():
     import time
     deadline = time.time() + a.max_seconds if a.max_seconds else None
     only = set(a.only.split(",")) - set(a.skip.split(","))
+    if not a.hacks and not any(x.startswith("--only") for x in sys.argv):
+        only.discard("const")      # explicit --only const still runs it
     out = a.out or re.sub(r"\.c$", "", a.src) + ".regswap.c"
     text = open(a.src).read()
     work = tempfile.mkdtemp(prefix="tmp_regswap_", dir=os.path.join(ROOT, "build"))
