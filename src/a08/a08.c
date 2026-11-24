@@ -8694,7 +8694,64 @@ s32 func_80140C4C(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80140E10);
+void func_80140E10(u8 *a)
+{
+    u8 *e;
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 0x41) != 0) {
+            break;
+        }
+        *(s16 *)(a + 0x80) = 0x3C;
+        *(s16 *)(a + 0x82) = 0x78;
+        *(s16 *)(a + 0x84) = 0xA0;
+        a[0] = 1;
+        *(s16 *)(a + 0x86) = 0x88;
+        a[0x29] = 0;
+        *(s16 *)(a + 0x58) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x54) = 0;
+        func_800517F8(a);
+        a[4]++;
+        break;
+    case 1:
+        func_8007778C(a);
+        func_800517F8(a);
+        break;
+    case 2:
+        a[1] = 1;
+        func_80077E7C(a);
+        func_800517F8(a);
+        switch (a[5]) {
+        case 1:
+            if (a[6] == 0) {
+                *(s16 *)(a + 0x84) = 0x5A;
+                *(s16 *)(a + 0x86) = 0x50;
+                a[6]++;
+            }
+            break;
+        case 2:
+        case 3:
+            func_80042354(1, 1);
+            e = D_800E7E80;
+            g = (u8 *)&D_800BF870;
+            *(s16 *)(e + 0x2E) = 0x3F01;
+            *(s16 *)(e + 0x36) = 0x1E3F;
+            g[0x1D4] |= 2;
+            func_8004D4C4(0x1B, 1);
+            func_8004B0D8(a);
+            func_80040B48(0x30);
+            a[4] = 3;
+            break;
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 // ASM by design: hand-written GTE routine (no stack frame, trapping add / addi / sub, `or rd, $zero, rs` moves: never emitted by gcc 2.8.1).
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80140FBC);
