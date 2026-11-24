@@ -6476,9 +6476,81 @@ void func_8003F344(u8 *a, u8 *p, u8 *end)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F3F4);
+void func_8003F3F4(s32 unused, u8 *start, u8 *end)
+{
+    u8 *p = start;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F4C4);
+    while (p < end) {
+        switch (p[7] & 0xFC) {
+        case 0x3C:
+            p[7] |= 2;
+            p += 0x34;
+            break;
+        case 0x24:
+            p[7] |= 2;
+            p += 0x20;
+            break;
+        case 0x2C:
+            p[7] |= 2;
+            p += 0x28;
+            break;
+        case 0x34:
+            p[7] |= 2;
+            p += 0x28;
+            break;
+        case 0x30:
+            p += 0x1C;
+            break;
+        case 0x38:
+            p += 0x24;
+            break;
+        case 0x20:
+            p += 0x14;
+            break;
+        case 0x28:
+            p += 0x18;
+            break;
+        }
+    }
+}
+
+void func_8003F4C4(s32 unused, u8 *start, u8 *end)
+{
+    u8 *p = start;
+
+    while (p < end) {
+        switch (p[7] & 0xFC) {
+        case 0x3C:
+            p[7] &= ~2;
+            p += 0x34;
+            break;
+        case 0x24:
+            p[7] &= ~2;
+            p += 0x20;
+            break;
+        case 0x2C:
+            p[7] &= ~2;
+            p += 0x28;
+            break;
+        case 0x34:
+            p[7] &= ~2;
+            p += 0x28;
+            break;
+        case 0x30:
+            p += 0x1C;
+            break;
+        case 0x38:
+            p += 0x24;
+            break;
+        case 0x20:
+            p += 0x14;
+            break;
+        case 0x28:
+            p += 0x18;
+            break;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F594);
 
