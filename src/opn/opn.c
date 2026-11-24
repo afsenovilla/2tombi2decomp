@@ -299,7 +299,209 @@ s32 func_8018AB78(u8 *a, u8 *b)
     return d < 0x50;
 }
 
-INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018AC84);
+/* turn the 16.16 angle at a + off towards tgt */
+static inline void opn_steer(u8 *a, s32 off, s32 tgt, s32 sd, s32 su)
+{
+    u8 *p = a + off;
+    s32 d = (tgt - U(p, 2)) & 0xFFF;
+    s16 e = d;
+
+    if (e != 0) {
+        if (e > 0x800) {
+            if (e > 0xFF0) {
+                U(p, 2) = U(p, 2) - 1;
+            } else {
+                W(a, off) -= ((0x1000 - d) << 16) >> sd;
+            }
+        } else if (e < 0x10) {
+            U(p, 2) = U(p, 2) + 1;
+        } else {
+            W(a, off) += e << su;
+        }
+    }
+}
+/* the same, 1 once the angle is (nearly) there */
+static inline s32 opn_steer_done(u8 *a, s32 off, s32 tgt)
+{
+    u8 *p = a + off;
+    s32 d = (tgt - U(p, 2)) & 0xFFF;
+    s16 e = d;
+
+    if (e == 0) {
+        return 1;
+    }
+    if (e > 0x800) {
+        if (e > 0xFF0) {
+            U(p, 2) = U(p, 2) - 1;
+            return 1;
+        }
+        W(a, off) -= ((0x1000 - d) << 16) >> 4;
+    } else {
+        if (e < 0x10) {
+            U(p, 2) = U(p, 2) + 1;
+            return 1;
+        }
+        W(a, off) += e << 12;
+    }
+    return 0;
+}
+
+void func_8018AC84(u8 *a, u8 *b)
+{
+    s32 r0;
+
+    switch (a[3]) {
+    case 0:
+        if (--H(a, 0x68) == 0) {
+            a[3]++;
+        }
+        opn_steer(a, 0x48, U(b, 0x6A), 5, 11);
+        opn_steer(a, 0x44, U(b, 0x6C), 7, 11);
+        break;
+    case 1:
+        H(b, 0x74) = 1;
+        H(b, 0x6A) = func_8018AAA4(b, H(b, 0x66), H(b, 0x6A));
+        H(b, 0x6C) = func_8018AAA4(b, H(b, 0x68), H(b, 0x6C));
+        if (func_8018AB78(a, b) != 0) {
+            H(b, 0x72)++;
+            if (H(b, 0x7A) != 0) {
+                a[3]++;
+                H(b, 0x74) = 0;
+                func_8018AB78(a, b);
+            } else {
+                func_8018AB78(a, b);
+            }
+        }
+        opn_steer(a, 0x48, U(b, 0x6A), 5, 11);
+        opn_steer(a, 0x44, U(b, 0x6C), 7, 11);
+        break;
+    case 2:
+        if (H(b, 0x60) < 0x800) {
+            r0 = opn_steer_done(a, 0x48, U(b, 0x66));
+            r0 += opn_steer_done(a, 0x44, U(b, 0x68));
+            if (r0 == 2) {
+                D_800BF9ED = 0x3C;
+                a[3]++;
+            }
+        }
+        break;
+    case 3:
+        if (H(b, 0x78) < 0x1000) {
+            H(b, 0x78) += 0x100;
+            if (H(b, 0x78) >= 0x1000) {
+                H(b, 0x78) = 0x1000;
+            }
+            H(b, 0x76) = (u32)(func_80083E80(H(b, 0x78)) * 25) >> 10;
+        } else {
+            H(b, 0x76) = 0;
+        }
+        if (D_800BF9ED == 0x46) {
+            a[3]++;
+        }
+        opn_steer(a, 0x48, U(b, 0x66), 4, 12);
+        opn_steer(a, 0x44, U(b, 0x68), 4, 12);
+        break;
+    case 4:
+        H(a, 0x68) = 1;
+        a[3]++;
+        H(b, 0x72)++;
+        func_8018AB78(a, b);
+        break;
+    case 5:
+        H(b, 0x74) = 1;
+        H(b, 0x6A) = func_8018AAA4(b, H(b, 0x66), H(b, 0x6A));
+        H(b, 0x6C) = func_8018AAA4(b, H(b, 0x68), H(b, 0x6C));
+        if (func_8018AB78(a, b) != 0) {
+            H(b, 0x72)++;
+            if (H(b, 0x7A) != 0) {
+                a[3]++;
+                H(b, 0x74) = 5;
+                H(a, 0x6A) = 0x3C;
+                D_800BF9ED = 0x4B;
+                func_8018AB78(a, b);
+            } else {
+                func_8018AB78(a, b);
+            }
+        }
+        if (H(a, 0x68) == 0) {
+            opn_steer(a, 0x48, U(b, 0x66), 5, 11);
+            opn_steer(a, 0x44, U(b, 0x68), 7, 11);
+            break;
+        }
+        r0 = opn_steer_done(a, 0x48, U(b, 0x6A));
+        r0 += opn_steer_done(a, 0x44, U(b, 0x6C));
+        if (r0 == 2) {
+            H(a, 0x68) = 0;
+        }
+        break;
+    case 6:
+        if (H(a, 0x6A) == 0) {
+            r0 = opn_steer_done(a, 0x48, U(b, 0x66));
+            r0 += opn_steer_done(a, 0x44, U(b, 0x68));
+            if (H(b, 0x76) >= -0x18F) {
+                H(b, 0x76) -= 0x20;
+            }
+            if (r0 == 2) {
+                H(a, 0x6A) = 0x3C;
+                a[3]++;
+                H(b, 0x72)++;
+                func_8018AB78(a, b);
+            }
+        } else {
+            H(a, 0x6A)--;
+        }
+        break;
+    case 7:
+        if (H(a, 0x6A) == 0) {
+            r0 = opn_steer_done(a, 0x48, U(b, 0x66));
+            r0 += opn_steer_done(a, 0x44, U(b, 0x68));
+            if (r0 == 2) {
+                a[3]++;
+                H(b, 0x74) = 1;
+                H(b, 0x60) = 0x1000;
+            }
+        } else {
+            H(a, 0x6A)--;
+            if (H(b, 0x76) >= -0x18F) {
+                H(b, 0x76) -= 0x20;
+            }
+        }
+        break;
+    case 8:
+        H(b, 0x6A) = func_8018AAA4(b, H(b, 0x66), H(b, 0x6A));
+        H(b, 0x6C) = func_8018AAA4(b, H(b, 0x68), H(b, 0x6C));
+        if (func_8018AB78(a, b) != 0) {
+            H(b, 0x72)++;
+            if (H(b, 0x7A) != 0) {
+                a[3]++;
+            } else {
+                func_8018AB78(a, b);
+            }
+        }
+        opn_steer(a, 0x48, U(b, 0x6A), 5, 11);
+        opn_steer(a, 0x44, U(b, 0x6C), 7, 11);
+        break;
+    case 9:
+        H(b, 0x74) = 0;
+        a[3]++;
+    case 10:
+        if (H(b, 0x76) < 0) {
+            H(b, 0x76) += 0x20;
+        }
+        if (H(b, 0x60) < 0xE00) {
+            D_800BF9ED = 0x50;
+            a[0x64] = 0xA;
+            a[0x67] = 0;
+            a[1] = 0;
+            a[2] = 0;
+            a[3]++;
+            *(volatile u8 *)(a + 3) = 0;
+        }
+        break;
+    case 11:
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018B924);
 
