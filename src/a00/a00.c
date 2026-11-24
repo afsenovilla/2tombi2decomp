@@ -8371,7 +8371,138 @@ u8 *func_801360F4(s32 a, u8 b) {
     return p;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleA00PendulumPlatformActor);
+#define W_d1fb(p, o) (*(s32 *)((u8 *)(p) + (o)))
+extern s16 D_1F8001A0;
+static inline s32 pend_flag(void) {
+    if (D_1F800207_9c67 < 0x18 || D_800BF816 == 1) {
+        return 1;
+    }
+    return 0;
+}
+
+void f_HandleA00PendulumPlatformActor(u8 *a)
+{
+    s16 ang;
+    s16 sp;
+    s16 z0;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 6) != 0) {
+            return;
+        }
+        H_f12c(a, 0x80) = 0x240;
+        a[0x29] = 0;
+        H_f12c(a, 0x82) = 0x480;
+        a[0] |= 1;
+        func_8004766C(a);
+        func_80048750(a);
+        H_f12c(a, 0x56) = D_1F8001A0;
+        H_f12c(a, 0x90) = H_f12c(a, 0x2E);
+        H_f12c(a, 0x92) = H_f12c(a, 0x32);
+        H_f12c(a, 0x94) = H_f12c(a, 0x36);
+        H_f12c(a, 0x54) = 0;
+        H_f12c(a, 0x58) = 0;
+        H_f12c(a, 0x62) = 0;
+        a[4] = 1;
+        a[5] = 0;
+        W_d1fb(a, 0x68) = 0;
+    case 1:
+        switch (a[5]) {
+        case 0:
+        case 1:
+            if (pend_flag()) {
+                return;
+            }
+            H_f12c(a, 0x44) = 0;
+            H_f12c(a, 0x40) = 0;
+            H_f12c(a, 0x64) = H_f12c(a, 0x44);
+            H_f12c(*(u8 **)(a + 0xC0), 0xC) = 0x100;
+            a[5] = 2;
+        case 2:
+            if (D_800BF809 == 0) {
+                ang = H_f12c(a, 0x44);
+                sp = H_f12c(*(u8 **)(a + 0xC0), 0xC);
+                if (ang > 0x500) {
+                    ang -= 0x20;
+                    if (ang > 0x4000) {
+                        ang = 0x4000;
+                    } else if (ang < 0) {
+                        ang = 0;
+                    }
+                } else if (ang < -0x500) {
+                    ang += 0x20;
+                    if (ang < -0x4000) {
+                        ang = -0x4000;
+                    } else if (ang > 0) {
+                        ang = 0;
+                    }
+                }
+                if (a[0x29] == 1) {
+                    H_f12c(a, 0x40) = 0;
+                    ang += H_f12c(a, 0x60) >> 2;
+                } else {
+                    ang -= sp / 8;
+                }
+                sp += ang >> 8;
+                if (sp < -0x400) {
+                    sp = -0x400;
+                    if (ang < 0) {
+                        ang = abs(ang) >> 2;
+                        if (ang > 0) {
+                            ang = 0;
+                        }
+                    }
+                } else if (sp > 0x400) {
+                    sp = 0x400;
+                    if (ang > 0) {
+                        ang = -abs(ang) >> 2;
+                        if (ang < 0) {
+                            ang = 0;
+                        }
+                    }
+                }
+                z0 = H_f12c(a, 0x36);
+                H_f12c(a, 0x36) = U(a, 0x94) + ((func_80083E80(sp) * 0x340) >> 12);
+                if (a[0x29] == 1) {
+                    u8 *e = D_800E7E80;
+                    U(e, 0x36) += U(a, 0x36) - z0;
+                }
+                H_f12c(*(u8 **)(a + 0xC0), 0xC) = sp;
+                H_f12c(a, 0x44) = ang;
+                a[0x29] = 0;
+            }
+            if (pend_flag()) {
+                a[5] = 1;
+            } else {
+                if (D_800E7EAA == 0x1F) {
+                    func_8007703C(a);
+                } else if (D_800E7EAA != 0x22) {
+                    func_8007778C(a);
+                }
+                if (a[1] != 0) {
+                    func_800517F8(a);
+                    if (D_800BF809 == 0) {
+                        if (abs(ang) < 0x100) {
+                            func_80074AF0(W_d1fb(a, 0x68));
+                            W_d1fb(a, 0x68) = 0;
+                        } else if (abs(H_f12c(a, 0x64)) < 0x100) {
+                            func_80074AF0(W_d1fb(a, 0x68));
+                            W_d1fb(a, 0x68) = func_80074590(0x81, 0, 0);
+                        }
+                    }
+                }
+            }
+            H_f12c(a, 0x64) = ang;
+            break;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801365C4);
 
@@ -9331,7 +9462,6 @@ void f_HandleMagicFlowerActor(u8 *a)
     }
 }
 
-extern s16 D_1F8001A0;
 extern s16 D_1F8001A2_3da0;
 typedef struct {
     u8 b[0x56];
