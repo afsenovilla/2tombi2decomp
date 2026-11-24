@@ -2822,8 +2822,6 @@ void func_800286CC(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800288AC);
-
 extern s32 D_1F800000[];
 extern s16 D_1F800002[];
 extern s16 D_1F800004[];
@@ -2834,6 +2832,61 @@ extern u8 D_8009F05C[];
 extern void (*D_800A4AA0[])(u8 *);
 extern s32 (*D_800A3B78[])(u8 *);
 extern u8 D_800A1CD4[];
+extern s32 D_1F800090_e8ac;
+void func_800288AC(u8 *a)
+{
+    s32 *z = &D_1F800090_e8ac;
+    s32 pad[12];
+    s32 v[3];
+    u8 *pos;
+    u8 *p;
+    s32 k;
+
+    p = *(u8 **)(a + 0x3C);
+    if (p != NULL) {
+        RotMatrix_gte((s16 *)(a + 0x48), D_1F800000);
+        v[0] = p[0] * 4;
+        v[1] = p[1] * 4;
+        v[2] = p[2] * 4;
+        ScaleMatrix(D_1F800000, v);
+        pos = a + 0x2C;
+        gte_SetRotMatrix(D_1F8000F8);
+        gte_ldclmv(D_1F800000);
+        gte_rtir();
+        gte_stclmv(D_1F800000);
+        gte_ldclmv(D_1F800002);
+        gte_rtir();
+        gte_stclmv(D_1F800002);
+        gte_ldclmv(D_1F800004);
+        gte_rtir();
+        gte_stclmv(D_1F800004);
+        gte_ldv0(pos);
+        gte_rtv0();
+        gte_stlvnl(D_1F800014);
+        D_1F800000[5] += D_1F8000D0_42d8[15];
+        D_1F800000[6] += D_1F8000D0_42d8[16];
+        D_1F800000[7] += D_1F8000D0_42d8[17];
+        gte_SetRotMatrix(D_1F800000);
+        gte_SetTransMatrix(D_1F800000);
+        if (p[3] & 0x40) {
+            *z = 0x1000 - ((p[3] & 0x3F) << 6);
+            k = 0;
+        } else {
+            *z = 0;
+            k = p[3] & 0xF;
+        }
+        if (p[3] & 0x80) {
+            p += 4;
+            *(s32 *)(a + 0x40) = 0;
+        } else {
+            p += 4;
+            *(u8 **)(a + 0x40) = p;
+        }
+        gte_ldfcdir(0, 0, 0);
+        f_DrawPackedGouraudQuadStream(*(u8 **)(a + 0x50), k, *(s16 *)(a + 0x32), a[0x29]);
+    }
+}
+
 void func_80028B70(u8 *a)
 {
     s32 *z = (s32 *)D_1F800090;
