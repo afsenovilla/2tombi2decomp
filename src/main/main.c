@@ -22628,7 +22628,58 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007D208);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007D594);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007DA50);
+typedef struct { u8 b[8]; } Copy8_DA50;
+
+void func_8007DA50(u8 *a)
+{
+    s32 off;
+    u8 *p;
+
+    switch (a[4]) {
+    case 0:
+        a[0x18] = (*(u8 **)(a + 0x4C) + *(s16 *)(a + 0x5E) * 4)[3];
+        if (a[0xD] != 0xFF) {
+            a[0xD] = (*(u8 **)(a + 0x4C) + *(s16 *)(a + 0x5E) * 4)[2];
+        }
+        off = *(u16 *)(*(u8 **)(a + 0x4C) + *(s16 *)(a + 0x5E) * 4);
+        a[0x46] |= 1;
+        p = *(u8 **)(a + 0x50) + off;
+        *(u8 **)(a + 0x10) = p;
+        *(u8 **)(a + 0x14) = p;
+        func_8007D0D0(a);
+        *(s16 *)(a + 0x42) = 0;
+        if (D_800BF84B == 0 && a[3] < 4) {
+            func_8007C940(a);
+            *(Copy8_DA50 *)(a + 0x80) = *(Copy8_DA50 *)(a + 0x54);
+            *(s16 *)(a + 0x58) = 8;
+            *(s16 *)(a + 0x54) = 0x9C;
+            if (*(s16 *)(a + 0x56) >= 0x80) {
+                *(s16 *)(a + 0x56) = 0x100;
+            } else {
+                *(s16 *)(a + 0x56) = -*(s16 *)(a + 0x5A);
+            }
+            *(s16 *)(a + 0x60) = 0x10;
+            a[6] = 0;
+            a[5] = 0x5A;
+        } else {
+            a[5] = 1;
+            *(u8 **)(a + 0x14) += 1;
+        }
+        D_800BF808[0x43] = 1;
+        D_800BF808[0x1A] |= 2;
+        a[4]++;
+        break;
+    case 1:
+        func_8007D594(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        D_800BF808[0x1A] &= 0xFD;
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 void func_8007DC38(u8 *a)
 {
