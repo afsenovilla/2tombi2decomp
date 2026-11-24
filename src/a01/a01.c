@@ -8857,7 +8857,205 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012B86C);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012BA60);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaQuestSceneryActor);
+typedef struct { u8 pad[0xD0]; s32 *p0; u8 pad2[8]; s32 *p1; } MidOwner;
+#define FPV(p, o) (*(u8 * volatile *)((u8 *)(p) + (o)))
+#define F32(p, o) M2C_FIELD(p, s32 *, o)
+extern u8 D_1F800233;
+static inline void MID(u8 *a) { MidOwner *e = (MidOwner *)D_800E7E80; H(a, 0x2E) = (e->p0[0xB] + e->p1[0xB]) / 2; H(a, 0x32) = (e->p0[0xC] + e->p1[0xC]) / 2; H(a, 0x36) = (e->p0[0xD] + e->p1[0xD]) / 2; }
+/* func_8012C18C, inlined */
+static inline void func_8012C18C_inl(u8 *a)
+{
+    u8 *c;
+
+    switch (a[5]) {
+    case 0 ... 5:
+        a[0] = 1;
+        a[4] = 1;
+        break;
+    case 6:
+        switch (a[6]) {
+        case 0:
+            a[0] = 2;
+            func_80042354(1, 1);
+            a[6]++;
+        case 1:
+            c = M2C_FIELD(a, u8 **, 0xC0);
+            M2C_FIELD(c, u16 *, 0x3A) -= 0x400;
+            if (M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), u16 *, 0x3A) < 0x400) {
+                D_800BF870.pad1[0x18B] |= 1;
+                func_80027144(M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), s32 *, 0x40), a + 0x2C, 0x400, 0xC);
+                func_80074590(0xC, 0, 0);
+                a[4] = 3;
+                func_80074590(0x97, 0, 0);
+            }
+            break;
+        }
+        func_80051844(a);
+        break;
+    }
+}
+/* func_8012C304, inlined */
+static inline void func_8012C304_inl(u8 *a) {
+    u8 *e;
+
+    switch (a[5]) {
+    case 0:
+        if (D_800BF9FA == 0x17) {
+            a[0] = 2;
+            e = D_800E7E80;
+            F16(a, 0x2E) = (F32(FPV(e, 0xD0), 0x2C) + F32(FPV(e, 0xDC), 0x2C)) / 2;
+            F16(a, 0x32) = (F32(FPV(e, 0xD0), 0x30) + F32(FPV(e, 0xDC), 0x30)) / 2;
+            F16(a, 0x36) = (F32(FPV(e, 0xD0), 0x34) + F32(FPV(e, 0xDC), 0x34)) / 2;
+        } else {
+            a[0] = 1;
+            F32(a, 0x2C) = 0x46E60000;
+            F32(a, 0x30) = 0xE53E0000;
+            F32(a, 0x34) = 0x23400000;
+            a[5]++;
+        }
+    case 1:
+        func_8007778C(a);
+        break;
+    }
+}
+/* func_8012C410, inlined */
+static inline void func_8012C410_inl(u8 *a) {
+    switch (a[5]) {
+    case 0 ... 5:
+        a[0] = 1;
+        a[4] = 1;
+        break;
+    case 6:
+        func_800521F4(0, 1, 0xC0, 4);
+        D_800BF9FA = 0x19;
+        func_80042354(1, 1);
+        func_80054198(D_800E7E80);
+        func_80027144(M2C_FIELD(M2C_FIELD(a, u8 **, 0xC0), s32 *, 0x40), a + 0x2C, 0x600, 8);
+        func_80074590(0xC, 0, 0);
+        func_80074810(0x97, 0);
+        func_80043B88(1);
+        *(volatile u8 *)&D_1F800233 = 1;
+        func_8001D71C(1);
+        a[4] = 3;
+        break;
+    }
+}
+
+void f_UpdatePipeAreaQuestSceneryActor(u8 *a)
+{
+    u8 *e;
+    GameState *g;
+
+    switch (a[4]) {
+    case 0:
+        switch (a[3]) {
+        case 0:
+            if (func_80051B70(a, 0xC, 0x19) != 0) {
+                return;
+            }
+            H(a, 0x80) = 0x40;
+            H(a, 0x82) = 0xA4;
+            H(a, 0x84) = 0x8A;
+            H(a, 0x86) = 0x8A;
+            H(a, 0x60) = H(a, 0x84);
+            break;
+        case 1:
+            if (func_80051B70(a, 0xC, 0x1E) != 0) {
+                return;
+            }
+            H(a, 0x80) = 0x69;
+            H(a, 0x82) = 0xD2;
+            H(a, 0x84) = 0x92;
+            H(a, 0x86) = 0x92;
+            break;
+        case 2:
+            if (func_80113D44(a) == 0) {
+                return;
+            }
+            a[0x1A] = 0;
+            a[0x19] = 0;
+            a[0x18] = 0;
+            a[0xD] &= 0xFD;
+            MID(a);
+            H(a, 0x80) = 0x40;
+            H(a, 0x82) = 0x80;
+            H(a, 0x84) = 0x8C;
+            H(a, 0x86) = 0x8C;
+            break;
+        case 3:
+            if (func_80051B70(a, 0xC, 0x30) != 0) {
+                return;
+            }
+            H(a, 0x80) = 0x5A;
+            H(a, 0x82) = 0xB4;
+            H(a, 0x84) = 0xA0;
+            H(a, 0x86) = 0xCF;
+            break;
+        case 4:
+            if (D_800BF871 != 0x1A) {
+                a[4] = 3;
+                return;
+            }
+            if (func_80051B70(a, 0xC, 0x47) != 0) {
+                return;
+            }
+            H(a, 0x80) = 0x64;
+            H(a, 0x82) = 0xC8;
+            H(a, 0x84) = 0x82;
+            H(a, 0x86) = 0x82;
+            H(a, 0x60) = H(a, 0x84);
+            W(a, 0x10) = (s32)func_80115F70(a);
+            break;
+        }
+        a[0] = 1;
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        a[4]++;
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+        case 1:
+        case 3:
+        case 4:
+            func_8007778C(a);
+            break;
+        case 2:
+            func_8012C304_inl(a);
+            break;
+        }
+        func_800517F8(a);
+        a[0x2B] = 0;
+        break;
+    case 2:
+        func_8007778C(a);
+        switch (a[3]) {
+        case 0:
+            func_8012B6CC(a);
+            a[0x2B] = 0;
+            return;
+        case 1:
+            func_8012C18C_inl(a);
+            break;
+        case 2:
+            func_8012C410_inl(a);
+            break;
+        case 3:
+            func_8012B86C(a);
+            a[0x2B] = 0;
+            return;
+        case 4:
+            func_8012BA60(a);
+            a[0x2B] = 0;
+            return;
+        }
+        a[0x2B] = 0;
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_8012C18C(u8 *a)
 {
@@ -8929,7 +9127,6 @@ void func_8012C304(u8 *a) {
     }
 }
 
-extern u8 D_1F800233;
 void func_8012C410(u8 *a) {
     switch (a[5]) {
     case 0 ... 5:
