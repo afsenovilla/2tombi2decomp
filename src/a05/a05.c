@@ -1321,7 +1321,184 @@ void func_801126C0(void *arg0) {
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80112778);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateKujaraSummitQuestPickupActor);
+static inline void func_80112D8C_inl(u8 *p)
+{
+    *(s16 *)(p + 0x2E) = *(s16 *)(*(u8 **)(p + 0x10) + 0x2E);
+    *(s16 *)(p + 0x32) = *(s16 *)(*(u8 **)(p + 0x10) + 0x32) - 0x64;
+    *(s16 *)(p + 0x36) = *(s16 *)(*(u8 **)(p + 0x10) + 0x36);
+}
+static inline void func_80112DBC_inl(u8 *a)
+{
+    if (a[5] == 0) {
+        a[5] = 1;
+        a[0] = 1;
+        *(s16 *)(a + 0x80) = 0x20;
+        *(s16 *)(a + 0x82) = 0x40;
+        *(s16 *)(a + 0x84) = 0x40;
+        *(s16 *)(a + 0x86) = 0x80;
+        func_80041194(a, (s16)(*(s16 *)(a + 0x82) - *(s16 *)(a + 0x80)), 0, 0);
+        *(s16 *)(a + 0x5A) = 0x400;
+    }
+}
+/* func_80112D28, inlined */
+static inline void inl_80112D28(u8 *p)
+{
+    *(s32 *)(p + 0x3C) = D_800ECF80;
+    func_80077B38(p, D_80140E40_ebd8, 0);
+    p[0xD] = 0;
+    *(s16 *)(p + 0x5C) = 0;
+    p[0xB] = 0x10;
+    *(s16 *)(p + 0x5A) = 0;
+    p[0x47] = 0;
+    p[8] = 0;
+    func_8004B354(p, 0);
+}
+/* func_80112E38, inlined */
+static inline void inl_80112E38(u8 *a)
+{
+    if (D_800BF816 == 0) {
+        a[4] = 3;
+        return;
+    }
+    switch (a[0x5E]) {
+    case 0:
+        func_80112D8C_inl(a);
+        break;
+    case 1:
+        func_80112DBC_inl(a);
+        break;
+    }
+    func_8007778C(a);
+    func_8004B374(a, 0);
+}
+/* func_80112F30, inlined */
+static inline void inl_80112F30(void *arg0) {
+    func_8004D4C4(0x4E, 1);
+    func_8004B0D8(arg0);
+    D_800BF870.pad1[0x149] |= 2;
+    func_80040B48(0x7A);
+    M2C_FIELD(arg0, s8 *, 4) = 3;
+}
+static inline u8 *follow_parent(u8 *a)
+{
+    u8 *p = *(u8 **)(a + 0x14);
+
+    if (p != NULL) {
+        a[0x2A] = p[0x2A];
+        *(s16 *)(a + 0x2E) = *(s16 *)(p + 0x2E);
+        *(s16 *)(a + 0x32) = *(s16 *)(p + 0x32);
+        *(s16 *)(a + 0x36) = *(s16 *)(p + 0x36);
+    }
+    return p;
+}
+
+void f_UpdateKujaraSummitQuestPickupActor(u8 *a)
+{
+    u8 *p;
+    u8 *g;
+    s16 r;
+    s16 h;
+
+    switch (a[4]) {
+    case 0:
+        switch (a[3]) {
+        case 0:
+            inl_80112D28(a);
+            break;
+        case 1:
+            r = 0x28;
+            h = 0x50;
+            *(s16 *)(a + 0x82) = h;
+            *(s16 *)(a + 0x86) = h;
+            h = 0x56;
+            a[0] = 1;
+            a[0x47] = 0;
+            *(s16 *)(a + 0x5A) = 0;
+            *(s16 *)(a + 0x5C) = 0;
+            *(s16 *)(a + 0x80) = r;
+            *(s16 *)(a + 0x84) = r;
+            *(s16 *)(a + 0x68) = h;
+            break;
+        case 2:
+            r = 0x28;
+            h = 0x50;
+            *(s16 *)(a + 0x82) = h;
+            *(s16 *)(a + 0x86) = h;
+            h = 0x25;
+            a[0] = 1;
+            a[0x47] = 0;
+            *(s16 *)(a + 0x5A) = 0;
+            *(s16 *)(a + 0x5C) = 0;
+            *(s16 *)(a + 0x80) = r;
+            *(s16 *)(a + 0x84) = r;
+            *(s16 *)(a + 0x68) = h;
+            break;
+        case 3:
+            r = 0x28;
+            h = 0x50;
+            *(s16 *)(a + 0x82) = h;
+            *(s16 *)(a + 0x86) = h;
+            h = 0x86;
+            a[0] = 1;
+            a[0x47] = 0;
+            *(s16 *)(a + 0x5A) = 0;
+            *(s16 *)(a + 0x5C) = 0;
+            *(s16 *)(a + 0x80) = r;
+            *(s16 *)(a + 0x84) = r;
+            *(s16 *)(a + 0x68) = h;
+            break;
+        }
+        a[4]++;
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            inl_80112E38(a);
+            break;
+        case 1:
+            if (a[5] == 0) {
+                p = follow_parent(a);
+                if (p == NULL || p[4] >= 2) {
+                    a[5]++;
+                }
+            }
+            func_8007778C(a);
+            break;
+        case 2:
+            func_8007778C(a);
+            break;
+        case 3:
+            func_8007778C(a);
+            break;
+        }
+        break;
+    case 2:
+        switch (a[3]) {
+        case 0:
+            inl_80112F30(a);
+            break;
+        case 1:
+            func_80112778(a);
+            break;
+        case 2:
+            if (func_80040B48(0x1A) >= 0) {
+                D_800BF870.pad1[0x197] |= 4;
+                func_8004A3D4(a);
+            }
+            a[4] = 3;
+            break;
+        case 3:
+            D_800BF870.pad1[0x197] |= 8;
+            func_8004A3D4(a);
+            a[4] = 3;
+            break;
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void f_UpdateKujaraSummitQuestPickupActor();
 u8 *func_80112CD8(void *a0, s32 a1)
@@ -1371,27 +1548,6 @@ void func_80112DBC(u8 *a)
     }
 }
 
-/* func_80112D8C, inlined */
-static inline void func_80112D8C_inl(u8 *p)
-{
-    *(s16 *)(p + 0x2E) = *(s16 *)(*(u8 **)(p + 0x10) + 0x2E);
-    *(s16 *)(p + 0x32) = *(s16 *)(*(u8 **)(p + 0x10) + 0x32) - 0x64;
-    *(s16 *)(p + 0x36) = *(s16 *)(*(u8 **)(p + 0x10) + 0x36);
-}
-/* func_80112DBC, inlined */
-static inline void func_80112DBC_inl(u8 *a)
-{
-    if (a[5] == 0) {
-        a[5] = 1;
-        a[0] = 1;
-        *(s16 *)(a + 0x80) = 0x20;
-        *(s16 *)(a + 0x82) = 0x40;
-        *(s16 *)(a + 0x84) = 0x40;
-        *(s16 *)(a + 0x86) = 0x80;
-        func_80041194(a, (s16)(*(s16 *)(a + 0x82) - *(s16 *)(a + 0x80)), 0, 0);
-        *(s16 *)(a + 0x5A) = 0x400;
-    }
-}
 void func_80112E38(u8 *a)
 {
     if (D_800BF816 == 0) {
