@@ -2331,7 +2331,100 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801159B0);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80115B48);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80115E04);
+extern u8 D_8013B6AC[];
+extern u8 D_800BF911;
+extern u8 D_800A3D70[];
+extern u8 D_8013CEDC[];
+
+void func_80115E04(u8 *a)
+{
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        g = D_800ECF58;
+        if (func_800519E0(a, 0xF, *(s32 *)(g + 0x3C), D_8013B6AC) != 0) {
+            break;
+        }
+        *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x38);
+        func_80040CDC(a, D_80140F7C_8010, D_800A3D18);
+        a[0xB] = 0x80;
+        a[0] = 9;
+        *(s16 *)(a + 0x80) = 0x60;
+        *(s16 *)(a + 0x82) = 0xC0;
+        *(s16 *)(a + 0x84) = 0xC0;
+        *(s16 *)(a + 0x86) = 0x158;
+        a[0x7B] = 4;
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        *(s16 *)(a + 0x58) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x54) = 0;
+        if (D_800BF911 != 0xFF) {
+            func_800416A8(a, -1, 0);
+            func_80041718(a, 0xDF, 0);
+            a[0x1A] = 0x30;
+            a[0x19] = 0x30;
+            a[0x18] = 0x30;
+            a[0x5E] = 0;
+            a[0xD] |= 2;
+        } else {
+            func_80041718(a, 4, 0);
+            a[0x5E] = 1;
+        }
+        a[4]++;
+        break;
+    case 1:
+        switch (a[0x5E]) {
+        case 0:
+            func_80115B48(a);
+            break;
+        case 1:
+            switch (a[5]) {
+            case 0:
+                if (func_8007778C(a) != 0 && a[0x2B] == 3) {
+                    func_80041768(a, a[0x7B], 4);
+                    func_80042354(1, 1);
+                    func_80040D68(a, D_800A3D70);
+                    a[0x70] = 2;
+                    a[6] = 0;
+                    a[5]++;
+                }
+                break;
+            case 1:
+                a[1] = 1;
+                func_80077E7C(a);
+                if (a[0x70] == 0xFF) {
+                    switch (a[6]) {
+                    case 0:
+                        a[0x7A] = 4;
+                        func_80040D68(a, D_8013CEDC);
+                        a[0x70] = 2;
+                        a[6]++;
+                        break;
+                    case 1:
+                        a[5] = 0;
+                        break;
+                    }
+                }
+                func_80041098(a);
+                break;
+            }
+            func_8004190C(a);
+            break;
+        }
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801160CC);
 
