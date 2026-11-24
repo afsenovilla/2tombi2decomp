@@ -19534,7 +19534,70 @@ void f_ReleaseActorModelParts(u8 *a)
     a[9] = 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007AE30);
+extern u8 *D_800F23A8_c058;
+extern u8 *D_800F23A0_9c78;
+#define LNK_NEXT(p) (*(u8 **)((p) + 0x20))
+#define LNK_PREV(p) (*(u8 **)((p) + 0x24))
+
+void func_8007AE30(u8 *at, u8 *n, s32 mode, s32 list)
+{
+    u8 **tail;
+    u8 **head;
+
+    switch (list) {
+    case 0:
+    default:
+        tail = &D_800FB168;
+        head = &D_800F23A8_c058;
+        break;
+    case 1:
+        tail = &D_800F2624_9bdb;
+        head = &D_800F239C;
+        break;
+    case 2:
+        tail = &D_800F2738_2edb;
+        head = &D_800F23A0_9c78;
+        break;
+    }
+    switch (mode) {
+    case 0:
+        if (LNK_NEXT(at) != NULL) {
+            LNK_NEXT(n) = LNK_NEXT(at);
+            LNK_PREV(n) = at;
+            LNK_PREV(LNK_NEXT(at)) = n;
+            LNK_NEXT(at) = n;
+            return;
+        }
+    case 1:
+        LNK_NEXT(n) = NULL;
+        LNK_PREV(n) = *tail;
+        if (*tail == NULL) {
+            *head = n;
+        } else {
+            LNK_NEXT(*tail) = n;
+        }
+        *tail = n;
+        return;
+    case 2:
+        if (LNK_PREV(at) != NULL) {
+            LNK_NEXT(n) = at;
+            LNK_PREV(n) = LNK_PREV(at);
+            LNK_NEXT(LNK_PREV(at)) = n;
+            LNK_PREV(at) = n;
+            return;
+        }
+    case 3:
+        LNK_NEXT(n) = *head;
+        LNK_PREV(n) = NULL;
+        if (*head == NULL) {
+            *tail = n;
+        } else {
+            LNK_PREV(*head) = n;
+        }
+        *head = n;
+        return;
+    }
+}
 
 void func_8007AF88(u8 *a, u8 **head, u8 **tail)
 {
