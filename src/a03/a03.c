@@ -140,9 +140,172 @@ INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010BBB8);
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_InitializeTrolleyModelAndTrackState);
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_SampleAirborneTrolleyTrack);
+typedef struct TrkMat { s16 m[3][3]; s16 pad; s32 t[3]; } TrkMat;
+typedef struct TrkNode {
+    s16 pos[3];
+    s16 flags;
+    u8 pad8[8];
+    s16 m[3][3];
+    u8 pad22[2];
+    union { s32 w; struct { s16 lo; s16 len; } h; } u2;
+    union { s32 w; struct { s16 lo; s16 len; } h; } u;
+    u8 pad2c[4];
+} TrkNode;
+extern TrkNode D_80111B48[];
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_SampleGroundedTrolleyTrack);
+TrkNode *f_SampleAirborneTrolleyTrack(TrkNode *n0, s32 dist, s16 *sv, TrkMat *m) {
+    TrkNode *n = n0;
+    s32 d = dist;
+    TrkNode *cur;
+    TrkNode *base;
+    s32 t;
+    s16 v;
+    s32 dx, dy, dz;
+
+    if (n == NULL) {
+restart:
+        n = D_80111B48;
+    }
+again:
+    if (d >= 0) {
+fwd:
+        cur = n;
+        n = cur + 1;
+        if (n->u2.w == 0) goto found;
+        if (d < cur->u2.h.len) goto found;
+        do {
+            d -= cur->u2.h.len;
+        } while (0);
+        goto fwd;
+    } else {
+        base = D_80111B48;
+back:
+        cur = n;
+        n = cur - 1;
+        if (n < base) {
+            do {
+                n++;
+            } while (n->u2.w != 0);
+            goto again;
+        }
+        d += n->u2.h.len;
+        if (d < 0) goto back;
+        {
+            TrkNode *tmp = n;
+            n = cur;
+            cur = tmp;
+        }
+    }
+found:
+    if (n->u2.w == 0) goto restart;
+    t = (d << 16) / cur->u2.h.len;
+    dx = (n->pos[0] - cur->pos[0]) * t;
+    dy = (n->pos[1] - cur->pos[1]) * t;
+    dz = (n->pos[2] - cur->pos[2]) * t;
+    v = cur->pos[0] + (dx >> 16);
+    sv[0] = v;
+    m->t[0] = v;
+    v = cur->pos[1] + (dy >> 16);
+    sv[1] = v;
+    m->t[1] = v;
+    v = cur->pos[2] + (dz >> 16);
+    sv[2] = v;
+    m->t[2] = v;
+    sv[3] = d;
+    {
+        s16 (*cm)[3] = cur->m;
+        if (!(n->flags & 0x8000)) {
+            s16 (*nm)[3] = n->m;
+            m->m[0][2] = cm[0][0] + (((nm[0][0] - cm[0][0]) * t) >> 16);
+            m->m[1][2] = cm[1][0] + (((nm[1][0] - cm[1][0]) * t) >> 16);
+            m->m[2][2] = cm[2][0] + (((nm[2][0] - cm[2][0]) * t) >> 16);
+            m->m[0][1] = cm[0][1] + (((nm[0][1] - cm[0][1]) * t) >> 16);
+            m->m[1][1] = cm[1][1] + (((nm[1][1] - cm[1][1]) * t) >> 16);
+            m->m[2][1] = cm[2][1] + (((nm[2][1] - cm[2][1]) * t) >> 16);
+            m->m[0][0] = cm[0][2] + (((nm[0][2] - cm[0][2]) * t) >> 16);
+            m->m[1][0] = cm[1][2] + (((nm[1][2] - cm[1][2]) * t) >> 16);
+            m->m[2][0] = cm[2][2] + (((nm[2][2] - cm[2][2]) * t) >> 16);
+        }
+    }
+    return cur;
+}
+
+TrkNode *f_SampleGroundedTrolleyTrack(TrkNode *n0, s32 dist, s16 *sv, TrkMat *m) {
+    TrkNode *n = n0;
+    s32 d = dist;
+    TrkNode *cur;
+    TrkNode *base;
+    s32 t;
+    s16 v;
+    s32 dx, dy, dz;
+
+    if (n == NULL) {
+restart:
+        n = D_80111B48;
+    }
+again:
+    if (d >= 0) {
+fwd:
+        cur = n;
+        n = cur + 1;
+        if (n->u2.w == 0) goto found;
+        if (d < cur->u.h.len) goto found;
+        do {
+            d -= cur->u.h.len;
+        } while (0);
+        goto fwd;
+    } else {
+        base = D_80111B48;
+back:
+        cur = n;
+        n = cur - 1;
+        if (n < base) {
+            do {
+                n++;
+            } while (n->u.w != 0);
+            goto again;
+        }
+        d += n->u.h.len;
+        if (d < 0) goto back;
+        {
+            TrkNode *tmp = n;
+            n = cur;
+            cur = tmp;
+        }
+    }
+found:
+    if (n->u.w == 0) goto restart;
+    t = (d << 16) / cur->u.h.len;
+    dx = (n->pos[0] - cur->pos[0]) * t;
+    dy = (n->pos[1] - cur->pos[1]) * t;
+    dz = (n->pos[2] - cur->pos[2]) * t;
+    v = cur->pos[0] + (dx >> 16);
+    sv[0] = v;
+    m->t[0] = v;
+    v = cur->pos[1] + (dy >> 16);
+    sv[1] = v;
+    m->t[1] = v;
+    v = cur->pos[2] + (dz >> 16);
+    sv[2] = v;
+    m->t[2] = v;
+    sv[3] = d;
+    {
+        s16 (*cm)[3] = cur->m;
+        if (!(n->flags & 0x8000)) {
+            s16 (*nm)[3] = n->m;
+            m->m[0][2] = cm[0][0] + (((nm[0][0] - cm[0][0]) * t) >> 16);
+            m->m[1][2] = cm[1][0] + (((nm[1][0] - cm[1][0]) * t) >> 16);
+            m->m[2][2] = cm[2][0] + (((nm[2][0] - cm[2][0]) * t) >> 16);
+            m->m[0][1] = cm[0][1] + (((nm[0][1] - cm[0][1]) * t) >> 16);
+            m->m[1][1] = cm[1][1] + (((nm[1][1] - cm[1][1]) * t) >> 16);
+            m->m[2][1] = cm[2][1] + (((nm[2][1] - cm[2][1]) * t) >> 16);
+            m->m[0][0] = cm[0][2] + (((nm[0][2] - cm[0][2]) * t) >> 16);
+            m->m[1][0] = cm[1][2] + (((nm[1][2] - cm[1][2]) * t) >> 16);
+            m->m[2][0] = cm[2][2] + (((nm[2][2] - cm[2][2]) * t) >> 16);
+        }
+    }
+    return cur;
+}
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010C678);
 
