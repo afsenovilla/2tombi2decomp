@@ -3350,7 +3350,31 @@ void func_8002AE0C(u8 *a, s32 s, s32 mode)
     f_DrawPackedGouraudQuadStream(D_8009FAE8, 0, k, 0);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B278);
+extern s16 D_1F8000D0_b278[];
+
+s32 func_8002B278(u8 *a)
+{
+    s16 *c = D_1F8000D0_b278;
+    s32 dx = *(s16 *)(a + 0x2C) - c[1];
+    s32 dy = *(s16 *)(a + 0x2E) - c[3];
+    s32 dz = *(s16 *)(a + 0x30) - c[5];
+    s32 d = (u16)f_IntegerSquareRootRounded(dx * dx + dy * dy + dz * dz);
+    s32 nx = c[0xC];
+    s32 ny = c[0xD];
+    s32 nz = c[0xE];
+
+    if (d < 0x200) {
+        return 0;
+    }
+    if (d > 0x1C00) {
+        return 0;
+    }
+    if (nx * dx + ny * dy + nz * dz < (d << 2) * 856) {
+        return 0;
+    }
+    a[1] = 1;
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B3A4);
 
