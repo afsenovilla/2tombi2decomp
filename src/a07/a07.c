@@ -1626,7 +1626,87 @@ void func_80113C20(s32 arg0) {
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80113D58);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801140A0);
+extern u8 *D_800BF544_37fb;
+extern u8 *D_800ED8C8_35cc;
+#define OT4 (*(u32 *)(ot + 0x10))
+extern s16 D_1F800160;
+extern s16 D_1F800164;
+extern void func_80083DE0(void *, s32, s32, s32, s32);
+
+void func_801140A0(void) {
+    u8 *p;
+    u8 *q;
+    u8 *q2;
+    u8 *p3;
+    u8 *ot;
+    u8 *ot1;
+    u8 *ot3;
+    s32 x;
+    s32 y;
+    u8 c;
+    u8 g;
+    u8 b;
+
+    c = 0xFF;
+    x = (D_1F800164 - 0x1680) / 182;
+    y = (D_1F800160 - 0xA00) / 182;
+    p = D_800BF544_37fb;
+    p[7] = 0x64;
+    if (D_1F80017C & 2) {
+        c = 0x80;
+    }
+    p[4] = c;
+    g = 0x20;
+    if (D_1F80017C & 2) {
+        g = 0x40;
+    }
+    p[5] = g;
+    b = 0x20;
+    if (D_1F80017C & 2) {
+        b = 0x40;
+    }
+    *(s16 *)(p + 8) = x + 0xEC;
+    *(s16 *)(p + 0xA) = y + 0xA0;
+    *(u16 *)(p + 0xE) = 0x74E7;
+    p[6] = b;
+    p[0xC] = 0x50;
+    p[0xD] = 0x58;
+    *(s16 *)(p + 0x10) = 8;
+    do {
+        *(s16 *)(p + 0x12) = 8;
+    } while (0);
+    ot1 = D_800ED8C8_35cc;
+    do {
+        *(u32 *)p = (*(u32 *)(ot1 + 0x10)) | 0x04000000;
+    } while (0);
+    (*(u32 *)(ot1 + 0x10)) = (u32)p;
+    q = D_800BF544_37fb;
+    D_800BF544_37fb += 0x14;
+    p = D_800BF544_37fb;
+    p[7] = 0x65;
+    *(s16 *)(p + 8) = 0xF0;
+    *(s16 *)(p + 0xA) = 0xA4;
+    *(u16 *)(p + 0xE) = 0x7527;
+    p[0xC] = 0xC0;
+    p[0xD] = 0x50;
+    *(s16 *)(p + 0x10) = 0x40;
+    *(s16 *)(p + 0x12) = 0x40;
+    do {
+        ot = D_800ED8C8_35cc;
+        *(u32 *)(q + 0x14) = OT4 | 0x04000000;
+        OT4 = (u32)p;
+    } while (0);
+    q2 = D_800BF544_37fb;
+    p3 = q2 + 0x14;
+    D_800BF544_37fb = p3;
+    func_80083DE0(p3, 0, 0, 0x19, 0);
+    ot3 = D_800ED8C8_35cc;
+    *(u32 *)(q2 + 0x14) = (*(u32 *)(ot3 + 0x10)) | 0x02000000;
+    do {
+        (*(u32 *)(ot3 + 0x10)) = (u32)p3;
+    } while (0);
+    D_800BF544_37fb += 0xC;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80114294);
 
@@ -4632,9 +4712,7 @@ s32 func_80126DEC(u8 *a)
 }
 
 extern s16 D_800E7FFE_1cd3;
-extern s16 D_1F800160;
 extern s16 D_1F800162;
-extern s16 D_1F800164;
 s32 func_80126E80(u8 *a)
 {
     if (!(D_800E7FFE_1cd3 & 0x8200)) {
