@@ -490,3 +490,7 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - The loop-hoisting compiler patch (2026-11-23) will be per-file set-ups like nocse, never a replacement.
 - gcc-2.8.1-nocse is a set-up of the library (made reproducibly by tools/setup_native.sh).
 - decomp.dev no longer accepts new projects (checked 2026-11-22).
+- Tomba2Edit is a source of names and meanings only (no license, its Ghidra C export not shipped): release 0.5.0
+  (2026-11-24) added globals and NPC field meanings (docs/TOMBA2EDIT.md, `T2E` comments in include/actor.h), no
+  function names and nothing that matches. Re-check new releases for `decomp/` changes; `import_names.py` takes
+  only function starts.

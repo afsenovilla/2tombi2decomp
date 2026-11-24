@@ -3,6 +3,16 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-24 (8): Tomba2Edit release 0.5.0 reviewed
+
+Tomba2Edit 0.5.0 (commit b3fd4a6; /opt/tomba2edit updated) has no new function names (`symbols_us.json` unchanged)
+and still does not ship its Ghidra C export (`decomp/MAIN.EXE_US_DECOMP.c`, read by its new `game/decomp_view.py`),
+so it gives no matches. It adds meaning: a dozen globals (inventory table 0x800BFAB4, item-use flag 0x800BF80A,
+current interior 0x800BF817, warp destination 0x800BF83A, file table 0x800ECF58, costume tables ...) and the NPC
+skeleton's fields in words (phase a[4], script running a[5], script status a[0x70] == 255, talk box +0x80..0x86,
+scale +0xB8..0xBC, yaw +0x56). Written down in docs/TOMBA2EDIT.md ("Release 0.5.0") and as `T2E` comments in
+include/actor.h. Not done: renaming the `D_` globals in the C (readability only; left for the header pass).
+
 ## 2026-11-24 (7): eleventh round (NPC state machines)
 
 All code in C: **4776 / 7011 functions (68.1 %, 45.5 % of the bytes)**, from 4626 (41.9 %). The round went after the

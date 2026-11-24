@@ -181,5 +181,7 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   Run 2026-11-23: nothing within 4 words, no ratio >= 0.8; what T2 shares with T1 is already matched. Not worth more
   effort (STATUS "2026-11-23 (4)").
 - `python3 -I tools/import_names.py /opt/tomba2edit --write [--eu]`: names from Tomba2Edit (docs/TOMBA2EDIT.md).
+  Release 0.5.0 (2026-11-24): no new names, no C export; globals and NPC field meanings in docs/TOMBA2EDIT.md and
+  include/actor.h (`T2E` comments).
 - `python3 -I tools/vermatch.py`: how much USA code is found in the EU / ES builds.
 - `python3 -I tools/gen_configs.py game/usa [--force] [--out config/eu]`: regenerates the first configs (keeps hand-made ones without --force).

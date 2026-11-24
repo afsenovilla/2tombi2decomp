@@ -2,7 +2,7 @@
 
 [SiergiejW/Tomba2Edit](https://github.com/SiergiejW/Tomba2Edit): a modding / translation / asset tool for Tomba! 2
 (PyQt6), built on Tomba Club research ([wiki](https://tomba.club/wiki/Tomba!_2:_The_Evil_Swine_Return/Technical_information)).
-Reviewed 2026-11-13 (commit 1f0b0c6). The repo has **no license file**: we read it, use the facts it states (names,
+Reviewed 2026-11-13 (commit 1f0b0c6) and again 2026-11-24 (release 0.5.0, commit b3fd4a6; section below). The repo has **no license file**: we read it, use the facts it states (names,
 addresses, format descriptions) with credit, and copy none of its code or data files. Clone it outside this repo:
 `git clone --depth 1 https://github.com/SiergiejW/Tomba2Edit /opt/tomba2edit` (the bootstrap does).
 
@@ -42,3 +42,28 @@ Names in Tomba2Edit's style (`f_UpdateCircusSeesawLaunchedActor`) are kept as gi
   TXT2 (text), ANMP family (TANP, MDAP, ALFP, BETP, ALFD: animation tables).
 - `TOMBA2.IMG`: per area, the VRAM as rectangular shards, each LZ77-compressed with only seven back distances (1, or
   the row above give or take 3 columns): byte = `amount<<3 | how`.
+
+## Release 0.5.0 (reviewed 2026-11-24, commit b3fd4a6)
+
+New since 1f0b0c6: level / event / NPC editors, character swap, warp destinations, an item scan of the NPC handlers
+(`docs/npc-item-scan.md`), `game/native_decode.py` (a reader of handler code that says what it does in words) and
+`game/decomp_view.py`, which shows Ghidra's C of a handler from `decomp/MAIN.EXE_US_DECOMP.c`. **That C export is
+still not in the repo** (not shipped, so nothing to compare against), and `decomp/symbols_us.json` is unchanged: no
+new function names (every engine routine the new code calls already has its `t2e` name here). Nothing in it changes
+bytes, so it gives no matches; what it adds is meaning:
+
+- Globals (USA addresses; not renamed here yet, the C uses `D_` names): `0x800BF80A` item-use flag, `0x800BF80B` the
+  item Tomba is using, `0x800BF80E` Tomba's cutscene control, `0x800BF817` the current interior (`src_Interior`),
+  `0x800BF83A` warp destination (u16: area << 8 | arrival index), `0x800BF844` the spawned pickup, `0x800BF854` the
+  linked door, `0x800BFAB4` the inventory table (a byte per item id), `0x800A54A8` warp spawn coordinates (a pointer
+  per area), `0x800A55B0` section base index per area, `0x800A2B84` section name pointers, `0x800ECF58` the file
+  table (a pointer per file id), `0x800A3FA8`.. the costume body tables (Tomba, Squirrel 0x800A4030, Wing 0x800A40C8,
+  Pig 0x800A4160, Pig Robes 0x800A41E8, Invisible 0x800A4270).
+- The NPC skeleton (AGENTS.md "Round 10 / 11 forms") in words, from Tomba2Edit's generated talker handler (a copy of
+  A00's 0x80121978): `a[4]` phase 0 init / 1 run / 3 release (`func_8007A624`); init builds the multi-part model
+  (`f_InitializeMultiPartActorModel` with the file table entry), starts animation 0, sets the talk box (+0x80..0x86),
+  scale (+0xB8..0xBC), yaw (+0x56), `a[0] = 9`; run starts the script (`f_InitializeActorScript`), `a[5] = 1` while it
+  runs, `a[0x70] == 255` when it is done, then animation, render queue, transforms and `a[0x2B] = 0`. These are
+  comments in include/actor.h (`T2E`).
+- Item routines: give 0x8004D4C4 / 0x8004D4F4 / 0x8004D338, take 0x8004D604 / 0x8004D650 / 0x8004D688, pickups
+  0x8006FB0C / 0x8006FF10 (already named).
