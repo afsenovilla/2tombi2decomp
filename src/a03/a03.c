@@ -5,7 +5,69 @@
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTombaTrolleyRaceActor);
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyAttachedModelTransforms);
+typedef struct { u8 pad[0xC0]; u8 *parts[64]; } PartOwner;
+extern u8 D_1F800000[];
+extern u8 D_1F800020[];
+extern u8 D_1F800040[];
+#define H16(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define W32(p, o) (*(s32 *)((u8 *)(p) + (o)))
+
+void f_UpdateTrolleyAttachedModelTransforms(u8 *a) {
+    u8 *o = *(u8 **)(a + 0x10);
+    u8 *s = D_1F800000;
+    u8 *m;
+    s32 i;
+    s32 pad[8];
+
+    H16(a, 0x98) = H16(o, 0x98);
+    H16(a, 0x9E) = H16(o, 0x9E);
+    H16(a, 0xA4) = H16(o, 0xA4);
+    H16(a, 0x9A) = H16(o, 0x9A);
+    H16(a, 0xA0) = H16(o, 0xA0);
+    H16(a, 0xA6) = H16(o, 0xA6);
+    H16(a, 0x9C) = H16(o, 0x9C);
+    H16(a, 0xA2) = H16(o, 0xA2);
+    H16(a, 0xA8) = H16(o, 0xA8);
+    func_800517BC(s, H16(a, 0xB8), H16(a, 0xBA), H16(a, 0xBC));
+    m = a + 0x98;
+    func_80084360(s, m);
+    i = 0;
+    H16(a, 0x2E) = H16(o, 0x2E) - ((H16(a, 0x9A) * H16(a, 0x84)) >> 12);
+    H16(a, 0x32) = H16(o, 0x32) - ((H16(a, 0xA0) * H16(a, 0x84)) >> 12);
+    H16(a, 0x36) = H16(o, 0x36) - ((H16(a, 0xA6) * H16(a, 0x84)) >> 12);
+    H16(a, 0x2E) += (H16(a, 0x98) * 37) >> 11;
+    H16(a, 0x32) += (H16(a, 0x9E) * 37) >> 11;
+    H16(a, 0x36) += (H16(a, 0xA4) * 37) >> 11;
+    func_80084470(m, a + 0x88, a + 0xAC);
+    W32(a, 0xAC) += H16(a, 0x2E);
+    W32(a, 0xB0) += H16(a, 0x32);
+    W32(a, 0xB4) += H16(a, 0x36);
+    if (a[8] != 0) {
+        u8 *s0 = s;
+        u8 *s1 = D_1F800020;
+        u8 *s2 = D_1F800040;
+        do {
+            s32 k = H16(((PartOwner *)a)->parts[i], 6);
+            func_800517BC(s0, H16(((PartOwner *)a)->parts[i], 0x38), H16(((PartOwner *)a)->parts[i], 0x3A), H16(((PartOwner *)a)->parts[i], 0x3C));
+            func_80085480(((PartOwner *)a)->parts[i] + 8, s1);
+            func_80084110(s1, s0, s2);
+            if (k < 0) {
+                func_80084110(a + 0x98, s2, ((PartOwner *)a)->parts[i] + 0x18);
+                func_80084220(((PartOwner *)a)->parts[i], ((PartOwner *)a)->parts[i] + 0x2C);
+                W32(((PartOwner *)a)->parts[i], 0x2C) += W32(a, 0xAC);
+                W32(((PartOwner *)a)->parts[i], 0x30) += W32(a, 0xB0);
+                W32(((PartOwner *)a)->parts[i], 0x34) += W32(a, 0xB4);
+            } else {
+                func_80084110(((PartOwner *)a)->parts[k] + 0x18, s2, ((PartOwner *)a)->parts[i] + 0x18);
+                func_80084220(((PartOwner *)a)->parts[i], ((PartOwner *)a)->parts[i] + 0x2C);
+                W32(((PartOwner *)a)->parts[i], 0x2C) += W32(((PartOwner *)a)->parts[k], 0x2C);
+                W32(((PartOwner *)a)->parts[i], 0x30) += W32(((PartOwner *)a)->parts[k], 0x30);
+                W32(((PartOwner *)a)->parts[i], 0x34) += W32(((PartOwner *)a)->parts[k], 0x34);
+            }
+            i++;
+        } while (i < a[8]);
+    }
+}
 
 void func_80109BC8(u8 *a) {
     s32 n = 0;
@@ -51,7 +113,6 @@ typedef struct ChildList2 {
       u8 *children[1];
 } ChildList2;
 typedef struct EventReward { u8 pad0; u8 ap; u8 pad2[10]; } EventReward;
-typedef struct { u8 pad[0xC0]; u8 *parts[64]; } PartOwner;
 typedef struct { s32 x, y, z; } Vec3i_74C;
 typedef struct { u8 pad[0x1C]; Vec3i_74C v; } ConvTarget_74C;
 typedef struct { u8 pad[0x2C]; Vec3i_74C pos; } PosHolder_858;
