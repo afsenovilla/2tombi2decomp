@@ -4295,7 +4295,65 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012168C);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801218B0);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80121AB4);
+extern u8 D_800BF9D7;
+extern u8 D_800BF8DB;
+
+void func_80121AB4(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        func_80040CDC(a, D_8014005C_9175, D_800A3D18_ed09);
+        a[0x7B] = 0x17;
+        func_80041718(a, 0x17, 0);
+        *(s16 *)(a + 0x58) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x54) = 0;
+        switch (D_800BF9D7) {
+        case 0:
+        case 1:
+            a[0x5E] = 0;
+            break;
+        case 3:
+            a[0x5E] = 2;
+            break;
+        case 2:
+        default:
+            if (D_800BF8DB != 0xFF) {
+                a[0x5E] = 1;
+            } else {
+                a[0x5E] = 3;
+            }
+            break;
+        }
+        a[4]++;
+        break;
+    case 1:
+        switch (a[0x5E]) {
+        case 0:
+            func_80120FD4(a);
+            break;
+        case 1:
+            func_801211B0(a);
+            break;
+        case 2:
+            func_8012168C(a);
+            break;
+        case 3:
+            func_801218B0(a);
+            break;
+        }
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u8 D_800BF81E;
 extern s32 D_1F80023C;
@@ -4995,7 +5053,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusPaonAtWellActor);
 
 extern u8 D_80131BC0[];
 extern u8 D_80140DC8[];
-extern u8 D_800BF9D7;
 
 void func_80126BD8(u8 *a)
 {
