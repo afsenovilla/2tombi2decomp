@@ -23196,7 +23196,51 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007F73C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007F8F8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007FC24);
+typedef struct {
+    u32 tag;
+    u8 r0, g0, b0, code;
+    s16 x0, y0;
+    u8 r1, g1, b1, pad1;
+    s16 x1, y1;
+    u8 r2, g2, b2, pad2;
+    s16 x2, y2;
+    u8 r3, g3, b3, pad3;
+    s16 x3, y3;
+} PolyG4_FC24;
+extern PolyG4_FC24 *D_800BF544_fc24;
+
+void func_8007FC24(void)
+{
+    PolyG4_FC24 *p = D_800BF544_fc24++;
+    u32 *ot;
+
+    p->code = 0x38;
+    p->b0 = 0x46;
+    p->b1 = 0x46;
+    p->b2 = 0x46;
+    p->b3 = 0x10;
+    p->r0 = 0;
+    p->g0 = 0;
+    p->r1 = 0;
+    p->g1 = 0;
+    p->r2 = 0;
+    p->g2 = 0;
+    p->r3 = 0;
+    p->g3 = 0;
+    p->x0 = 0;
+    p->y0 = 0;
+    p->x1 = 0x140;
+    p->y1 = 0;
+    p->x2 = 0;
+    p->y2 = 0xF0;
+    p->x3 = 0x140;
+    p->y3 = 0xF0;
+    do {
+        ot = D_800ED8C8;
+        p->tag = ot[1] | 0x8000000;
+        ot[1] = (u32)p;
+    } while (0);
+}
 
 s32 func_8007FCC8(s32 x, s32 y, s32 w, s32 h, s32 flags)
 {
