@@ -637,7 +637,77 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010AF4C);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010B09C);
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010B238);
+#define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
+extern u8 D_80118034[];
+#define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
+
+void func_8010B238(u8 *a, u8 *b) {
+    u8 k;
+    s32 r;
+    s32 v;
+    s16 w;
+    s32 pad[4];
+
+    switch (a[5]) {
+    case 0:
+        k = b[0x181];
+        if (k == 0 || a[0x5F] == 0) {
+            a[0x5F] = k;
+            r = func_8010B09C(a, b);
+            if (r != 0) {
+                a[5] = r;
+                if (r == 2) {
+                    H_f12c(a, 0xE) = 10;
+                    return;
+                }
+                w = abs(H_f12c(b, 0x44));
+                if (w > 0x3800) {
+                    w = 0x3800;
+                }
+                H_f12c(a, 0xE) = D_80118034[w >> 11];
+                if (w > 0x800) {
+                    a[6] = 0;
+                    return;
+                }
+                a[6] = 1;
+                return;
+            }
+        }
+        break;
+    case 1:
+    case 3:
+        if (--H_f12c(a, 0xE) == 0) {
+            goto reset;
+        }
+        if (a[6] != 0) {
+            v = H_f12c(b, 0x44);
+            if (v < 0) {
+                v = -v;
+            }
+            if (v > 0x800) {
+                goto reset;
+            }
+            if (b[0x145] != 0) {
+                a[5] = 0;
+            }
+        }
+        break;
+    case 4:
+    reset:
+        a[5] = 0;
+        break;
+    case 2:
+        if (--H_f12c(a, 0xE) == 0) {
+            a[5] = 0;
+        }
+        break;
+    case 5:
+        if (--a[0x2B] == 0) {
+            a[5] = 0;
+        }
+        break;
+    }
+}
 
 void func_8010B3E8(void) {
     func_8010AB24();
