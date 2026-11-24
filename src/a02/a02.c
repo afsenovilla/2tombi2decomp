@@ -3914,7 +3914,83 @@ void func_8011AC0C(void *arg0) {
     func_800517F8(arg0);
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011AC40);
+typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner8011AC40;
+extern u8 D_800E8008[];
+#define AC40_I16(o) (*(s16 *)(a->pad + (o)))
+#define AC40_W16(o) (*(u16 *)(a->pad + (o)))
+#define AC40_S32(o) (*(s32 *)(a->pad + (o)))
+
+void func_8011AC40(PartsOwner8011AC40 *a) {
+    u8 *g = D_800E8008;
+    s32 one = 1;
+    s32 i;
+
+    switch (a->pad[5]) {
+    case 0:
+        if (D_800BFA03 == 5) {
+            g[0x64] = 8;
+            func_8006CBA8(a->pad + 0x2C);
+            AC40_I16(0x40) = 0x3C;
+            AC40_I16(0x48) = 0x5000;
+            a->pad[6] = 0;
+            a->pad[5]++;
+        }
+        break;
+    case 1:
+        if (--AC40_I16(0x40) <= 0) {
+            a->pad[5]++;
+        }
+        break;
+    case 2:
+        a->pad[1] = one;
+        func_80077EBC(a);
+        switch (a->pad[6]) {
+        case 0:
+            AC40_S32(0x2C) -= AC40_I16(0x48) << 8;
+            if (AC40_S32(0x2C) <= 0x2C000000) {
+                D_800BFA03 = 7;
+                AC40_I16(0x4A) = -0x2800;
+                AC40_S32(0x2C) = 0x2C000000;
+                AC40_I16(0x50) = 0x380;
+                a->pad[6]++;
+            }
+            break;
+        case 1:
+            AC40_W16(0x58) = (AC40_W16(0x32) + 0xD3E) * 2;
+        case 2:
+        case 3:
+            AC40_W16(0x4A) += AC40_W16(0x50);
+            AC40_S32(0x30) += AC40_I16(0x4A) << 8;
+            if (AC40_S32(0x30) >= (s32)0xF2C20000) {
+                AC40_S32(0x30) = 0xF2C20000;
+                AC40_I16(0x58) = 0;
+                AC40_I16(0x4A) = -0x2800;
+                AC40_I16(0x50) = (-(a->pad[6] << 2) + (a->pad[6] << 5)) << 7;
+                if (++a->pad[6] >= 4) {
+                    g[0x64] = 7;
+                    D_800BFA03 = 6;
+                    a->pad[6] = 0;
+                    a->pad[5]++;
+                }
+            }
+            break;
+        }
+        *(u16 *)(g + 0x3A) = AC40_W16(0x2E);
+        for (i = 1; i < a->pad[8]; i++) {
+            *(u16 *)(a->parts[i] + 0xC) -= AC40_I16(0x48) >> 3;
+        }
+        break;
+    case 3:
+        if (D_1F800137 == 0) {
+            a->pad[3] = one;
+            a->pad[5] = 0;
+            a->pad[6] = 0;
+        }
+        a->pad[1] = one;
+        func_80077EBC(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011AEF0);
 
@@ -4772,7 +4848,6 @@ void func_8011E3A8(void *arg0) {
     }
 }
 
-extern u8 D_800E8008[];
 s32 func_8011E3C8(u8 *a) {
     u8 *e = D_800E8008;
 
