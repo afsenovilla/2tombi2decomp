@@ -4339,7 +4339,100 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80128414);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801285BC);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", f_UpdateSeaAnemoneFreezeSequence);
+#define QH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+s16 func_80129168();
+
+void f_UpdateSeaAnemoneFreezeSequence(u8 *a) {
+    u8 *p = *(u8 **)(a + 0x10);
+    s32 one;
+
+    if (a[0xBF] == 0 && p != NULL && a[0x2B] == 0 && (p[0x2B] != 0 || p[0] == 2)) {
+        *(u8 **)(a + 0x10) = NULL;
+        func_80129B54(a, 0, 0xC, 3);
+        QH(a, 0x62) = 0x3C;
+        a[0x5E] = 0;
+        QH(a, 0x60) = 0;
+        QH(a, 0x64) = 0;
+        QH(a, 0x6C) = 0xFF;
+        a[5] = 0;
+        a[6] = 0;
+        return;
+    }
+    switch (a[6]) {
+    case 0:
+        func_80128D84(a, 1);
+        a[6]++;
+        break;
+    case 1:
+        if (QH(a, 0x6A) == 1) {
+            a[6]++;
+        }
+    case 2:
+        if (a[0x2B] == 2) {
+            a[6] = 3;
+            a[0x5E]++;
+        }
+        break;
+    case 3:
+        if (func_80129168(a, 1) != 0) {
+            a[0] = 3;
+            QH(a, 0x72) = 1;
+            if (QH(a, 0x6C) < 3) {
+                func_80129B54(a, 0x10, 4, 3);
+            } else {
+                func_80129B54(a, 0x11, 4, 3);
+            }
+            QH(a, 0x40) = 4;
+            a[6]++;
+        }
+        break;
+    case 4:
+        if (QH(a, 0x6A) == 1 && --QH(a, 0x40) == 0) {
+            QH(a, 0x40) = 9;
+            func_80129B54(a, 0x12, 2, 3);
+            a[6]++;
+        }
+        break;
+    case 5:
+        if (--QH(a, 0x40) == 0) {
+            a[0xBF] = 1;
+            QH(a, 0x72) = 0;
+            p[4] = 3;
+            *(u8 **)(a + 0x10) = NULL;
+            func_80074590(8, 0x12, 0);
+        }
+        if (QH(a, 0x6A) == 1) {
+            func_80129B54(a, 0x13, 0, 3);
+            a[6]++;
+        }
+        break;
+    case 6:
+        if ((one = QH(a, 0x6A)) == 1) {
+            if (D_800BF80F == 0) {
+                func_80129B54(a, 0xA, 4, 3);
+                if (func_80040B48(0x66) >= 0) {
+                    D_800BF870.pad1[0x17B] |= one << (a[3] * 2);
+                    a[0] = one;
+                    a[3] |= 0x80;
+                }
+                func_80119F24(a, 1);
+                a[6]++;
+            } else {
+                func_80129B54(a, 0, 0x10, 3);
+                QH(a, 0x62) = 0x3C;
+                QH(a, 0x60) = 0;
+                QH(a, 0x64) = 0;
+                QH(a, 0x6C) = 0xFF;
+                a[0x5E] = 0;
+                a[0x2B] = 0;
+                a[0xBF] = 0;
+                a[5] = 0;
+                a[6] = 0;
+            }
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80128BEC);
 
