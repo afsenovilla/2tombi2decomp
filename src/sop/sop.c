@@ -717,7 +717,61 @@ void func_8010A8D4(u8 *a)
 
 INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010A900);
 
-INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010AB38);
+#define S16(p, o) (*(s16 *)((u8 *)(p) + (o)))
+
+void func_8010AB38(u8 *a)
+{
+    u8 *t = *(u8 **)(a + 0x10);
+
+    switch (a[4]) {
+    case 0:
+        S16(a, 0x40) = 0x50;
+        a[4] = 1;
+        S16(a, 0x54) = 0;
+        S16(a, 0x42) = 0x6E;
+        S16(a, 0xE) = 0;
+        S16(a, 0x56) = 0;
+        S16(a, 0x58) = 0;
+        break;
+    case 1:
+        if (D_800BF9B4 >= 5) {
+            a[4] = 2;
+            break;
+        }
+        if ((a[1] = t[1]) == 0) {
+            break;
+        }
+        S16(a, 0x40) = 0x50;
+        S16(a, 0x42) = 0x6E;
+        *(s32 *)(a + 0x2C) = *(s32 *)(t + 0x2C);
+        *(s32 *)(a + 0x30) = *(s32 *)(t + 0x30);
+        *(s32 *)(a + 0x34) = *(s32 *)(t + 0x34);
+        S16(a, 0x48) = S16(t, 0x2E);
+        S16(a, 0x4A) = S16(t, 0x32) + S16(t, 0x84);
+        S16(a, 0x4C) = S16(t, 0x36);
+        S16(a, 0x4E) = 0x80 - ((S16(a, 0x4A) - S16(t, 0x32) - 0x78) >> 2);
+        if (S16(a, 0x4E) < 0) {
+            S16(a, 0x4E) = 0;
+            a[1] = 0;
+        } else if (S16(a, 0x4E) > 0x80) {
+            S16(a, 0x4E) = 0x80;
+        }
+        S16(a, 0x50) = 0x100 - ((S16(a, 0x4A) - S16(t, 0x32) - 0x78) >> 2);
+        if (S16(a, 0x50) < 0) {
+            S16(a, 0x50) = 0;
+            a[1] = 0;
+        } else if (S16(a, 0x50) > 0x100) {
+            S16(a, 0x50) = 0x100;
+        }
+        break;
+    case 2:
+        a[4]++;
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u8 D_800ECF58[];
 extern u8 D_80017FE8[];
