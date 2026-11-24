@@ -3896,7 +3896,30 @@ s32 func_8011A0D8(u8 *a) {
     return 2;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011A10C);
+void func_8011A10C(u8 *a) {
+    u8 *g = (u8 *)&D_800BF870;
+    u8 *t;
+
+    if (g[0x18E] == 1) {
+        a[5] = 2;
+        a[6] = 0;
+        *(s16 *)(a + 0x40) = 1;
+        return;
+    }
+    if (a[0x2B] == 1) {
+        t = D_800BF808_1760;
+        if (t[2] == 1 && (t[3] == 0x7F || t[3] == 0x80 || t[3] == 0x92) && (s16)func_80119DEC(a) != 0) {
+            s32 k = t[3];
+            *(s16 *)(a + 0x62) = 0;
+            *(s16 *)(a + 0x40) = 1;
+            *(s16 *)(a + 0x60) = k;
+            g[0x18E] = 0x81;
+            a[5] = 1;
+            a[6] = 0;
+            a[0x5E] = 0;
+        }
+    }
+}
 
 void func_8011A1F0(u8 *a) {
     if (M2C_FIELD(a, s16 *, 0x40) != 0) {
