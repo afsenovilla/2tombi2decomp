@@ -2553,7 +2553,46 @@ void f_UpdateCoalMiningTownEntranceOpeningSequence(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80114380);
+extern PartInit5 D_80135B6C[];
+
+void func_80114380(PartsOwner *a) {
+    s32 i;
+    s16 k;
+    u8 *q;
+    u8 *g;
+
+    a->pad[8] = 5;
+    if (D_800ED098 < a->pad[8]) {
+        a->pad[4] = 3;
+        return;
+    }
+    a->pad[9] = 5;
+    a->pad[0xD] = 4;
+    g = (u8 *)&D_800BF870;
+    a->pad[0xB] = 0;
+    k = 0;
+    if (g[0x98] == 0xFF && g[0x97] == 0xFF) {
+        k = 0x11;
+    }
+    a->pad[0x46] = 0;
+    *(s16 *)(a->pad + 0x54) = 0;
+    *(s16 *)(a->pad + 0x56) = 0x400;
+    *(s16 *)(a->pad + 0x58) = 0;
+    *(s16 *)(a->pad + 0x60) = *(s16 *)(a->pad + 0x36);
+    for (i = 0; i < a->pad[8]; i++) {
+        q = func_8007AAE8();
+        a->parts[i] = q;
+        *(s16 *)(q + 6) = D_80135B6C[i].v[0];
+        *(s16 *)(a->parts[i] + 0) = D_80135B6C[i].v[1];
+        *(s16 *)(a->parts[i] + 2) = D_80135B6C[i].v[2];
+        *(s16 *)(a->parts[i] + 4) = D_80135B6C[i].v[3];
+        *(s16 *)(a->parts[i] + 8) = 0;
+        *(s16 *)(a->parts[i] + 0xA) = 0;
+        *(s16 *)(a->parts[i] + 0xC) = 0;
+        func_80051B04(a->parts[i], 0xC, D_80135B6C[i].v[4] + k);
+        a->parts[i][0x3F] = 0xE;
+    }
+}
 
 #define GH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define GW(p, o) (*(s32 *)((u8 *)(p) + (o)))
