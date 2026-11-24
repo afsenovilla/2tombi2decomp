@@ -2129,7 +2129,45 @@ u8 *func_80113D04(s32 a) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80113D44);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80113EB8);
+extern s16 *D_80135B60[];
+
+void func_80113EB8(u8 *a) {
+
+    s32 i;
+    s32 k;
+    s16 *r;
+    u8 *q;
+
+    a[8] = 2;
+    if (D_800ED098 < 2) {
+        a[4] = 3;
+        return;
+    }
+    k = 0x23;
+    { s32 n = 2; a[9] = n; }
+    a[0xD] = 4;
+    a[0xB] = 0;
+    LH(a, 0x54) = 0;
+    LH(a, 0x56) = 0;
+    LH(a, 0x58) = 0;
+    if (a[3] == 1) {
+        k = 0x1C;
+    }
+    r = D_80135B60[a[3] - 1];
+    for (i = 0; i < a[8]; i++) {
+        q = func_8007AAE8();
+        LP(a + i * 4) = q;
+        LH(q, 6) = *r++;
+        LH(LP(a + i * 4), 0) = *r++;
+        LH(LP(a + i * 4), 2) = *r++;
+        LH(LP(a + i * 4), 4) = *r++;
+        LH(LP(a + i * 4), 8) = 0;
+        LH(LP(a + i * 4), 0xA) = 0;
+        LH(LP(a + i * 4), 0xC) = 0;
+        func_80051B04(LP(a + i * 4), 0xC, k + i);
+    }
+    (*(u8 **)(a + 0xC4))[0x3F] = 0xF0;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80114018);
 
