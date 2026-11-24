@@ -5365,7 +5365,86 @@ void func_80126264(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeNestChickActor);
+typedef struct { u8 pad[0xC0]; u8 *parts[2]; } NestParent;
+
+void f_InitializeNestChickActor(u8 *a) {
+    NestParent *l;
+    s32 m = a[3];
+    s32 b;
+
+    a[4]++;
+    b = D_800ECF80;
+    a[0xB] = 0x10;
+    a[0xD] = 0;
+    H_f12c(a, 0x5A) = 0;
+    a[8] = 0;
+    *(s32 *)(a + 0x3C) = b;
+    switch (m) {
+    case 0:
+    case 1:
+        func_80077B38(a, D_8014C808, 0x16);
+        l = *(NestParent **)(a + 0x10);
+        a[0x47] = 0;
+        H_f12c(a, 0x2E) = H_f12c(l->parts[H_f12c(a, 0x60)], 0x2C);
+        H_f12c(a, 0x32) = H_f12c(l->parts[H_f12c(a, 0x60)], 0x30);
+        H_f12c(a, 0x36) = H_f12c(l->parts[H_f12c(a, 0x60)], 0x34);
+        if (H_f12c(a, 0x60) & 1) {
+            a[0x2A] = 0xA;
+        } else {
+            a[0x2A] = 1;
+        }
+        break;
+    case 2:
+    case 4:
+    case 5:
+        if (a[3] & 1) {
+            func_80077B38(a, D_8014C808, 0x1B);
+            H_f12c(a, 0x40) = 1;
+        } else if (a[3] & 2) {
+            func_80077B38(a, D_8014C808, 0x17);
+            H_f12c(a, 0x40) = 4;
+        } else {
+            func_80077B38(a, D_8014C808, 0xD);
+            H_f12c(a, 0x40) = 1;
+        }
+        a[0x47] = 1;
+        H_f12c(a, 0x2E) = 0x1040;
+        H_f12c(a, 0x32) = -0xA8C;
+        H_f12c(a, 0x36) = 0x1A41;
+        if (a[3] & 1) {
+            H_f12c(a, 0x4A) = -0x1600;
+        } else if (H_f12c(a, 0x68) == 0) {
+            H_f12c(a, 0x4A) = -0x1A00;
+        } else {
+            H_f12c(a, 0x4A) = -0x1200;
+        }
+        H_f12c(a, 0x50) = 0x100;
+        H_f12c(a, 0x44) = 0x800;
+        H_f12c(a, 0x64) = 1;
+        a[0x2A] = 3;
+        a[5] = 3;
+        break;
+    case 3:
+        func_80077B38(a, D_8014C808, 0x17);
+        H_f12c(a, 0x2E) = 0x1040;
+        H_f12c(a, 0x32) = -0xABC;
+        if (H_f12c(a, 0x68) & 1) {
+            H_f12c(a, 0x36) = 0x1B41;
+        } else {
+            H_f12c(a, 0x36) = 0x1BD1;
+        }
+        H_f12c(a, 0x44) = 0;
+        H_f12c(a, 0x40) = 1;
+        H_f12c(a, 0x64) = 0;
+        a[0x2A] = 3;
+        a[0x47] = 1;
+        a[5] = 3;
+        a[6] = 1;
+        break;
+    }
+    func_8004766C(a);
+    func_80049760(a);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801266C8);
 
