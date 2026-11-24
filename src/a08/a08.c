@@ -7895,7 +7895,94 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013F6E4);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013F8B4);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013FA00);
+#define CRD_MSG(id, msg)                     \
+    {                                        \
+        CrdMenu *s;                          \
+        s32 w, m;                            \
+        w = id;                              \
+        s = &D_800BF498;                     \
+        m = -1;                              \
+        if (s->x18 != w) {                   \
+            func_8009A5B0(s->xC, msg);       \
+            s->x18 = w;                      \
+        }                                    \
+        if (s->x1A != m) {                   \
+            *s->x10 = 0;                     \
+            s->x1A = m;                      \
+        }                                    \
+    }
+#define CRD_MSG2(id, msg)                    \
+    {                                        \
+        CrdMenu *s;                          \
+        s32 w, m;                            \
+        m = -1;                              \
+        s = &D_800BF498;                     \
+        w = id;                              \
+        if (s->x18 != m) {                   \
+            *(u8 *)s->xC = 0;                \
+            s->x18 = m;                      \
+        }                                    \
+        if (s->x1A != w) {                   \
+            func_8009A5B0(s->x10, msg);      \
+            s->x1A = w;                      \
+        }                                    \
+    }
+extern u16 D_800E7E68;
+extern u8 *D_1F800138_5432;
+extern s32 D_800A2914;
+extern s32 D_800A2918;
+extern s32 D_800A292C;
+
+void func_8013FA00(u8 *a)
+{
+    u8 mask;
+    u16 p;
+    mask = a[0x4A] < 3;
+    if (a[0x4B] < 3) {
+        mask |= 2;
+    }
+    if (mask != 0) {
+        if (a[0x44] == 0) {
+            a[0x44] = 1;
+        }
+        if ((D_800E7E68 & 0x80) && (mask & 1) && a[0x44] != 1) {
+            func_80074590(0x15, 0, 0);
+            a[0x44] = 1;
+        }
+        if ((D_800E7E68 & 0x20) && (mask & 2) && a[0x44] != 2) {
+            func_80074590(0x15, 0, 0);
+            a[0x44] = 2;
+        }
+        if (!(a[0x44] & mask)) {
+            a[0x44] = mask;
+        }
+        CRD_MSG2(0x36, D_800A292C);
+    } else {
+        a[0x44] = 0;
+        CRD_MSG(0x31, D_800A2918);
+    }
+    if (D_800E7E68 & 0x2000) {
+        func_8001CBA8(a, 0);
+        func_8001CBA8(a, 1);
+        *(u16 *)(D_1F800138_5432 + 0x50) = 2;
+    }
+    p = D_800E7E68;
+    if (p & 0x1000) {
+        func_8001CBA8(a, 0);
+        func_8001CBA8(a, 1);
+        *(u16 *)(D_1F800138_5432 + 0x50) = 3;
+        return;
+    }
+    if ((p & 0x4000) && a[0x44] != 0) {
+        func_80074590(0x11, 0, 0);
+        a[0x45] = a[0x44];
+        a[0x46] = a[0x44] - 1;
+        CRD_MSG(0x30, D_800A2914);
+        a[0] = 0x66;
+        a[1] = 0;
+        a[0x3F] = 0x6A;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013FCD4);
 
@@ -7907,8 +7994,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80140314);
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
-extern u16 D_800E7E68;
-extern s32 D_800A2914;
 void func_80140608(u8 *a)
 {
     CrdMenu *s;
