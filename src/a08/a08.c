@@ -3391,7 +3391,90 @@ s32 func_8012217C(u8 *p)
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", f_InsertPigNosePanelIntoTempleTower);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80122544);
+extern u8 D_8014005C[];
+extern u16 D_800BF89E;
+
+void func_80122544(u8 *a)
+{
+    u8 *p;
+    u8 *t;
+
+    switch (a[4]) {
+    case 0:
+        if (a[3] == 2) {
+            if (func_80051B70(a, 0xC, 0x40) != 0) {
+                break;
+            }
+            *(s16 *)(a + 0x54) = 0;
+            *(s16 *)(a + 0x56) = 0;
+            *(s16 *)(a + 0x58) = 0;
+            if (!((D_800BFA32 >> a[3]) & 1)) {
+                *(s32 *)(*(u8 **)(a + 0xC0) + 0x40) = 0;
+                *(s16 *)(a + 0x80) = 0x50;
+                *(s16 *)(a + 0x82) = 0xA0;
+                a[0] = 1;
+                *(s16 *)(a + 0x84) = 0x68;
+                *(s16 *)(a + 0x86) = 0x68;
+            }
+            a[0xD] |= 4;
+            (*(u8 **)(a + 0xC0))[0x3F] = 0x10;
+        } else if (!((D_800BFA32 >> a[3]) & 1)) {
+            if (func_80051B70(a, 0xC, 0x3E) != 0) {
+                break;
+            }
+            *(s16 *)(a + 0x80) = 0xC8;
+            *(s16 *)(a + 0x82) = 0x190;
+            a[0] = 1;
+            *(s16 *)(a + 0x84) = 0x100;
+            *(s16 *)(a + 0x86) = 0x100;
+            a[5] = 0;
+        } else {
+            if (func_80051B70(a, 0xC, 0x3F) != 0) {
+                break;
+            }
+            a[5] = 1;
+        }
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        a[4]++;
+        break;
+    case 1:
+        if (a[3] == 2) {
+            p = *(u8 **)(a + 0x10);
+            *(s16 *)(a + 0x2E) = *(s16 *)(p + 0x2C);
+            *(s16 *)(a + 0x32) = *(s16 *)(p + 0x30) - 0x6B;
+            *(s16 *)(a + 0x36) = *(s16 *)(p + 0x34);
+            if (a[0x29] != 0) {
+                t = D_800E7E80;
+                if (t[0x29] != 0 && !(t[0x174] & 4) && !(D_800BF89E & 0x200) && func_8005308C() != 0) {
+                    a[0x2B] = 3;
+                    t[0x147] = func_80077768((s16)func_800782B0(t + 0x2C, *(s16 *)(a + 0x2E), *(s16 *)(a + 0x36)), *(s16 *)(t + 0x140), 0);
+                    func_80055284(t);
+                }
+            }
+        }
+        if (a[5] == 0 && f_InsertPigNosePanelIntoTempleTower(a) != 0) {
+            a[5]++;
+        }
+        if (D_1F800207 == 6 || D_1F800207 == 0xF) {
+            a[1] = 1;
+            func_80077EBC(a);
+        } else {
+            func_8007778C(a);
+        }
+        if (a[1] != 0) {
+            func_800517F8(a);
+        }
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u8 D_800BFA3F;
 /* func_80122938, inlined */
@@ -6030,7 +6113,6 @@ void func_8012C928(u8 *a)
     }
 }
 
-extern u8 D_8014005C[];
 extern u8 D_8014159C[];
 extern u8 D_80148790[];
 extern u8 D_800A3D90_b2d8[];
