@@ -1210,7 +1210,54 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010FC30);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010FF78);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80110258);
+extern void func_80083DE0(void *, s32, s32, s32, s32);
+void func_8010DC3C();
+
+void func_80110258(u8 *a)
+{
+    u8 *p;
+    s32 k;
+
+    k = a[6];
+    switch (k) {
+    case 0:
+        p = func_8007AB20();
+        if (p != NULL) {
+            *(s16 *)(p + 0x2E) = I16(0x2E);
+            *(s16 *)(p + 0x32) = I16(0x32);
+            *(s16 *)(p + 0x36) = I16(0x36);
+            *(s16 *)(p + 0x56) = I16(0x56);
+            *(void **)(p + 0x1C) = func_8010DC3C;
+            p[2] = 7;
+        }
+        a[0x146] = 1;
+        a[6]++;
+        func_80054D14(a, 0x99, 5);
+        I16(0x40) = 0xD;
+        break;
+    case 1:
+        func_80076D68(a);
+        if (--I16(0x40) == 0) {
+            a[0x146] = 2;
+            I16(0x40) = 3;
+            a[6]++;
+            (*(u8 **)(a + 0x10))[0x2B] = k;
+        }
+        break;
+    case 2:
+        if (--I16(0x40) == 0) {
+            if (D_1F800137 == 2) {
+                D_1F800137 = 0;
+            }
+            a[0x146] = 0;
+            a[5] = 0;
+            a[6] = 0;
+            a[7] = 0;
+            func_80054D14(a, 2, 6);
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801103D8);
 
@@ -1662,7 +1709,6 @@ extern u8 *D_800ED8C8_35cc;
 #define OT4 (*(u32 *)(ot + 0x10))
 extern s16 D_1F800160;
 extern s16 D_1F800164;
-extern void func_80083DE0(void *, s32, s32, s32, s32);
 void func_801140A0(void) {
     u8 *p;
     u8 *q;
