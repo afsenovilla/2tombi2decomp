@@ -22941,7 +22941,36 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007F8F8);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007FC24);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007FCC8);
+s32 func_8007FCC8(s32 x, s32 y, s32 w, s32 h, s32 flags)
+{
+    s32 k;
+    u8 *p;
+    u32 *ot;
+
+    if (flags & 0x80) {
+        k = 0x7FF;
+    } else {
+        k = 1;
+    }
+    p = (u8 *)D_800BF544;
+    D_800BF544 = p + 0x10;
+    if (!(flags & 0x7F)) {
+        *(s32 *)(p + 4) = 0x460000;
+    } else {
+        *(s32 *)(p + 4) = 0;
+    }
+    p[3] = 3;
+    p[7] = 0x60;
+    *(s16 *)(p + 8) = x;
+    *(s16 *)(p + 0xA) = y;
+    *(s16 *)(p + 0xC) = w;
+    do {
+        *(s16 *)(p + 0xE) = h;
+        ot = D_800ED8C8 + k;
+        *(u32 *)p = *ot | 0x3000000;
+    } while (0);
+    *ot = (u32)p;
+}
 
 void f_DrawLoadingIndicator(void)
 {
