@@ -921,7 +921,219 @@ void f_SelectNextEvilPigAttack(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", f_SelectEvilPigArenaTarget);
+typedef struct {
+    s16 x;
+    s16 y;
+    s16 z;
+    s16 f;
+} SelPt;
+extern SelPt D_8011BA78_858f[];
+extern u8 D_800E7EAA;
+extern u8 D_1F80025C[];
+extern u16 D_1F800160_3621;
+extern u16 D_1F800162_b816;
+extern u16 D_1F800164_7d8c;
+
+s32 f_SelectEvilPigArenaTarget(void *arg0, s32 mode)
+{
+    u8 *a = arg0;
+    s16 dist[4];
+    s32 best;
+    s32 sel;
+    s32 i, j, k;
+    s32 d;
+    s32 found;
+    s32 fl;
+    s32 v;
+    SelPt *p;
+    s16 dx, dy, dz;
+
+    sel = 0;
+    best = 0xFFFFFFF;
+    dist[0] = -1;
+    dist[1] = -1;
+    dist[2] = -1;
+    dist[3] = -1;
+    *(s16 *)(a + 0x72) = -1;
+    D_1F80025C[0] = 0xFF;
+    D_1F80025C[1] = 0xFF;
+    D_1F80025C[2] = 0xFF;
+    D_1F80025C[3] = 0xFF;
+    switch (D_800BF870.unk0) {
+    case 10:
+    case 11:
+    case 13:
+    case 14:
+        fl = D_800BF870.unk0 == 11;
+        for (i = 0; i < 0x29; i++) {
+            if (fl) {
+                if (D_800E7EAA == 1) {
+                    if (D_8011BA78_858f[i].f != 1) {
+                        continue;
+                    }
+                } else if (D_8011BA78_858f[i].f == 1) {
+                    continue;
+                }
+            }
+            dx = D_1F800160_3621 - D_8011BA78_858f[i].x;
+            dz = D_1F800164_7d8c - D_8011BA78_858f[i].z;
+            d = func_80084080(dx * dx + dz * dz);
+            dy = D_1F800162_b816 - 0x190;
+            if (d < 0x640 && dy < D_8011BA78_858f[i].y) {
+                found = 0;
+                for (k = 0; k < 4; k++) {
+                    if (dist[k] == -1) {
+                        found = 1;
+                        dist[k] = d;
+                        D_1F80025C[k] = i;
+                        break;
+                    }
+                }
+                if (!found) {
+                    for (j = 0; j < 4; j++) {
+                        for (k = j + 1; k < 4; k++) {
+                            s32 t = dist[j];
+                            if (t < dist[k]) {
+                                dist[j] = dist[k];
+                                dist[k] = t;
+                                t = D_1F80025C[j];
+                                D_1F80025C[j] = D_1F80025C[k];
+                                D_1F80025C[k] = t;
+                            }
+                        }
+                    }
+                    for (k = 0; k < 4; k++) {
+                        if (d < dist[k]) {
+                            dist[k] = d;
+                            D_1F80025C[k] = i;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (d < best) {
+                best = d;
+                sel = i;
+            }
+        }
+        switch (mode) {
+        case 0:
+            i = (func_8009A450() & 0x30) >> 4;
+            break;
+        case 1:
+            i = 0;
+            break;
+        case 2:
+            i = (func_8009A450() & 0x20) >> 5;
+            break;
+        case 3:
+        case 4:
+            i = (func_8009A450() & 0x20) >> 5;
+            i++;
+            break;
+        case 5:
+            i = (func_8009A450() & 0x40) >> 6;
+            i++;
+            break;
+        }
+        for (k = 0; k < 4; k++, i++) {
+            j = D_1F80025C[i & 3];
+            if (j != -1) {
+                break;
+            }
+        }
+        if (j != -1) {
+            sel = j;
+        }
+        *(s16 *)(a + 0x72) = sel;
+        return sel;
+    case 12:
+    case 15:
+        fl = D_800BF870.unk0 == 15;
+        for (i = 0; i < 0x29; i++) {
+            if (fl) {
+                if (D_800E7EAA == 1) {
+                    if (D_8011BA78_858f[i].f != 1) {
+                        continue;
+                    }
+                } else if (D_8011BA78_858f[i].f == 1) {
+                    continue;
+                }
+            }
+            dx = D_1F800160_3621 - D_8011BA78_858f[i].x;
+            dy = D_1F800162_b816 - D_8011BA78_858f[i].y;
+            dz = D_1F800164_7d8c - D_8011BA78_858f[i].z;
+            d = func_80084080(dx * dx + dy * dy + dz * dz);
+            if (d < 0x640) {
+                found = 0;
+                for (k = 0; k < 4; k++) {
+                    if (dist[k] == -1) {
+                        found = 1;
+                        dist[k] = d;
+                        D_1F80025C[k] = i;
+                        break;
+                    }
+                }
+                if (!found) {
+                    for (j = 0; j < 4; j++) {
+                        for (k = j + 1; k < 4; k++) {
+                            s32 t = dist[j];
+                            if (t < dist[k]) {
+                                dist[j] = dist[k];
+                                dist[k] = t;
+                                t = D_1F80025C[j];
+                                D_1F80025C[j] = D_1F80025C[k];
+                                D_1F80025C[k] = t;
+                            }
+                        }
+                    }
+                    for (k = 0; k < 4; k++) {
+                        if (d < dist[k]) {
+                            dist[k] = d;
+                            D_1F80025C[k] = i;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (d < best) {
+                best = d;
+                sel = i;
+            }
+        }
+        switch (mode) {
+        case 0:
+            i = (func_8009A450() & 0x30) >> 4;
+            break;
+        case 1:
+            i = 0;
+            break;
+        case 2:
+            i = (func_8009A450() & 0x10) >> 4;
+            break;
+        case 3:
+        case 4:
+            i = (func_8009A450() & 0x20) >> 5;
+            i++;
+            break;
+        case 5:
+            i = (func_8009A450() & 0x40) >> 6;
+            i += 2;
+            break;
+        }
+        for (k = 0; k < 4; k++, i++) {
+            j = D_1F80025C[i & 3];
+            if (j != -1) {
+                break;
+            }
+        }
+        if (j != -1) {
+            sel = j;
+        }
+        *(s16 *)(a + 0x72) = sel;
+        return sel;
+    }
+}
 
 typedef struct { u16 x, y, z; u8 k; u8 pad; } ArenaPt;
 extern u8 D_800BF809;
@@ -3416,7 +3628,6 @@ void func_801160C4(u8 *a) {
 
 typedef struct { u16 a, b, c, d; } Box4;
 extern Box4 D_8011ED0C[];
-extern u16 D_1F800162_b816;
 void func_80116194(u8 *a)
 {
     switch (a[4]) {
