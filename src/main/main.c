@@ -3070,7 +3070,40 @@ void f_InitializeTransientEffectActor(u8 *a, s32 id)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002918C);
+void func_8002918C(u8 *a)
+{
+    s16 r;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        a[7] = 0;
+        *(s32 *)(a + 0x34) = *(s32 *)(a + 0x38);
+        a[6] = (rand() >> 11) + 8;
+        if (a[3] == 0x35 && (s16)D_800E7FFE < 0) {
+            a[6] = (rand() >> 12) + 3;
+        }
+    case 1:
+        a[7] += rand() >> 9;
+        r = func_8002B278(a);
+        if ((s8)a[7] < 0) {
+            a[7] += 0x80;
+            break;
+        }
+        if ((*(s32 *)(a + 0x34) = *(s32 *)(a + 0x38)) == 0) {
+            a[4] = 2;
+            break;
+        }
+        if (r == 0) {
+            func_80031780(a);
+        }
+        break;
+    case 2:
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 extern u8 D_800A1D88[];
 extern u8 D_800A1D68[];
@@ -3166,7 +3199,39 @@ void func_800293F4(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80029530);
+extern u8 D_800A1EE4[];
+extern u8 D_800A1ECC[];
+extern s16 D_1F800168;
+void func_80031744(void *arg0);
+
+void func_80029530(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        *(u8 **)(a + 0x40) = D_800A1EE4;
+        *(u8 **)(a + 0x50) = D_800A1ECC;
+        a[4] = 1;
+        *(s32 *)(a + 0x48) = 0;
+        *(s32 *)(a + 0x4C) = 0;
+        f_PlaySoundEffect(8, 0, 0);
+    case 1:
+        if ((*(s32 *)(a + 0x3C) = *(s32 *)(a + 0x40)) == 0) {
+            a[4] = 2;
+            break;
+        }
+        MEMBER_AT(u16, a, 0x2E) = D_1F800162 + 10;
+        MEMBER_AT(u16, a, 0x2C) = D_1F800160 + ((rcos(D_1F800168) * 3) >> 8);
+        MEMBER_AT(u16, a, 0x30) = D_1F800164 + ((rsin(D_1F800168) * 3) >> 8);
+        if (func_8002B278(a) == 0) {
+            func_80031744(a);
+        }
+        break;
+    case 2:
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80029664);
 
