@@ -3448,7 +3448,25 @@ void func_801167C4(u8 *a, s32 ang) {
     a[0x66] |= 1;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801168A0);
+extern u8 *D_80129B6C[];
+
+void func_801168A0(u8 *t, s32 i)
+{
+    u8 *p;
+    u32 o;
+
+    o = U(t, 0x6A) & 0xF0;
+    p = D_80129B6C[D_800BF817];
+    p = p + i * 8 + (o >> 1);
+    U(t, 0x2E) = U(p, 0);
+    if (S(t, 0x17E) < 0) {
+        U(t, 0x32) = U(p, 2) + 0x46;
+    } else {
+        U(t, 0x32) = U(p, 2);
+    }
+    U(t, 0x36) = U(p, 4);
+    U(t, 0x56) = U(p, 6);
+}
 
 void func_80116918(u8 *a) {
     u8 *t = D_800E7E80;
