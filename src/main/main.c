@@ -6461,14 +6461,54 @@ void f_LoadActorScriptCommand(u8 *a, u16 *cmd)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80040E54);
+s32 func_80040E54(u8 *a, s32 b)
+{
+    u8 *cmd = *(u8 **)(a + 0x6C);
+    u16 f = *(u16 *)cmd;
+    s32 r = ((f & 0x1000) != 0) * 4;
+    s32 g = (s16)f;
+
+    switch (g & 0xE000) {
+    case 0:
+        f_LoadActorScriptCommand(a, (u16 *)(cmd + 8));
+        break;
+    case 0x2000:
+        f_LoadActorScriptCommand(a, (u16 *)(cmd + 0x10));
+        break;
+    case 0x4000:
+        if (b == 0) {
+            f_LoadActorScriptCommand(a, *(u16 **)(cmd + 0xC));
+            r++;
+        } else {
+            f_LoadActorScriptCommand(a, (u16 *)(cmd + 0x10));
+        }
+        break;
+    case 0x6000:
+        if (b == 0) {
+            f_LoadActorScriptCommand(a, *(u16 **)(cmd + 0x14));
+            r++;
+        } else {
+            f_LoadActorScriptCommand(a, (u16 *)(cmd + 0x18));
+        }
+        break;
+    case 0x8000:
+    case 0xA000:
+    case 0xC000:
+    case 0xE000:
+        return 2;
+    }
+    if (g & 0x800) {
+        r = 6;
+    }
+    return r;
+}
 
 extern u16 D_800BF89E;
 s32 f_ApplyActorScriptTransition(u8 *a)
 {
     s32 r;
 
-    switch (func_80040E54(a)) {
+    switch (((s32 (*)(u8 *))func_80040E54)(a)) {
     case 0:
         if (a[0x70] == 2) {
             a[0x71] = a[0x70];
