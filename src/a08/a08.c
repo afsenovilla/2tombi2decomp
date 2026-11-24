@@ -7889,7 +7889,42 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013F150);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013F40C);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013F57C);
+extern u8 *D_800A2854[];
+
+void func_8013F57C(u8 *a)
+{
+    s16 ids[2] = { 0x2E, 0x2F };
+    CrdRect r;
+    s32 i, col, mode;
+    u8 *str;
+    if (*(u8 *)D_800BF498.xC != 0) {
+        return;
+    }
+    r.h = 0x10;
+    for (i = 0; i < 2; i++) {
+        if ((a + i)[0x4A] >= 3) {
+            continue;
+        }
+        str = D_800A2854[ids[i]];
+        r.x = 0x50 - func_8009A600(str) * 4;
+        if (i != 0) {
+            r.x += 0xA0;
+        }
+        r.y = 0x64;
+        r.w = 0;
+        if (a[0x44] == i + 1) {
+            col = 0;
+            mode = 0x40;
+        } else {
+            col = 6;
+            mode = 0x60;
+        }
+        func_80079374((s16)(r.x + r.w), r.y, col, str, 3);
+        r.w *= 2;
+        r.w += func_8009A600(str) << 3;
+        func_8005019C(&r, mode, 0, 3);
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013F6E4);
 
