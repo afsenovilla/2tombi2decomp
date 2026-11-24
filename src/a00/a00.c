@@ -7340,7 +7340,122 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateSegmentedTownActorSequence);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_EmitSegmentedTownActorEffect);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ConfigureSegmentedTownActorMorph);
+typedef struct { u8 hdr[0x10]; s16 f[9]; s16 pad; } MorphRecA;
+typedef struct { u8 hdr[0x14]; s16 f[12]; } MorphRecB;
+typedef struct { u8 pad[0xC0]; u8 *parts[2]; } MorphActor;
+extern u8 *D_800ECFC8;
+extern s16 D_8014C4FC[];
+extern s16 D_8014C60C[];
+extern s16 D_8014C63C[];
+extern s16 D_8014C74C[];
+
+void f_ConfigureSegmentedTownActorMorph(u8 *a, s16 n, s16 sel) {
+    u8 *base;
+    s32 *offs;
+    u8 *from, *to, *p;
+    MorphRecA *ra, *fa, *ta;
+    MorphRecB *rb, *fb, *tb;
+    s16 *d1, *d2;
+    s32 i;
+    s32 cnt;
+
+    if (a[3] == 0) return;
+    *(s16 *)(a + 0x60) = n;
+    base = D_800ECFC8;
+    offs = (s32 *)(base + 4);
+    switch (sel) {
+    case 0:
+        from = base + offs[0x18];
+        to = base + offs[0x19];
+        break;
+    case 1:
+        from = base + offs[0x19];
+        to = base + offs[0x1A];
+        break;
+    case 2:
+        from = base + offs[0x1A];
+        to = base + offs[0x19];
+        break;
+    case 3:
+        from = base + offs[0x19];
+        to = base + offs[0x18];
+        break;
+    case 4:
+        to = base + offs[0x18];
+        from = *(u8 **)(((MorphActor *)a)->parts[a[9] - 1] + 0x40);
+        break;
+    }
+    p = *(u8 **)(((MorphActor *)a)->parts[a[9] - 1] + 0x40);
+    cnt = *(u16 *)p;
+    ra = (MorphRecA *)(p + 0x10);
+    rb = (MorphRecB *)&ra[cnt];
+    fa = (MorphRecA *)(from + 0x10);
+    fb = (MorphRecB *)&fa[cnt];
+    ta = (MorphRecA *)(to + 0x10);
+    tb = (MorphRecB *)&ta[cnt];
+    if (a[3] & 1) {
+        d1 = D_8014C4FC;
+        d2 = D_8014C60C;
+    } else if (a[3] == 2) {
+        d1 = D_8014C63C;
+        d2 = D_8014C74C;
+    }
+    for (i = 0; i < cnt; i++) {
+        d1[0] = (ta->f[0] - fa->f[0]) / n;
+        d1[1] = (ta->f[1] - fa->f[1]) / n;
+        d1[2] = (ta->f[2] - fa->f[2]) / n;
+        d1[3] = (ta->f[4] - fa->f[4]) / n;
+        d1[4] = (ta->f[5] - fa->f[5]) / n;
+        d1[5] = (ta->f[3] - fa->f[3]) / n;
+        d1[6] = (ta->f[6] - fa->f[6]) / n;
+        d1[7] = (ta->f[7] - fa->f[7]) / n;
+        d1[8] = (ta->f[8] - fa->f[8]) / n;
+        ra->f[0] = fa->f[0];
+        ra->f[1] = fa->f[1];
+        ra->f[2] = fa->f[2];
+        ra->f[4] = fa->f[4];
+        ra->f[5] = fa->f[5];
+        ra->f[3] = fa->f[3];
+        ra->f[6] = fa->f[6];
+        ra->f[7] = fa->f[7];
+        ra->f[8] = fa->f[8];
+        d1 += 9;
+        fa++;
+        ta++;
+        ra++;
+    }
+    cnt = *(u16 *)(p + 2);
+    for (i = 0; i < cnt; i++) {
+        d2[0] = (tb->f[0] - fb->f[0]) / n;
+        d2[1] = (tb->f[1] - fb->f[1]) / n;
+        d2[2] = (tb->f[2] - fb->f[2]) / n;
+        d2[3] = (tb->f[4] - fb->f[4]) / n;
+        d2[4] = (tb->f[5] - fb->f[5]) / n;
+        d2[5] = (tb->f[3] - fb->f[3]) / n;
+        d2[6] = (tb->f[6] - fb->f[6]) / n;
+        d2[7] = (tb->f[7] - fb->f[7]) / n;
+        d2[8] = (tb->f[8] - fb->f[8]) / n;
+        d2[9] = (tb->f[10] - fb->f[10]) / n;
+        d2[10] = (tb->f[11] - fb->f[11]) / n;
+        d2[11] = (tb->f[9] - fb->f[9]) / n;
+        rb->f[0] = fb->f[0];
+        rb->f[1] = fb->f[1];
+        rb->f[2] = fb->f[2];
+        rb->f[4] = fb->f[4];
+        rb->f[5] = fb->f[5];
+        rb->f[3] = fb->f[3];
+        rb->f[6] = fb->f[6];
+        rb->f[7] = fb->f[7];
+        rb->f[8] = fb->f[8];
+        rb->f[10] = fb->f[10];
+        rb->f[11] = fb->f[11];
+        rb->f[9] = fb->f[9];
+        d2 += 12;
+        fb++;
+        tb++;
+        rb++;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801386A0);
 
