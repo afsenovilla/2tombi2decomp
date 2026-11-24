@@ -1672,7 +1672,87 @@ s32 func_801141F8(u8 *p) {
     return 0;
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateKujaraHotSpringActor);
+extern u8 D_8014005C[];
+extern u8 D_8013BA8C[];
+extern u8 D_800BF9BF;
+extern u8 D_8013C83C[];
+static inline s32 hot_step(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        a[6] = 1;
+        func_80040CDC(a, D_80141AF8, D_8013C748);
+        a[0x70] = 1;
+        break;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            func_80040CDC(a, D_80141AF8, D_8013C83C);
+            a[0x70] = 1;
+            a[6]++;
+        }
+        break;
+    case 2:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[6] = 0;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
+
+void f_UpdateKujaraHotSpringActor(u8 *a)
+{
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        g = D_800ECF58;
+        if (func_800519E0(a, 0xD, *(s32 *)(g + 0x88), D_8013BA8C) != 0) {
+            break;
+        }
+        *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x8C);
+        func_80077C40(a, D_80141AF8, 0);
+        a[0] = 9;
+        *(s16 *)(a + 0x80) = 0x96;
+        *(s16 *)(a + 0x82) = 0x12C;
+        *(s16 *)(a + 0x84) = 0x80;
+        *(s16 *)(a + 0x86) = 0x100;
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        a[0x5E] = 0;
+        a[0xB] = 0xF;
+        a[4]++;
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            if (D_800BF9BF & 0x80) {
+                a[5] = 1;
+            } else {
+                func_801141F8(a);
+            }
+            break;
+        case 1:
+            if (hot_step(a)) {
+                a[4] = 3;
+            }
+            break;
+        }
+        if (func_8007778C(a) != 0) {
+            func_8004190C(a);
+            func_800518FC(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_801145A0(void *arg0) {
     s32 temp_a0;
@@ -1692,7 +1772,6 @@ s32 func_801145A0(void *arg0) {
     return 1;
 }
 
-extern u8 D_8013C83C[];
 s32 func_801145F0(u8 *p)
 {
     s32 s = p[6];
@@ -2239,7 +2318,6 @@ s32 func_80117154(s16 a)
     return 0x36;
 }
 
-extern u8 D_8014005C[];
 extern u8 D_8013B24C[];
 extern u8 D_8013D174[];
 static inline s32 init_171bc(u8 *a)
