@@ -16121,7 +16121,80 @@ void func_800682C4(u8 *a, s32 flag)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800683B8);
+extern u8 D_800A0D50[];
+extern s16 D_800E7EE2;
+extern u8 D_800E806C;
+
+void func_800683B8(u8 *a)
+{
+    u8 *p = a + 0x60;
+    u8 *t;
+    s32 k;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+    case 1:
+        if ((*(s32 *)(a + 0x34) = *(s32 *)(a + 0x38)) == 0) {
+            *(u8 **)(a + 0x34) = *(u8 **)(a + 0x38) = D_800A0D50;
+        }
+        switch (a[5]) {
+        case 0:
+            if (--a[0x2A] != 0) {
+                break;
+            }
+            goto next;
+        case 1:
+            *(s32 *)(a + 0x50) -= 0x24;
+            *(s32 *)(a + 0x54) += 7;
+            *(s32 *)(a + 0x58) += 7;
+            t = (u8 *)D_800E7E80;
+            *(u16 *)(t + 0x7A) = *(u16 *)(a + 0x54);
+            *(s16 *)(t + 0x7C) = 7;
+            if (--*(s16 *)(p + 8) == 0) {
+                *(s16 *)(p + 8) = 0x1E;
+                a[5]++;
+            }
+            break;
+        case 2:
+            if (--*(s16 *)(p + 8) == 0) {
+                a[5]++;
+                D_800E7EFE = 1;
+            }
+            break;
+        case 4:
+            if (D_800E7EFE != 0) {
+            next:
+                a[5]++;
+                *(s16 *)(p + 8) = 0x40;
+            }
+            break;
+        case 5:
+            *(s32 *)(a + 0x50) += 0x3C;
+            *(s32 *)(a + 0x54) -= 7;
+            *(s32 *)(a + 0x58) -= 7;
+            if (--*(s16 *)(p + 8) == 0) {
+                D_1F800137_104c = 0;
+                D_1F800236_18be = 0;
+                D_800E806C = 0;
+                a[4] = 3;
+            }
+            break;
+        case 3:
+            break;
+        }
+        *(u16 *)(a + 0x2C) = D_1F800160;
+        k = D_800E7EE2;
+        *(u16 *)(a + 0x30) = D_1F800164;
+        *(u16 *)(a + 0x2E) = D_1F800162 + k * 2;
+        a[1] = 1;
+        break;
+    case 2:
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 void func_80068610(void *arg0, void *arg1) {
     u16 temp_v0;
