@@ -868,7 +868,61 @@ void func_8010CED0(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateFishermensTownCamera);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010D89C);
+extern s16 D_1F8000D0[];
+extern u8 D_800BF9DD;
+
+void func_8010D89C(u8 *a) {
+
+    switch (a[4]) {
+    case 0:
+        H_f12c(a, 0x68) = 0x28;
+        a[4]++;
+
+        D_1F8000D0[7] = 0x34FD;
+        D_1F8000D0[9] = -0xD52;
+        D_1F8000D0[11] = 0x1332;
+        D_1F8000D0[1] = 0x3207;
+        D_1F8000D0[3] = -0x12F3;
+        D_1F8000D0[5] = 0x1290;
+        func_8006D02C(a);
+        break;
+    case 1:
+        if (--H_f12c(a, 0x68) == 0) {
+            a[4]++;
+            D_1F8000D0[1] = 0x3BDC;
+            D_1F8000D0[3] = -0x6F7;
+            D_1F8000D0[5] = 0x1283;
+        }
+        break;
+    case 2:
+        func_8006E3B0(a, a + 0x38);
+
+        if (D_1F8000D0[9] < -0x334) {
+            a[4]++;
+            D_1F8000D0[1] = 0x34FB;
+            D_1F8000D0[5] = 0x1608;
+            D_1F8000D0[3] = -0x4B0;
+        }
+        break;
+    case 3:
+        if (D_800BF9DD == 0xF) {
+            a[4]++;
+        }
+
+        if (D_1F8000D0[9] < -0x37A) {
+            if ((D_1F8000D0[3] += 0x10) >= -0xC7) {
+                D_1F8000D0[3] = -0xC8;
+            }
+        }
+        func_8006E3B0(a, a + 0x38);
+        break;
+    case 4:
+        *(s32 *)(a + 0x58) = 0;
+        a[0x67] = 0;
+        a[0x64] = 6;
+        break;
+    }
+}
 
 extern s8 D_1F800138[];
 extern s8 D_1F80019B[];
@@ -882,7 +936,6 @@ extern u8 D_800E7E80[];
 extern u8 D_800BF808_1760[];
 extern u8 D_800E8008[];
 extern s32 D_1F800184;
-extern s16 D_1F8000D0[];
 void func_8010DAB0(void) {
     u8 *t = D_800E7E80;
     u8 *g = D_800BF808_1760;
@@ -5962,7 +6015,6 @@ void f_RunA00Event4ItemUseCutscene(u8 *a) {
 }
 
 #define CGH(p, o) (*(s16 *)((u8 *)(p) + (o)))
-extern u8 D_800BF9DD;
 void f_RunNetBridgeCogInstallationCutscene(u8 *a) {
     u8 *g;
 
