@@ -4190,7 +4190,60 @@ s32 func_80128040(void *arg0) {
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012809C);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801284F0);
+extern u8 D_800BF818;
+
+s32 func_801284F0(u8 *a)
+{
+    u8 *t = D_800E7E80;
+
+    switch (a[6]) {
+    case 0:
+        if (a[0x29] != 0 && (s8)D_800BF808[5] == 0) {
+            a[6]++;
+            D_800BF808[0x39] = 1;
+            D_800BF808[0x10] = 1;
+            D_800BF808[0xF] = a[3];
+        }
+        break;
+    case 1:
+        if (D_800BF816 != 0) {
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (D_800BF808[0x10] == 2 && D_800BF808[7] == 0) {
+            a[6]++;
+        }
+        break;
+    case 3:
+        if (*(s16 *)(a + 0x32) + *(s16 *)(a + 0x84) + 200 < *(s16 *)(t + 0x32)) {
+            a[6]++;
+        }
+        break;
+    case 4:
+        if (a[0x29] != 0 && D_800BF808[7] == 0) {
+            a[6]++;
+            D_800BF808[0x39] = 1;
+            D_800BF808[0x10] = 3;
+        }
+        break;
+    case 5:
+        if (D_800BF818 == 4) {
+            a[6]++;
+        }
+        break;
+    case 6:
+        if (D_800BF80F == 0) {
+            a[6] = 0;
+            return 1;
+        }
+        break;
+    }
+    if (a[6] >= 4) {
+        a[0x29] = 0;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateKujaraWashingShedEntrance);
 
@@ -4252,7 +4305,7 @@ void func_801294DC(s32 arg0) {
 }
 
 void func_8012950C(void) {
-    func_801284F0();
+    ((s32 (*)())func_801284F0)();
 }
 
 void func_8012952C(u8 *a)
@@ -4273,7 +4326,7 @@ void func_8012952C(u8 *a)
 }
 
 void func_801295C4(s32 arg0) {
-    func_801284F0();
+    ((s32 (*)())func_801284F0)();
     func_800735F4(arg0, 0x5A);
 }
 
