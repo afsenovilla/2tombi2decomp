@@ -2814,16 +2814,120 @@ void func_80116194(u8 *a)
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80116294);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011638C);
+#define FH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define SF(p, o) (((struct { u8 pad[o]; s16 v; } *)(p))->v)
+extern s8 *D_800ECF58[];
+extern u8 D_8013597C[];
+extern u8 D_80139B24[];
+extern u16 D_1F8001A0;
+extern s16 D_1F800160_71b4;
+extern s16 D_1F800164_d75f;
+void func_80133D74();
+/* func_80119BCC, inlined */
+static inline s32 inl_80119BCC(u8 *a) {
+    u8 *q = a + 0x60;
+    s32 h = M2C_FIELD(q, u16 *, 4);
+    s8 r;
+
+    r = (u32)((h - func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f) + 0x400) & 0xFFF) > 0x800;
+    if (r) {
+        M2C_FIELD(q, u16 *, 6) |= 1;
+    } else {
+        M2C_FIELD(q, u16 *, 6) &= 0xFFFE;
+    }
+    return r;
+}
+
+void func_8011638C(u8 *a) {
+    s8 **t = D_800ECF58;
+    u8 *q = a + 0x60;
+    u8 *e;
+    u16 h;
+
+    if (func_800519E0(a, 0x12, t[0x6C / 4], D_8013597C) != 0) {
+        return;
+    }
+    *(s8 **)(a + 0x3C) = t[0x70 / 4];
+    func_80077C40(a, D_80139B24, 0);
+    FH(a, 0x4E) = 0;
+    FH(a, 0x50) = 0;
+    switch (a[3]) {
+    case 0:
+        FH(a, 0x2E) = 0x3A60;
+        FH(a, 0x32) = -0x1B58;
+        FH(a, 0x36) = 0x2303;
+        break;
+    case 1:
+        FH(a, 0x2E) = 0x304B;
+        FH(a, 0x32) = -0x166C;
+        FH(a, 0x36) = 0x2460;
+        break;
+    case 2:
+        FH(a, 0x2E) = 0x3040;
+        FH(a, 0x32) = -0x1A38;
+        FH(a, 0x36) = 0x2DA3;
+        break;
+    case 3:
+        FH(a, 0x2E) = 0x45BF;
+        FH(a, 0x36) = 0x2340;
+        FH(a, 0x32) = -0x18FA;
+        FH(a, 0x4E) = FH(a, 0x2E);
+        FH(a, 0x52) = FH(a, 0x36);
+        break;
+    case 4:
+        FH(a, 0x2E) = 0x3040;
+        FH(a, 0x36) = 0x1788;
+        FH(a, 0x32) = -0x129E;
+        FH(a, 0x4E) = FH(a, 0x2E);
+        FH(a, 0x52) = FH(a, 0x36);
+        break;
+    }
+    FH(q, 0x14) = FH(a, 0x2E);
+    FH(q, 0x16) = FH(a, 0x36);
+    func_8004766C(a);
+    func_80049674(a);
+    h = D_1F8001A0;
+    q[8] = 0;
+    SF(q, 6) = 0;
+    SF(q, 0x12) = 0;
+    SF(q, 4) = h;
+    if (inl_80119BCC(a)) {
+        FH(a, 0x56) = FH(q, 4) + 0x800;
+    } else {
+        FH(a, 0x56) = FH(q, 4);
+    }
+    FH(a, 0x54) = 0;
+    FH(a, 0x58) = 0;
+    __asm__ volatile("");
+    a[0x1B] &= 0xBF;
+    do { /* a barrier in its own loop block: the plain one leaves the a[3] load late */
+        __asm__ volatile("");
+    } while (0);
+    q[0xA] = a[3];
+    a[0] = 1;
+    FH(a, 0xBC) = 0x1000;
+    FH(a, 0xBA) = 0x1000;
+    FH(a, 0xB8) = 0x1000;
+    FH(a, 0x80) = 0x38;
+    FH(a, 0x82) = 0x70;
+    FH(a, 0x84) = 0x8C;
+    FH(a, 0x86) = 0xF0;
+    FH(a, 0x60) = 0;
+    FH(a, 0x62) = 0;
+    e = func_80072DDC(a, 3, 2, 0x22);
+    *(u8 **)(a + 0x10) = e;
+    if (e != NULL) {
+        *(void **)(e + 0x1C) = func_80133D74;
+        e[3] = 0;
+        *(u8 **)(e + 0x10) = a;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80116620);
 
 #define FH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define FU(p, o) (*(u16 *)((u8 *)(p) + (o)))
 extern u8 *D_800ECFC4;
-extern u8 D_80139B24[];
-extern s16 D_1F800160_71b4;
-extern s16 D_1F800164_d75f;
 extern s16 D_800E7FFE;
 extern u8 D_80135BF8[];
 extern u8 D_80135C08[];
@@ -3387,7 +3491,6 @@ s32 func_80119E60(u8 *a) {
     return t[(func_8009A450() >> 8) & 0xF];
 }
 
-extern u16 D_1F8001A0;
 void func_80119F10(u8 *a) {
     u8 *q = a + 0x60;
 
@@ -8265,7 +8368,6 @@ s32 func_8012F864(s32 x, s32 y) {
     return D_80138FFC_e406[y * 52 + x] & D_80139000;
 }
 
-extern s8 *D_800ECF58[];
 extern s8 *D_80138FFC;
 void func_8012F89C(u8 *a)
 {
