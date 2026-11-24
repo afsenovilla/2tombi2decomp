@@ -873,7 +873,98 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", f_UpdateRemainingEvilPigStatueArrivalSeq
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010C01C);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", f_UpdateEvilPigStatueActor);
+extern s16 D_8010E38C[];
+
+void f_UpdateEvilPigStatueActor(u8 *a)
+{
+    u8 *g;
+    u8 *p;
+
+    switch (a[4]) {
+    case 0:
+        g = (u8 *)&D_800BF870;
+        if ((g[0x1CD] >> a[3]) & 1) {
+            a[4] = 3;
+            break;
+        }
+        if (func_80051B70(a, 0xC, D_8010E38C[a[3]]) != 0) {
+            break;
+        }
+        H(a, 0x80) = 0x118;
+        H(a, 0x82) = 0x230;
+        a[0] = 1;
+        H(a, 0x84) = 0x172;
+        H(a, 0x86) = 0x172;
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        H(a, 0x60) = 0;
+        a[4]++;
+        if (g[0x1D1] == 0) {
+            a[5] = 0;
+            break;
+        }
+        if (g[D_8010E398[a[3]] + 0x44] != 0) {
+            a[5] = 2;
+            a[0] = 2;
+        } else {
+            a[5] = 1;
+        }
+        p = func_80031220(0xA02, 0, 0);
+        if (p == NULL) {
+            break;
+        }
+        p[3] = a[3] + 1;
+        H(p, 0x2C) = H(a, 0x2E);
+        H(p, 0x2E) = H(a, 0x32) - 0x96;
+        H(p, 0x30) = H(a, 0x36);
+        {
+            s16 *q = (s16 *)(p + 0x50);
+
+            if (a[3] == 0) {
+                q[0] = 0x780;
+                q[1] = -0x338;
+                q[2] = 0x900;
+            } else {
+                q[0] = 0xD00;
+                q[1] = -0x4E9;
+                q[2] = 0xCED;
+            }
+        }
+        *(u8 **)(a + 0x10) = p;
+        break;
+    case 1:
+        a[1] = 1;
+        func_80077EBC(a);
+        switch (a[5]) {
+        case 0:
+            if (func_8010C01C(a) != 0) {
+                a[6] = 0;
+                a[5]++;
+            }
+            break;
+        case 1:
+            if (f_StartOrWaitForIndexedEvilPigPlateEvent(a) != 0) {
+                a[6] = 0;
+                a[0] = 2;
+                a[5]++;
+            }
+        case 2:
+            if (a[3] == 0) {
+                f_UpdateRemainingEvilPigStatueArrivalSequence(a);
+            }
+            break;
+        }
+        func_800517F8(a);
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u8 D_800BFA41;
 extern u8 D_800E8008[];
