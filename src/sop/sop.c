@@ -720,7 +720,47 @@ INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010A900);
 
 INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010AB38);
 
-INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010ACFC);
+extern u8 D_800ECF58[];
+extern u8 D_80017FE8[];
+extern u8 D_800E7E80[];
+extern u8 D_800A3FA8[];
+extern u8 D_8010CA28[];
+u8 *func_8010AE30(void *a);
+
+void func_8010ACFC(u8 *a)
+{
+    u8 *t;
+
+    switch (a[4]) {
+    case 0:
+        func_80067DA8(D_800E7E80);
+        t = D_800ECF58;
+        if (func_800519E0(a, 0x11, *(void **)(t + 0xBC), D_800A3FA8) != 0) {
+            break;
+        }
+        *(void **)(a + 0x3C) = *(void **)(t + 0x10);
+        a[0x47] = 0xFF;
+        a[4]++;
+        func_80040CDC(a, D_80017FE8, D_8010CA28);
+        func_80054D14(a, 8, 0);
+        a[0x70] = 2;
+        *(s16 *)(a + 0x84) = 0x8C;
+        func_8010AE30(a);
+        break;
+    case 1:
+        if (func_8007778C(a) != 0) {
+            func_800518FC(a);
+        }
+        func_80041098(a);
+        func_8004190C(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_8010AB38();
 extern u8 D_8002AB5C[];
@@ -873,9 +913,7 @@ void func_8010B4E0(u8 *a)
 
 INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010B588);
 
-extern u8 D_800ECF58[];
 extern u8 D_8010CB08[];
-extern u8 D_80017FE8[];
 void func_8010B798(u8 *a)
 {
     u8 *t;
@@ -1062,6 +1100,38 @@ void func_8010C678(void)
     }
 }
 
-INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010C6A0);
+typedef struct { s16 x, y, w, h; } ClutRectS;
+typedef struct {
+    u8 *ptr;
+    u8 *clut;
+    s16 x;
+    s16 y;
+} ClutCycleS;
+extern ClutCycleS D_8010D2FC[];
+
+void func_8010C6A0(void)
+{
+    ClutRectS r;
+    s32 i;
+    ClutCycleS *e;
+    u8 *data;
+
+    e = D_8010D2FC;
+    for (i = 0; i < 3; i++, e++) {
+        if ((s8)--D_8010D390[i] <= 0) {
+            if (e->ptr[0] == 0xFF) {
+                e->ptr -= e->ptr[1];
+            }
+            data = e->clut + e->ptr[0] * 32;
+            D_8010D390[i] = e->ptr[1];
+            r.x = e->x;
+            r.y = e->y;
+            r.w = 16;
+            r.h = 1;
+            func_80081218(&r, data);
+            e->ptr += 2;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010C79C);
