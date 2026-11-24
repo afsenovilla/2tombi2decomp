@@ -1565,7 +1565,58 @@ void func_801106F0(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801108A0);
+s32 func_801108A0(u8 *a, u8 *b, u8 *c)
+{
+    s32 r;
+    u8 k;
+    u16 d;
+
+    s32 w;
+
+    r = 0x32;
+    if (a[0xD] & 0x10) {
+        r = 0x5A;
+    }
+    if ((u16)(U(a, 0x32) - U(c, 0x30) + (U(a, 0x84) + U(b, 0x84))) > S(a, 0x86) + S(b, 0x86)) {
+        return 0;
+    }
+    w = U(b, 0x80);
+    if ((u16)(U(a, 0x2E) - U(c, 0x2C) + (r + w)) > r * 2 + S(b, 0x82)) {
+        return 0;
+    }
+    if (c[0x3E] == 1) {
+        d = r + (U(a, 0x36) - U(c, 0x34) + 0x118);
+        if (d > r * 2 + 0x230) {
+            return 0;
+        }
+    } else {
+        d = r + (U(a, 0x36) - U(c, 0x34) + 0x8C);
+        if (d > r * 2 + 0x118) {
+            return 0;
+        }
+    }
+    if (S(a, 0x36) > S(c, 0x34) + 0x8C) {
+        U(a, 0x36) = U(c, 0x34) + 0x8C;
+    } else if (S(a, 0x36) < S(c, 0x34) - 0x8C) {
+        U(a, 0x36) = U(c, 0x34) - 0x8C;
+    }
+    k = c[0x3E];
+    if (k == 1 && S(a, 0x2E) >= S(c, 0x2C) + S(b, 0x80) - 0xC8) {
+        if (abs((s16)-(U(a, 0x56) << 4)) < 0x2001 && a[5] < 2) {
+            a[5] = 5;
+            a[6] = k;
+            a[7] = 0;
+        }
+    }
+    if (a[0x145] & 1) {
+        return 0;
+    }
+    U(a, 0x2E) -= 10;
+    if (S(a, 0x32) >= S(c, 0x30) - S(b, 0x84) - S(a, 0x84)) {
+        U(a, 0x32) = U(c, 0x30) - U(b, 0x84) - U(a, 0x84);
+        func_80022C78(a);
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80110AB8);
 
