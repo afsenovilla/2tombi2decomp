@@ -21359,6 +21359,123 @@ void func_800803DC(u32 *p, void *b)
     func_8008007C(func_8007FDB0(p, b, lo), b, packed >> 16);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80080424);
+extern u16 *D_80017334_e22b[];
+extern u8 D_1F80027A_3214[];
+extern u16 D_1F80017C_7f8c[];
+extern u16 D_1F8001A4_b8b0[];
+s32 f_TestAndQueueActorForRender();
+
+void func_80080424(u8 *a)
+{
+    s32 draw = 0;
+    s32 k;
+    s32 r;
+    u16 t;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        *(s32 *)(a + 0x3C) = D_800ECF58_6489;
+        a[0xD] = 0;
+        a[0xB] = 0x10;
+        *(s16 *)(a + 0x5A) = 0;
+        a[8] = 0;
+        *(s16 *)(a + 0x5C) = 0;
+        f_StartActorTimedFrameSequence(a, D_80017334_e22b, 0x162);
+        a[0x47] = 0;
+        f_ResolveActorAreaPlanePosition(a);
+        k = a[3];
+        *(s16 *)(a + 0x80) = 0x1E;
+        *(s16 *)(a + 0x82) = 0x3C;
+        *(s16 *)(a + 0x84) = 0x3C;
+        a[0] = 1;
+        *(s16 *)(a + 0x86) = 0x5A;
+        *(u16 *)(a + 0x4A) = 0;
+        if (k == 1) {
+            *(u16 *)(a + 0x50) = 0x100;
+        } else if (k == 2) {
+            func_8012DE84(a, *(s16 *)(a + 0x32));
+            t = *D_1F8001A4_b8b0;
+            *(u16 *)(a + 0x64) = t;
+            if (*(s16 *)(a + 0x32) < (s16)t) {
+                a[5] = 1;
+            }
+        }
+        *(u16 *)(a + 0x40) = 0x12C;
+        a[0x29] = 0;
+        break;
+    case 1:
+        if (*D_1F80027A_3214 != 0) {
+            a[0x29] = 0;
+            f_TestAndQueueActorForRender(a);
+            break;
+        }
+        t = *(u16 *)(a + 0x40) - 1;
+        *(u16 *)(a + 0x40) = t;
+        switch (a[6]) {
+        case 0:
+            draw = 1;
+            if ((s16)t < 0x5B) {
+                a[6] = draw;
+            }
+            break;
+        case 1:
+            if (*D_1F80017C_7f8c & 3) {
+                draw = 1;
+            }
+            if ((s16)t < 0x1F) {
+                a[6] = 2;
+            }
+            break;
+        case 2:
+            if (*D_1F80017C_7f8c & 1) {
+                draw = 1;
+            }
+            if ((s16)t <= 0) {
+                a[4] = 3;
+                a[0] = 2;
+            }
+            break;
+        }
+        if (draw) {
+            ((s32 (*)())f_TestAndQueueActorForRender)(a, draw);
+        }
+        switch (a[3]) {
+        case 1:
+            *(u16 *)(a + 0x32) += *(s16 *)(a + 0x4A) >> 8;
+            *(u16 *)(a + 0x4A) += *(u16 *)(a + 0x50);
+            if (a[0x29] != 0) {
+                draw = 1;
+            } else {
+                draw = f_ProbeActorTerrainAlongFacing(a, 0, 0x32);
+            }
+            if (draw == 1) {
+                *(u16 *)(a + 0x4A) = 0;
+            } else if (*(s16 *)(a + 0x32) > 0) {
+                a[4] = 3;
+                a[0] = 2;
+            }
+            if (*(s16 *)(a + 0x4A) > 0x2000) {
+                *(u16 *)(a + 0x4A) = 0x2000;
+            }
+            break;
+        case 2:
+            func_8012D8F4(a);
+            break;
+        }
+        a[0x29] = 0;
+        break;
+    case 2:
+        if (f_StartEvent(0x81) >= 0) {
+            f_AddItemWithMessage(0x76, 1);
+            f_DespawnGrabbedItem(a);
+        }
+        a[4] = 3;
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80080750);
