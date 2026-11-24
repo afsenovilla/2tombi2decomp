@@ -1939,7 +1939,55 @@ void func_80113D08(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80113E4C);
+extern u8 D_800BF817;
+extern u16 D_800E7EEA;
+s32 func_801176EC(s32 a, s32 b);
+
+void func_80113E4C(u8 *a) {
+    u8 *g;
+
+    switch (func_801176EC(D_800E7EEA & 0xF0, D_800BF817)) {
+    case 3:
+        f_UpdateCoalMiningTownInteriorDoorPartTransition(a, FP(a, 0xC4));
+        M2C_FIELD(FP(a, 0xC8), s16 *, 0xA) = M2C_FIELD(FP(a, 0xC4), u16 *, 0xA);
+        break;
+    case 4:
+        f_UpdateCoalMiningTownInteriorDoorPartTransition(a, FP(a, 0xCC));
+        M2C_FIELD(FP(a, 0xD0), s16 *, 0xA) = M2C_FIELD(FP(a, 0xCC), u16 *, 0xA);
+        break;
+    case 5:
+        f_UpdateCoalMiningTownInteriorDoorPartTransition(a, FP(a, 0xD4));
+        M2C_FIELD(FP(a, 0xD8), s16 *, 0xA) = M2C_FIELD(FP(a, 0xD4), u16 *, 0xA);
+        break;
+    case 6:
+        f_UpdateCoalMiningTownInteriorDoorPartTransition(a, FP(a, 0xDC));
+        M2C_FIELD(FP(a, 0xE0), s16 *, 0xA) = M2C_FIELD(FP(a, 0xDC), u16 *, 0xA);
+        break;
+    }
+    switch (a[6]) {
+    case 0:
+        g = D_800BF808_1760;
+        if (g[0xE] != 0 && g[7] == 0) {
+            a[6] = 1;
+            M2C_FIELD(FP(a, 0xC4), s32 *, 0x40) = 0;
+            M2C_FIELD(FP(a, 0xCC), s32 *, 0x40) = 0;
+            M2C_FIELD(FP(a, 0xD4), s32 *, 0x40) = 0;
+            M2C_FIELD(FP(a, 0xDC), s32 *, 0x40) = 0;
+        }
+        break;
+    case 1:
+        if (D_800BF80F != 0) {
+            func_80051B04(FP(a, 0xC4), 0xC, M2C_FIELD(FP(a, 0xC4), u16 *, 0x38));
+            func_80051B04(FP(a, 0xCC), 0xC, M2C_FIELD(FP(a, 0xCC), u16 *, 0x38));
+            func_80051B04(FP(a, 0xD4), 0xC, M2C_FIELD(FP(a, 0xD4), u16 *, 0x38));
+            func_80051B04(FP(a, 0xDC), 0xC, M2C_FIELD(FP(a, 0xDC), u16 *, 0x38));
+            a[6]++;
+        }
+        break;
+    case 2:
+        break;
+    }
+}
 
 void func_80114024(u8 *a) {
     u8 *g;
@@ -2680,7 +2728,6 @@ u8 *a;
     }
 }
 
-extern u8 D_800BF817;
 typedef struct { u8 pad0[7]; u8 unk7; u8 pad8[7]; u8 unkF; u8 unk10; } AreaState808_10;
 extern AreaState808_10 D_800BF808_7eac;
 void func_80116C14(a)
