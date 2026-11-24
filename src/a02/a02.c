@@ -1705,7 +1705,154 @@ s32 func_80112D08(u8 *a) {
     return 0;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", f_SpawnCoalMiningTownSceneActorsFromPlacementTable);
+extern u8 *D_80128C48[];
+
+void f_SpawnCoalMiningTownSceneActorsFromPlacementTable(u8 *a, s32 mode)
+{
+    u8 *e;
+    u8 *g;
+    u8 *h;
+    u8 *p;
+
+    *(s16 *)(a + 8) = 0;
+    e = D_80128C48[mode];
+    if (e[0] == 0xFF) {
+        return;
+    }
+    g = D_800BF808_1760;
+    h = (u8 *)&D_800BF870;
+    do {
+        if (mode != 0 && *(s16 *)(a + 8) >= 0xF) {
+            goto next;
+        }
+        switch (e[0xA]) {
+        case 0:
+            break;
+        case 1:
+            *(s16 *)(g + 8) = *(s16 *)(e + 4);
+            *(s16 *)(g + 0xA) = *(s16 *)(e + 6);
+            *(s16 *)(g + 0xC) = *(s16 *)(e + 8);
+            break;
+        case 2:
+            switch (e[3]) {
+            case 0:
+                if (h[0x189] != 1) {
+                    goto next;
+                }
+                if (h[0x191] & 2) {
+                    break;
+                }
+                goto next;
+            case 1:
+                if (h[0x189] == 0) {
+                    goto next;
+                }
+                if (h[0x18A] < 2) {
+                    break;
+                }
+                goto next;
+            case 2:
+                if (h[0x18A] != 3) {
+                    goto next;
+                }
+                break;
+            case 3:
+                if ((s8)h[0x56] > 0) {
+                    break;
+                }
+                goto next;
+            case 4:
+                if (h[0x189] >= 5) {
+                    break;
+                }
+                goto next;
+            }
+            break;
+        case 3:
+            switch (e[3]) {
+            case 1:
+                if (h[0x18A] != 0x14) {
+                    goto next;
+                }
+                break;
+            case 2:
+                if (h[0x56] != 0xFF) {
+                    goto next;
+                }
+                break;
+            }
+            break;
+        case 4:
+            if (h[0x189] != 0) {
+                break;
+            }
+            goto next;
+        case 5:
+            if (h[0x194] == 0) {
+                goto next;
+            }
+            if (h[0x8D] == 0) {
+                break;
+            }
+            goto next;
+        case 6:
+            if (h[0x56] == 0xFF) {
+                goto next;
+            }
+            break;
+        case 7:
+            if (h[0x56] != 0xFF) {
+                goto next;
+            }
+            break;
+        case 8:
+            if (h[0x8D] != 0xFF) {
+                goto next;
+            }
+            break;
+        case 9:
+            if (h[0x56] != 0xFF) {
+                goto next;
+            }
+            if (h[0xAC] == 0xFF) {
+                goto next;
+            }
+            break;
+        case 10:
+            if (h[0x98] == 0xFF) {
+                goto next;
+            }
+            break;
+        case 11:
+            if (h[0x9F] != 0xFF) {
+                goto next;
+            }
+            break;
+        case 12:
+            if (h[0x54] == 0xFF) {
+                goto next;
+            }
+            break;
+        }
+        p = func_80072DDC(a, e[0], e[1], e[2]);
+        if (p != NULL) {
+            *(s32 *)(p + 0x2C) = *(s16 *)(e + 4) << 16;
+            *(s32 *)(p + 0x30) = *(s16 *)(e + 6) << 16;
+            *(s32 *)(p + 0x34) = *(s16 *)(e + 8) << 16;
+            p[3] = e[3];
+            *(s16 *)(p + 0x54) = 0;
+            *(s16 *)(p + 0x56) = 0;
+            *(s16 *)(p + 0x58) = 0;
+            *(s32 *)(p + 0x1C) = *(s32 *)(e + 0xC);
+            if (mode != 0) {
+                *(u8 **)(a + (*(s16 *)(a + 8) << 2) + 0xC) = p;
+                (*(s16 *)(a + 8))++;
+            }
+        }
+    next:
+        e += 0x10;
+    } while (e[0] != 0xFF);
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011321C);
 
