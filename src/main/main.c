@@ -2627,7 +2627,63 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnEffectTemplateInstances);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80027254);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800275D4);
+typedef struct { s16 vx, vy, vz, pad; } SVec_F230;
+void func_80031780(u8 *p);
+
+void func_800275D4(u8 *a)
+{
+    SVec_F230 *v = (SVec_F230 *)(a + 0x50);
+    s16 i;
+    s32 j;
+    s32 w;
+    s32 ang;
+    s32 k;
+    s32 x;
+    s32 z;
+
+    switch (a[4]) {
+    case 0:
+        *(s16 *)(a + 0x4E) = 5;
+        *(s16 *)(a + 0x48) = rand();
+        *(s16 *)(a + 0x4A) = -0x1E;
+        *(s16 *)(a + 0x32) = -0x32;
+        z = *(s16 *)(a + 0x30) | 0x1000000;
+        x = *(s32 *)(a + 0x2C);
+        for (i = 0; i < 5; ) {
+            i++;
+            *(s32 *)&v->vx = x;
+            *(s32 *)&v->vz = z;
+            v++;
+        }
+        v = (SVec_F230 *)(a + 0x50);
+        a[4] = 1;
+    case 1:
+        if ((*(s32 *)(a + 0x34) = *(s32 *)(a + 0x38)) == 0) {
+            goto resolve;
+        }
+        w = *(s32 *)(a + 0x48);
+        ang = w & 0xFFFF;
+        k = w >> 16;
+        for (j = 0; j < 5; ) {
+            v->vx += rcos(ang) >> 8;
+            v->vz += (rsin(ang) >> 8) - 10;
+            v->vy += k;
+            j++;
+            ang += 0x333;
+            v++;
+        }
+        *(s16 *)(a + 0x4A) = k + 4;
+        if (func_8002B278(a) == 0) {
+            func_80031780(a);
+        }
+        break;
+    case 2:
+    case 3:
+    resolve:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawPackedGouraudQuadStream);
 
