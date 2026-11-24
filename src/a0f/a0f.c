@@ -3613,7 +3613,101 @@ void func_80117F08(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80117FA4);
+extern u8 D_8011F230[];
+extern u8 D_80129EC8[];
+extern u8 D_801209E0[];
+extern u8 D_1F800236;
+
+void func_80117FA4(u8 *a)
+{
+    u8 *g;
+    u8 *p;
+    s16 h;
+    s32 k;
+    u8 *g_f;
+    u8 *g_s9;
+
+    switch (a[4]) {
+    case 0:
+        g_s9 = D_800ECF58_742e;
+        if (func_800519E0(a, 0xF, *(s32 *)(g_s9 + 0x54), D_8011F230) == 0) {
+        *(s32 *)(a + 0x3C) = *(s32 *)(g_s9 + 0x58);
+        func_80040CDC(a, D_80129EC8, D_801209E0);
+        a[0x70] = 2;
+        a[0x7B] = 3;
+        func_80041718(a, 0xA, 0);
+        H(a, 0x80) = 0x32;
+        H(a, 0x82) = 0x64;
+        H(a, 0x84) = 0xA0;
+        H(a, 0x86) = 0x140;
+        H(a, 0x2E) = 0x1DC0;
+        H(a, 0x32) = -0x354D;
+        H(a, 0x36) = 0x15E0;
+        a[0] = 3;
+        a[0x47] = 0;
+        H(a, 0x58) = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0x400;
+        H(a, 0x40) = 0;
+        a[4]++;
+        }
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            a[1] = 1;
+            func_80041098(a);
+            if (a[0x70] == 0xFF) {
+                a[5]++;
+            }
+            if (a[0x47] != 0) {
+                p = D_800E8008;
+                H(p, 0x3A) = H(a, 0x4E);
+                H(p, 0x3E) = H(a, 0x50);
+                H(p, 0x42) = H(a, 0x52);
+                switch (a[0x47]) {
+                case 1:
+                    k = 7;
+                    break;
+                case 2:
+                    k = 0x1F;
+                    break;
+                default:
+                    k = 0;
+                    a[0x47] = 0;
+                    break;
+                }
+                h = (s16)k >> 1;
+                if ((s16)k != 0) {
+                    H(p, 0x3A) += h - (k & func_8009A450());
+                    H(p, 0x3E) += h - (k & func_8009A450());
+                    H(p, 0x42) += h - (k & func_8009A450());
+                }
+            }
+            break;
+        case 1:
+            D_1F800236 = 7;
+            g = D_800BF808_1760;
+            g[0x31] = 1;
+            H(g, 0x32) = 0x1500;
+            g_f = (u8 *)&D_800BF870;
+            H(g_f, 0x2E) = 0;
+            g_f[0x1F] = 0;
+            a[4] = 3;
+            break;
+        }
+        func_8004190C(a);
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_80118250(void *arg0) {
     M2C_FIELD(arg0, u8 *, 0x47) = (u8) M2C_FIELD(arg0, u8 *, 0x72);
@@ -3944,7 +4038,6 @@ extern s32 D_80128CFC[];
 extern s32 D_80128D10[];
 extern u8 D_80128978[];
 extern u8 D_80017FC0[];
-extern u8 D_1F800236;
 extern s16 D_1F800240;
 typedef struct { u8 pad[0x5E6]; u16 f5E6; } GameState5E6;
 #define G ((u8 *)&D_800BF870)
@@ -4237,7 +4330,7 @@ extern s32 D_80129090[];
 extern s32 D_801290A8[];
 extern s16 D_801290C0[];
 extern u8 D_80128EB0[];
-extern u8 func_80117FA4[];
+void func_80117FA4();
 void func_80118C98();
 void func_8011968C(u8 *a)
 {
