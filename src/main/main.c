@@ -5650,7 +5650,47 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80035528);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800355B4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80035640);
+typedef struct { u8 area; u8 b1; u8 b2; u8 b3; } AreaKey_5640;
+extern AreaKey_5640 D_800A2468[];
+extern u8 *(*D_800A2444[])(void);
+
+s32 func_80035640(s32 idx)
+{
+    u8 *g = (u8 *)&D_800BF870;
+    AreaKey_5640 *e;
+    u8 *p;
+    u8 ar;
+
+    if (g[0x11] & 4) {
+        return 0;
+    }
+    if (*(u16 *)(g + 0x2E) & 0x200) {
+        return 0;
+    }
+    {
+        AreaKey_5640 *t = D_800A2468;
+        e = &t[idx];
+    }
+    ar = D_800BF870.unk0;
+    if (ar != e->area) {
+        return 0;
+    }
+    p = D_800A2444[ar]();
+    if (p != NULL) {
+        D_1F800080 = (s32)p;
+        if (p[0xC] != e->b1) {
+            return 0;
+        }
+        if (p[2] != e->b2) {
+            return 0;
+        }
+        if (e->b3 != 0xFF) {
+            return p[3] == e->b3;
+        }
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80035738);
 
