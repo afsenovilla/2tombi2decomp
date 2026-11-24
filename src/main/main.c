@@ -16613,9 +16613,80 @@ void func_8006C0C4(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C328);
+void func_8006C328(u8 *a)
+{
+    u8 *g = (u8 *)D_800E7E80;
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C478);
+    switch (a[6]) {
+    case 0:
+        { s32 one = 1; a[6] = one; *(s16 *)(a + 0x40) = one; }
+    case 1:
+        if (--*(s16 *)(a + 0x40) == 0) {
+            *(s16 *)(a + 0x40) = 0x12;
+            if (g[0xBE] != 0) {
+                f_PlaySoundEffect(6, 3, 0);
+            } else {
+                f_PlaySoundEffect(6, 6, 0);
+            }
+        }
+        if (g[0xBE] != 0 && a[0x5E] == 0) {
+            a[0x5E] = 1;
+            func_8006A8C8((s32)a);
+        }
+        if (g[0x144] == 2 || g[0x146] == 0) {
+            a[5] = 0;
+            a[4]++;
+        } else if (g[0x146] == 3) {
+            *(u16 *)(a + 0x2E) = *(u16 *)(g + 0x2E);
+            *(u16 *)(a + 0x32) = *(u16 *)(g + 0x32);
+            *(u16 *)(a + 0x36) = *(u16 *)(g + 0x36);
+            a[0x46] = g[0x14A];
+            a[0x2A] = g[0x2A];
+            a[5] = 1;
+            func_8006BDF0(a, 1);
+            a[6] = 1;
+        }
+        break;
+    }
+}
+
+void func_8006C478(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        a[0x5F] = 0x80;
+        func_8006ACAC(a);
+        **(s16 **)(a + 0xC0) = -0x96;
+        a[0] = 2;
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x58) = 0;
+        a[4]++;
+        if (a[3] == 0) {
+            a[5] = 1;
+        } else {
+            ((u8 *(*)())f_SpawnLinkedActorTrailEffect)(a, a[2] - 1);
+        }
+    case 1:
+        switch (a[5]) {
+        case 0:
+            func_8006C328(a);
+            break;
+        case 1:
+            func_8006C0C4(a);
+            break;
+        }
+        func_8006B020(a, 1);
+        a[1] = 1;
+        break;
+    case 2:
+        a[4]++;
+        break;
+    case 3:
+        func_8007AB44(a);
+        break;
+    }
+}
 
 void func_8002C138();
 void func_8006C59C(void *arg0) {
@@ -16635,7 +16706,41 @@ void func_8006C59C(void *arg0) {
     M2C_FIELD(arg0, u8 *, 4) = (u8) (M2C_FIELD(arg0, u8 *, 4) + 1);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006C608);
+void func_8006C608(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        func_8006C59C(a);
+    case 1:
+        a[1] = 1;
+        if (a[0x2B] != 0) {
+            *(s16 *)(a + 0x42) = 2;
+        } else if (*(s16 *)(a + 0x42) != 0) {
+            if (--*(s16 *)(a + 0x42) == 0) {
+                a[0x2B] = 0;
+            }
+        }
+        if (--*(s16 *)(a + 0x40) == 0) {
+            a[0] = 2;
+            a[4] = 2;
+        }
+        *(s32 *)(a + 0x2C) += (rcos(*(s16 *)(a + 0x56)) * *(s16 *)(a + 0x44)) >> 4;
+        *(s32 *)(a + 0x34) -= (rsin(*(s16 *)(a + 0x56)) * *(s16 *)(a + 0x44)) >> 4;
+        if (*(s16 *)(a + 0x60) < 4) {
+            *(s16 *)(a + 0x60) += 2;
+        }
+        *(s16 *)(a + 0x60) ^= 1;
+        break;
+    case 2:
+        if (*(s16 *)(a + 0x60) < 14) {
+            *(s16 *)(a + 0x60) += 2;
+            break;
+        }
+    case 3:
+        func_8007AB44(a);
+        break;
+    }
+}
 
 void func_8006C77C(void)
 {
