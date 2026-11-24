@@ -6396,7 +6396,26 @@ void func_8003F07C(u8 *a, s32 b)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F174);
+void func_8003F174(u8 *a, s32 b)
+{
+    s32 i;
+    s32 pad[10];
+
+    if (a[8] == 0) {
+        return;
+    }
+    for (i = 0; i < a[9]; i++) {
+        u8 *m;
+
+        if (i >= a[8]) {
+            return;
+        }
+        m = *(u8 **)(a + 0xC0 + i * 4);
+        gte_SetRotMatrix(m + 0x18);
+        gte_SetTransMatrix(m + 0x18);
+        f_DrawModelPrimitiveStreamForCurrentArea(*(u32 **)(m + 0x40), D_800ED8C8, b);
+    }
+}
 
 void func_8003F264(void)
 {
