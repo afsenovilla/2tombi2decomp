@@ -12710,7 +12710,105 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80059D28);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80059ED8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005A39C);
+typedef struct {
+    u8 anim;
+    u8 dur;
+    u8 dir;
+    u8 flags;
+} TombaPoseStep_5A39C;
+extern TombaPoseStep_5A39C D_800A4610[];
+extern s8 D_800E807E;
+s32 f_StepWrappedAngleToward(s32 a, s32 b, s32 step);
+
+void func_8005A39C(u8 *a, s32 arg1)
+{
+    s32 m;
+    s32 t;
+    s32 x;
+    u8 f;
+
+    if (a[2] == 0) {
+        a[0x177] |= 1;
+    }
+    switch (a[7]) {
+    case 0:
+        *(s16 *)(a + 0x40) = 0;
+        *(s16 *)(a + 0x150) = 0;
+        a[7]++;
+    case 1:
+        if (a[0x6E] == 0) {
+            if (a[2] != 0) {
+                f_SetTombaAnimationIfChanged(a, D_800A4610[*(s16 *)(a + 0x40)].anim, 4);
+            } else {
+                m = *(u16 *)(a + 0x6A) & 0xF00;
+                if (m == 0x100 || m == 0x200) {
+                    if (D_800A4610[*(s16 *)(a + 0x40)].anim != 0xAF && D_800A4610[*(s16 *)(a + 0x40)].anim != 0xB1) {
+                        f_SetTombaAnimationIfChanged(a, D_800A4610[*(s16 *)(a + 0x40)].anim, 4);
+                    }
+                } else {
+                    f_SetTombaAnimationIfChanged(a, D_800A4610[*(s16 *)(a + 0x40)].anim, 4);
+                }
+            }
+        } else if (D_800A4610[*(s16 *)(a + 0x40)].anim != 0xB1) {
+            f_SetTombaAnimationIfChanged(a, D_800A4610[*(s16 *)(a + 0x40)].anim, 4);
+        }
+        *(u16 *)(a + 0x14C) = D_800A4610[*(s16 *)(a + 0x40)].dur;
+        if (D_800A4610[*(s16 *)(a + 0x40)].dur == 0xFF) {
+            a[7] = 6;
+            break;
+        }
+        if (D_800A4610[*(s16 *)(a + 0x40)].flags & 1) {
+            D_800E807E = (D_800A4610[*(s16 *)(a + 0x40)].flags & 2) + 6;
+            a[7]++;
+        } else {
+            a[7] = 3;
+        }
+        break;
+    case 2:
+        D_800E807E = (D_800A4610[*(s16 *)(a + 0x40)].flags & 2) + 7;
+    case 3:
+        if (arg1 == 1) {
+            if (--*(s16 *)(a + 0x14C) == 0) {
+                a[7] = 1;
+                (*(s16 *)(a + 0x40))++;
+            }
+        }
+        if (*(s16 *)(a + 0x150) != D_800A4610[*(s16 *)(a + 0x40)].dir) {
+            t = D_800A4610[*(s16 *)(a + 0x40)].dir;
+            x = 0;
+            if (t == 1) {
+                x = a[0x147] != 0;
+            }
+            t = t + x * 2;
+            t <<= 10;
+            *(s16 *)(a + 0x14E) = f_StepWrappedAngleToward((s16)t, *(s16 *)(a + 0x14E), 0x80);
+            if (*(s16 *)(a + 0x14E) == t) {
+                *(s16 *)(a + 0x150) = D_800A4610[*(s16 *)(a + 0x40)].dir;
+            }
+        }
+        f = D_800A4610[*(s16 *)(a + 0x40)].flags;
+        if (f & 4) {
+            if (*(u16 *)(*(u8 **)(a + 0x38) + 2) == 0xE) {
+                D_800E807E = (f & 2) + 6;
+                a[7] = 2;
+            }
+            if (*(u16 *)(*(u8 **)(a + 0x38) + 2) == 0x11) {
+                a[7] = 3;
+            }
+        }
+        break;
+    case 7:
+        a[6] = 3;
+        a[7]++;
+        break;
+    case 8:
+        if (arg1 == 1) {
+            a[7] = 0;
+            f_SetTombaAnimationIfChanged(a, 2, 6);
+        }
+        break;
+    }
+}
 
 void func_8005A714(u8 *a)
 {
@@ -16247,7 +16345,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006BE88);
 
 typedef struct { u8 pad[0x30]; s32 y; } ActorY_C0C4;
 extern ActorY_C0C4 D_800E7E80_1c87;
-extern s8 D_800E807E;
 void func_8006C0C4(u8 *a)
 {
     u8 *g = D_800E7E80_f78d;
