@@ -7166,6 +7166,8 @@ void func_8013EE84(u8 *a)
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013F0DC);
 
+// ASM by design: hand-written GTE routine (no stack frame, trapping add / addi / sub: never emitted by gcc 2.8.1).
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013F418);
 
+// ASM by design: hand-written GTE routine (no stack frame, trapping add / addi / sub: never emitted by gcc 2.8.1).
 INCLUDE_ASM("asm/a04/nonmatchings/a04", f_UpdateThirdReadyOrNotKujaraDialogue);

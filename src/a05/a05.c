@@ -6548,6 +6548,8 @@ void func_8013AC40(void) {
     func_80075448(0xC, &D_80140508, 0x10, D_800BED82);
 }
 
+// ASM by design: hand-written GTE routine (no stack frame, trapping add / addi / sub: never emitted by gcc 2.8.1).
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8013AC90);
 
+// ASM by design: hand-written GTE routine (no stack frame, trapping add / addi / sub: never emitted by gcc 2.8.1).
 INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateThreeSistersCutsceneActorC);

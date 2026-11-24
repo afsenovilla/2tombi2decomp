@@ -2839,6 +2839,8 @@ void func_80112D98(s32 a)
     } while (func_8008CC30(n) == 0);
 }
 
+// ASM by design: hand-written GTE routine (no stack frame, trapping add / addi / sub, `or rd, $zero, rs` moves: never emitted by gcc 2.8.1).
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80112DEC);
 
+// ASM by design: hand-written GTE routine (no stack frame, trapping add / addi / sub, `or rd, $zero, rs` moves: never emitted by gcc 2.8.1).
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", f_DispatchEndingAreaCameraSequence);

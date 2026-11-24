@@ -78,6 +78,8 @@ class Prog:
         self.src = os.path.join(ROOT, "src", prog, prog + ".c")
         text = open(self.src).read() if os.path.exists(self.src) else ""
         self.pending = set(re.findall(r'INCLUDE_ASM\("[^"]+", (\w+)\);', text))
+        # asm by design (tools/asm_by_design.py --game): still INCLUDE_ASM (no C source), never a target
+        self.by_design = set(re.findall(r'(?m)^// ASM by design: [^\n]*\nINCLUDE_ASM\([^,]+,\s*(\w+)\)', text))
         self.includes = [l for l in re.findall(r"(?m)^#include .*$", text)
                          if not re.search(r'"(common|game|m2c)\.h"', l)]
         self.nb = DS.names_by_addr(prog)
@@ -676,7 +678,7 @@ def main():
     for p in targets:
         tp = progs[p]
         for tname in sorted(tp.pending):
-            if tname not in tp.funcs or (names and tname not in names):
+            if tname not in tp.funcs or tname in tp.by_design or (names and tname not in names):
                 continue
             k = tp.key(tname)
             if len(k) < a.min_words:

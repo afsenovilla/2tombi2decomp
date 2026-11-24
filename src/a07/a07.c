@@ -5463,6 +5463,8 @@ s32 f_TestCircusActorGroundContact(u8 *p)
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80130FB8);
 
+// ASM by design: hand-written GTE routine (no stack frame, trapping add / addi / sub, `or rd, $zero, rs` moves: never emitted by gcc 2.8.1).
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801311D0);
 
+// ASM by design: hand-written GTE routine (no stack frame, trapping add / addi / sub, `or rd, $zero, rs` moves: never emitted by gcc 2.8.1).
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusLockerNpcActor);

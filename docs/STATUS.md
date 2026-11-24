@@ -3,6 +3,24 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-24 (2): tools after round 8
+
+One tools agent, the "Tool work left" list of the round-8 entry below, in its order.
+
+- **asm by design for game code**: `python3 -I tools/asm_by_design.py --game [--prog P] [--write]`. A pending game
+  function is hand-written assembly when it has no stack frame and uses instructions gcc 2.8.1 never emits for C:
+  the trapping `add` / `addi` / `sub` or `or rd, $zero, rs` moves. No matched game function of any program has
+  either (the tool checks this on every run and stops on a hit). The mark is a `// ASM by design: ...` line right
+  above the INCLUDE_ASM line in src/<prog>/<prog>.c (sync_src.py keeps it with the line); progress.py counts these
+  as done (column "game asm (by design)"), workqueue / nearcopy / inlined.py no longer list them as targets.
+  Marked 12: one family of GTE primitive-list builders (rtpt / nclip / avsz3 over a vertex list into the OT, the
+  end pointer returned), two per overlay: a00 func_801465EC + f_UpdateWindmillCollapseParticleActor, a04
+  func_8013F418 + f_UpdateThirdReadyOrNotKujaraDialogue, a05 func_8013AC90 + f_UpdateThreeSistersCutsceneActorC,
+  a07 func_801311D0 + f_UpdateCircusLockerNpcActor, a08 func_80140FBC + f_UpdateWaterTempleRaftNpcActor, a0l
+  func_80112DEC + f_DispatchEndingAreaCameraSequence (the imported names of the second of each pair are wrong:
+  they are not actor updates). splat's `/* Handwritten function */` header is not a signal on its own: 138 matched
+  game functions with GTE macros have it too.
+
 ## 2026-11-24: eighth round (new scopes, work queue; two container restarts)
 
 All code in C: **4372 / 7011 functions (62.4 %, 37.1 % of the bytes)**, from 4220 (33.1 %). First round with the new

@@ -8288,6 +8288,8 @@ s32 func_80140C4C(u8 *a)
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80140E10);
 
+// ASM by design: hand-written GTE routine (no stack frame, trapping add / addi / sub, `or rd, $zero, rs` moves: never emitted by gcc 2.8.1).
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80140FBC);
 
+// ASM by design: hand-written GTE routine (no stack frame, trapping add / addi / sub, `or rd, $zero, rs` moves: never emitted by gcc 2.8.1).
 INCLUDE_ASM("asm/a08/nonmatchings/a08", f_UpdateWaterTempleRaftNpcActor);

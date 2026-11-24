@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Local progress per program, split into game code and the Psy-Q library (src/<prog>/psyq/), counted in functions
 and bytes. A function is done when the C defines it (tools/build.py proves the bytes); library functions marked
-`// ASM by design` (tools/asm_by_design.py) are done as assembly and shown apart.
+`// ASM by design` (tools/asm_by_design.py) are done as assembly and shown apart; so are game functions whose
+INCLUDE_ASM line in src/<prog>/<prog>.c has a `// ASM by design: ...` line right above it (hand-written in the
+original source too; tools/asm_by_design.py --game).
 
   python3 -I tools/progress.py [--phases]     (--phases: per roadmap phase, docs/ROADMAP.md)
 """
@@ -11,6 +13,12 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from funcstats import glabels, programs
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BY_DESIGN = re.compile(r"(?m)^// ASM by design: [^\n]*\nINCLUDE_ASM\([^,]+,\s*(\w+)\)")
+
+
+def by_design(text):
+    """names of the INCLUDE_ASM lines of a game file marked `// ASM by design: ...` on the line above."""
+    return set(BY_DESIGN.findall(text))
 
 
 def file_state(prog):
@@ -19,10 +27,11 @@ def file_state(prog):
     for f in glob.glob(os.path.join(ROOT, "src", prog, "**", "*.c"), recursive=True):
         t = open(f).read()
         lib = "/psyq/" in f.replace(os.sep, "/")
-        by_design = "// ASM by design:" in t
+        whole = lib and "// ASM by design:" in t
+        marked = set() if lib else by_design(t)
         equiv = set(re.findall(r'(?ms)^#ifdef NON_MATCHING\n(?:(?!^#endif).)*?^#else\nINCLUDE_ASM\([^,]+,\s*(\w+)\)', t))
         for n in re.findall(r"INCLUDE_ASM\([^,]+,\s*(\w+)\)", t):
-            out[n] = (lib, "asm" if by_design else "equiv" if n in equiv else "pending")
+            out[n] = (lib, "asm" if whole or n in marked else "equiv" if n in equiv else "pending")
         if lib and "INCLUDE_ASM" not in t:
             out[os.path.basename(f)[:-2]] = (True, "c")
     return out
@@ -51,7 +60,7 @@ def main():
     if "--phases" in sys.argv:
         return phases()
     total = collections.Counter()
-    print("%-6s %-26s %-26s %-18s" % ("prog", "game in C", "library in C", "library asm by design"))
+    print("%-6s %-26s %-26s %-10s %s" % ("prog", "game in C", "library in C", "lib asm", "game asm (by design)"))
     for prog, b, delta, ts, te, addrs in programs():
         has_c = bool(glob.glob(os.path.join(ROOT, "src", prog, "**", "*.c"), recursive=True))
         st = file_state(prog) if has_c else {}
@@ -118,7 +127,8 @@ def show(prog, c):
     def part(cat, st):
         n, nn, bb, b = c["%s_%s_n" % (cat, st)], c[cat + "_n"], c["%s_%s_b" % (cat, st)], c[cat + "_b"]
         return "%4d/%-4d %6.2f%% of bytes" % (n, nn, 100.0 * bb / b if b else 0)
-    print("%-6s %-26s %-26s %-18s" % (prog, part("game", "c"), part("lib", "c"), "%d" % c["lib_asm_n"]))
+    print("%-6s %-26s %-26s %-10s %d" % (prog, part("game", "c"), part("lib", "c"), "%d" % c["lib_asm_n"],
+                                        c["game_asm_n"]))
 
 
 if __name__ == "__main__":

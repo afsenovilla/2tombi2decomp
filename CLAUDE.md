@@ -91,7 +91,8 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
 - Library: `python3 -I tools/libsweep.py [--prog boot] [--epilogue] [--nocse | --only-nocse] [--names A,B] --install`
   (automatic candidates; `--epilogue` adds the `// EPILOGUE sony` / `// RETURN sony` set-ups, `--nocse` the
   gcc-2.8.1-nocse ones), `tools/libnear.py [--epilogue] [--nocse]`, `tools/libpermute.py`,
-  `tools/asm_by_design.py`; one file per library function in `src/<prog>/psyq/<lib>/`. Hand-written library C:
+  `tools/asm_by_design.py` (`--game [--write]`: game functions hand-written in assembly, a `// ASM by design:` line
+  above their INCLUDE_ASM; 12 GTE list builders marked 2026-11-24); one file per library function in `src/<prog>/psyq/<lib>/`. Hand-written library C:
   `python3 -I tools/install_lib.py FILE.c [--prog boot] [--auto] [--dry]` (each function into its own file with the
   scratch's set-up header, or the first libsweep set-up that matches with --auto; build-checked).
 - Set-up lines of a C file (tools/cc.py): `// CC`, `// FLAGS`, `// ASPSX`, `// AS gnu`, `// EPILOGUE sony` (Sony's

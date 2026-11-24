@@ -61,7 +61,11 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
 - Jump tables: a C `switch` keeps the retail table (tools/jtbl.py rewrites %hi/%lo and bare `$Lnn` operands).
 - GTE: `#include "gte.h"` (real cop2 command words over psyq/inline_c.h's placeholders).
 - Functions hand-written in assembly in the original (BIOS stubs, setjmp, libgte RotMatrix*, DecDCTvlc, ...) are
-  marked "asm by design" (tools/asm_by_design.py) and count as done.
+  marked "asm by design" (tools/asm_by_design.py) and count as done. Game code too (`--game`, 2026-11-24): no
+  stack frame plus a trapping `add` / `addi` / `sub` or an `or rd, $zero, rs` move (gcc 2.8.1 never emits either;
+  none of the matched game code has one): a `// ASM by design: ...` line right above the INCLUDE_ASM line. 12
+  marked, the GTE primitive-list builders of a00 / a04 / a05 / a07 / a08 / a0l. splat's `/* Handwritten function */`
+  header alone means nothing (GTE macros set it).
 
 ## Order of work for a scope
 

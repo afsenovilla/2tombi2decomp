@@ -193,7 +193,7 @@ def search(targets, sources, min_len=10, min_cover=0.8, only=None, copies=False,
             nl = norm(lines)
             size[(prog, name)] = len(lines) * 4
             if name in pn:
-                if prog in targets and (pending_only is None or (prog, name) in pending_only):
+                if prog in targets and name not in tp.by_design and (pending_only is None or (prog, name) in pending_only):
                     pend[(prog, name)] = nl
             elif prog in sources and len(nl) >= min_len and (only is None or name in only):
                 body[(prog, name)] = nl
