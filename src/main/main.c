@@ -5611,7 +5611,60 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_BuildActorSpriteQuadVertices);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ProjectAndQueueFourVertexPrimitive);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateAndDrawTombaModel);
+extern u8 D_1F800247;
+void f_DrawActorModelByRenderMode(u8 *a);
+
+void f_UpdateAndDrawTombaModel(void) {
+    u8 *a = D_800E7E80_f78d;
+
+    if (a[0xD] & 0xD0) {
+        a[0xD] |= 2;
+        if (!(a[0xD] & 0x20)) {
+            if (a[0xD] & 0x10) {
+                u8 p = D_1F800247;
+                if (!(p & 0x30) && (p & 3) >= 2) {
+                    a[0x18] = 0xD0;
+                    a[0x19] = 0xD0;
+                    a[0x1A] = 0xD0;
+                } else if (a[0xD] & 0x80) {
+                    a[0x18] = ((s16)rsin((D_1F800247 & 0xF) << 7) >> 6) + 0x30;
+                    a[0x19] = 0x20;
+                    a[0x1A] = 0x20;
+                } else if (a[0xD] & 0x40) {
+                    a[0x18] = 0x20;
+                    a[0x19] = 0x20;
+                    a[0x1A] = 0x20;
+                } else {
+                    a[0x18] = 0x80;
+                    a[0x19] = 0x80;
+                    a[0x1A] = 0x80;
+                }
+            } else {
+                s32 v;
+                if (a[0xD] & 0x80) {
+                    v = ((s16)rsin((D_1F800247 & 0xF) << 7) >> 6) + 0x10;
+                } else {
+                    v = 0;
+                }
+                a[0x18] = v + 0x20;
+                a[0x19] = 0x20;
+                a[0x1A] = 0x20;
+            }
+        }
+    } else {
+        a[0xD] = 0;
+    }
+    func_800597AC(a);
+    if (a[1] != 0) {
+        u8 s = a[8];
+
+        if ((*(u16 *)(a + 0x17E) & 0x20) && a[0x179] != 0) {
+            a[8] = a[9];
+        }
+        f_DrawActorModelByRenderMode(a);
+        a[8] = s;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003B704);
 
@@ -12378,7 +12431,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_RebuildTombaAppearanceModelParts);
 
 typedef struct { u8 unk0; u8 pad1[0x1E]; u8 u1F; u8 pad20[0xE]; s16 s2E; } GsStat_82F8;
 extern GsStat_82F8 D_800BF870_82f8;
-extern u8 D_1F800247;
 void f_ApplyTombaStatusCommand(u8 *a, s32 cmd)
 {
     u8 v;
