@@ -20,7 +20,211 @@ void func_8018A13C(u8 *a, u8 *b)
     D_1F8000D0.at[2].hi = H(b, 0x6A) + (0xC73 - H(b, 0x6A)) * H(a, 0x42) / 22;
 }
 
-INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018A300);
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+typedef struct { u8 pad0[0x3A]; s16 fx; u8 pad3C[2]; s16 fy; u8 pad40[2]; s16 fz; } OpnCamState;
+extern OpnCamState D_800E8008;
+extern u8 D_80100690[];
+extern u8 D_800BF9ED;
+extern u8 D_800E806C;
+
+void func_8018A300(u8 *a, s32 arg1)
+{
+    u8 *buf = D_80100690;
+    s32 hit;
+
+    switch (a[6]) {
+    case 0:
+        H(a, 0x42) = 0;
+        H(a, 0x4A) = -0x3800;
+        H(a, 0x48) = 0x20;
+        H(a, 0x40) = 0x25;
+        a[6]++;
+        H(a, 0x4E) = (H(a, 0x7A) - H(a, 0x2E)) / 37;
+        H(a, 0x50) = (H(a, 0x7C) - H(a, 0x32)) / 37;
+        H(a, 0x52) = (H(a, 0x7E) - H(a, 0x36)) / 37;
+        H(buf, 0x60) = D_800E8008.fx;
+        H(buf, 0x62) = D_800E8008.fy;
+        H(buf, 0x64) = D_800E8008.fz;
+        H(buf, 0x66) = D_1F8000D0.at[0].hi;
+        H(buf, 0x68) = D_1F8000D0.at[1].hi;
+        H(buf, 0x6A) = D_1F8000D0.at[2].hi;
+        func_80074590(7, 0, 0);
+        break;
+    case 1:
+        if (H(a, 0x40) >= 0xF) {
+            H(a, 0x58) += H(a, 0x48);
+        }
+        if (H(a, 0x40) != 0) {
+            H(a, 0x40)--;
+            H(a, 0x2E) += H(a, 0x4E);
+            H(a, 0x36) += H(a, 0x52);
+            H(a, 0x32) += H(a, 0x50);
+            if (H(a, 0x40) == 0) {
+                func_80054D14(a, 0x14, 4);
+            }
+        }
+        if (H(a, 0x4A) > 0) {
+            func_80054D14(a, 0x26, 2);
+            H(a, 0x48) += 0x20;
+            if (H(a, 0x48) > 0x200) {
+                H(a, 0x48) = 0x200;
+            }
+            H(a, 0x58) += H(a, 0x48);
+            if (H(a, 0x58) >= 0x1FC0) {
+                H(a, 0x58) = 0x2000;
+                func_80054D14(a, 0x1E, 4);
+            }
+        }
+        H(a, 0x4A) += 0x220;
+        if (H(a, 0x4A) > 0x2000) {
+            H(a, 0x4A) = 0x2000;
+        }
+        W(a, 0x30) += H(a, 0x4A) << 8;
+        if (H(a, 0x40) < 0x16) {
+            func_8018A13C(a, buf);
+        }
+        hit = 0;
+        if ((u16)(U(a, 0x2E) - U(a, 0x7A) + 0x64) < 0xC9 && (u16)(U(a, 0x32) - U(a, 0x7C) + 0x64) < 0xC9) {
+            func_80054D14(a, 0x1E, 4);
+            func_800312D4(7, a + 0x2C, -0x14);
+            hit = 1;
+            H(a, 0x2E) = H(a, 0x7A);
+            H(a, 0x36) = H(a, 0x7E);
+            H(a, 0x32) = H(a, 0x7C) - 0x50;
+        }
+        if (hit != 0) {
+            D_800BF9ED = 0x14;
+            H(a, 0x58) = 0;
+            H(a, 0x40) = 4;
+            a[6]++;
+            D_800E8008.fx = 0x8DA;
+            D_800E8008.fy = -0x320;
+            D_800E8008.fz = 0x128C;
+            D_1F8000D0.at[0].hi = 0xBEC;
+            D_1F8000D0.at[1].hi = -0x3E8;
+            D_1F8000D0.at[2].hi = 0xC73;
+        }
+        break;
+    case 3:
+        func_8003315C(a);
+        D_800E806C = 7;
+        D_800BF9ED = 0x1E;
+        H(a, 0x4A) = -0x3000;
+        a[6]++;
+        func_80054D14(a, 0x5A, 2);
+    case 4:
+        H(a, 0x4A) += 0x180;
+        if (H(a, 0x4A) > 0x3000) {
+            H(a, 0x4A) = 0x3000;
+        }
+        H(a, 0x2E) += 0xA;
+        W(a, 0x30) += H(a, 0x4A) << 8;
+        if (H(a, 0x4A) > 0 && H(a, 0x32) >= -0x36F) {
+            func_80074590(3, 0, 0);
+            H(a, 0x32) = -0x370;
+            H(a, 0x4A) = -0x2000;
+            a[6]++;
+        }
+        H(a, 0x58) = (H(a, 0x58) + 0x200) & 0xFFF;
+        func_8006CBA8(a + 0x2C);
+        break;
+    case 5:
+        a[6]++;
+    case 6:
+        H(a, 0x58) = (H(a, 0x58) + 0x100) & 0xFFF;
+        H(a, 0x4A) += 0x180;
+        if (H(a, 0x4A) > 0x3000) {
+            H(a, 0x4A) = 0x3000;
+        }
+        H(a, 0x2E) += 0xA;
+        W(a, 0x30) += H(a, 0x4A) << 8;
+        if (H(a, 0x4A) > 0) {
+            func_80055D5C(a);
+            func_8005444C(a);
+            if (a[0x29] != 0) {
+                func_80074590(3, 0, 0);
+                H(a, 0x58) = 0;
+                H(a, 0x4A) = -0x1800;
+                a[6]++;
+                func_80054D14(a, 0x19, 0);
+            }
+        }
+        func_8006CBA8(a + 0x2C);
+        break;
+    case 7:
+        H(a, 0x4A) += 0x300;
+        if (H(a, 0x4A) > 0x3000) {
+            H(a, 0x4A) = 0x3000;
+        }
+        H(a, 0x2E) += 8;
+        W(a, 0x30) += H(a, 0x4A) << 8;
+        func_80055D5C(a);
+        func_8005444C(a);
+        if (a[0x29] != 0) {
+            func_80074590(3, 0, 0);
+            H(a, 0x58) = 0;
+            a[6]++;
+            func_80054D14(a, 0x17, 2);
+            D_800E806C = 8;
+        }
+        func_8006CBA8(a + 0x2C);
+        break;
+    case 8:
+        if (arg1 == 1) {
+            func_80054D14(a, 0xC8, 2);
+            H(a, 0x40) = 0x14;
+            a[6]++;
+        }
+        D_1F8000D0.at[0].hi += 8;
+        if (D_1F8000D0.at[0].hi > 0xD48) {
+            D_1F8000D0.at[0].hi = 0xD48;
+        }
+        break;
+    case 9:
+        if (--H(a, 0x40) == 0) {
+            a[6]++;
+            D_800E8008.fx = 0xAA0;
+            D_800E8008.fy = -0x384;
+            D_800E8008.fz = 0xF80;
+        }
+        D_1F8000D0.at[0].hi += 8;
+        if (D_1F8000D0.at[0].hi > 0xD48) {
+            D_1F8000D0.at[0].hi = 0xD48;
+        }
+        break;
+    case 10:
+        D_1F8000D0.at[0].hi += 8;
+        if (D_1F8000D0.at[0].hi > 0xD48) {
+            D_1F8000D0.at[0].hi = 0xD48;
+            func_80054D14(a, 2, 0);
+            D_800BF9ED = 0x28;
+            H(a, 0x40) = 0xA;
+            a[6]++;
+        }
+        break;
+    case 11:
+        a[6]++;
+    case 12:
+        if (D_800BF9ED == 0x32) {
+            func_8006CBA8(a + 0x2C);
+            H(a, 0x40) = 0x14;
+            a[6]++;
+        }
+        break;
+    case 2:
+    case 13:
+        if (--H(a, 0x40) == 0) {
+            a[6]++;
+        }
+        break;
+    case 14:
+        func_80070724(0xA, 1, 0);
+        a[6] = 0;
+        a[5]++;
+        break;
+    }
+}
 
 s32 func_8018AAA4(u8 *a, s32 target, s32 cur)
 {
@@ -99,7 +303,6 @@ INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018AC84);
 
 INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018B924);
 
-extern u8 D_800BF9ED;
 extern u16 D_1F80017C;
 void func_8018BD30(u8 *a)
 {
