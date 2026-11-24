@@ -2582,7 +2582,53 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011FF44);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80120160);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80120378);
+extern u8 D_800BF928;
+extern u8 D_8013E530[];
+extern u8 D_8013E5F0[];
+extern u8 D_8013E638[];
+
+s32 func_80120378(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        a[6]++;
+        func_80077C40(a, D_80140F7C_8010, 0x17);
+        *(s16 *)(a + 0x56) = -0x200;
+        break;
+    case 1:
+        if (a[0x2B] == 3) {
+            a[6]++;
+            func_80042354(1, 1);
+        }
+        break;
+    case 2:
+        a[6]++;
+        func_80040CDC(a, D_80140F7C_8010, D_8013E530);
+        a[0x70] = 1;
+        break;
+    case 3:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[6]++;
+            if (D_800BF928 == 0) {
+                func_80040CDC(a, D_80140F7C_8010, D_8013E5F0);
+            } else {
+                func_80040CDC(a, D_80140F7C_8010, D_8013E638);
+            }
+            a[0x70] = 1;
+        }
+        break;
+    case 4:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[6] = 0;
+            func_80042310();
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateIceBlockAndSculptureQuestActor);
 
