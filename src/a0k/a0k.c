@@ -3004,7 +3004,189 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_UpdateBerryNutsHostDialogue);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801147D0);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_UpdateTinyMouseVillageNpcActor);
+extern u8 D_8011CBB4[];
+extern u8 D_8001B4DC[];
+extern u8 D_8011CC9C[];
+extern u8 D_800BF9C3;
+extern s32 D_800BF858;
+void func_80112D80();
+
+void f_UpdateTinyMouseVillageNpcActor(u8 *a)
+{
+    s8 **g;
+    u8 *p;
+    u8 *s;
+    u8 v;
+    u8 k;
+
+    switch (a[4]) {
+    case 0:
+        g = D_800ECF58;
+        if (func_800519E0(a, 0xF, g[0x12], D_8011CBB4) != 0) {
+            break;
+        }
+        *(s8 **)(a + 0x3C) = g[0x13];
+        a[0] = 9;
+        H(a, 0x80) = 0xB4;
+        H(a, 0x82) = 0x168;
+        H(a, 0x84) = 0x50;
+        H(a, 0x86) = 0x90;
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        a[4]++;
+        p = func_8003315C(a);
+        if (p != NULL) {
+            *(void **)(p + 0x1C) = func_80112D80;
+        }
+        switch (a[3]) {
+        case 1:
+            if (D_800BF9C3 & 0x80) {
+                a[4] = 3;
+                break;
+            }
+            func_80077C40(a, D_8001B4DC, 5);
+            break;
+        case 2:
+            if (D_800BF9C3 & 0x80) {
+                a[4] = 3;
+                break;
+            }
+            func_80077C40(a, D_8001B4DC, 9);
+            break;
+        case 3:
+            if (D_800BF9C3 & 0x80) {
+                a[4] = 3;
+                break;
+            }
+            func_80077C40(a, D_8001B4DC, 8);
+            func_80051B04(*(void **)(a + 0xDC), 0x12, 0x15);
+            break;
+        case 4:
+            if (D_800BF9C3 & 0x80) {
+                a[4] = 3;
+                break;
+            }
+            func_80077C40(a, D_8001B4DC, 3);
+            break;
+        case 5:
+            s = (u8 *)&D_800BF870;
+            v = s[0x153];
+            if (v & 0x80) {
+                D_800BF858 = 0x708;
+                a[5] = 0x63;
+            } else {
+                s[0x1E2] = 0;
+                if (v == 0) {
+                    if (s[0x8C] != 0) {
+                        a[5] = 5;
+                    } else if (s[0x8B] != 0) {
+                        a[5] = 4;
+                    } else if (s[0x8A] != 0) {
+                        a[5] = 1;
+                    } else {
+                        a[5] = 0;
+                    }
+                } else if (v == 1 || v == 3) {
+                    k = s[0x8C];
+                    if (k == 0xFF) {
+                        a[5] = 8;
+                    } else if (k != 0) {
+                        if (*(u16 *)(s + 0x1B4) >= 0xC8) {
+                            a[5] = 6;
+                        } else {
+                            a[5] = 7;
+                        }
+                    } else {
+                        a[5] = 2;
+                    }
+                } else {
+                    k = s[0x8C];
+                    if (k == 0xFF) {
+                        a[5] = 8;
+                    } else if (k != 0) {
+                        if (*(u16 *)(s + 0x1B4) >= 0xC8) {
+                            a[5] = 6;
+                        } else {
+                            a[5] = 7;
+                        }
+                    } else {
+                        a[5] = 3;
+                    }
+                }
+                D_800BF9C3 = 0;
+            }
+            func_80077C40(a, D_8001B4DC, 0);
+            H(a, 0x56) = 0x600;
+            break;
+        case 6:
+            if (D_800BF9C3 & 0x80) {
+                a[4] = 3;
+                break;
+            }
+            func_80077C40(a, D_8001B4DC, 5);
+            break;
+        }
+        break;
+    case 1:
+        func_8007778C(a);
+        switch (a[3]) {
+        case 1:
+            func_80113488(a);
+            break;
+        case 2:
+            func_801136F0(a);
+            break;
+        case 3:
+            switch (a[6]) {
+            case 0:
+                if (a[0x2B] == 3) {
+                    a[6] = 1;
+                    func_80042354(1, 3);
+                }
+                break;
+            case 1:
+                a[6] = 2;
+                func_80040CDC(a, D_8001B4DC, D_8011CC9C);
+                a[0x70] = 1;
+                break;
+            case 2:
+                func_80041098(a);
+                if (a[0x70] == 0xFF) {
+                    a[6] = 0;
+                    func_80042310();
+                }
+                break;
+            }
+            break;
+        case 4:
+            func_80113A7C(a);
+            break;
+        case 5:
+            f_UpdateBerryNutsHostDialogue(a);
+            if (H(a, 0xE) == 1) {
+                s16 m = H(*(u8 **)(a + 0x38), 2);
+                if (m == 1) {
+                    func_80074590(0x10, -3, 0);
+                } else if (m == 2) {
+                    func_80074590(0x81, 6, 0);
+                }
+            }
+            break;
+        case 6:
+            func_801147D0(a);
+            break;
+        }
+        func_8004190C(a);
+        func_800518FC(a);
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_80114EAC(u8 *a)
 {
