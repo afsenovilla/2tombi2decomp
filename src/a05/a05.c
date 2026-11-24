@@ -5605,7 +5605,117 @@ void func_8012B188(u8 *a)
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateIceBlockAndSculptureActor);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012B824);
+void func_801327F8(void *a0, s32 a1);
+
+void func_8012B824(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 0x21) != 0) {
+            break;
+        }
+        a[0] = 1;
+        *(s16 *)(a + 0x80) = 0xA0;
+        *(s16 *)(a + 0x82) = 0x140;
+        *(s16 *)(a + 0x84) = 0xA0;
+        *(s16 *)(a + 0x86) = 0x140;
+        *(s16 *)(a + 0x58) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x54) = 0;
+        if (func_8004766C(a) == 0) {
+            break;
+        }
+        func_80049760(a);
+        *(s16 *)(a + 0x60) = D_1F8001A0_b0de;
+        *(s16 *)(a + 0x62) = 0;
+        a[0xBE] = 0;
+        func_8004130C(a, 0);
+        func_800517F8(a);
+        *(s16 *)(a + 0x44) = 0;
+        *(s16 *)(a + 0x4A) = 0;
+        a[0x5F] = 0;
+        a[0x29] = 0;
+        if (!(D_800BFE56 & 0x20)) {
+            a[4]++;
+        } else {
+            a[4] = 4;
+        }
+        break;
+    case 1:
+        if (a[0xBF] == 0 || D_1F800207_9c67 >= 3) {
+            func_8007778C(a);
+        }
+        if (func_8012B118(a) != 0) {
+            func_8004766C(a);
+            if (!(a[0x29] & 0x80)) {
+                *(s16 *)(a + 0x32) = (s16)(*(s16 *)(a + 0x32) + 0x10) + (*(s16 *)(a + 0x50) >> 4);
+                if (func_800455C0(a, 0, (s16)(*(s16 *)(a + 0x86) - *(s16 *)(a + 0x84)), *(s16 *)(a + 0x60)) == 1) {
+                    func_80049674(a);
+                    *(s16 *)(a + 0x60) = D_1F8001A0_b0de;
+                    a[0x29] |= 0x40;
+                }
+            }
+            if (a[0x29] & 0xC0) {
+                if (*(s16 *)(a + 0x50) != 0) {
+                    if (*(s16 *)(a + 0x50) >= 0x100) {
+                        func_8012B188(a);
+                    }
+                    *(s16 *)(a + 0x50) = 0;
+                }
+            } else {
+                *(s16 *)(a + 0x50) += 0x20;
+                if (*(s16 *)(a + 0x50) >= 0x1000) {
+                    *(s16 *)(a + 0x50) = 0x1000;
+                }
+            }
+            func_800517F8(a);
+        }
+        a[0x5F] = 0;
+        a[0x29] = 0;
+        break;
+    case 2:
+        func_80113294(a, a[0x5E]);
+        func_80074590(0x88, 0, 0);
+        func_801327F8(a, 3);
+        func_801327F8(a, 4);
+        func_801327F8(a, 5);
+        a[4] = 3;
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    case 4:
+        switch (a[5]) {
+        case 0:
+            a[5]++;
+            break;
+        case 1:
+            func_8012B118(a);
+            func_8004766C(a);
+            if (!(a[0x29] & 0x80)) {
+                *(s16 *)(a + 0x32) = (s16)(*(s16 *)(a + 0x32) + 0x10) + (*(s16 *)(a + 0x50) >> 4);
+                if (func_800455C0(a, 0, (s16)(*(s16 *)(a + 0x86) - *(s16 *)(a + 0x84)), *(s16 *)(a + 0x60)) == 1) {
+                    func_80049674(a);
+                    *(s16 *)(a + 0x60) = D_1F8001A0_b0de;
+                    a[0x29] |= 0x40;
+                }
+            }
+            if (a[0x29] & 0xC0) {
+                *(s16 *)(a + 0x50) = 0;
+                func_800517F8(a);
+                a[4] = 1;
+            } else {
+                *(s16 *)(a + 0x50) += 0x20;
+                if (*(s16 *)(a + 0x50) >= 0x1000) {
+                    *(s16 *)(a + 0x50) = 0x1000;
+                }
+            }
+            break;
+        }
+        a[0x29] = 0;
+        break;
+    }
+}
 
 typedef struct { u8 pad[0x60]; s32 unk60; s32 unk64; } AreaStateF58;
 typedef struct { u8 pad0[7]; u8 unk7; u8 pad8[6]; u8 unkE; u8 unkF; u8 pad10[0x21]; u8 unk31; s16 unk32; } AreaState808_E;
