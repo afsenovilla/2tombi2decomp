@@ -6714,7 +6714,49 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012757C);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaBridgeMotion);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaBridgeRevealCamera);
+extern u8 D_80137660[];
+
+s32 f_UpdatePipeAreaBridgeRevealCamera(u8 *a) {
+    u8 *g = D_800E8008;
+    s32 pad[4];
+
+    switch (a[0x5E]) {
+    case 0:
+        func_8006E1C0(7);
+        H(g, 0x3A) = D_1F800160_3621;
+        H(g, 0x3E) = D_1F800162;
+        H(g, 0x42) = D_1F800164_d75f; 
+        func_8006CC1C(g, D_80137660, 0x40);
+        a[0x5E]++;
+        break;
+    case 1:
+        if (func_8006CDCC(g) == 1) {
+            a[0x5E]++;
+        }
+        break;
+    case 2:
+        if (H(*(u8 **)(a + 0x10), 0x4A) == 0) {
+            H(a, 0x40) = 0x30;
+            a[0x5E]++;
+        }
+        break;
+    case 3:
+        if (H(a, 0x40) != 0) {
+            H(a, 0x40)--;
+        } else {
+            func_8006E1E4();
+            a[0x5E]++;
+        }
+        break;
+    case 4:
+        if (g[0x66] == 3) {
+            func_80042310();
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaBridgeActor);
 
