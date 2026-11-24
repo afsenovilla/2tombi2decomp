@@ -1187,7 +1187,17 @@ void func_80110FB4(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011105C);
+void func_8012E454();
+
+u8 *func_8011105C(void) {
+    u8 *p = func_8007A980(2, 3, 1);
+    if (p != NULL) {
+    M2C_FIELD(p, void **, 0x1C) = func_8012E454;
+    p[2] = 0;
+    p[0x28] |= 0x80;
+    return p;
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801110A4);
 
