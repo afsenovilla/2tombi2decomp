@@ -2137,15 +2137,168 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateCoalMiningTownEntranceOpeningSeq
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80114380);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateTurboTrolleyLiftSequence);
+#define GH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define GW(p, o) (*(s32 *)((u8 *)(p) + (o)))
+#define GPART(a, i) (*(u8 **)((u8 *)(a) + (i) * 4 + 0xC0))
+extern u8 D_800BF909;
+extern s16 D_800E7EB6;
+/* func_80115CA0, inlined */
+static inline s32 lift_ready(u8 *a, s32 b) {
+    u8 *t = D_800E7E80;
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateQuickTrolleyDescentSequence);
+    if (*(s16 *)(t + 0x36) >= 0x4149) {
+        *(s16 *)(t + 0x36) = 0x4149;
+        if (b == 2) {
+            if (D_1F800137 == 1) {
+                return 1;
+            }
+            if (D_800BF909 == 0xFF) {
+                D_1F800137 = b;
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+void f_UpdateTurboTrolleyLiftSequence(u8 *a) {
+    s16 h;
+    s32 i, k;
+    s32 s = a[5];
+    u8 *c = D_800E8008;
+    u8 *t;
+
+    switch (s) {
+    case 0:
+        if (lift_ready(a, 2) != 0) {
+            a[5]++;
+        }
+        break;
+    case 1:
+        D_1F800190 = 0x80;
+        t = D_800E7E80;
+        if (MEMBER_AT(s16, a, 0x36) <= GH(t, 0x36)) {
+            GH(t, 0x36) = GH(a, 0x36);
+            D_1F800190 = 0;
+            a[5]++;
+            GH(c, 0x6E) = 0x60;
+            GH(c, 0x70) = 0x400;
+            c[0x64] = s;
+            GH(c, 0x6C) = 0x6D6;
+            func_8006CBA8(a + 0x2C);
+            GH(a, 0x42) = s;
+        }
+        break;
+    case 2:
+        k = (u16)GH(a, 0x60) - 0xC8;
+        h = ((u16)GH(a, 0x36) - k) * 8;
+        GH(a, 0x44) = h;
+        if (GH(a, 0x36) < 0x5208) {
+            GW(a, 0x34) += h << 8;
+        }
+        for (i = 1; i < a[8]; i++) {
+            GH(GPART(a, i), 0xC) -= GH(a, 0x44) >> 3;
+        }
+        if (--GH(a, 0x42) == 0) {
+            func_80074590(0x8D, 0, 0);
+            if (h > 0x2000) {
+                h = 0x2000;
+            }
+            GH(a, 0x42) = (0x3000 - h) >> 8;
+        }
+        D_800E7EB6 = GH(a, 0x36);
+        func_8006CBA8(a + 0x2C);
+        break;
+    }
+}
 
 #define GH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define GW(p, o) (*(s32 *)((u8 *)(p) + (o)))
 #define GPART(a, i) (*(u8 **)((u8 *)(a) + (i) * 4 + 0xC0))
 extern u8 D_1F8000D0_b839[];
-extern s16 D_800E7EB6;
+extern u8 D_800E806C;
+extern u8 D_800BF9FB_3655;
+
+void f_UpdateQuickTrolleyDescentSequence(u8 *a) {
+    s16 h;
+    s32 i, k;
+    u8 *sc;
+
+    switch (a[5]) {
+    case 0:
+        GH(a, 0x36) = 0x4E20;
+        GH(a, 0x44) = 0x2000;
+        a[5]++;
+        D_800E806C = 7;
+        {
+            u8 *s0 = D_1F8000D0_b839;
+            GH(s0, 2) = 0x2E61;
+            GH(s0, 6) = -0x11D1;
+            GH(s0, 0xA) = 0x3EBF;
+        }
+        GH(a, 0x42) = (0x3000 - GH(a, 0x44)) >> 8;
+        break;
+    case 1:
+        if (--GH(a, 0x42) == 0) {
+            func_80074590(0x8D, 0, 0);
+            GH(a, 0x42) = (0x3000 - GH(a, 0x44)) >> 8;
+        }
+        k = (u16)GH(a, 0x60) - 0xC8;
+        h = ((u16)GH(a, 0x36) - k) * 8;
+        if (h < 0x2000) {
+            GH(a, 0x44) = h;
+        }
+        GW(a, 0x34) -= GH(a, 0x44) << 8;
+        for (i = 1; i < a[8]; i++) {
+            GH(GPART(a, i), 0xC) += GH(a, 0x44) >> 3;
+        }
+        if (GH(a, 0x36) < GH(a, 0x60) + 0x12C) {
+            sc = D_1F8000D0_b839;
+            if ((GH(sc, 2) -= 8) < 0x2D71) {
+                GH(sc, 2) = 0x2D71;
+            }
+            if ((GH(sc, 6) -= 8) < -0x12A9) {
+                GH(sc, 6) = -0x12A9;
+            }
+            if ((GH(sc, 0xA) += 0x10) > 0x409F) {
+                GH(sc, 0xA) = 0x409F;
+            }
+        }
+        if (GH(a, 0x36) < GH(a, 0x60)) {
+            GH(a, 0x36) = GH(a, 0x60);
+            GH(a, 0x40) = 6;
+            a[5]++;
+        }
+        break;
+    case 2:
+        {
+            s32 r2 = func_8009A450() & 0xF;
+            s32 k2 = (u16)GH(a, 0x60) - 8;
+            GH(a, 0x36) = k2 + r2;
+        }
+        func_800521F4(0, 0, 0x81, 2);
+        if (--GH(a, 0x40) == 0) {
+            GH(a, 0x40) = 0x28;
+            a[5]++;
+        }
+        break;
+    case 3:
+        if (--GH(a, 0x40) == 0) {
+            D_800E806C = 1;
+            D_800BF9FB_3655 = 2;
+            a[5] = 0;
+        }
+        break;
+    }
+    func_8006CBA8(a + 0x2C);
+    if (func_8007778C(a) != 0) {
+        func_800517F8(a);
+    }
+}
+
+#define GH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define GW(p, o) (*(s32 *)((u8 *)(p) + (o)))
+#define GPART(a, i) (*(u8 **)((u8 *)(a) + (i) * 4 + 0xC0))
 void func_80114A28(u8 *a) {
     s16 h;
     s32 i, k;
@@ -2238,7 +2391,6 @@ void func_80114A28(u8 *a) {
     }
 }
 
-extern u8 D_800BF9FB_3655;
 void f_UpdatePipeAreaTrolleyCutscene(u8 *a) {
     u8 *t;
 
@@ -2304,7 +2456,6 @@ void func_80115C74(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
 }
 
-extern u8 D_800BF909;
 s32 func_80115CA0(u8 *a, s32 b) {
     u8 *t = D_800E7E80;
 
