@@ -14137,7 +14137,24 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaSupportSwingMotion);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80063B94);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80063ECC);
+typedef struct Pool108_a810 { u8 pad0[0x24]; struct Pool108_a810 *next; u8 type; u8 pad29[0xDF]; } Pool108_a810;
+extern Pool108_a810 D_80100690[4];
+extern Pool108_a810 *D_800F273C;
+extern void *D_800F2738_a810;
+extern void *D_800F23A0_a810;
+
+void func_80063ECC(u8 *a)
+{
+    u8 *p = *(u8 **)(a + 0x10);
+    s16 r;
+    s32 z;
+
+    *(u16 *)(a + 0x32) = *(u16 *)(p + 0x30) + ((rcos(*(s16 *)(a + 0x58)) * *(s16 *)(a + 0x64)) >> 12);
+    r = (rsin(*(s16 *)(a + 0x58)) * *(s16 *)(a + 0x64)) >> 12;
+    z = (rsin(*(s16 *)(a + 0x56)) * r) >> 12;
+    *(u16 *)(a + 0x2E) = *(u16 *)(p + 0x2C) - ((rcos(*(s16 *)(a + 0x56)) * r) >> 12);
+    *(u16 *)(a + 0x36) = *(u16 *)(p + 0x34) + z;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80063F9C);
 
@@ -20941,7 +20958,25 @@ s32 f_ResolveEffectEightByteStreamPayload(FreeNode *a)
     ((u8 *)a)[0x5E] = 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007A810);
+void func_8007A810(void)
+{
+    s32 i;
+    u8 k;
+
+    memset(D_800E7E80, 0, 0x184);
+    D_800F2738_a810 = 0;
+    D_800F23A0_a810 = 0;
+    i = 0;
+    k = 5;
+    for (; i < 4; i++) {
+        memset(&D_80100690[i], 0, sizeof(D_80100690[i]));
+        D_80100690[i].next = &D_80100690[i + 1];
+        D_80100690[i].type = k;
+    }
+    D_80100690[i - 1].next = 0;
+    D_800F273C = D_80100690;
+    D_800F2410 = 4;
+}
 
 extern s8 D_1F80017C[];
 void func_8007A8E0(void) {
