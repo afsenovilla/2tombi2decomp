@@ -6592,7 +6592,110 @@ u8 *func_8012B44C(void)
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusThrownQuestObject);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusClosetKeyActor);
+typedef struct { s32 x, y, z; } V3w;
+s32 f_TestCircusActorForwardCollision(u8 *a);
+
+void f_UpdateCircusClosetKeyActor(u8 *a)
+{
+    u8 *p;
+    u8 *p_f;
+
+    switch (a[4]) {
+    case 0:
+        func_80051B70(a, 0xC, 0x27);
+        a[0xD] = 0;
+        a[0xB] = 0;
+        *(s16 *)(a + 0x80) = 0x64;
+        *(s16 *)(a + 0x82) = 0xC8;
+        *(s16 *)(a + 0x84) = 0x64;
+        *(s16 *)(a + 0x86) = 0xC8;
+        *(s16 *)(a + 0x58) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x54) = 0;
+        switch (a[3]) {
+        case 0:
+            a[0] = 1;
+            a[0x5E] = 1;
+            break;
+        case 1:
+            a[0] = 2;
+            a[0x5E] = 0;
+            break;
+        case 3:
+            a[0] = 2;
+            a[0x5E] = 3;
+            break;
+        }
+        a[3] = 0;
+        a[4]++;
+        break;
+    case 1:
+        if (D_800BF816 != 0) {
+            if (a[0x5E] == 3) {
+                break;
+            }
+            if (D_800BFA45 & 1) {
+                a[4] = 3;
+                break;
+            }
+            if (a[0x5E] == 1) {
+                *(s16 *)(a + 0x2E) = 0x2040;
+                *(s16 *)(a + 0x32) = -0xA64;
+                *(s16 *)(a + 0x36) = 0x1C69;
+                a[6] = 0;
+                a[5] = 0;
+            }
+            break;
+        }
+        switch (a[0x5E]) {
+        case 0:
+            if (D_800BF8D8 != 0) {
+                a[0] = 1;
+                *(s16 *)(a + 0x56) = 0;
+                *(s16 *)(*(u8 **)(a + 0xC0) + 0xC) = 0;
+                a[0x5E] = 1;
+                a[6] = 0;
+                a[5] = 0;
+                break;
+            }
+            p = *(u8 **)(a + 0x10);
+            if ((a[1] = p[1]) != 0) {
+                func_80077EFC(a);
+            }
+            *(V3w *)(a + 0x2C) = *(V3w *)(p + 0x2C);
+            *(s16 *)(a + 0x32) += 0xCC;
+            *(s16 *)(a + 0x56) = *(s16 *)(p + 0x56);
+            *(s16 *)(*(u8 **)(a + 0xC0) + 0xC) += *(s16 *)(p + 0x44) >> 5;
+            break;
+        case 1:
+            func_8007778C(a);
+            f_TestCircusActorForwardCollision(a);
+            break;
+        case 2:
+            f_UpdateCircusThrownQuestObject(a);
+            break;
+        case 3:
+            p_f = *(u8 **)(a + 0x10);
+            if ((a[1] = p_f[1]) != 0) {
+                func_80077EFC(a);
+            }
+            *(V3w *)(a + 0x2C) = *(V3w *)(p_f + 0x2C);
+            *(s16 *)(a + 0x32) += 0xF5;
+            *(s16 *)(a + 0x56) = *(s16 *)(p_f + 0x56);
+            *(s16 *)(*(u8 **)(a + 0xC0) + 0xC) += *(s16 *)(p_f + 0x44) >> 5;
+            break;
+        }
+        if (a[1] != 0) {
+            func_800517F8(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 u8 *func_8012C104(void *a0, u8 a1)
 {
