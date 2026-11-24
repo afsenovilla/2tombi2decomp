@@ -8467,7 +8467,48 @@ s32 func_801278D8(PartsOwner *a)
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateBlastTheRockSequence);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80127EDC);
+extern u16 D_80138A18[];
+
+void func_80127EDC(u8 *a) {
+    s32 one = 1;
+    s32 i;
+
+    switch (a[4]) {
+    case 0:
+        if (func_801278D8(a) == 0) {
+            *(s16 *)(a + 0x80) = 0x50;
+            *(s16 *)(a + 0x82) = 0xA0;
+            *(s16 *)(a + 0x84) = 0x96;
+            *(s16 *)(a + 0x86) = 0x96;
+            a[0] = one;
+            a[0x29] = 0;
+            a[0xBF] = 0;
+            a[4]++;
+            for (i = 0; i < a[9]; i++) {
+                *(s16 *)(*(u8 **)(a + i * 4 + 0xC0) + 8) = 0xF00;
+            }
+        }
+        break;
+    case 1:
+        if (D_800BF816 == 0) {
+            if (func_8007778C(a)) {
+                f_UpdateBlastTheRockSequence(a);
+                func_800517F8(a);
+            }
+        } else {
+            *(u16 *)(a + 0x2E) = D_80138A18[0];
+            *(u16 *)(a + 0x32) = D_80138A18[1];
+            *(u16 *)(a + 0x36) = D_80138A18[2];
+        }
+        a[0x29] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_80128034(u8 *a, void *b) {
     switch (a[5]) {
