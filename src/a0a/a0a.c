@@ -2728,7 +2728,48 @@ INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80114630);
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80114784);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_801149D8);
+typedef struct { s16 v[4]; s16 k; } PartDef49D8;
+typedef struct { u8 pad[0xC0]; u8 *parts[4]; } PartsOwner49D8;
+extern PartDef49D8 D_8011EC54[];
+extern s16 D_800ED098;
+
+void func_801149D8(PartsOwner49D8 *a)
+{
+    s32 i;
+    u8 *q;
+
+    a->pad[8] = 2;
+    if (D_800ED098 < a->pad[8]) {
+        a->pad[4] = 3;
+        return;
+    }
+    a->pad[9] = 2;
+    a->pad[0] = 1;
+    *(s16 *)(a->pad + 0x80) = 0x50;
+    *(s16 *)(a->pad + 0x82) = 0xA0;
+    *(s16 *)(a->pad + 0x84) = 0x5A;
+    *(s16 *)(a->pad + 0x86) = 0xB4;
+    a->pad[0xD] = 0;
+    a->pad[0xB] = 0;
+    a->pad[0x29] = 0;
+    a->pad[0x2B] = 0;
+    a->pad[0x5E] = 0;
+    a->pad[0x46] = 0;
+    a->pad[4]++;
+    for (i = 0; i < a->pad[8]; i++) {
+        q = func_8007AAE8();
+        a->parts[i] = q;
+        *(s16 *)(q + 6) = D_8011EC54[i].v[0];
+        *(s16 *)(a->parts[i] + 0) = D_8011EC54[i].v[1];
+        *(s16 *)(a->parts[i] + 2) = D_8011EC54[i].v[2];
+        *(s16 *)(a->parts[i] + 4) = D_8011EC54[i].v[3];
+        *(s16 *)(a->parts[i] + 8) = 0;
+        *(s16 *)(a->parts[i] + 0xA) = 0;
+        *(s16 *)(a->parts[i] + 0xC) = 0;
+        func_80051B04(a->parts[i], 0xC, D_8011EC54[i].k);
+    }
+    *(s16 *)(a->pad + 0x60) = 0;
+}
 
 typedef struct { s16 x, y, z; } V3;
 extern V3 D_8011EC68[];
