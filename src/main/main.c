@@ -7572,7 +7572,53 @@ s32 func_80043A10(void *arg0) {
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80043A40);
+extern u8 D_1F800233_33a2;
+void f_StopNonReservedSequencedMusic(void);
+
+s32 func_80043A40(u8 *a)
+{
+    f_StopNonReservedSequencedMusic();
+    switch (a[0x78]) {
+    case 0:
+        switch (*(s16 *)(a + 0x72)) {
+        case 1:
+        case 3:
+            D_1F800233_33a2 = 1;
+        case 0:
+            f_PlayOrStopVoiceLine(*(s16 *)(a + 0x74));
+            if (*(s16 *)(a + 0x72) == 3) {
+                a[0x78]++;
+                break;
+            }
+            return 1;
+        case 2:
+            D_1F800233_33a2 = 0;
+            *(s16 *)(a + 0x72) = 0;
+            a[0x78] = 2;
+            break;
+        default:
+            return 0;
+        }
+        break;
+    case 1:
+        if (--*(s16 *)(a + 0x76) > 0) {
+            break;
+        }
+        D_1F800233_33a2 = 0;
+        return 1;
+    case 2:
+        if (++*(s16 *)(a + 0x72) >= 0x3C) {
+            return 1;
+        }
+        if (!(D_800BE0E4 & 0x80)) {
+            return 1;
+        }
+        break;
+    default:
+        return 0;
+    }
+    return 0;
+}
 
 extern s8 D_800BF84C;
 s32 f_SetSharedScriptControlFlag(s32 arg0, s32 arg1) {
@@ -19163,7 +19209,6 @@ extern u8 D_1F800259;
 extern u8 D_1F80025A;
 extern u8 D_1F80025B;
 extern s32 D_1F800214_f5da;
-extern u8 D_1F800233_33a2;
 extern u8 D_1F80023B_0a71;
 void f_SetDoubleBufferedClearColor(u8 r, u8 g, u8 b);
 void func_800796DC(void)
