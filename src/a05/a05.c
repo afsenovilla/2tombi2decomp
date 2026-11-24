@@ -2105,7 +2105,55 @@ void func_80114CC8(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80114F88);
+/* func_80115740 inlined, its table as a macro argument (a parameter gets the address loaded early) */
+#define SUB_TALK(p, T) switch ((p)[6]) { \
+    case 0:                                                                                                            \
+        if ((p)[0x2B] == 3) {                                                                                          \
+            (p)[6]++;                                                                                                  \
+            func_80042354(1, 1);                                                                                       \
+        }                                                                                                              \
+        break;                                                                                                         \
+    case 1:                                                                                                            \
+        (p)[6] = 2;                                                                                                    \
+        func_80040CDC(p, D_80140F7C_8010, T);                                                                               \
+        (p)[0x70] = 1;                                                                                                 \
+        break;                                                                                                         \
+    case 2:                                                                                                            \
+        func_80041098(p);                                                                                              \
+        if ((p)[0x70] == 0xFF) {                                                                                       \
+            (p)[6] = 0;                                                                                                \
+            func_80042310();                                                                                           \
+        }                                                                                                              \
+        break;                                                                                                         \
+    } /* end of SUB_TALK */
+
+void func_80114F88(u8 *a)
+{
+    switch (a[5]) {
+    case 0:
+        if (func_8011541C_inl() != 0) {
+            a[5] = 2;
+        } else {
+            a[5] = 1;
+        }
+        break;
+    case 1:
+        SUB_TALK(a, D_8013CA80);
+        break;
+    case 2:
+        if (func_801149A8(a) != 0) {
+            if (D_800BF925 == 0xFF) {
+                a[5] = 3;
+            } else {
+                a[5] = 1;
+            }
+        }
+        break;
+    case 3:
+        SUB_TALK(a, D_8013CAB0);
+        break;
+    }
+}
 
 extern s32 D_800ECF94;
 extern s32 D_800ECF90;
