@@ -2761,7 +2761,89 @@ u8 *func_8011C364(s32 a, s32 b) {
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011C3BC);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011C4E0);
+extern u8 D_800BF9B4;
+extern u8 D_800BF841;
+#define AH(o) (*(s16 *)(a + (o)))
+
+void func_8011C4E0(u8 *a)
+{
+    u8 *c = D_800E8008;
+    u8 *d;
+    s32 v;
+
+    switch (a[5]) {
+    case 0:
+        if (D_800BF9B4 & 0x10) {
+            AH(0x86) = 0x7D0;
+            AH(0xBA) = 0x1400;
+            a[5] = 7;
+        } else {
+            a[5]++;
+        }
+        break;
+    case 1:
+        if (a[0x2B] != 0) {
+            D_1F800137_104c = 2;
+            D_800BF841 = 1;
+            D_800BF870.pad1[0x143] |= 0x10;
+            AH(0x40) = 10;
+            a[5]++;
+            c[0x64] = 8;
+            d = D_1F8000D0;
+            {
+                s16 x = AH(0x2E) - *(s16 *)(d + 0xE);
+                s16 z = AH(0x36) - *(s16 *)(d + 0x16);
+                *(s16 *)(d + 2) += x;
+                *(s16 *)(d + 0xA) += z;
+            }
+            func_8006CBA8(a + 0x2C);
+        }
+        break;
+    case 2:
+        func_8006CBA8(a + 0x2C);
+        **(s16 **)(a + 0xC0) = (D_1F80017C_0fe7 & 1) * 6;
+        v = func_8009A450();
+        *(s16 *)(*(u8 **)(a + 0xC0) + 4) = ((v & 3) - 2) * 6;
+        if (--AH(0x40) == 0) {
+            AH(0x40) = 0x10;
+            a[5]++;
+        }
+        break;
+    case 3:
+        if (--AH(0x40) == 0) {
+            AH(0x40) = 0x10;
+            a[5]++;
+        }
+        break;
+    case 4:
+        *(s16 *)(c + 0x3E) += 100;
+        if (--AH(0x40) == 0) {
+            a[5]++;
+            **(s16 **)(a + 0xC0) = 0;
+            *(s16 *)(*(u8 **)(a + 0xC0) + 4) = 0;
+            AH(0x40) = 8;
+        }
+        break;
+    case 5:
+        AH(0xBA) += 0x80;
+        if (--AH(0x40) == 0) {
+            AH(0x40) = 0x10;
+            AH(0x86) = 0x7D0;
+            a[5]++;
+        }
+        break;
+    case 6:
+        if (--AH(0x40) == 0) {
+            a[5]++;
+            D_1F800137_104c = 0;
+            D_800BF841 = 0;
+            c[0x64] = 0;
+        }
+        break;
+    case 7:
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011C784);
 
@@ -3832,7 +3914,6 @@ done:
     }
 }
 
-extern u8 D_800BF841;
 extern u8 D_800E806E;
 extern u16 D_1F8000D6;
 void func_8012333C(u8 *a) {
