@@ -5797,7 +5797,67 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801354B8);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80135570);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80135698);
+void func_80135864(void *arg0);
+
+void func_80135698(u8 *a)
+{
+    s32 v;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 6) != 0) {
+            break;
+        }
+        a[0xB] = 0xF;
+        a[0xD] |= 4;
+        (*(u8 **)(a + 0xC0))[0x3F] = 0xC;
+        *(s16 *)(a + 0x80) = 0x7F;
+        *(s16 *)(a + 0x82) = 0xFE;
+        *(s16 *)(a + 0x84) = 0xBE;
+        *(s16 *)(a + 0x86) = 0x114;
+        a[0] = 1;
+        a[0x29] = 0;
+        a[0x2A] = 0;
+        a[4]++;
+        func_80041194(a, *(s16 *)(a + 0x86) - *(s16 *)(a + 0x84), 0, 0);
+        break;
+    case 1:
+        ((void (*)())func_80121C70)(a);
+        v = a[1];
+        goto tail;
+    case 2:
+        switch (a[5]) {
+        case 0:
+        case 1:
+            break;
+        case 2:
+            func_80135864(a);
+            a[4] = 3;
+            return;
+        case 3:
+            *(s16 *)(a + 0x58) += 0x200;
+            *(s16 *)(a + 0x32) += 0x20;
+            if (func_8004766C(a) == 0) {
+                return;
+            }
+            if (func_80049250(a, 0, (s16)(*(u16 *)(a + 0x86) - *(u16 *)(a + 0x84)))) {
+                func_80135864(a);
+                a[4] = 3;
+                return;
+            }
+            break;
+        }
+        v = func_8007778C(a);
+    tail:
+        if (v) {
+            func_800517F8(a);
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_80135864(void *arg0) {
     s32 temp_s1;
