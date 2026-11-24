@@ -405,12 +405,133 @@ void func_8010D004(void) {
     }
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010D0B4);
+typedef struct { s16 a, b, c, d; } SpeedRow8010A8D0;
+extern SpeedRow8010A8D0 D_800A455C_c872[];
+extern SpeedRow8010A8D0 D_800A4574_8b42;
+extern u16 D_1F8000F2;
+#define B8(o) (*(u8 *)(a + (o)))
+#define I16(o) (*(s16 *)(a + (o)))
+#define W16(o) (*(u16 *)(a + (o)))
+
+void func_8010D0B4(u8 *a) {
+    SpeedRow8010A8D0 *p;
+    u32 acc;
+    s32 four = 4;
+    u16 dec, max;
+    s32 t, step, dec2, v, ang;
+    u16 ang2;
+    u8 f;
+
+    if (B8(0x174) & 0x30) {
+        p = &D_800A4574_8b42;
+    } else {
+        p = &D_800A455C_c872[B8(0x6D)];
+    }
+    acc = (u32)(p->a * 5) >> 2;
+    dec = (u32)(p->b * 5) >> 2;
+    max = (u32)(p->c * 5) >> 2;
+    t = (p->d * 5) >> 2;
+    dec2 = t - 0x240;
+    step = t;
+    if (D_800BF808[0xE] != 0 && D_800BF808[0x45] != 0) {
+        v = 0xC0F;
+        I16(0x15E) = v;
+        max = v;
+    } else if (B8(0x165) != 0) {
+        acc = (u32)((s16)acc * 19) >> 4;
+        dec = (s16)dec * 3;
+        v = ((s16)max * 19) >> 4;
+        I16(0x15E) = v;
+        max = v;
+    } else {
+        switch ((s8)B8(0x14B)) {
+        case 1:
+            v = 0xF13;
+            break;
+        case 2:
+            v = 0x1553;
+            break;
+        case 0:
+        default:
+            v = (p->c * 5) >> 2;
+            break;
+        }
+        I16(0x15E) = v;
+    }
+    f = B8(0x147);
+    if (f & 0x80) {
+        W16(0x44) -= step;
+        if (I16(0x44) <= 0) {
+            W16(0x44) = 0;
+            if (B8(0x149) == 4) {
+                W16(0x56) = W16(0x172);
+            }
+            B8(0x149) = 2;
+        }
+        return;
+    }
+    ang = (((f & 0x7F) << 5) - D_1F8000F2 + 0x1000) & 0xFFF;
+    ang2 = ang;
+    if ((u32)(((ang - W16(0x56)) & 0xFFF) - 0x601) < 0x3FF) {
+        acc = four;
+        if (B8(0x149) == acc) {
+            W16(0x44) -= step;
+            if (I16(0x44) <= 0) {
+                W16(0x44) = max;
+                B8(0x149) = 0;
+                W16(0x56) = ang;
+            }
+            return;
+        }
+        if (I16(0x44) >= (s16)max * 3 / 4) {
+            W16(0x172) = ang;
+            B8(0x149) = acc;
+            I16(0x96) = abs(I16(0x44)) / (s16)step - 7;
+            if (I16(0x96) <= 0) {
+                I16(0x96) = 1;
+            }
+            W16(0x44) -= step;
+            return;
+        }
+        W16(0x44) -= dec;
+        if (I16(0x44) < 0) {
+            W16(0x44) = 0;
+        }
+        I16(0x56) = func_800776F8(ang, I16(0x56), 0x80, acc);
+    } else {
+        if (B8(0x149) == 2) {
+            B8(0x149) = 0;
+            W16(0x44) += acc;
+        } else if (B8(0x149) == 4) {
+            W16(0x44) -= step;
+            if (I16(0x44) <= 0) {
+                W16(0x44) = max;
+                B8(0x149) = 0;
+                W16(0x56) = ang;
+            }
+        } else {
+            if (I16(0x44) < (s16)acc) {
+                W16(0x44) = acc;
+            } else if (I16(0x15E) < I16(0x44)) {
+                W16(0x44) -= dec2;
+                if (I16(0x44) < I16(0x15E)) {
+                    W16(0x44) = I16(0x15E);
+                }
+            } else {
+                W16(0x44) += dec;
+                if (I16(0x15E) < I16(0x44)) {
+                    W16(0x44) = I16(0x15E);
+                }
+            }
+            B8(0x149) = 0;
+        }
+        I16(0x56) = func_800776F8(ang2, I16(0x56), 0x80, acc);
+    }
+}
 
 typedef struct { u16 acc, inc, max, dec; } SpeedTbl;
 extern SpeedTbl D_800A455C[];
 extern SpeedTbl D_800A4574;
-extern u16 D_1F8000F2;
 #define S16(o) (*(s16 *)(a + (o)))
 #define U16(o) (*(u16 *)(a + (o)))
 void func_8010D49C(u8 *a)
