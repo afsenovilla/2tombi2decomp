@@ -4152,7 +4152,58 @@ void func_8002F514(s32 kind, s32 owner)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002F738);
+extern u8 D_800E7E81;
+
+void func_8002F738(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+    s16 *p = (s16 *)(a + 0x2C);
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        a[5] = 0;
+        a[6] = 0x20;
+        a[7] = 0;
+        p[3] = (rand() & 0x1FF) + 0x100;
+        *(u16 *)(a + 0x2C) = *(u16 *)(o + 0x2E);
+        p[1] = *(u16 *)(o + 0x32);
+        p[2] = *(u16 *)(o + 0x36);
+    case 1:
+        switch (a[5]) {
+        case 0:
+            if (--a[6] == 0) {
+                a[5]++;
+                func_8002343C(o);
+            }
+            break;
+        case 1:
+            if ((u8)(a[7] += 0xC) >= 0xA0) {
+                a[4] = 2;
+                a[5] = 0;
+                a[7] = 0xA0;
+            }
+            break;
+        }
+        a[1] = D_800E7E81;
+        break;
+    case 2:
+        switch (a[5]) {
+        case 0:
+            a[5] = 1;
+            a[7] = 0;
+        case 1:
+            if (f_GrantPickupHealth(a, 1) != 0) {
+                a[4] = 3;
+            }
+            break;
+        }
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 extern s8 D_1F800088_f8dc[];
 extern s16 D_1F800160_f8dc;
@@ -6061,7 +6112,6 @@ void func_8003A290(u8 *a, u8 *b)
     }
 }
 
-extern u8 D_800E7E81;
 void func_8003A3E8(void *a, u8 *s)
 {
     switch (s[0x3E]) {
