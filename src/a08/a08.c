@@ -7988,7 +7988,36 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013FCD4);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013FEEC);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801401AC);
+extern u8 *D_800A29A8;
+extern u8 *D_800A29A4;
+
+void func_801401AC(u8 *a)
+{
+    s32 k;
+    u8 j;
+    k = a[0x3E];
+    j = k;
+    if (k == 0) {
+    } else if (j == 1) {
+        func_80074590(0x90, 0, 0);
+        CRD_MSG(0x55, D_800A29A8);
+        a[0x50] = 0x14;
+        a[1] = 0;
+        a[0] = 0x6B;
+    } else {
+        CRD_MSG(0x54, D_800A29A4);
+        a[0x50] = 0x1E;
+        a[0x44] = 0;
+        a[0x4B] = 0xFC;
+        a[0x4A] = 0xFC;
+        (a + a[0x46])[0x48] = 0;
+        (a + a[0x46])[0x4E] = 0xFF;
+        a[3] = 0x64;
+        a[0x46] = 0xFF;
+        a[0x47] = 0;
+        a[0] = 0x6D;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80140314);
 
