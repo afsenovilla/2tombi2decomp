@@ -1652,7 +1652,35 @@ void func_8011041C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80110714);
+typedef struct { s16 x, y, z, n; } Pt0714;
+extern Pt0714 D_8011BFB4[];
+
+s32 func_80110714(u8 *a)
+{
+    Pt0714 *p = &D_8011BFB4[H(a, 0x72)];
+
+    switch (a[0x78]) {
+    case 0:
+        H(a, 0x4E) = ((p->x - H(a, 0x2E)) << 8) / p->n;
+        H(a, 0x50) = ((p->y - H(a, 0x32)) << 8) / p->n;
+        H(a, 0x52) = ((p->z - H(a, 0x36)) << 8) / p->n;
+        H(a, 0x40) = p->n;
+        a[0x78]++;
+        break;
+    case 1:
+        W(a, 0x2C) += H(a, 0x4E) << 8;
+        W(a, 0x30) += H(a, 0x50) << 8;
+        W(a, 0x34) += H(a, 0x52) << 8;
+        if (--H(a, 0x40) == 0) {
+            H(a, 0x2E) = p->x;
+            H(a, 0x32) = p->y;
+            H(a, 0x36) = p->z;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", f_UpdateGhostEvilPigRandomRicochetVolley);
 
