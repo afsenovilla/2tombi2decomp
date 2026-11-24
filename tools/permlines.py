@@ -2,14 +2,16 @@
 """Statement-order permuter: move the lines marked `//P` of one function around until it matches.
 
   python3 -I tools/permlines.py FILE.c FUNC [--prog main] [-j N] [--window 12] [--max-pairs 4000] [--slots]
-      [--out FILE.best.c] [--unsafe] [--exhaustive]
+      [--out FILE.best.c] [--unsafe] [--exhaustive] [--max-seconds S]
 
 FILE.c is a ccheck scratch file. Mark each statement to move by ending its line with `//P` (one statement per
 line). Every round tries every single move of one marked line to another line boundary of the function body, then
 (when no single move helps) every pair of moves within --window lines of each line's place, and goes on from the
 best result while the words off (tools/ccheck.py score()) go down. --slots instead permutes the marked lines
 among their own lines (every order, at most --max-pairs); --exhaustive does every order of at most 7 marked
-lines (5040) without the cap. Candidates that do not compile are skipped. The best
+lines (5040) without the cap. A marked line never moves across a case / goto label, out of its enclosing block or
+into another one. A progress line per batch (and every 15 s); --max-seconds stops the search. Candidates that do
+not compile are skipped. The best
 file is written (default FILE.best.c) on every improvement, so it can be stopped at any time. Orders that put a
 line before one it depends on (it reads a variable the other assigns, or the other reads / assigns a variable it
 assigns; memory through pointers is not tracked) are not tried, unless --unsafe.
@@ -47,6 +49,27 @@ def indent_at(lines, pos, last):
     prv = lines[pos - 1] if pos > 0 else ""
     ind = prv[:len(prv) - len(prv.lstrip())]
     return ind + "    " if prv.rstrip().endswith("{") else ind
+
+
+def regions(lines, first, last):
+    """{boundary k (before line k): region} for first..last+1: the stack of open blocks and the case segment at
+    that point. A marked line moves only to a boundary of its own region: never across a case label, out of its
+    enclosing block or into another one."""
+    out, stack, case = {}, [("f", 0)], {("f", 0): 0}
+    for k in range(first, last + 2):
+        top = stack[-1]
+        out[k] = (tuple(stack), case.get(top, 0))
+        if k > last:
+            break
+        code = re.sub(r"//.*|/\*.*?\*/|\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*'", "", lines[k])
+        if re.match(r"^\s*(case\b.*|default\s*):", code) or re.match(r"^\s*[A-Za-z_]\w*\s*:(?!:)", code):
+            case[stack[-1]] = case.get(stack[-1], 0) + 1      # a case label / a goto label starts a new segment
+        for j, ch in enumerate(code):
+            if ch == "{":
+                stack.append((k, j))
+            elif ch == "}" and len(stack) > 1:
+                stack.pop()
+    return out
 
 
 def move(lines, first, last, moves):
@@ -131,7 +154,12 @@ def main():
                     "no --max-pairs cap")
     ap.add_argument("--out")
     ap.add_argument("--unsafe", action="store_true", help="also orders that move a line across one it depends on")
+    ap.add_argument("--max-seconds", type=float, default=0, help="stop after this long (0: no limit); the best "
+                    "file so far is kept")
     a = ap.parse_args()
+    import time
+    t0 = time.time()
+    deadline = t0 + a.max_seconds if a.max_seconds else None
     a.src = os.path.abspath(a.src)
     out = a.out or re.sub(r"\.c$", "", a.src) + ".best.c"
     work = os.path.join(ROOT, "build", "permlines")
@@ -142,6 +170,8 @@ def main():
         t = "\n".join(lines)
         h = hashlib.sha1(t.encode()).hexdigest()
         if h not in cache:
+            if deadline and time.time() > deadline:
+                return None
             f = os.path.join(work, "%s_%s_%d.c" % (a.func, h[:12], threading.get_ident()))
             open(f, "w").write(t)
             try:
@@ -161,7 +191,12 @@ def main():
         nonlocal best, cur
         found = None
         futs = {ex.submit(score, c): (c, d) for c, d in cands}
-        for f in cf.as_completed(futs):
+        print("%s: %d candidates (best %d, %.0f s)" % (label, len(futs), best, time.time() - t0), flush=True)
+        last_t = time.time()
+        for n_done, f in enumerate(cf.as_completed(futs), 1):
+            if time.time() - last_t > 15:
+                last_t = time.time()
+                print("  %d / %d done, best %d, %.0f s" % (n_done, len(futs), best, last_t - t0), flush=True)
             s = f.result()
             c, d = futs[f]
             if s is not None and s < best:
@@ -174,6 +209,9 @@ def main():
                     break
         if found:
             cur = found[0]
+        if deadline and time.time() > deadline:
+            print("--max-seconds reached", flush=True)
+            return False
         return found is not None
 
     if a.slots or a.exhaustive:
@@ -182,6 +220,7 @@ def main():
         if a.exhaustive and len(idx) > 7:
             sys.exit("--exhaustive: %d marked lines (at most 7)" % len(idx))
         body = [cur[i] for i in idx]
+        reg = regions(cur, first, last)
         cands = []
         cap = None if a.exhaustive else a.max_pairs + 1
         for perm in itertools.islice(itertools.permutations(range(len(idx))), 1, cap):
@@ -192,21 +231,27 @@ def main():
             order = list(range(len(cur)))
             for slot, j in zip(idx, perm):
                 order[slot] = idx[j]
+            if any(reg[slot] != reg[idx[j]] for slot, j in zip(idx, perm)):
+                continue    # a line would leave its block / case
             if a.unsafe or legal(cur, first, last, order):
                 cands.append((ls, perm))
         run(cands, "order")
     else:
-        while best:
+        while best and not (deadline and time.time() > deadline):
             first, last = body_range(cur, a.func)
             marked = [i for i in range(first, last + 1) if cur[i].rstrip().endswith("//P")]
             if not marked:
                 sys.exit("no line of %s ends with //P" % a.func)
             pos = range(first, last + 2)
-            ok = lambda mv: a.unsafe or legal(cur, first, last, new_order(len(cur), mv))
+            reg = regions(cur, first, last)
+            ok = lambda mv: all(reg.get(p_) == reg.get(i_) for i_, p_ in mv) and \
+                (a.unsafe or legal(cur, first, last, new_order(len(cur), mv)))
             singles = [(move(cur, first, last, [(i, p)]), "line %d before %d" % (i + 1, p + 1))
                        for i in marked for p in pos if p not in (i, i + 1) and ok([(i, p)])]
             if run(singles, "move"):
                 continue
+            if deadline and time.time() > deadline:
+                break
             pairs = []
             for i, k in itertools.combinations(marked, 2):
                 for p in pos:
