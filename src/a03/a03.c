@@ -136,11 +136,40 @@ INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010B738);
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_CollectNearbyTrolleySeeds);
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", func_8010BBB8);
+typedef struct TrkMat { s16 m[3][3]; s16 pad; s32 t[3]; } TrkMat;
+typedef struct { u8 pad0[0x12]; s16 h; s16 w; } TrkDims_BBB8;
+extern TrkDims_BBB8 D_8011BAEC;
+
+void func_8010BBB8(u8 *a, TrkMat *m, s32 ang) {
+    TrkDims_BBB8 *d = &D_8011BAEC;
+    s32 w = abs(d->w) + 0x1D;
+    s32 h = abs(d->h) + 0x17;
+    s32 c, s, x, y, z;
+    s32 pad[2];
+
+    if (ang < 0) {
+        w = -w;
+    }
+    c = func_80083F50(ang);
+    x = (w * c + h * func_80083E80(ang)) >> 12;
+    s = func_80083E80(ang);
+    y = (-w * s + h * func_80083F50(ang)) >> 12;
+    x -= w;
+    y -= h;
+    m->t[0] += (x * m->m[0][2]) >> 12;
+    m->t[1] += (x * m->m[1][2]) >> 12;
+    m->t[2] += (x * m->m[2][2]) >> 12;
+    m->t[0] += (y * m->m[0][1]) >> 12;
+    m->t[1] += (y * m->m[1][1]) >> 12;
+    m->t[2] += (y * m->m[2][1]) >> 12;
+    z = -(abs(d->h) + 0x17) - *(s16 *)(a + 0x8A);
+    m->t[0] += (z * m->m[0][1]) >> 12;
+    m->t[1] += (z * m->m[1][1]) >> 12;
+    m->t[2] += (z * m->m[2][1]) >> 12;
+}
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_InitializeTrolleyModelAndTrackState);
 
-typedef struct TrkMat { s16 m[3][3]; s16 pad; s32 t[3]; } TrkMat;
 typedef struct TrkNode {
     s16 pos[3];
     s16 flags;
