@@ -8327,7 +8327,66 @@ void func_8013EDC0(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013EF60);
+typedef struct { u8 a, b, c, d; } Ent;
+extern u8 *D_800ECF88;
+
+void func_8013EF60(u8 *a)
+{
+    Ent *e;
+    s32 i;
+    s32 k;
+    u8 *b;
+    s32 *h;
+    u8 *base = a + 0x50;
+
+    switch (a[4]) {
+    case 0:
+        e = (Ent *)base;
+        for (i = 0; i < 0xE; i++) {
+            k = i & 3;
+            e[i].b = func_8009A450() | 0x20;
+            e[i].c = func_8009A450() & 0x1F;
+            if (k == 0) {
+                e[i].a = func_8009A450() & 0x7F;
+            } else if (k == 1) {
+                e[i].a = (func_8009A450() & 0x7F) + 0x30;
+            } else {
+                e[i].a = (func_8009A450() & 0x7F) + 0x60;
+            }
+            ;
+        }
+        a[4] = 1;
+        a[5] = 0;
+        a[7] = 0x14;
+        *(s16 *)(a + 0x48) = func_8009A450();
+        *(s16 *)(a + 0x4A) = func_8009A450();
+        *(s16 *)(a + 0x4C) = func_8009A450();
+        b = D_800ECF88;
+        h = (s32 *)(b + 4);
+        *(u8 **)(a + 0x3C) = b + h[0x56];
+        *(u8 **)(a + 0x38) = b + h[0x57];
+        *(u8 **)(a + 0x34) = b + h[0x58];
+    case 1:
+        if (--a[7] == 0) {
+            a[4] = 2;
+            break;
+        }
+        e = (Ent *)base;
+        for (i = 0; i < 0xE; i++) {
+            e[i].c += 4;
+            ;
+        }
+        *(s16 *)(a + 0x48) += func_8009A450() >> 7;
+        k = func_8009A450();
+        a[1] = 1;
+        *(s16 *)(a + 0x4A) += k >> 8;
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 #define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
 typedef struct {
