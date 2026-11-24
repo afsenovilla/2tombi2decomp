@@ -4183,7 +4183,100 @@ s32 func_8011CE64(void *arg0) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_AdvanceKainenHouseRescueSequence);
+void f_AdvanceKainenHouseRescueSequence(u8 *a, s32 f) {
+    s16 v[6];
+    u8 *p;
+    s32 ok;
+    s32 n;
+    u8 *g;
+    u8 c;
+
+    switch (a[7]) {
+    case 0:
+        if (a[0x70] == 0 && (g = (u8 *)D_800BF808, g[2] == 0)) {
+            *(u8 **)(g + 0x58) = a;
+            a[0x70] = 2;
+            a[7]++;
+        }
+        break;
+    case 1:
+        if (a[0x70] == 0) {
+            if ((s16)f == 0) {
+                D_800BF9E0 = 2;
+            } else {
+                D_800BF9E0 = 0xC;
+            }
+            a[7]++;
+        }
+        break;
+    case 2:
+        ok = 0;
+        if ((s16)f == 0) {
+            ok = D_800BF9E0 == 3;
+        } else if (D_800BF9E0 == 0xD) {
+            ok = 1;
+        }
+        if (ok) {
+            func_800440E4(D_800E7E80, 2, 4);
+            a[0x70] = 2;
+            a[7]++;
+        }
+        break;
+    case 3:
+        if (a[0x70] == 0) {
+            a[0x47] = 0;
+            a[0x70] = 2;
+            a[7]++;
+        }
+        break;
+    case 4:
+        if (a[0x70] == 0) {
+            a[0x47] = 1;
+            a[0x70] = 2;
+            a[7]++;
+        }
+        break;
+    case 5:
+        if (a[0x70] == 0) {
+            H_f12c(a, 0x40) = 5;
+            a[7]++;
+        }
+        break;
+    case 6:
+        if (*(u16 *)(*(u8 **)(a + 0x38) + 4) != 0) {
+            if (*(u16 *)(*(u8 **)(a + 0x38) + 4) == 1) {
+                p = *(u8 **)(a + 0xDC);
+            } else {
+                p = *(u8 **)(a + 0xD0);
+            }
+            v[1] = H_f12c(p, 0x2C);
+            v[3] = H_f12c(p, 0x30);
+            v[5] = H_f12c(p, 0x34);
+            func_8003116C(0xE, v, 0);
+        }
+        if (--H_f12c(a, 0x40) == 0) {
+            c = a[0x18];
+            if ((s16)f == 0) {
+                n = c + 8;
+            } else {
+                n = c + 0xC;
+            }
+            a[0x1A] = n;
+            a[0x18] = a[0x19] = *(volatile u8 *)(a + 0x1A);
+            if ((s8)a[0x18] < 0) {
+                a[0x1A] = 0x7F;
+                a[0x19] = 0x7F;
+                a[0x18] = 0x7F;
+                a[0x70] = 2;
+                a[0xD] &= 0xFD;
+                a[7]++;
+                return;
+            }
+            H_f12c(a, 0x40) = 5;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleKainenInteraction);
 
