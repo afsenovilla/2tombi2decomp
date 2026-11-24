@@ -4813,7 +4813,61 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012D67C);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012D908);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012DBA0);
+#define H_d43e(o) (*(s16 *)(a + (o)))
+
+void func_8012DBA0(u8 *a)
+{
+    switch (H_d43e(0x76)) {
+    case 0:
+    case 4:
+        H_d43e(0x4A) = 8;
+        H_d43e(0x4E) = -8;
+        H_d43e(0x50) = -2;
+        if (H_d43e(0x76) == 0) {
+            H_d43e(0x76) = 1;
+            H_d43e(0x6A) = H_d43e(0x66) + 30;
+        } else {
+            H_d43e(0x76) = 2;
+            H_d43e(0x6A) = H_d43e(0x66);
+        }
+        break;
+    case 1:
+        H_d43e(0x68) += H_d43e(0x4A);
+        if (H_d43e(0x68) >= H_d43e(0x6A)) {
+            H_d43e(0x76)++;
+        }
+        break;
+    case 2:
+        H_d43e(0x68) += H_d43e(0x4A);
+        H_d43e(0x4A) += H_d43e(0x50);
+        if (H_d43e(0x68) <= H_d43e(0x6A)) {
+            H_d43e(0x76) = 3;
+            H_d43e(0x4A) = H_d43e(0x4E);
+            H_d43e(0x4E) = -H_d43e(0x4E);
+            H_d43e(0x50) = -H_d43e(0x50);
+            H_d43e(0x4E) -= H_d43e(0x50);
+        }
+        break;
+    case 3:
+        H_d43e(0x68) += H_d43e(0x4A);
+        H_d43e(0x4A) += H_d43e(0x50);
+        if (H_d43e(0x68) >= H_d43e(0x6A)) {
+            H_d43e(0x76) = 2;
+            H_d43e(0x4A) = H_d43e(0x4E);
+            H_d43e(0x4E) = -H_d43e(0x4E);
+            H_d43e(0x50) = -H_d43e(0x50);
+            H_d43e(0x4E) -= H_d43e(0x50);
+        }
+        break;
+    }
+    if (H_d43e(0x76) > 0 && H_d43e(0x4E) * H_d43e(0x50) <= 0) {
+        H_d43e(0x4A) = 0;
+        H_d43e(0x4E) = 0;
+        H_d43e(0x50) = 0;
+        H_d43e(0x76) = -1;
+        H_d43e(0x68) = H_d43e(0x6A);
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012DD44);
 
