@@ -6274,7 +6274,129 @@ void func_801213F4(u8 *a)
     func_801208B4(a);
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80121678);
+extern u16 D_8013723C[];
+static inline s32 inl_near(u8 *a) {
+    s16 dy;
+    u16 d;
+
+    if (D_800E7FFE & 0x8200) {
+        return 0;
+    }
+    dy = D_1F800162 - H(a, 0x32);
+    d = func_80084080((s16)(D_1F800160_3621 - H(a, 0x2E)) * (s16)(D_1F800160_3621 - H(a, 0x2E)) +
+                      (s16)(*(u16 *)&D_1F800164_7d8c - H(a, 0x36)) * (s16)(*(u16 *)&D_1F800164_7d8c - H(a, 0x36)) + dy * dy);
+    if (d >= 0x7D1) {
+        return 0;
+    }
+    if ((u16)(dy + 0x320) >= 0x44D) {
+        return 0;
+    }
+    if (d >= 0x3E9) {
+        return 1;
+    }
+    return 2;
+}
+
+void func_80121678(u8 *a) {
+    u8 *t;
+    s32 k;
+    u16 w;
+    s32 r;
+    s16 dy;
+    u16 d;
+
+    switch (a[6]) {
+    case 0:
+        t = D_800E7E80;
+        k = a[0xBE];
+        if (k != func_80077768((s16)func_80085690(-(s16)(*(u16 *)(t + 0x36) - *(u16 *)(a + 0x36)), (s16)(*(u16 *)(t + 0x2E) - *(u16 *)(a + 0x2E))), H(a, 0x60), 0)) {
+            a[6] = 3;
+            a[7] = 0;
+            break;
+        }
+        w = D_8013723C[a[0xBF]];
+        if (a[0xBE] == 0) {
+            H(a, 0x44) = w;
+        } else {
+            H(a, 0x44) = -w;
+        }
+        func_8004130C(a, 0);
+        a[7] = 0;
+        a[6]++;
+        break;
+    case 1:
+        func_80041A1C(a, 2);
+        func_80041AC0(a);
+        H(a, 0x32) += 8;
+        func_80041938(a, 0, 0);
+        if (func_80120804(a) != 0) {
+            a[6]++;
+            break;
+        }
+        if (inl_80122CAC(a) != 0) {
+            a[6]++;
+            break;
+        }
+        r = inl_near(a);
+        switch (r) {
+        case 0:
+            a[5] = 0;
+            a[6] = 0;
+            a[7] = 0;
+            break;
+        case 1:
+            a[6] = 0;
+            break;
+        case 2:
+            a[5] = 4;
+            a[6] = 0;
+            a[7] = 0;
+            break;
+        }
+        break;
+    case 2:
+        if (inl_80122D70(a) != 0) {
+            w = D_8013723C[a[0xBF]];
+            if (a[0xBE] == 0) {
+                H(a, 0x44) = w;
+            } else {
+                H(a, 0x44) = -w;
+            }
+            func_8004130C(a, 0);
+            H(a, 0x42) = 0xF;
+            a[6] = 4;
+            a[7] = 0;
+        }
+        break;
+    case 3:
+        if (inl_80122D70(a) != 0) {
+            w = D_8013723C[a[0xBF]];
+            if (a[0xBE] == 0) {
+                H(a, 0x44) = w;
+            } else {
+                H(a, 0x44) = -w;
+            }
+            func_8004130C(a, 0);
+            a[6] = 0;
+            a[7] = 0;
+        }
+        break;
+    case 4:
+        func_80041A1C(a, 2);
+        func_8004954C(a, H(a, 0x80), -0x5A);
+        func_80041AC0(a);
+        H(a, 0x32) += 8;
+        func_80041938(a, 0, 0);
+        if (--H(a, 0x42) == 0) {
+            a[5] = 2;
+            a[6] = 0;
+            a[7] = 0;
+        }
+        break;
+    }
+    func_801208B4(a);
+}
+
 
 /* tools/dispatch.py draft of func_80121BAC (a01, 0x3a8 bytes): 4 inlined bodies
  * register maps (body -> here): 
