@@ -6903,7 +6903,86 @@ void func_8011DE1C(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011DF98);
+extern u16 D_8012AD40[];
+
+s32 func_8011DF98(u8 *a)
+{
+    u8 *g = D_800BF808_1760;
+    u8 *cam = D_800E8008;
+    u8 *e = *(u8 **)(g + 0x3C);
+    u8 *t;
+
+    switch (a[6]) {
+    case 0:
+        if (U(*(u8 **)(a + 0x38), 4) != 0) {
+            e = func_80072DDC(a, 0, 2, 0x20);
+            if (e != NULL) {
+                e[0] = 1;
+                e[3] = 1;
+                *(void **)(e + 0x1C) = func_80123470;
+                *(u8 **)(g + 0x3C) = e;
+            }
+            t = D_800E7E80;
+            func_800440E4(t, 0xC4, 0);
+            S(t, 0x56) = func_80085690(D_1F800164 - S(e, 0x36), S(e, 0x2E) - D_1F800160) & 0xFFF;
+            func_80041768(a, 1, 8);
+            S(a, 0x40) = 0x28;
+            S(a, 0x42) = 0;
+            a[6]++;
+        }
+        break;
+    case 1:
+        if (--S(a, 0x40) < 0) {
+            cam[0x64] = 8;
+            if (e != NULL) {
+                func_8006CBA8(e + 0x2C);
+            }
+            S(a, 0x40) = 0x64;
+            {
+            u8 *d = D_1F8000D0;
+            u16 *tb = D_8012AD40;
+            U(d, 2) = tb[S(a, 0x42) * 3];
+            U(d, 6) = tb[S(a, 0x42) * 3 + 1];
+            U(d, 0xA) = tb[S(a, 0x42) * 3 + 2];
+            }
+            S(a, 0x42)++;
+            a[6]++;
+        }
+        D_800E7ED6 = func_80085690(D_1F800164 - S(e, 0x36), S(e, 0x2E) - D_1F800160) & 0xFFF;
+        break;
+    case 2:
+        if (e != NULL) {
+            func_8006CBA8(e + 0x2C);
+        }
+        if (--S(a, 0x40) < 0) {
+            S(a, 0x40) = 0x8C;
+            {
+            u8 *d = D_1F8000D0;
+            u16 *tb = D_8012AD40;
+            U(d, 2) = tb[S(a, 0x42) * 3];
+            U(d, 6) = tb[S(a, 0x42) * 3 + 1];
+            U(d, 0xA) = tb[S(a, 0x42) * 3 + 2];
+            }
+            if (S(a, 0x42) < 2) {
+                S(a, 0x42)++;
+            } else {
+                a[6]++;
+            }
+        }
+        D_800E7ED6 = func_80085690(D_1F800164 - S(e, 0x36), S(e, 0x2E) - D_1F800160) & 0xFFF;
+        break;
+    case 3:
+        if (e == NULL) {
+            a[6] = 0;
+            return 1;
+        }
+        if (e[0x5E] == 0) {
+            func_8006CBA8(e + 0x2C);
+        }
+        break;
+    }
+    return 0;
+}
 
 extern u8 D_8012AD54[];
 extern u8 D_8012AD64[];
