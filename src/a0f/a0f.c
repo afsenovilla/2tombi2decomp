@@ -2,6 +2,7 @@
 #include "game.h"
 #include "m2c.h"
 #include "gte.h"
+#include "psyq/gtemac.h"
 typedef struct { s16 x, y, w, h; } ClutRect;
 
 extern u8 D_1F800246_6eef;
@@ -2144,7 +2145,81 @@ void func_80113330(void)
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8011348C);
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_801135EC);
+typedef struct { s16 m[3][3]; s32 t[3]; } Mat;
+typedef struct { u8 pad[0x3C]; s32 x, y, z; } CamT;
+extern Mat D_1F800000_8be2;
+extern Mat D_1F8000F8;
+extern s32 D_1F800014[];
+extern CamT D_1F8000D0_b4b6;
+extern s32 D_1F800080_e4a3;
+extern u32 *D_800BF544_5fe3;
+extern u32 *D_800ED8C8;
+extern u32 D_80129954_592f[];
+#define gte_SetRotMatrix(r0) __asm__ volatile("lw	$12, 0( %0 );" "lw	$13, 4( %0 );" "ctc2	$12, $0;" "ctc2	$13, $1;" "lw	$12, 8( %0 );" "lw	$13, 12( %0 );" "lw	$14, 16( %0 );" "ctc2	$12, $2;" "ctc2	$13, $3;" "ctc2	$14, $4" : : "r"(r0) : "$12", "$13", "$14")
+#define gte_SetTransMatrix(r0) __asm__ volatile("lw	$12, 20( %0 );" "lw	$13, 24( %0 );" "ctc2	$12, $5;" "lw	$14, 28( %0 );" "ctc2	$13, $6;" "ctc2	$14, $7" : : "r"(r0) : "$12", "$13", "$14")
+
+void func_801135EC(u8 *a)
+{
+    s16 *v = D_80129854;
+    u32 *c = D_80129954_592f;
+    Mat *m = &D_1F800000_8be2;
+    u32 *p = D_800BF544_5fe3;
+    s32 *sz = &D_1F800080_e4a3;
+    s32 *flg;
+    s32 pad[2];
+    s32 s[4];
+    s32 n;
+    u32 *ot;
+
+    s[0] = s[1] = s[2] = a[5] << 6;
+    flg = sz;
+    func_80085480(a + 0x48, m);
+    func_80084520(m, s);
+    gte_MulMatrix0(&D_1F8000F8, &D_1F800000_8be2, &D_1F800000_8be2);
+    gte_ldv0(a + 0x2C);
+    gte_rtv0();
+    gte_stlvnl(D_1F800014);
+    m->t[0] += D_1F8000D0_b4b6.x;
+    m->t[1] += D_1F8000D0_b4b6.y;
+    m->t[2] += D_1F8000D0_b4b6.z;
+    gte_SetRotMatrix(m);
+    gte_SetTransMatrix(m);
+    n = a[6] >> 2;
+    while (n > 0) {
+        gte_ldv0(v);
+        gte_rtps();
+        gte_stflg(flg);
+        if (*flg >= 0) {
+            gte_stsz(sz);
+            if (*sz > 0) {
+                *sz >>= 2;
+                if (*sz < 4) {
+                    *sz = 4;
+                }
+                *sz = (*sz >> (*sz >> 10)) + ((*sz >> 10) << 9);
+                if ((u32)(*sz - 4) >= 0x7FC) {
+                    do {
+                        *sz = -1;
+                    } while (0);
+                }
+                gte_stsxy(p + 2);
+                p[1] = *c | 0x6A000000;
+                do {
+                    ot = &D_800ED8C8[*sz];
+                } while (0);
+                do {
+                    p[0] = *ot | 0x02000000;
+                } while (0);
+                *ot = (u32)p;
+                p += 3;
+            }
+        }
+        n--;
+        v += 4;
+        c++;
+    }
+    D_800BF544_5fe3 = p;
+}
 
 void func_8011394C(u8 *a)
 {
@@ -2444,7 +2519,6 @@ typedef struct {
     u8 u3, v3;
     u16 pad2;
 } AreaPolyFT4;
-extern u32 *D_800ED8C8;
 AreaPolyFT4 *func_80114288(AreaPolyFT4 *p, s32 x, s32 y, s32 w, s32 h, s16 c, s16 cy) {
     u32 rgbc;
     u16 clut;

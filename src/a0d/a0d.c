@@ -2,6 +2,7 @@
 #include "game.h"
 #include "m2c.h"
 #include "gte.h"
+#include "psyq/gtemac.h"
 
 extern u8 D_1F800246_6eef;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
@@ -1613,7 +1614,79 @@ void func_80111418(void)
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80111574);
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80111708);
+typedef struct { s16 m[3][3]; s32 t[3]; } Mat;
+typedef struct { u8 pad[0x3C]; s32 x, y, z; } CamT;
+extern Mat D_1F800000;
+extern Mat D_1F8000F8_3b13;
+extern s32 D_1F800014[];
+extern CamT D_1F8000D0_b4b6;
+extern s32 D_1F800080_e4a3;
+extern u32 *D_800BF544_5fe3;
+extern u32 *D_800ED8C8;
+extern u32 D_80125A4C_a3af[];
+
+void func_80111708(u8 *a)
+{
+    s16 *v = D_8012594C;
+    u32 *c = D_80125A4C_a3af;
+    Mat *m = &D_1F800000;
+    u32 *p = D_800BF544_5fe3;
+    s32 *sz = &D_1F800080_e4a3;
+    s32 *flg;
+    s32 pad[2];
+    s32 s[4];
+    s32 n;
+    u32 *ot;
+
+    s[0] = s[1] = s[2] = a[5] << 6;
+    flg = sz;
+    func_80085480(a + 0x48, m);
+    func_80084520(m, s);
+    gte_MulMatrix0(&D_1F8000F8_3b13, &D_1F800000, &D_1F800000);
+    gte_ldv0(a + 0x2C);
+    gte_rtv0();
+    gte_stlvnl(D_1F800014);
+    m->t[0] += D_1F8000D0_b4b6.x;
+    m->t[1] += D_1F8000D0_b4b6.y;
+    m->t[2] += D_1F8000D0_b4b6.z;
+    gte_SetRotMatrix(m);
+    gte_SetTransMatrix(m);
+    n = a[6] >> 2;
+    while (n > 0) {
+        gte_ldv0(v);
+        gte_rtps();
+        gte_stflg(flg);
+        if (*flg >= 0) {
+            gte_stsz(sz);
+            if (*sz > 0) {
+                *sz >>= 2;
+                if (*sz < 4) {
+                    *sz = 4;
+                }
+                *sz = (*sz >> (*sz >> 10)) + ((*sz >> 10) << 9);
+                if ((u32)(*sz - 4) >= 0x7FC) {
+                    do {
+                        *sz = -1;
+                    } while (0);
+                }
+                gte_stsxy(p + 2);
+                p[1] = *c | 0x6A000000;
+                do {
+                    ot = &D_800ED8C8[*sz];
+                } while (0);
+                do {
+                    p[0] = *ot | 0x02000000;
+                } while (0);
+                *ot = (u32)p;
+                p += 3;
+            }
+        }
+        n--;
+        v += 4;
+        c++;
+    }
+    D_800BF544_5fe3 = p;
+}
 
 void func_80111A68(u8 *a)
 {
@@ -1915,7 +1988,6 @@ typedef struct {
     u8 u3, v3;
     u16 pad2;
 } AreaPolyFT4;
-extern u32 *D_800ED8C8;
 AreaPolyFT4 *func_801123A4(AreaPolyFT4 *p, s32 x, s32 y, s32 w, s32 h, s16 c, s16 cy) {
     u32 rgbc;
     u16 clut;
