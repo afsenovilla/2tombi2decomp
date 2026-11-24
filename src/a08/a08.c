@@ -1542,7 +1542,59 @@ void func_8011A0F8(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011A7E8);
+typedef struct { s16 v[4]; } FxPos914;
+extern FxPos914 D_80109B58;
+
+void func_8011A7E8(u8 *a)
+{
+    s32 t;
+
+    switch (a[4]) {
+    case 0:
+        *(void **)(a + 0x10) = NULL;
+        *(s16 *)(a + 0x32) = -0x5A;
+        *(s16 *)(a + 0x48) = func_8009A450() | 1;
+        *(s16 *)(a + 0x4A) = func_8009A450() | 1;
+        *(s16 *)(a + 0x4E) = 0;
+        a[4] = 1;
+    case 1:
+        t = ++*(s16 *)(a + 0x4E);
+        if (t == 0xBD || t == 0xCC) {
+            FxPos914 p = D_80109B58;
+            Spawn914(p.v, 3, 0x40);
+        }
+        if (t == 0xC2) {
+            *(void **)(a + 0x10) = (void *)func_800310F4(0x908, -0x14);
+        }
+        if (t >= 0x167 && *(u8 **)(a + 0x10) != NULL) {
+            (*(u8 **)(a + 0x10))[4] = 2;
+        }
+        if ((u32)(t - 0xE4) < 0x85) {
+            s16 p[4];
+            if (((t - 0xC2) & 3) == 0) {
+                p[0] = 0x2F48;
+                p[1] = -0x25E0;
+                p[2] = 0x2134;
+                Spawn914(p, 6, 6);
+            }
+        }
+        if (t >= 0x16D && ((t - 0x16D) & 7) == 0) {
+            s16 p[4];
+            p[1] = D_1F800162 - 0x4B0;
+            p[0] = D_1F800160 + (func_8009A450() & 0x1FF) - 0x180;
+            p[2] = D_1F800164 + (func_8009A450() & 0x1FF) - 0x180;
+            Spawn914(p, 0, 0xF);
+        }
+        if (*(s16 *)(a + 0x4E) >= 0x1AE) {
+            a[4] = 2;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011AD6C);
 
