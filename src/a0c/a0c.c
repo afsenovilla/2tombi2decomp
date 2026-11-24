@@ -940,7 +940,6 @@ void func_8010CEE4(u8 *a, u8 *b, s32 ang)
 }
 
 extern u8 D_1F8000D0_b839[];
-
 void func_8010D108(u8 *a, u8 *b)
 {
     s16 ang;
@@ -1654,7 +1653,6 @@ void func_8011041C(u8 *a)
 
 typedef struct { s16 x, y, z, n; } Pt0714;
 extern Pt0714 D_8011BFB4[];
-
 s32 func_80110714(u8 *a)
 {
     Pt0714 *p = &D_8011BFB4[H(a, 0x72)];

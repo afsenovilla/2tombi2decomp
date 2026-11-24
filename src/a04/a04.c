@@ -2945,7 +2945,6 @@ void func_8011C4E0(u8 *a)
 
 extern s16 D_80141318[][3];
 extern u16 D_1F800162_b816;
-
 void func_8011C784(u8 *a)
 {
     u8 *st;
@@ -3511,7 +3510,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011E6AC);
 
 extern s16 D_801413C0[];
 #define P (*(s16 **)(a + 0xC0))
-
 void func_8011E764(u8 *a)
 {
     u8 *g;
@@ -4517,7 +4515,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801285BC);
 
 #define QH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 s16 func_80129168();
-
 void f_UpdateSeaAnemoneFreezeSequence(u8 *a) {
     u8 *p = *(u8 **)(a + 0x10);
     s32 one;
@@ -5726,7 +5723,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80131D14);
 
 extern u8 D_800E7EEE;
 extern s32 D_1F800214;
-
 void func_80131E08(u8 *a)
 {
     switch (a[4]) {
@@ -5902,7 +5898,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801354B8);
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80135570);
 
 void func_80135864(void *arg0);
-
 void func_80135698(u8 *a)
 {
     s32 v;
@@ -6092,7 +6087,6 @@ static inline s32 santa_setup(u8 *a, u8 *g)
     *(s16 *)(a + 0x56) = 0x800;
     return 1;
 }
-
 void func_801368A0(u8 *a)
 {
     u8 *g;
@@ -6150,7 +6144,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80136ADC);
 
 extern u8 D_8013FCCC[];
 extern u8 D_8013FC54[];
-
 void func_80136CB8(u8 *a)
 {
     u8 *g;
@@ -6330,7 +6323,6 @@ void func_80137514(u8 *a)
 }
 
 extern u8 D_80143E78[];
-
 void func_80137748(u8 *a)
 {
     u8 *g;
@@ -6839,7 +6831,6 @@ void func_801391A4(void *arg0) {
 }
 
 void func_80121A58();
-
 void func_801391E4(u8 *a)
 {
     u8 *st;
@@ -6922,7 +6913,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013945C);
 
 extern u8 D_8013FE34[];
 extern u8 D_8013FDBC[];
-
 void func_80139614(u8 *a)
 {
     u8 *g;

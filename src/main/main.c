@@ -3176,7 +3176,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80029F6C);
 
 extern int rand(void);
 s32 f_ResolveEffectEightByteStreamPayload();
-
 void func_8002A584(u8 *a)
 {
     u8 *q = a + 0x50;
@@ -3885,7 +3884,6 @@ static inline s32 ProjZ_F8DC(void)
     gte_stopz(otz);
     return 0;
 }
-
 void func_8002F8DC(u8 *a0)
 {
     u8 *a = a0;
@@ -12903,7 +12901,6 @@ typedef struct {
 extern TombaPoseStep_5A39C D_800A4610[];
 extern s8 D_800E807E;
 s32 f_StepWrappedAngleToward(s32 a, s32 b, s32 step);
-
 void func_8005A39C(u8 *a, s32 arg1)
 {
     s32 m;

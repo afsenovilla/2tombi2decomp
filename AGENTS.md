@@ -298,6 +298,28 @@ struct-member form of a cast access, regswap `member` toggles every one)
   in retail. a04 func_8013C2EC: gcc 2.8.1 hoists the constants 0x55555555 / 0x5000000 / 0x2000000 (move-insn,
   savings 1, life 31-65), retail loads them inside the loop and hoists only the %hi of the three globals.
 
+**Round 10 forms**
+- NPC actor state machines (a04-a08 and likely elsewhere): case 0 init (func_800519E0 / func_80051B70 +
+  func_80040CDC + a store list), case 1 dispatch on a[0x5E] / a[3] / a[5], case 2 empty, case 3 calls func_8007A624:
+  write them straight from the retail asm (2-4 minutes each). Find them: pending functions whose asm calls
+  func_8007A624 and one of func_800519E0 / func_80051B70 / func_80040CDC.
+- Inline flag helper: `static inline s32 f(...)` with early `return 1;` and a final `return 0;`, called as `r = f(A);
+  r += f(B); if (r == 2)` (not `f(A) + f(B) == 2`, not separate r0 / r1).
+- `bne v0,X; li v0,K1 (delay); li v0,K2; L: sb v0`: one store per arm, never a local assigned per arm.
+- One jal reached from two arms that set different arguments: write the whole call in each arm.
+- An inline helper taking a global's address hoists the address into a saved register: use a statement-expression
+  macro `({ ... })`.
+- `__asm__ volatile("");` right after a store retail keeps before a later independent load (wrap it in `do { } while
+  (0)` if a later load then stays late).
+- OT links: `*(u32 *)(ot + 0x10) = p` through a `u8 *ot` local (one per link), not `D_800ED8C8[4] = p` (an array store
+  the next global load is hoisted above).
+- A dead store retail keeps: `*(volatile u8 *)(a + 3) = 0;` after `a[3]++`.
+- `*(s32 *)(a + (a[9] << 2) + 0xC0)` gives the base-first addu; a pointer result kept in v0 with nothing set on the NULL
+  path: `if (p != NULL) { ...; return p; }` and no final return.
+- One store shared by two of three values: `if (c1) k = 3; else if (c2) k = 2; else { a[x] = 1; goto done; } a[x] = k;
+  done:`.
+- A store in a `jal` delay slot is written before the call.
+
 **Switch and jump-table shapes (more)**
 - Duplicate the cases with identical code to get a jump table whose entries share a target (gcc builds the table,
   then cross-jumps the blocks); `case 1: d = X; break; case 2: d = X; break; default: d = X;` gives separate tree
@@ -381,6 +403,10 @@ struct-member form of a cast access, regswap `member` toggles every one)
   or the linker's first error lines (the NOT INSTALLED reason is the first one); it says when it changed
   config/aliases_<prog>.ld (commit it with the C); a type left defined twice by an install keeps its first copy.
 - Never `pkill -f`, even with a narrow pattern: kill by PID.
+- install_c copies scratch prototypes with parameter types narrower than int into the target, which changes other
+  callers' code (link DIFF while ccheck is OK); it drops prototypes of callees the target does not declare (implicit
+  int: cast their results, e.g. `(s16)`). Run `ccheck --no-protos` before installing; drop narrow prototypes and cast
+  at the call instead.
 - Write scratch files containing inline asm (`$24`, `$6`) with a quoted heredoc (`<<'EOF'`): an unquoted one expands
   them.
 - `nearcopy.py --near --ratio 0.6` then hand edits of the differing constants / statements was the most productive

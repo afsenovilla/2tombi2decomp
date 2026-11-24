@@ -27,7 +27,6 @@ extern OpnCamState D_800E8008;
 extern u8 D_80100690[];
 extern u8 D_800BF9ED;
 extern u8 D_800E806C;
-
 void func_8018A300(u8 *a, s32 arg1)
 {
     u8 *buf = D_80100690;
@@ -345,7 +344,6 @@ static inline s32 opn_steer_done(u8 *a, s32 off, s32 tgt)
     }
     return 0;
 }
-
 void func_8018AC84(u8 *a, u8 *b)
 {
     s32 r0;
@@ -658,7 +656,6 @@ extern u8 **D_800E7E74;
 extern s16 D_800ED098;
 extern s16 D_8018D470[];
 void func_8018CCFC(PartOwner *a, s16 b);
-
 void func_8018CA1C(u8 *a)
 {
     switch (a[6]) {
@@ -768,7 +765,6 @@ extern u8 *D_80149E50[];
 extern u16 D_1F800160;
 extern u16 D_1F800162;
 extern u16 D_1F800164;
-
 void func_8018CE40(u8 *a)
 {
     OpnCamState2 *cam;

@@ -546,7 +546,6 @@ done:
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018BA68);
 
 extern s32 D_800A2928;
-
 void func_8018BF74(u8 *a)
 {
     u8 port = a[0x46] << 4;
@@ -783,7 +782,6 @@ extern u8 *D_800A2930;
 extern u8 *D_800A2934_4db7;
 extern u8 *D_800A294C;
 extern u8 *D_800A2950_0a39;
-
 void func_8018D74C(u8 *a)
 {
     CrdList *list = *(CrdList **)(a + 8);

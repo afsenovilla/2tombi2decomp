@@ -65,7 +65,6 @@ void func_8010A32C(u8 *a, u8 *b) {
 
 extern u16 D_1F80017C;
 extern u16 D_800BFE56;
-
 s32 func_8010A530(u8 *a, u8 *b, s32 skip) {
     u8 *p;
     s16 ang;
@@ -2962,7 +2961,6 @@ static inline s32 inl_80119BCC(u8 *a) {
     }
     return r;
 }
-
 void func_8011638C(u8 *a) {
     s8 **t = D_800ECF58;
     u8 *q = a + 0x60;
@@ -3348,7 +3346,6 @@ static inline void inl_80119AAC(u8 *a) {
     p.z = M2C_FIELD(M2C_FIELD(a, u8 **, 0xC4), s16 *, 0x34);
     func_80133CAC(0, a, &p, &s);
 }
-
 s32 func_80117BCC(u8 *a) {
     s32 ret = 0;
     u8 *q = a + 0x60;
@@ -3461,7 +3458,6 @@ static inline s16 inl_c(u8 *a) {
         return 0;
     }
 }
-
 void func_80119320(u8 *a) {
     u8 *q = a + 0x60;
     s16 c;
@@ -4758,7 +4754,6 @@ void func_8011C998(u8 *a) {
 extern u8 D_800BF80F;
 s16 func_8011D540();
 void func_8011DFEC(u8 *a);
-
 void f_UpdateAnemoneCaptureSequence(u8 *a) {
     u8 *p = *(u8 **)(a + 0x10);
     s32 one;
@@ -5815,7 +5810,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_HandleThirstyMinerInteraction);
 
 #define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
 u8 *func_8007DEF8();
-
 s32 func_8011FEF8(u8 *a) {
     u8 *t = D_800BF844;
     u8 *e;
@@ -6296,7 +6290,6 @@ static inline s32 inl_near(u8 *a) {
     }
     return 2;
 }
-
 void func_80121678(u8 *a) {
     u8 *t;
     s32 k;
@@ -6396,7 +6389,6 @@ void func_80121678(u8 *a) {
     }
     func_801208B4(a);
 }
-
 
 /* tools/dispatch.py draft of func_80121BAC (a01, 0x3a8 bytes): 4 inlined bodies
  * register maps (body -> here): 
@@ -7116,7 +7108,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80124CF8);
 
 extern u8 D_800E7EAA;
 extern u8 D_1F800236;
-
 void func_80124F14(u8 *a) {
     u8 one;
     switch (a[5]) {
@@ -7755,7 +7746,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80129394);
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePullAndOpenGateSegmentTransform);
 
 #define C0 (*(u8 **)(a + 0xC0))
-
 void f_UpdatePullAndOpenGateSegment(u8 *a) {
     s32 n;
 

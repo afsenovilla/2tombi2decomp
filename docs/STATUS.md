@@ -3,6 +3,54 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-24 (5): tenth round
+
+All code in C: **4625 / 7011 functions (66.0 %, 41.9 % of the bytes)**, from 4486 (39.3 %). main +3, a00-a01 +14 (~11
+KB: round-9 near misses finished with `__asm__ volatile("")` barriers and regswap's const-as-local kinds), a02-a03 +31
+(a02, ~12 KB: actor state machines and inits), a04-a08 +74 (~31 KB, the best round so far), a09-a0l + overlays +17
+(~14.5 KB, among them OPN's camera state machine func_8018AC84, 0xCA0, from 471 words to a match). Phase 3 (boot and
+the small overlays) is at 67 % of its bytes. 29 / 29 byte-identical; an intermediate push (d17ec9c) was checked by a
+clean build of that commit in a temporary worktree, tools/integrate.py checked the commits after it.
+
+Findings (folded into AGENTS.md):
+- **NPC actor state machines of a04-a08** (about 60 left): one skeleton: case 0 init (func_800519E0 / func_80051B70
+  + func_80040CDC + a list of stores), case 1 dispatching on a[0x5E] / a[3] / a[5], case 2 empty, case 3 calling
+  func_8007A624. Written straight from the retail asm they take 2-4 minutes each and usually match first time. To
+  list them: pending functions (still INCLUDE_ASM) whose asm calls func_8007A624 and one of func_800519E0 /
+  func_80051B70 / func_80040CDC. Other scopes likely have the same family: check.
+- An inline helper returning a flag: `static inline s32 f(...)` with early `return 1;` / final `return 0;`, called as
+  `r = f(A); r += f(B); if (r == 2)` (opn func_8018AC84).
+- `bne v0,X; li v0,K1 (delay); li v0,K2; L: sb v0`: one store per arm (`if (c) a[f] = K1; else a[f] = K2;`).
+- `__asm__ volatile("");` right after a store that retail keeps before a later independent load.
+- An inline helper taking a global's address hoists it into a saved register: use a statement-expression macro
+  `({ ... })` instead.
+- OT linking: `D_800ED8C8[4] = p` is an array store the load of D_800BF544 gets hoisted above: write it as `*(u32 *)(ot
+  + 0x10)` through a `u8 *ot` local, one local per link.
+- Pitfall: install_c copies scratch prototypes with parameter types narrower than int into the target, which changes
+  other callers (link DIFF while ccheck says OK); it drops prototypes of undeclared callees (implicit int): cast their
+  results. Run `ccheck --no-protos` before installing; drop narrow prototypes and cast at the call.
+
+Near misses (scratch in the session scratchpad r10b/<scope>/): a07 func_8010A660 1, a05 func_8013484C 1, a01
+func_80129394 1, main func_8007AA38 1 instruction, a00 func_80127798 2, func_80118B10 2, a02 func_8010B068 2 (3
+copies), a08 func_8013C6B4 2-3, a00 func_8013BCC8 3 (6 copies), a06 func_8011159C 4, main func_80021DF4 4, boot
+func_80011654 5, a05 func_8012D908 5, a07 func_8012D2B4 6 (3 copies), a0a f_UpdateEvilPigRushAttack 6 aligned words (6
+copies; abs is gcc's abssi2: `m = abs(rr)`, one `move a0,v0` left), a01 f_UpdatePipeAreaScenePropActor 6, a00
+func_8011B738 8, main func_80063B94 10, f_RebuildTombaAppearanceModelParts 11, func_8002EF58 11, a02 func_80111640 13,
+a08 func_8010D9AC 13, a06 func_8011D520 14, a00 f_HandleKainenHouseQuestItemActor 14, a02 func_8010FBFC 15, main
+func_80030264 16, a0a func_801140D0 21 (4 copies), opn func_8018BF08 20, game func_80106A24 19.
+
+Tool work left: an NPC state-machine skeleton drafter (above); ccheck: run the `--no-protos` compile itself and warn
+when it differs; install_c: never copy prototypes with narrow parameter types for callees that have other callers (K&R
+form instead), place inserted prototypes after the typedefs they use, the first differing offset / relocation on a
+link DIFF, the false link DIFF of a01 func_80121678 (extern clash with an s8[] -> alias); regswap: never fork into an
+uninitialised variable, reject "hack" rewrites (constants pulled into early locals) unless asked, kinds "emptycase"
+(`case K: break;`), "x = K -> x++ in a switch case", "volatile store" for dead stores retail keeps, "one store per
+arm" from `k = K1; if (c) k = K2; x = k;`, stores through the a0 argument copy, per-store barriers; permlines: never
+past `break;` / return, a case-block permutation mode, auto-mark runs of constant stores; nearcopy: a concatenation
+mode (matched A followed by matched body B: sop func_8010C26C = a00 func_80115598 + func_80115B88's loop); sbs.py
+`--real` (hide relocation-only differences); a reload diagnostic (spill register per reload, ours vs retail);
+workqueue size column in hex; leftover build/tmp_regswap_* of killed runs.
+
 ## 2026-11-24 (4): tools after round 9
 
 One tools agent, the "Tool work left" list of the round-9 entry below, in its order (about 60 minutes).

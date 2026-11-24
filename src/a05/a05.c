@@ -1188,7 +1188,6 @@ void func_80110FB4(u8 *a)
 }
 
 void func_8012E454();
-
 u8 *func_8011105C(void) {
     u8 *p = func_8007A980(2, 3, 1);
     if (p != NULL) {
@@ -1635,7 +1634,6 @@ extern u8 D_8013C748[];
 extern u8 D_8013C768[];
 extern u8 D_8013C7C0[];
 extern u8 D_8013C810[];
-
 s32 func_801141F8(u8 *p) {
     u8 *g;
 
@@ -2834,7 +2832,6 @@ extern u8 D_8013BA3C[];
 extern u8 D_80142108[];
 extern s16 D_8013E240[];
 s32 func_8011EB84(u8 *p, s32 f);
-
 void func_8011DDC0(u8 *a)
 {
     u8 *g;
@@ -2903,7 +2900,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011E4C4);
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011E870);
 
 extern u8 D_8013B9EC[];
-
 s32 func_8011EB84(u8 *p, s32 f)
 {
     u8 *s = D_800ECF58;
@@ -3003,7 +2999,6 @@ extern u8 D_8013B90C[];
 extern u8 D_8013B4BC[];
 extern u8 D_800BF8CE;
 u8 *func_80129924(void *a0, u8 a1);
-
 void func_8011FF44(u8 *a)
 {
     u8 *st;
@@ -3076,7 +3071,6 @@ void func_8011FF44(u8 *a)
 }
 
 extern u8 D_800BF9BA;
-
 void func_80120160(u8 *a)
 {
     u8 v;
@@ -6539,7 +6533,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801332B0);
 
 extern u8 D_8013BA14[];
 extern s16 D_8013F4B4[][3];
-
 void func_801333F0(u8 *a)
 {
     u8 *g;
@@ -6608,7 +6601,6 @@ u8 *func_801335A0(void *a0, u8 a1)
 }
 
 extern u8 D_800BF9C9;
-
 void func_8013360C(u8 *a)
 {
     u8 *g;

@@ -159,7 +159,6 @@ void func_8010BC9C(u8 *a, u8 *b)
 }
 
 extern u16 D_1F80009C_efeb;
-
 void func_8010BE08(u8 *a, u8 *b) {
     s16 d;
     s32 ang;
@@ -276,7 +275,6 @@ extern void (*D_800A4AF8[])(void);
 extern void (*D_800A4B50[])(void);
 extern void (*D_800A4AA0[])(u8 *);
 extern s32 (*D_800A3B78[])(u8 *);
-
 void f_DispatchCircusActorContactCleanup(u8 *a)
 {
     u8 **list;
@@ -1632,7 +1630,6 @@ extern u8 *D_800ED8C8_35cc;
 extern s16 D_1F800160;
 extern s16 D_1F800164;
 extern void func_80083DE0(void *, s32, s32, s32, s32);
-
 void func_801140A0(void) {
     u8 *p;
     u8 *q;
@@ -1761,7 +1758,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80114ADC);
 #define W_211f(p, o) (*(u32 *)((u8 *)(p) + (o)))
 typedef struct { u8 v[6][4]; } Tab64;
 extern Tab64 D_801094E8_ff27;
-
 void func_80114CF8(u8 *a)
 {
     Tab64 t = D_801094E8_ff27;
@@ -2518,7 +2514,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80117D4C);
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80117FE0);
 
 extern u8 *D_800BF864_ee3c;
-
 void func_80118184(u8 *a)
 {
     switch (a[4]) {
@@ -2584,7 +2579,6 @@ extern u8 D_8014106C[];
 extern u8 D_800A3D18_ed09[];
 extern u8 D_800BF9D6;
 u8 *func_8012B3FC(void *a0);
-
 void func_80118EDC(u8 *a)
 {
     u8 *g;
@@ -2908,7 +2902,6 @@ void func_8011B3B8(u8 *a) {
 }
 
 extern u8 D_80133114[];
-
 void func_8011B480(u8 *a)
 {
     u8 *g;
@@ -2970,7 +2963,6 @@ void func_8011B480(u8 *a)
 extern u8 D_800BF9D5;
 extern PartInit D_8013313C[];
 u8 *func_8007AAE8();
-
 void func_8011B650(PartsOwner *a)
 {
     s32 i;
@@ -3660,7 +3652,6 @@ s32 func_8011E3FC(u8 *a)
 }
 
 extern u8 D_80133850[];
-
 s32 func_8011E554(u8 *a)
 {
     switch (a[6]) {
@@ -4048,7 +4039,6 @@ extern s32 *D_800E7E74;
 extern u8 D_80133B70[];
 extern u8 D_80133C00[];
 extern u8 D_80133CF0[];
-
 void func_80120120(u8 *a)
 {
     switch (a[5]) {
@@ -4192,7 +4182,6 @@ s32 func_80120C30(u8 *p)
     return 0;
 }
 
-
 s32 func_80120C7C(u8 *a)
 {
     switch (a[0x78]) {
@@ -4219,7 +4208,6 @@ s32 func_80120C7C(u8 *a)
 void func_80120EC8(void *arg0);
 void func_80120F38(u8 *p);
 void func_80120FA4(void *arg0);
-
 void func_80120D64(u8 *a)
 {
     u8 *g;
@@ -4417,7 +4405,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801218B0);
 
 extern u8 D_800BF9D7;
 extern u8 D_800BF8DB;
-
 void func_80121AB4(u8 *a)
 {
     switch (a[4]) {
@@ -4587,7 +4574,6 @@ void func_80121FF8(void *arg0) {
 void func_801224E8(void *arg0);
 void func_80122558(u8 *a);
 void func_801222A4(u8 *a);
-
 void func_801220F8(u8 *a)
 {
     u8 *g;
@@ -5050,7 +5036,6 @@ extern s32 D_800ECFB8;
 extern u8 D_801317F8[];
 extern u8 D_80131870[];
 extern u8 D_800BFA2E;
-
 void func_801258E4(u8 *a)
 {
     switch (a[4]) {
@@ -5240,7 +5225,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusPaonAtWellActor);
 
 extern u8 D_80131BC0[];
 extern u8 D_80140DC8[];
-
 void func_80126BD8(u8 *a)
 {
     u8 *g;
@@ -5395,7 +5379,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80127EB8);
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801281C4);
 
 extern u8 D_801319D8[];
-
 void func_801283C0(u8 *a)
 {
     u8 *g;
@@ -5465,7 +5448,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80128798);
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80128980);
 
 extern u8 D_80131AC8[];
-
 void func_80128BAC(u8 *a)
 {
     u8 *g;
@@ -5916,7 +5898,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateTriangleGearRewardPresentation);
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateEarthPigBagRewardPresentation);
 
 extern u8 D_800BFA29;
-
 void func_8012B1B4(u8 *a)
 {
     switch (a[4]) {
@@ -6047,7 +6028,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012C16C);
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012C340);
 
 extern u8 D_800BF8D9;
-
 void func_8012C60C(u8 *a)
 {
     switch (a[4]) {

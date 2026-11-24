@@ -870,7 +870,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateFishermensTownCamera);
 
 extern s16 D_1F8000D0[];
 extern u8 D_800BF9DD;
-
 void func_8010D89C(u8 *a) {
 
     switch (a[4]) {
@@ -1463,7 +1462,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80111E18);
 
 extern s32 D_1F80009C_c31a_cacf;
 extern s32 D_1F800098;
-
 s32 f_ResolveTombaInteractiveCylinderContact(u8 *a, u8 *b, u8 *c) {
     s16 dx, dz, dy, e, f, v;
     u16 h, bh, ah;
@@ -4044,7 +4042,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011B738);
 
 #define KSH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define KSW(p, o) (*(s32 *)((u8 *)(p) + (o)))
-
 void func_8011BC3C(u8 *a) {
     s32 r;
     s32 c;
@@ -4210,7 +4207,6 @@ static inline void gcrab_idle(u8 *a) {
         }
     }
 }
-
 void f_HandleGoldenCrabAndWindmillActor(u8 *a) {
     GCrabVec v;
     GCrabPos *e;

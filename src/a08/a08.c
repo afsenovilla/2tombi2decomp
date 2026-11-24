@@ -182,7 +182,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010B328);
 
 extern s32 D_1F80009C_baed;
 extern s32 D_1F800098;
-
 s32 func_8010B598(u8 *a, u8 *b, u8 *c) {
     s16 dx, dz, dy, e, f, v;
     u16 h, bh, ah;
@@ -3674,7 +3673,6 @@ s32 func_801247C4(u8 *a)
 }
 
 extern u8 D_800BF8F8;
-
 void func_8012485C(u8 *a)
 {
     u8 *e;
@@ -5324,7 +5322,6 @@ void func_801297E8(u8 *p)
 
 #define F32(p, o) M2C_FIELD(p, s32 *, o)
 #define FP(p, o) (*(u8 **)((u8 *)(p) + (o)))
-
 void func_8012983C(u8 *a) {
     u8 *e;
     u8 *g;
@@ -6844,7 +6841,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801320B4);
 extern s32 D_800ECFA0;
 extern u8 D_8014168C_4b7c[];
 extern u8 D_800A3D18[];
-
 void f_UpdateGiantFishActor(u8 *a)
 {
     switch (a[4]) {
@@ -7577,7 +7573,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80139458);
 
 extern u8 D_80141434[];
 extern u8 D_80148790[];
-
 void f_UpdateWaterTempleMermaidAndGearNpcActor(u8 *a)
 {
     u8 *g;
@@ -7691,7 +7686,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80139E58);
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013A208);
 
 extern u8 D_80141524[];
-
 void func_8013A398(u8 *a)
 {
     u8 *g;
@@ -8214,7 +8208,6 @@ extern u8 D_800A3D90_b2d8[];
 void func_8013CAC0(void *arg0);
 void func_8013CB14(u8 *a);
 void func_8013CB70(u8 *p);
-
 void func_8013C8A8(u8 *a)
 {
     u8 *g;
@@ -8337,7 +8330,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013D178);
 
 extern u8 D_80141814[];
 extern u8 D_80149E30[];
-
 void func_8013D3C0(u8 *a)
 {
     u8 *g;

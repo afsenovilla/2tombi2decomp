@@ -820,7 +820,6 @@ void func_8010BA54(u8 *a, u8 *b, s32 ang)
 }
 
 extern u8 D_1F8000D0_b839[];
-
 void func_8010BC78(u8 *a, u8 *b)
 {
     s16 ang;

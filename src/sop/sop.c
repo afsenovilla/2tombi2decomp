@@ -719,7 +719,6 @@ void func_8010A8D4(u8 *a)
 extern u8 D_8010C980[];
 extern u8 D_800BF808[];
 extern u8 D_800BF80F;
-
 s32 func_8010A900(u8 *a)
 {
     switch (a[0x78]) {
@@ -785,7 +784,6 @@ s32 func_8010A900(u8 *a)
 }
 
 #define S16(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void func_8010AB38(u8 *a)
 {
     u8 *t = *(u8 **)(a + 0x10);
@@ -1035,7 +1033,6 @@ extern s32 D_800ECFA8;
 extern u8 D_8010CB80[];
 extern u8 D_8010CBD0[];
 extern u8 D_8010D39C[];
-
 void func_8010B588(u8 *a)
 {
     switch (a[6]) {
@@ -1153,7 +1150,6 @@ s32 func_8010B8AC(u8 *a)
 INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010B990);
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void func_8010BAF8(u8 *a)
 {
     u8 *q;
@@ -1315,7 +1311,6 @@ extern u8 *D_800ECF84;
 extern s16 D_1F8000F0;
 extern s16 D_1F8000F2;
 extern u8 D_8010D390[];
-
 void func_8010BFFC(u8 *a)
 {
     s32 pad;
@@ -1407,7 +1402,6 @@ typedef struct {
     u16 clut;
 } T2Sprt16;
 extern T2Sprt16 *D_800BF544_e6cf;
-
 void func_8010C26C(u8 *a)
 {
     s32 w2 = a[0x10] * 2;
