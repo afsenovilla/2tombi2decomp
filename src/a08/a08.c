@@ -1452,16 +1452,13 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801198CC);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80119A48);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80119C84);
-
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80119EC4);
-
 extern s16 D_1F800160;
 extern s16 D_1F800162;
 extern s16 D_1F800164;
 typedef struct { s16 v[9]; } FxParam914;
 typedef struct { FxParam914 e[10]; } FxTable914;
 extern FxTable914 D_80109AA4;
+/* func_8011BD98, inlined (its parameters in another order) */
 static inline void Spawn914(s16 *pos, s32 k, s32 life)
 {
     FxTable914 t;
@@ -1484,6 +1481,71 @@ static inline void Spawn914(s16 *pos, s32 k, s32 life)
         *(s16 *)(q + 0xA) = life;
     }
 }
+
+void func_80119C84(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+    s32 t;
+
+    switch (a[4]) {
+    case 0:
+        *(s16 *)(a + 0x32) = -0x5A;
+        *(s16 *)(a + 0x48) = func_8009A450() | 1;
+        *(s16 *)(a + 0x4A) = func_8009A450() | 1;
+        *(s16 *)(a + 0x4C) = 5;
+        *(s16 *)(a + 0x4E) = 0;
+        a[4] = 1;
+    case 1:
+        t = ++*(s16 *)(a + 0x4E);
+        if (t == 0x1E || t == 0xDB) {
+            s16 p[4];
+            p[0] = *(s16 *)(*(u8 **)(o + 0xD0) + 0x2C);
+            p[1] = -0x2208;
+            p[2] = *(s16 *)(*(u8 **)(o + 0xD0) + 0x34);
+            Spawn914(p, 1, 0x10);
+        }
+        if (t >= 0x258) {
+            a[4] = 2;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
+
+void func_80119EC4(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+    s32 t;
+
+    switch (a[4]) {
+    case 0:
+        *(s16 *)(a + 0x32) = -0x5A;
+        *(s16 *)(a + 0x48) = func_8009A450() | 1;
+        *(s16 *)(a + 0x4A) = func_8009A450() | 1;
+        *(s16 *)(a + 0x4E) = 0;
+        a[4] = 1;
+    case 1:
+        t = ++*(s16 *)(a + 0x4E);
+        if (t >= 0x3C) {
+            a[4] = 2;
+        } else if (t == 8 || t == 0x32) {
+            s16 p[4];
+            p[0] = *(s16 *)(o + 0x2E);
+            p[1] = -0x2172;
+            p[2] = *(s16 *)(o + 0x36);
+            Spawn914(p, 4, 0xC);
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
+
 
 void func_8011A0F8(u8 *a)
 {
@@ -1902,7 +1964,10 @@ void func_8011BC14(u8 *a) {
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011BCC8);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011BD98);
+void func_8011BD98(s32 k, s16 *pos, s32 life)
+{
+    Spawn914(pos, k, life);
+}
 
 void func_8011BF0C(u8 *a)
 {
