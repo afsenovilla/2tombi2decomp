@@ -9590,7 +9590,65 @@ void f_ConfigureSegmentedTownActorMorph(u8 *a, s16 n, s16 sel) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801386A0);
+typedef struct { u8 pad[0x10]; s16 v[9]; s16 pad2; } MV9;
+typedef struct { u8 pad[0x14]; s16 v[12]; } MV12;
+
+s32 func_801386A0(u8 *a) {
+    u8 k = a[3];
+    u16 *h;
+    MV9 *p;
+    MV12 *q;
+    s16 *s;
+    s16 *u;
+    s32 i;
+    s32 n;
+
+    if (k == 0) {
+        return 0;
+    }
+    h = *(u16 **)(((MorphActor *)a)->parts[a[9] - 1] + 0x40);
+    n = h[0];
+    p = (MV9 *)(h + 8);
+    q = (MV12 *)(p + n);
+    if (k & 1) {
+        s = D_8014C4FC;
+        u = D_8014C60C;
+    } else if (k == 2) {
+        s = D_8014C63C;
+        u = D_8014C74C;
+    }
+    for (i = 0; i < n; i++) {
+        p->v[0] += s[0];
+        p->v[1] += s[1];
+        p->v[2] += s[2];
+        p->v[4] += s[3];
+        p->v[5] += s[4];
+        p->v[3] += s[5];
+        p->v[6] += s[6];
+        p->v[7] += s[7];
+        p->v[8] += s[8];
+        s += 9;
+        p++;
+    }
+    n = h[1];
+    for (i = 0; i < n; i++) {
+        q->v[0] += u[0];
+        q->v[1] += u[1];
+        q->v[2] += u[2];
+        q->v[4] += u[3];
+        q->v[5] += u[4];
+        q->v[3] += u[5];
+        q->v[6] += u[6];
+        q->v[7] += u[7];
+        q->v[8] += u[8];
+        q->v[10] += u[9];
+        q->v[11] += u[10];
+        q->v[9] += u[11];
+        u += 12;
+        q++;
+    }
+    return --*(s16 *)(a + 0x60) == 0;
+}
 
 void func_80136D9C();
 void f_SpawnSegmentedTownActor(u8 *a) {
