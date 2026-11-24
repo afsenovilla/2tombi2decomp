@@ -22630,7 +22630,52 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007D594);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007DA50);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007DC38);
+void func_8007DC38(u8 *a)
+{
+    u8 *p;
+
+    switch (a[4]) {
+    case 0:
+        p = *(u8 **)(a + 0x50) + *(u16 *)(*(u8 **)(a + 0x4C) + *(s16 *)(a + 0x5E) * 4);
+        *(u8 **)(a + 0x10) = p;
+        *(u8 **)(a + 0x14) = p;
+        func_8007C0D0(a, 0);
+        a[0x46] = 1;
+        a[4]++;
+        switch (a[3]) {
+        case 0:
+            a[0x18] = 4;
+            D_800BF808[0x1A] |= 4;
+            break;
+        case 2:
+            a[0x18] = 5;
+            break;
+        case 3:
+            a[0x18] = 1;
+            break;
+        }
+        break;
+    case 1:
+        if (a[3] == 0 && (D_800BF822 & 0xFB)) {
+            a[4] = 2;
+        }
+        func_8007C940(a);
+        func_8007CC00(a);
+        if (a[3] != 1) {
+            func_8005019C(a + 0x54, a[0x18], 1, 2);
+        }
+        break;
+    case 2:
+        a[4]++;
+        break;
+    case 3:
+        if (a[3] == 0) {
+            D_800BF808[0x1A] &= 0xFB;
+        }
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 void func_8007DDE0(u8 *a)
 {
