@@ -40,6 +40,14 @@ One tools agent, the "Tool work left" list of the round-8 entry below, in its or
   before +off`, `N -> M words differ at +off`, constants `+off a -> b`, operand / register changes, other callees;
   relocations compared by kind, overlay-local callees not counted). Run on a0b a0c `--ratio 0.7`: a0b func_8010BE38
   8 off <- a01 func_8012B2D8 (2 constants, 2 extra words at +1C, ...).
+- **regswap.py**: the wrap and volatile rewrites come first in every round and, past `--max-cands`, every kind takes
+  its turn (decl orders alone used to fill the budget of a big function); `wrap` also takes runs of two or three
+  statements and the span of one local's uses (never around break / continue / case); new kinds `callres` (`p->x =
+  f(a);` -> `v = f(a); p->x = v;` with a local dead there) and `abs` (`abs(E)` <-> `E < 0 ? -E : E`, `E >= 0 ? E :
+  -E`, `__builtin_abs`, `if (v < 0) v = -v;` -> abs); splits through a temporary narrower than the store's target
+  (they truncate) are dropped unless `--narrowing` (then flagged NARROWING), an unknown target type is flagged;
+  `--max-seconds S` stops the search (best text kept). Tried on a0b func_8010BE38 (9 off, nothing better) and
+  func_80113F94 (68 -> 65 in 8 s with `--max-seconds 8`).
 
 ## 2026-11-24: eighth round (new scopes, work queue; two container restarts)
 

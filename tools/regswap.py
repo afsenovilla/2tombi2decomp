@@ -3,20 +3,22 @@
 statements, tried greedily on one function of a scratch file and scored by tools/ccheck.py score().
 
   python3 -I tools/regswap.py FILE.c FUNC [--prog main] [-j N] [--rounds 4] [--out FILE.regswap.c]
-      [--only decl,split,reuse,fork,copy,wrap,temp,load,const,member,volatile,goto,ternary,pathsplit]
-      [--skip KIND,...] [--max-perm 720] [--pairs 6] [--max-cands 3000] [--install]
+      [--only decl,split,reuse,fork,copy,wrap,temp,load,const,member,volatile,goto,ternary,pathsplit,callres,abs]
+      [--skip KIND,...] [--max-perm 720] [--pairs 6] [--max-cands 3000] [--max-seconds S] [--narrowing] [--install]
 
 The rewrites (docs/STATUS.md "Register priority" / "Registers" recipes):
   - decl: the order of the local declarations at the top of the function body (every order when there are at
     most 6 lines (--max-perm), else every move of one line to another place); a line whose initialiser reads
     another local stays below it;
   - split: a store through a temporary (`*p = e;` -> `{ T t = e; *p = t; }`, T the type of a local of the same
-    shape or s32 / s16 / u16 / u8);
+    shape or s32 / s16 / u16 / u8); a T narrower than the store's target truncates the value: left out unless
+    --narrowing (then flagged NARROWING), an unknown target type is flagged;
   - reuse: one local replaced by another of the same declared type everywhere (its declaration dropped);
   - fork: a local assigned more than once gets a new variable from one of its later assignments on;
   - copy: a copy of a local (`x_c = x;` after its assignment) used in one later statement instead of it (retail
     `move a2,v0; move s4,a2`: one value in two registers);
-  - wrap: one simple statement wrapped in `do { } while (0)` (more refs for its pseudos, no scheduling across);
+  - wrap: one simple statement, a run of two or three, or the span of one local's uses wrapped in
+    `do { } while (0)` (more refs for its pseudos, no scheduling across; never around a break / continue / case);
   - temp: a parameter copied into a new local and used through it (`void f(u8 *a0) { u8 *a = a0; ...}`): each
     parameter alone, after the declarations or before them, and all parameters at once;
   - load: a read (field, array element, global, `*(T *)` / M2C_FIELD access) of a statement moved into a new
@@ -33,7 +35,12 @@ The rewrites (docs/STATUS.md "Register priority" / "Registers" recipes):
   - ternary: `x = c ? a : b;` / `return c ? a : b;` as if / else, and an if / else of two single assignments to
     one variable as a ternary;
   - pathsplit: a local assigned inside a nested block (an if arm, a case) renamed from there to the end of that
-    block or case (one C variable per path where retail uses two registers).
+    block or case (one C variable per path where retail uses two registers);
+  - callres: a call result stored through memory goes through an existing local that is dead there first
+    (`p->x = f(a);` -> `v = f(a); p->x = v;`; the dead check is a forward scan: check loops by hand);
+  - abs: `abs(E)` <-> `E < 0 ? -E : E` / `E >= 0 ? E : -E` / `__builtin_abs`, and `if (v < 0) v = -v;` -> abs.
+Every round starts with the wrap and volatile rewrites; past --max-cands every kind gets its turn (round robin).
+--max-seconds stops the search (the best text so far stays in --out).
 Every round compiles every single rewrite of the current best text (in parallel) and keeps the best one while the
 score goes down (when no single one helps, every second rewrite on top of the --pairs best first ones is tried
 too); the best text so far is written to --out (default FILE.regswap.c) on every improvement, with a
@@ -214,10 +221,20 @@ def rewrites(text, func, only):
             if re.fullmatch(r"-?(0x[0-9A-Fa-f]+|\d+)|[A-Za-z_]\w*", rhs.strip()):
                 continue
             ind = m.group(1)
+            lty = next((d[1] for d in ds if d[2] == lhs and not d[3].strip() and not d[4]), None) or \
+                expr_type(lhs, text, lines, b, e)
             for t in types:
+                # a temporary narrower than the target truncates the value: a different program, not a register
+                # choice. Dropped unless --narrowing (then flagged); an unknown target type is flagged
+                narrow = SIZES.get(t, 4) < SIZES.get(lty, 4) if lty in SIZES else None
+                if narrow and not NARROWING:
+                    continue
                 ls = list(lines)
                 ls[k] = "%s{\n%s    %s rs_t = %s;\n%s    %s = rs_t;\n%s}" % (ind, ind, t, rhs, ind, lhs, ind)
-                out.append(("split line %d through %s" % (k - b, t), join(ls)))
+                out.append(("split line %d through %s%s" % (k - b, t, " (NARROWING: %s target, check it)" % lty
+                                                           if narrow else "" if narrow is not None or t == "s32"
+                                                           else " (target type unknown: check it does not truncate)"),
+                            join(ls)))
     if "temp" in only:
         ps = params(lines, b, func)
         sets = [[p] for p in ps] + ([ps] if len(ps) > 1 else [])
@@ -418,6 +435,96 @@ def rewrites(text, func, only):
                     ls[j] = sub_name(ls[j], n, nn)
                 ls.insert(ds[-1][0] + 1, "%s%s %s%s;" % (re.match(r"\s*", lines[i]).group(0), t, s, nn))
                 out.append(("pathsplit %s from line %d to %d" % (n, k - b, end - b), join(ls)))
+    if "wrap" in only:
+        # a run of two or three simple statements, and the span of one local's uses (first to last mention, at one
+        # indentation, braces balanced), in `do { } while (0)`; never around a break / continue / case (the
+        # do-while would capture them)
+        def wrappable(k1, k2):
+            seg = lines[k1:k2 + 1]
+            if indent(lines[k1]) != indent(lines[k2]) or any(
+                    re.search(r"\b(break|continue)\s*;|^\s*(case\b|default\s*:)|^\s*\w+:\s*$|^\s*#", l)
+                    for l in seg):
+                return False
+            depth = 0
+            for l in seg:
+                c = re.sub(r"//.*", "", l)
+                depth += c.count("{") - c.count("}")
+                if depth < 0:
+                    return False
+            return depth == 0 and not re.match(r"\s*(\}|else\b)", lines[k1]) and not \
+                re.match(r"\s*else\b", lines[k2 + 1] if k2 + 1 < e else "")
+
+        def wrapped(k1, k2):
+            ind = indent(lines[k1])
+            ls = list(lines)
+            ls[k1:k2 + 1] = [ind + "do {"] + ["    " + l for l in lines[k1:k2 + 1]] + [ind + "} while (0);"]
+            return join(ls)
+        for k in range(body_start, e - 1):
+            for n_ in (2, 3):
+                k2 = k + n_ - 1
+                if k2 < e and all(is_stmt(lines[j]) and indent(lines[j]) == indent(lines[k]) for j in range(k, k2 + 1)) \
+                        and wrappable(k, k2):
+                    out.append(("wrap lines %d-%d" % (k - b, k2 - b), wrapped(k, k2)))
+        for (i, t, n, s_, a_, init) in ds:
+            uses = [k for k in range(body_start, e) if re.search(r"(?<![\w.>])\b%s\b" % re.escape(n), lines[k])]
+            if len(uses) >= 2 and uses[-1] - uses[0] < 40 and wrappable(uses[0], uses[-1]):
+                out.append(("wrap the uses of %s (lines %d-%d)" % (n, uses[0] - b, uses[-1] - b),
+                            wrapped(uses[0], uses[-1])))
+    if "callres" in only:
+        # a call's result stored through memory first goes into an existing local whose value is dead there
+        # (`p->x = f(a);` -> `v = f(a); p->x = v;`): retail keeping the result in that local's register
+        for k in range(body_start, e):
+            m = re.match(r"^(\s+)(.+?)\s*=(?!=)\s*([A-Za-z_]\w*\s*\(.*\))\s*;\s*$", lines[k])
+            if not m or m.group(3).split("(")[0].strip() in KEYWORDS or not is_stmt(lines[k]):
+                continue
+            lhs = m.group(2)
+            for (i, t, n, s_, a_, init) in ds:
+                if a_ or n == lhs or re.search(r"\b%s\b" % re.escape(n), m.group(3) + lhs) or \
+                        not dead_after(lines, n, k + 1, e):
+                    continue
+                ls = list(lines)
+                ls[k] = "%s%s = %s;\n%s%s = %s;" % (m.group(1), n, m.group(3), m.group(1), lhs, n)
+                out.append(("call result of line %d through local %s" % (k - b, n), join(ls)))
+    if "abs" in only:
+        # abs(E) <-> E < 0 ? -E : E (and the >= / > / <= spellings, __builtin_abs)
+        for k in range(body_start, e):
+            l = lines[k]
+            for m in re.finditer(r"\b(__builtin_abs|abs)\s*\(", l):
+                end_ = balanced(l, m.end() - 1)
+                if end_ is None:
+                    continue
+                x = l[m.end():end_ - 1]
+                for desc, rep in (("ternary <", "((%s) < 0 ? -(%s) : (%s))" % (x, x, x)),
+                                  ("ternary >=", "((%s) >= 0 ? (%s) : -(%s))" % (x, x, x)),
+                                  ("other builtin", ("abs(%s)" if m.group(1) != "abs" else "__builtin_abs(%s)") % x)):
+                    out.append(("abs at line %d as %s" % (k - b, desc), join(lines[:k] + [l[:m.start()] + rep +
+                                                                                         l[end_:]] + lines[k + 1:])))
+            for m in re.finditer(r"(\(\s*)?([A-Za-z_][\w\[\]\->.]*)\s*(<|<=|>=|>)\s*0\s*(\))?\s*\?\s*", l):
+                if bool(m.group(1)) != bool(m.group(4)):
+                    continue
+                st = m.start()
+                x = m.group(2).strip()
+                rest = l[m.end():]
+                pat = (r"\s*-\(?%s\)?\s*:\s*\(?%s\)?(?![\w\[])" if m.group(3) in ("<", "<=") else
+                       r"\s*\(?%s\)?\s*:\s*-\(?%s\)?(?![\w\[])") % ((re.escape(x), re.escape(x)))
+                mm = re.match(pat, rest)
+                if not mm:
+                    continue
+                full_end = m.end() + mm.end()
+                for desc, rep in (("abs()", "abs(%s)" % x), ("ternary <", "(%s < 0 ? -%s : %s)" % (x, x, x)),
+                                  ("ternary >=", "(%s >= 0 ? %s : -%s)" % (x, x, x)),
+                                  ("ternary >", "(%s > 0 ? %s : -%s)" % (x, x, x))):
+                    nl = l[:st] + rep + l[full_end:]
+                    if nl.count("(") == nl.count(")") and nl != l:
+                        out.append(("abs ternary at line %d as %s" % (k - b, desc), join(lines[:k] + [nl] + lines[k + 1:])))
+            m = re.match(r"^(\s*)if \(\s*([A-Za-z_]\w*)\s*<\s*0\s*\)\s*\{?\s*$", l)
+            if m and k + 1 < e and re.match(r"^\s*%s\s*=\s*-\s*%s\s*;\s*$" % (m.group(2), m.group(2)), lines[k + 1]):
+                close = 1 if l.rstrip().endswith("{") and k + 2 < e and lines[k + 2].strip() == "}" else 0
+                if l.rstrip().endswith("{") and not close:
+                    continue
+                v = m.group(2)
+                out.append(("if (%s < 0) %s = -%s at line %d as abs()" % (v, v, v, k - b),
+                            join(lines[:k] + ["%s%s = abs(%s);" % (m.group(1), v, v)] + lines[k + 2 + close:])))
     return out
 
 
@@ -683,6 +790,39 @@ def path_end(lines, k, e):
 
 
 MAX_PERM = 720
+NARROWING = False
+SIZES = {"u8": 1, "s8": 1, "char": 1, "s16": 2, "u16": 2, "short": 2, "s32": 4, "u32": 4, "int": 4, "long": 4}
+# first in every round: the cheap rewrites that often decide a register; then every kind in turn up to --max-cands
+FIRST = ("wrap", "volatile")
+
+
+def kind_of(desc):
+    k = desc.split()[0].rstrip(":")
+    return {"if": "ternary", "call": "callres", "temp": "temp", "load": "load"}.get(k, k)
+
+
+def fair(cands, limit):
+    """at most `limit` candidates: wrap / volatile ones first, then one of each kind in turn (decl orders alone
+    used to fill the --max-cands budget of a big function before the later kinds were reached)."""
+    if len(cands) <= limit:
+        return sorted(cands, key=lambda c: kind_of(c[0]) not in FIRST)
+    by = collections.OrderedDict()
+    for c in cands:
+        by.setdefault(kind_of(c[0]), []).append(c)
+    order = [k for k in FIRST if k in by] + [k for k in by if k not in FIRST]
+    out, i = [], 0
+    while len(out) < limit:
+        added = False
+        for k in order:
+            if i < len(by[k]):
+                out.append(by[k][i])
+                added = True
+                if len(out) == limit:
+                    break
+        if not added:
+            break
+        i += 1
+    return out
 
 
 def main():
@@ -695,14 +835,22 @@ def main():
     ap.add_argument("--rounds", type=int, default=4)
     ap.add_argument("--out")
     ap.add_argument("--only", default="decl,split,reuse,fork,copy,wrap,temp,load,const,member,volatile,goto,ternary,"
-                                      "pathsplit")
+                                      "pathsplit,callres,abs")
     ap.add_argument("--skip", default="", help="kinds left out of --only")
     ap.add_argument("--max-cands", type=int, default=3000, help="rewrites compiled per round at most")
     ap.add_argument("--max-perm", type=int, default=720)
     ap.add_argument("--install", action="store_true")
     ap.add_argument("--pairs", type=int, default=6, help="when no single rewrite helps, pairs on the N best (0: off)")
+    ap.add_argument("--max-seconds", type=float, default=0, help="stop after this long (0: no limit); the best text "
+                    "so far is kept")
+    ap.add_argument("--narrowing", action="store_true", help="also try splits through a temporary narrower than "
+                    "the store's target (they truncate the value; flagged NARROWING)")
     a = ap.parse_args()
+    global NARROWING
     MAX_PERM = a.max_perm
+    NARROWING = a.narrowing
+    import time
+    deadline = time.time() + a.max_seconds if a.max_seconds else None
     only = set(a.only.split(",")) - set(a.skip.split(","))
     out = a.out or re.sub(r"\.c$", "", a.src) + ".regswap.c"
     text = open(a.src).read()
@@ -711,6 +859,8 @@ def main():
 
     def sc(t, k):
         # the candidate sits beside the scratch so its relative #include lines still resolve
+        if deadline and k and time.time() > deadline:
+            return None     # --max-seconds: the rest of the round is skipped
         f = os.path.join(d, ".regswap_%d_%d.c" % (os.getpid(), k))
         open(f, "w").write(t)
         try:
@@ -726,7 +876,10 @@ def main():
         for rnd in range(a.rounds):
             if best == 0:
                 break
-            cands = rewrites(text, a.func, only)[:a.max_cands]
+            if deadline and time.time() > deadline:
+                print("--max-seconds reached", flush=True)
+                break
+            cands = fair(rewrites(text, a.func, only), a.max_cands)
             with cf.ThreadPoolExecutor(a.j) as ex:
                 scores = list(ex.map(lambda kv: sc(kv[1][1], kv[0] + 1), enumerate(cands)))
             ranked = sorted((s, i) for i, s in enumerate(scores) if s is not None)
@@ -738,7 +891,7 @@ def main():
             elif a.pairs and ranked:
                 # no single rewrite helps: a second rewrite on top of each of the --pairs best first ones
                 firsts = [cands[i] for s, i in ranked[:a.pairs] if s <= best + 2]
-                jobs = [(d1, d2, t2) for d1, t1 in firsts for d2, t2 in rewrites(t1, a.func, only)]
+                jobs = [(d1, d2, t2) for d1, t1 in firsts for d2, t2 in fair(rewrites(t1, a.func, only), a.max_cands)]
                 with cf.ThreadPoolExecutor(a.j) as ex:
                     s2 = list(ex.map(lambda kv: sc(kv[1][2], kv[0] + 1), enumerate(jobs)))
                 r2 = sorted((s, i) for i, s in enumerate(s2) if s is not None)

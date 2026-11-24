@@ -144,7 +144,8 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
 - `python3 -I tools/regswap.py FILE.c F --prog P [--skip K,...]`: greedy register-choice rewrites of a near miss
   (declaration orders, store through a temporary, reuse / fork / copy / per-path split of locals, `do { } while (0)`
   wraps, parameter copies, loads before the previous store, constants as early locals, cast <-> `MEMBER_AT`
-  struct member, volatile re-reads, goto -> duplicated tail, ternary <-> if / else).
+  struct member, volatile re-reads, goto -> duplicated tail, ternary <-> if / else, a call result through a dead
+  local, abs variants; `--max-seconds S`; narrowing splits only with `--narrowing`).
   `python3 -I tools/prio.py FILE.c [F] --prog P [--sched]`: gcc 2.8's pseudo priorities and hard registers from the
   cc1 dumps next to retail's register for each (what priority a pseudo would need); `--sched` the scheduler
   priorities per insn (ccheck says `order only` when only the order differs).

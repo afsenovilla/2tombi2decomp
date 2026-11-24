@@ -340,7 +340,10 @@ struct-member form of a cast access, regswap `member` toggles every one)
   new extern, which makes an alias).
 - variants.py writes `//--` separators: never leave them in src/. In `--set` values write `\&` and `\|`.
 - permlines may move `//P` lines out of their switch case (invalid C that still scores lower): check its output.
-- regswap's narrowing splits can truncate values and its `__typeof__` locals must not reach src/.
+- regswap's splits through a narrower temporary than the store's target are left out since 2026-11-24 (`--narrowing`
+  tries them, flagged NARROWING); its `__typeof__` locals must not reach src/. New kinds `callres` (a call result
+  through a dead local; the dead check is a forward scan, check loops) and `abs` (abs() <-> ternaries); wrap and
+  volatile come first in every round, past --max-cands every kind gets its turn; `--max-seconds S` time-boxes it.
 - Copy the target file's prototypes into a scratch: a different scratch prototype can pass ccheck and fail the
   link. ccheck `--no-protos` compiles the scratch the way install_c drops prototypes (fixed 2026-11-24: it lost the
   newlines after the `#include` lines and the `// CC` set-up comments).
