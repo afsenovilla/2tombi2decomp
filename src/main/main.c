@@ -4261,7 +4261,42 @@ void func_8002F8DC(u8 *a0)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002FC40);
+void func_80031744(void *arg0);
+
+void func_8002FC40(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+    s16 *p = (s16 *)(a + 0x50);
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        *(u16 *)(a + 0x2C) = *(u16 *)(o + 0x2E);
+        *(u16 *)(a + 0x2E) = *(u16 *)(o + 0x32);
+        *(u16 *)(a + 0x30) = *(u16 *)(o + 0x36);
+        *(s32 *)(a + 0x48) = 0;
+        *(s16 *)(a + 0x4C) = 0;
+        p[0] = 0x3C;
+        p[1] = 0;
+    case 1:
+        if ((p[0] -= 6) > 0) {
+            a[1] = 1;
+            break;
+        }
+        SpawnAt_B8F4(8, a + 0x2C, -0x1E);
+        func_8002343C(o);
+        a[4] = 2;
+        p[0] = 0;
+    case 2:
+        if ((p[1] += 0x20) < 0x60) {
+            a[1] = 1;
+            break;
+        }
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 extern u8 D_8009F3E0[];
 typedef struct { u8 b[4]; } B4_FDD0;
@@ -4296,7 +4331,39 @@ void func_8002FDD0(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800300D8);
+void func_800300D8(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+    s16 *p = (s16 *)(a + 0x50);
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        *(u16 *)(a + 0x2C) = *(u16 *)(o + 0x2E);
+        *(u16 *)(a + 0x2E) = *(u16 *)(o + 0x32);
+        *(u16 *)(a + 0x30) = *(u16 *)(o + 0x36);
+        *(s32 *)(a + 0x48) = 0;
+        *(s16 *)(a + 0x4C) = 0;
+        p[0] = 0x3C;
+    case 1:
+        if ((p[0] -= 6) > 0) {
+            a[1] = 1;
+            break;
+        }
+        SpawnAt_B8F4(0x34, a + 0x2C, -0x1E);
+        func_8002343C(o);
+        a[4] = 2;
+        p[0] = 0;
+    case 2:
+        if ((p[0] += 0x88) < 0x1000) {
+            a[1] = 1;
+            break;
+        }
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80030264);
 
