@@ -6827,7 +6827,241 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80121F54);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012212C);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801222FC);
+typedef struct { u8 b[6]; } Ent6;
+#define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
+extern Ent6 D_80137214[];
+extern u8 D_80137230[];
+extern u8 D_800BF841;
+extern u8 D_800E7EAA;
+extern u8 D_800E7FC7;
+static inline void sync_child(u8 *a) {
+    u8 *p = P(a, 0x10);
+
+    if (p != NULL) {
+        H(p, 0x2C) = H(a, 0x2E);
+        H(p, 0x2E) = H(a, 0x32) + H(a, 0x72);
+        H(p, 0x30) = H(a, 0x36);
+    }
+}
+
+void func_801222FC(u8 *a)
+{
+    u8 *p;
+    u16 t;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 0x14) != 0) {
+            break;
+        }
+        H(a, 0x80) = 0x78;
+        H(a, 0x82) = 0xF0;
+        H(a, 0x84) = 0x3C;
+        H(a, 0x86) = 0x3C;
+        H(a, 0x6A) = 0xA0;
+        H(a, 0xBC) = 0x1000;
+        H(a, 0xBA) = 0x1000;
+        H(a, 0xB8) = 0x1000;
+        H(a, 0x74) = a[3];
+        a[4]++;
+        a[3] = 0;
+        a[0] = 1;
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        H(a, 0x72) = 0;
+        H(P(a, 0xC0), 0xA) = -0x400;
+        H(a, 0xE) = 0;
+        func_80041194(a, 0, D_80137214[H(a, 0x74)].b[5], 0);
+        func_8004130C(a, 1);
+        a[0x5E] = 0;
+        a[0xBF] = 0;
+        W(a, 0x10) = 0;
+        W(a, 0x14) = 0;
+        a[5] = 7;
+        a[0x47] = a[0xBE];
+        break;
+    case 1:
+        if (H(a, 0x74) == 3 && D_800E7EAA == 0x10) {
+            func_8007703C(a);
+        } else {
+            func_8007778C(a);
+        }
+        if (a[1] != 0) {
+            if (a[0xBF] == 0 && a[0x5E] == 0) {
+                p = func_8003116C(0x203, 0, 0);
+                if (p != NULL) {
+                    P(p, 0x10) = a;
+                    P(a, 0x10) = p;
+                    H(p, 0x2C) = H(a, 0x2E);
+                    H(p, 0x2E) = H(a, 0x32) + H(a, 0x72);
+                    H(p, 0x30) = H(a, 0x36);
+                    W(p, 0x34) = (H(a, 0x6A) << 16) + 0x100;
+                    a[0x5E] = 1;
+                } else {
+                    W(a, 0x10) = 0;
+                    a[0x5E] = 0;
+                }
+            }
+            func_80051844(a);
+        } else if (a[0xBF] == 0 && a[0x5E] != 0 && P(a, 0x10) != NULL) {
+            P(a, 0x10)[4] = 3;
+            W(a, 0x10) = 0;
+            a[0x5E] = 0;
+        }
+        if (a[0x2B] == 0) {
+            switch (a[5]) {
+            case 0:
+                func_80120DA0(a);
+                break;
+            case 1:
+                switch (a[6]) {
+                case 0:
+                    func_80113CB4(a);
+                    H(a, 0x40) = D_80137230[func_8009A450() & 3] << 6;
+                    a[6]++;
+                    break;
+                case 1:
+                    if (--H(a, 0x40) == 0) {
+                        a[5] = 2;
+                        a[6] = 0;
+                        a[7] = 0;
+                        if (P(a, 0x14) != NULL) {
+                            P(a, 0x14)[4] = 3;
+                        }
+                    }
+                    break;
+                }
+                func_801208B4(a);
+                break;
+            case 2:
+                func_80120F00(a);
+                break;
+            case 3:
+                func_801210A4(a);
+                break;
+            case 4:
+                func_801213F4(a);
+                break;
+            case 5:
+                func_80121678(a);
+                break;
+            case 6:
+                func_80121BAC(a);
+                break;
+            case 7:
+                func_80120C34(a);
+                break;
+            }
+        } else {
+            a[0x2B]--;
+        }
+        sync_child(a);
+        a[0x29] = 0;
+        break;
+    case 2:
+        func_8007778C(a);
+        switch (a[5]) {
+        case 0:
+        case 5:
+        case 6:
+        case 8:
+            a[0x2B] = 0;
+            a[0] = 1;
+            a[4] = 1;
+            a[5] = 0;
+            a[6] = 0;
+            a[7] = 0;
+            break;
+        case 1:
+            switch (a[6]) {
+            case 0:
+                a[0xBE] = func_80077768(H(a, 0x56), H(a, 0x60), 0);
+                func_8004130C(a, 0);
+                a[3] = 2;
+                func_80051B04(W(a, 0xC0), 0xC, 0x2D);
+                H(a, 0xE) = 0;
+                a[6]++;
+                func_80026100(4);
+                H(a, 0x50) = 0;
+            case 1:
+                if (D_1F800137 == 0 && D_800BF841 == 0) {
+                    if (D_800E7FC7 == 0) {
+                        H(a, 0x44) = 0x2400;
+                        a[0xBE] = 0;
+                    } else {
+                        H(a, 0x44) = -0x2400;
+                        a[0xBE] = 1;
+                    }
+                    func_8004130C(a, 0);
+                    func_80041A1C(a, 0);
+                    if (H(a, 0x74) == 3 && H(a, 0x36) >= 0x3B8F) {
+                        H(a, 0x36) = 0x3B8E;
+                    }
+                    func_8004954C(a, H(a, 0x80), -0x5A);
+                    func_80041AC0(a);
+                    D_800E7EAA = a[0x2A];
+                    H(a, 0x32) += 8;
+                    func_80041938(a, 0, 0);
+                    if (a[0x29] == 0) {
+                        H(a, 0x4A) = 0;
+                        H(a, 0x50) += 0x300;
+                        if (H(a, 0x50) > 0x3000) {
+                            H(a, 0x50) = 0x3000;
+                        }
+                        W(a, 0x30) += H(a, 0x50) << 8;
+                    } else {
+                        H(a, 0x50) = 0;
+                    }
+                }
+                func_801208B4(a);
+                t = ((u32)U(P(a, 0xC0), 0x3A) * 25) >> 10;
+                H(a, 0x84) = t;
+                H(a, 0x86) = t;
+                break;
+            case 2:
+                H(a, 0xBC) = 0x1000;
+                H(a, 0xBA) = 0x1000;
+                H(a, 0xB8) = 0x1000;
+                func_80051B04(W(a, 0xC0), 0xC, 0x2F);
+                H(a, 0xE) = 0;
+                a[6]++;
+                break;
+            }
+            break;
+        case 11:
+            if (func_80080750(a, 0, 0) != 0) {
+                if (P(a, 0x10) != NULL) {
+                    P(a, 0x10)[4] = 3;
+                    W(a, 0x10) = 0;
+                    a[0x5E] = 0;
+                }
+                a[4] = 3;
+                break;
+            }
+            a[5] = 2;
+        case 2:
+        case 3:
+            func_8012212C(a);
+            break;
+        case 4:
+        case 7:
+            func_80121F54(a);
+            break;
+        case 9:
+        case 10:
+            break;
+        }
+        a[0x29] = 0;
+        if (a[1] != 0) {
+            func_80051844(a);
+            sync_child(a);
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_80122A2C(u8 *a) {
     u8 *p;
@@ -6992,7 +7226,6 @@ void func_80122F80(u8 *a, s32 b) {
     func_8004130C(a, 0);
 }
 
-extern u8 D_80137230[];
 void func_80122FBC(u8 *a) {
     u8 *p;
 
@@ -7498,7 +7731,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateMythicalTowerEntranceTransition)
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80124CF8);
 
-extern u8 D_800E7EAA;
 extern u8 D_1F800236;
 void func_80124F14(u8 *a) {
     u8 one;
@@ -9008,7 +9240,6 @@ done:
     }
 }
 
-extern u8 D_800BF841;
 extern u16 D_1F8000D6;
 void func_8012CE5C(u8 *a) {
     u8 *t;
