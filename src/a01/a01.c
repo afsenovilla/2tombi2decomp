@@ -2372,7 +2372,44 @@ u8 *func_80113D04(s32 a) {
     return p;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80113D44);
+extern PartInit D_80135B30[];
+
+s32 func_80113D44(PartsOwner *a) {
+    s32 i;
+    u8 *q;
+
+    a->pad[8] = 2;
+    if (D_800ED098 < a->pad[8]) {
+        a->pad[4] = 3;
+        return 0;
+    }
+    a->pad[9] = 2;
+    a->pad[0xD] = 2;
+    a->pad[0xB] = 0;
+    *(s16 *)(a->pad + 0x54) = 0;
+    *(s16 *)(a->pad + 0x56) = 0;
+    *(s16 *)(a->pad + 0x58) = 0;
+    *(s16 *)(a->pad + 0xB8) = 0x1500;
+    *(s16 *)(a->pad + 0xBA) = 0x1500;
+    *(s16 *)(a->pad + 0xBC) = 0x1500;
+    func_8004B354(a, 1);
+    for (i = 0; i < a->pad[8]; i++) {
+        q = func_8007AAE8();
+        a->parts[i] = q;
+        *(s16 *)(q + 6) = D_80135B30[i].v[0];
+        *(s16 *)(a->parts[i] + 0) = D_80135B30[i].v[1];
+        *(s16 *)(a->parts[i] + 2) = D_80135B30[i].v[2];
+        *(s16 *)(a->parts[i] + 4) = D_80135B30[i].v[3];
+        *(s16 *)(a->parts[i] + 8) = 0;
+        *(s16 *)(a->parts[i] + 0xA) = 0;
+        *(s16 *)(a->parts[i] + 0xC) = 0;
+        *(s16 *)(a->parts[i] + 0x38) = 0x1000;
+        *(s16 *)(a->parts[i] + 0x3A) = 0x1000;
+        *(s16 *)(a->parts[i] + 0x3C) = 0x1000;
+        func_80051B04(a->parts[i], 0xC, i + 0x16);
+    }
+    return 1;
+}
 
 extern s16 *D_80135B60[];
 void func_80113EB8(u8 *a) {
