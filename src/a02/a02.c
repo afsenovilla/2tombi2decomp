@@ -1615,12 +1615,73 @@ s32 func_80114650(u8 *a, u8 *b) {
     return r;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801146D8);
+extern u8 D_800BFA03;
+
+void func_801146D8(u8 *a) {
+    u8 *s = *(u8 **)(a + 0x10);
+    u8 *q;
+    u8 v;
+
+    switch (a[5]) {
+    case 0:
+        *(u16 *)(a + 0x2E) = *(u16 *)(*(u8 **)(s + 0xD0) + 0x2C) + ((func_80083F50(*(s16 *)(a + 0x56)) * 16) >> 12);
+        *(u16 *)(a + 0x32) = *(u16 *)(*(u8 **)(s + 0xD0) + 0x30) + 0x80;
+        *(u16 *)(a + 0x36) = *(u16 *)(*(u8 **)(s + 0xD0) + 0x34) - ((func_80083E80(*(s16 *)(a + 0x56)) * 32) >> 12);
+        break;
+    case 1:
+        *(s16 *)(a + 0x4A) = -0x3000;
+        *(s16 *)(a + 0x50) = 0x380;
+        *(u8 **)(a + 0x14) = *(u8 **)(s + 0x10);
+        q = *(u8 **)(a + 0x14);
+        *(u16 *)(a + 0x2E) = *(u16 *)(q + 0x2C);
+        *(u16 *)(a + 0x32) = *(u16 *)(q + 0x2E);
+        *(u16 *)(a + 0x36) = *(u16 *)(q + 0x30);
+        a[5]++;
+        break;
+    case 2:
+        q = *(u8 **)(a + 0x14);
+        *(u16 *)(a + 0x4A) += *(u16 *)(a + 0x50);
+        if (*(s16 *)(a + 0x4A) >= 0x2000) {
+            *(s16 *)(a + 0x4A) = 0x2000;
+        }
+        *(s32 *)(a + 0x30) += *(s16 *)(a + 0x4A) << 8;
+        if (*(s16 *)(a + 0x4A) >= 0 && *(s16 *)(a + 0x32) >= *(s16 *)(q + 0x2E) - 0x40) {
+            a[0x18] = a[0x19] = a[0x1A] = 0x7F;
+            *(u16 *)(a + 0x32) = *(u16 *)(q + 0x2E) - 0x20;
+            a[5]++;
+        }
+        break;
+    case 3:
+        if (D_800BFA03 == 0xF) {
+            a[0xD] = 3;
+            a[5]++;
+        }
+        {
+            s16 d = (a[0x18] >> 1) - 0x20;
+            *(u16 *)(a + 0x32) = *(u16 *)(*(u8 **)(a + 0x14) + 0x2E) - d;
+        }
+        break;
+    case 4:
+        a[0x18] = a[0x19] = a[0x1A] = v = a[0x18] - 4;
+        if ((s8)v <= 0) {
+            D_800BFA03 = 0x10;
+            a[0x18] = a[0x19] = a[0x1A] = 0;
+            a[4] = 3;
+        }
+        {
+            s16 d = (a[0x18] >> 1) - 0x20;
+            *(u16 *)(a + 0x32) = *(u16 *)(*(u8 **)(a + 0x14) + 0x2E) - d;
+        }
+        break;
+    }
+    if (func_8007778C(a) != 0) {
+        func_800517F8(a);
+    }
+}
 
 void f_UpdateCoalMiningTownScenePropActor();
 extern void *D_800ECF80;
 extern u8 D_80139100[];
-extern u8 D_800BFA03;
 extern u8 D_800BF816;
 extern u8 D_1F8000D0[];
 extern u8 D_1F800000[];
