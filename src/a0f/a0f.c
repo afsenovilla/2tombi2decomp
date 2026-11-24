@@ -686,7 +686,6 @@ extern u8 D_800BF840;
 extern u16 D_800ECF54;
 extern s16 D_1F80016C;
 extern s16 D_1F80016E;
-
 void func_8010B2F8(u8 *a, u8 *b) {
     if (++H(a, 0x42) >= 6) {
         if ((D_800ECF54 & D_1F80016C) && a[0x147] == 0) {
@@ -1639,7 +1638,6 @@ extern u8 D_800E7FC5;
 extern ArenaPt D_8011EBAC[];
 extern s16 D_1F8001A4;
 extern u8 D_1F80025B;
-
 void func_8010EDF8(u8 *a)
 {
     ArenaPt *e;

@@ -527,7 +527,6 @@ extern u8 D_800E7E80[];
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
 extern u8 D_8014190C[];
-
 void func_8010C588(u8 *a, u8 *b) {
     s32 r = 0;
     s32 k;
@@ -1206,7 +1205,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80112B50);
 extern u16 D_800ECF54;
 extern s16 D_1F80016C;
 extern s16 D_1F80016E;
-
 void func_801131E0(u8 *a, u8 *b) {
     if (++H(a, 0x42) >= 6) {
         if ((D_800ECF54 & D_1F80016C) && a[0x147] == 0) {
@@ -1281,7 +1279,6 @@ static inline s32 ClingTurn(u8 *a)
     }
     return 0;
 }
-
 void func_801133CC(u8 *a, u8 *b, s32 f, s32 g)
 {
     u8 *p;
@@ -6657,7 +6654,6 @@ static inline void FogVertex(u32 *col, s32 z)
     T2_dpcs();
     T2_strgb(col);
 }
-
 u32 *func_8013D568(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[4];

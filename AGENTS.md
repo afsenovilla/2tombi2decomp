@@ -249,6 +249,23 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - Primitives: addPrim / setaddr / setlen with `struct { unsigned addr:24; unsigned len:8; }`; `TERM_PRIM` through a
   local pointer.
 
+**Round 8 forms**
+- Two tests sharing one body where retail reloads the global in each: `if (A) {body; return;} else if (B) {body;
+  return;}` with the body written twice, not `A || B`.
+- Keeping the first copy of a cross-jumped call: on the first path `r = a[0x29] = call(...); test: if (r) goto found;
+  goto end;`, the last path `r = a[0x29] = call(...); goto test;` (gcc otherwise keeps the later copy).
+- A local whose address goes to a call stays live to the end of its block: declare a shared struct / array copy in
+  the enclosing scope to reproduce retail's stack-slot reuse.
+- Jump table with empty cases: distinct dead stores per case (`case 0: k = 0; break; case 1: k = 1; break;`).
+- `sll/sra 16` of an argument register right before a `jal` is a cast at the call (`f((s16)z)`).
+- A `u8` return type breaks implicit-int callers that test the result (ccheck OK, link DIFF): keep s32 and `return
+  a[0x29];`. Check how other overlays call a callee: a wrong argument count changes scheduling.
+- Depth-cued polygon lists: `__asm__ volatile("nop")` before `p->rgb2`, `*otz` stored in each arm of the max / min
+  code, `mode = c >> 24; switch (mode & 3) { case 1: case 3: ...}`; the dpcs per vertex as a static inline helper.
+- Global's full address hoisted to the outer loop's preheader: `g = D;` as the first statement of the outer body.
+- Functions with no frame and `or t0,zero,a0` moves (gcc emits addu) are hand-written assembly: mark them, do not
+  try to match them.
+
 **Switch and jump-table shapes (more)**
 - Duplicate the cases with identical code to get a jump table whose entries share a target (gcc builds the table,
   then cross-jumps the blocks); `case 1: d = X; break; case 2: d = X; break; default: d = X;` gives separate tree
@@ -324,6 +341,12 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - install_c may drop a macro whose name is redefined differently further down in the target (use unique macro
   names per function).
 - Never `pkill -f`, even with a narrow pattern: kill by PID.
+- Write scratch files containing inline asm (`$24`, `$6`) with a quoted heredoc (`<<'EOF'`): an unquoted one expands
+  them.
+- `nearcopy.py --near --ratio 0.6` then hand edits of the differing constants / statements was the most productive
+  method of round 8.
+- The container can restart in the middle of a round: commit every function or two (the disk survives, uncommitted
+  work and the report do not).
 - `register ... asm("reg")` matches are not installed (compiler-specific); they stay near misses.
 - A static inline helper must be defined before its first use, or gcc emits it as a function.
 - nearcopy refuses or mis-patches some copies (a repeated immediate, constants in helpers, callee names that differ

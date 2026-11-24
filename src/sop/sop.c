@@ -595,7 +595,6 @@ typedef struct {
 extern T2CamD0 D_1F8000D0_3bb0;
 extern s32 D_800A3F90;
 extern s32 D_800A3F94;
-
 void func_8010A0E0(u8 *a)
 {
     T2Pt32 v0, v1, v2;
@@ -726,7 +725,6 @@ extern u8 D_800E7E80[];
 extern u8 D_800A3FA8[];
 extern u8 D_8010CA28[];
 u8 *func_8010AE30(void *a);
-
 void func_8010ACFC(u8 *a)
 {
     u8 *t;
@@ -1108,7 +1106,6 @@ typedef struct {
     s16 y;
 } ClutCycleS;
 extern ClutCycleS D_8010D2FC[];
-
 void func_8010C6A0(void)
 {
     ClutRectS r;

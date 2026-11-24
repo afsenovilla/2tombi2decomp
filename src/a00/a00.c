@@ -300,7 +300,6 @@ s32 func_8010B600(s32 arg0) {
 extern s16 D_1F80016C;
 extern s16 D_1F80016E;
 extern u8 D_800BF840;
-
 void func_8010B754(u8 *a, u8 *b) {
     if (++H(a, 0x42) >= 6) {
         if ((D_800ECF54 & D_1F80016C) && a[0x147] == 0) {
@@ -337,7 +336,6 @@ void func_8010B754(u8 *a, u8 *b) {
         D_800BF840 = 0x48;
     }
 }
-
 
 void f_UpdateA00TombaClingOrientation0(u8 *a, u8 *b, s32 f) {
     u8 *p;
@@ -449,7 +447,6 @@ void f_UpdateA00TombaClingOrientation0(u8 *a, u8 *b, s32 f) {
     H(a, 0x32) = H(p, 0x30) + H(a, 0x156);
 }
 
-
 void func_8010BD7C(u8 *a, u8 *b) {
     if (++H(a, 0x42) >= 6) {
         if ((D_800ECF54 & D_1F80016C) && a[0x147] == 0) {
@@ -478,7 +475,6 @@ void func_8010BD7C(u8 *a, u8 *b) {
         D_800BF840 = 0x48;
     }
 }
-
 
 void f_UpdateA00TombaClingOrientation1(u8 *a, u8 *b, s32 f) {
     u8 *p;
@@ -626,7 +622,6 @@ void func_8010C290(u8 *a, s32 f) {
 
 extern u16 D_1F80019E_7f82;
 extern s16 D_1F8001A4_f18c;
-
 s32 func_8010C40C(u8 *a, u8 *b) {
     s16 v[8];
 

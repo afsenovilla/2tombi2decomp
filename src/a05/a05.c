@@ -1050,7 +1050,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010F948);
 extern u16 D_800ECF54;
 extern s16 D_1F80016C;
 extern s16 D_1F80016E;
-
 void func_8010FF20(u8 *a)
 {
     if (++*(s16 *)(a + 0x42) >= 0x6) {
@@ -3365,7 +3364,6 @@ void func_8012761C(u8 *a) {
 extern u8 D_800BF808_1760[];
 #define C0(p) M2C_FIELD(p, u8 **, 0xC0)
 #define C0(p) M2C_FIELD(p, u8 **, 0xC0)
-
 void func_80127734(u8 *a)
 {
     s16 s = F16(a, 0x76);
@@ -5808,7 +5806,6 @@ extern s32 D_1F800088;
 #define T2_ldrgb(r0) __asm__ volatile("mtc2 %0, $6" : : "r"(r0))
 #define T2_dpcs() __asm__ volatile("nop; nop; .word 0x4A780010")
 #define T2_strgb(r0) __asm__ volatile("swc2 $22, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_8013544C(u32 *f, u32 *ot, s32 n, s32 dp)
 {
     s32 rgb;
@@ -6006,7 +6003,6 @@ extern u8 D_800BF871;
 extern u16 *D_800ECFA4;
 extern u16 *D_800ECF78;
 void func_80136788(u8 *a, s32 *p0, s32 *p1, s32 *p2);
-
 void func_80136488(u8 *a)
 {
     T2Pt32 v0, v1, v2;

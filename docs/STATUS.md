@@ -3,6 +3,57 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-24: eighth round (new scopes, work queue; two container restarts)
+
+All code in C: **4372 / 7011 functions (62.4 %, 37.1 % of the bytes)**, from 4220 (33.1 %). First round with the new
+scopes (main; a00-a01; a02-a03; a04-a08; a09-a0l + overlays) and targets from tools/workqueue.py. The container
+restarted twice while the agents worked; the disk survived both times, so the committed work did (the agents commit
+every function or two), only their reports of the first part were lost; the round was relaunched from the commits and
+the scratch files. Intermediate pushes were made only of commits whose clean full build is 29 / 29 (checked in a
+temporary worktree); tools/integrate.py checked that all 43 commits after 9db1d81 link. Per scope: main ~30 (the most
+called pending MAIN functions: f_PlaySoundEffect, f_RunActorScriptInterpreter, f_BeginScriptedInteractionAudio, the
+model-transform and skeletal-animation functions, f_ResolveTombaGroundTerrainContact, f_UpdateTombaAirborneMotion,
+...: every caller now has the real prototype), a00-a01 ~16, a02-a03 ~20 (a03 trolley menus), a04-a08 ~55 (~33 KB:
+cling orientations, depth-cued GT3 / GT4 lists, effect spawners), a09-a0l + overlays ~35 (triangle grid-cell collector
+with 11 copies, f_UpdateEvilPigRelocationAttack with its 5 copies, depth-cued emitters in a0k).
+
+Findings (folded into AGENTS.md):
+- `nearcopy.py --near --ratio 0.6`, then hand edits of the differing constants / statements / blocks, was the most
+  productive method of the round.
+- Two tests sharing one body where retail reloads the global in each: `if (A) {body; return;} else if (B) {body;
+  return;}` with the body written twice, not `A || B` (pad handlers; cross-jumping merges the copies after CSE).
+- Keeping the first copy of a cross-jumped call: `r = a[0x29] = call(...); test: if (r) goto found; goto end;` on the
+  first path, the last path ends `r = ... = call(...); goto test;` (gcc keeps the later copy otherwise).
+- Stack-slot sharing for block-scoped struct copies: a local whose address goes to a call stays live to the end of its
+  block: declare the shared array in the enclosing scope.
+- Jump table with empty cases: distinct dead stores per case keep the labels (gcc merges labels sharing a body).
+- A conversion right before a `jal` in the argument register is a cast at the call (`f((s16)z)`); a `u8` return type
+  breaks implicit-int callers that test the result (linked build DIFF while ccheck says OK): keep s32.
+- Wrong argument counts of callees change scheduling: check how other overlays call the same function.
+- Probably assembly by design (no frame, `or t0,zero,a0` moves that gcc never emits, start `beqz a2`): a00
+  f_UpdateWindmillCollapseParticleActor, a07 f_UpdateCircusLockerNpcActor, a0l f_DispatchEndingAreaCameraSequence, a08
+  f_UpdateWaterTempleRaftNpcActor; the a00 func_801465EC family (no frame, t-registers only). To do: mark them with
+  asm_by_design.py (it handles library files: extend it to game functions) after checking.
+
+Near misses (scratch in the session scratchpad r8b/<scope>/): a01 func_80117290 1, func_80117BCC 1, func_8012AC84 1,
+a05 func_8013484C 2 instructions, a0c func_8011353C 2 lines, main func_800532A0 3, a0f func_8010A5F8 3 (hoist order;
+a0c func_8010B36C), a08 func_8012282C 3 lines, a00 func_8013BCC8 5 (6-copy family), a0b func_8010BE38 5, a0l
+func_8010FC58 5 lines (= func_8010FDB4), a02 func_8010B068 6 (3 copies), a07 func_8012D2B4 6 (copies a05
+func_8013590C, a08 func_8012A06C), a03 f_UpdateTrolleyCourseOverlayActor 7, f_UpdateTrolleySteeringInput 9, a0b
+func_801127BC 12, a01 func_80113D44 14, a04 func_8013D0F8 15, a0a f_UpdateEvilPigRushAttack ~16 lines (6 copies), a07
+func_8010D84C 17, a02 f_UpdateTabbyHouseSceneController 25, a0a func_801140D0 25 (3 copies), main
+f_DrawPackedGouraudQuadStream ~25 lines, main func_80056F3C 35.
+
+Tool work left: install_c: print the compiler error on a failed link, rewrite callers with another argument count
+through a cast instead of failing, warn on a return type narrower than int with implicit-int callers, warn when a
+scratch macro redefines one with another body, say when it changed an aliases file, avoid duplicate typedef names
+when moving up; ccheck `--no-protos` loses the include path; workqueue.py: drop installed functions (stale csv);
+nearcopy `--near`: a diff summary (missing / extra block, constants only, callees); asm_by_design.py for game code;
+regswap: `do {} while (0)` wrap and volatile re-read in the first round, const local per use, reuse a local for a
+call result, abs variants, flag narrowing splits, `--max-seconds`; inlined.py: a loop body inlined several times in
+one function -> one helper; a loop-hoisting diff and a scheduling helper (loads hoisted above a store to another
+global); heredocs with inline asm must be quoted (`<<'EOF'`).
+
 ## 2026-11-23 (5): speed-up tools
 
 One tools agent (the user approved the list). No function count change.

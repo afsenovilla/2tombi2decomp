@@ -482,7 +482,6 @@ extern u8 D_800BF840;
 extern u16 D_800ECF54;
 extern s16 D_1F80016C;
 extern s16 D_1F80016E;
-
 void func_8010AA94(u8 *a, u8 *b) {
     if (++H(a, 0x42) >= 6) {
         if ((D_800ECF54 & D_1F80016C) && a[0x147] == 0) {
@@ -933,7 +932,6 @@ extern s16 D_1F800164_d75f;
 extern s16 D_1F800162;
 extern s16 D_1F8001A4;
 extern u8 D_1F80025B;
-
 void f_UpdateEvilPigRelocationAttack(u8 *a)
 {
     ArenaPt *e;
@@ -2732,7 +2730,6 @@ typedef struct { s16 v[4]; s16 k; } PartDef49D8;
 typedef struct { u8 pad[0xC0]; u8 *parts[4]; } PartsOwner49D8;
 extern PartDef49D8 D_8011EC54[];
 extern s16 D_800ED098;
-
 void func_801149D8(PartsOwner49D8 *a)
 {
     s32 i;
@@ -3020,7 +3017,6 @@ void func_801160C4(u8 *a) {
 typedef struct { u16 a, b, c, d; } Box4;
 extern Box4 D_8011ED0C[];
 extern u16 D_1F800162_b816;
-
 void func_80116194(u8 *a)
 {
     switch (a[4]) {

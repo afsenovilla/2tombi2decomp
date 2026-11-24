@@ -900,7 +900,6 @@ extern s16 D_1F800164_d75f;
 extern s16 D_1F800162_a8d4;
 extern s16 D_1F8001A4_f18c;
 extern u8 D_1F80025B;
-
 void func_8010C11C(u8 *a)
 {
     ArenaPt *e;

@@ -728,7 +728,6 @@ extern u16 D_800ECF54;
 extern s16 D_1F80016C;
 extern s16 D_1F80016E;
 extern u8 D_800BF840;
-
 void func_8010C114(u8 *a)
 {
     if (++*(s16 *)(a + 0x42) >= 6) {
@@ -1204,7 +1203,6 @@ extern s16 D_1F800164_d75f;
 extern s16 D_1F800162_b816_b4b8;
 extern s16 D_1F8001A4;
 extern u8 D_1F80025B;
-
 void func_8010E4C8(u8 *a)
 {
     ArenaPt *e;

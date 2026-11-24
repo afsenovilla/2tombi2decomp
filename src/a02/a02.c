@@ -69,7 +69,6 @@ extern u16 D_1F8000F2_1841;
 #define B8(o) (*(u8 *)(a + (o)))
 #define I16(o) (*(s16 *)(a + (o)))
 #define W16(o) (*(u16 *)(a + (o)))
-
 void func_8010A8D0(u8 *a) {
     SpeedRow8010A8D0 *p;
     u32 acc;
@@ -1487,7 +1486,6 @@ void func_80112C58(void) {
 
 extern u8 D_800BF818;
 extern u8 *D_1F800138;
-
 s32 func_80112D08(u8 *a) {
     switch (a[5]) {
     case 0: {
@@ -1788,7 +1786,6 @@ s32 func_80114650(u8 *a, u8 *b) {
 }
 
 extern u8 D_800BFA03;
-
 void func_801146D8(u8 *a) {
     u8 *s = *(u8 **)(a + 0x10);
     u8 *q;
@@ -2929,7 +2926,6 @@ typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner80117D64;
 extern s16 D_800ED098;
 #define D64_I16(o) (*(s16 *)(a->pad + (o)))
 #define D64_W16(o) (*(u16 *)(a->pad + (o)))
-
 void func_80117D64(PartsOwner80117D64 *a) {
     switch (a->pad[4]) {
     case 0:
@@ -3010,7 +3006,6 @@ extern u8 *D_800ECFC8;
 extern u8 D_800BFA0B;
 #define FC0_I16(o) (*(s16 *)(a->pad + (o)))
 #define FC0_W16(o) (*(u16 *)(a->pad + (o)))
-
 void func_80117FC0(PartsOwner80117FC0 *a) {
     u8 *base;
 
@@ -3134,7 +3129,6 @@ typedef struct { u8 b0; u8 b1; s16 v[6]; s16 idx; } PartInit80118354;
 extern u8 *D_800ECFD0;
 extern PartInit80118354 D_80129C6C[];
 void func_801255C0(s32 arg0);
-
 void func_80118354(PartsOwner80118354 *a) {
     s32 i;
     u8 *base;
@@ -3305,7 +3299,6 @@ extern s32 D_800ECFCC;
 extern u8 D_8012A114[];
 extern s16 *D_8012A100[];
 extern u8 D_80139F38[];
-
 void func_80118880(PartsOwner80118880 *a) {
     s32 i;
     s16 *t;
@@ -3919,7 +3912,6 @@ extern u8 D_800E8008[];
 #define AC40_I16(o) (*(s16 *)(a->pad + (o)))
 #define AC40_W16(o) (*(u16 *)(a->pad + (o)))
 #define AC40_S32(o) (*(s32 *)(a->pad + (o)))
-
 void func_8011AC40(PartsOwner8011AC40 *a) {
     u8 *g = D_800E8008;
     s32 one = 1;
@@ -3998,7 +3990,6 @@ extern Tbl8011AEF0 D_801096DC;
 #define EF0_I16(o) (*(s16 *)(a->pad + (o)))
 #define EF0_W16(o) (*(u16 *)(a->pad + (o)))
 #define EF0_S32(o) (*(s32 *)(a->pad + (o)))
-
 void func_8011AEF0(PartsOwner8011AEF0 *a) {
     u8 *g = D_800E7E80;
     Tbl8011AEF0 tbl;
@@ -4341,7 +4332,6 @@ void func_8011C100(u8 *a)
 
 extern u8 D_800BF9FA;
 #define S32(o) (*(s32 *)(a + (o)))
-
 void f_UpdateFreedCharlesSequence(u8 *a) {
     s32 dx;
     s32 dz;
@@ -4638,7 +4628,6 @@ void func_8011CCD0(void *arg0) {
 }
 
 extern u8 D_800A3D18_ed09[];
-
 s32 f_RunTabbyHouseResidentConversation(u8 *a) {
     u8 *t;
 
@@ -5253,7 +5242,6 @@ extern u8 D_8012B430[];
 extern u8 D_8012B450[];
 extern u8 D_8012B460[];
 extern u8 D_8012B470[];
-
 void func_8011F6EC(u8 *a) {
     u8 *g;
 
@@ -5534,7 +5522,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80120A3C);
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80120BE0);
 
 extern u8 D_800E807E;
-
 s32 func_80120D1C(u8 *a) {
     s16 v[6];
     s32 i;
@@ -6139,7 +6126,6 @@ void func_80122EA8(u8 *a) {
 }
 
 #define S32(o) (*(s32 *)(a + (o)))
-
 void func_80122F6C(u8 *a) {
     switch (a[5]) {
     case 0:
@@ -6234,7 +6220,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8012383C);
 extern u8 D_800BFAFE;
 extern void *D_8012C914_7d7d[];
 void func_80123DA4(void *arg0);
-
 void func_8012396C(u8 *a) {
     s32 n = 0;
 
@@ -6398,7 +6383,6 @@ extern Cam80123E1C D_1F8000D0_959d;
 extern s32 D_800A3F90;
 extern s32 D_800A3F94;
 void func_80124138(u8 *a, s32 *p0, s32 *p1, s32 *p2);
-
 void func_80123E1C(u8 *a) {
     s32 p[6];
     s32 ang;
@@ -6935,7 +6919,6 @@ void func_801255C0(s32 arg0) {
 }
 
 extern s32 D_801390E0[];
-
 void func_80125618(u8 *a, s32 *b) {
     s32 i;
     s32 j;

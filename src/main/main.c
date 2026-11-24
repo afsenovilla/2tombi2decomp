@@ -6751,7 +6751,6 @@ s32 f_SetActorAnimationIfChanged(u8 *a, s32 anim, s16 c)
 }
 
 s32 f_PlaySoundEffect();
-
 s32 func_8004179C(u8 *a)
 {
     u8 *s;
@@ -7574,7 +7573,6 @@ s32 func_80043A10(void *arg0) {
 
 extern u8 D_1F800233_33a2;
 void f_StopNonReservedSequencedMusic(void);
-
 s32 func_80043A40(u8 *a)
 {
     f_StopNonReservedSequencedMusic();
@@ -8015,7 +8013,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_EvaluateTerrainVerticalSurface);
 extern s16 D_1F8001C2;
 extern u16 *D_1F8001E0;
 extern s16 *D_1F8001EC;
-
 s32 func_800459D0(s16 k)
 {
     s32 hi, lo;
@@ -11089,7 +11086,6 @@ void f_ResetTombaControlState(void *arg0) {
 }
 
 #define PROBE_800493E8 ((s32 (*)(u8 *, s32, s32))func_800493E8)
-
 s32 f_ResolveTombaOverheadTerrainContact(u8 *a, s32 b)
 {
     s16 z;
@@ -11176,7 +11172,6 @@ void func_800543C0(u8 *a)
 extern u16 D_1F80019E;
 extern u16 D_1F8001A4;
 extern u16 D_1F8001A8;
-
 s32 f_ResolveTombaGroundTerrainContact(u8 *a)
 {
     s32 alt = 0;
@@ -11564,7 +11559,6 @@ void f_AdvanceTombaAlongMovementVector(u8 *t, s32 noY)
 }
 
 void f_DetachTombaFromSupport(u8 *a, s32 keep);
-
 void f_UpdateTombaLostGroundSupportMotion(u8 *a, s32 b)
 {
     u8 *g;
@@ -11639,7 +11633,6 @@ void f_DetachTombaFromSupport(u8 *a, s32 keep)
 
 extern u16 D_800A4588_8cc4[];
 extern u16 D_800A45A0_e73f[];
-
 void func_80056E08(u8 *a)
 {
     u16 *t;
@@ -11684,7 +11677,6 @@ void func_80056EC8(u8 *p)
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80056F3C);
 
 s32 f_StepWrappedAngleToward(s32 a, s32 b, s32 step);
-
 void func_8005706C(u8 *a, s32 b)
 {
     *(u16 *)(a + 0x4A) += 0x360;
@@ -11811,7 +11803,6 @@ void func_8005749C(void *arg0) {
 }
 
 extern u8 D_800BF848;
-
 void f_UpdateTombaAirborneMotion(u8 *a, s32 b)
 {
     s32 pos[3];
@@ -12486,7 +12477,6 @@ s32 func_8005B134(s32 unused, u8 *a)
 }
 
 extern u16 D_800A46AC[];
-
 void func_8005B20C(u8 *a, s32 b)
 {
     u8 *t = *(u8 **)(a + 0x10);
@@ -14196,7 +14186,6 @@ extern u16 D_800A4940[];
 extern u16 D_800A4980[];
 extern u16 D_800A49A0[];
 extern u16 D_800A49C0[];
-
 void func_80067DA8()
 {
     Rect_7DA8 r;
@@ -16081,7 +16070,6 @@ void f_SetCameraPositionVertical(s32 arg0, void *arg1) {
 
 typedef struct { u8 pad[0xC]; s32 x; s32 y; s32 z; } CamH_DA30;
 extern CamH_DA30 D_1F8000D0_8d1c;
-
 s32 f_ApproachCameraPositionHorizontal(void *unused, u8 *t)
 {
     CamH_DA30 *c;
@@ -19883,7 +19871,6 @@ extern u8 *D_800F23A8_c058;
 extern u8 *D_800F23A0_9c78;
 #define LNK_NEXT(p) (*(u8 **)((p) + 0x20))
 #define LNK_PREV(p) (*(u8 **)((p) + 0x24))
-
 void func_8007AE30(u8 *at, u8 *n, s32 mode, s32 list)
 {
     u8 **tail;
@@ -20311,7 +20298,6 @@ typedef struct {
     s16 w;
     s16 h;
 } UiCell_C780;
-
 UiCell_C780 *func_8007C780(UiCell_C780 *p, u16 *x, u8 c, s16 kind)
 {
     u8 *s;

@@ -733,7 +733,6 @@ extern SpeedRow8010A8D0 D_800A4574_8b42;
 #define I16(o) (*(s16 *)(a + (o)))
 #define W16(o) (*(u16 *)(a + (o)))
 extern s32 D_8011FC18[];
-
 void func_8010B760(u8 *a) {
     SpeedRow8010A8D0 *p;
     u32 acc;
@@ -1662,7 +1661,6 @@ extern s8 D_800BF808_c1f7[];
 typedef struct { u8 pad[0x104]; u8 *s[6]; } TrolleyMenuText;
 extern TrolleyMenuText D_800A2854;
 typedef struct { s16 x, y, w, h; } TrolleyMenuRect;
-
 s32 menu(void) {
     u8 *strs[4];
     s32 ys[4];
@@ -2828,7 +2826,6 @@ static inline void K_depth(u32 *c, s32 *z)
     K_dpcs();
     K_strgb2(c);
 }
-
 u32 *func_801163E0(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[3];
@@ -2997,7 +2994,6 @@ static inline void K_depth_4647(s32 z, u32 *c)
     K_dpcs();
     K_strgb2(c);
 }
-
 u32 *func_80116708(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[4];

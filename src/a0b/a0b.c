@@ -892,7 +892,6 @@ extern s16 D_1F800164_d75f;
 extern s16 D_1F800162;
 extern s16 D_1F8001A4;
 extern u8 D_1F80025B;
-
 void func_8010D1F0(u8 *a)
 {
     ArenaPt *e;
@@ -2668,7 +2667,6 @@ INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80114AA8);
 typedef struct { u16 a, b, c, d; } Box4;
 extern Box4 D_8011C158[];
 extern u16 D_1F800162_b816;
-
 void func_80114CEC(u8 *a)
 {
     switch (a[4]) {

@@ -412,7 +412,6 @@ extern u16 D_1F8000F2;
 #define B8(o) (*(u8 *)(a + (o)))
 #define I16(o) (*(s16 *)(a + (o)))
 #define W16(o) (*(u16 *)(a + (o)))
-
 void func_8010D0B4(u8 *a) {
     SpeedRow8010A8D0 *p;
     u32 acc;
@@ -2611,7 +2610,6 @@ void func_8011BD6C(u8 *a, s32 b) {
 extern u8 D_800BF809;
 extern u8 D_800ECF58_742e[];
 extern u8 D_80133210_bcc2[];
-
 void func_8011C02C(u8 *a)
 {
     s32 s = a[4];
@@ -3039,7 +3037,6 @@ extern u8 D_801337C8[];
 extern u8 D_801337F0[];
 extern u8 D_801337E0[];
 extern u8 D_800BFAEA;
-
 s32 func_8011E3FC(u8 *a)
 {
     switch (a[6]) {
@@ -3133,7 +3130,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011EF34);
 extern u8 D_800A3D18_ed09[];
 extern u8 D_80133900[];
 s32 f_CompleteUseTheSeesawEventIfResolved(void);
-
 s32 func_8011EFF8(u8 *a) {
     u8 *t;
 
@@ -4337,7 +4333,6 @@ s32 func_8012AB5C(void)
 }
 
 #define S32(o) (*(s32 *)(a + (o)))
-
 void func_8012AB88(u8 *a, void *b) {
     switch (a[5]) {
     case 0:
@@ -4738,7 +4733,6 @@ extern s32 D_1F80008C_f832;
 #define T2_ldrgb(r0) __asm__ volatile("mtc2 %0, $6" : : "r"(r0))
 #define T2_dpcs() __asm__ volatile("nop; nop; .word 0x4A780010")
 #define T2_strgb(r0) __asm__ volatile("swc2 $22, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_8012CDF4(u32 *f, u32 *ot, s32 n, s32 dp)
 {
     s32 rgb;
@@ -4958,7 +4952,6 @@ typedef struct {
 extern Cam80123E1C D_1F8000D0_959d;
 extern s32 D_800A3F90;
 extern s32 D_800A3F94;
-
 void func_8012E2F4(u8 *a) {
     s32 p[6];
     s32 ang;
@@ -5081,7 +5074,6 @@ void func_8012EB50(u8 *a)
 }
 
 extern s32 D_8013FF48[];
-
 void func_8012EB7C(u8 *a, s32 *b) {
     s32 i;
     s32 j;

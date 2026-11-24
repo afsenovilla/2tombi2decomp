@@ -402,7 +402,6 @@ void func_8010D188(u8 *a, u8 *b) {
 }
 
 extern u8 D_80134C08[];
-
 void func_8010D3E0(u8 *a, u8 *b) {
     s32 r = 0;
     s32 k;
@@ -2130,7 +2129,6 @@ u8 *func_80113D04(s32 a) {
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80113D44);
 
 extern s16 *D_80135B60[];
-
 void func_80113EB8(u8 *a) {
 
     s32 i;
@@ -2172,7 +2170,6 @@ void func_80113EB8(u8 *a) {
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern u8 D_800E806E;
 extern u16 D_1F80017C;
-
 s32 func_80114018(u8 *a) {
     u8 *p;
 
@@ -2221,7 +2218,6 @@ s32 func_80114018(u8 *a) {
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern u8 D_800BF9FD;
-
 void f_UpdateCoalMiningTownEntranceOpeningSequence(u8 *a) {
     s32 s;
     s32 v;
@@ -2300,7 +2296,6 @@ static inline s32 lift_ready(u8 *a, s32 b) {
     }
     return 0;
 }
-
 void f_UpdateTurboTrolleyLiftSequence(u8 *a) {
     s16 h;
     s32 i, k;
@@ -2358,7 +2353,6 @@ void f_UpdateTurboTrolleyLiftSequence(u8 *a) {
 extern u8 D_1F8000D0_b839[];
 extern u8 D_800E806C;
 extern u8 D_800BF9FB_3655;
-
 void f_UpdateQuickTrolleyDescentSequence(u8 *a) {
     s16 h;
     s32 i, k;
@@ -4149,7 +4143,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateAnemoneCaptureSequence);
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
 extern u8 D_8013616C[];
-
 s32 func_8011CF9C(u8 *a, s32 f) {
     u8 *t;
     s16 dx, dz, dy;
@@ -4187,7 +4180,6 @@ s32 func_8011CF9C(u8 *a, s32 f) {
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011D104);
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 s32 func_8011D2C4(u8 *a) {
     u8 *e = *(u8 **)(a + 0x10);
     s16 dy, dx, dz;
