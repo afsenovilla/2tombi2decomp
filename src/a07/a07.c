@@ -235,7 +235,55 @@ void f_DispatchCircusMovingActorContacts(u8 *a)
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_DispatchCircusActorContacts);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", f_DispatchCircusActorContactCleanup);
+extern s8 D_1F800182_85c9[];
+extern int rcos(int a);
+extern int rsin(int a);
+extern s8 D_800BF80D;
+extern s8 D_1F800182_85c9[];
+extern s8 D_1F800154_248c[];
+extern s8 D_1F80015C_055a[];
+extern void (*D_8009D1D4[])(void);
+extern s8 D_800BF80D;
+extern void (*D_8009D22C[])(void);
+extern void (*D_8009D314[])(u8 *);
+extern void (*D_8009D52C[])(u8 *);
+extern void (*D_800A4AF8[])(void);
+extern void (*D_800A4B50[])(void);
+extern void (*D_800A4AA0[])(u8 *);
+extern s32 (*D_800A3B78[])(u8 *);
+
+void f_DispatchCircusActorContactCleanup(u8 *a)
+{
+    u8 **list;
+    u8 *e;
+
+    if (*(s16 *)(a + 0x16E) == 0 || D_800BF80D != 0 || (*(u16 *)(a + 0x17E) & 0x200)) {
+        return;
+    }
+    list = *(u8 ***)D_1F800154_248c;
+    *(u8 *)D_1F800182_85c9 = *(u8 *)D_1F80015C_055a;
+    while (*(u8 *)D_1F800182_85c9 != 0) {
+        e = *list;
+        *(u8 *)D_1F800182_85c9 = *(u8 *)D_1F800182_85c9 - 1;
+        list++;
+        if (e[0] == 1) {
+            switch (e[2]) {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                func_80022060(a, e);
+                break;
+            case 5:
+                func_8010B6F4(a, e);
+                break;
+            }
+        } else if (e[0] == 5 && e[2] == 5) {
+            func_8010B6F4(a, e);
+        }
+    }
+}
 
 void func_8010CA60(u8 *a, u8 *b)
 {
@@ -2489,13 +2537,6 @@ void func_8011AD44(u8 *a) {
 }
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
-extern void (*D_8009D1D4[])(void);
-extern void (*D_8009D22C[])(void);
-extern void (*D_8009D314[])(u8 *);
-extern void (*D_8009D52C[])(u8 *);
-extern void (*D_800A4AF8[])(void);
-extern void (*D_800A4B50[])(void);
-extern void (*D_800A4AA0[])(u8 *);
 extern s16 D_801330FC;
 typedef struct {
     s16 f0, f2, f4, f6, f8, fA, fC, pad0E[2], f12, pad14, f16;
