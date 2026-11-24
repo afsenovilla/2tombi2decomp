@@ -3231,7 +3231,67 @@ void func_80119454(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80119510);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SubmitPendingGoldenCrabs);
+static inline s32 gc_submit(u8 *a) {
+    s32 i;
+    s32 k;
+    u8 *e;
+
+    i = 0;
+    do {
+        if ((a[0x5F] >> i) & 1) {
+            k = i + 4;
+            e = func_8011C610(a, k);
+            if (e != NULL) {
+                e[0x28] |= 0x80;
+                D_800BF870.pad1[0x172] |= 1 << k;
+                a[0x5F] -= 1 << i;
+                func_8004D604(0x2A, 1);
+                return 1;
+            }
+        }
+        i++;
+    } while (i < 3);
+    return 0;
+}
+
+s32 f_SubmitPendingGoldenCrabs(u8 *a) {
+    u8 *t = D_800E7E80;
+    s16 r;
+
+    switch (a[7]) {
+    case 0:
+        if ((s8)a[0x70] <= 0) {
+            a[7]++;
+        }
+        break;
+    case 1:
+        if (gc_submit(a) != 0) {
+            H_f12c(a, 0x40) = 0x48;
+            a[7]++;
+        } else {
+            a[7] = 3;
+        }
+        break;
+    case 2:
+        if (--H_f12c(a, 0x40) == 0) {
+            a[7]--;
+        }
+        break;
+    case 3:
+        func_8006CBA8(t + 0x2C);
+        a[7]++;
+        H_f12c(a, 0x42) = func_800782B0(t + 0x2C, H_f12c(a, 0x2E), H_f12c(a, 0x36)) & 0xFFF;
+    case 4:
+        r = func_800776F8(H_f12c(a, 0x42), H_f12c(t, 0x56), 0x100);
+        H_f12c(t, 0x56) = r;
+        if (r == H_f12c(a, 0x42)) {
+            a[7] = 0;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 extern u8 D_800BF80E;
 extern u8 D_80148680[];

@@ -3032,7 +3032,53 @@ s32 func_801175D0(u8 *a) {
     return ret;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80117A00);
+s32 func_80117A00(u8 *a, s16 y) {
+    s32 r = 0;
+    s32 d;
+    u8 *q = a + 0x60;
+
+    switch (a[7]) {
+    case 0:
+        FH(q, 0x18) = FH(a, 0x32) + (y - FH(a, 0x32)) / 2;
+        a[7]++;
+    case 1:
+        d = func_80083E80(-FH(a, 0x58)) >> 5;
+        if (d == 0) {
+            if (FH(q, 0x18) < FH(a, 0x32)) {
+                a[7] = 2;
+            } else {
+                a[7] = 3;
+            }
+        } else {
+            FH(a, 0x58) += d;
+        }
+        break;
+    case 2:
+        if (FH(a, 0x32) > FH(q, 0x18)) {
+            FH(a, 0x58) += func_80083E80(-0x300 - FH(a, 0x58)) >> 5;
+        } else {
+            a[7] = 4;
+        }
+        break;
+    case 3:
+        if (FH(a, 0x32) < FH(q, 0x18)) {
+            FH(a, 0x58) += func_80083E80(0x300 - FH(a, 0x58)) >> 5;
+        } else {
+            a[7] = 4;
+        }
+        break;
+    case 4:
+        d = func_80083E80(-FH(a, 0x58)) >> 5;
+        if (d != 0) {
+            FH(a, 0x58) += d;
+        } else {
+            r = 1;
+        }
+        break;
+    }
+    a01_turn(a);
+    return r;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80117BCC);
 
