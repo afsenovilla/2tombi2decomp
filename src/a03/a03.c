@@ -746,7 +746,53 @@ void f_UpdateTrolleyMovementAndCamera(u8 *a) {
     f_UpdateTrolleyRaceCamera(a);
 }
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyCourseProgressActor);
+extern s8 D_800BF80D;
+extern u8 *D_8011BB60;
+u8 *func_8007E038(s32, s32);
+
+void f_UpdateTrolleyCourseProgressActor(u8 *a) {
+    s32 y;
+
+    switch (a[6]) {
+    case 0:
+        a[6] = 1;
+        D_8011BB60 = func_8007E038(0x17, 3);
+    case 1:
+        f_UpdateTrolleyMovementAndCamera(a);
+        y = *(s16 *)(a + 0x36);
+        D_1F80020C &= ~7;
+        if (y >= -0x5BA) {
+            D_8011BB60[4] = 2;
+            a[6]++;
+        } else if (y >= -0x1829) {
+            D_1F80020C |= 3;
+        } else if (y >= -0x2960) {
+            D_1F80020C |= 2;
+        } else if (y >= -0x39C8) {
+            D_1F80020C |= 1;
+        }
+        break;
+    case 2:
+        f_UpdateTrolleyMovementAndCamera(a);
+        {
+            s32 v = D_1F80020C & ~7;
+            s32 z = *(s16 *)(a + 0x36);
+            D_1F80020C = v;
+            if (z >= 0xA72) {
+                a[6]++;
+            } else {
+                D_1F80020C = v | 4;
+            }
+        }
+        break;
+    case 3:
+        f_UpdateTrolleyMovementAndCamera(a);
+        if (D_800BF80D != 0) {
+            a[4] = 2;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateDetachedTrolleyActor);
 
