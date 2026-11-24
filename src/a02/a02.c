@@ -6754,6 +6754,36 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateBlastTheRockSequence);
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80127EDC);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80128034);
+void func_80128034(u8 *a, void *b) {
+    switch (a[5]) {
+    case 0:
+        I16(0x4A) = -0x2800;
+        a[5] = 1;
+        I16(0x50) = 0x200;
+        func_8004B354(a, b);
+        a[0xB] = 0x10;
+        break;
+    case 1:
+        S32(0x30) += I16(0x4A) << 8;
+        W16(0x4A) += W16(0x50);
+        if (I16(0x4A) > 0) {
+            a[0] = 1;
+            a[5]++;
+        }
+        break;
+    case 2:
+        S32(0x30) += I16(0x4A) << 8;
+        if (I16(0x4A) < 0x3000) {
+            W16(0x4A) += W16(0x50);
+        }
+        if (a[0x29] == 0 && func_8010A868(a) == 0) {
+            break;
+        }
+        I16(0x4A) = 0;
+        a[5]++;
+        break;
+    }
+    func_8004B374(a, b);
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateTabbyHouseResidentActor);
