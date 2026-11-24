@@ -11677,7 +11677,50 @@ void func_801401B8(PartList *a)
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801402B8);
+typedef struct { u8 b[8]; } AnimEnt8;
+extern AnimEnt8 D_8014BF04[];
+extern u8 D_8014BF58[];
+extern u8 D_8014BF54[];
+extern u8 *D_800ECFB0;
+extern u8 D_8014CDA8[];
+
+void func_801402B8(u8 *a, s32 k, s32 m) {
+    u8 *q = a + 0x60;
+    AnimEnt8 *e;
+    s32 idx;
+    u8 *base;
+    s32 *tbl;
+    u8 *r;
+
+    if (a[0x46] == k) {
+        return;
+    }
+    a[0x46] = k;
+    if ((m & 0xFF) == 0) {
+        func_80077C40(a, D_8014CDA8, k);
+    } else {
+        func_80077CFC(a, D_8014CDA8, k, (u8)m);
+    }
+    idx = *(u16 *)(P(a, 0x38) + 2);
+    e = &D_8014BF04[idx];
+    H_f12c(a, 0x80) = e->b[0];
+    H_f12c(a, 0x82) = e->b[1];
+    H_f12c(a, 0x84) = e->b[2];
+    H_f12c(a, 0x86) = e->b[3];
+    H_f12c(q, 0x1C) = (s8)e->b[4];
+    H_f12c(q, 0x1E) = (s8)e->b[5];
+    base = D_800ECFB0;
+    tbl = (s32 *)(base + 4);
+    P(P(a, 0xC4), 0x40) = base + tbl[D_8014BF58[e->b[6] & 0xF]];
+    P(P(a, 0xE4), 0x40) = base + tbl[D_8014BF54[e->b[7] & 0xF]];
+    r = a + 0x60;
+    if (e->b[7] & 0x80) {
+        P(P(a, 0xFC), 0x40) = base + tbl[0x16];
+    } else {
+        P(P(a, 0xFC), 0x40) = base + tbl[0xF];
+    }
+if (D_8014BF04[idx].b[7] & 0x10) { H_f12c(r, 2) |= 8; } else { H_f12c(r, 2) &= 0xFFF7; }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8014047C);
 
