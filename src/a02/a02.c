@@ -9204,7 +9204,57 @@ s32 func_80126C94(u8 *a) {
     return 0;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80126D24);
+typedef struct { u8 b[6]; } Tbl6D24;
+extern Tbl6D24 D_8010A4A4;
+#define U(p, o) (*(u16 *)((p) + (o)))
+#define S(p, o) (*(s16 *)((p) + (o)))
+
+s32 func_80126D24(u8 *a)
+{
+    Tbl6D24 t = D_8010A4A4;
+    u8 *s = a + 0x50;
+    s32 d;
+    s16 k;
+
+    switch (a[4]) {
+    case 0:
+        *(s32 *)(a + 0x48) = 0;
+        *(s32 *)(a + 0x4C) = 0;
+        S(a, 0x50) = 0;
+        S(s, 2) = 0;
+        k = S(a, 0x2E);
+        S(s, 8) = -2;
+        S(s, 4) = k;
+        a[4] = 1;
+    case 1:
+        d = S(a, 0x2E);
+        d = S(s, 4) - d;
+        d -= 0xC8;
+        d *= d;
+        d = 0x112 - (d >> 8);
+        d /= 16;
+        S(s, 6) = d;
+        if ((s16)d <= 0) {
+
+            a[4] = 2;
+            break;
+        }
+        U(a, 0x2E) += U(s, 8);
+        U(s, 8) += (-0x19 - S(s, 8)) >> 1;
+        U(s, 2)++;
+        if (S(s, 2) >= 0xC) {
+            S(s, 2) = 0;
+        }
+        U(s, 0) = t.b[S(s, 2) >> 1];
+        a[1] = 1;
+        U(a, 0x4A) += 0x44;
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u8 D_80138990[];
 typedef struct { u8 pad[0x48]; s16 r[3]; } RotAct;
