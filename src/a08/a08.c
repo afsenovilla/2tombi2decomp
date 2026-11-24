@@ -5184,7 +5184,33 @@ void func_801299A8(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80129A5C);
+void func_80129A5C(u8 *a)
+{
+    u8 *g = (u8 *)&D_800BF870;
+
+    if (g[0xB2] != 0xFF) {
+        return;
+    }
+    switch (a[5]) {
+    case 0:
+        if (g[0x1E0] >= 0x1E) {
+            a[5] = 1;
+            func_80074590(0x1A, 0x1B, 0);
+        }
+        break;
+    case 1:
+        *(s16 *)(*(u8 **)(a + 0xC4) + 8) -= 0x40;
+        if (*(s16 *)(*(u8 **)(a + 0xC4) + 8) < -0x6FF) {
+            a[5]++;
+            g[0x1E0] = 0x1F;
+        }
+        break;
+    case 2:
+        break;
+    }
+    a[1] = 1;
+    func_800517F8(a);
+}
 
 void func_80129B40(void *arg0) {
     M2C_FIELD(arg0, s8 *, 0) = 1;
