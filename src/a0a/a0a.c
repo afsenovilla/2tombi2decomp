@@ -2976,7 +2976,34 @@ void func_801160C4(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80116194);
+typedef struct { u16 a, b, c, d; } Box4;
+extern Box4 D_8011ED0C[];
+extern u16 D_1F800162_b816;
+
+void func_80116194(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        *(u16 *)(a + 0x80) = D_8011ED0C[a[3]].a;
+        *(u16 *)(a + 0x82) = D_8011ED0C[a[3]].b;
+        *(u16 *)(a + 0x84) = D_8011ED0C[a[3]].c;
+        *(u16 *)(a + 0x86) = D_8011ED0C[a[3]].d;
+        a[8] = 0;
+        a[9] = 0;
+        a[0] = 1;
+        a[0xB] = 0;
+        a[0x2B] = 0;
+        a[4]++;
+        break;
+    case 1:
+        func_8007778C(a);
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern s16 D_80126A5C[];
 void f_CopyEvilPigCaptureDeformationVertices(u16 *a, s16 *v)
