@@ -3380,7 +3380,84 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B3A4);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B7B0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B8F4);
+extern u8 D_800A2030[];
+extern u8 D_800A2018[];
+extern u8 D_800E7E7C;
+s32 f_AllocateActorRecordByType(u8 type, u8 b, s32 c);
+void func_80031744(void *arg0);
+/* f_SpawnTransientEffectAtFixedPosition, inlined (position as three halfwords) */
+static inline u8 *SpawnAt_B8F4(s32 id, u8 *pos, s16 y)
+{
+    u8 *t;
+
+    if (D_800E7E7C < 7) {
+        return NULL;
+    }
+    t = (u8 *)f_AllocateActorRecordByType(0, 6, 1);
+    if (t == NULL) {
+        return NULL;
+    }
+    if (pos != NULL) {
+        *(u16 *)(t + 0x2C) = *(u16 *)(pos + 0);
+        *(u16 *)(t + 0x2E) = *(u16 *)(pos + 2);
+        *(u16 *)(t + 0x30) = *(u16 *)(pos + 4);
+    }
+    *(s16 *)(t + 0x32) = y;
+    f_InitializeTransientEffectActor(t, id);
+    return t;
+}
+
+void func_8002B8F4(u8 *a)
+{
+    u8 *v = a + 0x58;
+    u8 *e;
+    s32 x;
+    s32 y;
+
+    switch (a[4]) {
+    case 0:
+        *(u8 **)(a + 0x40) = D_800A2030;
+        *(u8 **)(a + 0x50) = D_800A2018;
+        *(s32 *)(a + 0x48) = 0;
+        *(s32 *)(a + 0x4C) = 0;
+        a[4] = 1;
+        a[7] = 0;
+        *(u16 *)(v + 0) = *(u16 *)(a + 0x2C);
+        *(u16 *)(v + 2) = *(u16 *)(a + 0x2E) - 0x78;
+        *(u16 *)(v + 4) = *(u16 *)(a + 0x30);
+    case 1:
+        x = *(s32 *)(a + 0x38);
+        y = *(s32 *)(a + 0x40);
+        *(s32 *)(a + 0x34) = x;
+        *(s32 *)(a + 0x3C) = y;
+        if (x == 0 && y == 0) {
+            a[4] = 2;
+            break;
+        }
+        if ((u8)(a[3] - 0x14) < 2) {
+            if (++a[7] == 7) {
+                e = SpawnAt_B8F4(3, a + 0x2C, -0x32);
+                if (e != NULL) {
+                    e[0x28] |= 0x80;
+                }
+            }
+            if (a[3] == 0x15) {
+                *(u16 *)(v + 2) -= 0x10;
+            } else if (a[3] == 0x14) {
+                *(u16 *)(v + 2) -= 10;
+            }
+        }
+        if (func_8002B278(a) == 0) {
+            func_80031744(a);
+            func_80031780(a);
+        }
+        break;
+    case 2:
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002BAFC);
 
@@ -3794,7 +3871,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8002F230);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002F36C);
 
-extern u8 D_800E7E7C;
 void func_8002F514(s32 kind, s32 owner)
 {
     u8 *e;
