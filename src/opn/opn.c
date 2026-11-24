@@ -648,7 +648,69 @@ void func_8018C820(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/opn/nonmatchings/opn", func_8018CA1C);
+typedef struct {
+    u8 pad0[8];
+    u8 count;
+    u8 pad9[0xB7];
+    u8 *parts[4];
+} PartOwner;
+extern u8 **D_800E7E74;
+extern s16 D_800ED098;
+extern s16 D_8018D470[];
+void func_8018CCFC(PartOwner *a, s16 b);
+
+void func_8018CA1C(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        H(a, 0x40) = 3;
+        H(a, 0x42) = 0;
+        a[7] = 0;
+        a[6]++;
+        break;
+    case 1:
+        if (--H(a, 0x42) < 0) {
+            switch (a[7]) {
+            case 0:
+                func_8018CCFC((PartOwner *)a, 8);
+                a[7]++;
+                break;
+            case 1:
+                func_8018CCFC((PartOwner *)a, 4);
+                break;
+            }
+            D_800ED098++;
+            {
+                u8 **p = D_800E7E74;
+                D_800E7E74 = p - 1;
+                p[-1] = ((PartOwner *)a)->parts[a[8] - 1];
+            }
+            H(a, 0x42) = 5;
+            a[9] = a[8] = a[8] - 1;
+            if (--H(a, 0x40) == 0) {
+                a[6]++;
+            }
+        }
+        break;
+    case 2:
+        if (--H(a, 0x42) < 0) {
+            func_8018CCFC((PartOwner *)a, 4);
+            H(((PartOwner *)a)->parts[a[8] - 1], 0) = D_8018D470[0];
+            H(((PartOwner *)a)->parts[a[8] - 1], 2) = D_8018D470[1];
+            H(((PartOwner *)a)->parts[a[8] - 1], 4) = D_8018D470[2];
+            H(((PartOwner *)a)->parts[a[8] - 1], 8) = D_8018D470[3];
+            H(((PartOwner *)a)->parts[a[8] - 1], 0xA) = D_8018D470[4];
+            H(((PartOwner *)a)->parts[a[8] - 1], 0xC) = D_8018D470[5];
+            H(((PartOwner *)a)->parts[a[8] - 1], 0x38) = 0x1000;
+            H(((PartOwner *)a)->parts[a[8] - 1], 0x3A) = 0x1000;
+            H(((PartOwner *)a)->parts[a[8] - 1], 0x3C) = 0x1000;
+            a[5] = 0;
+            a[6] = 1;
+            func_80051B04(((PartOwner *)a)->parts[a[8] - 1], 0x1C, 0x1C);
+        }
+        break;
+    }
+}
 
 typedef struct {
     s16 pad0;
@@ -658,12 +720,6 @@ typedef struct {
     s16 pad8;
     s16 z;
 } HiPos;
-typedef struct {
-    u8 pad0[8];
-    u8 count;
-    u8 pad9[0xB7];
-    u8 *parts[4];
-} PartOwner;
 void func_8018CCFC(PartOwner *a, s16 b)
 {
     HiPos p;
