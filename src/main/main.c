@@ -17571,7 +17571,73 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80075FF8);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80076904);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_AdvanceActorSkeletalAnimation);
+static inline void SkelAnimStartFrame(u8 *a)
+{
+    u8 *s;
+    u16 v;
+
+    *(s16 *)(a + 0xE) = *(u16 *)(*(u8 **)(a + 0x38) + 6) & 0xFFF;
+    func_80076904(a);
+    s = *(u8 **)(a + 0x38);
+    v = *(u16 *)(s + 6);
+    if (v & 0x2000) {
+        switch (v & 0xC000) {
+        case 0:
+            func_80075FF8(a, s + 8, *(s16 *)(a + 0xE));
+            break;
+        case 0x4000:
+        case 0xC000:
+            func_80075FF8(a, *(void **)(s + 8), *(s16 *)(a + 0xE));
+            break;
+        case 0x8000:
+            break;
+        }
+    }
+}
+
+s32 f_AdvanceActorSkeletalAnimation(u8 *a)
+{
+    u16 t = *(u16 *)(a + 0xE);
+    s16 n = (t & 0xFFF) - 1;
+    u8 *s;
+
+    if (n != 0) {
+        if (*(s32 *)(a + 0x38) >= 0) {
+            func_80075F0C(a, n);
+            *(u16 *)(a + 0xE) = n + (*(u16 *)(a + 0xE) & 0x1000);
+            return 2;
+        }
+        *(u16 *)(a + 0xE) = n + (t & 0x1000);
+        return 0;
+    }
+    s = *(u8 **)(a + 0x38);
+    switch (*(s16 *)(s + 6) & 0xC000) {
+    case 0:
+        if (!(t & 0x1000)) {
+            *(u8 **)(a + 0x38) = s + 8;
+        }
+        SkelAnimStartFrame(a);
+        break;
+    case 0x4000:
+        if (!(t & 0x1000)) {
+            *(u8 **)(a + 0x38) = s + 8;
+            *(u8 **)(a + 0x38) = *(u8 **)(s + 8);
+        }
+        SkelAnimStartFrame(a);
+        break;
+    case 0x8000:
+        *(u16 *)(a + 0xE) = *(u16 *)(s + 6) & 0xFFF;
+        return 1;
+    case 0xC000:
+        if (!(t & 0x1000)) {
+            *(u8 **)(a + 0x38) = s + 8;
+            *(u8 **)(a + 0x38) = *(u8 **)(s + 8);
+        }
+        SkelAnimStartFrame(a);
+        return 1;
+    }
+    return 0;
+}
 
 /* f_QueueClass2Or9ActorForRender, inlined */
 static inline void QueueC2_703C(s32 arg0) {
