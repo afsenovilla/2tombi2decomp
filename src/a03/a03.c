@@ -151,7 +151,54 @@ s32 func_80109C48(u8 *t, s32 anim, s32 blend)
     return 1;
 }
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateAndDrawTrolleyRiderModel);
+extern u8 D_800E7E80[];
+extern u8 D_1F800247;
+
+void f_UpdateAndDrawTrolleyRiderModel(void) {
+    u8 *a = D_800E7E80;
+
+    if (a[0xD] & 0xD0) {
+        a[0xD] |= 2;
+        if (!(a[0xD] & 0x20)) {
+            if (a[0xD] & 0x10) {
+                u8 p = D_1F800247;
+                if (!(p & 0x30) && (p & 3) >= 2) {
+                    a[0x18] = 0xD0;
+                    a[0x19] = 0xD0;
+                    a[0x1A] = 0xD0;
+                } else if (a[0xD] & 0x80) {
+                    a[0x18] = ((s16)func_80083E80((D_1F800247 & 0xF) << 7) >> 6) + 0x30;
+                    a[0x19] = 0x20;
+                    a[0x1A] = 0x20;
+                } else if (a[0xD] & 0x40) {
+                    a[0x18] = 0x20;
+                    a[0x19] = 0x20;
+                    a[0x1A] = 0x20;
+                } else {
+                    a[0x18] = 0x80;
+                    a[0x19] = 0x80;
+                    a[0x1A] = 0x80;
+                }
+            } else {
+                s32 v;
+                if (a[0xD] & 0x80) {
+                    v = ((s16)func_80083E80((D_1F800247 & 0xF) << 7) >> 6) + 0x10;
+                } else {
+                    v = 0;
+                }
+                a[0x18] = v + 0x20;
+                a[0x19] = 0x20;
+                a[0x1A] = 0x20;
+            }
+        }
+    } else {
+        a[0xD] = 0;
+    }
+    f_UpdateTrolleyAttachedModelTransforms(a);
+    if (a[1] != 0) {
+        func_8003CCA4(a);
+    }
+}
 
 extern u8 D_80111AEC[];
 void f_SetTrolleyHudSegmentEnabled(s32 i, s32 on) {
