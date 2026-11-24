@@ -3872,7 +3872,52 @@ void f_UpdateWindmillFallingActor(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011B738);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011BC3C);
+#define KSH(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define KSW(p, o) (*(s32 *)((u8 *)(p) + (o)))
+
+void func_8011BC3C(u8 *a) {
+    s32 r;
+    s32 c;
+
+    r = func_80077B5C(a);
+    switch (a[7]) {
+    case 0:
+        func_80077B38(a, D_8014C808, 0xB);
+        a[7]++;
+        break;
+    case 1:
+        if (r != 0) {
+            func_80074590(5, 0, 0);
+            a[0x5F] = 0;
+            a[0x29] = 0;
+            KSH(a, 0x4A) = -((func_8009A450() & 0x7FF) + 0x2600);
+            a[7]++;
+        }
+        break;
+    case 2:
+        KSW(a, 0x30) += KSH(a, 0x4A) << 8;
+        if ((KSH(a, 0x4A) += 0x400) > 0x3000) {
+            KSH(a, 0x4A) = 0x3000;
+        }
+        func_8004766C(a);
+        if ((c = func_80049250(a, 0, 0x14)) == 1) {
+            KSH(a, 0x4A) = 0;
+            a[0x29] = c;
+        }
+        if (a[0x29] != 0) {
+            func_80074590(3, 3, -0xA);
+            func_80077B38(a, D_8014C808, 0xA);
+            a[7]++;
+        }
+        break;
+    case 3:
+        if (r != 0) {
+            a[6] = 0;
+            a[7] = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011BDB8);
 
