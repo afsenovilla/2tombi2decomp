@@ -19406,7 +19406,114 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80078988);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawMenuTextGlyphs);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80079014);
+void func_80079014(u32 *src, s32 idx)
+{
+    u32 *p;
+    u32 *ot;
+    u32 *ot_c;
+    u32 *ot2;
+    u32 *ot3;
+
+    p = D_800BF544;
+    __asm__ volatile("");
+
+    do {
+        ot = D_800ED8C8 + idx;
+    } while (0);
+    ot_c = ot;
+    __asm__ volatile("");
+    do {
+        *p = *ot | 0x10000000;
+    } while (0);
+    __asm__ volatile("");
+    *ot = (u32)p;
+    __asm__ volatile("");
+    p++;
+    __asm__ volatile("");
+    *p++ = 0xA0000000;
+    __asm__ volatile("");
+    *p++ = 0x01000380;
+    __asm__ volatile("");
+    *p++ = 0x60004;
+    __asm__ volatile("");
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = 0x01000000;
+    __asm__ volatile("");
+    ot2 = D_800ED8C8 + idx;
+    __asm__ volatile("");
+    *p = *ot2 | 0x10000000;
+    __asm__ volatile("");
+    *ot2 = (u32)p;
+    __asm__ volatile("");
+    p++;
+    __asm__ volatile("");
+    *p++ = 0xA0000000;
+    __asm__ volatile("");
+    *p++ = 0x01060380;
+    __asm__ volatile("");
+    *p++ = 0x60004;
+    __asm__ volatile("");
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = 0x01000000;
+    __asm__ volatile("");
+    ot3 = D_800ED8C8 + idx;
+    __asm__ volatile("");
+    *p = *ot3 | 0x10000000;
+    __asm__ volatile("");
+    *ot3 = (u32)p;
+    __asm__ volatile("");
+    p++;
+    __asm__ volatile("");
+    *p++ = 0xA0000000;
+    __asm__ volatile("");
+    *p++ = 0x010C0380;
+    __asm__ volatile("");
+    *p++ = 0x60004;
+    __asm__ volatile("");
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = *src++;
+    *p++ = 0;
+    __asm__ volatile("");
+    *p++ = 0;
+    __asm__ volatile("");
+    *p++ = 0;
+    __asm__ volatile("");
+    *p++ = 0;
+    __asm__ volatile("");
+    *p++ = 0;
+    __asm__ volatile("");
+    *p++ = 0;
+    __asm__ volatile("");
+    *p++ = 0x01000000;
+    __asm__ volatile("");
+    D_800BF544 = p;
+}
 
 void f_DrawSmallMenuText(s16 x, s32 y, s16 c, s32 d, s32 e)
 {
