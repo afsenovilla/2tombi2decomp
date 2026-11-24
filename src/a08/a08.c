@@ -6032,7 +6032,63 @@ void func_8012C928(u8 *a)
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012CA40);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012CCD4);
+extern u8 D_8014005C[];
+extern s32 D_800ECF90;
+
+void func_8012CCD4(u8 *a)
+{
+    u8 *p = *(u8 **)(a + 0x10);
+    u8 *t;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0x1B, 0x10) != 0) {
+            break;
+        }
+        *(s32 *)(a + 0x3C) = D_800ECF90;
+        *(s16 *)(*(u8 **)(a + 0xC0) + 0) -= 0x2D;
+        *(s16 *)(*(u8 **)(a + 0xC0) + 4) += 0x28;
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x58) = 0;
+        a[4]++;
+        *(s16 *)(a + 0x56) = *(s16 *)(p + 0x56);
+        *(s16 *)(a + 0x32) = *(s16 *)(p + 0x32);
+        *(s16 *)(a + 0x40) = 0;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            t = D_800E7E80;
+            *(s16 *)(a + 0x2E) = *(s16 *)(*(u8 **)(t + 0xD0) + 0x2C);
+            *(s16 *)(a + 0x36) = *(s16 *)(*(u8 * volatile *)(t + 0xD0) + 0x34);
+            break;
+        case 2:
+            *(s16 *)(a + 0x56) += 0x70;
+            if (*(s16 *)(a + 0x56) >= *(s16 *)(p + 0x56) + 0x1000) {
+                *(s16 *)(a + 0x56) = *(s16 *)(p + 0x56) + 0x1000;
+            }
+            *(s16 *)(a + 0x40) += 1;
+        case 1:
+            *(s16 *)(a + 0x2E) = *(s16 *)(*(u8 **)(p + 0xDC) + 0x2C);
+            *(s16 *)(a + 0x36) = *(s16 *)(*(u8 **)(p + 0xDC) + 0x34);
+            *(s16 *)(a + 0x2E) -= (func_80083F50(*(s16 *)(p + 0x56)) * *(s16 *)(a + 0x40)) >> 12;
+            *(s16 *)(a + 0x36) -= (-func_80083E80(*(s16 *)(p + 0x56)) * *(s16 *)(a + 0x40)) >> 12;
+            break;
+        case 3:
+            a[4] = 3;
+            return;
+        }
+        if (p[1] != 0) {
+            a[1] = 1;
+            func_800517F8(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012CF20);
 
