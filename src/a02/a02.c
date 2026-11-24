@@ -6440,7 +6440,7 @@ void func_8011DC88(u8 *a)
 
 extern u8 D_800A3CC0_459e;
 u8 *func_80072DDC();
-void func_80123470(u8 *);
+void func_80123470();
 void func_8011DE1C(u8 *a) {
     u8 *p;
 
@@ -8719,7 +8719,75 @@ void func_8012328C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80123470);
+void func_80123470(u8 *a) {
+    switch (a[4]) {
+    case 0:
+        a[0xB] = 0x11;
+        M2C_FIELD(a, s16 *, 0x7A) = 0x1000;
+        M2C_FIELD(a, s16 *, 0x7C) = 0x1000;
+        M2C_FIELD(a, s16 *, 0x7E) = 0x1000;
+        M2C_FIELD(a, s16 *, 0x80) = 0x32;
+        M2C_FIELD(a, s16 *, 0x82) = 0x64;
+        M2C_FIELD(a, s16 *, 0x84) = 0x50;
+        M2C_FIELD(a, s16 *, 0x86) = 0x50;
+        a[4] = 1;
+        a[0xD] = 0;
+        M2C_FIELD(a, s16 *, 0x5C) = 0;
+        M2C_FIELD(a, s16 *, 0x54) = 0;
+        M2C_FIELD(a, s16 *, 0x56) = 0;
+        M2C_FIELD(a, s16 *, 0x58) = 0;
+        a[0x47] = 0;
+        a[8] = 0;
+        a[0x5E] = 0;
+        M2C_FIELD(a, void **, 0x3C) = D_800ECF80;
+        switch (a[3]) {
+        case 0:
+            M2C_FIELD(a, s16 *, 0x2E) = 0x1270;
+            M2C_FIELD(a, s16 *, 0x32) = -0xC80;
+            M2C_FIELD(a, s16 *, 0x36) = 0x33B8;
+            func_80077B38(a, D_80139100, 0x17);
+            break;
+        case 1:
+            M2C_FIELD(a, s16 *, 0x2E) = 0x1270;
+            M2C_FIELD(a, s16 *, 0x32) = -0xC80;
+            M2C_FIELD(a, s16 *, 0x36) = 0x33B8;
+            func_80077B38(a, D_80139100, 4);
+            break;
+        case 2:
+            M2C_FIELD(a, s16 *, 0x2E) = 0x1F57;
+            M2C_FIELD(a, s16 *, 0x32) = -0xD98;
+            M2C_FIELD(a, s16 *, 0x36) = 0x2B3F;
+            func_80077B38(a, D_80139100, 0x17);
+            break;
+        }
+        M2C_FIELD(a, s16 *, 0x42) = 0xE;
+        M2C_FIELD(a, s16 *, 0x40) = 0x20;
+        M2C_FIELD(a, s16 *, 0x44) = -0x1800;
+        M2C_FIELD(a, s16 *, 0x4E) = (0x13F6 - M2C_FIELD(a, s16 *, 0x2E)) / 30;
+        M2C_FIELD(a, s16 *, 0x50) = (-0xD52 - M2C_FIELD(a, s16 *, 0x32)) / 30;
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+        case 1:
+            func_80122F6C(a);
+            break;
+        case 2:
+            if (D_800BF816 == 0) {
+                a[4] = 3;
+                return;
+            }
+            func_8012328C(a);
+            break;
+        }
+        func_8007778C(a);
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_801236C8(u8 *a) {
     *(s32 *)(a + 0x3C) = D_800ECF58[0x38 / 4];
