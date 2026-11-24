@@ -1912,10 +1912,48 @@ void func_80111564(u8 *a)
     func_80027768(m, 0, H(a, 0x32), 0);
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80111670);
+typedef struct { u8 a, b, c, d; } Ent;
+
+void func_80111670(u8 *a)
+{
+    Ent *e;
+    s32 i;
+    u8 *base = a + 0x34;
+
+    switch (a[4]) {
+    case 0:
+        e = (Ent *)base;
+        *(s16 *)(a + 0x2C) = 0x12E0;
+        *(s16 *)(a + 0x2E) = -0x4A5;
+        *(s16 *)(a + 0x30) = 0x11A0;
+        for (i = 0; i < 0x15; i++) {
+            e[i].a = (func_8009A450() & 0x7F) + 0x20;
+            e[i].b = func_8009A450();
+            e[i].c = 0;
+            e[i].d = 0xFF;
+        }
+        a[4] = 1;
+        a[7] = 0x32;
+    case 1:
+        if (--a[7] == 0xFF) {
+            a[4] = 2;
+            break;
+        }
+        e = (Ent *)base;
+        for (i = 0; i < 0x15; i++) {
+            e[i].c += 2;
+            e[i].d -= ((func_8009A450() >> 10) & 3) + 2;
+        }
+        a[1] = 1;
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 #define gte_ldv0m(p) __asm__ volatile("lwc2	$0, %0;" "lwc2	$1, %1" : : "m"(((s32 *)(p))[0]), "m"(((s32 *)(p))[1]))
-typedef struct { u8 a, b, c, d; } Ent;
 extern u32 *D_800BF544_5fe3;
 extern u32 *D_800ED8C8;
 extern s32 D_1F800080_e4a3;

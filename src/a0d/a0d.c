@@ -1560,7 +1560,69 @@ INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80110C14);
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80110DBC);
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80111034);
+extern u8 *D_800ECF88;
+
+void func_80111034(u8 *a)
+{
+    Ent *e;
+    s32 i;
+    s32 k;
+    u8 *b;
+    s32 *h;
+    u8 *base = a + 0x50;
+
+    switch (a[4]) {
+    case 0:
+        e = (Ent *)base;
+        for (i = 0; i < 0xE; i++) {
+            k = i & 3;
+            e[i].b = func_8009A450();
+            e[i].c = func_8009A450() & 0x7;
+            if (k == 0) {
+                e[i].a = func_8009A450() & 0x3F;
+            } else if (k == 1) {
+                e[i].a = (func_8009A450() & 0x3F) + 0x10;
+            } else {
+                e[i].a = (func_8009A450() & 0x3F) + 0x20;
+            }
+            ;
+        }
+        a[4] = 1;
+        a[5] = 0;
+        a[7] = 0xF;
+        *(s16 *)(a + 0x48) = func_8009A450();
+        *(s16 *)(a + 0x4A) = func_8009A450();
+        *(s16 *)(a + 0x4C) = func_8009A450();
+        b = D_800ECF88;
+        h = (s32 *)(b + 4);
+        if (a[3] == 0x85) {
+            *(u8 **)(a + 0x3C) = *(u8 **)(a + 0x34) = *(u8 **)(a + 0x38) = b + h[16];
+        } else {
+            *(u8 **)(a + 0x3C) = b + h[16];
+            *(u8 **)(a + 0x34) = b + h[15];
+            *(u8 **)(a + 0x38) = b + h[14];
+        }
+    case 1:
+        if (--a[7] == 0) {
+            a[4] = 2;
+            break;
+        }
+        e = (Ent *)base;
+        for (i = 0; i < 0xE; i++) {
+            e[i].c += 5;
+            ;
+        }
+        *(s16 *)(a + 0x48) += func_8009A450() >> 7;
+        k = func_8009A450();
+        a[1] = 1;
+        *(s16 *)(a + 0x4A) += k >> 8;
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 typedef struct {
     u8 b[4];
