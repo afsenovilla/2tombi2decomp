@@ -19207,7 +19207,7 @@ void func_8007263C(u8 *a)
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800726D4);
 
 u8 f_FormatIntegerText(s32 v, char *out);
-void func_80072898(void);
+void func_80072898(u8 *a);
 u8 *func_800727D4(void *owner, s32 ev, s32 kind)
 {
     s32 ap = f_GetEventAPReward(ev, kind);
@@ -19227,7 +19227,62 @@ u8 *func_800727D4(void *owner, s32 ev, s32 kind)
     return a;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80072898);
+void func_80072898(u8 *a)
+{
+    struct { u8 b0; u8 b1; s16 h2; } q;
+    UiRect r;
+    char buf[2];
+    u8 *o = *(u8 **)(a + 0x10);
+    s32 i;
+    u8 *s;
+    void **tbl;
+    s32 x;
+
+    switch (a[4]) {
+    case 0:
+        if (o[0x5E] == 1) {
+            a[4] = 1;
+            a[0x5F] = *(s16 *)(a + 0xE) / 2;
+            if (*(u16 *)(a + 0xE) & 1) {
+                a[0x5F] = a[0x5F] * 8;
+            } else {
+                a[0x5F] = a[0x5F] * 8 - 4;
+            }
+            *(s8 **)(a + 0x3C) = D_800ECF58[0];
+        }
+        break;
+    case 1:
+        s = a + 0x44;
+        if (o[0x5E] == 2) {
+            a[4] = 3;
+            break;
+        }
+        a[0x5F] = *(s16 *)(a + 0xE) / 2;
+        do {
+            q.b1 = 0;
+        } while (0);
+        q.b0 = 0;
+        q.h2 = *(u16 *)(a + 0x5C);
+        r.w = 0;
+        r.h = 0;
+        for (i = 0; i < *(s16 *)(a + 0xE); ) {
+            r.x = i * 9 - (a[0x5F] - 0xA0);
+            r.y = 100;
+            buf[0] = *s;
+            buf[1] = 0;
+            tbl = D_80017334_ae99;
+            f_DrawPackedUiQuadFrame(&r, tbl[(s16)(atoi(buf) + 0x69)], *(void **)(a + 0x3C), &q);
+            i++;
+            s++;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80072A78);
 
