@@ -3857,7 +3857,93 @@ void func_80121FF8(void *arg0) {
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801220F8);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801222A4);
+#define AH(o) (*(s16 *)(a + (o)))
+#define QH(o) (*(s16 *)(q + (o)))
+#define PH(o) (*(s16 *)(p + (o)))
+
+void func_801222A4(u8 *a)
+{
+    u8 *p;
+    u8 *q;
+    u8 *r;
+
+    if (a[0x71] == 0xFF) {
+        if (a[0x5E] == 1) {
+            a[0x5E]++;
+            D_800BF870.pad1[0xC8] |= 0x20;
+        }
+        a[5] = 0;
+        return;
+    }
+    if (a[0x5E] != 1) {
+        return;
+    }
+    switch (a[6]) {
+    case 1:
+        *(u8 **)(a + 0x14) = D_800BF844;
+        a[6]++;
+        break;
+    case 3:
+        q = *(u8 **)(a + 0x14);
+        AH(0x48) = (0x1589 - QH(0x2E)) >> 5;
+        AH(0x4A) = (-0xCC9 - QH(0x32)) >> 5;
+        AH(0x4C) = (0x275B - QH(0x36)) >> 5;
+        AH(0x50) = -0x10;
+        AH(0x40) = 0x22;
+        a[6]++;
+    case 4:
+        q = *(u8 **)(a + 0x14);
+        QH(0x2E) += AH(0x48);
+        QH(0x36) += AH(0x4C);
+        QH(0x32) += AH(0x4A);
+        AH(0x50)++;
+        QH(0x32) += AH(0x50);
+        if (--AH(0x40) <= 0) {
+            a[6]++;
+        }
+        break;
+    case 6:
+        q = *(u8 **)(a + 0x14);
+        func_8003116C(0x806, q + 0x2C, -0x14);
+        a[6]++;
+        break;
+    case 7:
+        r = func_80119418(a);
+        *(u8 **)(a + 0x14) = r;
+        if (r != NULL) {
+            a[6]++;
+        }
+        break;
+    case 9:
+    case 11:
+    case 13:
+        p = *(u8 **)(a + 0x14);
+        p[6]++;
+        a[6]++;
+        break;
+    case 15:
+        p = *(u8 **)(a + 0x14);
+        p[5] = 2;
+        p[6] = 0;
+        a[6]++;
+        break;
+    case 17:
+        p = *(u8 **)(a + 0x14);
+        func_8004B0D8(p);
+        func_8004D4C4(0x95, 1);
+        p[4] = 2;
+        a[6]++;
+        break;
+    case 2:
+    case 5:
+    case 8:
+    case 10:
+    case 12:
+    case 14:
+    case 16:
+        break;
+    }
+}
 
 extern M2C_UNK D_8013439C;
 extern M2C_UNK D_80134664;
