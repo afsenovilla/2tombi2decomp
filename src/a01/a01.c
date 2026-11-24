@@ -4877,9 +4877,137 @@ void func_8011ECFC(void *arg0) {
     func_8004190C(arg0);
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateGranRemoveCappersDialogue);
+extern u8 D_800BF8BE;
+extern u8 D_8013694C[];
+extern u8 D_80136974[];
+extern u8 D_801369BC[];
+extern u8 D_80136A1C[];
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateGranPostPipeAreaDialogue);
+void f_UpdateGranRemoveCappersDialogue(u8 *a) {
+    u8 *p;
+    u8 k;
+
+    switch (a[5]) {
+    case 0:
+        *(u8 **)(a + 0x14) = func_8012B654(a, 0);
+        a[5]++;
+    case 1:
+        if (func_8007778C(a) != 0 && D_1F800207_9c67 == 0x10 && D_1F800164_d75f >= 0x3A34 && func_8005308C() != 0) {
+            func_80042354(1, 1);
+            func_80040D68(a, D_8013694C);
+            a[0x70] = 2;
+            a[5]++;
+        }
+        break;
+    case 2:
+        if (a[0x70] == 0xFF) {
+            func_80040D68(a, D_80136974);
+            a[0x70] = 2;
+            a[5]++;
+        }
+        a[1] = 1;
+        func_80077E7C(a);
+        break;
+    case 3:
+        k = a[0x70];
+        if (k == 0xFF) {
+            if (D_800BF8BE == k) {
+                a[0] = 2;
+                func_80040D68(a, D_801369BC);
+            } else {
+                func_80040D68(a, D_80136A1C);
+            }
+            a[0x70] = 2;
+            a[5]++;
+        }
+        a[1] = 1;
+        func_80077E7C(a);
+        break;
+    case 4:
+        k = a[0x70];
+        if (k == 0xFF) {
+            p = *(u8 **)(a + 0x14);
+            if (p != NULL) {
+                p[4] = 3;
+            }
+            if (D_800BF870.pad1[0x4D] == k) {
+                a[0] = 2;
+                a[4] = 3;
+                D_800BF870.pad1[0x190] |= 2;
+            } else {
+                a[5] = 0;
+                a[0xBF] = 2;
+            }
+        }
+        a[1] = 1;
+        func_80077E7C(a);
+        break;
+    }
+    func_80041098(a);
+    func_8004190C(a);
+}
+
+extern u8 D_8013690C[];
+extern u8 D_80136A54[];
+extern u8 D_80136A7C[];
+
+void f_UpdateGranPostPipeAreaDialogue(u8 *a) {
+    u8 *p;
+
+    switch (a[5]) {
+    case 0:
+        if (D_800BF8BE == 0xFF) {
+            *(u8 **)(a + 0x14) = func_8012B654(a, 0);
+            a[5] = 2;
+        }
+        if (func_8007778C(a) != 0 && a[0x2B] == 3) {
+            func_80042354(1, 1);
+            func_80070724(1, 0, 0x9A);
+            func_80040D68(a, D_80136A54);
+            a[0x70] = 2;
+            a[5]++;
+        }
+        break;
+    case 1:
+        if (a[0x70] == 0xFF) {
+            a[5]--;
+        }
+        a[1] = 1;
+        func_80077E7C(a);
+        break;
+    case 2:
+        if (func_8007778C(a) != 0 && D_1F800207_9c67 == 0x10 && D_1F800164_d75f >= 0x3A34 && func_8005308C() != 0) {
+            func_80042354(1, 1);
+            func_80040D68(a, D_8013690C);
+            a[0x70] = 2;
+            a[5]++;
+        }
+        break;
+    case 3:
+        if (a[0x70] == 0xFF) {
+            func_80040D68(a, D_80136A7C);
+            a[0x70] = 2;
+            a[5]++;
+        }
+        a[1] = 1;
+        func_80077E7C(a);
+        break;
+    case 4:
+        if (a[0x70] == 0xFF) {
+            p = *(u8 **)(a + 0x14);
+            if (p != NULL) {
+                p[4] = 3;
+            }
+            a[4] = 3;
+            D_800BF870.pad1[0x190] |= 2;
+        }
+        a[1] = 1;
+        func_80077E7C(a);
+        break;
+    }
+    func_80041098(a);
+    func_8004190C(a);
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011F2A4);
 
