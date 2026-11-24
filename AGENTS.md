@@ -352,7 +352,10 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - Write scratch files containing inline asm (`$24`, `$6`) with a quoted heredoc (`<<'EOF'`): an unquoted one expands
   them.
 - `nearcopy.py --near --ratio 0.6` then hand edits of the differing constants / statements was the most productive
-  method of round 8.
+  method of round 8. Each near file's `// retail diff:` line (2026-11-24) says what to edit: `constants
+  only`, an extra / missing block at +off, register changes, other callees.
+- workqueue.py reads the pending set fresh from src/ on every run (under a second): rerun it rather than reading an
+  old build/queue_*.csv.
 - The container can restart in the middle of a round: commit every function or two (the disk survives, uncommitted
   work and the report do not).
 - `register ... asm("reg")` matches are not installed (compiler-specific); they stay near misses.

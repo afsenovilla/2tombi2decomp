@@ -112,7 +112,8 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
 - `python3 -I tools/permute.py NAME --src FILE.c`: decomp-permuter with the game's pipeline (near-misses).
 - `python3 -I tools/nearcopy.py [PROG ...] [--install] [--ratio 0.8 --near]`: matched C from any program put into
   near copies (patched constants / offsets, renamed symbols); `--near` writes the closest C of the rest to
-  build/nearcopy/<prog>/near/ for hand work. `tools/dupsweep.py`: exact copies only.
+  build/nearcopy/<prog>/near/ for hand work (a `// retail diff:` line: constants only / extra or missing block at
+  +off / registers / callees). `tools/dupsweep.py`: exact copies only.
 - `python3 -I tools/ccheck.py FILE.c --prog P --func F --sbs` (or `tools/sbs.py FILE.c F --prog P`): side-by-side
   diff, ours vs retail. `tools/permlines.py FILE.c F --prog P`: moves the lines marked `//P` until it matches.
   `tools/variants.py FILE.c F --prog P [--set 'k=a|b'] [--alts K=ALTS.txt]`: words off of each `//--` variant in the

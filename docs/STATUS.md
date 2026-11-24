@@ -32,6 +32,14 @@ One tools agent, the "Tool work left" list of the round-8 entry below, in its or
 - **ccheck `--no-protos`** works again: install_c.drop_prototypes() re-joined ptsrc items, which lose the newline
   after a `#include` and the comment above one (`#include expects FILENAME`, lost `// CC` lines); it now cuts the
   dropped prototypes out of the text itself.
+- **workqueue.py** re-reads the INCLUDE_ASM lines before it writes the csv and drops what was installed while it ran
+  ("dropped N function(s) installed meanwhile"); the `inl` column is flagged when the inlined.py csv is older than
+  the last change of src/. Rerun it (under a second for one program) instead of reading an old build/queue_*.csv.
+- **nearcopy `--near`**: every near file gets a `// retail diff:` line and the run prints it per target: how the
+  source's retail code differs from the target's (`constants only: ...`, `extra N words at +off`, `missing N words
+  before +off`, `N -> M words differ at +off`, constants `+off a -> b`, operand / register changes, other callees;
+  relocations compared by kind, overlay-local callees not counted). Run on a0b a0c `--ratio 0.7`: a0b func_8010BE38
+  8 off <- a01 func_8012B2D8 (2 constants, 2 extra words at +1C, ...).
 
 ## 2026-11-24: eighth round (new scopes, work queue; two container restarts)
 

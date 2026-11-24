@@ -14,7 +14,10 @@ For each pending game function (an INCLUDE_ASM line of src/<prog>/<prog>.c; libr
     match), and `callers`: pending functions of the scope that call it (matching it frees them). The last line names
 the pending callees (any program) that block the most functions of the scope.
 Rank: no pending callee first, then by value = size x exact copies (bytes gained with the copies), larger first.
-Writes build/queue_<progs>.csv (every pending function) and prints the top of the list.
+Writes build/queue_<progs>.csv (every pending function) and prints the top of the list. The pending set is read from
+the INCLUDE_ASM lines of src/ at every run (functions installed while it runs are dropped before the csv is written;
+asm by design ones are never listed): rerun it rather than reading an old csv. The `inl` column comes from the last
+tools/inlined.py csv; it is flagged when that csv is older than the last change of src/.
 """
 import argparse, collections, csv, glob, os, re, struct, sys
 
@@ -150,6 +153,14 @@ def main():
                 if r is not None:
                     r["callers"] += 1
                     break
+    # never a stale list: drop what is no longer an INCLUDE_ASM line now (installed while this ran, e.g. by another
+    # agent; the pending sets above were read at the start)
+    now = {p: {n for n, (lib, st) in P.file_state(p).items() if st in ("pending", "equiv")} for p in progs}
+    gone = [r for r in rows if r["name"] not in now[r["prog"]]]
+    if gone:
+        print("dropped %d function(s) installed meanwhile: %s" % (len(gone), " ".join(
+            "%s:%s" % (r["prog"], r["name"]) for r in gone[:10])))
+        rows = [r for r in rows if r["name"] in now[r["prog"]]]
     rows.sort(key=lambda r: (r["pend"] > 0, -r["value"], -r["size"]))
     tag = "all" if sorted(progs) == allp else "-".join(progs)
     out = a.csv or os.path.join(ROOT, "build", "queue_%s.csv" % tag)
@@ -163,7 +174,11 @@ def main():
         len(rows), sum(r["size"] for r in rows), len(ready), sum(r["size"] for r in ready),
         "" if inl_src else " (no inlined.py csv: run tools/inlined.py %s for the inl column)" % " ".join(a.progs)))
     if inl_src:
-        print("inl from " + inl_src)
+        newest = max(os.path.getmtime(f) for p in progs for f in glob.glob(os.path.join(ROOT, "src", p, "**", "*.c"),
+                                                                           recursive=True))
+        print("inl from " + inl_src + ("" if os.path.getmtime(os.path.join(ROOT, inl_src)) >= newest else
+                                       " (older than the last change of src/: bodies matched since are not in it; "
+                                       "rerun tools/inlined.py for a fresh column)"))
     print("%-4s %-46s %6s %3s %4s %3s %3s %4s %5s %4s  %s" % ("prog", "name", "size", "jt", "pend", "inl", "fam",
                                                           "exact", "value", "clrs", "pending callees"))
     shown = [r for r in rows if lo <= r["size"] <= hi][:a.top]

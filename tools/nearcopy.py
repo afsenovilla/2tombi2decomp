@@ -28,7 +28,8 @@ another program's alias names, get an alias line in config/aliases_<prog>.ld at 
 Matches go to build/nearcopy/<prog>/<name>.c (install_c.py scratch files); --install installs them with
 tools/install_c.py (linked build checked; files with clashing declarations go in separate batches). --near also
 writes the closest attempt of every target that did not match to build/nearcopy/<prog>/near/<name>.c, headed by
-how many words are off and where the C came from: starting points for hand matching (--near alone implies
+how many words are off, where the C came from and a one-line summary of how the two retail functions differ
+(`constants only`, an extra / missing block at +off, register changes, other callees): starting points for hand matching (--near alone implies
 --ratio 0.8; pass --ratio to change it).
 """
 import argparse, collections, concurrent.futures as cf, difflib, glob, itertools, os, re, shutil, struct, \
@@ -482,6 +483,65 @@ def load_sources(progs):
     return out
 
 
+_INS = re.compile(r"/\* \w+ ([0-9A-F]{8}) [0-9A-F]{8} \*/\s+(\S+)\s*([^/\n]*)")
+
+
+def _ins(prog, name):
+    """[(offset, mnemonic, operands)] of a function's splat .s (any matchings dir), or None."""
+    hits = glob.glob(os.path.join(ROOT, "asm", prog, "*matchings", "**", name + ".s"), recursive=True)
+    if not hits:
+        return None
+    out = [(int(m.group(1), 16), m.group(2), m.group(3).strip()) for m in _INS.finditer(open(hits[0]).read())]
+    return [(a - out[0][0], op, arg) for a, op, arg in out] if out else None
+
+
+def near_summary(sp, sname, tprog, tname):
+    """What differs between the source function's retail code and the target's, in a few words: `constants only`
+    (same instructions, immediates differ), registers, an extra / missing block at +off, other callees. Relocated
+    operands (%hi / %lo, labels) are compared by kind only; jal targets by name (a callee local to each overlay
+    is not a difference)."""
+    a, b = _ins(sp, sname), _ins(tprog, tname)
+    if not a or not b:
+        return "no asm to compare"
+    norm = lambda x: re.sub(r"\.L[0-9A-F]+", ".L", re.sub(r"%(hi|lo)\([^)]*\)", r"%\1()", x))
+    nums = lambda x: re.sub(r"-?\b(0x[0-9A-Fa-f]+|\d+)\b", "K", x)
+    sm = difflib.SequenceMatcher(None, [x[1] for x in a], [x[1] for x in b], autojunk=False)
+    consts, regs, blocks, calls = [], [], [], []
+    local = lambda p, n: p != "main" and re.fullmatch(r"func_[0-9A-F]{8}", n)
+    for tag, i1, i2, j1, j2 in sm.get_opcodes():
+        if tag == "equal":
+            for (_, op, x), (off, _, y) in zip(a[i1:i2], b[j1:j2]):
+                if op in ("jal", "j") and x != y:
+                    if not (local(sp, x) and local(tprog, y)) and op == "jal":
+                        calls.append("%s->%s" % (x, y))
+                elif norm(x) != norm(y):
+                    (consts if nums(norm(x)) == nums(norm(y)) else regs).append(
+                        "+%X %s" % (off, " -> ".join(re.findall(r"-?\b0x[0-9A-Fa-f]+\b|-?\b\d+\b", norm(x))[-1:] +
+                                                   re.findall(r"-?\b0x[0-9A-Fa-f]+\b|-?\b\d+\b", norm(y))[-1:]))
+                        if nums(norm(x)) == nums(norm(y)) else "+%X" % off)
+        elif tag == "insert":
+            blocks.append("extra %d words at +%X" % (j2 - j1, b[j1][0]))
+        elif tag == "delete":
+            blocks.append("missing %d words before +%X" % (i2 - i1, b[j1][0] if j1 < len(b) else len(b) * 4))
+        else:
+            blocks.append("%d -> %d words differ at +%X" % (i2 - i1, j2 - j1, b[j1][0]))
+    parts = []
+    if blocks:
+        parts.append("; ".join(blocks[:4]) + (" ..." if len(blocks) > 4 else ""))
+    if consts:
+        parts.append("%d constant(s) (%s%s)" % (len(consts), ", ".join(consts[:4]), " ..." if len(consts) > 4 else ""))
+    if regs:
+        parts.append("%d operand / register change(s) (%s%s)" % (len(regs), " ".join(regs[:4]),
+                                                                  " ..." if len(regs) > 4 else ""))
+    if calls:
+        parts.append("other callees: " + ", ".join(calls[:4]))
+    if not parts:
+        return "same retail code up to relocations (the C itself is off: types, names)"
+    if consts and not (blocks or regs or calls):
+        return "constants only: " + parts[0]
+    return " | ".join(parts)
+
+
 def find_candidates(key, sources, bylen, max_diff, max_frac, top, ratio):
     n = len(key)
     lim = max(max_diff, int(max_frac * n))
@@ -730,8 +790,10 @@ def main():
         for off, p, tname, sp, sname, txt in near:
             if txt:
                 os.makedirs(os.path.join(OUT, p, "near"), exist_ok=True)
+                summ = near_summary(sp, sname, p, tname)
                 open(os.path.join(OUT, p, "near", tname + ".c"), "w").write(
-                    "// nearcopy: %d words off, C from %s %s\n" % (off, sp, sname) + txt)
+                    "// nearcopy: %d words off, C from %s %s\n// retail diff: %s\n" % (off, sp, sname, summ) + txt)
+                print("near %s %s: %d off <- %s %s: %s" % (p, tname, off, sp, sname, summ))
     if near:
         print("closest left (words off): " + ", ".join("%s %s %d<-%s:%s" % (p, t, o, sp, sn)
                                                       for o, p, t, sp, sn, _ in near[:30]))
