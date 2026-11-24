@@ -2090,7 +2090,159 @@ void func_80114024(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateCoalMiningTownInteriorSceneryAssemblyActor);
+typedef struct { u8 n; u8 pad; } Coal9A34;
+void *func_8007AAE8();
+extern s16 D_800ED098;
+extern u8 *D_800ECF88;
+extern u8 *D_800ECFC8;
+extern void *D_800ECFCC_7069;
+extern u8 D_80139F38[];
+extern Coal9A34 D_80129A34[];
+extern s16 D_80129A58[];
+extern s16 *D_801299F0[];
+/* door part (cases 0 / 5) */
+static inline void coal_door_part_inl(u8 *a)
+{
+    u8 *g;
+
+    f_UpdateCoalMiningTownInteriorDoorPartTransition(a, FP(a, 0xC4));
+    M2C_FIELD(FP(a, 0xC8), s16 *, 0xA) = M2C_FIELD(FP(a, 0xC4), u16 *, 0xA);
+    switch (a[6]) {
+    case 0:
+        g = D_800BF808_1760;
+        if (g[0xE] != 0 && g[7] == 0) {
+            a[6] = 1;
+            M2C_FIELD(FP(a, 0xC4), s32 *, 0x40) = 0;
+        }
+        break;
+    case 1:
+        if (D_800BF80F != 0) {
+            func_80051B04(FP(a, 0xC4), 0xC, M2C_FIELD(FP(a, 0xC4), u16 *, 0x38));
+            a[6]++;
+        }
+        break;
+    case 2:
+        break;
+    }
+}
+
+void f_UpdateCoalMiningTownInteriorSceneryAssemblyActor(u8 *a)
+{
+    s32 i;
+    u8 *base;
+    s32 *offs;
+    s16 *src;
+    u8 *q;
+    s32 k;
+
+    switch (a[4]) {
+    case 0:
+        a[8] = D_80129A34[a[3]].n;
+        if (D_800ED098 < a[8]) {
+            a[4] = 3;
+            break;
+        }
+        a[9] = a[8];
+        a[4]++;
+        if (a[3] == 7) {
+            base = D_800ECFC8;
+        } else {
+            base = D_800ECF88;
+        }
+        a[0xD] = 0;
+        a[0xB] = 0;
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x56) = (D_80129A58[a[3]] << 12) / 360;
+        i = 0;
+        *(s16 *)(a + 0x58) = 0;
+        src = D_801299F0[a[3]];
+        offs = (s32 *)(base + 4);
+        for (; i < a[8]; i++) {
+            q = func_8007AAE8();
+            FP(a, 0xC0 + i * 4) = q;
+            *(s16 *)(q + 6) = *src++;
+            *(s16 *)(FP(a, 0xC0 + i * 4) + 0) = *src++;
+            *(s16 *)(FP(a, 0xC0 + i * 4) + 2) = *src++;
+            *(s16 *)(FP(a, 0xC0 + i * 4) + 4) = *src++;
+            *(s16 *)(FP(a, 0xC0 + i * 4) + 8) = *src++;
+            *(s16 *)(FP(a, 0xC0 + i * 4) + 0xA) = *src++;
+            *(s16 *)(FP(a, 0xC0 + i * 4) + 0xC) = *src++;
+            k = *src;
+            *(u8 **)(FP(a, 0xC0 + i * 4) + 0x40) = base + offs[k];
+            *(s16 *)(FP(a, 0xC0 + i * 4) + 0x38) = k;
+            src++;
+        }
+        switch (a[3]) {
+        case 3:
+            a[0x46] = 1;
+            a[0xBF] = 0;
+            break;
+        case 0:
+        case 1:
+        case 2:
+        case 4:
+        case 5:
+        case 6:
+            a[0x46] = 1;
+            a[0xBF] = 1;
+            break;
+        case 7:
+            if (D_800BFE56 & 4) {
+                a[8] = 1;
+                break;
+            }
+            *(s16 *)(a + 0xB8) = 0x1000;
+            *(s16 *)(a + 0xBA) = 0x1000;
+            *(s16 *)(a + 0xBC) = 0x1000;
+            *(s16 *)(a + 0x88) = 0;
+            *(s16 *)(a + 0x8A) = 0;
+            *(s16 *)(a + 0x8C) = 0;
+            *(void **)(a + 0x3C) = D_800ECFCC_7069;
+            func_80077C40(a, D_80139F38, 4);
+            break;
+        }
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            coal_door_part_inl(a);
+            break;
+        case 1:
+            func_80113BC4(a);
+            break;
+        case 2:
+            func_80113D08(a);
+            break;
+        case 3:
+            break;
+        case 4:
+            func_80113E4C(a);
+            break;
+        case 5:
+            coal_door_part_inl(a);
+            break;
+        case 6:
+            func_80114024(a);
+            break;
+        case 7:
+            break;
+        }
+        if (a[3] == 7 && !(D_800BFE56 & 4)) {
+            a[1] = 1;
+            func_80076D68(a);
+            func_800518FC(a);
+        } else {
+            a[1] = 1;
+            func_800517F8(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_80114650(u8 *a, u8 *b) {
     s32 r = 0;
@@ -3405,7 +3557,6 @@ void func_80117C3C(u8 *a)
 }
 
 typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner80117D64;
-extern s16 D_800ED098;
 #define D64_I16(o) (*(s16 *)(a->pad + (o)))
 #define D64_W16(o) (*(u16 *)(a->pad + (o)))
 void func_80117D64(PartsOwner80117D64 *a) {
@@ -3484,7 +3635,6 @@ void func_80117D64(PartsOwner80117D64 *a) {
 }
 
 typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner80117FC0;
-extern u8 *D_800ECFC8;
 extern u8 D_800BFA0B;
 #define FC0_I16(o) (*(s16 *)(a->pad + (o)))
 #define FC0_W16(o) (*(u16 *)(a->pad + (o)))
@@ -3780,7 +3930,6 @@ typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner80118880;
 extern s32 D_800ECFCC;
 extern u8 D_8012A114[];
 extern s16 *D_8012A100[];
-extern u8 D_80139F38[];
 void func_80118880(PartsOwner80118880 *a) {
     s32 i;
     s16 *t;
