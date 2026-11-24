@@ -2890,7 +2890,58 @@ void func_80114560(u8 *a)
     *(u16 *)(a + 0xA) = t;
 }
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_8011458C);
+#define M(a) (*(u8 **)((a) + 0xC0))
+static inline void init(u8 *p)
+{
+    H(p, 0x80) = 0x1E;
+    H(p, 0x82) = 0x3C;
+    H(p, 0x84) = 0x32;
+    H(p, 0x86) = 0x64;
+    H(p, 0x60) = 0x188;
+    p[0] = 1;
+    p[0x29] = 0;
+    H(p, 0x56) = 0x800;
+    p[4]++;
+    func_800517F8(p);
+}
+
+void func_8011458C(u8 *a)
+{
+    u8 *pl = D_800E7E80;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 9) != 0) {
+            break;
+        }
+        init(a);
+        break;
+    case 1:
+        a[1] = 1;
+        func_80077EBC(a);
+        if (a[0x29] == 0) {
+            break;
+        }
+        if (!(pl[0x147] & 1)) {
+            H(M(a), 0) = -(func_80083E80(H(pl, 0x58)) << 3) >> 12;
+            H(M(a), 2) = (u32)func_80083F50(H(pl, 0x58)) >> 9;
+        } else {
+            H(M(a), 0) = -(func_80083E80(-H(pl, 0x58)) << 3) >> 12;
+            H(M(a), 2) = (u32)func_80083F50(-H(pl, 0x58)) >> 9;
+        }
+        H(M(a), 8) = func_80085690(H(M(a), 2), H(a, 0x60));
+        H(M(a), 0xA) = -func_80085690(H(M(a), 0), H(a, 0x60));
+        do {
+            func_800517F8(a);
+        } while (0);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80114760);
 
