@@ -3103,12 +3103,6 @@ s32 func_80117A00(u8 *a, s16 y) {
     return r;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80117BCC);
-
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80118070);
-
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80118F90);
-
 typedef struct {
     s16 x, y, z;
 } SV3;
@@ -3125,6 +3119,68 @@ static inline void inl_80119AAC(u8 *a) {
     p.z = M2C_FIELD(M2C_FIELD(a, u8 **, 0xC4), s16 *, 0x34);
     func_80133CAC(0, a, &p, &s);
 }
+
+s32 func_80117BCC(u8 *a) {
+    s32 ret = 0;
+    u8 *q = a + 0x60;
+    s32 r, y;
+
+    switch (a[7]) {
+    case 0:
+        FH(a, 0x40) = FH(q, 4) + 0x400;
+        __asm__ volatile("");
+        FH(a, 0x42) = 0x28;
+        a[7]++;
+    case 1:
+        FH(a, 0x56) += func_80083E80(FH(a, 0x40) - FH(a, 0x56)) >> 7;
+        if (FH(a, 0x42)-- <= 0) {
+            FH(a, 0x42) = 0x1E;
+            inl_801199DC(a, 9, 4);
+            a[7]++;
+        }
+        break;
+    case 2:
+        r = func_80083E80(FH(a, 0x40) - FH(a, 0x56));
+        if (r < 0) {
+            FH(a, 0x56)--;
+        } else if (r > 0) {
+            FH(a, 0x56)++;
+        }
+        if (FH(a, 0x42)-- <= 0) {
+            FH(a, 0x42) = 0xB4;
+            inl_801199DC(a, 0xE, 7);
+            func_80074590(0x8A, 7, 0);
+            a[7]++;
+        }
+        break;
+    case 3:
+        FH(a, 0x58) += func_80083E80(0x1B8 - FH(a, 0x58)) >> 5;
+        inl_80119AAC(a);
+        if (FH(a, 0x42)-- <= 0) {
+            inl_801199DC(a, 8, 0x1E);
+            FH(a, 0x42) = 0x3C;
+            a[7]++;
+        }
+        break;
+    case 4:
+        FH(a, 0x58) += func_80083E80(-FH(a, 0x58)) >> 5;
+        a01_turn(a);
+        if (FH(a, 0x42)-- <= 0) {
+            ret = 1;
+        }
+        break;
+    }
+    y = a01_target_y(a);
+    y += func_80083F50(FH(q, 0x10)) >> 5;
+    FH(q, 0x10) += func_8009A450() >> 9;
+    FH(a, 0x32) += (y - FH(a, 0x32)) / 16;
+    return ret;
+}
+
+INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80118070);
+
+INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80118F90);
+
 s32 func_80119104(u8 *a) {
     s32 r = 0;
 
