@@ -6522,7 +6522,59 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateMythicalTowerEntranceTransition)
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80124CF8);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80124F14);
+extern u8 D_800E7EAA;
+extern u8 D_1F800236;
+
+void func_80124F14(u8 *a) {
+    u8 one;
+    switch (a[5]) {
+    case 0:
+        if (D_800BF871 == H(a, 0x7C)) {
+            H(a, 0x40) = 0xF;
+            H(a, 0x50) = 0x400;
+            a[5]++;
+            func_80072EFC(a);
+            a[0] = 2;
+        } else {
+            a[5] = 4;
+        }
+        break;
+    case 1:
+        if (--H(a, 0x40) == -1) {
+            a[5]++;
+        }
+        break;
+    case 2:
+        if (func_80072F14(a) != 0) {
+            a[5]++;
+        }
+        break;
+    case 3:
+        if (D_800E7EAA != a[0x2A]) {
+            a[0] = 1;
+            a[5]++;
+        }
+        break;
+    case 4:
+        if (D_800E7E80[0x2A] == a[0x2A] && (D_800E7E80[5] == 0 || a[0x29] != 0)) {
+            a[0] = 2;
+            a[5]++;
+            D_1F800137 = 2;
+            one = 1;
+            D_800BF808[0x31] = one;
+            D_800BF808[7] = 2;
+            H(D_800BF808, 0x32) = H(a, 0x7A);
+            D_1F800236 = 1;
+            func_80074590(0x17, 0, 0xF);
+        }
+        break;
+    case 5:
+        if (func_80072E60(a) != 0) {
+            a[5]++;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801250B8);
 
@@ -6533,7 +6585,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80125304);
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012540C);
 
 #define TH(p, o) (*(s16 *)((u8 *)(p) + (o)))
-extern u8 D_1F800236;
 static inline void f125548_start(u8 *p) {
     TH(p, 0x40) = 0xF;
     p[0] = 2;
@@ -8303,7 +8354,6 @@ extern s32 D_800A3F94;
 extern u8 *D_800ECFD8;
 extern u8 *D_800ECF78;
 extern u8 D_801388BC[];
-extern u8 D_800E7EAA;
 void func_8012EE14(u8 *a)
 {
     T2Pt32 v0, v1, v2;
