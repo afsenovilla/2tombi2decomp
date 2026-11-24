@@ -1574,7 +1574,42 @@ void func_80111244(u8 *a)
     } while (i < 14);
 }
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80111418);
+extern s16 D_8012594C[];
+extern s32 D_80125A4C[];
+
+void func_80111418(void)
+{
+    s16 *p = D_8012594C;
+    s32 *c = D_80125A4C;
+    u32 seed = 0xEDCBA987;
+    s32 pad[2];
+    s32 i;
+    s32 r, a, b, col, y, x, z;
+
+    for (i = 0; i < 0x20; i++) {
+        {
+            s32 rs_t = (seed & 0xFF) + 0x40;
+            r = rs_t;
+        }
+        seed = seed * 0x7D2B89DD + 1;
+        a = seed;
+        seed = seed * 0x7D2B89DD + 1;
+        b = seed;
+        seed = seed * 0x7D2B89DD + 1;
+        col = (seed & 0x3F) + 0xC0;
+        *c = col | (col << 8);
+        seed = seed * 0x7D2B89DD + 1;
+        y = (func_80083E80(a) * r) >> 12;
+        r = (func_80083F50(a) * r) >> 12;
+        x = (func_80083E80(b) * r) >> 12;
+        z = (func_80083F50(b) * r) >> 12;
+        c++;
+        p[0] = x;
+        p[1] = y;
+        p[2] = z;
+        p += 4;
+    }
+}
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80111574);
 
