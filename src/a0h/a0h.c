@@ -626,7 +626,87 @@ void f_UpdateStrengthTowerExitDoorSequence(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010A574);
+typedef struct { u8 a, b; } Pair;
+typedef struct { s16 x, y, z; u8 k; u8 pad; s16 w, h; } Ent12;
+extern Pair D_8010C58C[];
+extern Ent12 D_8010C590[];
+
+void func_8010A574(u8 *a)
+{
+    u8 v;
+    u8 *q;
+    u16 w;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, D_8010C58C[a[3]].a) != 0) {
+            break;
+        }
+        a[0xBF] = 1;
+        H(a, 0x50) = 0;
+        a[4]++;
+        a[0x28] |= 0x80;
+        H(a, 0x5A) = H(a, 0x56);
+        v = D_8010C58C[a[3]].b;
+        if (v != 0) {
+            a[0x2A] = v;
+            H(a, 0x60) = D_8010C590[a[3]].x - H(a, 0x2E);
+            H(a, 0x62) = D_8010C590[a[3]].y;
+            H(a, 0x64) = D_8010C590[a[3]].z - H(a, 0x36);
+            a[0x5F] = D_8010C590[a[3]].k;
+            H(a, 0x82) = D_8010C590[a[3]].w;
+            H(a, 0x80) = H(a, 0x82) / 2;
+            w = D_8010C590[a[3]].h;
+            a[0] = 1;
+            H(a, 0x86) = w;
+            H(a, 0x84) = (s16)w / 2;
+        }
+        a[0x29] = 0;
+        a[0x5E] = 0;
+        if (a[3] == 0) {
+            a[0x46] = 0;
+            H(a, 0x50) = -0x400;
+            func_80072EFC(a);
+            a[0] = 2;
+        }
+        break;
+    case 1:
+        if (a[3] == 0) {
+            f_UpdateStrengthTowerExitDoorSequence(a);
+            switch (a[7]) {
+            case 0:
+                break;
+            case 1:
+                *(u8 **)(a + 0x14) = func_8007E038(0x6B, 2);
+                if (*(u8 **)(a + 0x14) != NULL) {
+                    H(a, 0xE) = 0x5A;
+                    a[7]++;
+                }
+                break;
+            case 2:
+                if (--H(a, 0xE) == -1) {
+                    q = *(u8 **)(a + 0x14);
+                    if (q[4] < 2) {
+                        q[4] = 2;
+                        *(u8 **)(a + 0x14) = NULL;
+                    }
+                    a[7] = 0;
+                }
+                break;
+            }
+        }
+        if (func_8007778C(a) != 0) {
+            func_800517F8(a);
+        }
+        a[0x29] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_8010A854(u8 *a, s16 id)
 {
