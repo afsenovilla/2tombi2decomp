@@ -2104,7 +2104,67 @@ void func_80112CE0(u8 *a)
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80112D10);
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80113068);
+#define W_211f(p, o) (*(u32 *)((u8 *)(p) + (o)))
+typedef struct { u8 v[6][4]; } Tab64;
+extern Tab64 D_801091F8;
+
+void func_80113068(u8 *a)
+{
+    Tab64 t = D_801091F8;
+    u32 r, h;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        a[6] = 0xA;
+        a[5] = 0;
+        a[7] = 0;
+        *(s16 *)(a + 0x32) = -0xC8;
+    case 1:
+    case 2:
+        if (a[4] == 1) {
+            r = func_8009A450() & 0x3F;
+            h = r >> 1;
+            switch (a[5]) {
+            case 0:
+                if (--a[6] == 0xFF) {
+                    a[5] = 1;
+                    a[6] = 0xA;
+                }
+                break;
+            case 1:
+                if (--a[6] == 0xFF) {
+                    a[4] = 2;
+                }
+                break;
+            }
+            W_211f(a, 0x60) = h + 0x200;
+            W_211f(a, 0x64) = r + 0x300;
+            W_211f(a, 0x68) = r + 0x300;
+            W_211f(a, 0x6C) = h + 0x200;
+        } else {
+            W_211f(a, 0x60) -= W_211f(a, 0x60) >> 2;
+            W_211f(a, 0x64) -= W_211f(a, 0x64) >> 2;
+            W_211f(a, 0x68) -= W_211f(a, 0x68) >> 2;
+            W_211f(a, 0x6C) -= W_211f(a, 0x6C) >> 2;
+            if (W_211f(a, 0x6C) < 9) {
+                a[4] = 3;
+            }
+            if (++a[7] >= 6) {
+                a[7] = 0;
+            }
+        }
+        W_211f(a, 0x50) = (W_211f(a, 0x60) * t.v[a[7]][0]) >> 4;
+        W_211f(a, 0x54) = (W_211f(a, 0x64) * t.v[a[7]][1]) >> 4;
+        W_211f(a, 0x58) = (W_211f(a, 0x68) * t.v[a[7]][2]) >> 4;
+        W_211f(a, 0x5C) = (W_211f(a, 0x6C) * t.v[a[7]][3]) >> 4;
+        a[1] = 1;
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern s16 D_80129854[];
 extern s32 D_80129954[];
