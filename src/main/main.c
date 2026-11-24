@@ -20056,7 +20056,73 @@ s32 func_8007C654(s32 arg0, s32 arg1, s32 arg2) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C688);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C780);
+extern u8 D_800A58B8[];
+extern u8 D_800A58C0[];
+extern u8 D_800A58C8[];
+extern u8 D_800A58D0[];
+extern u8 D_800A58DC[];
+typedef struct {
+    u16 x;
+    u8 c;
+    u8 z;
+    s16 w;
+    s16 h;
+} UiCell_C780;
+
+UiCell_C780 *func_8007C780(UiCell_C780 *p, u16 *x, u8 c, s16 kind)
+{
+    u8 *s;
+    u32 w;
+
+    p->x = *x;
+    p->c = c;
+    p->z = 0;
+    p->w = 8;
+    p->h = 0x38;
+    p++;
+    p->x = *x += 8;
+    p->c = c;
+    p->z = 0;
+    p->w = 0x80;
+    p->h = 0x38;
+    *x += 0x10;
+    p++;
+    switch (kind) {
+    default:
+        s = D_800A58DC;
+        break;
+    case 0:
+        s = D_800A58B8;
+        break;
+    case 1:
+        s = D_800A58C0;
+        break;
+    case 2:
+        s = D_800A58C8;
+        break;
+    case 3:
+        s = D_800A58D0;
+        break;
+    }
+    w = *s;
+    while (w != 0xFF) {
+        if (w < 10) {
+            w = *s * 8 + 0x80;
+        } else {
+            w = 0x60;
+        }
+        s++;
+        p->x = *x;
+        p->c = c;
+        p->z = 0;
+        p->w = w;
+        p->h = 0x28;
+        *x += 8;
+        w = *s;
+        p++;
+    }
+    return p;
+}
 
 Glyph_C8C8 *func_8007C8C8(Glyph_C8C8 *g, s32 c, u16 *x, u8 y)
 {
