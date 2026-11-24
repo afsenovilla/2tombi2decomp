@@ -733,7 +733,80 @@ s32 func_8010A854(u8 *a, s16 id)
     }
 }
 
-INCLUDE_ASM("asm/a0h/nonmatchings/a0h", func_8010A918);
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+#define M(a) (*(u8 **)((a) + 0xC0))
+void func_8010ABE8(u8 *a);
+
+void func_8010A918(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, a[3] + 1) != 0) {
+            break;
+        }
+        H(a, 0xB8) = 0x1000;
+        H(a, 0xBA) = 0x1000;
+        H(a, 0xBC) = 0x1000;
+        a[4]++;
+        if (a[3] == 0) {
+            H(a, 0x80) = 0x258;
+            H(a, 0x82) = 0x4B0;
+            H(a, 0x84) = 0x140;
+            a[0] = 1;
+            H(a, 0x86) = 0x280;
+            a[0x29] = 0;
+            a[0x2B] = 0;
+        } else {
+            H(a, 0x40) = 0x28;
+            H(a, 0x54) = func_8009A450() & 0xFFF;
+            H(a, 0x58) = func_8009A450() & 0xFFF;
+            H(a, 0x52) = (func_8009A450() & 0x7F) - 0x3F;
+            H(a, 0x44) = 0x400;
+            H(a, 0x4A) = 0;
+            H(a, 0x48) = func_80083F50(H(a, 0x56)) >> 4;
+            H(a, 0x4C) = -func_80083E80(H(a, 0x56)) >> 4;
+            H(M(a), 2) += 0x4B;
+            H(M(a), 4) = (s16)(H(M(a), 4) - 0xAA) - (func_8009A450() & 0x1F);
+            H(M(a), 0x38) = 0x3000;
+            H(M(a), 0x3A) = 0x3000;
+            H(M(a), 0x3C) = 0x3000;
+        }
+        func_80051844(a);
+        break;
+    case 1:
+        a[1] = 1;
+        func_80077EBC(a);
+        if (a[3] == 0) {
+            break;
+        }
+        W(a, 0x2C) += H(a, 0x48) * H(a, 0x44);
+        H(a, 0x32) += H(a, 0x4A) >> 8;
+        W(a, 0x34) += H(a, 0x4C) * H(a, 0x44);
+        if ((H(a, 0x44) -= 0x40) <= 0xC0) {
+            H(a, 0x44) = 0xC0;
+        }
+        if ((H(a, 0x4A) += 0x100) >= 0x3000) {
+            H(a, 0x4A) = 0x3000;
+        }
+        H(M(a), 0xC) += H(a, 0x52);
+        if (H(a, 0x32) >= -0x11F8) {
+            a[4] = 3;
+        }
+        func_80051844(a);
+        break;
+    case 2:
+        a[1] = 1;
+        func_80077EBC(a);
+        a[0] = 2;
+        a[4] = 3;
+        func_8010ABE8(a);
+        func_80074590(0x2D, -0x1B, 0);
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 void func_8010A918();
