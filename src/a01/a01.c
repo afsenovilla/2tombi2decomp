@@ -6243,7 +6243,44 @@ void func_80123BD8(void) {
     func_8007778C();
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80123BF8);
+void func_80123BF8(u8 *a) {
+    u8 *p;
+    s32 k;
+
+    switch (a[5]) {
+    case 0:
+        a[0] = 1;
+        a[4] = 1;
+        a[5] = 1;
+        break;
+    case 2:
+    case 3:
+    case 4:
+    case 7:
+        a[0] = 2;
+        a[4] = 3;
+        k = a[3];
+        if (k == 3) {
+            D_800BF870.pad1[0x18B] |= 0x40;
+        } else if (k == 1) {
+            D_800BF870.pad1[0x18B] |= 0x80;
+        } else if (k == 0) {
+            p = *(u8 **)(a + 0x10);
+            *p = 1;
+            D_800BF870.pad1[0x195] |= 1;
+        }
+        p = *(u8 **)(a + 0x14);
+        if (p != NULL && p[4] < 2) {
+            p[4] = 2;
+            *(u8 **)(a + 0x14) = NULL;
+        }
+        break;
+    case 1:
+    case 5:
+    case 6:
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80123CFC);
 
