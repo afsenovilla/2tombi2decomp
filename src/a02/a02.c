@@ -1582,7 +1582,118 @@ void func_80113824(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateCoalMiningTownInteriorDoorPartTransition);
+void f_UpdateCoalMiningTownInteriorDoorPartTransition(u8 *a, u8 *p) {
+    s32 done;
+
+    switch (a[5]) {
+    case 0:
+        a[5]++;
+        *(u16 *)(p + 0xE) = *(u16 *)(p + 0xA);
+        func_80072FE0(a, p);
+        break;
+    case 1:
+        if (D_800BF818 == 2) {
+            a[5]++;
+        }
+        break;
+    case 2:
+        if (func_80073194(a, p) != 0) {
+            a[5]++;
+        }
+        break;
+    case 3: {
+        u8 *g = D_800BF808_1760;
+        if (g[0x10] == 3) {
+            a[5]++;
+        } else if (g[0x10] == 7) {
+            g[0x10] = 0;
+            a[5] = 6;
+            func_80074590(0x17, 0, 0);
+        } else if (g[0x10] == 9) {
+            g[0x10] = 0;
+            a[5] = 9;
+            func_80074590(0x17, 0, 0);
+        }
+        break;
+    }
+    case 4:
+        if (func_8007302C(a, p) != 0) {
+            a[5]++;
+        }
+        break;
+    case 6:
+        if (func_8007302C(a, p) != 0) {
+            a[5]++;
+        }
+        break;
+    case 7:
+        if (D_800BF818 == 8) {
+            a[5]++;
+        }
+        break;
+    case 8:
+        if (func_800730C8(a, p) != 0) {
+            a[5] = 3;
+            func_80074590(0x18, 0, 0);
+            D_800BF818 = 0;
+        }
+        break;
+    case 9:
+        done = 0;
+        switch (a[0x46]) {
+        case 0:
+            W16(0x50) += 0x40;
+            if (I16(0x50) > I16(0x5A) + 0x400) {
+                W16(0x50) = 0x400;
+                done = 1;
+            }
+            break;
+        case 1:
+            W16(0x50) -= 0x40;
+            if (I16(0x50) < I16(0x5A) - 0x400) {
+                I16(0x50) = -0x400;
+                done = 1;
+            }
+            break;
+        }
+        *(u16 *)(p + 0xA) = W16(0x5A) - W16(0x50);
+        if (done) {
+            W16(0x40) = 0xC;
+            a[5]++;
+        }
+        break;
+    case 10:
+        if (D_800BF818 == 10) {
+            a[5]++;
+        }
+        break;
+    case 11:
+        done = 0;
+        switch (a[0x46]) {
+        case 0:
+            W16(0x50) -= 0x40;
+            if (I16(0x50) < 0) {
+                W16(0x50) = 0;
+                done = 1;
+            }
+            break;
+        case 1:
+            W16(0x50) += 0x40;
+            if (I16(0x50) > 0) {
+                W16(0x50) = 0;
+                done = 1;
+            }
+            break;
+        }
+        *(u16 *)(p + 0xA) = W16(0x5A) - W16(0x50);
+        if (done) {
+            a[5] = 3;
+            func_80074590(0x18, 0, 0);
+            D_800BF818 = 0;
+        }
+        break;
+    }
+}
 
 #define FP(p, o) M2C_FIELD(p, u8 **, o)
 void func_80113BC4(u8 *a) {
