@@ -3585,11 +3585,100 @@ s32 func_80118B50(s32 arg0) {
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80118C54);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011903C);
+s32 func_8011A280(u8 *a);
+s32 func_80119D58(u8 *a, s32 b);
+s32 func_80119DEC(u8 *a);
+
+void func_8011903C(u8 *a) {
+    s32 s = a[6];
+    s32 one = 1;
+
+    switch (s) {
+    case 0:
+        if ((*(u8 **)(a + 0x14))[0x2B] == 2) {
+            *(s16 *)(a + 0x40) = one;
+            a[6]++;
+        }
+        break;
+    case 1:
+        if ((s16)func_80119D58(a, 0) != 0) {
+            if (*(s16 *)(a + 0x40) != 0) {
+                a[6]++;
+            } else {
+                a[5] = 2;
+                a[6] = 0;
+            }
+        }
+        break;
+    case 2:
+        if (a[0x2B] == one && D_800BF80A == one && func_8011A280(a) != 0 && (s16)func_80119DEC(a) != 0) {
+            a[0] = 2;
+            a[5] = one;
+            a[6] = 0;
+            a[0x5E] = one;
+        }
+        break;
+    case 3:
+        if ((s16)func_80119D58(a, 1) != 0) {
+            if (*(s16 *)(a + 0x40) != 0) {
+                a[5] = 3;
+            } else {
+                (*(u8 **)(a + 0x14))[0x2B] = 0;
+                a[0] = one;
+            }
+            a[6] = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801191B0);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80119390);
+s32 func_80119D58(u8 *a, s32 b);
+s32 func_80119DEC(u8 *a);
+
+void func_80119390(u8 *a) {
+    s32 s = a[6];
+    s32 one = 1;
+
+    switch (s) {
+    case 0:
+        if ((*(u8 **)(a + 0x14))[0x2B] == 2) {
+            *(s16 *)(a + 0x40) = one;
+            a[6]++;
+        }
+        break;
+    case 1:
+        if ((s16)func_80119D58(a, 0) != 0) {
+            if (*(s16 *)(a + 0x40) != 0) {
+                a[6]++;
+            } else {
+                a[5] = 2;
+                a[6] = 0;
+            }
+        }
+        break;
+    case 2:
+        if (a[0x2B] == one && D_800BF808_1760[2] == one && (D_800BF808_1760[3] == 0x83 || D_800BF808_1760[3] == 0x84) && (s16)func_80119DEC(a) != 0) {
+            a[0] = 2;
+            a[5] = one;
+            a[6] = 0;
+            a[0x5E] = 2;
+        }
+        break;
+    case 3:
+        if ((s16)func_80119D58(a, 1) != 0) {
+            if (*(s16 *)(a + 0x40) != 0) {
+                a[5] = 3;
+            } else {
+                a[0] = one;
+                (*(u8 **)(a + 0x14))[0x2B] = 0;
+            }
+            a[6] = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80119510);
 
