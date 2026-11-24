@@ -19670,10 +19670,107 @@ void func_800796DC(void)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_NewGameSetDefaultValues);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800798F8);
+extern u8 *D_800F23A8_c058;
+typedef struct Pool88_98f8 { u8 pad0[0xC]; u8 c; u8 padD[0x17]; struct Pool88_98f8 *next; u8 type; u8 pad29[0x5F]; } Pool88_98f8;
+extern Pool88_98f8 D_800ED8D8[52];
+extern Pool88_98f8 *D_800E8098_3d1a;
+typedef struct PoolC4_98f8 { u8 pad0[0xC]; u8 c; u8 padD[0x17]; struct PoolC4_98f8 *next; u8 type; u8 pad29[0x9B]; } PoolC4_98f8;
+extern PoolC4_98f8 D_800EF478[58];
+extern PoolC4_98f8 *D_800E80A0_8bd4;
+extern u8 D_800E7E7D;
+typedef struct PoolD0_98f8 { u8 pad0[0xC]; u8 c; u8 padD[0x17]; struct PoolD0_98f8 *next; u8 type; u8 pad29[0xA7]; } PoolD0_98f8;
+extern PoolD0_98f8 D_800FE198[42];
+extern PoolD0_98f8 *D_800F2398_86a8;
+extern u8 D_800ED8CC;
+typedef struct Pool108_98f8 { u8 pad0[0xC]; u8 c; u8 padD[0x17]; struct Pool108_98f8 *next; u8 type; u8 pad29[0xDF]; } Pool108_98f8;
+extern Pool108_98f8 D_800FB858[40];
+extern Pool108_98f8 *D_800ED8D4_e488;
+extern u8 D_800ED8C5;
+typedef struct Pool140_98f8 { u8 pad0[0xC]; u8 c; u8 padD[0x17]; struct Pool140_98f8 *next; u8 type; u8 pad29[0x117]; } Pool140_98f8;
+extern Pool140_98f8 D_800FB218[5];
+extern Pool140_98f8 *D_800ED8D0_6a4c;
+extern u8 D_800ED8C4;
+extern u8 D_800F2410_a6e3[];
+extern u8 D_800F26C8_05e2[];
+extern u8 D_800F2738_371f[];
+
+void func_800798F8(void)
+{
+    s32 i;
+    u8 k;
+
+    D_800FB168 = 0;
+    D_800F23A8_c058 = 0;
+    D_800F2624_9bdb = 0;
+    D_800F239C = 0;
+    for (i = 0; i < 0x34; i++) {
+        memset(&D_800ED8D8[i], 0, sizeof(D_800ED8D8[i]));
+        D_800ED8D8[i].next = &D_800ED8D8[i + 1];
+        D_800ED8D8[i].type = 0;
+        D_800ED8D8[i].c = 0;
+    }
+    D_800ED8D8[i - 1].next = 0;
+    D_800E8098_3d1a = D_800ED8D8;
+    D_800E7E7C = 0x34;
+    i = 0;
+    k = 1;
+    for (; i < 0x3A; i++) {
+        memset(&D_800EF478[i], 0, sizeof(D_800EF478[i]));
+        D_800EF478[i].next = &D_800EF478[i + 1];
+        D_800EF478[i].type = k;
+        D_800EF478[i].c = 0;
+    }
+    D_800EF478[i - 1].next = 0;
+    D_800E80A0_8bd4 = D_800EF478;
+    D_800E7E7D = 0x3A;
+    i = 0;
+    k = 2;
+    for (; i < 0x2A; i++) {
+        memset(&D_800FE198[i], 0, sizeof(D_800FE198[i]));
+        D_800FE198[i].next = &D_800FE198[i + 1];
+        D_800FE198[i].type = k;
+        D_800FE198[i].c = 0;
+    }
+    D_800FE198[i - 1].next = 0;
+    D_800F2398_86a8 = D_800FE198;
+    D_800ED8CC = 0x2A;
+    i = 0;
+    k = 3;
+    for (; i < 0x28; i++) {
+        memset(&D_800FB858[i], 0, sizeof(D_800FB858[i]));
+        D_800FB858[i].next = &D_800FB858[i + 1];
+        D_800FB858[i].type = k;
+        D_800FB858[i].c = 0;
+    }
+    D_800FB858[i - 1].next = 0;
+    D_800ED8D4_e488 = D_800FB858;
+    D_800ED8C5 = 0x28;
+    i = 0;
+    k = 4;
+    for (; i < 0x5; i++) {
+        memset(&D_800FB218[i], 0, sizeof(D_800FB218[i]));
+        D_800FB218[i].next = &D_800FB218[i + 1];
+        D_800FB218[i].type = k;
+        D_800FB218[i].c = 0;
+    }
+    D_800FB218[i - 1].next = 0;
+    D_800ED8D0_6a4c = D_800FB218;
+    D_800ED8C4 = 0x5;
+    *(u8 **)D_1F80013C = D_800F2410_a6e3;
+    *(u8 **)D_1F800140 = D_800F2410_a6e3;
+    *(s16 *)D_1F800146 = 0;
+    *(s16 *)D_1F800144 = 0;
+    *(u8 **)D_1F800148 = D_800F26C8_05e2;
+    *(u8 **)D_1F80014C = D_800F26C8_05e2;
+    *(s16 *)D_1F800152 = 0;
+    *(s16 *)D_1F800150 = 0;
+    *(u8 **)D_1F800154 = D_800F2738_371f;
+    *(u8 **)D_1F800158 = D_800F2738_371f;
+    *(s16 *)D_1F80015E = 0;
+    *(s16 *)D_1F80015C = 0;
+}
 
 typedef struct FreeNodeA_8313 { u8 kind0; u8 pad1[9]; u8 uA; u8 padB; u8 uC; u8 padD[0x13]; struct FreeNodeA_8313 *prev; struct FreeNodeA_8313 *next; } FreeNodeA_8313;
-extern u8 D_800ED8CC;
 extern FreeNodeA_8313 *D_800F2398_0c73;
 extern FreeNodeA_8313 *D_800F239C_ee60;
 extern FreeNodeA_8313 *D_800F23A0_43a0;
@@ -19681,7 +19778,6 @@ extern FreeNodeA_8313 *D_800F23A8_14aa;
 extern FreeNodeA_8313 *D_800F2624_cee9;
 extern FreeNodeA_8313 *D_800F2738_e681;
 extern FreeNodeA_8313 *D_800FB168_2285;
-extern u8 D_800E7E7D;
 extern FreeNodeA_8313 *D_800E8098_a875;
 extern FreeNodeA_8313 *D_800E80A0_2bca;
 FreeNodeA_8313 *f_AllocateActorFromPool2(FreeNodeA_8313 *at, u8 kind, s32 mode, s32 list);
@@ -19826,8 +19922,6 @@ FreeNodeA_8313 *f_AllocateActorFromPool1(FreeNodeA_8313 *at, u8 kind, s32 mode, 
     return f_AllocateActorFromPool2(at, kind, mode, list);
 }
 
-extern u8 D_800ED8C5;
-extern u8 D_800ED8C4;
 extern FreeNodeA_8313 *D_800ED8D4_34bd;
 extern FreeNodeA_8313 *D_800ED8D0_f3a6;
 extern FreeNodeA_8313 *D_800F23A0;
@@ -20294,7 +20388,6 @@ void f_ReleaseActorModelParts(u8 *a)
     a[9] = 0;
 }
 
-extern u8 *D_800F23A8_c058;
 extern u8 *D_800F23A0_9c78;
 #define LNK_NEXT(p) (*(u8 **)((p) + 0x20))
 #define LNK_PREV(p) (*(u8 **)((p) + 0x24))
