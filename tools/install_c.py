@@ -130,24 +130,99 @@ def params(args):
     return a.count(",") + 1
 
 
+def arg_count(text, i):
+    """(argument count, end offset) of the call whose `(` ends just before text[i]."""
+    depth, n, empty = 1, 0, True
+    while i < len(text) and depth:
+        c = text[i]
+        if c in "([{":
+            depth += 1
+        elif c in ")]}":
+            depth -= 1
+        elif c == "," and depth == 1:
+            n += 1
+        if depth and not c.isspace():
+            empty = False
+        i += 1
+    return (0 if empty else n + 1), i
+
+
 def calls(text, name):
     """Argument counts of every call of name in text."""
-    out = []
-    for m in re.finditer(r"\b%s\s*\(" % re.escape(name), text):
-        i, depth, n, empty = m.end(), 1, 0, True
-        while i < len(text) and depth:
-            c = text[i]
-            if c in "([{":
-                depth += 1
-            elif c in ")]}":
-                depth -= 1
-            elif c == "," and depth == 1:
-                n += 1
-            if depth and not c.isspace():
-                empty = False
-            i += 1
-        out.append(0 if empty else n + 1)
-    return out
+    return [arg_count(text, m.end())[0] for m in re.finditer(r"\b%s\s*\(" % re.escape(name), text)]
+
+
+def cast_calls(t, funcs):
+    """Calls of an installed function, after its definition (or a full prototype) in t, that pass another argument
+    count than it has (an m2c draft's count, a pass-through dropped) would not compile: each becomes a call through
+    a cast to an unprototyped pointer, `((RET (*)())f)(...)`, which compiles to the same `jal f` with the same
+    argument promotions as the undeclared call it was. Returns (t, [(name, count)])."""
+    done = []
+    for n, body in funcs:
+        hd = heads(body, re.escape(n))
+        if not hd or proto_of(hd[0][1]).endswith("();"):
+            continue    # K&R definitions take any argument count
+        h = " ".join(hd[0][1].split())
+        m = re.match(r"(.*?)\b%s\s*\(([^()]*)\)" % re.escape(n), h)
+        k = params(m.group(2)) if m else None
+        if not m or k is None:
+            continue
+        ret = " ".join(re.sub(r"\b(static|inline|extern)\b", " ", m.group(1)).split()) or "int"
+        starts = [hm.start() for hm in re.finditer(HEAD % re.escape(n), t)]
+        starts += [pm.start() for pm in re.finditer(r"(?m)^(?:extern\s+)?[A-Za-z_][\w \*]*?\b%s\s*\(([^;{}()]*)\)\s*;"
+                                                    % re.escape(n), t) if params(pm.group(1)) is not None]
+        if not starts:
+            continue
+        first = min(starts)
+        spans = []
+        for cm in re.finditer(r"(?<![\w.>])%s\s*\(" % re.escape(n), t):
+            ls = t.rfind("\n", 0, cm.start()) + 1
+            if cm.start() <= first or not t[ls:ls + 1].isspace():
+                continue    # the definition / a prototype (top level), or before the first declaration
+            c, _ = arg_count(t, cm.end())
+            if c != k:
+                spans.append((cm.start(), cm.end(), c))
+        for a_, b_, c in reversed(spans):
+            t = t[:a_] + "((%s (*)())%s)(" % (ret, n) + t[b_:]
+        if spans:
+            done.append((n, sorted({c for _, _, c in spans}), "((%s (*)())%s)(...)" % (ret, n)))
+    return t, done
+
+
+def dedupe_types(old, t):
+    """A type name the install left defined twice at top level (it was defined at most once before): identical
+    copies (up to layout) keep the first one only; different ones are reported."""
+    def defs(text):
+        out = {}
+        for kind, seg in ptsrc.items(text):
+            if kind == "code":
+                for tn in type_names(seg):
+                    out.setdefault(tn, []).append(seg.strip())
+        return out
+    before = defs(old)
+    seen = set()
+    for tn, segs in defs(t).items():
+        if len(segs) < 2 or len(before.get(tn, [])) > 1 or tuple(segs) in seen:
+            continue
+        seen.add(tuple(segs))
+        if all(norm(x) == norm(segs[0]) for x in segs[1:]):
+            for x in segs[1:]:
+                i = t.find(x, t.find(segs[0]) + len(segs[0]))
+                if i >= 0:
+                    t = t[:i] + t[i + len(x):]
+            print("type %s was defined %d times after the install: the later copies removed" % (tn[1], len(segs)))
+        else:
+            print("warning: %s %s is defined %d times, differently: fix by hand" % (
+                "struct tag" if tn[0] == "tag" else "type", tn[1], len(segs)))
+    return t
+
+
+def build_errors(out):
+    """The useful lines of a failed tools/build.py run: compiler diagnostics (`file:line: ...`), link errors."""
+    keep = [l for l in out.splitlines()
+            if re.match(r"\S+:\d+: ", l) or "undefined reference" in l or "multiple definition" in l
+            or re.search(r"\b(error|Error)\b", l) and not l.startswith("FAILED")]
+    return keep
 
 
 def drop_prototypes(text, keep=()):
@@ -156,13 +231,18 @@ def drop_prototypes(text, keep=()):
     items = ptsrc.items(text)
     bodies = [s for k, s in items if k == "code" and ptsrc.func_name(s.strip())]
     defined = {ptsrc.func_name(b.strip()) for b in bodies}
-    out = []
+    # the dropped segments are cut out of the text itself: ptsrc.items() leaves out the newline after a
+    # preprocessor line and a comment above one (the `// CC` set-up lines), so a re-join loses both
+    out, pos = [], 0
     for k, seg in items:
         pr = proto(seg.strip()) if k == "code" else None
         if pr and pr[0] not in defined and pr[0] not in keep and \
                 not any(re.search(r"\b%s\b(?!\s*\()" % pr[0], b) for b in bodies):
-            continue
-        out.append(seg)
+            at = text.find(seg, pos)
+            if at >= 0:
+                out.append(text[pos:at])
+                pos = at + len(seg)
+    out.append(text[pos:])
     return "".join(out)
 
 
@@ -225,6 +305,19 @@ def install(a):
                 pre[i] = "s32 %s();" % k
                 print("extern %s: a function: declared `s32 %s();`" % (k, k))
     pre = [x for x in pre if x]
+    # a macro the target defines with another body: ours is renamed (Name_xxxx), else the target's later
+    # #define would silently change what our functions compile to (or ours what the target's code does)
+    tmacros = {m.group(1): m.group(2) for m in re.finditer(r"(?m)^#\s*define\s+(\w+)((?:.*\\\n)*.*)$", t)}
+    for i, p in enumerate(list(pre)):
+        m = re.match(r"#\s*define\s+(\w+)((?:.*\\\n)*.*)$", p, re.S)
+        if not m or m.group(1) not in tmacros or norm(m.group(2)) == norm(tmacros[m.group(1)]):
+            continue
+        k = m.group(1)
+        new = "%s_%s" % (k, hashlib.sha1(p.encode()).hexdigest()[:4])
+        print("warning: macro %s is defined with another body in the target (`#define %s%s`): renamed %s here" % (
+            k, k, tmacros[k].strip()[:60], new))
+        pre = [re.sub(r"\b%s\b" % k, new, q) for q in pre]
+        funcs = [(fn, re.sub(r"\b%s\b" % k, new, b)) for fn, b in funcs]
     # a global the target declares with another type is used here under an alias name (config/aliases_<prog>.ld)
     import libsweep
     aliases = libsweep.read_aliases(a.prog)
@@ -408,6 +501,8 @@ def install(a):
         if m and params(m.group(1)) and not kr:
             sigs[n] = params(m.group(1))
     for n, k in sigs.items():
+        if n in dict(funcs):
+            continue    # calls of an installed function: cast_calls() below
         for where, text_ in [("the target", t)] + [(fn, b) for fn, b in funcs]:
             few = [c for c in calls(text_, n) if c < k]
             if few:
@@ -442,6 +537,11 @@ def install(a):
                 t = t.replace(m.group(0), want, 1)
                 print("prototype of %s in the target made the definition's: %s -> %s" % (n, m.group(0).strip(),
                                                                                          want))
+    t, casted = cast_calls(t, funcs)
+    for n, cs, form in casted:
+        print("calls of %s with %s argument(s) (another count than its definition) go through a cast: %s" % (
+            n, "/".join(map(str, cs)), form))
+    t = dedupe_types(old, t)
     if includes:   # after the target's last #include line
         last = list(re.finditer(r"(?m)^#include .*$", t))
         at = last[-1].end() if last else 0
@@ -452,9 +552,18 @@ def install(a):
     if " OK " not in r.stdout:
         open(path, "w").write(old)
         restore_aliases()
+        errs = build_errors(r.stdout + r.stderr)
+        why = "linked build not OK, restored"
+        if errs:
+            print("the build failed (the target with this C does not compile / link); first lines:")
+            print("\n".join("  " + l for l in errs[:12]))
+            why = "does not build: %s" % errs[0].strip()
+        elif "DIFF" in r.stdout:
+            why = "linked build DIFF (compiles, other bytes), restored"
         if len(funcs) < 2:
-            print(r.stdout + r.stderr[-2500:])
-            fail("linked build not OK, restored", [n for n, _ in funcs])
+            if not errs:
+                print(r.stdout + r.stderr[-2500:])
+            fail(why, [n for n, _ in funcs])
         # one function at a time: the others may still go in (a callee prototype in the target, for instance,
         # can change one function's code)
         print("linked build not OK with all %d; trying one at a time" % len(funcs))
@@ -472,10 +581,14 @@ def install(a):
             if n in failed:
                 print("  %s: %s" % (n, (r.stdout + r.stderr).strip().splitlines()[-1:]))
         print("installed %d functions: %s" % (len(done), " ".join(done)))
+        if (open(ap_).read() if os.path.exists(ap_) else None) != old_aliases:
+            print("changed %s: commit config/aliases_%s.ld too" % (os.path.relpath(ap_, ROOT), a.prog))
         if failed:
             fail("%d of %d did not build" % (len(failed), len(funcs)), failed)
         return
     print("installed %d functions: %s" % (len(funcs), " ".join(n for n, _ in funcs)))
+    if (open(ap_).read() if os.path.exists(ap_) else None) != old_aliases:
+        print("changed %s: commit config/aliases_%s.ld too" % (os.path.relpath(ap_, ROOT), a.prog))
 
 
 if __name__ == "__main__":

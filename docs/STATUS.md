@@ -20,6 +20,18 @@ One tools agent, the "Tool work left" list of the round-8 entry below, in its or
   func_80112DEC + f_DispatchEndingAreaCameraSequence (the imported names of the second of each pair are wrong:
   they are not actor updates). splat's `/* Handwritten function */` header is not a signal on its own: 138 matched
   game functions with GTE macros have it too.
+- **install_c.py**: a failed linked build prints the compiler / linker error lines (`file:line: ...`, undefined
+  references; first 12) and the NOT INSTALLED reason is the first of them (`linked build DIFF` when it compiles);
+  calls of an installed function after its definition (or a full prototype) with another argument count are
+  rewritten as `((RET (*)())f)(...)` (checked: the same code as the undeclared call) instead of failing to compile;
+  a scratch `#define` the target has with another body is renamed `NAME_xxxx` with a warning; "changed
+  config/aliases_<prog>.ld: commit ... too" when the install added alias lines; a type name the install left defined
+  twice (identical copies) keeps the first copy only (different copies are reported). Tested: a broken scratch into
+  opn (error lines shown, file restored), a macro clash (renamed), a round trip of a0g func_80109180 (removed, then
+  installed again: the file is byte-identical), the cast rewrite on a synthetic file.
+- **ccheck `--no-protos`** works again: install_c.drop_prototypes() re-joined ptsrc items, which lose the newline
+  after a `#include` and the comment above one (`#include expects FILENAME`, lost `// CC` lines); it now cuts the
+  dropped prototypes out of the text itself.
 
 ## 2026-11-24: eighth round (new scopes, work queue; two container restarts)
 

@@ -327,7 +327,8 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - regswap rewrites can produce invalid or semantically wrong C (MEMBER_AT with a variable offset, an unset fork
   variable, a reused variable read after its reassignment): check every result before installing.
 - prio.py names pseudos by declaration order even when array locals are not pseudos (names shifted).
-- install_c: an existing caller with fewer arguments needs a K&R definition (`void f(a) u8 *a; {`); alias renames are
+- install_c: an existing caller with another argument count after the definition is rewritten as a call through a
+  cast, `((RET (*)())f)(...)` (same `jal`, same promotions as the undeclared call it was; since 2026-11-24); alias renames are
   not applied inside moved helpers; a moved helper loses prototypes declared further down (declare them in the
   helper's block). `extern M2C_UNK func_X;` for a function the C calls becomes `s32 func_X();` (dropped when the
   target declares it) since 2026-11-23.
@@ -341,9 +342,12 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - permlines may move `//P` lines out of their switch case (invalid C that still scores lower): check its output.
 - regswap's narrowing splits can truncate values and its `__typeof__` locals must not reach src/.
 - Copy the target file's prototypes into a scratch: a different scratch prototype can pass ccheck and fail the
-  link. ccheck `--no-protos` is currently broken (STATUS 2026-11-23 (3)).
-- install_c may drop a macro whose name is redefined differently further down in the target (use unique macro
-  names per function).
+  link. ccheck `--no-protos` compiles the scratch the way install_c drops prototypes (fixed 2026-11-24: it lost the
+  newlines after the `#include` lines and the `// CC` set-up comments).
+- install_c renames a scratch macro the target defines with another body (`H` -> `H_xxxx`, with a warning; since
+  2026-11-24); unique macro names per function are still clearer. On a failed linked build it prints the compiler's
+  or the linker's first error lines (the NOT INSTALLED reason is the first one); it says when it changed
+  config/aliases_<prog>.ld (commit it with the C); a type left defined twice by an install keeps its first copy.
 - Never `pkill -f`, even with a narrow pattern: kill by PID.
 - Write scratch files containing inline asm (`$24`, `$6`) with a quoted heredoc (`<<'EOF'`): an unquoted one expands
   them.

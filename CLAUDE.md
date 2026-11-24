@@ -106,7 +106,9 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
 - `python3 -I tools/decomp.py NAME [--check] [--write]`: m2c draft of one function; `python3 -I tools/sweep.py
   [--max-size 0x100] --install`: install every draft that matches as is (build-checked).
 - Hand-written C: check a scratch file with `tools/ccheck.py FILE.c`, install with `python3 -I tools/install_c.py FILE.c
-  [--prog main]` (build-checked); recurring fixes are listed in docs/STATUS.md.
+  [--prog main]` (build-checked; on a failed build it prints the compiler's first error lines; callers with another
+  argument count become `((RET (*)())f)(...)`; a clashing scratch macro is renamed; it says when to commit
+  config/aliases_<prog>.ld too); recurring fixes are listed in docs/STATUS.md.
 - `python3 -I tools/permute.py NAME --src FILE.c`: decomp-permuter with the game's pipeline (near-misses).
 - `python3 -I tools/nearcopy.py [PROG ...] [--install] [--ratio 0.8 --near]`: matched C from any program put into
   near copies (patched constants / offsets, renamed symbols); `--near` writes the closest C of the rest to
