@@ -8713,7 +8713,52 @@ s32 func_800436BC(u8 *p)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80043720);
+extern u8 D_800BF822;
+
+s32 func_80043720(u8 *a)
+{
+    s32 one;
+
+    switch (a[0x78]) {
+    case 0:
+        switch (*(s16 *)(a + 0x72)) {
+        case 10:
+            a[0x78] = 2;
+            return 0;
+        case 0:
+        case 1:
+            f_QueueResourceMessage(*(s16 *)(a + 0x74), *(s16 *)(a + 0x76));
+            break;
+        case 2:
+        case 3:
+            f_QueueItemMessage(*(s16 *)(a + 0x74), *(s16 *)(a + 0x76));
+            break;
+        case 4:
+        case 5:
+            func_8004EDDC(*(s16 *)(a + 0x74), *(s16 *)(a + 0x76));
+            break;
+        }
+        if (!(*(u16 *)(a + 0x72) & 1)) {
+            return 1;
+        }
+        a[0x78]++;
+        goto ret0;
+    case 1:
+        if (D_800BF822 & 1) {
+            a[0x78] = 2;
+        }
+        goto ret0;
+    case 2:
+        one = 1;
+        if (!(D_800BF822 & one)) {
+            return one;
+        }
+    ret0:
+        return 0;
+    default:
+        return 0;
+    }
+}
 
 s32 func_80043858(u8 *p)
 {
@@ -9018,7 +9063,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800444EC);
 
 typedef struct { u8 pad[0x3C]; u8 *p3C; } Gs808_46A4;
 extern Gs808_46A4 D_800BF808_84c1;
-extern u8 D_800BF822;
 s32 func_800446A4(u8 *a)
 {
     u16 v;
