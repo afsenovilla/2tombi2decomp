@@ -1772,7 +1772,6 @@ static inline void init(u8 *p, s16 v)
     H(p, 0x56) = v;
     func_800517F8(p);
 }
-
 void func_8011014C(u8 *a)
 {
     PosV v;
@@ -3010,7 +3009,6 @@ extern u8 D_8011CC9C[];
 extern u8 D_800BF9C3;
 extern s32 D_800BF858;
 void func_80112D80();
-
 void f_UpdateTinyMouseVillageNpcActor(u8 *a)
 {
     s8 **g;

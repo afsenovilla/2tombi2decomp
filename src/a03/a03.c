@@ -970,7 +970,6 @@ typedef struct {
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
 extern void *D_800BF544;
-
 u32 *f_DrawTrolleyMeshTriangles(u32 *f, u32 *ot, s32 n)
 {
     s32 *otz = (s32 *)0x1F800004;
@@ -1076,7 +1075,6 @@ void func_801109D4(TrkPartList *a)
 INCLUDE_ASM("asm/a03/nonmatchings/a03", func_80110B00);
 
 extern s32 D_1F800080;
-
 void f_UpdateTrolleyTrailActor(u8 *a)
 {
     s32 *z = &D_1F800080;

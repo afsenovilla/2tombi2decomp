@@ -673,7 +673,6 @@ s32 func_8010ACA0(u8 *a, s16 id)
 #define M(a) (*(u8 **)((a) + 0xC0))
 void func_8010B06C(u8 *a);
 extern u8 D_800BFA59;
-
 void func_8010AD64(u8 *a)
 {
     switch (a[4]) {

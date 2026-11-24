@@ -736,7 +736,6 @@ s32 func_8010A854(u8 *a, s16 id)
 #define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
 #define M(a) (*(u8 **)((a) + 0xC0))
 void func_8010ABE8(u8 *a);
-
 void func_8010A918(u8 *a)
 {
     switch (a[4]) {

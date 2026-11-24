@@ -819,7 +819,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010D6B4);
 
 u8 *func_8007AB20();
 void func_8010B458(u8 *);
-
 void func_8010DA78(u8 *a)
 {
     u8 *p;
@@ -1253,7 +1252,6 @@ void func_8010F9E4(u8 *a) {
 
 #define U(p, o) (*(u16 *)((p) + (o)))
 #define S(p, o) (*(s16 *)((p) + (o)))
-
 s32 func_8010FAB0(u8 *a, u16 *e)
 {
     s16 m, m2;
@@ -1426,7 +1424,6 @@ void func_8010FE90(u8 *a, u8 *b)
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010FFF4);
 
 extern u16 D_1F80009C;
-
 void func_801101D4(u8 *a, u8 *b, s32 k)
 {
     s16 ang;
@@ -1492,7 +1489,6 @@ void func_80110370(u8 *a, u8 *b)
 
 extern u8 D_800BF9C7;
 extern u8 D_800BF8C0;
-
 void func_8011053C(u8 *a, u8 *b)
 {
     s16 ang;
@@ -1576,7 +1572,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80110AB8);
 #define U(p, o) (*(u16 *)((p) + (o)))
 #define S(p, o) (*(s16 *)((p) + (o)))
 #define L(p, o) (*(s32 *)((p) + (o)))
-
 s32 func_80110C7C(u8 *a, u8 *b, u8 *c)
 {
     s32 r;
@@ -1620,7 +1615,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80111184);
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801114B0);
 
 extern u8 *D_1F800080;
-
 void func_80111640(u8 *a, u8 *b)
 {
     s16 dx, dz;
@@ -1667,7 +1661,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80111D24);
 
 extern u8 **D_1F800158;
 extern u8 D_1F80015E;
-
 void func_80111FB4(u8 *a)
 {
     u8 **l = D_1F800158;
@@ -2088,7 +2081,6 @@ s32 func_80112D08(u8 *a) {
 }
 
 extern u8 *D_80128C48[];
-
 void f_SpawnCoalMiningTownSceneActorsFromPlacementTable(u8 *a, s32 mode)
 {
     u8 *e;
@@ -2654,7 +2646,6 @@ static inline void coal_door_part_inl(u8 *a)
         break;
     }
 }
-
 void f_UpdateCoalMiningTownInteriorSceneryAssemblyActor(u8 *a)
 {
     s32 i;
@@ -3193,7 +3184,6 @@ void func_80115148(u8 *a) {
 
 typedef struct { u16 x, w, z, d; } Box518C;
 extern Box518C D_80129BDC[];
-
 s32 func_8011518C(u8 *a, s32 r)
 {
     s32 i;
@@ -3646,7 +3636,6 @@ static inline void func_8011778C_inl(u8 *a)
         return;
     }
 }
-
 void func_8011718C(u8 *a)
 {
     switch (a[4]) {
@@ -6317,7 +6306,6 @@ static inline s32 tabby_spawn_inl(u8 *owner, u8 *e)
     }
     return 1;
 }
-
 void f_UpdateTabbyHouseSceneController(u8 *a)
 {
     s16 i;
@@ -9682,7 +9670,6 @@ typedef struct { u8 b[6]; } Tbl6D24;
 extern Tbl6D24 D_8010A4A4;
 #define U(p, o) (*(u16 *)((p) + (o)))
 #define S(p, o) (*(s16 *)((p) + (o)))
-
 s32 func_80126D24(u8 *a)
 {
     Tbl6D24 t = D_8010A4A4;
@@ -9961,7 +9948,6 @@ s32 func_801278D8(PartsOwner *a)
 s16 func_800776F8();
 #define C0 (*(u8 **)(a + 0xC0))
 #define C4 (*(u8 **)(a + 0xC4))
-
 void f_UpdateBlastTheRockSequence(u8 *a)
 {
     s16 v[6];

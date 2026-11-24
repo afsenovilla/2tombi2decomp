@@ -1350,7 +1350,6 @@ static inline s32 set_pos(u8 *a, s16 *v)
     H(a, 0x36) = v[2];
     return func_801175B8(a, 1, 0);
 }
-
 void func_8010FC1C(u8 *a)
 {
     u8 *pl = D_800E7E80;
@@ -2909,7 +2908,6 @@ void func_801144F4(u8 *a, s32 i)
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80114608);
 
 #define M(a) (*(u8 **)((a) + 0xC0))
-
 void func_80114AA8(u8 *a)
 {
     s32 d = 0;

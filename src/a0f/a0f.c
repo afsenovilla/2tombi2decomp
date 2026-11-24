@@ -2110,7 +2110,6 @@ static inline void set_state(u8 *a, void *fn)
     a[5] = 0;
     func_80041718(a, 0, 0);
 }
-
 void func_801123F0(u8 *a)
 {
     u8 *pl = D_800E7E80;
@@ -3617,7 +3616,6 @@ extern u8 D_8011F230[];
 extern u8 D_80129EC8[];
 extern u8 D_801209E0[];
 extern u8 D_1F800236;
-
 void func_80117FA4(u8 *a)
 {
     u8 *g;

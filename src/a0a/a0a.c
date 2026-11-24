@@ -1351,7 +1351,6 @@ static inline void set_state(u8 *a, void *fn)
     a[5] = 0;
     func_80041718(a, 0, 0);
 }
-
 void f_UpdateEvilPigBattleActor(u8 *a)
 {
     u8 *pl = D_800E7E80;

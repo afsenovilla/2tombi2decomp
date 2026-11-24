@@ -4432,7 +4432,6 @@ static inline void capper_size(u8 *a) {
     }
     H(a, 0x86) = H(a, 0x84);
 }
-
 void f_UpdateCapperActor(u8 *a)
 {
     GameState *g;
@@ -5916,7 +5915,6 @@ extern u8 D_801357A4[];
 extern u8 D_800A3CD0[];
 u8 *func_8006FB0C();
 u8 *func_8012C2B4(void);
-
 void func_8011F7CC(u8 *a)
 {
     u8 *g;
@@ -6843,7 +6841,6 @@ static inline void sync_child(u8 *a) {
         H(p, 0x30) = H(a, 0x36);
     }
 }
-
 void func_801222FC(u8 *a)
 {
     u8 *p;
@@ -7259,7 +7256,6 @@ extern s32 D_800ECFB4;
 extern u8 D_80135894[];
 u8 *func_8007A980();
 u8 *func_8012B654(s32 a, s32 b);
-
 void func_801233A8(u8 *a)
 {
     s32 k;
@@ -7856,7 +7852,6 @@ extern u8 D_800BF9DB;
 extern u8 D_800E7FF4;
 extern s8 D_800BF81F;
 void func_8012B324();
-
 void f_UpdatePipeAreaEntranceAndDoorActor(u8 *a)
 {
     u8 v;
@@ -8718,7 +8713,6 @@ static inline void mud_sync(u8 *a) {
     H(a, 0x36) = H(a, 0x94);
     func_800517F8(a);
 }
-
 void f_UpdatePipeAreaMudballSurpriseCarrierActor(u8 *a)
 {
     GameState *g;
@@ -9501,7 +9495,6 @@ static inline void func_8012C410_inl(u8 *a) {
         break;
     }
 }
-
 void f_UpdatePipeAreaQuestSceneryActor(u8 *a)
 {
     u8 *e;

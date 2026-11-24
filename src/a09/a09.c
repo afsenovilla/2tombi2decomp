@@ -398,7 +398,6 @@ typedef struct { s16 x, y, z; u8 b6, b7; s16 h8, hA; } DoorEnt;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern u8 D_8010E160[];
 extern DoorEnt D_8010E164[];
-
 void func_8010A5D8(u8 *a)
 {
     u8 *t;
@@ -874,7 +873,6 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", f_UpdateRemainingEvilPigStatueArrivalSeq
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010C01C);
 
 extern s16 D_8010E38C[];
-
 void f_UpdateEvilPigStatueActor(u8 *a)
 {
     u8 *g;
@@ -1071,7 +1069,6 @@ static inline s32 inl_8010CCD8(u8 *a)
         return 0;
     }
 }
-
 void func_8010C6B8(u8 *a)
 {
     PosV v;

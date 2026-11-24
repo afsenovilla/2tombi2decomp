@@ -1453,7 +1453,6 @@ extern s32 D_800E7FFC;
         }                                                 \
         break;                                            \
     }
-
 void f_UpdateGoldenTowerPigElderActor(u8 *a)
 {
     u8 *g;
@@ -1533,8 +1532,8 @@ void f_UpdateGoldenTowerPigElderActor(u8 *a)
         break;
     }
 }
-#undef TALK
 
+#undef TALK
 s32 func_8010C1D4(void *a)
 {
     u8 *r = func_80072DDC(a, 0, 3, 0x10);
@@ -1690,7 +1689,6 @@ typedef struct { s16 x, y, z; u8 b6, b7; s16 h8, hA; } DoorEnt;
 extern u8 D_8010D81C[];
 extern DoorEnt D_8010D820[];
 extern u8 D_1F800236;
-
 void func_8010C5F0(u8 *a)
 {
     u8 *t;

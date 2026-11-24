@@ -2489,7 +2489,6 @@ void func_8011765C(void *arg0) {
 }
 
 extern u8 D_800E7EEE;
-
 void func_80117680(u8 *a)
 {
     u8 *t;
@@ -2786,7 +2785,6 @@ void func_80119454(u8 *a)
 typedef struct { s16 v[5]; } PartInit5;
 extern PartInit5 D_80133070[];
 extern u8 D_80133098[];
-
 void f_UpdateCircusGearMechanismActor(u8 *a)
 {
     s32 i;
@@ -3633,7 +3631,6 @@ extern u8 D_80133274[];
 extern u8 D_8001B4DC[];
 extern u8 D_801332EC[];
 extern u8 D_8013339C[];
-
 void func_8011D724(u8 *a)
 {
     u8 *g;
@@ -3721,7 +3718,6 @@ extern u8 D_801318E8[];
 extern u8 D_801333F0[];
 void func_8011DCEC(u8 *a);
 void func_8011DD48(u8 *a);
-
 void func_8011D9B4(u8 *a)
 {
     u8 *g;
@@ -4136,7 +4132,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011E900);
 
 extern u8 D_801315A0[];
 extern u8 D_800BFA13;
-
 void func_8011EB04(u8 *a)
 {
     u8 *g;
@@ -5816,7 +5811,6 @@ extern u8 D_80131A50[];
 extern u8 D_80134E04[];
 s32 func_80130BA4(u8 *a);
 s32 func_80130CB0(void *a0);
-
 void func_80127690(u8 *a)
 {
     u8 *g;
@@ -6229,7 +6223,6 @@ extern u8 D_801359FC[];
 extern u8 D_80135A24[];
 extern u8 D_800E8008[];
 extern s16 D_800E7ED6;
-
 void func_80129C20(u8 *a)
 {
     u8 *g;
@@ -6344,7 +6337,6 @@ extern u8 D_80131618[];
 extern u8 D_80131690[];
 void func_8012A894(u8 *a);
 void func_8012A8F0(void *arg0);
-
 void f_UpdateCircusIceCandyAndTinyPigActor(u8 *a)
 {
     u8 *st;
@@ -6722,7 +6714,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusThrownQuestObject);
 
 typedef struct { s32 x, y, z; } V3w;
 s32 f_TestCircusActorForwardCollision(u8 *a);
-
 void f_UpdateCircusClosetKeyActor(u8 *a)
 {
     u8 *p;

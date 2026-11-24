@@ -329,6 +329,22 @@ struct-member form of a cast access, regswap `member` toggles every one)
   done:`.
 - A store in a `jal` delay slot is written before the call.
 
+**Round 11 forms**
+- Family template method: match one member, diff each sibling's opcode-normalised asm against it, map callees and
+  symbols from the jal / %hi lists, substitute constants and store lists (minutes per sibling).
+- A store in a jal delay slot that gcc will not move there: `MEMBER_AT(s16, a, off) = K;`.
+- A pointer local reused in two places lands in a saved register: give each place its own local.
+- A talk-state switch repeated with different script tables: a multi-line `#define` macro, not a static inline.
+- Flag helpers: `if (A || B) return 1; return 0;` (branches); `return A || B;` gives scc.
+- ccheck masks rodata: when a switch has empty cases, check the case-to-label mapping against the jtbl in
+  asm/<prog>/data/*rodata*.s (a wrong one passes ccheck and fails the link).
+- Compare orientation (`a > b` vs `b < a`) changes load order and registers: try both; split `x + (y + K)` into a
+  local against reassociation; `(s16)(y + K) + z`.
+- `n = K; a[8] = n; if (x < n)` stops gcc reusing the constant for a later store; `a[6]++` / `a[5]++` instead of `= 1`
+  when retail reuses the compare constant; empty `case 2: break;` moves the decision tree's root.
+- `switch ((s32)((u32)sw >> 8))` for srl + slti; a variable shift whose count is also returned: `u32 k = 1; if (x >=
+  ((u32)tbl[i] >> k)) return k;`; sra instead of srl on a u8: shift by a local (`n = 2; (x >> n) & 1`).
+
 **Switch and jump-table shapes (more)**
 - Duplicate the cases with identical code to get a jump table whose entries share a target (gcc builds the table,
   then cross-jumps the blocks); `case 1: d = X; break; case 2: d = X; break; default: d = X;` gives separate tree

@@ -1325,7 +1325,6 @@ extern u8 *D_80115C9C[];
 extern u8 D_8011B154[];
 extern s16 D_1F800160;
 extern s16 D_1F800164;
-
 void func_8010D8F0(u8 *a)
 {
     u8 *g;
@@ -1744,7 +1743,6 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", f_UpdateEndingCompletionBranchScript);
 
 extern u8 D_80117438[];
 extern u8 D_8011AD3C[];
-
 void func_8010E8B8(u8 *a)
 {
     u8 *g;
@@ -1965,7 +1963,6 @@ static inline s16 *at(s16 *t, u8 *a)
 {
     return &t[H(a, 0x42) * 3];
 }
-
 void func_8010F56C(u8 *a)
 {
     u8 *g;
@@ -2089,7 +2086,6 @@ void func_8010F56C(u8 *a)
 
 extern u8 D_801177F0[];
 extern u8 D_8011A738_e3cb_78c6[];
-
 void func_8010FA48(u8 *a)
 {
     u8 *g;
@@ -2167,7 +2163,6 @@ extern u8 D_800BFA55;
 extern M2C_UNK D_800ECF58_6b74;
 extern M2C_UNK D_801174A0;
 extern M2C_UNK D_8011AEAC;
-
 void func_8010FC58(u8 *a)
 {
     u8 *g;
@@ -2225,7 +2220,6 @@ M2C_UNK func_8007A624(void *);
 extern u8 D_800BFA55;
 extern M2C_UNK D_80117590;
 extern M2C_UNK D_8011A738_e3cb;
-
 void func_8010FDB4(u8 *a)
 {
     u8 *g;
@@ -2435,7 +2429,6 @@ s16 func_800776F8(s16, s16, M2C_UNK);
 /* extern */
 extern M2C_UNK D_800ECF58_6b74;
 extern M2C_UNK D_80117778;
-
 void func_80110548(u8 *a)
 {
     u8 *g;

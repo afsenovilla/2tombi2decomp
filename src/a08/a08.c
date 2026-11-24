@@ -3287,7 +3287,6 @@ static inline void draw_name(u8 *name)
     func_80079374((s16)x, 0x50, 0, (s32)name, 0);
     func_8005019C(&r, 7, 1, 0);
 }
-
 void func_80120BC8(u8 *a)
 {
     s16 t;
@@ -3512,7 +3511,6 @@ static inline s32 wt_lower(u8 *a)
     }
     return 0;
 }
-
 void func_80121C2C(u8 *a)
 {
     u8 *p;
@@ -3698,7 +3696,6 @@ s32 func_8012217C(u8 *p)
 INCLUDE_ASM("asm/a08/nonmatchings/a08", f_InsertPigNosePanelIntoTempleTower);
 
 extern u16 D_800BF89E;
-
 void func_80122544(u8 *a)
 {
     u8 *p;
@@ -3829,7 +3826,6 @@ void func_80122938(void *arg0) {
 
 extern u8 D_800BFA42;
 extern s16 D_1F8001A4_f18c;
-
 void func_80122998(u8 *a)
 {
     u8 *p = *(u8 **)(a + 0x10);
@@ -4078,7 +4074,6 @@ static inline void cam_setup(void)
     *(s32 *)(e + 0x40) = D_1F800164 << 16;
     *(s16 *)(e + 0x70) = D_800E7FC0 + *(u16 *)(e + 0x52) + 0x180;
 }
-
 void func_80124210(u8 *a)
 {
     s32 dx;
@@ -6426,7 +6421,6 @@ extern u8 D_800BF9F3;
 extern u8 D_80149D08[];
 extern u8 D_800BF8F4;
 extern u8 D_800BFA47;
-
 void func_8012B414(u8 *a)
 {
     u8 *g;
@@ -6599,7 +6593,6 @@ extern u8 D_800BFA46;
 extern u8 D_80145B34[];
 extern u8 D_800A3CF0[];
 extern u8 D_80145B24[];
-
 void func_8012BC44(u8 *a)
 {
     u8 *g;
@@ -6798,7 +6791,6 @@ static inline s32 nest_step(u8 *a)
     }
     return 0;
 }
-
 void f_UpdateNishikiBirdNestActor(u8 *a)
 {
     u8 *g;
@@ -6976,7 +6968,6 @@ extern u8 D_800A3D90_b2d8[];
 extern u8 D_80145EF8[];
 void func_8012D000(u8 *a);
 void func_8012D144(u8 *a);
-
 void func_8012CA40(u8 *a)
 {
     u8 *g;
@@ -7059,7 +7050,6 @@ void func_8012CA40(u8 *a)
 }
 
 extern s32 D_800ECF90;
-
 void func_8012CCD4(u8 *a)
 {
     u8 *p = *(u8 **)(a + 0x10);
@@ -7383,7 +7373,6 @@ s32 func_8012E1A4(u8 *a) {
 
 extern s32 D_800ECFB0;
 void func_8011B654();
-
 void func_8012E274(u8 *a)
 {
     u8 *c = a + 0x60;
@@ -8216,7 +8205,6 @@ s32 func_80135354(void *a0);
 void func_80134F68(u8 *a);
 void func_8013500C(void *arg0);
 void func_801350D8(void *arg0);
-
 void func_801327A8(u8 *a)
 {
     u8 *g;
@@ -8805,7 +8793,6 @@ extern u8 D_80146EA0[];
 s32 func_801391C4(u8 *a);
 s32 func_8013900C(void *a0);
 void func_80138F00(void *arg0);
-
 void func_801383F0(u8 *a)
 {
     u8 *g;
@@ -9607,7 +9594,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013BB64);
 
 extern u8 D_801414AC[];
 extern u8 D_800BFA43;
-
 void func_8013BCAC(u8 *a)
 {
     u8 *g;
@@ -9730,7 +9716,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013C354);
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013C530);
 
 extern u8 D_800BFA36;
-
 void func_8013C6B4(u8 *a)
 {
     u8 *g;

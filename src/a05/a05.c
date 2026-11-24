@@ -1702,7 +1702,6 @@ static inline s32 hot_step(u8 *a)
     }
     return 0;
 }
-
 void f_UpdateKujaraHotSpringActor(u8 *a)
 {
     u8 *g;
@@ -2069,7 +2068,6 @@ extern s32 D_800ECF94;
 extern s32 D_800ECF90;
 extern u8 D_8013B42C[];
 extern u8 D_8013B81C[];
-
 void func_80115198(u8 *a)
 {
     s32 r;
@@ -2335,7 +2333,6 @@ extern u8 D_8013B6AC[];
 extern u8 D_800BF911;
 extern u8 D_800A3D70[];
 extern u8 D_8013CEDC[];
-
 void func_80115E04(u8 *a)
 {
     u8 *g;
@@ -2518,7 +2515,6 @@ static inline s32 init_171bc(u8 *a)
     *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x38);
     return 1;
 }
-
 void func_801171BC(u8 *a)
 {
     u8 *st;
@@ -2634,7 +2630,6 @@ static inline s32 init_174ac(u8 *a)
     *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x38);
     return 1;
 }
-
 void func_801174AC(u8 *a)
 {
     u8 *st;
@@ -2774,7 +2769,6 @@ static inline s32 init_17984(u8 *a)
     *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x38);
     return 1;
 }
-
 void func_80117984(u8 *a)
 {
     u8 *st;
@@ -2965,7 +2959,6 @@ extern u8 D_8013D634[];
 extern u8 D_8013D674[];
 extern u8 D_8013D6C4[];
 extern u8 D_8013D704[];
-
 void f_UpdateWhosTheLiarSisterActorB(u8 *a)
 {
     u8 *st;
@@ -3162,7 +3155,6 @@ extern u8 D_8013D81C[];
 extern u8 D_8013D84C[];
 extern u8 D_800BFB26;
 extern u8 D_8013D884[];
-
 void f_UpdateWhosTheLiarSisterActorC(u8 *a)
 {
     u8 *st;
@@ -3505,7 +3497,6 @@ extern u8 D_8013B7A4[];
 extern s32 D_800BF850;
 extern u8 D_8013D8AC[];
 extern u8 D_8013D8C4[];
-
 void f_UpdateStaticExplosionQuestActor(u8 *a)
 {
     u8 *g;
@@ -3726,7 +3717,6 @@ extern s16 D_1F8001A0_b0de;
 extern u8 D_800BF809;
 s32 func_8012B118(u8 *p);
 void func_8011CC1C(void *arg0);
-
 void func_8011A95C(u8 *a)
 {
     u8 *g;
@@ -5905,7 +5895,6 @@ void func_8012B188(u8 *a)
 INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateIceBlockAndSculptureActor);
 
 void func_801327F8(void *a0, s32 a1);
-
 void func_8012B824(u8 *a)
 {
     switch (a[4]) {

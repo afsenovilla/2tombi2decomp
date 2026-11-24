@@ -2629,7 +2629,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80027254);
 
 typedef struct { s16 vx, vy, vz, pad; } SVec_F230;
 void func_80031780(u8 *p);
-
 void func_800275D4(u8 *a)
 {
     SVec_F230 *v = (SVec_F230 *)(a + 0x50);
@@ -3259,7 +3258,6 @@ extern u8 D_800A1EE4[];
 extern u8 D_800A1ECC[];
 extern s16 D_1F800168;
 void func_80031744(void *arg0);
-
 void func_80029530(u8 *a)
 {
     switch (a[4]) {
@@ -3472,7 +3470,6 @@ void func_8002AE0C(u8 *a, s32 s, s32 mode)
 }
 
 extern s16 D_1F8000D0_b278[];
-
 s32 func_8002B278(u8 *a)
 {
     s16 *c = D_1F8000D0_b278;
@@ -3501,7 +3498,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B3A4);
 
 extern u16 D_8009DDB8[];
 extern u8 D_8009DDBC[];
-
 void func_8002B7B0(u8 *a)
 {
     u8 *o = *(u8 **)(a + 0x10);
@@ -3568,7 +3564,6 @@ static inline u8 *SpawnAt_B8F4(s32 id, u8 *pos, s16 y)
     f_InitializeTransientEffectActor(t, id);
     return t;
 }
-
 void func_8002B8F4(u8 *a)
 {
     u8 *v = a + 0x58;
@@ -4153,7 +4148,6 @@ void func_8002F514(s32 kind, s32 owner)
 }
 
 extern u8 D_800E7E81;
-
 void func_8002F738(u8 *a)
 {
     u8 *o = *(u8 **)(a + 0x10);
@@ -4313,7 +4307,6 @@ void func_8002F8DC(u8 *a0)
 }
 
 void func_80031744(void *arg0);
-
 void func_8002FC40(u8 *a)
 {
     u8 *o = *(u8 **)(a + 0x10);
@@ -4419,7 +4412,6 @@ void func_800300D8(u8 *a)
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80030264);
 
 void func_80031744(void *arg0);
-
 void func_800308C0(u8 *a)
 {
     u8 *o = *(u8 **)(a + 0x10);
@@ -5168,7 +5160,6 @@ test:
 extern u8 D_800A0C5C[];
 extern u8 D_8009E730[];
 extern u8 D_8009E378[];
-
 void func_80032F98(u8 *a)
 {
     u8 *t = (u8 *)D_800E7E80;
@@ -7085,7 +7076,6 @@ void func_8003F4C4(s32 unused, u8 *start, u8 *end)
 }
 
 typedef struct { u32 tag; u32 c0; u32 xy0; u32 uv0; u32 c1; u32 xy1; u32 uv1; u32 c2; u32 xy2; u32 uv2; u32 c3; } PrimCol_F594;
-
 void func_8003F594(u8 *a, u8 *start, u8 *end)
 {
     u32 c = *(u32 *)(a + 0x18);
@@ -10751,7 +10741,6 @@ void func_8004DD90(u8 *p)
 typedef struct { u8 pad0[9]; u8 u9; } Flags058_DE04;
 extern Flags058_DE04 D_800ED058_de04;
 extern u8 D_800BF87F;
-
 void func_8004DE04(u8 *a)
 {
     switch (a[4]) {
@@ -10984,7 +10973,6 @@ s32 func_8004E29C(u8 *a)
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004E414);
 
 extern u8 D_800E7EC6;
-
 void func_8004E808(u8 *a)
 {
     u8 *t;
@@ -12198,7 +12186,6 @@ void func_800531DC(void *arg0) {
 }
 
 extern u8 D_800A4478[];
-
 s32 func_800532A0(u8 *a)
 {
     u16 f = *(u16 *)(a + 0x6A);
@@ -12793,7 +12780,6 @@ void func_800552B8(void *arg0) {
 }
 
 extern u8 D_1F800230_52ec;
-
 s32 func_800552EC(u8 *a)
 {
     u16 f;
@@ -15050,7 +15036,6 @@ extern Pool108_a810 D_80100690[4];
 extern Pool108_a810 *D_800F273C;
 extern void *D_800F2738_a810;
 extern void *D_800F23A0_a810;
-
 void func_80063ECC(u8 *a)
 {
     u8 *p = *(u8 **)(a + 0x10);
@@ -15604,7 +15589,6 @@ void func_8006625C(u8 *t)
 
 extern s8 D_1F8000EE[];
 extern u8 D_800A47E8[];
-
 void func_800662D8(u8 *a, s32 mode)
 {
     u8 *g;
@@ -16124,7 +16108,6 @@ void func_800682C4(u8 *a, s32 flag)
 extern u8 D_800A0D50[];
 extern s16 D_800E7EE2;
 extern u8 D_800E806C;
-
 void func_800683B8(u8 *a)
 {
     u8 *p = a + 0x60;
@@ -22781,7 +22764,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007D208);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007D594);
 
 typedef struct { u8 b[8]; } Copy8_DA50;
-
 void func_8007DA50(u8 *a)
 {
     s32 off;

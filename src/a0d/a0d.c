@@ -1463,7 +1463,6 @@ static inline void set_state(u8 *a, void *fn)
     a[5] = 0;
     func_80041718(a, 0, 0);
 }
-
 void func_8010FEBC(u8 *a)
 {
     u8 *pl = D_800E7E80;
@@ -2904,7 +2903,6 @@ static inline void init(u8 *p)
     p[4]++;
     func_800517F8(p);
 }
-
 void func_8011458C(u8 *a)
 {
     u8 *pl = D_800E7E80;

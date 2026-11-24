@@ -3,6 +3,49 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-24 (7): eleventh round (NPC state machines)
+
+All code in C: **4776 / 7011 functions (68.1 %, 45.5 % of the bytes)**, from 4626 (41.9 %). The round went after the
+139 NPC actor state machines tools/npcsm.py found: a04-a08 +48 (~37 KB), a09-a0l + overlays +29 (~23 KB, the Evil Pig
+battle actor family of 6 and the a0l family that was 20 words off), a00-a01 +16 (~19 KB, 14 of their 17), a02-a03 +21
+(~12 KB), main +36 (~11.5 KB: actor / effect state machines ending in f_ResolveEffectEightByteStreamPayload, primitive
+walkers; func_8002B278 unblocked its caller family). 29 / 29 byte-identical; an intermediate push (5ed8162) was checked
+by a clean build of that commit, tools/integrate.py checked the commits after it.
+
+Findings (folded into AGENTS.md):
+- Family template method: match one member, then diff each sibling's opcode-normalised asm against it, map callees /
+  symbols from the jal and %hi lists, substitute constants and store lists (six 0x4C0 functions in ~10 minutes).
+- A store retail puts in a jal delay slot: `MEMBER_AT(s16, a, 0x86) = K;` (the a0l family).
+- A pointer local reused in two places gets a saved register: fork it per place (fixed many NPC functions; also
+  removes `lui/addiu` straight into a saved register).
+- A talk-state switch repeated with different script tables: a multi-line `#define` macro (a static inline hoists the
+  script address).
+- Flag helpers: `if (A || B) return 1; return 0;` keeps branches; `return A || B;` gives scc.
+- ccheck masks rodata: a wrong case-to-label mapping for an empty case passed ccheck and failed the link at a jtbl
+  entry: read the jtbl when a switch has empty cases.
+- A signed switch over a logically shifted operand: `switch ((s32)((u32)sw >> 8))`; a `srlv` by a register holding 1
+  that is also the return value: `u32 k = 1; if (x >= ((u32)tbl[i] >> k)) return k;`.
+
+Near misses (scratch in the session scratchpad r11b/<scope>/): a07 func_8010A660 1, a05 func_8013484C 1, main
+func_8006BE88 2, a02 func_8010B068 2 (3 copies), a03 f_UpdateTrolleyCourseOverlayActor 2, a06 func_801229A0 2, a00
+func_80127798 2, func_80118B10 2, func_8013BCC8 3 (6 copies), main func_8004F474 3, func_8002F230 4, func_80021DF4 4,
+a06 func_8011159C 4, a0a func_801179C0 6 (6-member family), a01 f_UpdatePipeAreaScenePropActor 6, a02 func_801154DC 6,
+main func_8006DF88 7, func_800508A8 9, func_80035640 9, a05 f_UpdateWhosTheLiarSisterActorA 10, a00 func_80132400 13,
+func_80127D1C 13, main func_800368D0 19 (blocks 6 functions), a00 f_HandleKainenInteraction 20. Pending NPC state
+machines left: about 20 (a00 3, a0c func_801172B0, a0d f_UpdateEarthEvilPigSplitActor 0xD80, a0g
+f_UpdateCourageTowerInteriorEntranceActor, a0k func_80112884, ...: `tools/npcsm.py --list`).
+
+Tool work left: npcsm family mode / "variant from sibling" (map constants and symbols from a matched scratch or
+function to a pending sibling, ccheck'd); install_c: rewrite data-style declarations of the installed function
+(`extern u8 f[];` / `extern M2C_UNK f;` -> `void f();` + casts at uses), skip `#define` bodies when looking for
+functions, roll back alias lines after NOT INSTALLED, reuse an existing alias on a second install, insert a prototype
+before a helper that needs it; ccheck: compare scratch prototypes with the target's definitions (return type), a
+jump-table check (case-to-block mapping against retail's jtbl), expand local `#include "hdr.h"` in --no-protos, a
+`--frame` hint; permlines: permute inside static inline helpers, an auto mode for loop increments; regswap: flip
+comparison orientation, variable shift (`x >> K` -> `n = K; x >> n`), break CSE of a switch value reused as a
+constant, an scc defeater, flip if / else for per-arm stores, "giv-base" (`q = a + K` for `a[K + i*S]`), rank clean
+rewrites before hacks; variants.py `--alts` blocks need a newline before `@@`, an inline-alternatives mode.
+
 ## 2026-11-24 (6): tools after round 10
 
 One tools agent, the "Tool work left" list of the round-10 entry below, in its order (about 60 minutes).

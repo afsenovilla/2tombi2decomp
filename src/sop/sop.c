@@ -980,7 +980,6 @@ INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010B11C);
 extern u8 D_800A4BC8[];
 extern u8 D_8001B860[];
 extern u8 D_8010CAB8[];
-
 void func_8010B2D4(u8 *a)
 {
     u8 *t;
@@ -1197,7 +1196,6 @@ s32 func_8010B8AC(u8 *a)
 
 typedef struct { s16 pad; s16 x; s16 pad2; s16 y; s16 pad3; s16 z; } PosV;
 extern u8 D_8010C9B0[];
-
 void func_8010B990(u8 *a)
 {
     u8 *t;

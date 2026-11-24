@@ -4643,7 +4643,6 @@ extern u8 D_8001B354[];
 extern u8 D_80145000[];
 extern u8 D_801450D0[];
 extern u8 D_80145100[];
-
 void func_80123018(u8 *a)
 {
     u8 *g;
@@ -5097,7 +5096,6 @@ extern u8 D_800BF9CE;
 extern u8 D_1F800207;
 extern s16 D_800E7FEE;
 void func_801265E4(u8 *p);
-
 void f_UpdateDeepForestSeesawActor(u8 *a)
 {
     switch (a[4]) {
@@ -5872,7 +5870,6 @@ extern u8 D_80147D64[];
 extern u8 D_8001B4DC[];
 extern u8 D_80147DDC[];
 extern u8 D_80147E6C[];
-
 void f_UpdateNishikiTempleBirdActor(u8 *a)
 {
     u8 *g;
@@ -5961,7 +5958,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80128794);
 extern u8 D_80141F08[];
 extern u8 D_800A3D70[];
 extern u8 D_8014801C[];
-
 void func_80128A70(u8 *a)
 {
     u8 *g;
@@ -6485,7 +6481,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012E048);
 
 extern u8 D_80141FF8[];
 extern u8 D_8014D94C[];
-
 void func_8012E194(u8 *a)
 {
     u8 *g;

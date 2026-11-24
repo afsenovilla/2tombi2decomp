@@ -4658,7 +4658,6 @@ static inline s32 func_8011D8AC_inl(u8 *a) {
     }
     return 0;
 }
-
 void f_HandleKainenNpcActor(u8 *a)
 {
     switch (a[4]) {
@@ -5135,7 +5134,6 @@ void func_80121B44(u8 *a);
 void func_80121CF8(u8 *a);
 void func_80122CA4(u8 *a);
 void func_80122BF4(u8 *a);
-
 void func_80121978(u8 *a)
 {
     u8 *g;
@@ -5434,7 +5432,6 @@ static inline s32 func_801230A4_inl(u8 *p) {
     }
     return 0;
 }
-
 void f_HandleStuckFishhookQuestNpc(u8 *a)
 {
     u8 *e = D_800E7E80;
@@ -5614,7 +5611,6 @@ static inline s32 func_801233DC_inl(u8 *a) {
     }
     return 0;
 }
-
 void f_HandleNetBridgeCutsceneTrigger(u8 *a)
 {
     u8 *e = D_800E7E80;
@@ -7279,7 +7275,6 @@ void func_8012D404(u8 *a) {
 
 extern u8 D_800BF9DF;
 extern s16 D_1F8000DE;
-
 void f_HandleGoldFishhookScenePropActor(u8 *a)
 {
     u8 *e = D_800E7E80;
@@ -8683,7 +8678,6 @@ static inline s32 pend_flag(void) {
     }
     return 0;
 }
-
 void f_HandleA00PendulumPlatformActor(u8 *a)
 {
     s16 ang;
@@ -9318,7 +9312,6 @@ extern u32 D_800BF814;
 extern u8 D_800BF81F;
 extern u8 D_800BF9DB;
 extern u8 D_800E7FC7;
-
 void f_HandleFishermensTownEntranceActor(u8 *a)
 {
     u8 v;
@@ -9494,7 +9487,6 @@ void f_HandleFishermensTownEntranceActor(u8 *a)
 
 typedef struct { u16 x, y, z, w; } CurvePt;
 extern CurvePt D_8014AA38[];
-
 void f_HandleCurvedSupportContactActor(u8 *a)
 {
     u8 *p = *(u8 **)(a + 0x10);

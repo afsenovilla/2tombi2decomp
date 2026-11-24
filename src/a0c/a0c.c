@@ -1700,7 +1700,6 @@ static inline void set_state(u8 *a, void *fn)
     a[5] = 0;
     func_80041718(a, 0, 0);
 }
-
 void func_80110FE8(u8 *a)
 {
     u8 *pl = D_800E7E80;
@@ -3034,7 +3033,6 @@ void func_80114CF8(void *arg0) {
 }
 
 #define M(a) (*(u8 **)((a) + 0xC0))
-
 void func_80114E00(u8 *a)
 {
     s32 d = 0;
@@ -3112,7 +3110,6 @@ void func_80114E00(u8 *a)
 }
 
 #define M(a) (*(u8 **)((a) + 0xC0))
-
 void func_80115048(u8 *a)
 {
     u8 *pl;
