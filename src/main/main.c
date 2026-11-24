@@ -8040,7 +8040,25 @@ s32 func_8004960C(u8 *a, s32 b)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ApplyTerrainProfileOrientationToActor);
+extern u8 *D_1F8001E8;
+
+void f_ApplyTerrainProfileOrientationToActor(u8 *a)
+{
+    s8 *p = (s8 *)D_1F8001E8;
+    s16 y = p[1];
+    s16 z = p[2];
+    s16 x = p[0];
+    s32 z2 = z;
+    s32 x2 = x;
+    s16 r;
+
+    D_1F8001A0_6940 = -ratan2(z2, x2) & 0xFFF;
+    r = ratan2((s16)y, (s16)SquareRoot0(x2 * x2 + z2 * z2));
+    *(s16 *)(a + 0x48) = x << 2;
+    *(s16 *)(a + 0x4A) = y << 2;
+    *(s16 *)(a + 0x4C) = z << 2;
+    D_1F8001A2 = r;
+}
 
 void f_ApplyAreaPlaneDirectionToActor(u8 *a)
 {
