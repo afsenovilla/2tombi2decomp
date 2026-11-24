@@ -567,7 +567,60 @@ INCLUDE_ASM("asm/a03/nonmatchings/a03", func_80110B00);
 
 INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyTrailActor);
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", func_80111158);
+typedef struct { u16 a, b; } U16Pair_1158;
+extern U16Pair_1158 D_8011BC28;
+extern u8 D_8011BC2C[];
+
+void func_80111158(u8 *a) {
+    u8 *o = *(u8 **)(a + 0x10);
+    u8 *t = o + 0x60;
+    s32 k;
+    u8 *p;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        {
+            u16 x = D_8011BC28.a;
+            u16 y = D_8011BC28.b;
+            *(u8 **)(a + 0x38) = NULL;
+            *(u16 *)(a + 0x44) = x;
+            *(u16 *)(a + 0x46) = y;
+        }
+    case 1:
+        if (o[4] >= 2) {
+            a[4] = 2;
+            break;
+        }
+        p = *(u8 **)(a + 0x38);
+        *(u8 **)(a + 0x34) = p;
+        if (p == NULL) {
+            *(u8 **)(a + 0x38) = D_8011BC2C;
+            *(u8 **)(a + 0x34) = D_8011BC2C;
+        }
+        if (t[0x12] & *(s32 *)(a + 0x50)) {
+            k = *(s32 *)(a + 0x54);
+            *(s16 *)(a + 0x2C) = *(s16 *)(o + 0x2E);
+            *(s16 *)(a + 0x2E) = *(s16 *)(o + 0x32);
+            *(s16 *)(a + 0x30) = *(s16 *)(o + 0x36);
+            *(s16 *)(a + 0x2C) += (*(s16 *)(o + 0x9C) * k) >> 12;
+            *(s16 *)(a + 0x2E) += (*(s16 *)(o + 0xA2) * k) >> 12;
+            *(s16 *)(a + 0x30) += (*(s16 *)(o + 0xA8) * k) >> 12;
+            *(s16 *)(a + 0x2C) += -(*(s16 *)(o + 0x98) * 110) >> 12;
+            *(s16 *)(a + 0x2E) += -(*(s16 *)(o + 0x9E) * 110) >> 12;
+            *(s16 *)(a + 0x30) += -(*(s16 *)(o + 0xA4) * 110) >> 12;
+            *(s16 *)(a + 0x2C) += (*(s16 *)(o + 0x9A) * 3) >> 6;
+            *(s16 *)(a + 0x2E) += (*(s16 *)(o + 0xA0) * 3) >> 6;
+            *(s16 *)(a + 0x30) += (*(s16 *)(o + 0xA6) * 3) >> 6;
+            a[1] = 1;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_801113B4(s32 arg0) {
     func_80110B00(4, arg0 + 0x3C, 0x10);
