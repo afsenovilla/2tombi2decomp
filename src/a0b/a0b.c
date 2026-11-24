@@ -2908,7 +2908,83 @@ void func_801144F4(u8 *a, s32 i)
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80114608);
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80114AA8);
+#define M(a) (*(u8 **)((a) + 0xC0))
+
+void func_80114AA8(u8 *a)
+{
+    s32 d = 0;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 1) != 0) {
+            break;
+        }
+        H(a, 0x80) = 0x2E9;
+        H(a, 0x82) = 0x5D2;
+        a[0] = 1;
+        H(a, 0x84) = 0;
+        H(a, 0x86) = 0x96;
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        H(a, 0x60) = 0;
+        H(a, 0x96) = 0;
+        a[0xBF] = 0;
+        a[0x46] = 0;
+        a[4]++;
+        break;
+    case 1:
+        a[1] = 1;
+        func_80077EBC(a);
+        if (H(a, 0x44) != 0) {
+            d = H(a, 0x44) >> 8;
+            if (H(a, 0x44) < -0x20) {
+                H(a, 0x44) += 0x20;
+            } else if (H(a, 0x44) > 0x20) {
+                H(a, 0x44) -= 0x20;
+            } else {
+                H(a, 0x44) = 0;
+            }
+        }
+        if (a[0x29] != 0) {
+            d += H(a, 0x60) * 48 / H(a, 0x80);
+            d >>= 2;
+        }
+        if (d != 0) {
+            H(M(a), 0xC) += d;
+            if (d > 0) {
+                if (H(M(a), 0xC) >= 0x200) {
+                    H(M(a), 0xC) = 0x1FF;
+                }
+                if (a[0x46] != 1) {
+                    a[0xBF] = 0;
+                    a[0x46] = 1;
+                }
+            } else {
+                if (H(M(a), 0xC) < -0x1FF) {
+                    H(M(a), 0xC) = -0x1FF;
+                }
+                if (a[0x46] != 0xFF) {
+                    a[0xBF] = 0;
+                    a[0x46] = 0xFF;
+                }
+            }
+            if (a[0xBF] == 0) {
+                a[0xBF] = 1;
+            }
+        } else {
+            a[0xBF] = 0;
+        }
+        func_800517F8(a);
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 typedef struct { u16 a, b, c, d; } Box4;
 extern Box4 D_8011C158[];

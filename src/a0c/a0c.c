@@ -3033,7 +3033,83 @@ void func_80114CF8(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80114E00);
+#define M(a) (*(u8 **)((a) + 0xC0))
+
+void func_80114E00(u8 *a)
+{
+    s32 d = 0;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 3) != 0) {
+            break;
+        }
+        H(a, 0x80) = 0x17F;
+        H(a, 0x82) = 0x2FE;
+        a[0] = 1;
+        H(a, 0x84) = 0x50;
+        H(a, 0x86) = 0xAA;
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        H(a, 0x60) = 0;
+        H(a, 0x96) = 0;
+        a[0xBF] = 0;
+        a[0x46] = 0;
+        a[4]++;
+        break;
+    case 1:
+        a[1] = 1;
+        func_80077EBC(a);
+        if (H(a, 0x44) != 0) {
+            d = H(a, 0x44) >> 8;
+            if (H(a, 0x44) < -0x20) {
+                H(a, 0x44) += 0x20;
+            } else if (H(a, 0x44) > 0x20) {
+                H(a, 0x44) -= 0x20;
+            } else {
+                H(a, 0x44) = 0;
+            }
+        }
+        if (a[0x29] != 0) {
+            d += H(a, 0x60) * 48 / H(a, 0x80);
+            d >>= 2;
+        }
+        if (d != 0) {
+            H(M(a), 0xC) += d;
+            if (d > 0) {
+                if (H(M(a), 0xC) >= 0x200) {
+                    H(M(a), 0xC) = 0x1FF;
+                }
+                if (a[0x46] != 1) {
+                    a[0xBF] = 0;
+                    a[0x46] = 1;
+                }
+            } else {
+                if (H(M(a), 0xC) < -0x1FF) {
+                    H(M(a), 0xC) = -0x1FF;
+                }
+                if (a[0x46] != 0xFF) {
+                    a[0xBF] = 0;
+                    a[0x46] = 0xFF;
+                }
+            }
+            if (a[0xBF] == 0) {
+                a[0xBF] = 1;
+            }
+        } else {
+            a[0xBF] = 0;
+        }
+        func_800517F8(a);
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 #define M(a) (*(u8 **)((a) + 0xC0))
 
