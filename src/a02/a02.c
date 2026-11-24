@@ -3992,7 +3992,85 @@ void func_8011AC40(PartsOwner8011AC40 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011AEF0);
+typedef struct { u8 pad[0xC0]; u8 *parts[2]; } PartsOwner8011AEF0;
+typedef struct { s32 v[4]; } Tbl8011AEF0;
+extern Tbl8011AEF0 D_801096DC;
+#define EF0_I16(o) (*(s16 *)(a->pad + (o)))
+#define EF0_W16(o) (*(u16 *)(a->pad + (o)))
+#define EF0_S32(o) (*(s32 *)(a->pad + (o)))
+
+void func_8011AEF0(PartsOwner8011AEF0 *a) {
+    u8 *g = D_800E7E80;
+    Tbl8011AEF0 tbl;
+    s32 d;
+    s32 i;
+
+    switch (a->pad[6]) {
+    case 0:
+        if (a->pad[0x70] == 0xFF) {
+            func_80054DAC(g, 0x19, 4);
+            g[5] = 0x21;
+            g[6] = 0;
+            EF0_I16(0x4A) = -0x3200;
+            EF0_I16(0x50) = 0x380;
+            a->pad[6]++;
+        }
+        func_80041098(a);
+        break;
+    case 1: {
+        s32 k;
+        *(u16 *)(g + 0x2E) += 0xC;
+        if (*(s16 *)(g + 0x2E) >= 0x2BF2) {
+            *(s16 *)(g + 0x2E) = 0x2BF2;
+        }
+        EF0_W16(0x4A) += EF0_W16(0x50);
+        *(s32 *)(g + 0x30) += EF0_I16(0x4A) << 8;
+        do {
+            k = -0xD52;
+        } while (0);
+        if (EF0_I16(0x4A) >= 0 && *(s16 *)(g + 0x32) >= k - *(s16 *)(g + 0x84)) {
+            tbl = D_801096DC;
+            func_80074590(3, 0, 0);
+            *(s16 *)(g + 0x2E) = 0x2BF2;
+            *(u16 *)(g + 0x32) = k - *(u16 *)(g + 0x84);
+            func_80054DAC(g, tbl.v[func_8009A450() & 3], 8);
+            EF0_I16(0x48) = 0;
+            EF0_I16(0x4E) = 0xC0;
+            *(u16 *)(a->parts[1] + 0xC) &= 0xFFF;
+            a->pad[6]++;
+        }
+        break;
+    }
+    case 2:
+        if (EF0_I16(0x2E) >= 0x32C8) {
+            D_1F800236 = 2;
+            D_1F800137 = 2;
+            D_800BF808_1760[7] = 2;
+            D_800BF808_1760[0x31] = 1;
+            *(s16 *)(D_800BF808_1760 + 0x32) = 0x400;
+            a->pad[6]++;
+        }
+    case 3:
+        EF0_W16(0x48) += EF0_W16(0x4E);
+        if (EF0_I16(0x48) >= 0x4000) {
+            EF0_I16(0x48) = 0x4000;
+        }
+        EF0_S32(0x2C) += EF0_I16(0x48) << 8;
+        d = (s16)EF0_W16(0x48) >> 6;
+        if (d < 0x100) {
+            d = 0x100;
+        }
+        for (i = 1; i < a->pad[8]; i++) {
+            *(u16 *)(a->parts[i] + 0xC) += d;
+        }
+        if (*(s16 *)(a->parts[1] + 0xC) >= 0x1000) {
+            *(u16 *)(a->parts[1] + 0xC) &= 0xFFF;
+            func_80074590(0x89, 0, 0);
+        }
+        *(u16 *)(g + 0x2E) = EF0_W16(0x2E);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011B1FC);
 
