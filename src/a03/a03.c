@@ -1353,4 +1353,53 @@ loop:
     return 0;
 }
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTrolleyCourseOverlayActor);
+extern u8 D_800BF808_1760[];
+extern s8 D_800BF9FB;
+extern u8 *D_1F800138;
+extern u8 D_1F800136;
+extern u8 D_1F800137;
+
+void f_UpdateTrolleyCourseOverlayActor(void) {
+    u8 *a = D_1F800138;
+    s32 r;
+    s32 two;
+
+    switch (*(u16 *)(a + 0x50)) {
+    case 0:
+        (*(u16 *)(a + 0x50))++;
+        D_1F800136 = 1;
+        D_800BF808_1760[0] = 0;
+        break;
+    case 1:
+        r = ((s32 (*)())f_UpdateTrolleyFinishMenu)(a);
+        if (r == 0) {
+            break;
+        }
+        two = 2;
+        if (r == two) {
+            D_1F800137 = r;
+            D_800BF808_1760[7] = r;
+            D_800BF808_1760[5] = 3;
+            D_800BF808_1760[0x31] = 0;
+        } else if (r == 3) {
+            u8 *g = D_800BF808_1760;
+            u16 t;
+            do {
+                g[7] = two;
+            } while (0);
+            g[5] = 0;
+            g[0x31] = r;
+            __asm__ volatile("");
+            a = D_1F800138;
+            *(s16 *)(g + 0x32) = 0x104;
+            D_800BF9FB = r;
+            t = *(u16 *)(a + 0x50);
+            D_1F800137 = two;
+            *(u16 *)(a + 0x50) = t + (r - two);
+        }
+        D_1F800138[0x6B] = 0;
+        D_1F800136 = 0;
+        *(u16 *)(D_1F800138 + 0x50) = 0;
+        break;
+    }
+}
