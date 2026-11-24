@@ -6552,7 +6552,60 @@ void func_8003F4C4(s32 unused, u8 *start, u8 *end)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003F594);
+typedef struct { u32 tag; u32 c0; u32 xy0; u32 uv0; u32 c1; u32 xy1; u32 uv1; u32 c2; u32 xy2; u32 uv2; u32 c3; } PrimCol_F594;
+
+void func_8003F594(u8 *a, u8 *start, u8 *end)
+{
+    u32 c = *(u32 *)(a + 0x18);
+    u8 *p = start;
+    u8 k;
+
+    while (p < end) {
+        switch (p[7] & 0xFC) {
+        case 0x34:
+            k = p[7];
+            ((PrimCol_F594 *)p)->c0 = c;
+            ((PrimCol_F594 *)p)->c1 = c;
+            ((PrimCol_F594 *)p)->c2 = c;
+            p[7] = k | 2;
+            p += 0x28;
+            break;
+        case 0x3C:
+            k = p[7];
+            ((PrimCol_F594 *)p)->c0 = c;
+            ((PrimCol_F594 *)p)->c1 = c;
+            ((PrimCol_F594 *)p)->c2 = c;
+            ((PrimCol_F594 *)p)->c3 = c;
+            p[7] = k | 2;
+            p += 0x34;
+            break;
+        case 0x24:
+            k = p[7];
+            ((PrimCol_F594 *)p)->c0 = c;
+            p[7] = k | 2;
+            p += 0x20;
+            break;
+        case 0x2C:
+            k = p[7];
+            ((PrimCol_F594 *)p)->c0 = c;
+            p[7] = k | 2;
+            p += 0x28;
+            break;
+        case 0x30:
+            p += 0x1C;
+            break;
+        case 0x38:
+            p += 0x24;
+            break;
+        case 0x20:
+            p += 0x14;
+            break;
+        case 0x28:
+            p += 0x18;
+            break;
+        }
+    }
+}
 
 extern u8 D_1F800234_8e95;
 void f_DrawModelPrimitiveStreamForCurrentArea(u32 *a, void *b, s32 c)
