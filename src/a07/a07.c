@@ -4199,7 +4199,58 @@ void func_80121FF8(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801220F8);
+void func_801224E8(void *arg0);
+void func_80122558(u8 *a);
+void func_801222A4(u8 *a);
+
+void func_801220F8(u8 *a)
+{
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        func_80040CDC(a, D_8014005C_9175, D_800A3CD0);
+        g = (u8 *)&D_800BF870;
+        if (*(u16 *)(g + 0x5E6) & 0x80) {
+            *(s16 *)(a + 0x32) -= 0x14;
+        }
+        func_80041718(a, 0x17, 0);
+        if (g[0xC9] & 0x20) {
+            a[0x5E] = 2;
+        } else if (g[0x2D8] != 0) {
+            a[0x5E] = 1;
+        } else {
+            a[0x5E] = 0;
+        }
+        a[4]++;
+        break;
+    case 1:
+        func_8007778C(a);
+        func_80041098(a);
+        func_8004190C(a);
+        switch (a[5]) {
+        case 0:
+            func_801224E8(a);
+            break;
+        case 1:
+            func_80122558(a);
+            break;
+        case 2:
+            func_801222A4(a);
+            break;
+        }
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 #define AH(o) (*(s16 *)(a + (o)))
 #define QH(o) (*(s16 *)(q + (o)))
