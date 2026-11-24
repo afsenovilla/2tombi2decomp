@@ -2107,13 +2107,119 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801189B4);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80118A9C);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80118C24);
+extern u8 D_800BF9EB;
+extern u8 D_8013D694[];
+extern u8 D_8013D6B4[];
+
+void func_80118C24(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        func_80040D68(a, D_8013D694);
+        a[0x70] = 2;
+        a[6]++;
+        break;
+    case 1:
+        if (a[0x70] == 0xFF) {
+            a[6]++;
+        }
+        func_80041098(a);
+        break;
+    case 2:
+        if (D_800BF9EB == 1) {
+            func_80041768(a, 0x2A, 4);
+            a[6]++;
+        }
+        break;
+    case 3:
+        if (D_800BF9EB == 2) {
+            func_80041768(a, 0x2B, 4);
+            a[6]++;
+        }
+        break;
+    case 4:
+        if (D_800BF9EB == 0x5A) {
+            a[6]++;
+        } else if (D_800BF9EB == 3) {
+            func_80041768(a, a[0x7B], 4);
+            a[6] = 2;
+        }
+        break;
+    case 5:
+        if (a[0x79] == 1) {
+            func_80041768(a, a[0x7B], 4);
+            func_80040D68(a, D_8013D6B4);
+            a[0x70] = 2;
+            a[6]++;
+        }
+        break;
+    case 6:
+        if (a[0x70] == 0xFF) {
+            a[7] = 0;
+            a[6] = 0;
+            a[5]++;
+        }
+        func_80041098(a);
+        break;
+    }
+    func_8004190C(a);
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateWhosTheLiarSisterActorB);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011917C);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80119310);
+extern u8 D_8013D7EC[];
+extern u8 D_8013D80C[];
+
+void func_80119310(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        func_80040D68(a, D_8013D7EC);
+        a[0x70] = 2;
+        a[6]++;
+        break;
+    case 1:
+        if (a[0x70] == 0xFF) {
+            a[6]++;
+        }
+        func_80041098(a);
+        break;
+    case 2:
+        if (D_800BF9EB == 1) {
+            func_80041768(a, 0x2A, 4);
+            a[6]++;
+        }
+        break;
+    case 3:
+        if (D_800BF9EB == 2) {
+            func_80041768(a, 0x2B, 4);
+            a[6]++;
+        }
+        break;
+    case 4:
+        if (D_800BF9EB == 0x5A) {
+            func_80041768(a, a[0x7B], 4);
+            func_80040D68(a, D_8013D80C);
+            a[0x70] = 2;
+            a[6]++;
+        } else if (D_800BF9EB == 3) {
+            func_80041768(a, a[0x7B], 4);
+            a[6] = 2;
+        }
+        break;
+    case 5:
+        if (a[0x70] == 0xFF) {
+            a[7] = 0;
+            a[6] = 0;
+            a[5]++;
+        }
+        func_80041098(a);
+        break;
+    }
+    func_8004190C(a);
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateWhosTheLiarSisterActorC);
 
