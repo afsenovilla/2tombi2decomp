@@ -43,6 +43,17 @@ def proto_of(header):
     return h + ";"
 
 
+def non_int_return(p):
+    """a prototype line whose return type is not int-like (a pointer, a narrower integer, a struct): a call
+    without a declaration would read it as int."""
+    m = re.match(r"\s*(?:extern\s+)?(.*?)\b\w+\s*\([^;{}]*\)\s*;\s*$", p.strip())
+    if not m:
+        return False
+    r = " ".join(m.group(1).replace("*", " * ").split())
+    return "*" in r or r not in ("", "int", "s32", "u32", "void", "unsigned int", "signed int", "long",
+                                 "unsigned long", "unsigned", "signed")
+
+
 def is_static(seg):
     return ptsrc.strip_comments(seg).strip().startswith("static")
 
@@ -152,7 +163,7 @@ def calls(text, name):
     return [arg_count(text, m.end())[0] for m in re.finditer(r"\b%s\s*\(" % re.escape(name), text)]
 
 
-def cast_calls(t, funcs):
+def cast_calls(t, funcs, only=None):
     """Calls of an installed function, after its definition (or a full prototype) in t, that pass another argument
     count than it has (an m2c draft's count, a pass-through dropped) would not compile: each becomes a call through
     a cast to an unprototyped pointer, `((RET (*)())f)(...)`, which compiles to the same `jal f` with the same
@@ -175,10 +186,13 @@ def cast_calls(t, funcs):
             continue
         first = min(starts)
         spans = []
+        inside = [body_span(t, fn) for fn in only] if only is not None else None
         for cm in re.finditer(r"(?<![\w.>])%s\s*\(" % re.escape(n), t):
             ls = t.rfind("\n", 0, cm.start()) + 1
             if cm.start() <= first or not t[ls:ls + 1].isspace():
                 continue    # the definition / a prototype (top level), or before the first declaration
+            if inside is not None and not any(sp and sp[0] <= cm.start() < sp[1] for sp in inside):
+                continue    # only the calls inside these spans (the bodies just installed)
             c, _ = arg_count(t, cm.end())
             if c != k:
                 spans.append((cm.start(), cm.end(), c))
@@ -187,6 +201,15 @@ def cast_calls(t, funcs):
         if spans:
             done.append((n, sorted({c for _, _, c in spans}), "((%s (*)())%s)(...)" % (ret, n)))
     return t, done
+
+
+def body_span(t, name):
+    """(start, end) of the definition of name in t (its header to the closing brace at column 0), or None."""
+    hd = heads(t, re.escape(name))
+    if not hd:
+        return None
+    end = t.find("\n}", hd[0][2])
+    return (hd[0][2], end + 2) if end >= 0 else None
 
 
 def dedupe_types(old, t):
@@ -282,8 +305,8 @@ def install(a):
             continue
         if kind == "pp" and s.startswith("#include"):
             s = s.replace('"psyq/inline_c.h"', '"gte.h"')     # the real GTE command words (include/gte.h)
-            if s not in t and not re.search(r'"(common|game|m2c|actor)\.h"', s):
-                includes.append(s)   # e.g. psyq/inline_c.h for GTE macros: goes after the target's own includes
+            if s not in t and not re.search(r'"(common|game|m2c)\.h"', s):
+                includes.append(s)   # e.g. gte.h for GTE macros, actor.h: goes after the target's own includes
             continue
         # a static (inline) helper goes with the declarations, before the first function that uses it
         n = ptsrc.func_name(s) if s.endswith("}") and not is_static(s) else None
@@ -305,6 +328,32 @@ def install(a):
                 pre[i] = "s32 %s();" % k
                 print("extern %s: a function: declared `s32 %s();`" % (k, k))
     pre = [x for x in pre if x]
+    # `extern s16 D_a, D_b;`: one declaration per name, so that the clash check below sees each of them
+    split_pre = []
+    for p in pre:
+        m = re.fullmatch(r"(extern\s+(?:(?:volatile|const|unsigned|signed|struct|union|enum)\s+)*\w+)\s+"
+                         r"([^;(){}=]+,[^;(){}=]+);", p)
+        if m:
+            for d in m.group(2).split(","):
+                split_pre.append("%s %s;" % (m.group(1), d.strip()))
+            print("split `%s` into %d declarations" % (p[:60], len(m.group(2).split(","))))
+        else:
+            split_pre.append(p)
+    pre = split_pre
+    # a scratch static helper no installed function (nor another used helper) calls: left out
+    used_text = "\n".join(b for _, b in funcs)
+    helpers = {ptsrc.func_name(p): p for p in pre if p.endswith("}") and is_static(p) and ptsrc.func_name(p)}
+    used, grow = set(), True
+    while grow:
+        grow = False
+        for hn, hp in helpers.items():
+            if hn not in used and re.search(r"\b%s\b" % re.escape(hn), used_text):
+                used.add(hn)
+                used_text += "\n" + hp
+                grow = True
+    for hn in set(helpers) - used:
+        print("unused scratch helper %s: left out" % hn)
+        pre.remove(helpers[hn])
     # a macro the target defines with another body: ours is renamed (Name_xxxx), else the target's later
     # #define would silently change what our functions compile to (or ours what the target's code does)
     tmacros = {m.group(1): m.group(2) for m in re.finditer(r"(?m)^#\s*define\s+(\w+)((?:.*\\\n)*.*)$", t)}
@@ -452,8 +501,19 @@ def install(a):
         # defines it further down (a call before the definition would declare it `int f()`: conflicting types)
         if pr[0] in later and not heads(before, re.escape(pr[0])):
             return True     # (written as the definition's own header below)
+        if non_int_return(p) and not re.search(r"(?m)^[^\n;{}()=]*\b%s\s*\(" % re.escape(pr[0]), t) and \
+                any(re.search(r"(?<![\w.>])%s\s*\(" % re.escape(pr[0]), b) for _, b in funcs):
+            return True     # an undeclared call would be `int f()`: another return type changes the caller
         return any(re.search(r"\b%s\b(?!\s*\()" % pr[0], b) for _, b in funcs)
     extra = [p for p in pre if wanted(p)]
+    for i, p in enumerate(extra):
+        pr = proto(p)
+        if pr and non_int_return(p) and pr[0] not in later and not heads(t, re.escape(pr[0])):
+            # kept for its return type only: K&R, so the drafts' argument counts still compile
+            new = re.sub(r"\(([^()]*)\)\s*;\s*$", "();", p.strip())
+            if new != p.strip():
+                print("prototype %s kept for its return type, K&R: %s" % (pr[0], new))
+            extra[i] = new
     # a kept prototype naming a type nobody defines (an m2c guess, a type of another program's file) would not
     # compile: it becomes `T f();` (or `s32 f();` when the return type is the unknown one)
     known = known_types(t + "\n" + "\n".join(q for q in pre if q))
@@ -538,6 +598,15 @@ def install(a):
                 print("prototype of %s in the target made the definition's: %s -> %s" % (n, m.group(0).strip(),
                                                                                          want))
     t, casted = cast_calls(t, funcs)
+    # calls in the installed bodies of a function the target defines (or prototypes in full) before them with
+    # another parameter count: through the same cast (they would not compile otherwise)
+    inst = {n for n, _ in funcs}
+    callees = {c for _, b in funcs for c in re.findall(r"(?<![\w.>])([A-Za-z_]\w*)\s*\(", b)} - inst
+    tdef = [(n, h + " {}") for n, h, _ in heads(t) if n in callees]
+    if tdef:
+        t2, casted2 = cast_calls(t, tdef, only=inst)
+        t = t2
+        casted += casted2
     for n, cs, form in casted:
         print("calls of %s with %s argument(s) (another count than its definition) go through a cast: %s" % (
             n, "/".join(map(str, cs)), form))

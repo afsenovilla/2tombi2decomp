@@ -87,10 +87,46 @@ def decls(lines, b, e):
         if not l.strip():
             i += 1
             continue
+        if "," in l.split("=")[0] and multi_decl(l):
+            i += 1
+            continue                                    # `s32 a, b;`: multi_decl() / all_locals()
         m = DECL.match(l)
         if not m or m.group(2).split()[0] in KEYWORDS or "," in l.split("=")[0]:
             break
         out.append((i, m.group(2), m.group(4), m.group(3).strip().replace(" ", ""), m.group(5), (m.group(6) or "")))
+        i += 1
+    return out
+
+
+def multi_decl(l):
+    """[(type, name, stars, array)] of a declaration line with several declarators (`s32 a, *b, c[4];`), or []."""
+    m = re.match(r"^\s+((?:(?:register|volatile|const|unsigned|signed|struct|union|enum)\s+)*[A-Za-z_]\w*)\s+"
+                 r"([^;=(){}]+);\s*(//.*)?$", l)
+    if not m or m.group(1).split()[0] in KEYWORDS:
+        return []
+    out = []
+    for p in m.group(2).split(","):
+        pm = re.match(r"\s*(\**)\s*([A-Za-z_]\w*)\s*((?:\[[^\]]*\])*)\s*$", p)
+        if not pm:
+            return []
+        out.append((m.group(1), pm.group(2), pm.group(1), pm.group(3)))
+    return out
+
+
+def all_locals(lines, b, e, ds):
+    """ds plus the names declared on multi-declarator lines at the top of the body (same tuple shape)."""
+    out = list(ds)
+    i = b + 1
+    while i < e:
+        l = lines[i]
+        if not l.strip():
+            i += 1
+            continue
+        md = multi_decl(l) if "," in l.split("=")[0] else []
+        if md:
+            out += [(i, t, n, s, a, "") for t, n, s, a in md]
+        elif not DECL.match(l):
+            break
         i += 1
     return out
 
@@ -116,8 +152,9 @@ def rewrites(text, func, only):
     lines = text.split("\n")
     b, e = func_span(lines, func)
     ds = decls(lines, b, e)
-    names = [d[2] for d in ds]
-    body_start = (ds[-1][0] + 1) if ds else b + 1
+    dsa = all_locals(lines, b, e, ds)
+    names = [d[2] for d in dsa]
+    body_start = max(d[0] for d in dsa) + 1 if dsa else b + 1
     out = []
 
     def join(ls):
@@ -155,7 +192,7 @@ def rewrites(text, func, only):
                 continue
             ls = list(lines)
             if init2:      # its initialiser becomes an assignment of n1 below the declarations
-                ls.insert(ds[-1][0] + 1, "%s%s %s;" % (re.match(r"\s*", lines[i2]).group(0), n1, init2.strip()))
+                ls.insert(body_start, "%s%s %s;" % (re.match(r"\s*", lines[i2]).group(0), n1, init2.strip()))
             ls[i2] = None
             ls = [l for l in ls if l is not None]
             nb, ne = func_span(ls, func)
@@ -174,26 +211,44 @@ def rewrites(text, func, only):
                 ls = list(lines)
                 for j in range(k, e):
                     ls[j] = sub_name(ls[j], n, nn)
-                ls.insert(ds[-1][0] + 1, "%s%s %s%s;" % (re.match(r"\s*", lines[i]).group(0), t, s, nn))
+                ls.insert(body_start, "%s%s %s%s;" % (re.match(r"\s*", lines[i]).group(0), t, s, nn))
                 out.append(("fork %s at line %d" % (n, k - b), join(ls)))
-    if "copy" in only:
-        for (i, t, n, s, a, init) in ds:
-            if a:
+    if ("copy" in only or "keep" in only) and dsa:
+        # a copy of a local (`x_c = x;` right after one of its assignments) used instead of it in later statements
+        # that the copy dominates (same block or deeper, no case / label / loop back edge / reassignment between):
+        # copy: one use; keep: every dominated use, or every one but the first (retail `move a0,v0`: the value
+        # kept in its own register while the first one is reused)
+        last_decl = body_start - 1
+        for (i, t, n, s, a, init) in dsa:
+            if a or re.search(r"&\s*%s\b" % re.escape(n), join(lines[body_start:e])):
                 continue
-            assigns = [k for k in range(body_start, e) if re.match(r"\s+%s\s*=(?!=)" % re.escape(n), lines[k])]
-            at = assigns[0] if assigns else (ds[-1][0] if init else None)
-            if at is None:
-                continue
-            for j in range(at + 1, e):
-                if not re.search(r"(?<![\w.>])\b%s\b" % re.escape(n), lines[j]) or \
-                        re.match(r"\s+%s\s*=(?!=)" % re.escape(n), lines[j]):
+            assigns = [k for k in range(body_start, e) if re.match(r"\s+%s\s*=(?!=)" % re.escape(n), lines[k])
+                       and is_stmt(lines[k])]
+            if init:
+                assigns = [i] + assigns
+            for at in assigns:
+                uses = dominated_uses(lines, n, at, e)
+                if not uses:
                     continue
-                ls = list(lines)
-                ls[j] = sub_name(ls[j], n, n + "_c")
-                ind = re.match(r"\s*", lines[at + 1] if at + 1 < e and lines[at + 1].strip() else lines[at]).group(0)
-                ls.insert(at + 1, "%s%s_c = %s;" % (ind, n, n))
-                ls.insert(ds[-1][0] + 1, "%s%s %s%s_c;" % (re.match(r"\s*", lines[i]).group(0), t, s, n))
-                out.append(("copy %s for line %d" % (n, j - b), join(ls)))
+                nn = "%s_c%d" % (n, at - b)
+                if at < body_start:
+                    continue                        # an initialised declaration: its copy would sit among them
+                ind = indent(lines[at])
+                sets = []
+                if "copy" in only:
+                    sets += [("copy %s (line %d) for line %d" % (n, at - b, j - b), [j]) for j in uses]
+                if "keep" in only and len(uses) > 1:
+                    sets += [("keep %s (line %d) in its own register for lines %d-%d" % (n, at - b, uses[0] - b,
+                                                                                         uses[-1] - b), uses)]
+                    sets += [("keep %s (line %d) in its own register for lines %d-%d (first use not)" % (
+                        n, at - b, uses[1] - b, uses[-1] - b), uses[1:])]
+                for desc, js in sets:
+                    ls = list(lines)
+                    for j in js:
+                        ls[j] = sub_name(ls[j], n, nn)
+                    ls.insert(at + 1, "%s%s = %s;" % (ind, nn, n))
+                    ls.insert(last_decl + 1, "%s%s %s%s;" % (re.match(r"\s*", lines[i]).group(0), t, s, nn))
+                    out.append((desc, join(ls)))
     if "wrap" in only:
         for k in range(body_start, e):
             l = lines[k]
@@ -246,14 +301,14 @@ def rewrites(text, func, only):
                 for j in range(b + 1, e):
                     for t, s, n in group:
                         ls[j] = sub_name(ls[j], n, n + "_p")
-                ins = ds[-1][0] + 1 if where == "after" and ds else b + 1
+                ins = body_start if where == "after" and ds else b + 1
                 for t, s, n in reversed(group):
                     ls.insert(ins, "    %s %s%s_p = %s;" % (t, s, n, n))
                 out.append(("temp copy of parameter%s %s%s" % ("s" if len(group) > 1 else "",
                                                                ",".join(g[2] for g in group),
                                                                " (first)" if where == "before" else ""), join(ls)))
     pnames = {p[2] for p in params(lines, b, func)}
-    ins_decl = ds[-1][0] + 1 if ds else b + 1
+    ins_decl = body_start if dsa else b + 1
     ind0 = re.match(r"\s*", lines[ds[0][0]]).group(0) if ds else "    "
 
     def with_decl(ls, decl, at=None):
@@ -433,7 +488,7 @@ def rewrites(text, func, only):
                 ls = list(lines)
                 for j in range(k, end):
                     ls[j] = sub_name(ls[j], n, nn)
-                ls.insert(ds[-1][0] + 1, "%s%s %s%s;" % (re.match(r"\s*", lines[i]).group(0), t, s, nn))
+                ls.insert(body_start, "%s%s %s%s;" % (re.match(r"\s*", lines[i]).group(0), t, s, nn))
                 out.append(("pathsplit %s from line %d to %d" % (n, k - b, end - b), join(ls)))
     if "wrap" in only:
         # a run of two or three simple statements, and the span of one local's uses (first to last mention, at one
@@ -525,6 +580,197 @@ def rewrites(text, func, only):
                 v = m.group(2)
                 out.append(("if (%s < 0) %s = -%s at line %d as abs()" % (v, v, v, k - b),
                             join(lines[:k] + ["%s%s = abs(%s);" % (m.group(1), v, v)] + lines[k + 2 + close:])))
+    if "callcopy" in only:
+        # a call inside a bigger expression (`x = f(a) >> 12;`, `abs(f(a))`, `f(a) * k`) first copied into a local
+        # (top-level or block-scoped): retail keeping the call result in its own register before the shift / abs
+        n_out = 0
+        for k in range(body_start, e):
+            l = lines[k]
+            if not is_stmt(l) and not re.match(r"\s*if \(", l):
+                continue
+            if re.match(r"\s*(\}\s*)?else\b", l):
+                continue
+            first = None
+            for m in re.finditer(r"(?<![\w.>])([A-Za-z_]\w*)\s*\(", l):
+                if m.group(1) in KEYWORDS or m.group(1) in TYPEWORDS or m.group(1) in ("M2C_FIELD", "MEMBER_AT") \
+                        or re.fullmatch(r"[A-Z][A-Z0-9_]*", m.group(1)):
+                    continue
+                en = balanced(l, m.end() - 1)
+                if en is None:
+                    continue
+                first = (m.start(), en)
+                break
+            if not first:
+                continue
+            s0, s1 = first
+            call = l[s0:s1]
+            before = l[:s0].rstrip()
+            after = l[s1:].lstrip()
+            if re.search(r"=\s*$", before) and after.startswith(";") or before.strip() == "" and after.startswith(";"):
+                continue                            # already the whole right-hand side / a call statement
+            nm = "rs_c%d" % n_out
+            n_out += 1
+            ind = indent(l)
+            ls = list(lines)
+            ls[k] = "%s%s = %s;\n%s" % (ind, nm, call, l[:s0] + nm + l[s1:])
+            out.append(("callcopy of %s at line %d into a local" % (call.split("(")[0], k - b),
+                        join(with_decl(ls, "s32 %s;" % nm))))
+            if is_stmt(l):
+                ls = list(lines)
+                ls[k] = "%s{\n%s    s32 %s = %s;\n%s    %s\n%s}" % (ind, ind, nm, call, ind,
+                                                                    (l[:s0] + nm + l[s1:]).strip(), ind)
+                out.append(("callcopy of %s at line %d into a block-scoped local" % (call.split("(")[0], k - b),
+                            join(ls)))
+    if "barrier" in only:
+        # an empty `__asm__ volatile("");` between two statements: a scheduler barrier that emits nothing
+        for k in range(body_start, e - 1):
+            if is_stmt(lines[k]) and (is_stmt(lines[k + 1]) or re.match(r"\s*(if|return|switch)\b", lines[k + 1])):
+                ls = list(lines)
+                ls.insert(k + 1, indent(lines[k]) + '__asm__ volatile("");')
+                out.append(("barrier after line %d" % (k - b), join(ls)))
+    if "swapif" in only or "perbranch" in only:
+        for k in range(body_start, e):
+            m = re.match(r"^(\s*)((?:\}\s*else\s+)?)if \((.*)\) \{\s*$", lines[k])
+            if not m or m.group(2):
+                continue
+            arms = if_arms(lines, k, e)
+            if not arms:
+                continue
+            (t0, t1), (f0, f1), close = arms
+            ind = m.group(1)
+            if "swapif" in only and f0 is not None and not m.group(2):
+                # if (c) { A } else { B }  ->  if (!(c)) { B } else { A }
+                ls = lines[:k] + ["%sif (!(%s)) {" % (ind, m.group(3))] + lines[f0:f1] + [ind + "} else {"] + \
+                    lines[t0:t1] + lines[close:]
+                out.append(("swap the if / else arms at line %d" % (k - b), join(ls)))
+            if "perbranch" in only and f0 is not None and close + 1 < e:
+                # v = K1 / v = K2 at the end of the arms, then `X = v;` (or another use of v) right after:
+                # the use with its value in every arm, the local gone (one cross-jumped store)
+                nxt = lines[close + 1]
+                lt = [j for j in range(t0, t1) if lines[j].strip()]
+                lf = [j for j in range(f0, f1) if lines[j].strip()]
+                if not lt or not lf or not is_stmt(nxt):
+                    continue
+                ma = re.match(r"^\s*([A-Za-z_]\w*)\s*=(?!=)\s*(.+);\s*$", lines[lt[-1]])
+                mb = re.match(r"^\s*([A-Za-z_]\w*)\s*=(?!=)\s*(.+);\s*$", lines[lf[-1]])
+                if not ma or not mb or ma.group(1) != mb.group(1) or ma.group(1) not in names:
+                    continue
+                v = ma.group(1)
+                if len(re.findall(r"(?<![\w.>])\b%s\b" % re.escape(v), nxt)) != 1 or \
+                        re.match(r"\s*%s\s*=(?!=)" % re.escape(v), nxt) or not dead_after(lines, v, close + 2, e):
+                    continue
+                ia = indent(lines[lt[-1]])
+                ls = list(lines)
+                ls[lt[-1]] = ia + sub_name(nxt.strip(), v, "(%s)" % ma.group(2))
+                ls[lf[-1]] = indent(lines[lf[-1]]) + sub_name(nxt.strip(), v, "(%s)" % mb.group(2))
+                ls[close + 1] = None
+                out.append(("per-branch %s at line %d instead of local %s" % (nxt.strip(), close + 1 - b, v),
+                            join([x for x in ls if x is not None])))
+    if "ptrlocal" in only:
+        # globals read or written through pointer locals in a block (`{ s16 *p0 = &D_x; ... *p0 ... }`; the
+        # scratchpad recipe: every lui first): a run of 1-4 statements, or the body of one case
+        def globals_in(seg):
+            gs = []
+            for l in seg:
+                for g in re.findall(r"(?<![\w.>&])(D_[0-9A-Fa-f]\w*)\b(?!\s*[\[(])", re.sub(r"//.*", "", l)):
+                    if g not in gs and re.search(r"(?m)^extern\s+(?:volatile\s+)?[A-Za-z_]\w*\s+%s\s*;" % g, text):
+                        gs.append(g)
+            return gs
+
+        def ptr_block(k1, k2, desc):
+            seg = lines[k1:k2 + 1]
+            gs = globals_in(seg)
+            if not gs:
+                return
+            ind = indent(lines[k1])
+            hdr = []
+            for q, g in enumerate(gs):
+                ty = re.search(r"(?m)^extern\s+((?:volatile\s+)?[A-Za-z_]\w*)\s+%s\s*;" % g, text).group(1)
+                hdr.append("%s    %s *rs_p%d = &%s;" % (ind, ty, q, g))
+            body = []
+            for l in seg:
+                for q, g in enumerate(gs):
+                    l = re.sub(r"(?<![\w.>&])%s\b(?!\s*[\[(])" % g, "(*rs_p%d)" % q, l)
+                body.append("    " + l)
+            ls = lines[:k1] + [ind + "{"] + hdr + body + [ind + "}"] + lines[k2 + 1:]
+            out.append(("ptrlocal %s for %s" % ("/".join(gs), desc), join(ls)))
+        for k in range(body_start, e):
+            for n_ in (1, 2, 3, 4):
+                k2 = k + n_ - 1
+                if k2 < e and all(is_stmt(lines[j]) and indent(lines[j]) == indent(lines[k]) for j in range(k, k2 + 1)):
+                    ptr_block(k, k2, "lines %d-%d" % (k - b, k2 - b))
+            if re.match(r"\s*case\b.*:\s*$", lines[k]):
+                end = path_end(lines, k, e) or e
+                j2 = end - 1
+                while j2 > k and (not lines[j2].strip() or re.match(r"\s*(break|return)\b", lines[j2])):
+                    j2 -= 1
+                seg = list(range(k + 1, j2 + 1))
+                if seg and all(not re.match(r"\s*(case\b|default\s*:|\w+:\s*$)", lines[j]) for j in seg):
+                    depth = 0
+                    for j in seg:
+                        depth += lines[j].count("{") - lines[j].count("}")
+                        if depth < 0:
+                            break
+                    if depth == 0 and not any(re.search(r"\bbreak\s*;", lines[j]) for j in seg):
+                        ptr_block(k + 1, j2, "the case at line %d" % (k - b))
+    return out
+
+
+def if_arms(lines, k, e):
+    """((then first, then end), (else first, else end) or (None, None), index of the closing `}` line) of an
+    `if (...) {` line at k whose arms are plain blocks (`} else {`, not `} else if`), or None."""
+    depth, j = 0, k
+    t0, t1 = k + 1, None
+    while j < e:
+        c = re.sub(r"//.*|/\*.*?\*/", "", lines[j])
+        if j > k and depth == 1 and re.match(r"^\s*\}\s*else\s*\{\s*$", c):
+            if t1 is not None:
+                return None
+            t1 = j
+            j += 1
+            continue
+        if j > k and depth == 1 and re.match(r"^\s*\}\s*else\b", c):
+            return None                             # else if: not a plain pair
+        depth += c.count("{") - c.count("}")
+        if depth == 0:
+            if t1 is None:
+                return (t0, j), (None, None), j
+            return (t0, t1), (t1 + 1, j), j
+        j += 1
+    return None
+
+
+def assigns_to(l, n):
+    return re.search(r"(?<![\w.>])\b%s\s*(=(?!=)|\+\+|--|[-+*/|&^%%]=|<<=|>>=)|(\+\+|--)\s*%s\b" % (
+        re.escape(n), re.escape(n)), l)
+
+
+def dominated_uses(lines, n, at, e):
+    """the lines after `at` (an assignment of n) that read n and run only after it with its value: same block or
+    deeper, no case / default / label line in between, no reassignment of n before them; with a loop between, n
+    must not be assigned again anywhere after at (a back edge would bring another value)."""
+    out, depth, loop = [], 0, False
+    later_assign = any(assigns_to(lines[k], n) for k in range(at + 1, e))
+    for j in range(at + 1, e):
+        c = re.sub(r"//.*|/\*.*?\*/", "", lines[j])
+        if re.match(r"^\s*(case\b.*:|default\s*:|[A-Za-z_]\w*\s*:(?!:))", c):
+            break
+        if re.match(r"^\s*(\}\s*)?(for|while|do)\b", c):
+            loop = True
+        for ch in c:
+            depth += (ch == "{") - (ch == "}")
+            if depth < 0:
+                return out
+        if re.search(r"(?<![\w.>])\b%s\b" % re.escape(n), c):
+            m = assigns_to(c, n)
+            rhs = c.split("=", 1)[1] if m and "=" in c else ""
+            if m:
+                if re.search(r"(?<![\w.>])\b%s\b" % re.escape(n), rhs) and not loop:
+                    pass                            # reads before it writes: still the old value on the right
+                break
+            if loop and later_assign:
+                break
+            out.append(j)
     return out
 
 
@@ -798,7 +1044,8 @@ FIRST = ("wrap", "volatile")
 
 def kind_of(desc):
     k = desc.split()[0].rstrip(":")
-    return {"if": "ternary", "call": "callres", "temp": "temp", "load": "load"}.get(k, k)
+    return {"if": "ternary", "call": "callres", "temp": "temp", "load": "load", "swap": "swapif",
+            "per-branch": "perbranch"}.get(k, k)
 
 
 def fair(cands, limit):
@@ -834,8 +1081,8 @@ def main():
     ap.add_argument("-j", type=int, default=os.cpu_count())
     ap.add_argument("--rounds", type=int, default=4)
     ap.add_argument("--out")
-    ap.add_argument("--only", default="decl,split,reuse,fork,copy,wrap,temp,load,const,member,volatile,goto,ternary,"
-                                      "pathsplit,callres,abs")
+    ap.add_argument("--only", default="decl,split,reuse,fork,copy,keep,wrap,temp,load,const,member,volatile,goto,"
+                                      "ternary,pathsplit,callres,abs,callcopy,barrier,swapif,perbranch,ptrlocal")
     ap.add_argument("--skip", default="", help="kinds left out of --only")
     ap.add_argument("--max-cands", type=int, default=3000, help="rewrites compiled per round at most")
     ap.add_argument("--max-perm", type=int, default=720)

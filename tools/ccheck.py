@@ -8,7 +8,8 @@ Pipeline: tools/cc.py (the file's // CC, // FLAGS, // ASPSX, // AS headers; defa
 Each defined function is looked up by name in config/symbol_addrs_<prog>.txt or as func_XXXXXXXX, and compared word by
 word with the retail file; relocated fields (jal target, %hi/%lo) are compared only where the object has no relocation.
 The length must also be the retail one (asm/<prog>/nonmatchings `nonmatching NAME, SIZE`).
-Prints OK / DIFF per function (with -v the differing words; `order only` when the function has retail's
+Prints OK / DIFF per function (with -v the differing words; for another length also `score N`, the aligned count
+that score() and so regswap / variants / permlines report; `order only` when the function has retail's
 instructions in another order: tools/prio.py --sched shows the scheduler priorities); --func NAME limits the check. --sbs prints a
 side-by-side diff of every DIFF function, ours next to retail (tools/sbs.py; --sbs-all with the equal lines too).
 """
@@ -102,6 +103,41 @@ def score(src, prog, name, workdir=None, override=None):
         subprocess.run(["rm", "-rf", d])
 
 
+def argcount_warnings(src, prog):
+    """warn for every call in the scratch whose argument count differs from the parameter count of the callee's
+    definition in src/<prog>/<prog>.c (and src/main/main.c, resident under every overlay): m2c drafts often drop
+    or add arguments, which changes the scheduling around the call; install_c.py would cast such calls."""
+    import install_c
+    defs = {}
+    for f in dict.fromkeys([os.path.join(ROOT, "src", prog, prog + ".c"), os.path.join(ROOT, "src", "main", "main.c")]):
+        if not os.path.exists(f):
+            continue
+        for n, h, _ in install_c.heads(open(f).read()):
+            if n in defs:
+                continue
+            hh = " ".join(h.split())
+            m = re.match(r"(.*?)\b%s\s*\(([^()]*)\)\s*$" % re.escape(n), hh)    # K&R definitions: any count
+            if m:
+                k = install_c.params(m.group(2))
+                if k is not None:
+                    defs[n] = (k, os.path.relpath(f, ROOT))
+    text = open(src).read()
+    own = {n for n, _, _ in install_c.heads(text)}
+    seen = set()
+    for n, (k, where) in defs.items():
+        if n in own:
+            continue
+        for cm in re.finditer(r"(?<![\w.>])%s\s*\(" % re.escape(n), text):
+            ls = text.rfind("\n", 0, cm.start()) + 1
+            if not text[ls:ls + 1].isspace():
+                continue        # a prototype at top level
+            c, _ = install_c.arg_count(text, cm.end())
+            if c != k and (n, c) not in seen:
+                seen.add((n, c))
+                print("warning: line %d calls %s with %d argument(s); its definition in %s has %d" % (
+                    text.count("\n", 0, cm.start()) + 1, n, c, where, k))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("src")
@@ -134,6 +170,7 @@ def main():
         src2 = os.path.join(d, "noprotos_" + os.path.basename(a.src))
         open(src2, "w").write(install_c.drop_prototypes(open(a.src).read(), keep))
         a.src = src2
+    argcount_warnings(a.src, a.prog)
     text, funcs, rel = compile_c(a.src, a, d)
     bad = 0
     asm_included = {n[:-len(".NON_MATCHING")] for n, _, _ in funcs if n.endswith(".NON_MATCHING")}
@@ -176,8 +213,16 @@ def main():
             if ours_w == want_w:
                 order = " (order only: the same instructions; tools/prio.py %s %s --sched)" % (
                     os.path.relpath(a.src, ROOT) if a.src.startswith(ROOT) else a.src, name)
-        print("%s %s %08X (%d bytes)%s%s" % ("OK  " if ok else "DIFF", name, addr, size,
-                                           "" if ok else ", %d words differ" % len(diffs), order))
+        aligned = ""
+        if want_size is not None and want_size != size:
+            # another length: the positional count is meaningless past the first insertion; the score of
+            # score() (difflib-aligned words + the length difference), the number regswap / variants / permlines use
+            import nearcopy
+            aligned = " (score %d: %d word(s) %s, aligned)" % (
+                nearcopy.aligned_off(got, binary[addr - delta: addr - delta + want_size]) +
+                abs(size - want_size) // 4, abs(size - want_size) // 4, "extra" if size > want_size else "short")
+        print("%s %s %08X (%d bytes)%s%s%s" % ("OK  " if ok else "DIFF", name, addr, size,
+                                             "" if ok else ", %d words differ" % len(diffs), aligned, order))
         if a.v:
             for i, g, w in diffs:
                 if i < 0:
