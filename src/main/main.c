@@ -3769,7 +3769,114 @@ void func_8002F514(s32 kind, s32 owner)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002F738);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002F8DC);
+extern s8 D_1F800088_f8dc[];
+extern s16 D_1F800160_f8dc;
+extern s16 D_1F800162_f8dc;
+extern s16 D_1F800164_f8dc;
+extern s32 D_8009EB7C[];
+extern int rand(void);
+/* sprite depth projection with a -0x14 depth bias, inlined */
+static inline s32 ProjZ_F8DC(void)
+{
+    s32 *flag = &D_1F800080;
+    s32 *otz = (s32 *)D_1F800084;
+    s32 *sxy = (s32 *)D_1F80008C;
+    s32 e;
+
+    gte_rtps();
+    gte_stflg(flag);
+    if (*flag < 0) {
+        return 1;
+    }
+    gte_stsz(flag);
+    if (*flag <= 0) {
+        return 1;
+    }
+    *flag = (*flag >> 2) - 0x14;
+    if (*flag < 4) {
+        *flag = 4;
+    }
+    e = *flag >> 10;
+    *flag = (*flag >> e) + (e << 9);
+    if ((u32)(*flag - 4) >= 0x7FC) {
+        *flag = -1;
+    }
+    if (*flag < 0) {
+        return 1;
+    }
+    gte_stsxy(sxy);
+    gte_stopz(otz);
+    return 0;
+}
+
+void func_8002F8DC(u8 *a0)
+{
+    u8 *a = a0;
+    s32 *otz = (s32 *)D_1F800084;
+    s32 *o2 = (s32 *)D_1F800088_f8dc;
+    s32 *z = (s32 *)D_1F800090;
+    s16 pts[5][4];
+    s32 col[5];
+    u8 sz[8];
+    s32 d0;
+    s32 d1;
+    s32 d2;
+    s32 i;
+    u8 *ps;
+    s32 *pc;
+    s16 *pos;
+    s32 k;
+    s32 m;
+    s16 *p;
+
+    i = 0;
+    ps = sz;
+    pc = col;
+    pos = (s16 *)(a + 0x2C);
+    k = a[7];
+    d0 = D_1F800160_f8dc - *(s16 *)(a + 0x2C);
+    d1 = D_1F800162_f8dc - pos[1];
+    d2 = D_1F800164_f8dc - pos[2];
+    do {
+        if (i == 0 || i == 4) {
+            *pc = 0;
+            *ps = 0;
+        } else {
+            *pc = 0x9850E0;
+            *ps = (5 - i) * 2;
+        }
+        m = 0;
+        if (k >= 0) {
+            m = k;
+            if (k > 0x80) {
+                m = 0x80;
+            }
+        }
+        p = pts[i];
+        p[0] = pos[0] + ((d0 * m) >> 7);
+        p[1] = pos[1] + ((d1 * m) >> 7) - ((rsin(m * 16) * pos[3]) >> 12);
+        p[2] = pos[2] + ((d2 * m) >> 7);
+        ps++;
+        pc++;
+        i++;
+        k -= 0xD;
+    } while (i < 5);
+    func_80029664(pts, 5, col, sz);
+    if (a[7] <= 0x80) {
+        SetProj_7CB4(6);
+        gte_ldv0(pts);
+        if (ProjZ_F8DC() == 0) {
+            {
+                s32 r = rand() & 0x7FF;
+                s32 h = (a[6] << 7) - 0x3FF;
+                *z = r + h;
+            }
+            *otz = (*otz * (a[6] + 0x10)) >> 4;
+            *o2 = *otz;
+            f_DrawProjectedSpriteDefinitionStream(D_8009EB7C, D_8009EB7C[-1]);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002FC40);
 
