@@ -5033,9 +5033,73 @@ void func_80121918(s32 a, s32 b, s32 c) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80121978);
-
+extern u8 D_8014C02C[];
 extern u8 D_8014E4EC[];
+void func_80122D58(u8 *a);
+void func_80121B44(u8 *a);
+void func_80121CF8(u8 *a);
+void func_80122CA4(u8 *a);
+void func_80122BF4(u8 *a);
+
+void func_80121978(u8 *a)
+{
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        g = (u8 *)D_800ECF58;
+        if (func_800519E0(a, 0x12, *(s32 *)(g + 0x74), D_8014C02C) != 0) {
+            break;
+        }
+        *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x78);
+        func_80077C40(a, D_8014E4EC, 0);
+        *(s16 *)(a + 0x80) = 0x8C;
+        *(s16 *)(a + 0x82) = 0x118;
+        *(s16 *)(a + 0x84) = 0x80;
+        *(s16 *)(a + 0x86) = 0x100;
+        a[0xB] = 0;
+        a[0x2B] = 0;
+        *(s16 *)(a + 0x44) = 0x180;
+        a[0x47] = 0;
+        a[4]++;
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            f_HandleNetBridgeCutsceneTrigger(a);
+            break;
+        case 1:
+            func_80122D58(a);
+            break;
+        case 2:
+            break;
+        case 0x5F:
+            f_HandleStuckFishhookQuestNpc(a);
+            break;
+        case 0x60:
+            func_80121B44(a);
+            break;
+        case 0x61:
+            func_80121CF8(a);
+            break;
+        case 0x62:
+            func_80122CA4(a);
+            break;
+        case 0x63:
+            func_8018BF08(a);
+            break;
+        }
+        func_80122BF4(a);
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
+
 extern u8 D_801494B0[];
 void func_80121B44(u8 *a) {
     u8 k;
@@ -5373,7 +5437,6 @@ s32 func_801231B0(void) {
 
 extern u8 D_800BF8F6;
 extern s32 D_800ECFCC;
-extern u8 D_8014C02C[];
 s32 func_801231E0(u8 *a, s32 r) {
     switch (a[7]) {
     case 0:
@@ -8564,7 +8627,67 @@ void f_HandleTinyMousesHouseEntrance(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleFishermensTownEntranceActor);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleCurvedSupportContactActor);
+typedef struct { u16 x, y, z, w; } CurvePt;
+extern CurvePt D_8014AA38[];
+
+void f_HandleCurvedSupportContactActor(u8 *a)
+{
+    u8 *p = *(u8 **)(a + 0x10);
+    s16 num, den, h;
+    s16 t;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 0x16) != 0) {
+            break;
+        }
+        a[4]++;
+        U(a, 0x2E) = D_8014AA38[p[3] * 2 + a[3]].x;
+        U(a, 0x32) = D_8014AA38[p[3] * 2 + a[3]].y;
+        U(a, 0x36) = D_8014AA38[p[3] * 2 + a[3]].z;
+        H_f12c(a, 0x54) = 0;
+        if (p[3] == 0) {
+            H_f12c(a, 0x56) = 0;
+        } else {
+            H_f12c(a, 0x56) = 0x400;
+        }
+        H_f12c(a, 0x58) = 0;
+        break;
+    case 1:
+        if (D_1F800207_9c67 < 0x17 || D_1F800207_9c67 == 0x22) {
+            break;
+        }
+        if (p[3] == 0) {
+            if (a[3] == 0) {
+                den = U(p, 0x4E) - U(p, 0x80);
+                num = U(a, 0x2E) - U(p, 0x80);
+            } else {
+                den = U(p, 0x82) - U(p, 0x4E);
+                num = U(p, 0x82) - U(a, 0x2E);
+            }
+        } else {
+            if (a[3] == 0) {
+                den = U(p, 0x52) - U(p, 0x84);
+                num = U(a, 0x36) - U(p, 0x84);
+            } else {
+                den = U(p, 0x86) - U(p, 0x52);
+                num = U(p, 0x86) - U(a, 0x36);
+            }
+        }
+        t = (num << 10) / den;
+        h = U(p, 0x50) - U(p, 0x32);
+        U(a, 0x32) = U(p, 0x32) + ((h * func_80083E80(t)) >> 12) - 0x60;
+        if (func_8007778C(a) != 0) {
+            func_800517F8(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 u8 *func_80139838(s32 a, u8 b) {
     u8 *p = func_8007A980(1, 4, 0);
