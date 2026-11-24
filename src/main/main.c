@@ -11278,7 +11278,35 @@ void func_8004F430(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004F474);
+typedef struct { s16 x; s16 y; u8 pad[0x88]; } Rec_F474;
+
+void func_8004F474(u8 *a)
+{
+    Rec_F474 *r = (Rec_F474 *)(a + 0xC);
+    s32 i;
+    u8 *p;
+
+    i = 0;
+    if (i < *(s16 *)(a + 8)) {
+        p = a + 0xE;
+        do {
+            *(s16 *)p += 2;
+            i++;
+            r++;
+            p += 0x8C;
+        } while (i < *(s16 *)(a + 8));
+    }
+    r--;
+    if (r->y >= 0x9E) {
+        for (i = 0; i < *(s16 *)(a + 8); ) {
+            r->y = i * 0x12 + 0x9E;
+            i++;
+            r--;
+        }
+        *(s16 *)(a + 4) = 0;
+        a[1] = 2;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004F514);
 
