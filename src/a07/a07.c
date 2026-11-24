@@ -4727,7 +4727,61 @@ void func_8012E2A0(void)
     }
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012E2F4);
+typedef struct {
+    s16 pad0;
+    s16 x;
+    s16 pad4[3];
+    s16 z;
+    s16 padC[10];
+    s16 pitch;
+    u16 yaw;
+} Cam80123E1C;
+extern Cam80123E1C D_1F8000D0_959d;
+extern s32 D_800A3F90;
+extern s32 D_800A3F94;
+
+void func_8012E2F4(u8 *a) {
+    s32 p[6];
+    s32 ang;
+    s32 s;
+    s32 dx;
+    s32 dz;
+    s16 y;
+
+    D_800A3F90 = 0x4B00;
+    y = D_1F8000D0_959d.yaw;
+    D_800A3F94 = 0x1C7;
+    ang = (-y - D_800A3F94) & 0xFFF;
+
+    p[0] = D_1F8000D0_959d.x;
+    p[1] = D_1F8000D0_959d.z;
+    p[2] = p[0] + ((func_80083E80(ang) * D_800A3F90) >> 12);
+    p[3] = p[1] + ((func_80083F50(ang) * D_800A3F90) >> 12);
+    ang = (D_800A3F94 - (s16)D_1F8000D0_959d.yaw) & 0xFFF;
+    p[4] = p[0] + ((func_80083E80(ang) * D_800A3F90) >> 12);
+    p[5] = p[1] + ((func_80083F50(ang) * D_800A3F90) >> 12);
+    p[0] -= (func_80083E80(-(s16)D_1F8000D0_959d.yaw) * 1600) >> 12;
+    p[1] -= (func_80083F50(-(s16)D_1F8000D0_959d.yaw) * 1600) >> 12;
+    s = abs(func_80083E80(D_1F8000D0_959d.pitch));
+    dx = (func_80083E80(-(s16)D_1F8000D0_959d.yaw) * s) >> 12;
+    dz = (func_80083F50(-(s16)D_1F8000D0_959d.yaw) * s) >> 12;
+    dx = (dx * D_800A3F90 * 5) >> 16;
+    dz = (dz * D_800A3F90 * 5) >> 16;
+    p[2] -= dx;
+    p[3] -= dz;
+    p[4] -= dx;
+    p[0] -= dx;
+    p[5] -= dz;
+    p[1] -= dz;
+    p[0] /= 640;
+    p[1] /= 640;
+    p[2] /= 640;
+    p[3] /= 640;
+    p[4] /= 640;
+    p[5] /= 640;
+    a[6] = 0;
+    func_8012E610(a, &p[0], &p[2], &p[4]);
+}
 
 extern s8 *D_800ECF58_g8[];
 #define GH(p, o) (*(s16 *)((u8 *)(p) + (o)))
