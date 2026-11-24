@@ -5650,7 +5650,60 @@ void func_80131520(PartsOwner *a, s32 b)
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801316C4);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80131824);
+typedef struct {
+    u8 pad0[4];
+    u8 state;
+    u8 pad5[3];
+    u8 partFrame, partCount, padA, renderKind, padC, renderMode;
+    u8 padE[0x20];
+    s16 x, pad30, y, pad34, z;
+    u8 pad38[0x1C];
+    s16 turn, unk_56, unk_58;
+    u8 pad5A[4];
+    u8 pickupBehaviour;
+    u8 pad5F[0x61];
+    u8 *parts[2];
+} PartActor;
+extern u16 D_801003F8_af64;
+extern s16 *D_8013F49C[];
+extern u8 D_8013F4AC[][2];
+
+void func_80131824(PartActor *a)
+{
+    s16 *src;
+    s32 i;
+    s32 n;
+    s32 d;
+
+    a->partFrame = D_8013F4AC[a->pickupBehaviour][0];
+    d = D_800ED098;
+    n = a->partFrame;
+    if (d < n) {
+        a->state = 3;
+        return;
+    }
+    a->renderKind = 1;
+    a->partCount = n;
+    a->renderMode = 0;
+    a->y = -0x28;
+    a->turn = 0;
+    a->unk_58 = 0;
+    a->unk_56 = 0;
+    a->x = 0;
+    a->z = D_801003F8_af64;
+    src = D_8013F49C[a->pickupBehaviour];
+    for (i = 0; i < a->partFrame; i++) {
+        a->parts[i] = func_8007AAE8();
+        H(a->parts[i], 6) = -1;
+        H(a->parts[i], 0) = *src++;
+        H(a->parts[i], 2) = *src++;
+        H(a->parts[i], 4) = *src++;
+        H(a->parts[i], 8) = 0;
+        H(a->parts[i], 0xA) = 0;
+        H(a->parts[i], 0xC) = 0;
+        func_80051B04(a->parts[i], 0xC, *src++);
+    }
+}
 
 extern s8 D_800BF841;
 void func_80131988(u8 *a)

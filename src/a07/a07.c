@@ -2,6 +2,7 @@
 #include "game.h"
 #include "m2c.h"
 #include "gte.h"
+#include "psyq/gtemac.h"
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010A660);
 
@@ -2371,7 +2372,82 @@ void func_8011AD44(u8 *a) {
     func_8011AB3C(a);
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011AE24);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+extern void (*D_8009D1D4[])(void);
+extern void (*D_8009D22C[])(void);
+extern void (*D_8009D314[])(u8 *);
+extern void (*D_8009D52C[])(u8 *);
+extern void (*D_800A4AF8[])(void);
+extern void (*D_800A4B50[])(void);
+extern void (*D_800A4AA0[])(u8 *);
+extern s16 D_801330FC;
+typedef struct {
+    s16 f0, f2, f4, f6, f8, fA, fC, pad0E[2], f12, pad14, f16;
+    u8 pad18[0x22];
+    s16 f3A;
+    u8 pad3C[4];
+    s32 f40;
+} Sub;
+
+void func_8011AE24(u8 *a)
+{
+    s16 t;
+    a[8] = 1;
+    if (D_800ED098 <= 0) {
+        a[4] = 3;
+        return;
+    }
+    t = 1;
+    a[9] = t;
+    a[0] = t;
+    a[0xB] = 2;
+    H(a, 0x60) = 0xF;
+    H(a, 0x62) = 0x343F;
+    H(a, 0x64) = -0x1C00;
+    H(a, 0x66) = -0x1BF1;
+    H(a, 0x68) = -0xC00;
+    H(a, 0x6A) = -0xBF1;
+    a[0x29] = 0;
+    a[0x2B] = 0;
+    a[0x5E] = 0;
+    a[0xBF] = 0;
+    H(a, 0x6C) = 0x50;
+    H(a, 0x6E) = 0;
+    H(a, 0x7C) = 0;
+    H(a, 0x7E) = 0;
+    H(a, 0x7A) = 0;
+    a[4]++;
+    *(Sub **)(a + 0xC0) = func_8007AAE8();
+    (*(Sub **)(a + 0xC0))->f6 = -1;
+    (*(Sub **)(a + 0xC0))->f0 = 0;
+    (*(Sub **)(a + 0xC0))->f4 = 0;
+    (*(Sub **)(a + 0xC0))->f8 = 0;
+    (*(Sub **)(a + 0xC0))->fA = 0;
+    (*(Sub **)(a + 0xC0))->fC = 0;
+    (*(Sub **)(a + 0xC0))->f40 = 0;
+    H(a, 0x88) = D_801330FC;
+    H(a, 0x8A) = (&D_801330FC)[1];
+    H(a, 0x8C) = (&D_801330FC)[2];
+    H(a, 0x54) = (&D_801330FC)[3];
+    H(a, 0x56) = (&D_801330FC)[4];
+    H(a, 0x58) = (&D_801330FC)[5];
+    (*(Sub **)(a + 0xC0))->f3A = (&D_801330FC)[6];
+    H(a, 0x80) = (&D_801330FC)[7];
+    H(a, 0x82) = (&D_801330FC)[8];
+    H(a, 0x84) = (&D_801330FC)[9];
+    H(a, 0x86) = (&D_801330FC)[10];
+    (*(Sub **)(a + 0xC0))->f2 = 0x140;
+    H(a, 0x4A) = 0;
+    H(a, 0x50) = 0x200;
+    (*(Sub **)(a + 0xC0))->f16 = (*(Sub **)(a + 0xC0))->f3A;
+    (*(Sub **)(a + 0xC0))->f12 = 0;
+    t = (*(Sub **)(a + 0xC0))->f2;
+    a[0x47] = 3;
+    H(a, 0x78) = t;
+    H(a, 0x32) -= (*(Sub **)(a + 0xC0))->f3A;
+    H(a, 0x56) = -D_1F8000F2;
+    func_800517F8(a);
+}
 
 void func_8011B030(u8 *a)
 {
