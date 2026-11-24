@@ -6003,7 +6003,89 @@ s32 func_8013632C(u8 *a)
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", f_UpdateSantaBringTheBigSackConversation);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801368A0);
+extern u8 D_8013FBDC[];
+extern u8 D_80017FE8[];
+static inline s32 santa_setup(u8 *a, u8 *g)
+{
+    u8 *e;
+
+    a[0x47] = 0;
+    if (D_800ED098 == 0) {
+        return 0;
+    }
+    a[9] = 0x10;
+    e = func_8007AAE8();
+    *(u8 **)(a + 0xFC) = e;
+    *(s16 *)(e + 6) = 7;
+    *(s16 *)(e + 0) = 0;
+    *(s16 *)(e + 2) = 0;
+    *(s16 *)(e + 4) = 0;
+    *(s16 *)(e + 0x38) = 0x1000;
+    *(s16 *)(e + 0x3A) = 0x1000;
+    *(s16 *)(e + 0x3C) = 0x1000;
+    func_80051B04(e, 1, 0x13);
+    *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x10);
+    *(u8 **)(a + 0x7C) = D_80017FE8;
+    if (D_800BFA00 != 0) {
+        func_80041718(a, 0xC3, 0);
+    } else {
+        func_80041718(a, 0xC1, 0);
+    }
+    *(s32 *)(a + 0x2C) = 0x11940000;
+    *(s32 *)(a + 0x30) = 0xE5440000;
+    *(s32 *)(a + 0x34) = 0x24DF0000;
+    a[0x7B] = 0;
+    *(s16 *)(a + 0x56) = 0x800;
+    return 1;
+}
+
+void func_801368A0(u8 *a)
+{
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        g = D_800ECF58;
+        if (func_800519E0(a, 0xF, *(s32 *)(g + 0x3C), D_8013FBDC) != 0) {
+            break;
+        }
+        *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x38);
+        func_80040CDC(a, D_80144404, D_800A3D18);
+        a[0] = 9;
+        *(s16 *)(a + 0x80) = 0x64;
+        *(s16 *)(a + 0x82) = 0xC8;
+        *(s16 *)(a + 0x84) = 0x90;
+        a[0xB] = 0;
+        *(s16 *)(a + 0x86) = 0x110;
+        a[0x2B] = 0;
+        a[0x29] = 0;
+        *(s16 *)(a + 0x58) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x54) = 0;
+        if (a[3] == 0 && !santa_setup(a, g)) {
+            break;
+        }
+        a[4]++;
+        break;
+    case 1:
+        if (a[3] == 0) {
+            f_UpdateSantaBringTheBigSackConversation(a);
+        }
+        if (a[1] != 0) {
+            func_800518FC(a);
+        }
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        if (a[3] == 0) {
+            a[9] = 0x10;
+        }
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_80136AC8(void *arg0) {
     M2C_FIELD(arg0, u8 *, 0x47) = (u8) M2C_FIELD(arg0, u8 *, 0x72);
