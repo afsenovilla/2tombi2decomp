@@ -3314,7 +3314,83 @@ void func_8012761C(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80127734);
+extern u8 D_800BF808_1760[];
+#define C0(p) M2C_FIELD(p, u8 **, 0xC0)
+#define C0(p) M2C_FIELD(p, u8 **, 0xC0)
+
+void func_80127734(u8 *a)
+{
+    s16 s = F16(a, 0x76);
+    u8 *g;
+    u8 *e = NULL;
+
+    switch (s) {
+    case 0:
+        if (a[0x2B] == 0) {
+            return;
+        }
+        F16(a, 0x76)++;
+        break;
+    case 1:
+        if (a[0x2B] & 0x80) {
+            F16(a, 0x48) = F16(a, 0x4C) = 0x200;
+            g = D_800BF808_1760;
+            if (M2C_FIELD(g, s32 *, 0x64) == 0) {
+                e = (u8 *)func_8004CBD8(a, 0xD);
+                M2C_FIELD(g, s32 *, 0x64) = s;
+            }
+        } else {
+            F16(a, 0x48) = F16(a, 0x4C) = 0x180;
+        }
+        F16(a, 0x52) = -8;
+        if (func_80077768(a[0x46] << 4, F16(a, 0x56), 1)) {
+            F16(a, 0x4C) = -F16(a, 0x4C);
+            F16(a, 0x52) = -F16(a, 0x52);
+        }
+        if (e != NULL) {
+            F16(e, 0x78) = F16(a, 0x4C);
+        }
+        a[0x2B] = 0;
+        a[0x5F] = 1;
+        if (a[1]) {
+            func_80074590(0xF, -5, 0);
+        }
+        F16(a, 0x76)++;
+        break;
+    case 2:
+        F16(C0(a), 0xC) += F16(a, 0x4C);
+        if (F16(C0(a), 0xC) < -F16(a, 0x48) || F16(a, 0x48) < F16(C0(a), 0xC)) {
+            if (F16(a, 0x4C) > 0) {
+                F16(C0(a), 0xC) = F16(a, 0x48);
+            } else {
+                F16(C0(a), 0xC) = -F16(a, 0x48);
+            }
+            F16(a, 0x48) -= 0x18;
+            if (F16(a, 0x48) <= 0) {
+                F16(C0(a), 0xC) = 0;
+                F16(a, 0x76) = 0;
+                break;
+            }
+            if (F16(a, 0x48) <= 0xA0) {
+                a[0x5F] = 0;
+            }
+            F16(a, 0x4C) = -F16(a, 0x4C);
+            F16(a, 0x52) = -F16(a, 0x52);
+        }
+        F16(a, 0x4C) += F16(a, 0x52);
+        if (F16(a, 0x4C) > 0 && F16(a, 0x4C) < 0x60) {
+            F16(a, 0x4C) = 0x60;
+        } else if (F16(a, 0x4C) < 0) {
+            if (F16(a, 0x4C) > -0x60) {
+                F16(a, 0x4C) = -0x60;
+            }
+        }
+        break;
+    }
+    if (a[0x2B]) {
+        F16(a, 0x76) = 1;
+    }
+}
 
 void func_801279B4(u8 *a)
 {
