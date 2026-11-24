@@ -5766,7 +5766,99 @@ void func_8011D4E8(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateTabbyHouseSceneController);
+extern u8 D_800BF9F9;
+extern u8 *D_8012AA68[];
+extern u8 *D_8012ACF0[];
+static inline s32 tabby_spawn_inl(u8 *owner, u8 *e)
+{
+    s32 i;
+    u8 *p;
+    u8 k;
+
+    for (i = 0; e[0] != 0xFF; e += 0x14) {
+        p = func_8007A980(3, 9, 0);
+        if (p == NULL) {
+            return 0;
+        }
+        if (owner != NULL) {
+            p[0x28] |= 0x80;
+            *(u8 **)(owner + i * 4 + 0xC) = p;
+        }
+        *(void **)(p + 0x1C) = func_8011D4E8;
+        p[3] = e[1] + (i - 0x80);
+        p[2] = 0x15;
+        *(s16 *)(p + 0x56) = *(s16 *)(e + 0xA);
+        p[0x5F] = e[0];
+        *(u8 **)(p + 0x14) = e;
+        p[0x7B] = e[2];
+        *(s16 *)(p + 0x2E) = *(s16 *)(e + 4);
+        *(s16 *)(p + 0x32) = *(s16 *)(e + 6);
+        *(s16 *)(p + 0x36) = *(s16 *)(e + 8);
+        i++;
+    }
+    return 1;
+}
+
+void f_UpdateTabbyHouseSceneController(u8 *a)
+{
+    s16 i;
+    s32 j;
+    u8 *g;
+    u8 *h;
+    u8 *p;
+
+    switch (a[4]) {
+    case 0:
+        for (i = 0; i < 0x10; i++) {
+            *(u8 **)(a + (i << 2) + 0xC) = NULL;
+        }
+        if (tabby_spawn_inl(NULL, D_8012AA68[D_800BF9F9]) != 0) {
+            a[4]++;
+        }
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            g = D_800BF808_1760;
+            if (g[0xE] != 0 && g[0xF] == 7) {
+                if (tabby_spawn_inl(a, D_8012ACF0[D_800BF9F9]) == 0) {
+                    break;
+                }
+                a[5]++;
+            }
+            h = (u8 *)&D_800BF870;
+            switch (h[0x195]) {
+            case 1:
+                if (D_800BF816 == 0) {
+                    h[0x195] = 2;
+                }
+                break;
+            case 2:
+                h[0x195] = 0;
+                tabby_spawn_inl(NULL, D_8012AA68[h[0x189]]);
+                break;
+            }
+            break;
+        case 1:
+            if (D_800BF816 == 0) {
+                for (j = 0; j < 0x10; j++) {
+                    p = *(u8 **)(a + j * 4 + 0xC);
+                    if (p != NULL) {
+                        p[4] = 3;
+                        *(u8 **)(a + j * 4 + 0xC) = NULL;
+                    }
+                }
+                a[5] = 0;
+            }
+            break;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007ADD0(a);
+        break;
+    }
+}
 
 void func_8011DBD8(void *arg0) {
     u8 temp_v1;
@@ -6473,7 +6565,6 @@ s32 func_8011F640(u8 *a) {
     return 0;
 }
 
-extern u8 D_800BF9F9;
 extern u8 D_8012B430[];
 extern u8 D_8012B450[];
 extern u8 D_8012B460[];
