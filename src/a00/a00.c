@@ -11841,7 +11841,43 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureFleeRun);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureStraightRun);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80141AC4);
+s32 func_80141AC4(u8 *a, s32 anim, s32 spd) {
+    u8 *q = a + 0x60;
+    s32 res = 0;
+    s32 dx, dz;
+    s32 f;
+
+    if (a[7] == 0) {
+        HU(q, 2) &= 0xFFFB;
+        func_801402B8(a, (s16)anim, 8);
+        H_f12c(a, 0x4E) = spd;
+        a[7]++;
+    }
+    dx = H_f12c(a, 0x48) * H_f12c(a, 0x4E);
+    dz = H_f12c(a, 0x4C) * H_f12c(a, 0x4E);
+    if (HU(q, 2) & 1) {
+        W_d1fb(a, 0x2C) -= dx;
+        W_d1fb(a, 0x34) -= dz;
+    } else {
+        W_d1fb(a, 0x2C) += dx;
+        W_d1fb(a, 0x34) += dz;
+    }
+    H_f12c(a, 0x32) += 0x10;
+    f_UpdateTownCreatureTerrainContact(a);
+    f = 0;
+    if (a[0x66] == 0x81 && a[0x29] == 0 && a[4] == 1) {
+        W_d1fb(a, 4) = 0x20501;
+        f = 1;
+    }
+    if (f == 0) {
+        if (a[7] >= 0x14) {
+            res = 1;
+        } else {
+            a[7]++;
+        }
+    }
+    return res;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureHopAndBrake);
 
