@@ -1658,12 +1658,70 @@ void func_801100E4(void *a, u8 *b)
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8011014C);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", menu);
-
 extern s8 D_800BF808_c1f7[];
 typedef struct { u8 pad[0x104]; u8 *s[6]; } TrolleyMenuText;
 extern TrolleyMenuText D_800A2854;
 typedef struct { s16 x, y, w, h; } TrolleyMenuRect;
+
+s32 menu(void) {
+    u8 *strs[4];
+    s32 ys[4];
+    s32 xs[4];
+    TrolleyMenuRect r;
+    s32 i;
+    s32 m;
+    u8 sel;
+
+    if (D_800E7E68 & 0x4000) {
+        return *(u8 *)D_800BF808_c1f7 + 1;
+    }
+    if (D_800E7E68 & 0x1000) {
+        return 1;
+    }
+    if (D_800E7E68 & 0x40) {
+        if (*(u8 *)D_800BF808_c1f7 < 2) {
+            *(u8 *)D_800BF808_c1f7 = *(u8 *)D_800BF808_c1f7 + 1;
+            func_80074590(0x15, 0, 0);
+        }
+    } else if (D_800E7E68 & 0x10) {
+        if (*(u8 *)D_800BF808_c1f7 != 0) {
+            *(u8 *)D_800BF808_c1f7 = *(u8 *)D_800BF808_c1f7 - 1;
+            func_80074590(0x15, 0, 0);
+        }
+    }
+    ys[0] = 0x50;
+    ys[1] = 0x64;
+    ys[2] = 0x78;
+    strs[0] = D_800A2854.s[0x19];
+    strs[1] = D_800A2854.s[0x1A];
+    strs[2] = D_800A2854.s[0x1B];
+    func_800793C4(strs, 3, xs);
+    if (xs[0] < xs[1]) {
+        m = xs[2];
+        if (xs[0] < m) {
+            m = xs[0];
+        }
+    } else {
+        m = xs[2];
+        if (xs[1] < m) {
+            m = xs[1];
+        }
+    }
+    for (i = 0; i < 3; i++) {
+        s16 x = m;
+
+        sel = *(u8 *)D_800BF808_c1f7;
+        func_80079374(x, (s16)ys[i], (sel == i) * 2, strs[i], 0);
+    }
+    func_8007E998(m - 0x10, ys[*(u8 *)D_800BF808_c1f7] + 4, 0);
+    r.x = m - 0x20;
+    r.w = (0xA0 - m) * 2 + 0x30;
+    r.h = 0x40;
+    r.y = ys[0] - 4;
+    func_8005019C(&r, 0, 1, 1);
+    return 0;
+}
+
 s32 f_UpdateBerryNutsRetryMenu(void) {
     u8 *strs[4];
     s32 ys[4];
