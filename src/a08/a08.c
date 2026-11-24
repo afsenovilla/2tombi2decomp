@@ -3277,9 +3277,44 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", f_InsertPigNosePanelIntoTempleTower);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80122544);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012282C);
-
 extern u8 D_800BFA3F;
+/* func_80122938, inlined */
+static inline void func_80122938_inl(void *arg0) {
+    M2C_FIELD(arg0, s8 *, 1) = 1;
+    func_80077EBC(arg0);
+    if (D_800BFA3F & 0x20) {
+        func_80027144(M2C_FIELD(M2C_FIELD(arg0, void **, 0xC0), s32 *, 0x40), arg0 + 0x2C, 0x800, 8);
+        M2C_FIELD(arg0, s8 *, 4) = 3;
+    }
+}
+
+void func_8012282C(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        *(s16 *)(a + 0x80) = 0xA0;
+        *(s16 *)(a + 0x82) = 0x140;
+        *(s16 *)(a + 0x84) = 0x20;
+        a[0] = 1;
+        *(s16 *)(a + 0x86) = 0x40;
+        func_80051B70(a, 0xC, 0x24);
+        *(s16 *)(a + 0x58) = 0;
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x56) = 0x11E;
+        a[4]++;
+        break;
+    case 1:
+        func_80122938_inl(a);
+        func_800517F8(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
+
 void func_80122938(void *arg0) {
     M2C_FIELD(arg0, s8 *, 1) = 1;
     func_80077EBC();
