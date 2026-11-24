@@ -1757,7 +1757,138 @@ void func_801100E4(void *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8011014C);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define M(a) (*(u8 **)((a) + 0xC0))
+extern s16 D_8011C758[];
+extern s16 D_8011C764[];
+extern u32 D_8011C770[];
+extern u8 D_800BF8ED;
+extern u16 D_1F800174;
+extern u32 D_800BF874;
+extern u8 D_8004C930[];
+static inline void init(u8 *p, s16 v)
+{
+    H(p, 0x58) = 0;
+    H(p, 0x56) = v;
+    func_800517F8(p);
+}
+
+void func_8011014C(u8 *a)
+{
+    PosV v;
+    u8 *p;
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 1, 0x18) != 0) {
+            break;
+        }
+        H(a, 0x80) = 0xA0;
+        H(a, 0x82) = 0x140;
+        H(a, 0x84) = 0x15E;
+        H(a, 0x86) = 0x15E;
+        a[0] = 1;
+        a[0x2B] = 0;
+        H(a, 0x54) = 0;
+        a[4]++;
+        init(a, D_8011C758[a[3]]);
+        break;
+    case 1:
+        func_8007778C(a);
+        switch (a[5]) {
+        case 0x63:
+            a[0] = 1;
+            a[5] = 0;
+        case 0:
+            if (a[0x2B] != 1) {
+                break;
+            }
+            if ((*(u8 **)(a + 0x14) = func_8007E110(D_8011C764[a[3]], 0)) == NULL) {
+                break;
+            }
+            if (D_800BF8ED == 0) {
+                a[5]++;
+                func_80040B48(0x39);
+            } else {
+                a[5] += 2;
+            }
+            break;
+        case 1:
+            if (func_80042728() == 0) {
+                break;
+            }
+            goto inc;
+        case 2:
+            if (D_800E7E68 & D_1F800174) {
+                a[5] = 3;
+            }
+            break;
+        case 3:
+            {
+                u8 *q = *(u8 **)(a + 0x14);
+                if (q[4] < 2) {
+                    q[4] = 2;
+                    *(u8 **)(a + 0x14) = NULL;
+                }
+            }
+            if (D_800BF874 < D_8011C770[a[3]]) {
+                a[0] = 2;
+                a[5] = 0x63;
+                func_80042310();
+                break;
+            }
+            p = func_80072DDC(a, 0, 5, 4);
+            if (p != NULL) {
+                *(void **)(p + 0x1C) = D_8004C930;
+                H(p, 0x2E) = H(a, 0x2E);
+                H(p, 0x32) = H(a, 0x32) - H(a, 0x84) / 2;
+                H(p, 0x36) = H(a, 0x36);
+                p[3] = a[3] + 0x2B;
+                p[0x28] |= 0x80;
+            }
+            *(u8 **)(a + 0x14) = p;
+            if (p == NULL) {
+                break;
+            }
+        inc:
+            a[5]++;
+            break;
+        case 4:
+            if ((*(u8 **)(a + 0x14))[4] < 2) {
+                break;
+            }
+            a[0] = 2;
+            func_80042310();
+            a[4] = 3;
+            v.x = H(a, 0x2E);
+            v.y = H(a, 0x32) - H(a, 0x84) / 2;
+            v.z = H(a, 0x36);
+            func_80027144(*(void **)(M(a) + 0x40), &v, 0x800, 0x18);
+            func_80074590(0xC, 0, 0);
+            func_80027144(*(void **)(M(a) + 0x40), &v, 0x800, 8);
+            func_80074590(0xC, 0, 0);
+            func_80040C00(0x39);
+            g = (u8 *)&D_800BF870;
+            g[0x1B3] |= 1 << a[3];
+            if (g[0x7E] == 0) {
+                func_80040B48(0x3A);
+                break;
+            }
+            if (g[0x1B3] == 0x1F) {
+                func_80040C00(0x3A);
+            }
+            break;
+        }
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern s8 D_800BF808_c1f7[];
 typedef struct { u8 pad[0x104]; u8 *s[6]; } TrolleyMenuText;
