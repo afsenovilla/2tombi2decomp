@@ -2169,9 +2169,111 @@ void func_80113EB8(u8 *a) {
     (*(u8 **)(a + 0xC4))[0x3F] = 0xF0;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80114018);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+extern u8 D_800E806E;
+extern u16 D_1F80017C;
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateCoalMiningTownEntranceOpeningSequence);
+s32 func_80114018(u8 *a) {
+    u8 *p;
+
+    switch (a[6]) {
+    case 0:
+        if (D_800E806E == 3) {
+            a[6] = 1;
+            H(a, 0x40) = 0xF;
+        }
+        H(*(u8 **)(a + 0xC0), 2) = -((D_1F80017C & 2) * 6);
+        H(*(u8 **)(a + 0xC0), 0) = ((func_8009A450() & 3) - 2) * 6;
+        break;
+    case 1:
+        if (--H(a, 0x40) == -1) {
+            p = a + 0x2C;
+            a[6]++;
+            func_80027144(*(s32 *)(*(u8 **)(a + 0xC4) + 0x40), p, 0x400, 4);
+            func_80074590(0xC, 0, 0);
+            func_80027144(*(s32 *)(*(u8 **)(a + 0xC4) + 0x40), p, 0x400, 4);
+            func_80074590(0xC, 0, 0);
+            *(s32 *)(*(u8 **)(a + 0xC4) + 0x40) = 0;
+        }
+        H(*(u8 **)(a + 0xC0), 2) = -((D_1F80017C & 2) * 6);
+        H(*(u8 **)(a + 0xC0), 0) = ((func_8009A450() & 3) - 2) * 6;
+        break;
+    case 2:
+        a[6]++;
+        H(a, 0x4A) = -0x2000;
+        H(a, 0x50) = 0x200;
+        break;
+    case 3:
+        if (a[1] == 0) {
+            return 1;
+        }
+        H(a, 0x54) += 0x100;
+        H(a, 0x56) += 0x40;
+        H(a, 0x36) -= 0x10;
+        *(s32 *)(a + 0x30) += H(a, 0x4A) << 8;
+        H(a, 0x4A) += H(a, 0x50);
+        break;
+    default:
+        return 0;
+    }
+    return 0;
+}
+
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+extern u8 D_800BF9FD;
+
+void f_UpdateCoalMiningTownEntranceOpeningSequence(u8 *a) {
+    s32 s;
+    s32 v;
+    s32 one;
+    u8 *e;
+
+    func_8007778C(a);
+    one = 1;
+    s = a[5];
+    switch (s) {
+    case 0:
+        if (a[3] == one) {
+            v = D_800BF9FD & 1;
+        } else {
+            v = D_800BF9FD & 2;
+        }
+        if (v != 0) {
+            a[5] = one;
+        }
+        break;
+    case 1:
+        a[5] = 2;
+        func_8006E1C0(one);
+        e = D_800E8008;
+        H(e, 0x6C) = 0x578;
+        H(e, 0x6E) = 0x100;
+        H(e, 0x70) = 0x400;
+        H(e, 0x3A) = H(a, 0x2E);
+        H(e, 0x3E) = H(a, 0x32);
+        H(e, 0x42) = H(a, 0x36);
+    case 2:
+        if (func_80114018(a) != 0) {
+            a[5]++;
+        }
+        break;
+    case 3:
+        a[4] = s;
+        if (a[3] == one) {
+            D_800BF870.pad1[0x18C] |= 4;
+        } else {
+            D_800BF870.pad1[0x18C] |= 8;
+        }
+        if (((D_800BF9FD >> 2) & 3) != 3) {
+            func_80042310(one);
+            func_8006E1E4();
+        }
+        break;
+    }
+    if (a[1] != 0) {
+        func_800517F8(a);
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80114380);
 
@@ -2560,7 +2662,6 @@ void func_80115DE0(u8 *a) {
     M2C_FIELD(a, s16 *, 0x86) = 0x64;
 }
 
-extern u8 D_800BF9FD;
 extern u8 *D_800F2738;
 void func_80115EC0(u8 *a) {
     if (func_80051B70(a, 0xC, 0x44) == 0) {
@@ -2886,7 +2987,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80119320);
 
 extern u8 D_800BF809;
 extern u8 D_800BF9F0;
-extern u16 D_1F80017C;
 void func_80119778(u8 *a)
 {
     u8 *b = a + 0x60;
@@ -6965,7 +7065,6 @@ done:
 }
 
 extern u8 D_800BF841;
-extern u8 D_800E806E;
 extern u16 D_1F8000D6;
 void func_8012CE5C(u8 *a) {
     u8 *t;
