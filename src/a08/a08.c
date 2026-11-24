@@ -6084,7 +6084,55 @@ u8 *func_8012D398(void *a)
     return r;
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012D3D4);
+void func_8012D3D4(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 0x60) != 0) {
+            break;
+        }
+        *(s16 *)(a + 0x80) = 0x7F;
+        *(s16 *)(a + 0x82) = 0xFE;
+        *(s16 *)(a + 0x84) = 0xBE;
+        *(s16 *)(a + 0x86) = 0x114;
+        a[0xB] = 0;
+        a[0] = 1;
+        a[0x29] = 0;
+        a[0x2A] = 0x2B;
+        a[4]++;
+        break;
+    case 2:
+        switch (a[5]) {
+        case 0:
+        case 1:
+            break;
+        case 2:
+            func_8012D560(a);
+            a[4] = 3;
+            return;
+        case 3:
+            *(s16 *)(a + 0x58) += 0x200;
+            *(s16 *)(a + 0x32) += 0x20;
+            if (func_8004766C(a) == 0) {
+                return;
+            }
+            if (a[0x29] != 0 || func_80049250(a, 0, (s16)(*(u16 *)(a + 0x86) - *(u16 *)(a + 0x84)))) {
+                func_8012D560(a);
+                a[4] = 3;
+                return;
+            }
+            break;
+        }
+    case 1:
+        if (func_8007778C(a)) {
+            func_800517F8(a);
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_8012D560(void *arg0) {
     s32 temp_s1;
