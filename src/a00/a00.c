@@ -9006,7 +9006,187 @@ void f_HandleTinyMousesHouseEntrance(u8 *a) {
     func_800735F4(a, 0x47);
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleFishermensTownEntranceActor);
+typedef struct { s16 x, y, z; u8 b6; u8 pad7; s16 h8, hA; } EntrancePt;
+extern u8 D_8014A9A8[];
+extern u8 D_8014A9B0[];
+extern EntrancePt D_8014A9B8[];
+extern u32 D_800BF814;
+extern u8 D_800BF81F;
+extern u8 D_800BF9DB;
+extern u8 D_800E7FC7;
+
+void f_HandleFishermensTownEntranceActor(u8 *a)
+{
+    u8 v;
+    u8 *g;
+    u8 *e;
+    u8 *g_f;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, D_8014A9A8[a[3]]) != 0) {
+            break;
+        }
+        a[4]++;
+        a[0xBF] = 1;
+        H_f12c(a, 0x50) = 0;
+        a[0x29] = 0;
+        a[0x28] |= 0x80;
+        H_f12c(a, 0x5A) = H_f12c(a, 0x56);
+        v = D_8014A9B0[a[3]];
+        if (v != 0) {
+            a[0x2A] = v;
+            if (D_8014A9B8[a[3]].x != 0) {
+                H_f12c(a, 0x60) = D_8014A9B8[a[3]].x - H_f12c(a, 0x2E);
+            } else {
+                H_f12c(a, 0x60) = D_8014A9B8[a[3]].x;
+            }
+            if (D_8014A9B8[a[3]].z != 0) {
+                H_f12c(a, 0x64) = D_8014A9B8[a[3]].z - H_f12c(a, 0x36);
+            } else {
+                H_f12c(a, 0x64) = D_8014A9B8[a[3]].z;
+            }
+            H_f12c(a, 0x62) = D_8014A9B8[a[3]].y;
+            a[0x5F] = D_8014A9B8[a[3]].b6;
+            H_f12c(a, 0x82) = D_8014A9B8[a[3]].h8;
+            H_f12c(a, 0x80) = H_f12c(a, 0x82) / 2;
+            {
+                s16 t = D_8014A9B8[a[3]].hA;
+                a[0] = 1;
+                H_f12c(a, 0x86) = t;
+            }
+            H_f12c(a, 0x84) = H_f12c(a, 0x86) / 2;
+        }
+        switch (a[3]) {
+        case 2:
+            a[0x46] = 1;
+            g = (u8 *)D_800BF808;
+            if (g[0xE] != 0 && g[0xF] == 2) {
+                a[4] = 1;
+                a[5] = 0;
+                a[6] = 2;
+                func_80072EFC(a);
+            }
+            break;
+        case 0:
+        case 1:
+        case 3:
+            a[0x46] = 1;
+            break;
+        case 4:
+            a[0x46] = 0;
+            break;
+        case 5:
+            H_f12c(a, 0x56) -= 0x600;
+            break;
+        }
+        break;
+    case 1:
+        g_f = (u8 *)D_800BF808;
+        if (g_f[0xE] != 0) {
+            if (g_f[0xF] == a[3]) {
+                func_80077EBC(a);
+            }
+        } else if (a[3] == 2 && D_1F800207_9c67 >= 0x1D) {
+            func_8007703C(a);
+        } else {
+            func_8007778C(a);
+        }
+        switch (a[3]) {
+        case 0:
+            e = D_800E7E80;
+            switch (a[5]) {
+            case 0:
+                if (e[0x2A] == a[0x2A] && e[5] == 0) {
+                    a[5] = 1;
+                    D_1F800137 = 2;
+                }
+                break;
+            case 1:
+                a[5] = 2;
+                a[0x29] = 1;
+                D_800BF81F = (1 - a[0x5F]) << 4;
+            case 2:
+                if (func_80073328(a) != 0) {
+                    a[5]++;
+                }
+                break;
+            case 3:
+                if (e[0x2A] != a[0x2A]) {
+                    a[5] = 0;
+                }
+                break;
+            }
+            break;
+        case 1:
+            func_80073328(a);
+            func_800735F4(a, 0x45);
+            break;
+        case 2:
+            func_80073328(a);
+            func_800735F4(a, 0x46);
+            if ((D_800BF814 & 0xFFFF0000) == 0x2010000) {
+                a[0x2A] = 0x26;
+                if (D_800BF8BC == 0xFF) {
+                    a[0x5F] = 0;
+                } else {
+                    a[0x5F] = 1;
+                }
+            } else {
+                a[0x2A] = 0x1F;
+                a[0x5F] = 0;
+            }
+            break;
+        case 3:
+            switch (a[5]) {
+            case 0:
+                if (D_800BF9DB & 1) {
+                    a[5] = 2;
+                } else {
+                    a[5] = 1;
+                }
+                break;
+            case 1:
+                switch (a[6]) {
+                case 0:
+                    if (a[0x29] != 0) {
+                        a[6] = 1;
+                        func_80054198(D_800E7E80);
+                        func_8004ED94(0x6D, 0x41);
+                        func_80074590(0x19, 0, 0xF);
+                    }
+                    break;
+                case 1:
+                    if (a[0x29] == 0 && (D_800E7FC7 & 1) == a[0x5F]) {
+                        a[6] = 0;
+                    }
+                    break;
+                }
+                break;
+            case 2:
+                f_HandleA00Warp0813Entrance(a);
+                break;
+            }
+            break;
+        case 4:
+            f_HandleTinyMousesHouseEntrance(a);
+            break;
+        case 5:
+            break;
+        }
+        if (a[1] != 0) {
+            func_800517F8(a);
+        }
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 typedef struct { u16 x, y, z, w; } CurvePt;
 extern CurvePt D_8014AA38[];
