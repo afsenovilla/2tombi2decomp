@@ -4993,7 +4993,59 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80126270);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusPaonAtWellActor);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80126BD8);
+extern u8 D_80131BC0[];
+extern u8 D_80140DC8[];
+extern u8 D_800BF9D7;
+
+void func_80126BD8(u8 *a)
+{
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        g = D_800ECF58;
+        if (func_800519E0(a, 0xA, *(s32 *)(g + 0x74), D_80131BC0) != 0) {
+            break;
+        }
+        *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x78);
+        func_80040CDC(a, D_80140DC8, D_800A3D18_ed09);
+        a[0x7B] = 0;
+        func_80041768(a, 0, 0);
+        a[0] = 3;
+        *(s16 *)(a + 0x80) = 0x120;
+        *(s16 *)(a + 0x82) = 0x240;
+        *(s16 *)(a + 0x84) = 0x180;
+        *(s16 *)(a + 0x86) = 0x190;
+        a[0xB] = 0;
+        if (D_800BF9D7 != 3) {
+            a[0x5E] = 0;
+        } else {
+            a[0x5E] = 1;
+        }
+        *(s16 *)(a + 0x68) = 0x80;
+        a[4]++;
+        break;
+    case 1:
+        switch (a[0x5E]) {
+        case 0:
+            func_80126270(a);
+            break;
+        case 1:
+            f_UpdateCircusPaonAtWellActor(a);
+            break;
+        }
+        if (a[1] != 0) {
+            func_800518FC(a);
+            func_801150DC(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_80126D6C(void *arg0) {
     if (M2C_FIELD(M2C_FIELD(arg0, void **, 0x38), u16 *, 2) == 0) {
