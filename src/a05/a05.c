@@ -2953,11 +2953,80 @@ s32 func_801210EC(u8 *p) {
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801211C8);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801215BC);
+extern u8 D_800BF80F;
+extern u8 D_800E806C;
+extern u8 D_8013E8E8[];
+extern u8 D_8013E970[];
+extern u8 D_8013E9B0[];
+extern u8 D_8013E9C8[];
+extern u8 D_8013EA08[];
+
+void func_801215BC(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        if (D_800BF80F == 0) {
+            a[6]++;
+            func_80042354(1, 1);
+            if (D_800BF870.pad1[0x159] < 9) {
+                D_800BF870.pad1[0x159]++;
+            }
+        }
+        break;
+    case 1:
+        a[6]++;
+        if (D_800BF9CA < 3) {
+            func_80040CDC(a, D_80140F7C_8010, D_8013E970);
+        } else {
+            func_80040CDC(a, D_80140F7C_8010, D_8013E9C8);
+        }
+        a[0x70] = 1;
+        break;
+    case 2:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            D_800E806C = 8;
+            func_8006CBA8(a + 0x2C);
+            a[6]++;
+            func_80040CDC(a, D_80140F7C_8010, D_8013E8E8);
+            a[0x70] = 1;
+        }
+        break;
+    case 3:
+        func_8006CBA8(a + 0x2C);
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[6]++;
+            if (D_800BF870.pad1[0x159] < 3) {
+                func_80040CDC(a, D_80140F7C_8010, D_8013E9B0);
+                if (D_800BF870.pad1[0x159] == 1) {
+                    a[0x7A] = 4;
+                } else {
+                    a[0x7A] = 5;
+                }
+            } else {
+                func_80040CDC(a, D_80140F7C_8010, D_8013EA08);
+                if (D_800BF870.pad1[0x159] < 9) {
+                    a[0x7A] = 4;
+                } else {
+                    a[0x7A] = 5;
+                }
+            }
+            a[0x70] = 1;
+        }
+        break;
+    case 4:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[6]++;
+            func_80042310();
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801217E8);
 
-extern u8 D_800BF80F;
 extern u8 D_800BFB02;
 extern M2C_UNK D_8013EAC0;
 extern M2C_UNK D_80140F7C;
