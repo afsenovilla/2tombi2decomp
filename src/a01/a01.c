@@ -4398,9 +4398,186 @@ void func_8011B594(u8 *a) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011B6B0);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateCapperActor);
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+u8 *func_80072DDC();
+void func_8012AC84(u8 *a);
+/* func_8011C06C, inlined */
+static inline void inl_8011C06C(u8 *a) {
+    extern void func_8011BED0();
+    u8 *p = func_80072DDC((s32)a, 0, 3, 0x13);
 
-extern u8 f_UpdateCapperActor[];
+    if (p != NULL) {
+        M2C_FIELD(p, void **, 0x1C) = func_8011BED0;
+        p[3] = 0;
+        M2C_FIELD(p, s16 *, 0x60) = a[3];
+        M2C_FIELD(p, s16 *, 0x2E) = M2C_FIELD(a, s16 *, 0x2E);
+        M2C_FIELD(p, s16 *, 0x32) = M2C_FIELD(a, s16 *, 0x32);
+        M2C_FIELD(p, s16 *, 0x36) = M2C_FIELD(a, s16 *, 0x36);
+        p[0x5E] = 0;
+        M2C_FIELD(a, u8 **, 0x14) = p;
+    }
+}
+static inline void capper_size(u8 *a) {
+    switch (a[0x5E]) {
+    case 0:
+        if (a[3] == 1) {
+            H(a, 0x84) = 0x320;
+        } else {
+            H(a, 0x84) = 0xA0;
+        }
+        break;
+    case 1:
+        H(a, 0x84) = 0x78;
+        break;
+    }
+    H(a, 0x86) = H(a, 0x84);
+}
+
+void f_UpdateCapperActor(u8 *a)
+{
+    GameState *g;
+    u8 *p;
+    s32 r;
+
+    switch (a[4]) {
+    case 0:
+        if (D_800BF873 != 0) {
+            a[4] = 3;
+            break;
+        }
+        if (D_800BF816 != 0) {
+            break;
+        }
+        H(a, 0x80) = 0x6E;
+        H(a, 0x82) = 0xDC;
+        capper_size(a);
+        func_80041194(a, H(a, 0x86) - H(a, 0x84), 1, 0);
+        W(a, 0x10) = 0;
+        W(a, 0x14) = 0;
+        W(a, 0x3C) = 0;
+        inl_8011C06C(a);
+        g = &D_800BF870;
+        if ((g->pad1[0x183] >> a[3]) & 1) {
+            p = (u8 *)func_80133574(0, a[3]);
+            r = (s32)p;
+            if (W(a, 0x14) != 0) {
+                W(W(a, 0x14), 0x14) = r;
+            }
+            a[4] = 3;
+            break;
+        }
+        if (a[3] == 6 && !(g->pad1[0x18B] & 0x20)) {
+            p = func_80072DDC(a, 1, 4, 0x1C);
+            if (p != NULL) {
+                *(void **)(p + 0x1C) = func_8012AC84;
+                *(u8 **)(a + 0x3C) = p;
+            }
+        }
+        if (a[5] == 2) {
+            if (func_80051B70(a, 0xC, 0x26) != 0) {
+                break;
+            }
+            a[0x5E] = 1;
+        } else {
+            if (func_80051B70(a, 0xC, 0xD) != 0) {
+                break;
+            }
+            a[0x5E] = 0;
+        }
+        a[0] = 1;
+        H(a, 0xBC) = 0x1000;
+        H(a, 0xBA) = 0x1000;
+        H(a, 0xB8) = 0x1000;
+        a[4]++;
+        a[0xD] = 0;
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        H(*(u8 **)(a + 0xC0), 0xA) = -0x400;
+        func_8004130C(a, 1);
+        a[0x46] = a[0xBE];
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            func_8011B100(a);
+            break;
+        case 1:
+            switch (a[6]) {
+            case 0:
+                a[6] = 1;
+                H(a, 0x40) = 0x78;
+            case 1:
+                if (--H(a, 0x40) == 0) {
+                    a[5] = 0;
+                    a[6] = 0;
+                    a[0x5E] = 0;
+                }
+            }
+            func_8011AFF0(a);
+            if (func_800778E4(a, (s16)(D_1F800162 - *(u16 *)(a + 0x32))) != 0) {
+                func_800517F8(a);
+            }
+            break;
+        case 2:
+            switch (a[6]) {
+            case 0:
+                a[6] = 1;
+                H(a, 0x40) = 0x78;
+            case 1:
+                if (--H(a, 0x40) == 0) {
+                    a[5] = 0;
+                    a[6] = 0;
+                    a[0x5E] = 0;
+                }
+            }
+            func_8011AFF0(a);
+            if (func_800778E4(a, (s16)(D_1F800162 - *(u16 *)(a + 0x32))) != 0) {
+                func_800517F8(a);
+            }
+            break;
+        }
+        capper_size(a);
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        break;
+    case 2:
+        switch (a[5]) {
+        case 0:
+        case 6:
+            func_8011B268(a);
+            break;
+        case 1:
+            func_8011B3EC(a);
+            break;
+        case 2:
+            func_8011B594(a);
+            break;
+        case 3:
+            a[0] = 1;
+            a[4] = 1;
+            a[5] = 1;
+            a[6] = 0;
+            if (func_800778E4(a, (s16)(D_1F800162 - *(u16 *)(a + 0x32))) != 0) {
+                func_800517F8(a);
+            }
+            break;
+        case 4:
+            func_8011B6B0(a);
+            break;
+        case 5:
+            break;
+        }
+        capper_size(a);
+        a[0x29] = 0;
+        a[0x2B] = 0;
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
+
+void f_UpdateCapperActor();
 void func_8011BDC4(u8 *a) {
     s32 k;
     u8 *e;
@@ -4418,7 +4595,7 @@ void func_8011BDC4(u8 *a) {
         e = func_80072DDC(a, 1, 2, 0x10);
         if (e != NULL) {
             a[0x5E] = 0;
-            FP(e, 0x1C) = f_UpdateCapperActor;
+            FP(e, 0x1C) = (u8 *)f_UpdateCapperActor;
             e[3] = a[0x60];
             F16(e, 0x2E) = FU16(a, 0x2E);
             F16(e, 0x32) = FU16(a, 0x32) - 0x64;
