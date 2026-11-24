@@ -3580,7 +3580,53 @@ void func_8002B8F4(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002BAFC);
+void func_8002BAFC(u8 *a)
+{
+    SVec_F230 *v;
+    s32 i;
+    SVec_F230 *w;
+    s32 j;
+    u16 x, y, z;
+
+    switch (a[4]) {
+    case 0:
+        w = (SVec_F230 *)(a + 0x50);
+        x = *(u16 *)(a + 0x2C);
+        y = *(u16 *)(a + 0x2E);
+        z = *(u16 *)(a + 0x30);
+        *(s16 *)(a + 0x4E) = 7;
+        a[4] = 1;
+        for (j = 0; j < 7; ) {
+            j++;
+            w->vx = x + ((rand() - 0x4000) >> 8);
+            w->vy = y + ((rand() - 0x4000) >> 8);
+            w->vz = z + ((rand() - 0x4000) >> 8);
+            w->pad = 0x100;
+            w++;
+        }
+    case 1:
+        if ((*(s32 *)(a + 0x34) = *(s32 *)(a + 0x38)) == 0) {
+            goto resolve;
+        }
+        v = (SVec_F230 *)(a + 0x50);
+        for (i = 0; i < 7; ) {
+            i++;
+            v->vx += (rand() - 0x4000) >> 11;
+            v->vz += (rand() - 0x4000) >> 11;
+            v->vy -= 0x12;
+            v++;
+        }
+        if (func_8002B278(a) == 0) {
+            func_80031780(a);
+        }
+        break;
+    case 2:
+    case 3:
+    resolve:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 #define gte_ldv0_58(r0) __asm__ volatile("lwc2 $0, 0x58(%0); lwc2 $1, 0x5C(%0)" : : "r"(r0))
 void func_8002BC9C(u8 *a)
