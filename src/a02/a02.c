@@ -3019,7 +3019,48 @@ void func_80115148(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011518C);
+typedef struct { u16 x, w, z, d; } Box518C;
+extern Box518C D_80129BDC[];
+
+s32 func_8011518C(u8 *a, s32 r)
+{
+    s32 i;
+    Box518C *e;
+    s16 dx, wx, dz, wz, adx, adz, px, pz;
+    s32 r_p = r;
+
+    for (i = 0; i < 3; i++) {
+        dx = *(u16 *)(a + 2) - D_80129BDC[i].x;
+        adx = dx;
+        wx = D_80129BDC[i].w + r_p;
+        px = wx;
+        if ((u16)(dx + wx) > wx * 2) {
+            continue;
+        }
+        dz = *(u16 *)(a + 0xA) - D_80129BDC[i].z;
+        adz = dz;
+        wz = D_80129BDC[i].d + r_p;
+        pz = wz;
+        if ((u16)(dz + wz) > wz * 2) {
+            continue;
+        }
+        if (dx < 0) {
+            adx = -dx;
+            px = -wx;
+        }
+        if (dz < 0) {
+            adz = -dz;
+            pz = -wz;
+        }
+        if (wx - adx < wz - adz) {
+            *(u16 *)(a + 2) = D_80129BDC[i].x + px;
+            return 1;
+        }
+        *(u16 *)(a + 0xA) = D_80129BDC[i].z + pz;
+        return 2;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801152A8);
 
