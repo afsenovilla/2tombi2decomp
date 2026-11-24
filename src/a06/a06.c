@@ -2000,7 +2000,71 @@ void func_801147CC(u8 *a)
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80114840);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80114A18);
+typedef struct { s16 l0, x, l1, y, l2, z; } V3Hi;
+#define CH(o) (*(s16 *)(c + (o)))
+#define AH(o) (*(s16 *)(a + (o)))
+#define DH(o) (*(s16 *)(d + (o)))
+
+void func_80114A18(u8 *c, u8 *a)
+{
+    V3Hi v;
+    u8 *d;
+
+    CH(0x26) = 0xFA;
+    d = D_1F8000D0_b839;
+    DH(0x1E) = -0x960;
+    switch (c[3]) {
+    case 0:
+        c[3] = 1;
+        if (a[0x2A] == 1) {
+            DH(0x2) = 0x6FEA;
+            DH(0x6) = -0x8F9;
+            DH(0xA) = 0x4AC9;
+        }
+    case 1:
+        c[0x64] &= 0x7F;
+        if (a[0x2A] == 1) {
+            if (AH(0x36) > 0x4E20) {
+                c[0x64] |= 0x80;
+                CH(0xA) = AH(0x2E);
+                CH(0xE) = AH(0x32);
+                CH(0x12) = AH(0x36);
+                func_8006E3F4(c, c + 8);
+                v.x = 0x6FEA;
+                v.y = -0x8F9;
+                v.z = 0x4AC9;
+                func_8006CEC4(D_1F8000D0_b839, &v, 0xE0);
+            } else if (AH(0x2E) > 0x64C8) {
+                CH(0x26) = 0;
+            }
+        } else {
+            c[3]++;
+        }
+        break;
+    case 2:
+        c[0x72] = 0;
+        switch (a[0x2A]) {
+        case 1:
+            c[3]--;
+            break;
+        case 2:
+            if (AH(0x32) < -0x1C20 && AH(0x36) > 0x3E1C) {
+                c[0x72] = 2;
+            }
+            break;
+        case 3:
+            if (AH(0x32) < -0x1EA0 && AH(0x36) < 0x2A76) {
+                c[0x72] = 3;
+            }
+            break;
+        case 4:
+        case 5:
+            c[0x72] = 3;
+            break;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80114C1C);
 
