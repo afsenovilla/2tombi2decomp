@@ -11736,13 +11736,70 @@ land:
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TryStartTombaSupportInteraction);
+s32 f_TryStartTombaSupportInteraction(u8 *a)
+{
+    if ((*(s32 *)(a + 0x158) = f_FindTombaSupportInteractionTarget(a, 0)) != 0) {
+        a[0x16A] = 0;
+        a[0x181] = 0;
+        *(s32 *)(a + 0x10) = *(s32 *)D_1F800084;
+        *(s16 *)(a + 0x6A) = 0;
+        *(s16 *)(a + 0x58) = 0;
+        a[0x145] = 0;
+        a[0x144] = 0;
+        a[6] = 0;
+        a[7] = 0;
+        a[0x14A] = a[0x147] | 2;
+        switch (a[0x164]) {
+        case 0x81:
+            a[5] = 0x18;
+            a[0] = 6;
+            *(s16 *)(a + 0x44) = 0;
+            a[6] = 0xC;
+            a[0x164] &= 1;
+            f_PlaySoundEffect(5, 0, 0);
+            break;
+        case 1:
+        case 9:
+        case 0xB:
+            *(s16 *)(a + 0x44) = 0;
+            a[5] = 4;
+            f_PlaySoundEffect(5, 0, 0);
+            break;
+        case 2:
+        case 7:
+        case 8:
+            *(s16 *)(a + 0x44) = 0;
+            a[5] = 7;
+            f_PlaySoundEffect(5, 0, 0);
+            break;
+        case 3:
+            a[5] = 8;
+            f_PlaySoundEffect(5, 0, 0);
+            break;
+        case 6:
+            a[5] = 0x16;
+            f_PlaySoundEffect(4, 0, 0);
+            break;
+        case 4:
+            a[5] = 0x14;
+            f_PlaySoundEffect(4, 0, 0);
+            break;
+        case 5:
+        case 0xA:
+            a[5] = 0x15;
+            f_PlaySoundEffect(4, 0, 0);
+            break;
+        }
+        return 1;
+    }
+    return 0;
+}
 
 void func_80057C08(void *arg0, s32 arg1) {
     u8 temp_v0;
     u8 temp_v0_2;
 
-    if ((f_TryStartTombaSupportInteraction() == 0) && (arg1 != 2)) {
+    if ((((s32 (*)())f_TryStartTombaSupportInteraction)() == 0) && (arg1 != 2)) {
         if ((M2C_FIELD(arg0, u8 *, 0x29) == 0) && (M2C_FIELD(arg0, u16 *, 0x17E) & 0x180)) {
             if (arg1 == 0) {
                 if (M2C_FIELD(arg0, u8 *, 0x16A) == 0) {
