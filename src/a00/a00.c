@@ -11970,7 +11970,58 @@ s32 f_UpdateTownCreatureLaunchLanding(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreaturePostKnockbackRecovery);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureRandomIdle);
+extern u8 D_8014BEB4[];
+
+s32 f_UpdateTownCreatureRandomIdle(u8 *a) {
+    u8 *q = a + 0x60;
+    s32 res = 0;
+
+    switch (a[7]) {
+    case 0:
+        HU(q, 2) &= 0xFFFB;
+        switch (D_8014BEB4[func_8009A450() & 0xF]) {
+        case 0:
+            a[7] = 1;
+            break;
+        case 1:
+            a[7] = 5;
+            break;
+        case 2:
+            a[7] = 9;
+            break;
+        }
+        H_f12c(a, 0x40) = 0x2D;
+        func_801402B8(a, 0x15, 8);
+        H_f12c(a, 0x4E) = 0;
+    case 1:
+    case 5:
+    case 9:
+        if (--H_f12c(a, 0x40) == -1) {
+            if (a[7] == 1) {
+                res = 1;
+            } else {
+                a[7]++;
+            }
+        }
+        break;
+    case 6:
+    case 10:
+        switch (a[7]) {
+        case 6:
+            func_801402B8(a, 0x14, 8);
+            break;
+        case 10:
+            func_801402B8(a, 0x15, 8);
+            break;
+        }
+        H_f12c(a, 0x40) = 0x2D;
+        a[7] = 1;
+        break;
+    }
+    H_f12c(a, 0x32) += 0x10;
+    f_UpdateTownCreatureTerrainContact(a);
+    return res;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureIdleDecision);
 
