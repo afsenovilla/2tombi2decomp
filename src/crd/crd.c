@@ -545,7 +545,136 @@ done:
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018BA68);
 
-INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018BF74);
+extern s32 D_800A2928;
+
+void func_8018BF74(u8 *a)
+{
+    u8 port = a[0x46] << 4;
+    s32 one = 1;
+    u8 r;
+
+    switch (a[2]) {
+    case 0:
+        func_8009BA90(port);
+        a[0x43] = 0;
+        (a + a[0x46])[0x4C] = 0;
+        a[2]++;
+        break;
+    case 1:
+        if ((a[0x3E] = crd_card_event_wait()) == 0) {
+            break;
+        }
+        switch (a[0x3E]) {
+        case 1:
+            if ((a + a[0x46])[0x4E] != 0xFF) {
+                break;
+            }
+        case 4:
+            func_80080840(D_800BF498.x2C);
+            func_80080840(D_800BF498.x30);
+            func_80080840(D_800BF498.x34);
+            func_80080840(D_800BF498.x38);
+            func_8009BAB0(port);
+            while (1) {
+                if (func_80080840(D_800BF498.x2C) == 1) {
+                    break;
+                }
+                if (func_80080840(D_800BF498.x30) == 1) {
+                    break;
+                }
+                if (func_80080840(D_800BF498.x34) == 1) {
+                    break;
+                }
+                if (func_80080840(D_800BF498.x38) == 1) {
+                    break;
+                }
+            }
+            if (a[0x3E] != 1) {
+                (a + a[0x46])[0x48] = 0;
+            }
+            (a + a[0x46])[0x4E] = 0xFF;
+            a[0x3E] = 0;
+            a[2]++;
+            return;
+        case 2:
+            a[0x3F] = 0;
+            a[0x40] = 0;
+            CRD_MSG(0x35, D_800A2928);
+            a[0x50] = 0x1E;
+            a[0x44] = 0;
+            a[0x4B] = 0xFC;
+            a[0x4A] = 0xFC;
+            (a + a[0x46])[0x48] = 0;
+            (a + a[0x46])[0x4E] = 0xFF;
+            a[0x46] = 0xFF;
+            a[0x47] = 0;
+            a[0x52] = 0;
+            H(a, 0x54) = 0;
+            H(a, 0x56) = 0;
+            a[3] = 0;
+            a[2] = 0;
+            a[1] = 0;
+            a[0] = 0xF;
+            return;
+        default:
+            func_8001CBA8(a, a[0x46]);
+            a[0x3E] = 2;
+            break;
+        }
+        a[0x3F] = 0;
+        a[0x40] = 0;
+        break;
+    case 2:
+        func_80080840(D_800BF498.x1C);
+        func_80080840(D_800BF498.x20);
+        func_80080840(D_800BF498.x24);
+        func_80080840(D_800BF498.x28);
+        func_8009BAA0(port);
+        a[0x43] = 0;
+        a[2]++;
+        break;
+    case 3:
+        if ((a[0x3E] = crd_card_event_wait()) == 0) {
+            break;
+        }
+        switch (a[0x3E]) {
+        case 4:
+            if ((a + a[0x46])[0x4C] == 0) {
+                a[0x3E] = 0;
+                func_8009BA90(port);
+                a[0x43] = 0;
+                (a + a[0x46])[0x4C]++;
+                a[2] = 1;
+                return;
+            }
+            break;
+        case 2:
+            CRD_MSG(0x35, D_800A2928);
+            a[0x50] = 0x1E;
+            a[0x44] = 0;
+            a[0x4B] = 0xFC;
+            a[0x4A] = 0xFC;
+            (a + a[0x46])[0x48] = 0;
+            (a + a[0x46])[0x4E] = 0xFF;
+            a[0x46] = 0xFF;
+            a[0x47] = 0;
+            a[0x52] = 0;
+            H(a, 0x54) = 0;
+            H(a, 0x56) = 0;
+            a[3] = 0;
+            a[2] = 0;
+            a[1] = 0;
+            a[0] = 0xF;
+            break;
+        case 3:
+            (a + a[0x46])[0x4A] = 0xFC;
+            break;
+        }
+        a[0x3F] = 0;
+        a[0x40] = 0;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/crd/nonmatchings/crd", func_8018C4B4);
 
@@ -826,7 +955,6 @@ void func_8018DD38(u8 *a)
 
 extern s32 D_800A291C;
 extern s32 D_800A2920;
-extern s32 D_800A2928;
 void func_8018DFEC(u8 *a)
 {
     s32 k;
