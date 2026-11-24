@@ -2583,7 +2583,7 @@ extern u16 D_1F8001B2;
 extern u16 D_1F8001B4;
 extern u16 D_1F8001B6;
 extern u16 D_1F8001B8;
-void func_8002B7B0(u8 *);
+void func_8002B7B0(u8 *a);
 void func_8002B3A4(u8 *);
 void f_InitializeEffectSlotFromTemplateIndex(void *a, u16 *t, s32 n)
 {
@@ -3499,7 +3499,48 @@ s32 func_8002B278(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B3A4);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002B7B0);
+extern u16 D_8009DDB8[];
+extern u8 D_8009DDBC[];
+
+void func_8002B7B0(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+    u16 h0, h1;
+
+    switch (a[4]) {
+    case 0:
+        *(s32 *)(a + 0x48) = 0;
+        *(s32 *)(a + 0x4C) = 0;
+        h0 = D_8009DDB8[0];
+        h1 = D_8009DDB8[1];
+        *(s16 *)(a + 0x32) = -0x28;
+        *(s32 *)(a + 0x38) = 0;
+        *(s32 *)(a + 4) = 1;
+        *(u16 *)(a + 0x44) = h0;
+        *(u16 *)(a + 0x46) = h1;
+    case 1:
+        if (!((*(u8 **)(a + 0x14))[0x1B] & 0x40)) {
+            a[4] = 2;
+            break;
+        }
+        if ((*(s32 *)(a + 0x34) = *(s32 *)(a + 0x38)) == 0) {
+            *(u8 **)(a + 0x34) = *(u8 **)(a + 0x38) = D_8009DDBC;
+        }
+        if ((a[1] = (*(u8 **)(a + 0x14))[1]) != 0) {
+            *(u16 *)(a + 0x2C) = *(u16 *)(o + 0x2C);
+            *(u16 *)(a + 0x2E) = *(u16 *)(o + 0x30);
+            *(u16 *)(a + 0x30) = *(u16 *)(o + 0x34);
+            *(u16 *)(a + 0x4A) = (*(u16 *)(a + 0x4A) + 0x88) & 0xFFF;
+            *(s16 *)(a + 0x48) = rsin(a[7] << 4) >> 4;
+            a[7] += 2;
+        }
+        break;
+    case 2:
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 extern u8 D_800A2030[];
 extern u8 D_800A2018[];
@@ -10770,7 +10811,47 @@ s32 func_8004E29C(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004E414);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004E808);
+extern u8 D_800E7EC6;
+
+void func_8004E808(u8 *a)
+{
+    u8 *t;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        a[0xB] = 0x10;
+        a[0xD] = 0;
+        a[0x47] = 0;
+        *(s16 *)(a + 0x5A) = 0;
+        *(s16 *)(a + 0x5C) = 0;
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            if (D_800E7EC6 == 0x72) {
+                a[5] = 1;
+            }
+            break;
+        case 1:
+            t = (u8 *)D_800E7E80;
+            f_PositionActorFromModelParts(a, 0, *(s32 *)(t + 0xDC), *(s32 *)(t + 0xD0), 0);
+            if (t[0x174] & 4) {
+                *(s16 *)(a + 0x32) -= 0x46;
+            } else {
+                *(s16 *)(a + 0x32) -= 0x64;
+            }
+            a[1] = 1;
+            break;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004E928);
 
