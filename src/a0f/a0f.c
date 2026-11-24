@@ -3498,7 +3498,6 @@ extern M2C_UNK D_8001B354;
 extern M2C_UNK D_800A43E8;
 extern M2C_UNK D_800ECF58_6b74;
 extern M2C_UNK D_80120C20;
-
 void func_801183C8(u8 *a)
 {
     u8 *g;
