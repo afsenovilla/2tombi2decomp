@@ -2830,7 +2830,69 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011D70C);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011DA2C);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011DDC0);
+extern u8 D_8013BA3C[];
+extern u8 D_80142108[];
+extern s16 D_8013E240[];
+s32 func_8011EB84(u8 *p, s32 f);
+
+void func_8011DDC0(u8 *a)
+{
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        if (func_8011EB84(a, 0) == 0) {
+            break;
+        }
+        if (D_800BF8CD == 0xFF) {
+            func_8007ADDC(a);
+            g = D_800ECF58;
+            if (func_800519E0(a, 5, *(s32 *)(g + 0x78), D_8013BA3C) == 0) {
+                *(s32 *)(a + 0x3C) = *(s32 *)(g + 0x80);
+            }
+            func_80077C40(a, D_80142108, 4);
+            a[0x46] = func_8009A450();
+            *(s16 *)(a + 0x58) = 0;
+            *(s16 *)(a + 0x54) = 0;
+            *(s16 *)(a + 0x56) = a[0x46] << 4;
+            *(s16 *)(a + 0x2E) = D_8013E240[(a[3] - 4) * 3];
+            *(s16 *)(a + 0x32) = D_8013E240[(a[3] - 4) * 3 + 1];
+            *(s16 *)(a + 0x36) = D_8013E240[(a[3] - 4) * 3 + 2];
+            a[0x5E] = 1;
+        } else {
+            a[0x5E] = 0;
+            *(s16 *)(a + 0x56) = 0xE83;
+        }
+        a[4]++;
+        break;
+    case 1:
+        if (D_800BF816 == 0) {
+            a[4] = 3;
+            break;
+        }
+        switch (a[0x5E]) {
+        case 0:
+            func_8011CD30(a);
+            break;
+        case 1:
+            func_8011D70C(a);
+            break;
+        case 2:
+            func_8011DA2C(a);
+            break;
+        }
+        if (a[1] != 0) {
+            func_80076D68(a);
+            func_800518FC(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011E000);
 
@@ -2841,7 +2903,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011E4C4);
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8011E870);
 
 extern u8 D_8013B9EC[];
-extern u8 D_80142108[];
 
 s32 func_8011EB84(u8 *p, s32 f)
 {
