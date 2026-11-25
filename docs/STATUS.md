@@ -3,6 +3,42 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-25: twelfth round
+
+All code in C: **4847 / 7011 functions (69.1 %, 47.1 % of the bytes)**, from 4778 after the tools pass (45.5 %).
+Agents: a00-a01 +21 (~9.5 KB: a00's town-creature callees func_801402B8 / f_UpdateTownCreatureTerrainContact unblocked
+the creature states, 6 matched, ~12 left), a04-a08 +17 (~9.3 KB: contact dispatchers, four round-11 near misses),
+a02-a03 +16 (~8.0 KB), a09 scope +10 (~13.9 KB: three NPC state machines and f_SelectEvilPigArenaTarget with its five
+copies in a0b..a0f), main +5 (~1.5 KB, three round-11 near misses). nearcopy put a02 func_801168A0 into a07
+func_80113470. integrate.py: clean build 29 / 29, sweeps nothing more; 8219523 (a02 func_8011BACC) does not link
+alone (its alias line is in the next commit). sibling.py ported nothing new this round (families matched by
+nearcopy or differed in shape). Recipes in AGENTS.md "Round 12 forms", pitfalls in "Tool pitfalls".
+
+Near misses (scratch in the session scratchpad r12b/<scope>/): a05 func_8013484C 1 (delay slot from the
+fall-through), main func_8007AA38 1 short, func_8006DF88 2 (matches only with an asm register), a00 func_80118B10 2,
+a02 func_8010B068 2 (3 copies), a04 func_8010FF6C 2, a0c func_8011353C 2 (order only), main func_800508A8 3, a00
+func_8013BCC8 3 (6 copies), a01 func_8010FD5C 3, a02 func_8010FFF4 3 short, a0a func_801179C0 4, main func_80021DF4 4,
+func_8002F230 4, a02 func_80122AC4 4, func_801154DC 6, func_8011321C 6, a05 func_8013590C 6 (family of 3 with a07
+func_8012D2B4, a08 func_8012A06C), main func_8007E110 8, a00 f_ResolveActiveColliderActorContacts 8,
+f_UpdateLinkedTownCreatureActor 8, a01 func_8010EFBC 8, a01 f_UpdatePipeAreaScenePropActor 10, a05
+f_UpdateWhosTheLiarSisterActorA 10, main func_800368D0 12 (blocks 6), a06 func_8010F450 11, func_8011D520 12, main
+f_StepAngleTowardTarget 14, a02 func_801117B0 14, a08 func_8010D9AC 15 (s2 / s3), a00 func_80140544 19, a0a
+func_801140D0 21 (4 copies; register pair), a07 func_8012DBB4 23, main func_8006DCF4 38. Left in a00: the
+town-creature states (KnockbackBounce, HopAndBrake, ExtendedLeap, LeapingCharge, func_8014103C, FleeRun,
+JumpingAttack, IdleDecision, StraightRun, ApproachTomba, VariantActivation, f_UpdateCrabBasketCarrierSequence).
+
+Tool work left: regswap kinds (comparison orientation, variable shift, scc defeater, giv-base, chained assignment,
+late store `t = x + 1 ... x = t`, parameter frame copy, swap temp reuse, folded-away use, one-expression temporary,
+block-scoped pointer locals, constant through a two-set variable, store into each arm, loads into temporaries, copy
+back of a parameter, accumulator -> `x0 + i*K`, literal-in-index -> locals); a return-structure variants tool
+(in-place return / goto shared label / fall through) and a cross-jump defeater; loophoist: the threshold x savings x
+lifetime arithmetic per movable and the distance to the edge; statemachine.py: jump tables through a hoisted
+register and unlabeled rodata (a05 D_80109150); a contact-dispatch generator from the case map; install_c: types of
+a definition prototype declared before its insertion point, skip pp items / rename aliases inside `#define` bodies,
+data-style declarations, alias roll back / reuse; ccheck: a scratch extern clashing with the target's headers;
+workqueue: a "pending callee just matched" column; decomp.py `--actor` by default for overlays; nearcopy prints
+copies in other programs at the end of a scoped run; variants `--alts` without leading indentation.
+
 ## 2026-11-24 (9): tools after round 11
 
 One tools agent, about 80 minutes, the "Tool work left" list of the round-11 entry in its order.

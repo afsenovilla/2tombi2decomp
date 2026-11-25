@@ -939,7 +939,6 @@ void func_8010F690(u8 *a) {
 extern s16 D_1F800144;
 extern u8 **D_1F80013C;
 extern u8 *D_800F2738;
-
 void func_8010F87C(void) {
     u8 *a;
     u8 **p;
@@ -2373,7 +2372,6 @@ u8 *func_80113D04(s32 a) {
 }
 
 extern PartInit D_80135B30[];
-
 s32 func_80113D44(PartsOwner *a) {
     s32 i;
     u8 *q;
@@ -2554,7 +2552,6 @@ void f_UpdateCoalMiningTownEntranceOpeningSequence(u8 *a) {
 }
 
 extern PartInit5 D_80135B6C[];
-
 void func_80114380(PartsOwner *a) {
     s32 i;
     s16 k;

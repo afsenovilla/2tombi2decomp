@@ -810,7 +810,6 @@ static inline void inl_80110BD0(u8 *a, u8 *b)
         }
     }
 }
-
 void func_8010FBEC(void)
 {
     u8 *a;
@@ -932,7 +931,6 @@ extern u8 *D_1F800080_ddd3;
 extern s16 D_1F800166;
 extern s16 D_1F800190;
 extern u8 D_800BF81E;
-
 u8 *func_801103F0(u8 *a)
 {
     u8 **l = D_1F80014C;

@@ -639,7 +639,6 @@ found:
 }
 
 u8 *func_800310F4();
-
 void func_8010C678(u8 *a, s32 k) {
     s16 *m = (s16 *)(a + 0x98);
     s16 *n = (s16 *)(*(u8 **)(a + 0x60) + 0x10);
@@ -703,7 +702,6 @@ extern u16 D_800E7E68;
 extern u16 D_1F800170;
 extern u16 D_1F800172;
 extern u16 D_1F800174;
-
 void f_UpdateTrolleySteeringInput(u8 *a) {
     u8 *b = a + 0x60;
     u8 k;
@@ -1504,7 +1502,6 @@ extern s8 D_800BF9FB;
 extern u8 *D_1F800138;
 extern u8 D_1F800136;
 extern u8 D_1F800137;
-
 void f_UpdateTrolleyCourseOverlayActor(void) {
     u8 *a = D_1F800138;
     s32 r;

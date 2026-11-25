@@ -933,7 +933,6 @@ extern u8 D_1F80025C[];
 extern u16 D_1F800160_3621;
 extern u16 D_1F800162_b816;
 extern u16 D_1F800164_7d8c;
-
 s32 f_SelectEvilPigArenaTarget(void *arg0, s32 mode)
 {
     u8 *a = arg0;

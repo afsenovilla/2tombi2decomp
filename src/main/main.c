@@ -5653,7 +5653,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_800355B4);
 typedef struct { u8 area; u8 b1; u8 b2; u8 b3; } AreaKey_5640;
 extern AreaKey_5640 D_800A2468[];
 extern u8 *(*D_800A2444[])(void);
-
 s32 func_80035640(s32 idx)
 {
     u8 *g = (u8 *)&D_800BF870;
@@ -8714,7 +8713,6 @@ s32 func_800436BC(u8 *p)
 }
 
 extern u8 D_800BF822;
-
 s32 func_80043720(u8 *a)
 {
     s32 one;
@@ -11363,7 +11361,6 @@ void func_8004F430(void *arg0) {
 }
 
 typedef struct { s16 x; s16 y; u8 pad[0x88]; } Rec_F474;
-
 void func_8004F474(u8 *a)
 {
     Rec_F474 *r = (Rec_F474 *)(a + 0xC);
@@ -17671,7 +17668,6 @@ void func_8006BDF0(u8 *a, s32 quiet)
 extern u16 D_800E7ED6;
 void func_8006C608(u8 *a);
 void func_8007AB20(void);
-
 void func_8006BE88(u8 *a)
 {
     s16 v[6];
@@ -23208,7 +23204,6 @@ typedef struct {
     s16 x3, y3;
 } PolyG4_FC24;
 extern PolyG4_FC24 *D_800BF544_fc24;
-
 void func_8007FC24(void)
 {
     PolyG4_FC24 *p = D_800BF544_fc24++;

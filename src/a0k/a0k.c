@@ -2042,7 +2042,6 @@ loop:
 extern u8 *D_1F800138_5432;
 extern u8 D_1F800136;
 extern u8 D_800BF9C3;
-
 void func_80110938(void)
 {
     u8 *a = D_1F800138_5432;
@@ -2960,7 +2959,6 @@ extern u8 D_800E800D;
 extern u8 D_8011CB3C[];
 void func_80112D80();
 u8 *func_8003315C();
-
 void func_80112884(u8 *a)
 {
     u8 *p = D_800E7E80;

@@ -349,6 +349,53 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - `switch ((s32)((u32)sw >> 8))` for srl + slti; a variable shift whose count is also returned: `u32 k = 1; if (x >=
   ((u32)tbl[i] >> k)) return k;`; sra instead of srl on a u8: shift by a local (`n = 2; (x >> n) & 1`).
 
+**Round 12 forms**
+- Memory CSE off: a chained assignment `H(a,0x32) = H(a,0x7C) = K;` makes later field reads real loads (retail re-reads
+  a field right after storing a constant).
+- Early load, late store of a counter: `f = a[4] + 1;` at the top of the block, `a[4] = f;` at its end (the `sb` lands
+  in a jal delay slot); `a[4]++` does not.
+- An argument saved to a frame slot (`sw a0,0x18(sp)` below the frame size): `void *arg0` + `u8 *a = arg0;`.
+- `move v0,sN` with no sll/sra: the return type is s32 even when the value is stored to an s16 field.
+- `s32 pad[1];` gives a leaf an 8-byte frame (`pad[2]` 16, a scalar none).
+- A real `mult` by a constant: multiply by the field just stored with it (`H(a,0x2E) = 0x8E8; ... H(a,0x2E) * x`);
+  a literal gives shift-add.
+- Two adjacent s16 globals into fields: read both into locals first (a struct copy gives lwl/lwr); two globals
+  loaded before stores into the actor: temporaries first (aliasing).
+- Loop-carried `ang += K` set up after the hoisted constants: `ang + i * K`. A pointer set after the loop's entry
+  test: `i = 0; if (i < n) { p = a + 0xE; do { ... } while (i < n); }`.
+- Identical tails kept apart: `return 0;` in one case, `goto ret0;` in the others, `ret0: return 0;` inside the last
+  case; both loops falling through to one final `return -1;` for retail's single `li v0,-1`.
+- Primitive fills (POLY_G4) whose stores stay in source order: struct members, not casts; OT-link statements in
+  `do { } while (0)`.
+- Literal constants inside an index that gcc regroups: put them in locals (`s32 n1 = 1, n2 = 2;`).
+- Which register CSE keeps after `if (r == 2)`: add a use of `r` that folds away (`t + r - 2`).
+- `case 0: break;` below the lowest label moves gcc's switch pivot.
+- A temporary written as one expression (`s = (rand() * rand() >> 16) + K`) gets a higher priority than two
+  statements (s0 / s1 swap).
+- Compare orientation swaps registers: `S(a,x) > S(c,y) + K` vs `S(c,y) + K < S(a,x)`; `if (D_X <= e)` loads the
+  global first; a `li vN,K` in a delay slot may be the other compare's constant (`a[3] == 3`, not 2).
+- A load retail puts before a store into a jal delay slot: write that copy statement first.
+- Global arrays `D_X[7] = ...` rather than a pointer local (gcc hoists the pointer above the previous store); a
+  struct member `D_800BF870.pad1[0x197]` vs a pointer cast choose the `lui` / `addiu` registers.
+- An inlined helper taking a table: a `#define` macro keeps the address load in place (a static inline loads it
+  early). A repeated null test after a guarded copy: a static inline returning the pointer.
+- Case tails merged where retail merges: per-case locals (`r = 0x28; h = 0x50;`) so the tail instructions are equal;
+  write each case's tail in full and let gcc cross-jump; a trailing store skipped by early branches goes into each
+  arm.
+- Loop-hoist threshold in loops with calls (contact dispatchers): gcc moves an invariant when threshold (~26) x
+  savings x lifetime >= the loop's insn count; a jump-table address (156) is on the edge. A constant assigned through
+  a variable set in two places (`k = 2;` / `k = 1;`) is not movable and keeps the jump table in the loop; a `u16 d`
+  temporary per arm changes the insn count (loophoist.py).
+- Contact-dispatch loops: `D_1F800182 = n; while (D_1F800182) { b = *l; D_1F800182--; l++; if (b[0] & 1) switch
+  (b[2]) ... }`, the case map from statemachine.py plus the table offset; cases equal to matched functions as static
+  inline helpers (take regswap's double `do { } while (0)` wraps).
+- One parameter masked twice: `(m & 0xFF)` in the test and `(u8)m` as the argument; `if (r[3] == 0)` after
+  `r[3] = a1` reproduces the `andi` of the argument register; `parts[a[9] - 1]` keeps `addiu -1` only through a
+  struct with `u8 *parts[2]`.
+- A random choice of an argument: two full calls in if / else (a ternary gives the delay-slot overwrite form).
+- A scratch `extern u8 D_800BF870;` clashes with include/game.h's GameState: include game.h and use its member.
+- Writing straight from the retail asm beat the drafts this round (12 of a00's 21 matches first or second try).
+
 **Switch and jump-table shapes (more)**
 - Duplicate the cases with identical code to get a jump table whose entries share a target (gcc builds the table,
   then cross-jumps the blocks); `case 1: d = X; break; case 2: d = X; break; default: d = X;` gives separate tree
@@ -490,6 +537,14 @@ struct-member form of a cast access, regswap `member` toggles every one)
 
 - Never name a tool after a stdlib module (`tools/queue.py` would shadow `queue`, which concurrent.futures imports,
   for every tool run as `python3 tools/X.py`): the work queue is tools/workqueue.py.
+
+- install_c (round 12): a prototype taken from a definition can land above the typedef it names (parse error: move
+  the typedef up); a multi-line `#define` ending with `}` can still be taken for a function (end it with
+  `} /* end */`); alias renaming skips macro bodies (use the alias name inside a macro); callee prototypes with a
+  narrow return type (`s16 f()`) change every caller in the file (keep s32, narrow at the use).
+- sibling.py needs a program list (none = nothing searched); variants.py `--set` needs `\|` / `\&` inside single
+  quotes, `--alts` blocks may fail without leading indentation. Never `pkill -f` a background tool (blocked): TaskStop
+  or let it time out.
 
 ## Decisions (with dates in STATUS)
 

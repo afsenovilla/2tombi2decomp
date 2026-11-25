@@ -902,7 +902,6 @@ extern u8 D_1F80025C[];
 extern u16 D_1F800160_71b4_70bb;
 extern u16 D_1F800162;
 extern u16 D_1F800164_d75f_59c5;
-
 s32 func_8010BA70(void *arg0, s32 mode)
 {
     u8 *a = arg0;
@@ -4007,7 +4006,6 @@ void func_80116FC8(void) {
 
 extern u8 D_8012583C[];
 extern u16 D_1F8001A6;
-
 void func_80116FFC(u8 *a)
 {
     u8 *p;

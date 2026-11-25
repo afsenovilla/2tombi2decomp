@@ -347,7 +347,6 @@ void f_DispatchCircusMovingActorContacts(u8 *a)
 
 extern u8 **D_1F800148;
 extern u8 D_1F800150;
-
 void f_DispatchCircusActorContacts(u8 *a)
 {
     u8 **l = D_1F800148;
@@ -1333,7 +1332,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8010FF78);
 
 extern void func_80083DE0(void *, s32, s32, s32, s32);
 void func_8010DC3C();
-
 void func_80110258(u8 *a)
 {
     u8 *p;
@@ -1650,7 +1648,6 @@ void func_80113394(u8 *a, s32 ang) {
 #define S(p, o) (*(s16 *)((p) + (o)))
 extern u8 D_800BF817;
 extern u8 *D_80131D88[];
-
 void func_80113470(u8 *t, s32 i)
 {
     u8 *p;

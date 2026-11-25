@@ -1619,7 +1619,6 @@ s32 func_801108A0(u8 *a, u8 *b, u8 *c)
 }
 
 #define L(p, o) (*(s32 *)((p) + (o)))
-
 s32 func_80110AB8(u8 *a, u8 *b, u8 *c)
 {
     s32 r;
@@ -1781,7 +1780,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80111974);
 
 extern s16 D_1F800272;
 extern s16 D_1F800276;
-
 void func_80111D24(u8 *a, u8 *b)
 {
     s32 s;
@@ -3515,7 +3513,6 @@ void func_801167C4(u8 *a, s32 ang) {
 }
 
 extern u8 *D_80129B6C[];
-
 void func_801168A0(u8 *t, s32 i)
 {
     u8 *p;
@@ -4820,7 +4817,6 @@ extern u8 D_80129DE8[];
 extern u8 D_80129DF4[];
 extern u8 D_800BF901;
 s32 func_80119E68();
-
 void func_801191B0(u8 *a)
 {
     u8 *cam = D_800E8008;
@@ -4926,7 +4922,6 @@ void func_80119390(u8 *a) {
 extern u8 D_80129E00[];
 extern u8 D_80129E0C[];
 s32 func_80119E68();
-
 void func_80119510(u8 *a)
 {
     u8 *cam = D_800E8008;
@@ -4972,7 +4967,6 @@ void func_80119510(u8 *a)
 }
 
 extern u8 *D_800BF844_3cf3;
-
 s32 func_80119694(u8 *a, s16 x, s16 z)
 {
     u8 *p = D_800BF844_3cf3;
@@ -5967,7 +5961,6 @@ void func_8011B904(u8 *a)
 
 extern u8 D_800BFA02;
 extern s16 D_8012A208_7930[];
-
 void func_8011BACC(u8 *a) {
     s16 *t;
     s32 lim;
@@ -6003,7 +5996,6 @@ void func_8011BACC(u8 *a) {
 }
 
 extern u8 D_800BF9FA;
-
 void func_8011BC0C(u8 *a)
 {
     u8 *p;
@@ -6904,7 +6896,6 @@ void func_8011DE1C(u8 *a) {
 }
 
 extern u16 D_8012AD40[];
-
 s32 func_8011DF98(u8 *a)
 {
     u8 *g = D_800BF808_1760;
@@ -7301,7 +7292,6 @@ void func_8011EAD4(u8 *a) {
 extern u8 D_800BFA04;
 extern u8 *D_1F800214;
 s32 func_8011F028(u8 *a);
-
 void func_8011ECC8(u8 *a)
 {
     u8 *p;

@@ -1247,7 +1247,6 @@ extern SelPt D_8011BBFC_a9c2[];
 extern u8 D_800E7EAA;
 extern u8 D_1F80025C[];
 extern u16 D_1F800162_b816;
-
 s32 func_8010DE1C(void *arg0, s32 mode)
 {
     u8 *a = arg0;
@@ -4182,7 +4181,6 @@ extern u8 D_1F80025A;
 void func_80117788(u8 *a);
 s32 func_8011787C(T787C *a);
 s32 func_80117B84(u8 *a);
-
 void func_801172B0(u8 *a)
 {
     u8 *g;

@@ -123,7 +123,6 @@ extern u8 D_1F800136;
 extern u8 D_1F800137;
 extern u8 D_800BF808[];
 extern u8 D_800BF9C9;
-
 void func_8010A704(void)
 {
     u8 *a = D_1F800138_5432;
@@ -1391,7 +1390,6 @@ static inline u8 *follow_parent(u8 *a)
     }
     return p;
 }
-
 void f_UpdateKujaraSummitQuestPickupActor(u8 *a)
 {
     u8 *p;
@@ -2282,7 +2280,6 @@ void func_80114CC8(u8 *a)
         }                                                                                                              \
         break;                                                                                                         \
     } /* end of SUB_TALK */
-
 void func_80114F88(u8 *a)
 {
     switch (a[5]) {
@@ -3140,7 +3137,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", f_UpdateWhosTheLiarSisterActorA);
 
 typedef struct { u8 b[5]; } Liar5;
 extern Liar5 D_8010989C;
-
 void func_801189B4(u8 *a, s32 r)
 {
     u8 *st;

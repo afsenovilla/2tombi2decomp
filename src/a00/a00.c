@@ -1708,7 +1708,6 @@ static inline void inl_ResolveTombaMultipartActorContact(u8 *a, PartsOwner *b) {
         }
     }
 }
-
 void f_ResolveTombaActorContacts(u8 *a) {
     u8 **p;
     u8 *b;
@@ -2496,7 +2495,6 @@ extern u8 D_1F800230;
 extern u8 D_1F80019A;
 extern u8 D_800BF830;
 extern u8 D_800BF80F;
-
 void func_80116094(u8 *a) {
     u8 *t = D_800E7E80;
     u8 *s = D_800BF808_1760;
@@ -5054,7 +5052,6 @@ s32 func_8011D8AC(u8 *a) {
 }
 
 void f_HandleKainenNpcActor();
-
 u8 *func_8011D910(u8 *a0, s32 a1) {
     u8 *r;
 
@@ -6676,7 +6673,6 @@ typedef struct {
 #define C0 (*(u8 **)(a + 0xC0))
 extern s16 D_800E8078;
 extern SVec3Q D_1F8000C0_cda2;
-
 void func_80127798(u8 *a) {
     u8 *t;
     u8 *e;
@@ -9592,7 +9588,6 @@ void f_ConfigureSegmentedTownActorMorph(u8 *a, s16 n, s16 sel) {
 
 typedef struct { u8 pad[0x10]; s16 v[9]; s16 pad2; } MV9;
 typedef struct { u8 pad[0x14]; s16 v[12]; } MV12;
-
 s32 func_801386A0(u8 *a) {
     u8 k = a[3];
     u16 *h;
@@ -11683,7 +11678,6 @@ extern u8 D_8014BF58[];
 extern u8 D_8014BF54[];
 extern u8 *D_800ECFB0;
 extern u8 D_8014CDA8[];
-
 void func_801402B8(u8 *a, s32 k, s32 m) {
     u8 *q = a + 0x60;
     AnimEnt8 *e;
@@ -11728,7 +11722,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80140544);
 
 #define HU(p, o) (*(u16 *)((u8 *)(p) + (o)))
 extern u16 D_1F8001A0_6940;
-
 s32 f_UpdateTownCreatureTerrainContact(u8 *a) {
     u8 *q;
     s16 res;
@@ -11806,7 +11799,6 @@ static inline s16 inl_80145EA4(u8 *a) {
     }
     return 0;
 }
-
 s32 f_UpdateTownCreatureFaceTomba(u8 *a) {
     switch (a[6]) {
     case 0:
@@ -12017,7 +12009,6 @@ s32 f_UpdateTownCreaturePostKnockbackRecovery(u8 *a) {
 }
 
 extern u8 D_8014BEB4[];
-
 s32 f_UpdateTownCreatureRandomIdle(u8 *a) {
     u8 *q = a + 0x60;
     s32 res = 0;

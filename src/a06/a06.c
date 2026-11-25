@@ -937,7 +937,6 @@ void func_8010F2E8(u8 *a)
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8010F450);
 
 extern u8 D_1F800183;
-
 void func_8010F608(void)
 {
     u8 **l = D_1F80013C;
@@ -1026,7 +1025,6 @@ static inline void inl_801112BC(u8 *a0, S11130C *a1)
         func_8010BA74(a0, (u8 *)a1, (u8 *)a1->xC0[D_801422B0[((u8 *)a1)[3]]]);
     }
 }
-
 void func_8010FECC(u8 *a)
 {
     u8 **l = D_1F800148;
@@ -4756,7 +4754,6 @@ extern u8 D_8014005C[];
 extern u8 D_800BF932;
 extern u8 D_800BFA10;
 extern u8 D_800BFA1D;
-
 void func_801229A0(u8 *a)
 {
     s16 t;
@@ -10154,7 +10151,6 @@ static inline void inl_8014183C(u8 *p)
         break;
     }
 }
-
 void func_80141480(u8 *a)
 {
     switch (a[4]) {
