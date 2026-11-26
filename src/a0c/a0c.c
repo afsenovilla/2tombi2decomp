@@ -5465,7 +5465,204 @@ void func_8011836C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", f_UpdateGhostEvilPigGraspActor);
+extern u16 D_800E7E68;
+static inline void gpga_move(u8 *a)
+{
+    s16 s, y;
+    s32 c;
+
+    s = (func_80083F50(H(a, 0x64)) * H(a, 0x44)) >> 12;
+    c = func_80083E80(H(a, 0x64));
+    y = (c * H(a, 0x44)) >> 12;
+    W(a, 0x2C) += H(a, 0x48) * s;
+    W(a, 0x34) += H(a, 0x4C) * s;
+    W(a, 0x30) += y << 8;
+
+    func_8004766C(a);
+    func_80049760(a);
+}
+
+void f_UpdateGhostEvilPigGraspActor(u8 *a)
+{
+    u8 *t = D_800E7E80;
+    s16 m;
+    s8 *g;
+    s16 lo;
+    s16 lo_f;
+
+    switch (a[4]) {
+    case 0:
+        a[0xB] = 0xFF;
+        a[0xD] = 1;
+        a[0x29] = 0;
+        a[0x5F] = 0;
+        a[0x2B] = 0;
+        a[0x5E] = 0;
+        a[0xBF] = 0;
+        H(a, 0x62) = 300;
+        H(a, 0x42) = 0;
+        if (func_8004766C(a) == 0) {
+            a[4] = 3;
+            break;
+        }
+        a[4] = 1;
+        func_80049760(a);
+        {
+            u16 v = D_1F8001A0;
+            H(a, 0x44) = 0x100;
+            U(a, 0x60) = v;
+            U(a, 0x56) = v;
+        }
+        if (a[0xBE] != 0) {
+            H(a, 0x64) = 0x800;
+        } else {
+            H(a, 0x64) = 0;
+        }
+        H(a, 0x80) = 0x50;
+        H(a, 0x82) = 0xA0;
+        H(a, 0x84) = 0x50;
+        H(a, 0x86) = 0xA0;
+        W(a, 0x10) = func_800310F4(0xD01, 0);
+        if (W(a, 0x10) != 0) {
+            W(W(a, 0x10), 0x10) = (s32)a;
+        }
+        break;
+    case 1:
+        if (D_1F800259 != 0) {
+            goto out;
+        }
+        g = D_800BF808;
+        if (g[5] != 0) {
+            goto out;
+        }
+        if (((u8 *)g)[1] != 0) {
+            goto done;
+        }
+        if (--H(a, 0x62) == 0) {
+            a[0] = 2;
+            a[4] = 2;
+            break;
+        }
+        switch (a[5]) {
+        case 0:
+            H(a, 0x44) += 0xE0;
+            if (H(a, 0x44) > 0x1000) {
+                H(a, 0x44) = 0x1000;
+                a[0] = 1;
+                a[5]++;
+            }
+            gpga_move(a);
+            {
+                u16 v = D_1F8001A0;
+                U(a, 0x60) = v;
+                U(a, 0x56) = v;
+            }
+            break;
+        case 1:
+            gpga_move(a);
+            {
+                u16 v = D_1F8001A0;
+                U(a, 0x60) = v;
+                U(a, 0x56) = v;
+            }
+            func_8011836C(a);
+            if (a[0x2B] != 0) {
+                a[5] = 2;
+                H(a, 0x40) = 0x96;
+            }
+            break;
+        case 2:
+            if (func_8006CEC4(a + 0x2C, t + 0x2C, 0) != 0) {
+                a[5]++;
+            }
+            if (t[0x164] == 0 && __builtin_abs(H(t, 0x44)) > 0x1400) {
+                H(t, 0x44) = H(t, 0x44) >> 1;
+            }
+            if (--H(a, 0x40) == 0) {
+                H(a, 0x40) = 0x96;
+                t[0x2B] = U(t, 0x56) >> 4;
+                func_80022D08(t, a, 1, 1);
+            }
+            H(a, 0x42)++;
+            lo = H(a, 0x42) & 0xFF;
+            if (lo >= 0x80) {
+                lo = 0x80;
+            }
+            {
+                s16 n;
+                m = H(a, 0x42) & ~0xFF;
+                n = m | lo;
+                MEMBER_AT(s16, a, 0x42) = n;
+                if (D_800E7E68 & 0xF0) {
+                    if ((n & 0xFF) < 0xA) {
+                        H(a, 0x42) = (n + 0x100) & ~0xFF;
+                    if (H(a, 0x42) >= 0x500) {
+                    out:
+                        a[0] = 2;
+                        a[4] = 2;
+                    }
+                } else {
+                    H(a, 0x42) = 0;
+                }
+            }
+            }
+            break;
+        case 3:
+            if (--H(a, 0x40) == 0) {
+                H(a, 0x40) = 0x96;
+                t[0x2B] = U(t, 0x56) >> 4;
+                func_80022D08(t, a, 1, 1);
+            }
+            if (t[0x164] == 0) {
+                H(t, 0x44) = H(t, 0x44) >> 1;
+            }
+            {
+                u16 px = D_1F800160_3621;
+                u16 py = D_1F800162_b816;
+                u16 pz = D_1F800164_7d8c;
+                U(a, 0x2E) = px;
+                U(a, 0x32) = py;
+                U(a, 0x36) = pz;
+            }
+            H(a, 0x42)++;
+            lo_f = H(a, 0x42) & 0xFF;
+            if (lo_f >= 0x80) {
+                lo_f = 0x80;
+            }
+            {
+                s16 n;
+                m = H(a, 0x42) & ~0xFF;
+                n = m | lo_f;
+                MEMBER_AT(s16, a, 0x42) = n;
+                if (D_800E7E68 & 0xF0) {
+                    if ((n & 0xFF) < 0xA) {
+                        H(a, 0x42) = (n + 0x100) & ~0xFF;
+                    if (H(a, 0x42) >= 0x500) {
+                        a[0] = 2;
+                        a[4] = 2;
+                    }
+                } else {
+                    H(a, 0x42) = 0;
+                }
+            }
+            }
+            break;
+        }
+    done:
+        func_8007778C(a);
+        break;
+    case 2:
+        if (W(a, 0x10) != 0) {
+            ((u8 *)W(a, 0x10))[4] = 2;
+        }
+        a[4] = 3;
+        break;
+    case 3:
+        D_1F80025B--;
+        func_8007A624(a);
+        break;
+    }
+}
 
 void f_UpdateGhostEvilPigGraspActor(u8 *a);
 u8 *f_SpawnGhostEvilPigGraspActor(u8 *a)
