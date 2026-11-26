@@ -17484,7 +17484,49 @@ void func_800655DC(u8 *t)
     f_UpdateTombaTransitionTerrainContact(t, 1);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800656FC);
+extern u8 D_800BF808_78e8[];
+
+void func_800656FC(u8 *t)
+{
+    s32 k;
+    u8 *g;
+
+    switch (t[6]) {
+    case 0:
+        f_SetTombaAnimationIfChanged(t, 2, 6);
+        t[6]++;
+        t[0x147] = f_ReadTombaDirectionalInput(t, 0) & 1;
+        f_ResetTombaControlState(t);
+        if (t[0x147] != 0) {
+            D_1F800192_55dc = (*(u16 *)(t + 0x140) - 0x800) & 0xFFF;
+        } else {
+            D_1F800192_55dc = *(u16 *)(t + 0x140);
+        }
+    case 1:
+        k = D_1F800192_55dc & 0xFFF;
+        *(s16 *)(t + 0x56) = f_StepWrappedAngleToward(k, *(s16 *)(t + 0x56), 0x100);
+        if (*(s16 *)(t + 0x56) == k) {
+            t[6]++;
+        }
+        break;
+    case 2:
+        g = D_800BF808_78e8;
+        g[6] = 0;
+        g[1] = 0;
+        t[0] = 3;
+        *(s16 *)(t + 0x172) = 0x1E;
+        t[4] = 1;
+        t[5] = 0;
+        t[6] = 0;
+        t[7] = 0;
+        *(s16 *)(t + 0x4A) = 0;
+        f_UpdateTombaMovementOrientation(t);
+        t[0x180] = 6;
+        break;
+    }
+    f_AdvanceActorSkeletalAnimation(t);
+    f_UpdateTombaTransitionTerrainContact(t, 1);
+}
 
 void func_8006585C(u8 *t)
 {
@@ -18252,7 +18294,6 @@ void func_8006762C(u8 *a)
 }
 
 extern u8 D_800BF80D_78e8;
-extern u8 D_800BF808_78e8[];
 
 void func_800678E8(u8 *t)
 {
