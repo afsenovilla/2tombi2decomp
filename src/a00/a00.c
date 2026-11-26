@@ -11829,7 +11829,75 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureKnockbackBounce);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8014103C);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureFleeRun);
+static inline void inl_move(u8 *a) {
+    s32 dx, dz;
+
+    dx = H_f12c(a, 0x48) * H_f12c(a, 0x4E);
+    dz = H_f12c(a, 0x4C) * H_f12c(a, 0x4E);
+    if (HU(a, 0x62) & 1) {
+        W_d1fb(a, 0x2C) -= dx;
+        W_d1fb(a, 0x34) -= dz;
+    } else {
+        W_d1fb(a, 0x2C) += dx;
+        W_d1fb(a, 0x34) += dz;
+    }
+}
+
+s32 f_UpdateTownCreatureFleeRun(u8 *a) {
+    u8 *q = a + 0x60;
+    s32 res = 0;
+
+    switch (a[7]) {
+    case 0:
+        HU(q, 2) &= 0xFFFB;
+        func_801402B8(a, 4, 0);
+        H_f12c(a, 0x42) = 0x3C;
+        a[7]++;
+    case 1:
+        if (H_f12c(a, 0x4E) < 0x1E00) {
+            if ((H_f12c(a, 0x4E) += 0x500) > 0x1E00) {
+                H_f12c(a, 0x4E) = 0x1E00;
+            }
+        }
+        inl_move(a);
+        if (inl_80145EA4(a)) {
+            a[7]++;
+        } else if (--H_f12c(a, 0x42) <= 0) {
+            H_f12c(a, 0x42) = 0x1E;
+            a[7]++;
+        } else if (D_800E7E80_d97c & 2) {
+            a[7] = 3;
+        }
+        if ((H_f12c(a, 0x42) & 7) == 0) {
+            func_8003116C(0, a + 0x2C, -5);
+        }
+        break;
+    case 2:
+        inl_move(a);
+        if ((s16)func_800781E0(H_f12c(a, 0x2E) - D_1F800160_71b4, H_f12c(a, 0x36) - D_1F800164_d75f) >= 0x118 || --H_f12c(a, 0x42) < 0) {
+            a[7]++;
+        }
+        break;
+    case 3:
+        func_801402B8(a, 0x17, 0);
+        a[7]++;
+    case 4:
+        inl_move(a);
+        if ((H_f12c(a, 0x4E) -= 0xAA) <= 0) {
+            res = 1;
+        }
+        break;
+    default:
+        goto end;
+    }
+    H_f12c(a, 0x32) += 0x10;
+    f_UpdateTownCreatureTerrainContact(a);
+    if (a[0x66] == 0x81 && a[0x29] == 0 && a[4] == 1) {
+        W_d1fb(a, 4) = 0x20501;
+    }
+end:
+    return res;
+}
 
 static inline s16 inl_wall(u8 *a) {
     u8 *q;
