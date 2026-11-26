@@ -21115,7 +21115,39 @@ s32 func_80077F3C(ActorPos_778C *a)
     return f_TestActorVisibilityAndQueueForRender(a, dx, dy, dz);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_IntegerSquareRootRounded);
+#define STEP(k) t = r + (k); sq = t * t; if (x >= sq) { r = t; }
+
+s32 f_IntegerSquareRootRounded(u32 x)
+{
+    u16 r;
+    u16 t;
+    u32 sq;
+
+    r = (x > 0x3FFFFFFF) ? 0x8000 : 0;
+    STEP(0x4000)
+    STEP(0x2000)
+    STEP(0x1000)
+    STEP(0x800)
+    STEP(0x400)
+    STEP(0x200)
+    STEP(0x100)
+    STEP(0x80)
+    STEP(0x40)
+    STEP(0x20)
+    STEP(0x10)
+    STEP(8)
+    STEP(4)
+    STEP(2)
+    STEP(1)
+    if (r == 0xFFFF) {
+        return r;
+    }
+    sq = r * r;
+    if (sq + r < x) {
+        r++;
+    }
+    return r;
+}
 
 s32 f_ApproximateVectorLength2D(s32 x, s32 y)
 {
