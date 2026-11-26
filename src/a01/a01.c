@@ -5446,7 +5446,41 @@ ret0:
     return 0;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011D540);
+s16 func_8011D540(u8 *a)
+{
+    u8 *c = P(a, 0xCC);
+    u8 *b = P(a, 0x10);
+    s16 dx = (U(c, 0x2C) + U(a, 0x60)) - U(b, 0x2E);
+    s16 dy = (U(c, 0x30) + U(a, 0x62)) - U(b, 0x32);
+    s16 dz = (U(c, 0x34) + U(a, 0x64)) - U(b, 0x36);
+    s16 d = func_80084080(dx * dx + dy * dy + dz * dz);
+    s32 vx, vy, vz;
+
+    if (d < 0x33) {
+        return 1;
+    }
+    vx = (dx * 8) / d;
+    vy = (dy * 8) / d;
+    vz = (dz * 8) / d;
+    H(b, 0x2E) += vx;
+    H(b, 0x32) += vy;
+    H(b, 0x36) += vz;
+    H(b, 0x58) = U(P(a, 0xCC), 0xC);
+    if (b[3] & 0x80) {
+        func_800517F8(b);
+    } else {
+        func_800518FC(b);
+    }
+    if (U(b, 0xB8) > 0xA00) {
+        H(b, 0xB8) -= 0x80;
+        if (U(b, 0xB8) < 0xA00) {
+            H(b, 0xB8) = 0xA00;
+        }
+        H(b, 0xBA) = U(b, 0xB8);
+        H(b, 0xBC) = U(b, 0xB8);
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011D754);
 
