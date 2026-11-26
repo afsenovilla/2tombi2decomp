@@ -10458,7 +10458,62 @@ u8 *func_80139838(s32 a, u8 b) {
     return p;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeDryingRackControllerState);
+extern u8 D_800BF9EA;
+
+void f_InitializeDryingRackControllerState(AreaPartsOwner *a)
+{
+    u8 *g;
+
+    func_8004CC64(a->parts[10], 7);
+    g = (u8 *)&D_800BF870;
+    if (g[0x17E] & 1) {
+        if (g[0x17A] & 1) {
+            g[0x17A] |= 0x10;
+            func_8011884C(a->parts[3], 0);
+        }
+        if (g[0x17A] & 2) {
+            g[0x17A] |= 0x20;
+            func_8011884C(a->parts[5], 1);
+        }
+        if (g[0x17A] & 4) {
+            g[0x17A] |= 0x40;
+            func_8011884C(a->parts[7], 2);
+        }
+        if (g[0x17A] & 8) {
+            g[0x17A] |= 0x80;
+            func_8011884C(a->parts[9], 3);
+        }
+    } else {
+        if (g[0x17A] & 1) {
+            if (g[0x17A] & 0x10) {
+                func_8011884C(a->parts[3], 0);
+            } else {
+                f_SpawnSmallFishActor(a->parts[3], 2, 0);
+            }
+        }
+        if (D_800BF9EA & 2) {
+            if (D_800BF9EA & 0x20) {
+                func_8011884C(a->parts[5], 1);
+            } else {
+                f_SpawnSmallFishActor(a->parts[5], 2, 1);
+            }
+        }
+        if (D_800BF9EA & 4) {
+            if (D_800BF9EA & 0x40) {
+                func_8011884C(a->parts[7], 2);
+            } else {
+                f_SpawnSmallFishActor(a->parts[7], 2, 2);
+            }
+        }
+        if (D_800BF9EA & 8) {
+            if (D_800BF9EA & 0x80) {
+                func_8011884C(a->parts[9], 3);
+            } else {
+                f_SpawnSmallFishActor(a->parts[9], 2, 3);
+            }
+        }
+    }
+}
 
 extern u8 D_800BF80A;
 
