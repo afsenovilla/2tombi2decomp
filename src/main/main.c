@@ -21132,7 +21132,46 @@ u8 *f_SpawnTombaMovementHintController(void)
     return a;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006F138);
+void func_8006F138(u8 *a)
+{
+    s32 i;
+    u8 *m;
+    s32 k;
+    s32 *mat;
+    u8 *q;
+    u8 *r;
+
+    RotMatrix_gte(a + 0x54, a + 0x98);
+    *(s32 *)(a + 0xAC) = *(s16 *)(a + 0x2E);
+    *(s32 *)(a + 0xB0) = *(s16 *)(a + 0x32);
+    *(s32 *)(a + 0xB4) = *(s16 *)(a + 0x36);
+    for (i = 0; i < a[8]; i++) {
+        mat = D_1F800000;
+        q = a;
+        q += i * 4;
+        m = *(u8 **)(q + 0xC0);
+        k = *(s16 *)(m + 6);
+        f_SetIdentityMatrix(mat);
+        RotMatrixX(*(s16 *)(m + 8), mat);
+        RotMatrixZ(*(s16 *)(m + 0xC), mat);
+        RotMatrixY(*(s16 *)(m + 0xA), mat);
+        if (k == -1) {
+            MulMatrix0(a + 0x98, mat, m + 0x18);
+            ApplyRotMatrix(m, m + 0x2C);
+            *(s32 *)(m + 0x2C) += *(s32 *)(a + 0xAC);
+            *(s32 *)(m + 0x30) += *(s32 *)(a + 0xB0);
+            *(s32 *)(m + 0x34) += *(s32 *)(a + 0xB4);
+        } else {
+            r = a;
+            r += k * 4;
+            MulMatrix0(*(u8 **)(r + 0xC0) + 0x18, mat, m + 0x18);
+            ApplyRotMatrix(m, m + 0x2C);
+            *(s32 *)(m + 0x2C) += *(s32 *)(*(u8 **)(r + 0xC0) + 0x2C);
+            *(s32 *)(m + 0x30) += *(s32 *)(*(u8 **)(r + 0xC0) + 0x30);
+            *(s32 *)(m + 0x34) += *(s32 *)(*(u8 **)(r + 0xC0) + 0x34);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006F2D0);
 
