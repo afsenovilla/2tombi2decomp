@@ -23182,7 +23182,28 @@ void f_OpenSequencedMusicSlot(s16 slot, void *data, s16 mode, s16 id)
     SsSeqSetVol(e->seq, vol, vol);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800754F4);
+extern s16 D_800BED82;
+extern s16 D_800BED84;
+
+u8 *func_800754F4(u8 *a)
+{
+    u8 *h = a + 0x51000;
+
+    ((void (*)())func_800753AC)(a, 0, 0x51800);
+    func_800753D4(&D_800BED84, (s32)(a + *(s32 *)(h + 0x28)), (s32)(a + *(s32 *)(h + 0x30)));
+    func_800753D4(&D_800BED82, (s32)(a + *(s32 *)(h + 0x2C)), (s32)(a + *(s32 *)(h + 0x34)));
+    f_OpenSequencedMusicSlot(0, a + *(s32 *)(h + 0xC), 0xE, D_800BED82);
+    f_OpenSequencedMusicSlot(1, a + *(s32 *)(h + 0x8), 0xE, D_800BED82);
+    f_OpenSequencedMusicSlot(2, a + *(s32 *)(h + 0x4), 0xE, D_800BED82);
+    f_OpenSequencedMusicSlot(3, a + *(s32 *)(h + 0x0), 0xE, D_800BED82);
+    f_OpenSequencedMusicSlot(4, a + *(s32 *)(h + 0x10), 8, D_800BED82);
+    f_OpenSequencedMusicSlot(5, a + *(s32 *)(h + 0x14), 8, D_800BED82);
+    f_OpenSequencedMusicSlot(6, a + *(s32 *)(h + 0x18), 8, D_800BED82);
+    f_OpenSequencedMusicSlot(7, a + *(s32 *)(h + 0x1C), 0xE, D_800BED82);
+    f_OpenSequencedMusicSlot(8, a + *(s32 *)(h + 0x20), 0xE, D_800BED82);
+    f_OpenSequencedMusicSlot(9, a + *(s32 *)(h + 0x24), 0xE, D_800BED82);
+    return a + 0x66F4;
+}
 
 extern s16 D_800A4F7E;
 void func_800753AC(void *dst, s32 sector, s32 size, void *slot);
