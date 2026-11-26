@@ -10640,7 +10640,145 @@ void f_SpawnStarShapedCogPickup(u8 *a) {
     inl_8013A784(a);
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleDryingRackController);
+extern AreaPartsOwner *D_800BF854;
+extern u16 D_1F800162_b816;
+static inline s32 DryingRackInit(AreaPartsOwner *a)
+{
+    s32 i;
+    u8 *g;
+
+    if (D_800ED098 < 0xD) {
+        return 1;
+    }
+    a->pad[8] = 0xD;
+    a->pad[9] = 0xD;
+    a->pad[0xB] = 0;
+    a->pad[0xD] = 0;
+    for (i = 0; i < a->pad[8]; i++) {
+        a->parts[i] = func_8007AAE8();
+        func_80051B04(a->parts[i], 0xC, i + 0x26);
+    }
+    a->pad[3] = 0;
+    g = (u8 *)&D_800BF870;
+    if (g[0x268] == 0 && g[0x49] != 0xFF) {
+        func_80118974(a->parts[4]);
+    }
+    f_SpawnStarShapedCogPickup(a);
+    f_InitializeDryingRackControllerState(a);
+    return 0;
+}
+
+void f_HandleDryingRackController(AreaPartsOwner *a)
+{
+    u8 *g;
+    AreaPartsOwner *p;
+    s32 i;
+    s32 j;
+    s32 r;
+
+    switch (a->pad[4]) {
+    case 0:
+        D_800BF854 = a;
+        a->pad[0xBF] = 0;
+        if (DryingRackInit(a) != 0) {
+            a->pad[4] = 3;
+            break;
+        }
+        a->pad[0] = 1;
+        a->pad[0x29] = 0;
+        H_f12c(a, 0x80) = 0x60;
+        H_f12c(a, 0x82) = 0xC0;
+        H_f12c(a, 0x84) = 0x10;
+        H_f12c(a, 0x86) = 0x60;
+        a->pad[4]++;
+        break;
+    case 1:
+        if (D_800BF89C == 2 || D_800E7EAA != 1) {
+            func_800778E4(a, (s16)(D_1F800162_b816 - U(a, 0x32)));
+            p = *(AreaPartsOwner **)(a->pad + 0x10);
+            if (a->pad[1] != 0) {
+                goto on;
+            }
+            if (p->pad[1] != 0) {
+                a->pad[1] = 1;
+                func_80077EBC(a);
+            }
+        }
+        if (a->pad[1] == 0) {
+            goto parts;
+        }
+    on:
+        if (p->pad[0x5E] == 1) {
+            a->pad[0x5E] = 2;
+        } else if (p->pad[0x5E] == 2) {
+            a->pad[0x5E] = 1;
+        } else {
+            a->pad[0x5E] = 0;
+        }
+        if (a->pad[0x5E] == 1) {
+            W_d1fb(a, 0x30) -= H_f12c(a, 0x50) << 8;
+            if (H_f12c(a, 0x32) <= H_f12c(a, 0x60)) {
+                W_d1fb(a, 0x30) = H_f12c(a, 0x60) << 16;
+                {
+                    u8 *g2 = (u8 *)&D_800BF870;
+                    g2[0x17E] |= 1;
+                }
+                a->pad[0x5E] = 0;
+                a->pad[0xBF] = 0;
+                goto seg;
+            }
+            {
+                u8 *g3 = (u8 *)&D_800BF870;
+                g3[0x17E] &= 0xFE;
+            }
+        } else if (a->pad[0x5E] == 2) {
+            W_d1fb(a, 0x30) += H_f12c(a, 0x50) << 8;
+            if (H_f12c(a, 0x32) >= H_f12c(a, 0x62)) {
+                W_d1fb(a, 0x30) = H_f12c(a, 0x62) << 16;
+                a->pad[0x5E] = 0;
+                a->pad[0xBF] = 1;
+                goto seg;
+            }
+        } else {
+            goto seg;
+        }
+        if ((U(p->parts[0], 0xC) & 0xF00) == 0) {
+            func_80074590(0x8D, 0, 0);
+        }
+    seg:
+        switch (a->pad[5]) {
+        case 0:
+            if (a->pad[0x5E] == 1) {
+                if (f_RetractDryingRackSegments(a) != 0) {
+                    a->pad[6] = 0;
+                    a->pad[5]++;
+                }
+            } else if (a->pad[0x5E] == 2) {
+                f_DeployDryingRackSegments(a);
+            }
+            break;
+        case 1:
+            if (func_8013A008(a, p) != 0) {
+                a->pad[6] = 0;
+                a->pad[5]--;
+            }
+            break;
+        }
+        func_800517F8(a);
+    parts:
+        for (j = 0; j < a->pad[8]; j++) {
+            a->parts[j][0x3F] = a->pad[1];
+        }
+        a->pad[0x29] = 0;
+        func_80139A70(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void f_HandleDryingRackController();
 u8 *func_8013A730(s32 a) {
