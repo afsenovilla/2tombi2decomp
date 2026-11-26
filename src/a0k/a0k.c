@@ -4427,6 +4427,92 @@ s32 func_80117DE8(s32 *pos, s16 *off)
     return 1;
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80118054);
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+
+s32 func_80118054(u8 *a)
+{
+    u8 *t = D_800E7E80;
+    u8 *p;
+    s32 ang;
+    u16 b;
+
+    switch (a[0x78]) {
+    case 0: {
+        u16 az = U(a, 0x76);
+        u16 tz = U(t, 0x36);
+        u16 ax = U(a, 0x74);
+        u16 tx = U(t, 0x2E);
+        s16 dz = az - tz;
+        s16 dx = ax - tx;
+
+        if (dz * dz + dx * dx < H(a, 0x68) * H(a, 0x68)) {
+            U(t, 0x2E) = ax;
+            U(t, 0x36) = U(a, 0x76);
+            return 1;
+        }
+        ang = func_80085690((s16)tz - (s16)az, (s16)ax - (s16)tx) & 0xFFF;
+        b = ang;
+        switch (H(a, 0x66)) {
+        case -1:
+            H(t, 0x56) = ang;
+        case 0:
+            a[0x78] = 2;
+            break;
+        case 2:
+            b = (ang + 0x800) & 0xFFF;
+        default:
+            H(a, 0x66) = b;
+            a[0x78]++;
+            break;
+        }
+        if (H(a, 0x72) == 0) {
+            t[5] = 0x27;
+            t[6] = 0;
+        }
+        break;
+    }
+    case 1:
+        if (func_80041438(t, H(a, 0x66), 0x100) != 0) {
+            a[0x78]++;
+        }
+        break;
+    case 2:
+        if (H(a, 0x72) == 1) {
+            func_80054D14(t, 0xCE, 4);
+        }
+        a[0x78]++;
+    case 3:
+        if ((H(t, 0x44) = H(a, 0x64) >> 8) == 0) {
+            H(t, 0x44) = 10;
+        }
+        H(a, 0x64) = func_80084080((s16)(U(a, 0x76) - U(t, 0x36)) * (s16)(U(a, 0x76) - U(t, 0x36)) +
+                                   (s16)(U(a, 0x74) - U(t, 0x2E)) * (s16)(U(a, 0x74) - U(t, 0x2E)));
+        if ((H(a, 0x64) = H(a, 0x64) / H(t, 0x44)) == 0) {
+            H(a, 0x64) = 1;
+        }
+        H(a, 0x64) = 0x1000 / H(a, 0x64);
+        H(a, 0x66) = 0x1000;
+        H(a, 0x74) -= U(t, 0x2E);
+        H(a, 0x76) -= U(t, 0x36);
+        a[0x78]++;
+        break;
+    case 4:
+        p = *(u8 **)(a + 0x6C);
+        if ((H(a, 0x66) -= H(a, 0x64)) <= 0) {
+            H(a, 0x66) = 0;
+        }
+        H(t, 0x2E) = U(p, 4) - H(a, 0x66) * H(a, 0x74) / 4096;
+        H(t, 0x36) = U(p, 6) - H(a, 0x66) * H(a, 0x76) / 4096;
+        if (H(a, 0x66) == 0) {
+            H(t, 0x44) = 0;
+            if (H(a, 0x72) == 1) {
+                func_80054D14(t, 0xCD, 4);
+            }
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_UpdateTinyMouseVillageEntranceActor);
