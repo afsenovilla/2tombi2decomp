@@ -2468,7 +2468,80 @@ void func_8010ECA8(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", f_UpdateWaterEvilPigProjectileAttack);
+extern u8 D_1F80025A;
+
+void f_UpdateWaterEvilPigProjectileAttack(u8 *a)
+{
+    s16 t;
+    s16 k;
+
+    if (D_800BF809 != 0) {
+        return;
+    }
+    switch (a[6]) {
+    case 0:
+        if (func_80077768((s16)func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f), H(a, 0x60), 0) != 0) {
+            a[0xBE] = 1;
+        } else {
+            a[0xBE] = 0;
+        }
+        if (D_1F80025A != 0) {
+            a[6] = 3;
+            H(a, 0x40) = 1;
+            break;
+        }
+        a[6]++;
+    case 1:
+        if (func_8010C4AC(a) != 0) {
+            goto hit;
+        }
+        if (a[0xBE] == 0) {
+            k = U(a, 0x60);
+        } else {
+            k = U(a, 0x60) + 0x800;
+        }
+        k &= 0xFFF;
+        t = func_800776F8(k, H(a, 0x56), 0x100);
+        H(a, 0x56) = t;
+        if (t == k) {
+            func_80041768(a, 0xC, 5);
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (U(*(u8 **)(a + 0x38), 2) == 0x12) {
+            a[6]++;
+            func_80074590(0x86, 0, 0);
+            func_80117960(a, 0, a[0xBE]);
+            H(a, 0x40) = 0x28;
+        }
+        break;
+    case 3:
+        if (--H(a, 0x40) == 0) {
+            a[6]++;
+            func_80041768(a, 0, 6);
+            H(a, 0x40) = 0x3C;
+        }
+        break;
+    case 4:
+        if (func_8010C4AC(a) != 0) {
+        hit:
+            a[0] = 2;
+            func_80041768(a, 3, 4);
+            func_8010C598(a);
+            a[5] = 1;
+            a[6] = 1;
+            a[7] = 0;
+            break;
+        }
+        if (--H(a, 0x40) == 0) {
+            a[5] = 0;
+            a[6] = 0;
+            H(a, 0x64) = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", f_UpdateWaterEvilPigSpinningLeapAttack);
 
