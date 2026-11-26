@@ -638,7 +638,72 @@ void func_8010BE80(u8 *a, u8 *b, s32 ang)
     }
 }
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_8010C0A4);
+extern u8 D_800BF821;
+extern u8 D_800E7EAA;
+static inline void cam_inl(u8 *a)
+{
+    if ((u8)(D_800E7EAA - 0xE) < 7) {
+        D_800BF821 = 0;
+        *(s16 *)&D_1F8000EE = -0x514;
+        H(a, 0x26) = -0x100;
+    } else {
+        D_800BF821 = 2;
+        *(s16 *)&D_1F8000EE = -0x79E;
+        H(a, 0x26) = -0x320;
+    }
+}
+
+void func_8010C0A4(u8 *a)
+{
+    u8 *g;
+
+    switch (a[3]) {
+    case 0:
+        D_800BF821 = 2;
+        H(a, 0x56) = 0;
+        *(s16 *)&D_1F8000EE = -0x79E;
+        H(a, 0x26) = -0x320;
+        a[3]++;
+        break;
+    case 1:
+        if (D_1F800246_6eef != 0) {
+            a[0x64] |= 0x80;
+            a[3]++;
+            func_8010BE80(a, D_800E7E80, 0);
+            func_8006E3F4(a, a + 0x38);
+            break;
+        }
+        cam_inl(a);
+        break;
+    case 2:
+        if (D_1F800246_6eef == 0) {
+            H(a, 0x56) = 0;
+            a[0x64] &= 0x7F;
+            a[3]++;
+            cam_inl(a);
+            H(a, 0x26) = -0x320;
+            func_8006EA00();
+            H(a, 0x68) = 0xC;
+            break;
+        }
+        if (D_1F800246_6eef == 1) {
+            func_8010BE80(a, D_800E7E80, 0);
+        }
+        func_8006E3F4(a, a + 0x38);
+        break;
+    case 3:
+        if (--H(a, 0x68) == 0) {
+            g = (u8 *)D_800BF808;
+            if (g[0x39] != 0) {
+                g[1] = 0;
+                g[0x39] = 0;
+            }
+            a[3] = 1;
+        }
+        cam_inl(a);
+        break;
+    }
+}
 
 void func_8010C300(void) {
 }
@@ -897,7 +962,6 @@ typedef struct {
     s16 f;
 } SelPt;
 extern SelPt D_8011A26C_75fb[];
-extern u8 D_800E7EAA;
 extern u8 D_1F80025C[];
 extern u16 D_1F800160_71b4_70bb;
 extern u16 D_1F800162_b816;
