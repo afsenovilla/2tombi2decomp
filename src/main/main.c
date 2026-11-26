@@ -5763,7 +5763,53 @@ s32 func_80035088(void *unused, s32 item, s32 mode)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8003511C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80035218);
+extern u16 D_800BF83A;
+u8 *func_8004DC84(s32 k, s32 mode);
+
+s32 func_80035218(u8 *a, s32 item, s32 mode)
+{
+    GameState *g = &D_800BF870;
+    s32 k;
+
+    if ((g->pad1[0x10] & 4) || (*(u16 *)&g->pad1[0x2D] & 0x200)) {
+        k = 0x5F;
+    } else if (g->unk0 == 9) {
+        goto deny;
+    } else if (g->pad1[2] != 0) {
+        if (item == 0x98 || item == 0xA6) {
+            goto deny;
+        }
+        k = 0xA7;
+    } else {
+        goto ok;
+    }
+    if (item == k) {
+    deny:
+        if (mode == 1) {
+            return 1;
+        }
+        return 4;
+    }
+ok:
+    if (mode == 1) {
+        return 0;
+    }
+    if ((u32)(item - 0x5F) < 2) {
+        return 0;
+    }
+    if (item == 0x98) {
+        D_800BF83A = 0x80A;
+    } else if (item == 0xA6) {
+        D_800BF83A = 0x203;
+    } else if (item == 0xA7) {
+        D_800BF83A = 0x603;
+    }
+    D_800BF808[2] = 3;
+    D_800BF808[3] = item;
+    D_800BF808[1] = 1;
+    func_8004DC84(item, 3);
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80035338);
 
