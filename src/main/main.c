@@ -5761,7 +5761,41 @@ s32 func_80035088(void *unused, s32 item, s32 mode)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003511C);
+extern s16 D_800E7FEE;
+u8 *func_8004DC84(s32 k, s32 mode);
+void f_RemoveItemWithoutMessage(s32 item, s32 count);
+
+s32 func_8003511C(u8 *a, s32 item, s32 mode)
+{
+    switch (item) {
+    case 0x5A ... 0x5C:
+        if (D_800E7FEE < D_800BF870.pad1[0xC]) {
+            if (mode == 1) {
+                return 0;
+            }
+            f_RemoveItemWithoutMessage(item, 1);
+            func_8004DC84(item, 0);
+            return 0;
+        }
+        if (mode == 1) {
+            return 1;
+        }
+        return 4;
+    case 0x59:
+        if (D_800E7FEE < D_800BF870.pad1[0xC] || D_800BF870.pad1[0xD] < D_800BF870.pad1[0xE]) {
+            if (mode == 1) {
+                return 0;
+            }
+            f_RemoveItemWithoutMessage(0x59, 1);
+            func_8004DC84(0x59, 0);
+            return 0;
+        }
+        if (mode == 1) {
+            return 1;
+        }
+        return 4;
+    }
+}
 
 extern u16 D_800BF83A;
 u8 *func_8004DC84(s32 k, s32 mode);
@@ -7792,7 +7826,6 @@ u8 *func_80040AA4(s32 x, s32 kind)
 }
 
 typedef struct { s32 w[8]; } PopupReq32;
-extern s16 D_800E7FEE;
 typedef struct { void *t[8]; } AudioBanks_05C;
 extern AudioBanks_05C D_8001005C;
 extern u8 *D_1F800224;
