@@ -8648,7 +8648,49 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RotateSelectedTownBarrel);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80130524);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80130788);
+s32 func_80130788(u8 *a, s32 m)
+{
+    u8 f = a[0x29];
+
+    if (f & 1) {
+        if (f & 0x80) {
+            if (H_f12c(a, 0x78) == 0 && m != 0) {
+                H_f12c(a, 0x4E) = -0x100;
+            }
+            if (H_f12c(a, 0x48) >= 0) {
+                goto ret2;
+            }
+            return 1;
+        } else {
+            if (H_f12c(a, 0x78) == 0 && m != 0) {
+                H_f12c(a, 0x4E) = 0x100;
+            }
+            if (H_f12c(a, 0x48) <= 0) {
+                goto ret2;
+            }
+            return 1;
+        }
+    }
+    if (f & 4) {
+        if (H_f12c(a, 0x78) == 0 && m != 0) {
+            H_f12c(a, 0x4E) = (H_f12c(a, 0x44) << 7) / H_f12c(a, 0x6A);
+        }
+        if (H_f12c(a, 0x44) * H_f12c(a, 0x48) <= 0) {
+            goto ret2;
+        }
+        return 1;
+    }
+    if (H_f12c(a, 0x78) == 0 && m != 0) {
+        if (H_f12c(a, 0x48) > 0) {
+            H_f12c(a, 0x4E) = -0x80;
+        } else if (H_f12c(a, 0x48) < 0) {
+            H_f12c(a, 0x4E) = 0x80;
+        }
+    }
+    return 0;
+ret2:
+    return 2;
+}
 
 extern s32 D_8014A270;
 
