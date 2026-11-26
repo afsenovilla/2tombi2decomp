@@ -1914,7 +1914,77 @@ void func_8010E070(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", f_SpawnEarthEvilPigDetachedPartsActor);
+extern s16 D_800ED098;
+void func_8010E5EC(u8 *a);
+void *func_8007AAE8();
+
+u8 *f_SpawnEarthEvilPigDetachedPartsActor(AreaPartsOwner *a)
+{
+    u8 *p = func_8007A980(2, 3, 1);
+    s32 i;
+    u8 *q;
+    u8 *g;
+
+    if (p == NULL) {
+        return NULL;
+    }
+    p[2] = 0x29;
+    p[0x1A] = 0x80;
+    p[0x19] = 0x80;
+    p[0x18] = 0x80;
+    p[3] = 0;
+    p[0x1B] = 0;
+    p[0xD] |= 1;
+    MEMBER_AT(void *, p, 0x1C) = func_8010E5EC;
+    if (D_800ED098 < 3) {
+        p[4] = 3;
+        return NULL;
+    }
+    D_1F80025B = 1;
+    p[9] = 3;
+    p[8] = 3;
+    U(p, 0x2E) = U(a->parts[7], 0x2C);
+    U(p, 0x32) = U(a->parts[7], 0x30);
+    U(p, 0x36) = U(a->parts[7], 0x34);
+    H(p, 0x8A) = -0x32;
+    H(p, 0x54) = 0;
+    H(p, 0x56) = 0;
+    H(p, 0x58) = 0;
+    H(p, 0x88) = 0;
+    H(p, 0x8C) = 0;
+    H(p, 0xB8) = 0x1000;
+    H(p, 0xBA) = 0x1000;
+    H(p, 0xBC) = 0x1000;
+    for (i = 0; i < p[9]; i++) {
+        q = ((AreaPartsOwner *)p)->parts[i] = func_8007AAE8();
+        if (i == 0) {
+            H(q, 6) = -1;
+            H(q, 0) = 0;
+            H(q, 2) = 0;
+            H(q, 4) = 0;
+        } else {
+            H(q, 6) = 0;
+            U(q, 0) = U(a->parts[i + 8], 0);
+            U(q, 2) = U(a->parts[i + 8], 2);
+            U(q, 4) = U(a->parts[i + 8], 4);
+        }
+        U(q, 0x38) = U(a->parts[i + 8], 0x38);
+        U(q, 0x3A) = U(a->parts[i + 8], 0x3A);
+        U(q, 0x3C) = U(a->parts[i + 8], 0x3C);
+        H(q, 8) = 0;
+        H(q, 0xA) = 0;
+        H(q, 0xC) = 0;
+        W(q, 0x40) = W(a->parts[i + 8], 0x40);
+    }
+    g = (u8 *)D_800BF808;
+    W(((AreaPartsOwner *)p)->parts[1], 0x40) = W(g, 0x5C);
+    W(((AreaPartsOwner *)p)->parts[2], 0x40) = 0;
+    W(g, 0x58) = W(*(u8 **)((u8 *)a + 0xE0), 0x40);
+    W(g, 0x60) = W(*(u8 **)((u8 *)a + 0xE8), 0x40);
+    W(*(u8 **)((u8 *)a + 0xE0), 0x40) = 0;
+    W(*(u8 **)((u8 *)a + 0xE8), 0x40) = 0;
+    return p;
+}
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_8010E5EC);
 
