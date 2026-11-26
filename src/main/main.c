@@ -14538,7 +14538,35 @@ s32 func_8005B5E4(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005B63C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005C138);
+s32 func_8005C138(u8 *a, u8 *b)
+{
+    if (b[0xC] != 2) {
+        return 0;
+    }
+    switch (b[2]) {
+    case 4:
+        b[4] = b[0xC];
+        b[5] = 0;
+        b[6] = 0;
+        return 1;
+    case 1:
+    case 0xF:
+    case 0x14:
+    case 0x23 ... 0x26:
+    case 0x2E ... 0x30:
+    case 0x3B ... 0x3C:
+    case 0x3F:
+    case 0x47:
+    case 0x50:
+    case 0x56:
+    case 0xCF:
+        b[4] = 2;
+        b[5] = 3;
+        b[6] = 0;
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005C26C);
 
