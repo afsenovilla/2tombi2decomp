@@ -4135,7 +4135,109 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8011778C);
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80117B24);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80117DE8);
+typedef struct {
+    u8 pad0[4];
+    s32 flags;
+    s16 a, b, c, d;
+    s16 e[4][2];
+    s16 n[4][2];
+    u8 pad30[0];
+} ColTri;
+typedef struct {
+    s32 x, y, z;
+} V3_9da5;
+typedef struct {
+    u16 *list;
+    u16 *grid;
+    ColTri *tris;
+} ColTable;
+extern ColTable D_8011FBF4;
+extern ColTable D_8011FC00;
+extern s32 D_8011FC28[];
+extern u8 D_800BF816;
+extern s32 D_1F8001C8[];
+extern s16 D_1F8001A4;
+
+s32 func_80117DE8(s32 *pos, s16 *off)
+{
+    s32 *v = D_1F8001C8;
+    ColTable *t;
+    u16 *list;
+    u16 *grid;
+    ColTri *tris;
+    ColTri *hit;
+    ColTri *tri;
+    u32 k;
+    u16 cell;
+    s32 i;
+    s32 j, inside, d, y, x, z, best;
+    s16 *pl;
+    s32 w;
+
+    if (D_800BF816 == 0) {
+        t = &D_8011FBF4;
+    } else {
+        t = &D_8011FC00;
+    }
+    list = t->list;
+    grid = t->grid;
+    tris = t->tris;
+    ((V3_9da5 *)v)->x = pos[0] + (off[0] << 16);
+    x = ((s16 *)v)[1];
+    v[1] = pos[1] + ((off[1] - 0x28) << 16);
+    v[2] = pos[2] + (off[2] << 16);
+    z = ((s16 *)v)[5];
+    x /= 512;
+    z /= 512;
+    cell = grid[(z << 6) + x];
+    if (cell == 0xFFFF) {
+        D_1F8001A4 = 0;
+        return 0xFF;
+    }
+    best = 0;
+    hit = (ColTri *)best;
+    if (list[cell] != 0xFFFF) {
+        i = cell;
+        do {
+            k = list[i];
+            tri = &tris[k];
+            j = 0;
+            inside = 0;
+            for (; j < 4; j++) {
+                d = (((s16 *)v)[1] - tri->e[j][0]) * tri->n[j][0] + (((s16 *)v)[5] - tri->e[j][1]) * tri->n[j][1];
+                D_8011FC28[j] = d;
+                if (d > 0) {
+                    goto out;
+                }
+            }
+            inside = 1;
+        out:
+            if (inside) {
+                s32 c1, c2, c3;
+
+                pl = &tri->a;
+                w = pl[3] << 12;
+                y = (tri->a * ((s16 *)v)[1] + pl[2] * ((s16 *)v)[5] + w) / -pl[1];
+                c1 = y <= best;
+                c2 = y >= ((s16 *)v)[3];
+                c3 = y <= ((s16 *)v)[3] + 0x80;
+                if (c1 && c2 && c3) {
+                    hit = tri;
+                    best = y;
+                }
+            }
+        } while (list[++i] != 0xFFFF);
+    }
+    if (hit == NULL) {
+        D_1F8001A4 = 0;
+        return -1;
+    }
+    if (!(hit->flags & 0x8000)) {
+        return 0;
+    }
+    D_1F8001A4 = 0;
+    return 1;
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80118054);
 
