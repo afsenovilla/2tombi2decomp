@@ -927,7 +927,69 @@ void func_8010FB44(u8 *a, s32 b) {
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010FF9C);
+extern u16 D_800BFE56;
+
+void func_8010FF9C(u8 *a) {
+    s32 m;
+    s32 n;
+    s32 k;
+    s16 v;
+
+    if (!(D_800BFE56 & 0x100)) {
+        m = 0x1000;
+        n = 0x1800;
+    } else {
+        m = 0x800;
+        n = 0xC00;
+    }
+    k = (U(a, 0x6A) >> 12) & 7;
+    if (k >= 6) {
+        if (H(a, 0x142) == 0) {
+            if (H(a, 0x182) == 0) {
+                if (k == 6) {
+                    H(a, 0x182) = 0x200;
+                } else {
+                    H(a, 0x182) = -0x200;
+                }
+            } else if (k == 6) {
+                H(a, 0x182) = U(a, 0x182) + 0x40;
+            } else {
+                H(a, 0x182) = U(a, 0x182) - 0x40;
+            }
+            {
+                s16 t = m;
+                if (H(a, 0x182) > t) {
+                    H(a, 0x182) = m;
+                } else if (H(a, 0x182) < -t) {
+                    H(a, 0x182) = -m;
+                }
+            }
+        } else {
+            if (k == 6) {
+                H(a, 0x182) = U(a, 0x182) + (H(a, 0x142) >> 1);
+            } else {
+                H(a, 0x182) = U(a, 0x182) - (H(a, 0x142) >> 1);
+            }
+            {
+                s16 t = n;
+                if (H(a, 0x182) > t) {
+                    H(a, 0x182) = n;
+                } else if (H(a, 0x182) < -t) {
+                    H(a, 0x182) = -n;
+                }
+            }
+        }
+    } else {
+        v = abs(H(a, 0x182)) - 0x100;
+        if (v <= 0) {
+            H(a, 0x182) = 0;
+        } else if (H(a, 0x182) < 0) {
+            H(a, 0x182) = -v;
+        } else {
+            H(a, 0x182) = v;
+        }
+    }
+}
 
 #define W_d1fb(p, o) (*(s32 *)((u8 *)(p) + (o)))
 extern u16 D_1F8001A6;
