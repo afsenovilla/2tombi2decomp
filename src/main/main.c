@@ -23527,7 +23527,42 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C940);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007CC00);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007CDD4);
+extern u8 D_800BFE4C;
+
+void func_8007CDD4(u16 *r)
+{
+    u8 *p = D_800BF544_37fb;
+    u32 *ot;
+
+    p[7] = 0x65;
+    *(u16 *)(p + 0xE) = 0x7C3F;
+    *(u16 *)(p + 8) = r[0] + r[2] - 16;
+    *(u16 *)(p + 0xA) = r[1] + r[3] - 16;
+    switch (D_800BFE4C) {
+    case 0:
+        p[0xC] = 0;
+        break;
+    case 1:
+        p[0xC] = 0x10;
+        break;
+    }
+    p[0xD] = 0x78;
+    *(u16 *)(p + 0x10) = 16;
+    *(u16 *)(p + 0x12) = 16;
+    do {
+        ot = D_800ED8C8;
+        *(u32 *)p = ot[2] | 0x4000000;
+        ot[2] = (u32)p;
+    } while (0);
+    p += 0x14;
+    D_800BF544_37fb = p + 0xC;
+    SetDrawMode(p, 0, 0, 0x1F, NULL);
+    do {
+        ot = D_800ED8C8;
+        *(u32 *)p = ot[2] | 0x2000000;
+        ot[2] = (u32)p;
+    } while (0);
+}
 
 void func_8007CEEC(u8 *a, s16 *w, s16 *h)
 {
