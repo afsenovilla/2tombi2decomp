@@ -11831,7 +11831,64 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8014103C);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureFleeRun);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureStraightRun);
+static inline s16 inl_wall(u8 *a) {
+    u8 *q;
+
+    if (a[0x5F] == 0) return 0;
+    q = a + 0x60;
+    if (a[0x5F] == 3) {
+        if (HU(q, 2) & 1) return 1;
+        return 0;
+    }
+    if (!(HU(q, 2) & 1)) return 1;
+    return 0;
+}
+
+s16 f_UpdateTownCreatureStraightRun(u8 *a) {
+    u8 *q = a + 0x60;
+    s16 res = 0;
+    s32 dx, dz;
+
+    switch (a[7]) {
+    case 0:
+        HU(q, 2) &= 0xFFFB;
+        f_UpdateTownCreatureTerrainContact(a);
+        func_801402B8(a, 0, 8);
+        H_f12c(a, 0x4E) = 0xE00;
+        a[7]++;
+    case 1:
+        if (inl_80145EA4(a)) {
+            a[7]++;
+        } else if (D_800E7E80_d97c & 2) {
+            a[7] = 2;
+            res = 1;
+        }
+        break;
+    case 2:
+        if (func_800781E0(H_f12c(a, 0x2E) - D_1F800160_71b4, H_f12c(a, 0x36) - D_1F800164_d75f) >= 0x140) {
+            res = 1;
+        }
+        break;
+    }
+    dx = H_f12c(a, 0x48) * H_f12c(a, 0x4E);
+    dz = H_f12c(a, 0x4C) * H_f12c(a, 0x4E);
+    if (HU(a, 0x62) & 1) {
+        W_d1fb(a, 0x2C) -= dx;
+        W_d1fb(a, 0x34) -= dz;
+    } else {
+        W_d1fb(a, 0x2C) += dx;
+        W_d1fb(a, 0x34) += dz;
+    }
+    if (inl_wall(a)) {
+        res = -1;
+    }
+    H_f12c(a, 0x32) += 0x10;
+    f_UpdateTownCreatureTerrainContact(a);
+    if (res == 0 && a[0x66] == 0x81 && a[0x29] == 0 && a[4] == 1) {
+        W_d1fb(a, 4) = 0x20501;
+    }
+    return res;
+}
 
 s32 func_80141AC4(u8 *a, s32 anim, s32 spd) {
     u8 *q = a + 0x60;
