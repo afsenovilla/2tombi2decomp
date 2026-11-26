@@ -16596,7 +16596,59 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80061A7C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80061C64);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800620D0);
+s32 f_AdvanceActorSkeletalAnimation();
+
+void func_800620D0(u8 *t)
+{
+    f_AdvanceActorSkeletalAnimation(t);
+    switch (t[6]) {
+    case 0:
+        t[0x146] = 0;
+        f_ClearTombaInteractionState(t);
+        f_ResetTombaControlState(t);
+        f_SetTombaAnimationIfChanged(t, 0xE1, 4);
+        f_PlaySoundEffect(0x39, 0, 0);
+        *(s16 *)(t + 0x40) = 0x1E;
+        t[6]++;
+        f_UpdateTombaModelOrientationFromFacing(t);
+    case 1:
+        f_UpdateTombaMovementOrientation(t);
+        *(s16 *)(t + 0x32) += 8;
+        f_ResolveTombaGroundTerrainContact(t);
+        f_UpdateTombaLostGroundSupportMotion(t, 1);
+        if (*(s16 *)(t + 0x40) == 0) {
+            if (t[0x29] != 0) {
+                t[5] = 0;
+                t[6] = 0;
+            } else {
+                f_DetachTombaFromSupport(t, 0);
+            }
+        } else {
+            (*(s16 *)(t + 0x40))--;
+        }
+        break;
+    case 2:
+        D_800BF80E_58ec = 0;
+        t[0x146] = 0;
+        f_ClearTombaInteractionState(t);
+        f_ResetTombaControlState(t);
+        f_SetTombaAnimationIfChanged(t, 0xE1, 4);
+        f_PlaySoundEffect(0x39, 0, 0);
+        *(s16 *)(t + 0x40) = 0x1E;
+        t[6]++;
+        break;
+    case 3:
+        f_UpdateTombaModelOrientationFromFacing(t);
+        if (--*(s16 *)(t + 0x40) == 0) {
+            D_800BF80E_58ec = 1;
+            t[4] = 4;
+            t[5] = 0x20;
+            t[6] = 0;
+            t[7] = 0;
+        }
+        break;
+    }
+}
 
 extern s8 D_800BF80E;
 void func_8006228C(void *arg0) {
