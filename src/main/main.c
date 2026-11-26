@@ -2709,7 +2709,83 @@ s16 f_CountEffectTemplates(u16 *c)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnEffectTemplateInstances);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80027254);
+extern s16 D_8009D53C[];
+extern s16 D_8009D54C[];
+extern u16 D_8009D55C[];
+extern u16 D_8009D56C[];
+extern u16 D_8009D57C[];
+void func_8007B2AC(void *arg0);
+#define S_1781(o) (*(s16 *)(a + (o)))
+#define W_3fd2(o) (*(s32 *)(a + (o)))
+
+void func_80027254(u8 *a)
+{
+    s16 v;
+    s32 x;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        a[0xE] = a[0x33];
+        S_1781(0x10) = S_1781(0x14) = (a[2] & 1) + 2;
+        S_1781(0x10) += rand() & 3;
+        S_1781(0x14) += rand() & 3;
+        if (a[1] & 1) {
+            S_1781(0x8) = 0x18;
+            S_1781(0x12) = -0x2000;
+            S_1781(0x18) = 0x400;
+            if (a[1] & 2) {
+                S_1781(0x10) = (S_1781(0x10) << 1) * D_8009D54C[a[2] & 7];
+                S_1781(0x14) = (S_1781(0x14) << 1) * D_8009D54C[(a[2] + 6) & 7];
+            } else {
+                S_1781(0x10) = (S_1781(0x10) << 1) * D_8009D53C[a[2] & 7];
+                S_1781(0x14) = (S_1781(0x14) << 1) * D_8009D53C[(a[2] + 6) & 7];
+            }
+        } else {
+            S_1781(0x8) = 0x30;
+            if (a[1] & 2) {
+                S_1781(0x10) = (S_1781(0x10) << 2) * D_8009D54C[a[2] & 7];
+                S_1781(0x14) = (S_1781(0x14) << 2) * D_8009D54C[(a[2] + 6) & 7];
+            } else {
+                S_1781(0x10) = (S_1781(0x10) << 2) * D_8009D53C[a[2] & 7];
+                S_1781(0x14) = (S_1781(0x14) << 2) * D_8009D53C[(a[2] + 6) & 7];
+            }
+            S_1781(0x12) = (-(((rand() & 3) + 1) * 8) - 0x20) << 8;
+            S_1781(0x18) = 0x300;
+        }
+        v = S_1781(0x10) | S_1781(0x14);
+        x = v * 20;
+        S_1781(0x1A) = x;
+        S_1781(0xA) = x;
+        S_1781(0x16) = x;
+        S_1781(0x16) = x * D_8009D55C[a[2]];
+        S_1781(0xA) = *(u16 *)(a + 0xA) * D_8009D56C[a[2]];
+        S_1781(0x1A) = *(u16 *)(a + 0x1A) * D_8009D57C[a[2]];
+        S_1781(0x28) = 0;
+        S_1781(0x2A) = 0;
+        S_1781(0x2C) = 0;
+        S_1781(0x2E) = -S_1781(0x12);
+        break;
+    case 1:
+        *(u16 *)(a + 0xC) -= *(u16 *)(a + 0xC) >> 7;
+        S_1781(0x1E) += S_1781(0x10);
+        S_1781(0x26) += S_1781(0x14);
+        S_1781(0x28) += S_1781(0x16);
+        S_1781(0x2A) += S_1781(0xA);
+        S_1781(0x2C) += S_1781(0x1A);
+        W_3fd2(0x20) += S_1781(0x12) << 8;
+        S_1781(0x12) += S_1781(0x18);
+        if (S_1781(0x12) > S_1781(0x2E) + 0x800 || --S_1781(0x8) == 0) {
+            a[4] = 3;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007B2AC(a);
+        break;
+    }
+}
 
 typedef struct { s16 vx, vy, vz, pad; } SVec_F230;
 void func_80031780(u8 *p);
@@ -3373,7 +3449,132 @@ void func_80029530(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80029664);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80029B40);
+typedef struct { s32 a, b; } Hist_9B40;
+s32 f_ResolveEffectEightByteStreamPayload();
+
+void func_80029B40(u8 *a)
+{
+    u8 *p = *(u8 **)(a + 0x10);
+    u8 *q = p + 0x60;
+    u8 *e = a + 0x2C;
+    Hist_9B40 *h = (Hist_9B40 *)(a + 0x38);
+    Hist_9B40 *d;
+    s16 i;
+    s16 j;
+    u8 k;
+
+    switch (a[4]) {
+    case 0:
+        a[0x2C] = 4;
+        a[4] = 1;
+        a[5] = 0;
+        a[6] = 0;
+        a[7] = 0;
+        a[1] = 0;
+        e[2] = 0xA0;
+        for (i = 0; i < 5; i++) {
+            h[i].a = 0;
+            h[i].b = 0;
+        }
+        *(s16 *)(e + 4) = *(s16 *)(p + 0x2E);
+        *(s16 *)(e + 6) = *(s16 *)(p + 0x32);
+        *(s16 *)(e + 8) = *(s16 *)(p + 0x36);
+        *(s16 *)(e + 0xA) = 0;
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            if (p[0] != 2) {
+                break;
+            }
+            do {
+                a[5] = 1;
+            } while (0);
+        case 1:
+            if (p[0] != 1 || p[0x5E] != 1) {
+                break;
+            }
+            a[5]++;
+        case 2:
+            *(s16 *)(e + 4) = *(s16 *)(p + 0x2E);
+            *(s16 *)(e + 6) = *(s16 *)(p + 0x32);
+            *(s16 *)(e + 8) = *(s16 *)(p + 0x36);
+            *(u16 *)(e + 0xA) = *(u16 *)(q + 0xA) & 0xFF0;
+            k = a[3];
+            if (k == 0) {
+                if (p[0] == 1) {
+                    goto inc6;
+                }
+            } else if (k < 3) {
+                if (p[0] == 1 && p[0x29] == 0) {
+                inc6:
+                    a[6]++;
+                    break;
+                }
+            } else if (k < 6) {
+                if (p[0x2B] != 2 && a[6]++ < 4) {
+                    break;
+                }
+            } else {
+                if (p[0x2B] != 3 && a[6]++ < 3) {
+                    break;
+                }
+            }
+            a[5]++;
+        case 3:
+            if ((*(s16 *)(e + 0xA) & 7) < 3) {
+                *(u16 *)(e + 0xA) += 1;
+                break;
+            }
+            a[5]++;
+            break;
+        }
+        a[1] = 1;
+        if (p[4] >= 2 || (D_800E7FC6 & 4) || D_800E7FC6 == 0) {
+            e[1] = e[0];
+            a[4] = 2;
+        }
+        i = 5;
+        do {
+            h[i].a = h[i - 1].a;
+            h[i].b = h[i - 1].b;
+            i--;
+        } while (i > 0);
+        ((s16 *)h)[0] = *(s16 *)(p + 0x2E);
+        ((s16 *)h)[1] = *(s16 *)(p + 0x32);
+        ((s16 *)h)[2] = *(s16 *)(p + 0x36);
+        break;
+    case 2:
+        i = 5;
+        do {
+            h[i].a = h[i - 1].a;
+            h[i].b = h[i - 1].b;
+            i--;
+        } while (i > 0);
+        ((s16 *)h)[0] = 0;
+        ((s16 *)h)[1] = 0;
+        ((s16 *)h)[2] = 0;
+        a[1] = 1;
+        if (a[5] >= 2) {
+            if (++*(s8 *)e >= 5) {
+                *(s8 *)e = 0;
+            }
+            ((s16 *)&h[*(s8 *)e])[3] = 0;
+            if ((*(s16 *)(e + 0xA) & 7) < 3) {
+                *(u16 *)(e + 0xA) += 1;
+            }
+            if (*(s8 *)e == *(s8 *)(e + 1)) {
+                a[4] = 3;
+            }
+        } else if (h[4].a == 0) {
+            a[4] = 3;
+        }
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80029F6C);
 
@@ -4717,7 +4918,7 @@ typedef struct { u8 pad[0xC0]; u8 *parts[64]; } PartOwner;
 extern PartOwner *D_1F800214_50e7;
 void func_80059ED8(u8 *);
 void func_8002AB5C(u8 *);
-void func_80029B40(u8 *);
+void func_80029B40(u8 *a);
 void func_80029F6C(u8 *);
 u8 *f_SpawnLinkedActorTrailEffect(u8 *owner, u8 kind)
 {
