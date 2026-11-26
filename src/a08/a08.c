@@ -178,7 +178,112 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010B104);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010B1E8);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010B328);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+extern u16 D_1F8001A8;
+extern u16 D_1F800194;
+extern s16 D_1F800196;
+extern u16 D_1F8001A0_b0de_1f9a;
+extern u16 D_1F8001A2_7766;
+extern s16 D_1F80019E_3f3f;
+extern s16 D_1F8001A4_f18c;
+extern u8 D_800BF873;
+extern u8 D_1F80027B;
+/* func_8010F110, inlined */
+static inline void func_8010F110_inl(u8 *a) {
+    if (func_8012DE84(a, H(a, 0x32)) != 0) {
+        D_1F80019E_3f3f = D_1F8001A4_f18c;
+    }
+    if (D_1F800137 == 0) {
+        a[4] = 1;
+    }
+    if (a[5] == 0x2A) {
+        a[0x181] = 1;
+        return;
+    }
+    if (a[0x78] != 0 && a[5] == 3) {
+        a[0x29] = 1;
+        a[0x181] = 1;
+    } else {
+        if (a[0x144] == 1) {
+            a[0x144] = 0;
+        }
+        if (a[5] == 6) {
+            a[5] = 0x32;
+            a[0x149] = (a[0x149] & 1) | 2;
+        } else {
+            a[5] = 0x1D;
+            a[6] = 0;
+        }
+    }
+    a[7] = 0;
+    if (a[0x146] != 0 || a[0x145] == 0) {
+        H(a, 0x4A) = 0;
+    }
+    a[0x145] = 0;
+}
+
+void func_8010B328(u8 *a) {
+    s8 *g;
+    s16 v[6]; /* unused: retail's frame has the 16 bytes */
+    s32 k;
+
+    if (D_800BF873 != 0) {
+        return;
+    }
+    g = D_800BF808_c1f7;
+    if (g[5] != 0) {
+        return;
+    }
+    if (a[0] == 2) {
+        return;
+    }
+    if (a[0x181] != 0 && (a[4] != 1 || a[5] >= 2)) {
+        return;
+    }
+    func_8010B1E8(a);
+    k = U(a, 0x6A) & 0xF00;
+    if (!(U(a, 0x6A) & 0x8000)) {
+        return;
+    }
+    g[0x16] = 0;
+    if (k == 0x100 || k == 0x200) {
+        if (a[4] == 2) {
+            return;
+        }
+        if (a[0x145] & 1) {
+            return;
+        }
+        if (U(a, 0x17E) & 0x100) {
+            if (a[0x146] == 4 && D_1F80027B != 0) {
+                return;
+            }
+            if (a[5] == 0x2C) {
+                return;
+            }
+            func_8010F110_inl(a);
+            return;
+        }
+        if (D_1F800137 != 0) {
+            return;
+        }
+        a[0] = 3;
+        H(a, 0x6A) = 0;
+        a[4] = 2;
+        a[5] = 4;
+        a[6] = 0;
+        a[7] = 0;
+    } else if (k == 0x700) {
+        if (D_1F800137 != 0) {
+            return;
+        }
+        a[0] = 3;
+        a[4] = 2;
+        a[5] = 5;
+        a[6] = 0;
+        a[7] = 0;
+    }
+}
 
 extern s32 D_1F80009C_baed;
 extern s32 D_1F800098;
@@ -628,13 +733,6 @@ void func_8010EF9C(void)
     func_8010F288_inl(p);
 }
 
-extern u16 D_1F8001A8;
-extern u16 D_1F800194;
-extern s16 D_1F800196;
-extern u16 D_1F8001A0_b0de_1f9a;
-extern u16 D_1F8001A2_7766;
-extern s16 D_1F80019E_3f3f;
-extern s16 D_1F8001A4_f18c;
 
 void func_8010F110(u8 *a) {
     if (func_8012DE84(a, H(a, 0x32)) != 0) {
@@ -2106,7 +2204,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", f_SpawnWaterTempleSceneActorsFromPlaceme
 
 extern ClutCycle D_80142EA8[];
 extern s8 D_801485CC[];
-extern u8 D_800BF873;
 void func_801152F0(s32 arg0) {
     ClutRect r;
     s32 i;
