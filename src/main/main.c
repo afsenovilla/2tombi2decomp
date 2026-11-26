@@ -12422,7 +12422,45 @@ void func_8005245C(void)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800524B4);
+extern u16 D_800ECF48_0f0a[];
+
+s16 func_800524B4(s32 flag)
+{
+    s32 flag_p = flag;
+    u16 *st = D_800ECF48_0f0a;
+    u8 *pad = D_800BF4F8;
+    u16 btn;
+    u16 t;
+
+    if (pad[0] != 0) {
+        return 0;
+    }
+    st[1] = PadInfoMode(0, 2, 0);
+    btn = ~*(u16 *)(pad + 2);
+    t = (pad[1] >> 4) & 7;
+    D_800ECF48_0f0a[0] = t;
+    switch (t) {
+    case 4:
+        ((u8 *)st)[8] = 0;
+        ((u8 *)st)[9] = 0;
+        break;
+    case 7:
+        if ((s16)flag_p != 0) {
+            break;
+        }
+        if (!(btn & 0xF0)) {
+            btn &= 0xFF0F;
+            btn |= func_80052144(pad[6], 0);
+            btn |= func_80052144(pad[7], 1);
+        }
+        ((u8 *)st)[8] = func_80052198(pad[6], (u8 *)st + 0xA);
+        ((u8 *)st)[9] = func_80052198(pad[7], (u8 *)st + 0xB);
+        break;
+    default:
+        return 0;
+    }
+    return btn;
+}
 
 void func_800527C8();
 u8 *func_800525D0(void *owner, s32 slot)
