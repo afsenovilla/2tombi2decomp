@@ -6180,7 +6180,41 @@ void func_80125D88(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80125F6C);
+extern u8 D_800BFA43;
+
+void func_80125F6C(u8 *a)
+{
+    switch (a[5]) {
+    case 0:
+        if (D_800BFA43 != 5) {
+            break;
+        }
+        a[0xD] |= 4;
+        (*(u8 **)(a + 0xC4))[0x3F] = 0x46;
+        (*(u8 **)(a + 0xC8))[0x3F] = 0x46;
+        a[5]++;
+        break;
+    case 1:
+        U(*(u8 **)(a + 0xC4), 2) -= 4;
+        U(*(u8 **)(a + 0xC8), 2) += 4;
+        if (H(*(u8 **)(a + 0xC8), 2) < 0xC8) {
+            break;
+        }
+        D_800BFA43 = 6;
+        H(*(u8 **)(a + 0xC4), 2) = -0x188;
+        H(*(u8 **)(a + 0xC8), 2) = 0xC8;
+        a[5]++;
+        break;
+    case 2:
+        if (D_800BFA43 != 7) {
+            break;
+        }
+        a[8] = 1;
+        a[5] = 0xA;
+        a[0xD] &= ~4;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", f_UpdateWaterTempleInteriorEnvironmentActor);
 
@@ -11415,7 +11449,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013B9F8);
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013BB64);
 
 extern u8 D_801414AC[];
-extern u8 D_800BFA43;
 void func_8013BCAC(u8 *a)
 {
     u8 *g;

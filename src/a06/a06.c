@@ -3779,7 +3779,35 @@ void func_8011A104(u8 *a)
     *(s16 *)(a + 0x32) += 0x64;
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011A1AC);
+void func_8011A1AC(u8 *a)
+{
+    u8 *o;
+
+    a[1] = 1;
+    o = *(u8 **)(a + 0x10);
+    switch (a[5]) {
+    case 0:
+        U(a, 0x4A) += U(a, 0x50);
+        if (H(a, 0x4A) > 0) {
+            H(a, 0x50) = H(a, 0x50) >> 2;
+            a[5]++;
+        }
+        W_d1fb(a, 0x30) += H(a, 0x4A) << 8;
+        break;
+    case 1:
+        U(a, 0x4A) += U(a, 0x50);
+        W_d1fb(a, 0x30) += H(a, 0x4A) << 8;
+        if (W_d1fb(*(u8 **)(o + 0xDC), 0x30) - 0x3C < H(a, 0x32)) {
+            a[5]++;
+        }
+        break;
+    case 2:
+        U(a, 0x2E) = U(*(u8 **)(o + 0xDC), 0x2C);
+        U(a, 0x32) = U(*(u8 **)(o + 0xDC), 0x30) - 0xF;
+        U(a, 0x36) = U(*(u8 **)(o + 0xDC), 0x34);
+        break;
+    }
+}
 
 void func_8011A2E8(u8 *p)
 {
