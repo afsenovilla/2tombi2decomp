@@ -10584,7 +10584,31 @@ s32 f_RetractDryingRackSegments(AreaPartsOwner *a)
     return H_f12c(SLOT(a, j), 0x16) == 0;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A008);
+s32 func_8013A008(AreaPartsOwner *a, AreaPartsOwner *b)
+{
+    s32 i;
+    s32 j;
+
+    if (D_1F80017C_0fe7 & 3) {
+        return 0;
+    }
+    for (i = 1; i < a->pad[8]; i++) {
+        H_f12c(a->parts[i], 0xA) += U(a->parts[i], 0x14);
+        H_f12c(a->parts[i], 0xA) &= 0xFFF;
+        if (H_f12c(a->parts[i], 0xA) == 0xC || H_f12c(a->parts[i], 0xA) == 0xFF4) {
+            H_f12c(a->parts[i], 0x14) *= -1;
+        }
+    }
+    for (i = 5; i < a->pad[8]; i++) {
+        H_f12c(a->parts[i], 0xC) += U(a->parts[i], 0x10);
+        H_f12c(a->parts[i], 0xC) &= 0xFFF;
+        if (H_f12c(a->parts[i], 0xC) == 0x10 || H_f12c(a->parts[i], 0xC) == 0xFF0) {
+            H_f12c(a->parts[i], 0x10) *= -1;
+        }
+    }
+    j = a->pad[8] - 1;
+    return W_d1fb(a->parts[j], 0x30) + 0x50 >= H_f12c(a, 0x64);
+}
 
 typedef struct { s16 x, y; } S16Pair;
 extern S16Pair D_8014AA58[];
