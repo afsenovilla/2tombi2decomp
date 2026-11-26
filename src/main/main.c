@@ -17982,7 +17982,63 @@ void func_8006670C(void *arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80066878);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80066DE8);
+void func_80066DE8(u8 *t)
+{
+    switch (t[6]) {
+    case 0:
+        *(s16 *)(t + 0x172) = 0x78;
+        f_PlaySoundEffect(0x23, 0, 0);
+        *(s16 *)(t + 0x58) = 0;
+        f_ClearTombaInteractionState(t);
+        t[0x146] = 0;
+        t[0x61] = 0;
+        if (f_TestWrappedAngleSide(*(s16 *)(t + 0x140), t[0x2B] << 4, 0)) {
+            t[0x147] = 0;
+            *(s16 *)(t + 0x44) = -0x1000;
+        } else {
+            t[0x147] = 1;
+            *(s16 *)(t + 0x44) = 0x1000;
+        }
+        t[0x149] = t[0x14A] = t[0x147] + 2;
+        f_SetTombaAnimationIfChanged(t, 0x56, 0);
+        *(s16 *)(t + 0x4A) = -0x2000;
+        t[7] = 0;
+        t[0x29] = 0;
+        t[6]++;
+    case 1:
+        f_AdvanceActorSkeletalAnimation(t);
+        f_AdvanceTombaAlongMovementVector(t, 1);
+        f_UpdateTombaMovementOrientation(t);
+        f_UpdateTombaAirborneMotion(t, 0x11);
+        t[0x144] = 0;
+        if (func_800665F4(t) != 0) {
+            break;
+        }
+        if (t[0x29] != 0) {
+            t[0] = 3;
+            *(s16 *)(t + 0x172) = 0x1E;
+            *(s16 *)(t + 0x50) = 0;
+            t[0x148] = 0;
+            t[4] = 1;
+            t[6] = 0;
+            t[7] = 0;
+            if (func_8005344C(t) == 0) {
+                *(s16 *)(t + 0x44) = 0;
+                f_SetTombaAnimationIfChanged(t, 2, 0);
+                t[5] = 0;
+            }
+        } else if (*(s16 *)(t + 0x4A) > 0x2800) {
+            t[0] = 3;
+            *(s16 *)(t + 0x172) = 0x1E;
+            t[4] = 1;
+            *(s16 *)(t + 0x50) = *(s16 *)(t + 0x4A);
+            f_DetachTombaFromSupport(t, 0);
+            *(s16 *)(t + 0x4A) = *(s16 *)(t + 0x50);
+        }
+        f_UpdateTombaModelOrientationFromFacing(t);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80066FA8);
 
