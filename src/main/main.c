@@ -5571,7 +5571,96 @@ s32 func_8003499C(void) {
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800349A4);
+typedef struct { u8 b0; u8 kind; u8 pad[10]; } ItemDef_49A4;
+extern ItemDef_49A4 D_800A2BE8_614d[];
+extern u16 D_800BF89E;
+extern u8 D_800BF881;
+extern u8 D_800BF88C;
+extern u8 D_800BF88F;
+extern u8 D_800BF81A;
+extern u8 D_800BF81B;
+extern u8 D_800BF81D;
+
+s32 func_800349A4(u8 *a, s32 item, s32 mode)
+{
+    u8 *t = (u8 *)D_800E7E80;
+    s32 k;
+    GameState *g;
+
+    if ((D_800BF89E & 0x200) && D_800A2BE8_614d[item].kind == 2) {
+deny:
+        if (mode == 1) {
+            return 1;
+        }
+        return 4;
+    }
+    if (D_800BF881 & 4) {
+        k = D_800A2BE8_614d[item].kind;
+        if (k == 2 && item != 0x15) {
+            goto deny;
+        }
+        if (k == 0) {
+            goto deny;
+        }
+    }
+    if ((D_800BF881 & 2) || (D_800BF881 & 1)) {
+        if (D_800A2BE8_614d[item].kind == 0) {
+            goto deny;
+        }
+    }
+    if (mode == 1) {
+        return 0;
+    }
+    k = D_800A2BE8_614d[item].kind;
+    if (k == 0) {
+        if (item == D_800BF88C) {
+            return 4;
+        }
+        if (item != t[0x6C]) {
+            D_800BF81A = 1;
+        } else {
+            D_800BF81A = 0;
+        }
+        D_800BF88C = item;
+        return 2;
+    }
+    if (k == 1) {
+        item -= 10;
+        if (item == D_800BF88D) {
+            return 4;
+        }
+        if (item != t[0x6D]) {
+            D_800BF81B = 1;
+        } else {
+            D_800BF81B = 0;
+        }
+        D_800BF88D = item;
+        return 2;
+    }
+    if (k != 2) {
+        return 2;
+    }
+    {
+        g = &D_800BF870;
+        if (item == g->pad1[0x1E]) {
+            if (item == t[0x6F]) {
+                D_800BF81D = k;
+                g->pad1[0x1E] = 0;
+            } else {
+                D_800BF81D = 0;
+                g->pad1[0x1E] = t[0x6F];
+            }
+            return 3;
+        }
+        if (item != t[0x6F]) {
+            D_800BF81D = 1;
+        } else {
+            D_800BF81D = 0;
+        }
+        D_800BF88F = item;
+    }
+    return 2;
+}
 
 extern u8 D_800BF81C;
 s32 func_80034BE0(s32 unused, s32 item, s32 mode)
@@ -5858,7 +5947,6 @@ s32 func_80036D90(s32 arg0) {
 extern s16 D_800ED098;
 extern s32 *D_800E7E74;
 extern u8 D_800A24E4[];
-extern u8 D_800BF88C;
 extern u8 D_800E7EEC;
 extern u16 D_1F800172_5cdb;
 extern u8 **D_800A54A8[];
@@ -7772,7 +7860,6 @@ s32 func_80040E54(u8 *a, s32 b)
     return r;
 }
 
-extern u16 D_800BF89E;
 s32 f_ApplyActorScriptTransition(u8 *a)
 {
     s32 r;
@@ -10879,7 +10966,6 @@ void func_8004DE04(u8 *a)
 typedef struct { u8 pad0[9]; u8 u9; } Flags058_DF94;
 extern Flags058_DF94 D_800ED058_c3b3;
 extern s32 D_800BF880;
-extern u8 D_800BF881;
 void func_8004DF94(u8 *a)
 {
     u8 *t = D_800E7E80_f78d;
@@ -14768,7 +14854,6 @@ void func_8006228C(void *arg0) {
 }
 
 extern s32 D_1F80023C;
-extern u8 D_800BF88F;
 extern u16 D_801FE0E0;
 extern void *D_800ED014;
 extern u32 D_800FB170[];
