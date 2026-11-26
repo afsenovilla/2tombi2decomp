@@ -18140,7 +18140,48 @@ void func_8006762C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800678E8);
+extern u8 D_800BF80D_78e8;
+extern u8 D_800BF808_78e8[];
+
+void func_800678E8(u8 *t)
+{
+    u8 *g;
+    u8 *g2;
+    s32 pad[4];
+
+    switch (t[6]) {
+    case 0:
+        f_PlaySoundEffect(0x24, 0, 0);
+        D_800BF80D_78e8 = 1;
+        *(s16 *)(t + 0x16E) = 0;
+        *(s16 *)(t + 0x170) = 0;
+        f_ClearTombaInteractionState(t);
+        f_StartControllerVibration(0, 0x81, 0x81, 0xF);
+        *(s16 *)(t + 0x40) = 3;
+        t[6]++;
+    case 1:
+        if (*(s16 *)(t + 0x40) == 0) {
+            g = D_800BF808_78e8;
+            if (g[7] == 0) {
+                func_8005245C();
+                g[5] = 3;
+                t[6]++;
+            }
+        } else if (--*(s16 *)(t + 0x40) == 0) {
+            func_800662D8(t, 0);
+            g2 = D_800BF808_78e8;
+            g2[5] = 2;
+            g2[7] = 2;
+        }
+        f_AdvanceActorSkeletalAnimation(t);
+        *(s16 *)(t + 0x4A) += 0x360;
+        if (*(s16 *)(t + 0x4A) > 0x3E00) {
+            *(s16 *)(t + 0x4A) = 0x3E00;
+        }
+        *(s32 *)(t + 0x30) += *(s16 *)(t + 0x4A) << 8;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80067A40);
 
