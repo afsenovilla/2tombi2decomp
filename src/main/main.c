@@ -18042,7 +18042,49 @@ void func_80066DE8(u8 *t)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80066FA8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800674F4);
+extern u16 D_1F80019E_74f4;
+extern u8 D_800BF870_9d28;
+
+void func_800674F4(u8 *t)
+{
+    s16 v[6];
+    s32 id;
+
+    switch (t[7]) {
+    case 0:
+        *(s32 *)(t + 0x30) += *(s16 *)(t + 0x4A) << 8;
+        *(s16 *)(t + 0x4A) -= 0x400;
+        if (*(s16 *)(t + 0x4A) < -0x13FF) {
+            t[7]++;
+        }
+        break;
+    case 1:
+        *(s32 *)(t + 0x30) += *(s16 *)(t + 0x4A) << 8;
+        *(s16 *)(t + 0x4A) += 0x400;
+        if (*(s16 *)(t + 0x4A) >= 0x1400) {
+            v[1] = *(u16 *)(t + 0x2E);
+            v[3] = D_1F80019E_74f4;
+            v[5] = *(u16 *)(t + 0x36);
+            if (D_800BF870_9d28 == 0) {
+                f_SpawnTransientEffectAtFixedPosition(0x10D, v, -10);
+            } else {
+                if (D_800BF870_9d28 == 6) {
+                    id = 0x704;
+                } else if (D_800BF870_9d28 == 8) {
+                    id = 0x909;
+                } else if (D_800BF870_9d28 == 0xE) {
+                    id = 0xF06;
+                } else {
+                    goto skip;
+                }
+                f_SpawnFlaggedTransientEffectAtFixedPosition(id, (u8 *)v, -10);
+            }
+        skip:
+            t[7]--;
+        }
+        break;
+    }
+}
 
 typedef struct { u8 unk0; u8 pad1[0x5E5]; u16 f5E6; } GsArea_762C;
 extern GsArea_762C D_800BF870_762c;
