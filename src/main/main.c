@@ -1533,7 +1533,59 @@ void func_800232F4(void *arg0) {
     D_800BF81E = 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80023320);
+extern s16 D_800E7FEE;
+extern u32 D_1F800208_9c07;
+extern u8 *D_1F800280_e69d;
+extern u8 D_800E7FC6;
+extern u8 D_1F80027B;
+extern u8 D_1F80023A;
+extern u16 D_1F800200_d47a;
+extern u16 D_1F800202_eb01;
+extern u16 D_1F800204_6927;
+s32 f_PlaySoundEffect();
+#define H(p, o) (*(u16 *)((u8 *)(p) + (o)))
+
+void func_80023320(u8 *a, u8 *b, u8 *c, s32 flags)
+{
+    u8 *t = a + 0x60;
+    u16 x;
+    u16 y;
+    u16 z;
+    u16 v;
+
+    if (D_800E7FEE == 0 || D_1F800137_104c != 0) {
+        return;
+    }
+    if (flags & 0x100) {
+        x = H(b, 0x2E);
+        y = H(b, 0x32);
+        z = H(b, 0x36);
+        D_1F800208_9c07 = (u32)b;
+    } else {
+        x = H(c, 0x2C);
+        y = H(c, 0x30);
+        z = H(c, 0x34);
+        D_1F800208_9c07 = (u32)c & 0x7FFFFFFF;
+        D_1F800280_e69d = b;
+    }
+    H(t, 0x18) = H(t, 8);
+    D_800E7FC6 = 4;
+    v = H(a, 0x2E);
+    D_1F80027B = 1;
+    a[0x29] = 1;
+    H(t, 0) = v - x;
+    H(t, 2) = H(a, 0x32) - y;
+    H(t, 4) = H(a, 0x36) - z;
+    D_1F800200_d47a = H(a, 0x2E);
+    D_1F800202_eb01 = H(a, 0x32);
+    D_1F800204_6927 = H(a, 0x36);
+    if (flags & 0x1000) {
+        D_1F80023A = 0;
+    } else {
+        D_1F80023A = 1;
+    }
+    f_PlaySoundEffect(0xC, 0, 0);
+}
 
 void func_8002343C(void *arg0) {
     M2C_FIELD(arg0, s8 *, 0) = 2;
@@ -5761,7 +5813,6 @@ s32 func_80035088(void *unused, s32 item, s32 mode)
     return 0;
 }
 
-extern s16 D_800E7FEE;
 u8 *func_8004DC84(s32 k, s32 mode);
 void f_RemoveItemWithoutMessage(s32 item, s32 count);
 
@@ -17200,8 +17251,6 @@ void func_80069CD8(u8 *a, s32 b)
     }
 }
 
-extern u8 D_1F80027B;
-extern u8 D_1F80023A;
 void func_8006A080(u8 *a)
 {
     u8 *m = a + 0x60;
