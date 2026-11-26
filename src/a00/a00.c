@@ -12077,7 +12077,97 @@ s32 func_80141AC4(u8 *a, s32 anim, s32 spd) {
     return res;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureHopAndBrake);
+static inline void inl_dust(u8 *a) {
+    s16 v[8];
+
+    if (--H_f12c(a, 0x40) < 0) {
+        v[1] = H_f12c(a, 0x2E);
+        v[3] = H_f12c(a, 0x32) + 0x1E;
+        v[5] = H_f12c(a, 0x36);
+        func_8003116C(0, v, -0x32);
+        H_f12c(a, 0x40) = (func_8009A450() & 3) + 3;
+    }
+}
+
+s32 f_UpdateTownCreatureHopAndBrake(u8 *a) {
+    u8 *q = a + 0x60;
+    s32 res = 0;
+    s32 d;
+    s16 t;
+
+    switch (a[7]) {
+    case 0:
+        HU(q, 2) &= 0xFFFB;
+        func_801402B8(a, 9, 8);
+        H_f12c(a, 0x50) = -0x28;
+        a[7]++;
+    case 1:
+        H_f12c(a, 0x32) += H_f12c(a, 0x50);
+        H_f12c(a, 0x50) += 4;
+        inl_move(a);
+        f_UpdateTownCreatureTerrainContact(a);
+        if (H_f12c(a, 0x50) >= 0) {
+            a[7]++;
+        }
+        break;
+    case 2:
+        inl_move(a);
+        H_f12c(a, 0x32) += H_f12c(a, 0x50);
+        f_UpdateTownCreatureTerrainContact(a);
+        if (H_f12c(a, 0x50) < 0x3C) {
+            H_f12c(a, 0x50) += 4;
+        }
+        if (a[0x29] != 0) {
+            H_f12c(a, 0x50) = 0;
+            H_f12c(a, 0x40) = 0;
+            H_f12c(a, 0x42) = 0x28;
+            a[7]++;
+        }
+        break;
+    case 3:
+        inl_move(a);
+        H_f12c(a, 0x32) += 0x10;
+        f_UpdateTownCreatureTerrainContact(a);
+        if (--H_f12c(a, 0x42) <= 0 || (D_800E7E80_d97c & 2)) {
+            a[7]++;
+        }
+        inl_dust(a);
+        if ((H_f12c(a, 0x58) & 0xFFF) > 0x800) {
+            H_f12c(a, 0x4E) -= 0x100;
+            H_f12c(a, 0x4E) -= ((0x400 - abs((H_f12c(a, 0x58) & 0xFFF) - 0xC00)) >> 6 << 8) + 0x100;
+            if (H_f12c(a, 0x4E) <= 0) {
+                H_f12c(a, 0x4E) = 0;
+                res = 1;
+            }
+        }
+        break;
+    case 4:
+        d = H_f12c(a, 0x58) & 0xFFF;
+        if (d > 0x800) {
+            H_f12c(a, 0x4E) -= ((0x400 - abs(d - 0xC00)) >> 6 << 6) + 0x10;
+        } else {
+            H_f12c(a, 0x4E) -= 0x400;
+        }
+        inl_dust(a);
+        if (abs(H_f12c(a, 0x4E)) <= 0x600) {
+            H_f12c(a, 0x4E) = 0;
+            H_f12c(a, 0x42) = 0x14;
+            a[7]++;
+        }
+        inl_move(a);
+        H_f12c(a, 0x32) += 0x10;
+        f_UpdateTownCreatureTerrainContact(a);
+        break;
+    case 5:
+        H_f12c(a, 0x32) += 0x10;
+        f_UpdateTownCreatureTerrainContact(a);
+        if (--H_f12c(a, 0x42) <= 0) {
+            res = 1;
+        }
+        break;
+    }
+    return res;
+}
 
 s32 f_UpdateTownCreatureVerticalLaunch(u8 *a) {
     u8 *q = a + 0x60;
