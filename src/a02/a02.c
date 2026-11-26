@@ -11404,4 +11404,168 @@ void func_80128034(u8 *a, void *b) {
     func_8004B374(a, b);
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", f_UpdateTabbyHouseResidentActor);
+typedef struct { u16 a, b; } Range;
+extern Range D_80138B18[];
+extern Range D_80138B30[];
+extern Range D_80138B5C[];
+extern Range D_80138BDC[];
+extern Range D_80138C20[];
+extern Range D_80138C2C[];
+extern Range D_80138CE0[];
+extern Range D_80138CE8[];
+extern Range D_80138D2C[];
+extern Range D_80138D98[];
+extern Range D_80138DC0[];
+extern Range D_80138DD4[];
+extern Range D_80138E18[];
+extern Range D_80138E44[];
+extern Range D_80138E50[];
+extern Range D_80138EA8[];
+extern Range D_80138EB8[];
+extern Range D_80138EF4[];
+extern Range D_80138F10[];
+extern Range D_80138F24[];
+extern Range D_80138F64[];
+extern Range D_80138FA0[];
+extern Range D_80138FDC[];
+extern Range D_80139028[];
+extern Range D_80139078[];
+extern u8 *D_1F80021C;
+
+void f_UpdateTabbyHouseResidentActor(s16 kind, s16 idx)
+{
+    Range *t;
+    s32 n, base;
+    u8 *p;
+    switch (kind) {
+    case 0:
+        t = D_80138B18;
+        n = 0x3;
+        base = 0;
+        break;
+    case 1:
+        t = D_80138B30;
+        n = 0x1A;
+        base = 0;
+        break;
+    case 2:
+        t = D_80138B5C;
+        n = 0x13;
+        base = 0x128;
+        break;
+    case 3:
+        t = D_80138BDC;
+        n = 0x14;
+        base = 0x65;
+        break;
+    case 4:
+        t = D_80138C20;
+        n = 0x7;
+        base = 0;
+        break;
+    case 5:
+        t = D_80138C2C;
+        n = 0x6;
+        base = 0;
+        break;
+    case 6:
+        t = D_80138CE0;
+        n = 0x6;
+        base = 0x2FF;
+        break;
+    case 7:
+        t = D_80138CE8;
+        n = 0x10;
+        base = 0x22C;
+        break;
+    case 8:
+        t = D_80138D2C;
+        n = 0x17;
+        base = 0;
+        break;
+    case 9:
+        t = D_80138D98;
+        n = 0x4;
+        base = 0x2B;
+        break;
+    case 10:
+        t = D_80138DC0;
+        n = 0xB;
+        base = 0;
+        break;
+    case 11:
+        t = D_80138DD4;
+        n = 0xF;
+        base = 0x23C;
+        break;
+    case 12:
+        t = D_80138E18;
+        n = 0x5;
+        base = 0x342;
+        break;
+    case 13:
+        t = D_80138E44;
+        n = 0x1;
+        base = 0;
+        break;
+    case 14:
+        t = D_80138E50;
+        n = 0x19;
+        base = 0;
+        break;
+    case 15:
+        t = D_80138EA8;
+        n = 0x13;
+        base = 0x332;
+        break;
+    case 16:
+        t = D_80138EB8;
+        n = 0x8;
+        base = 0;
+        break;
+    case 17:
+        t = D_80138EF4;
+        n = 0x11;
+        base = 0x16E;
+        break;
+    case 18:
+        t = D_80138F10;
+        n = 0x17;
+        base = 0x1F8;
+        break;
+    case 19:
+        t = D_80138F24;
+        n = 0x4;
+        base = 0xE1;
+        break;
+    case 20:
+        t = D_80138F64;
+        n = 0x16;
+        base = 0x1FA;
+        break;
+    case 21:
+        t = D_80138FA0;
+        n = 0x5;
+        base = 0x3FA;
+        break;
+    case 22:
+        t = D_80138FDC;
+        n = 0x16;
+        base = 0x324;
+        break;
+    case 23:
+        t = D_80139028;
+        n = 0x1A;
+        base = 0x112;
+        break;
+    case 24:
+        t = D_80139078;
+        n = 0x1E;
+        base = 0;
+        break;
+    default:
+        return;
+    }
+    p = D_1F80021C + t[idx].a * 32 + base * 32;
+    func_8001D2A8(n, p, p + (t[idx].b + 1) * 32, 0);
+}
