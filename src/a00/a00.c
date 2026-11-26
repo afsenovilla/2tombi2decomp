@@ -10460,7 +10460,64 @@ u8 *func_80139838(s32 a, u8 b) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeDryingRackControllerState);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80139A70);
+extern u8 D_800BF80A;
+
+void func_80139A70(AreaPartsOwner *a)
+{
+    u8 *g = D_800E7E80;
+    u8 *s;
+    u8 f;
+    s32 k;
+    s32 m;
+
+    switch (a->pad[7]) {
+    case 0:
+        if (D_800BF808_1760[2] != 0 && D_800BF808_1760[3] == 0x77) {
+            a->pad[7] = 1;
+            func_80042354(1, 1);
+        }
+        break;
+    case 1:
+        a->pad[7] = 2;
+        g[0x147] = func_80077768((s16)func_800782B0(g + 0x2C, H_f12c(a, 0x2E), H_f12c(a, 0x36)), H_f12c(g, 0x140), 0);
+        func_80054198(g);
+        func_80055284(g);
+        break;
+    case 2:
+        if (D_800BF80A != 0) {
+            break;
+        }
+        s = (u8 *)&D_800BF870;
+        f = s[0x17A];
+        if (!(f & 1)) {
+            s[0x17A] = f | 1;
+            k = 3;
+            m = 0;
+        } else if (!(f & 2)) {
+            s[0x17A] = f | 2;
+            k = 5;
+            m = 1;
+        } else if (!(f & 4)) {
+            s[0x17A] = f | 4;
+            k = 7;
+            m = 2;
+        } else if (f & 8) {
+            a->pad[7] = 3;
+            break;
+        } else {
+            s[0x17A] = f | 8;
+            k = 9;
+            m = 3;
+        }
+        f_SpawnSmallFishActor(a->parts[k], 2, m);
+        a->pad[7] = 0;
+        func_80042310();
+        break;
+    case 3:
+        a->pad[7] = 0;
+        break;
+    }
+}
 
 s32 f_DeployDryingRackSegments(AreaPartsOwner *a)
 {
