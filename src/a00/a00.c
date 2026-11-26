@@ -13399,7 +13399,131 @@ s32 f_UpdateTownCreatureVariantActivation(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureInteractionLifecycle);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleTownCreatureActor);
+extern s8 D_8014BF5E;
+void f_UpdateCrabBasketCarrierSequence(u8 *a);
+static inline s32 inl_out(u8 *a) {
+    u8 *q = a + 0x60;
+    s16 y = H_f12c(a, 0x32);
+
+    if (y > 0) return 1;
+    if (q[6] == 0x81) return y >= -0x81;
+    return D_800E7EAA >= 0xC;
+}
+
+void f_HandleTownCreatureActor(u8 *a) {
+    u8 *q = a + 0x60;
+    s16 v[8];
+    u32 k;
+    u16 t;
+
+    switch (a[4]) {
+    case 0:
+        func_80140544(a);
+        break;
+    case 1:
+        if (inl_out(a)) {
+            a[4] = 3;
+            break;
+        }
+        if ((D_1F800137 != 0 && D_800BF89C != 2) || D_800BF809 != 0) {
+            if (func_8014047C(a) == 0) {
+                goto L388;
+            }
+            break;
+        }
+        if (a[0x2B] != 0) {
+            a[0x2B]--;
+            if (D_1F80017C_0fe7 & 1) {
+                H_f12c(a, 0x56) += 0x80;
+            } else {
+                H_f12c(a, 0x56) -= 0x80;
+            }
+        L388:
+            if (func_800777FC(a)) {
+                func_800518FC(a);
+            }
+            break;
+        }
+        if (func_8014047C(a) == 0) {
+            switch (a[3]) {
+            case 0:
+            default:
+                f_UpdateTownCreatureBehaviorState(a);
+                if (a[0x2A] == 1 && H_f12c(a, 0x2E) > 0x31A8) {
+                    H_f12c(a, 0x2E) = 0x31A8;
+                }
+                break;
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                if ((s16)f_UpdateTownCreatureVariantActivation(a)) {
+                    if (a[3] == 2) {
+                        W_d1fb(a, 4) = 0x801;
+                    } else {
+                        t = ((s32 (*)())func_801409C0)(a, inl_8014601C(a));
+                        if (t != 0) {
+                            a[5] = t;
+                            a[6] = 0;
+                        } else {
+                            W_d1fb(a, 4) = 0x301;
+                        }
+                    }
+                    a[3] = 0;
+                }
+                break;
+            case 0x80:
+                f_UpdateLinkedTownCreatureActor(a);
+                break;
+            case 0x81:
+                f_UpdateCrabBasketCarrierSequence(a);
+                break;
+            }
+            if (func_800777FC(a)) {
+                if (q[7] == 1) {
+                    func_80074590(0x87, func_8009A450() & 3, 0);
+                }
+                {
+                    u8 *p = a + 0x60;
+                    if (D_8014BF5E-- < 0) {
+                        k = (HU(p, 8) >> 8) & 0xF;
+                        if (k == 1 || (k == 2 && H_f12c(a, 0x4E) > 0x500)) {
+                            v[1] = H_f12c(a, 0x2E);
+                            v[3] = HU(p, 0xA);
+                            v[5] = H_f12c(a, 0x36);
+                            func_8003116C(8, v, -0x50);
+                            D_8014BF5E = 0xA;
+                        }
+                        HU(p, 8) = 0;
+                    }
+                }
+                func_80076D68(a);
+                func_800518FC(a);
+                if (a[0x29] != 0) {
+                    a[0xB] = (a[0xB] & 0xC0) | 0x80;
+                } else {
+                    a[0xB] &= 0x3F;
+                }
+            }
+        }
+        a[0x29] = 0;
+        a[0x5F] = 0;
+        q[7] = 0;
+        break;
+    case 2:
+        f_UpdateTownCreatureInteractionLifecycle(a);
+        break;
+    case 3:
+        a[0] = 2;
+        if (a[0x1B] & 0x40) {
+            a[0x1B] &= 0xBF;
+        } else {
+            func_8007A624(a);
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureSpawner);
 
