@@ -2554,13 +2554,94 @@ void f_SpawnCoalMiningTownSceneActorsFromPlacementTable(u8 *a, s32 mode)
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8011321C);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80113394);
+extern u8 D_800BF816;
+extern u8 D_800BF8BE;
+extern s32 D_801390D8;
+extern s32 D_801390DC;
+extern s16 D_1F800160;
+extern s16 D_1F800162;
+extern s16 D_1F800164;
+
+void func_80113394(u8 *a) {
+    s32 vol = 0x7FFC;
+    s32 v;
+    u32 w;
+    u8 *g;
+    s16 dx;
+    s16 dy;
+    s16 dz;
+    s32 d;
+    s32 n;
+
+    switch (a[4]) {
+    case 0:
+        func_800752B4(2);
+        D_801390D8 = -1;
+        D_801390DC = -1;
+        a[4] = 1;
+    case 1:
+if (D_800BF8BE != 0xFF || D_800BF816 != 0) {
+            v = 0;
+        } else {
+            v = ((-D_1F800162 - 0xA8C) * 15) >> 9;
+            if (v < 0) {
+                v = 0;
+            }
+            if (D_1F800137 == 1) {
+                v >>= 1;
+            }
+        }
+        if (func_8007496C(D_801390D8, v, v) == 0) {
+            D_801390D8 = func_80074590(0x83, 0, -0x7F);
+        } else {
+            func_80074A38(D_801390D8);
+        }
+        g = (u8 *)&D_800BF808;
+        if (g[0xE] == 0 || g[0xF] != 7) {
+            w = 0;
+        } else {
+            dx = 0x22DE - D_1F800160;
+            dy = -0x684 - D_1F800162;
+            dz = 0x26C5 - D_1F800164;
+            d = func_80078240(dx, dy, dz) - 0x2BC;
+            if (d < 0) {
+                d = 0;
+            }
+            n = 0x60 - (d >> 5);
+            if (n < 0xF) {
+                n = 0xF;
+            }
+            w = func_80074A60(n, func_80085690(dz, dx));
+            if (D_1F800137 == 1) {
+                w >>= 1;
+                w &= 0x7FFF7FFF;
+            }
+        }
+        if (func_8007496C(D_801390DC, w >> 16, w & 0xFFFF) == 0) {
+            D_801390DC = func_80074590(0x81, 0, -0x7F);
+        } else {
+            func_80074A38(D_801390DC);
+        }
+        if (D_1F800137 == 1) {
+            vol = 0x7FFF;
+        } else {
+            vol >>= 2;
+        }
+        if (vol < 0) {
+            vol = 0;
+        }
+        func_80075D24(vol);
+        break;
+    case 2:
+    case 3:
+        func_8007ADD0(a);
+        break;
+    }
+}
 
 extern u8 *D_800BF544_37fb;
 extern u8 *D_800ED8C8_35cc;
 #define OT4 (*(u32 *)(ot + 0x10))
-extern s16 D_1F800160;
-extern s16 D_1F800164;
 extern void func_80083DE0(void *, s32, s32, s32, s32);
 void func_80113628(void) {
     u8 *p;
@@ -3177,7 +3258,6 @@ void func_801146D8(u8 *a) {
 void f_UpdateCoalMiningTownScenePropActor();
 extern void *D_800ECF80;
 extern u8 D_80139100[];
-extern u8 D_800BF816;
 extern u8 D_1F8000D0[];
 extern u8 D_1F800000[];
 extern u8 D_80129A7C[];
@@ -4054,7 +4134,6 @@ u8 *a;
     }
 }
 
-extern u8 D_800BF8BE;
 extern u8 D_80129BF4[];
 /* func_8011778C, inlined */
 static inline void func_8011778C_inl(u8 *a)
