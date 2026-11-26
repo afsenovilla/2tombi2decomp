@@ -4131,8 +4131,6 @@ void func_80117500(u8 *a, s32 *b) {
     b[2] -= j;
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8011778C);
-
 typedef struct {
     u8 pad0[4];
     s32 flags;
@@ -4156,6 +4154,110 @@ extern u8 D_800BF816;
 extern s32 D_1F8001C8[];
 extern s16 D_1F8001A4;
 extern u16 D_1F8001A6;
+
+s32 func_8011778C(s32 *pos, s16 *off)
+{
+    s32 best = 0;
+    s32 ret = best;
+    s32 iter = 2;
+    s32 n = best;
+    s32 *v = D_1F8001C8;
+    ColTable *t;
+    ColTri *found[4];
+    u16 *list;
+    u16 *grid;
+    ColTri *tris;
+    ColTri *hit;
+    ColTri *tri;
+    u16 *q;
+    u16 *p;
+    u16 k;
+    u16 cell;
+    s32 m;
+    s32 i, j, inside, d, y, x, z;
+    s32 *e;
+    s16 *pl;
+    s32 w;
+
+    if (D_800BF816 == 0) {
+        t = &D_8011FBF4;
+    } else {
+        t = &D_8011FC00;
+    }
+    list = t->list;
+    grid = t->grid;
+    tris = t->tris;
+    ((V3_9da5 *)v)->x = pos[0] + (off[0] << 16);
+    v[1] = pos[1] + (off[1] << 16);
+    v[2] = pos[2] + (off[2] << 16);
+    while (iter-- > 0) {
+        hit = NULL;
+        x = ((s16 *)v)[1];
+        z = ((s16 *)v)[5];
+        x /= 512;
+        z /= 512;
+        cell = grid[(z << 6) + x];
+        if (cell == 0xFFFF) {
+            return 0;
+        }
+        if (list[cell] != 0xFFFF) {
+            m = cell;
+            do {
+                k = list[m];
+                tri = &tris[k];
+                if (tri->flags & 0x8000) {
+                    for (i = 0; i < n; i++) {
+                        if (tri == found[i]) {
+                            break;
+                        }
+                    }
+                    if (i == n) {
+                        j = 0;
+                        inside = 0;
+                        for (; j < 4; j++) {
+                            d = (((s16 *)v)[1] - tri->e[j][0]) * tri->n[j][0] +
+                                (((s16 *)v)[5] - tri->e[j][1]) * tri->n[j][1];
+                            D_8011FC28[j] = d;
+                            if (d > 0) {
+                                goto out;
+                            }
+                        }
+                        inside = 1;
+                    out:
+                        if (inside) {
+                            s32 c1, c2, c3;
+
+                            pl = &tri->a;
+                            w = pl[3] << 12;
+                y = (tri->a * ((s16 *)v)[1] + pl[2] * ((s16 *)v)[5] + w) / -pl[1];
+                            c1 = y <= best;
+                            c2 = y >= ((s16 *)v)[3];
+                            c3 = y <= ((s16 *)v)[3] + 0x80;
+                            if (c1 && c2 && c3) {
+                                hit = tri;
+                                best = y;
+                                D_8011FC18[0] = D_8011FC28[0];
+                                D_8011FC18[1] = D_8011FC28[1];
+                                D_8011FC18[2] = D_8011FC28[2];
+                                D_8011FC18[3] = D_8011FC28[3];
+                            }
+                        }
+                    }
+                }
+            } while (list[++m] != 0xFFFF);
+        }
+        if (hit == NULL) {
+            break;
+        }
+        func_80117500(hit, v);
+        ret = 1;
+        found[n++] = hit;
+    }
+    pos[0] = v[0] - (off[0] << 16);
+    pos[2] = v[2] - (off[2] << 16);
+    return ret;
+}
+
 
 s32 func_80117B24(s32 *pos, s16 *off, s16 flag)
 {
