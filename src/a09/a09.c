@@ -681,7 +681,95 @@ void func_8010AD9C(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010AFB4);
+typedef struct { u8 pad[0x3A]; s16 x; s16 p1; s16 y; s16 p2; s16 z; } S8008;
+extern u8 D_800BF80F;
+extern u16 D_1F80017C;
+extern s16 D_1F8000D0[];
+extern S8008 D_800E8008_ef2a;
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+#define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
+
+void func_8010AFB4(u8 *a, u16 *b)
+{
+    s16 v[6];
+    u8 *e;
+    u8 *pos;
+
+    switch (a[5]) {
+    case 0:
+        H(a, 0x40) = 0x3C;
+        a[5]++;
+    case 1:
+        if (D_800BF80F == 0) {
+            a[5]++;
+            D_1F800137 = 2;
+            D_800BF870.pad1[0x1A8] |= 1 << a[3];
+            func_8006E1C0(8);
+            D_1F8000D0[1] = b[0];
+            D_1F8000D0[3] = b[1];
+            D_1F8000D0[5] = b[2];
+            D_800E8008_ef2a.x = b[3];
+            D_800E8008_ef2a.y = b[4];
+            D_800E8008_ef2a.z = b[5];
+            D_800E7E80[4] = 4;
+            D_800E7E80[5] = 0x21;
+            D_800E7E80[6] = 0;
+        }
+        break;
+    case 2:
+        if (D_800E806E == 3) {
+            a[5]++;
+        }
+        break;
+    case 3:
+        if (--H(a, 0x40) == -1) {
+            H(a, 0x40) = 0x3C;
+            a[5]++;
+            v[1] = H(a, 0x2E);
+            v[3] = H(a, 0x32) + 0x80;
+            v[5] = H(a, 0x36);
+            e = func_8003116C(0x15, v, -0x32);
+            e[0x28] |= 0x80;
+            e = func_8003116C(0x24, v, -0x32);
+            e[0x28] |= 0x80;
+            func_80027144(W(P(a, 0xC0), 0x40), v, 0x800, 8);
+            func_80074590(0xC, 0, 0);
+            pos = a + 0x2C;
+            func_80027144(W(P(a, 0xC0), 0x40), pos, 0x600, 0x18);
+            func_80074590(0xC, 0, 0);
+            v[1] = H(P(a, 0xC4), 0x2C);
+            v[1] = H(P(a, 0xC4), 0x30) + 0x80;
+            v[1] = H(P(a, 0xC4), 0x34);
+            e = func_8003116C(0x24, v, -0x32);
+            e[0x28] |= 0x80;
+            func_80027144(W(P(a, 0xC4), 0x40), pos, 0x800, 8);
+            func_80074590(0xC, 0, 0);
+            func_80027144(W(P(a, 0xC4), 0x40), pos, 0x600, 0x18);
+            func_80074590(0xC, 0, 0);
+            v[1] = H(P(a, 0xC8), 0x2C);
+            v[1] = H(P(a, 0xC8), 0x30) + 0x80;
+            v[1] = H(P(a, 0xCC), 0x34);
+            e = func_8003116C(0x24, v, -0x32);
+            e[0x28] |= 0x80;
+            func_80027144(W(P(a, 0xC8), 0x40), pos, 0x800, 8);
+            func_80074590(0xC, 0, 0);
+            func_80027144(W(P(a, 0xC8), 0x40), pos, 0x600, 0x18);
+            func_80074590(0xC, 0, 0);
+        } else {
+            H(P(a, 0xC0), 2) = (D_1F80017C & 1) * 6;
+            H(P(a, 0xC0), 0) = ((func_8009A450() & 3) - 2) * 6;
+        }
+        break;
+    case 4:
+        if (--H(a, 0x40) == -1) {
+            a[4] = 3;
+            D_1F800137 = 0;
+            func_8006E1E4();
+        }
+        a[1] = 0;
+        break;
+    }
+}
 
 typedef struct { s16 x, y, w, h; } RECT16;
 typedef struct {
