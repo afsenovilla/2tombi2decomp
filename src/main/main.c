@@ -9517,7 +9517,41 @@ void func_80048D3C(void)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_LoadAreaPlaneDescriptor);
+void f_LoadAreaPlaneDescriptor(u8 idx)
+{
+    u16 *t = D_1F8001C8;
+    u16 *e;
+    u16 a;
+    u16 b;
+    u16 v;
+
+    D_1F8001FE = idx;
+    e = t + t[idx];
+    a = e[0];
+    b = e[1];
+    D_1F8001B2 = a;
+    D_1F8001B6 = b;
+    D_1F8001B4 = e[2];
+    D_1F8001B8 = e[3];
+    D_1F8001BA = e[4];
+    v = e[5];
+    D_1F8001FC = v;
+    D_1F8001FD = v >> 8;
+    if (a <= b) {
+        D_1F8001AA = a;
+        D_1F8001AE = b - a;
+    } else {
+        D_1F8001AA = b;
+        D_1F8001AE = a - b;
+    }
+    if (D_1F8001B4 <= D_1F8001B8) {
+        D_1F8001AC = D_1F8001B4;
+        D_1F8001B0 = D_1F8001B8 - D_1F8001B4;
+    } else {
+        D_1F8001AC = D_1F8001B8;
+        D_1F8001B0 = D_1F8001B4 - D_1F8001B8;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_TransitionOrClampAreaPlaneEndpoint);
 
