@@ -12841,7 +12841,46 @@ end:
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaForwardTerrainContact);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80054790);
+extern u8 D_800A42F8[];
+extern u8 D_800A44AC[][3];
+extern void *D_800ED014;
+#define W_d1fb(p, o) (*(s32 *)((u8 *)(p) + (o)))
+#define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
+
+void func_80054790(u8 *a, s32 idx)
+{
+    u8 k = D_800A42F8[idx];
+    u8 *base;
+    s32 *tbl;
+    u8 *e;
+
+    if (k != a[0x47]) {
+        a[0x47] = k;
+        base = D_800ED014;
+        tbl = (s32 *)(base + 4);
+        if (!(D_800E7FFE & 0x40)) {
+            e = (u8 *)D_800A44AC;
+            e += k * 3;
+            W_d1fb(P(a, 0xC4), 0x40) = (s32)(base + tbl[e[0]]);
+            W_d1fb(P(a, 0xD0), 0x40) = (s32)(base + tbl[e[1]]);
+            W_d1fb(P(a, 0xDC), 0x40) = (s32)(base + tbl[e[2]]);
+        } else if (k == 10) {
+            W_d1fb(P(a, 0xC4), 0x40) = (s32)(base + tbl[1]);
+            W_d1fb(P(a, 0xDC), 0x40) = 0;
+            W_d1fb(P(a, 0xD0), 0x40) = 0;
+            W_d1fb(P(a, 0xCC), 0x40) = (s32)(base + tbl[19]);
+            W_d1fb(P(a, 0xD8), 0x40) = (s32)(base + tbl[20]);
+        } else {
+            e = (u8 *)D_800A44AC;
+            e += k * 3;
+            W_d1fb(P(a, 0xC4), 0x40) = (s32)(base + tbl[e[0]]);
+            W_d1fb(P(a, 0xD0), 0x40) = (s32)(base + tbl[4]);
+            W_d1fb(P(a, 0xDC), 0x40) = (s32)(base + tbl[7]);
+            W_d1fb(P(a, 0xCC), 0x40) = (s32)(base + tbl[3]);
+            W_d1fb(P(a, 0xD8), 0x40) = (s32)(base + tbl[6]);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005490C);
 
@@ -12903,7 +12942,7 @@ s32 f_SetTombaAnimationIfChanged(u8 *t, s32 anim, s32 blend)
 void f_SetTombaAnimation(u8 *t, s32 anim, s16 blend)
 {
     t[0x46] = anim;
-    func_80054790(t);
+    ((void (*)())func_80054790)(t);
     if (blend == 0) {
         f_StartActorSkeletalAnimation(t, D_80017FE8, anim);
     } else {
@@ -14855,7 +14894,6 @@ void func_8006228C(void *arg0) {
 
 extern s32 D_1F80023C;
 extern u16 D_801FE0E0;
-extern void *D_800ED014;
 extern u32 D_800FB170[];
 void func_800624B4(u8 *a)
 {
