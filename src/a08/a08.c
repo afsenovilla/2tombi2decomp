@@ -1555,9 +1555,49 @@ void func_80112238(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80112418);
-
+extern u16 D_1F800192_4f46;
 extern u8 D_800BF80E;
+
+void func_80112418(u8 *a) {
+    s32 s;
+
+    switch (a[6]) {
+    case 0:
+        a[0x181] = 1;
+        func_80054D14(a, 0xDD, 6);
+        H(a, 0x50) = 0;
+        H(a, 0x4A) = 0;
+        a[6]++;
+        a[0x147] = func_80055E28(a, 0) & 1;
+        func_80054198(a);
+        if (a[0x147] != 0) {
+            D_1F800192_4f46 = (U(a, 0x140) - 0x800) & 0xFFF;
+        } else {
+            D_1F800192_4f46 = U(a, 0x140);
+        }
+    case 1:
+        s = D_1F800192_4f46;
+        s &= 0xFFF;
+        if ((H(a, 0x56) = func_800776F8(s, H(a, 0x56), 0x100)) == s) {
+            a[6]++;
+        }
+        break;
+    case 2:
+        D_800BF80E = 0;
+        a[0] = 3;
+        H(a, 0x172) = 0x1E;
+        a[4] = 1;
+        a[5] = 0x1D;
+        a[6] = 1;
+        func_80055D5C(a);
+        a[0x180] = 6;
+        break;
+    }
+    func_80076D68(a);
+    func_8010FB44(a, 0);
+    snap_inl(a);
+}
+
 extern u8 D_800BF81F_4c28;
 void func_801125E4(u8 *a) {
     s32 k;
