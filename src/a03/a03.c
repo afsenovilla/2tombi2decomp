@@ -236,7 +236,115 @@ void func_8010B328(void) {
     func_8003C048();
 }
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdatePlayerTrolleyActor);
+typedef struct { s32 w[8]; } Blk20;
+#define U16(p, o) (*(u16 *)((u8 *)(p) + (o)))
+extern s32 D_1F80020C;
+extern u8 D_1F800137;
+extern s8 D_800BF80D;
+extern u8 D_800BF80E;
+extern u8 D_800BF80F;
+extern s32 D_8011BAE8;
+extern u8 *D_8011BB34;
+extern s32 D_8011BB38[];
+extern u8 D_8011BB4C[];
+void f_InitializeTrolleyModelAndTrackState(u8 *a);
+void func_8010B738(void);
+void f_UpdateTrolleyMovementAndCamera(u8 *a);
+void f_CollectNearbyTrolleySeeds(void);
+u8 *func_80072DDC();
+void f_UpdateDetachedTrolleyActor(u8 *a);
+
+void f_UpdatePlayerTrolleyActor(u8 *a) {
+    u8 *q = a + 0x60;
+    u8 *b;
+    u8 *t;
+
+    switch (a[4]) {
+    case 0:
+        f_InitializeTrolleyModelAndTrackState(a);
+        func_8010B738();
+        D_8011BAE8 = -400;
+        a[4] = 1;
+        a[5] = 0;
+    case 1:
+        f_UpdateTrolleyMovementAndCamera(a);
+        switch (a[5]) {
+        case 0:
+            D_8011BB34 = func_8007E038(0x17, 3);
+            D_1F80020C &= ~7;
+            a[6] = 0;
+            a[5]++;
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+            if (D_8011BB38[a[5] - 1] < H16(a, 0x36)) {
+                D_1F80020C &= ~7;
+                if (a[5] < 5) {
+                    if (a[5] == 4) {
+                        D_8011BB34[4] = 2;
+                        D_800E7E80[5]++;
+                    }
+                    D_1F80020C |= a[5];
+                    func_80074590(D_8011BB4C[a[5] - 1], 0, 0xF);
+                }
+                a[5]++;
+            }
+            break;
+        case 6:
+            f_CollectNearbyTrolleySeeds();
+            if (D_800BF80E != 0) {
+                func_80074590(0x8A, 0, 7);
+                D_1F80020C = (D_1F80020C & ~7) | 5;
+                a[5]++;
+            }
+            break;
+        case 7:
+            H16(q, 0xE) = H16(q, 0xE) >> 1;
+            H16(q, 0x10) = H16(q, 0x10) >> 1;
+            U16(q, 0xC) += (0x3C0 - H16(q, 0xC)) >> 6;
+            if (H16(q, 0x16) < 0) {
+                U16(q, 0x16)++;
+            } else if (H16(q, 0x16) > 0) {
+                U16(q, 0x16)--;
+            }
+            break;
+        }
+        if (D_1F800137 == 2 && D_800BF80F == 0) {
+            a[4] = 3;
+        }
+        break;
+    case 2:
+        switch (a[5]) {
+        case 0:
+            t = D_800E7E80;
+            b = func_80072DDC(0, 3, 4, 0x26);
+            *(void (**)(u8 *))(b + 0x1C) = f_UpdateDetachedTrolleyActor;
+            *(u8 **)(b + 0x10) = t;
+            *(u8 **)(t + 0x10) = b;
+            U16(b, 0x2E) = U16(a, 0x2E);
+            U16(b, 0x32) = U16(a, 0x32);
+            U16(b, 0x36) = U16(a, 0x36);
+            b[3] = a[7];
+            *(Blk20 *)(b + 0x98) = *(Blk20 *)(a + 0x98);
+            a[1] = 1;
+            func_80077EBC(a);
+            func_80051300(a);
+            a[5]++;
+        case 1:
+            f_UpdateTrolleyMovementAndCamera(a);
+            if (D_1F800137 == 2 && D_800BF80D == 2) {
+                a[4] = 3;
+            }
+            break;
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 typedef struct TrkNode {
     s16 pos[3];
@@ -395,7 +503,6 @@ typedef struct { s32 a, b; } TrkPair_BDEC;
 extern TrkPair_BDEC D_8011BCD8[];
 extern s32 D_8011C0D8;
 extern s32 D_8011C0DC;
-extern s32 D_1F80020C;
 void f_UpdatePlayerTrolleyActor(u8 *a);
 void f_InitializeTrolleyModelAndTrackState(u8 *a) {
     u8 *t = a + 0x60;
@@ -884,7 +991,6 @@ void f_UpdateTrolleyMovementAndCamera(u8 *a) {
     f_UpdateTrolleyRaceCamera(a);
 }
 
-extern s8 D_800BF80D;
 extern u8 *D_8011BB60;
 u8 *func_8007E038(s32, s32);
 void f_UpdateTrolleyCourseProgressActor(u8 *a) {
@@ -931,7 +1037,6 @@ void f_UpdateTrolleyCourseProgressActor(u8 *a) {
     }
 }
 
-extern u8 D_1F800137;
 extern u8 *D_800E7E90;
 
 void f_UpdateDetachedTrolleyActor(u8 *a) {
