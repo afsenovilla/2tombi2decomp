@@ -9003,7 +9003,7 @@ extern s8 D_1F800214[];
 extern u8 D_800BF808[];
 typedef struct SoundHandle { u8 volume; u8 pad1[11]; } SoundHandle;
 extern SoundHandle D_800BE238[];
-u8 *f_SpawnAreaIndexedPersistentPickup(void *, s32, s32);
+u8 *f_SpawnAreaIndexedPersistentPickup(u8 *owner, u8 idx, s32 flag);
 void func_80041378(u8 *actor)
 {
     f_ApplyActorOrientationToRotation(actor, *(s16 *)(actor + 0x72));
@@ -11720,7 +11720,50 @@ void func_8004C01C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SpawnAreaIndexedPersistentPickup);
+extern u8 *D_800A3EDC[];
+s32 f_TestAppleCollectedBit(s32 n);
+s32 f_TestWorldOrOtherPickupCollectedBit(s32 n, u8 other);
+
+u8 *f_SpawnAreaIndexedPersistentPickup(u8 *owner, u8 idx, s32 flag)
+{
+    u8 *e;
+    s32 apple;
+    s32 r;
+    u8 *a;
+
+    e = D_800A3EDC[D_800BF870_9d28];
+    e += idx * 4;
+    apple = e[0] & 0x80;
+    if (apple) {
+        r = ((s32 (*)())f_TestAppleCollectedBit)(*(s16 *)(e + 2), 1);
+    } else {
+        r = f_TestWorldOrOtherPickupCollectedBit(*(s16 *)(e + 2), 1);
+    }
+    if (r != 0) {
+        return NULL;
+    }
+    if (flag == 0) {
+        a = f_AllocateActor(owner, 0, 5, 4);
+    } else {
+        a = f_AllocateActor(owner, 1, 5, 4);
+    }
+    if (a == NULL) {
+        return NULL;
+    }
+    *(void **)(a + 0x1C) = func_8004C238;
+    a[3] = e[1];
+    a[0x5E] = e[0] & 0x7F;
+    *(s16 *)(a + 0x60) = 1;
+    *(u16 *)(a + 0x62) = *(u16 *)(e + 2);
+    *(s16 *)(a + 0x64) = 2;
+    if (apple) {
+        *(s16 *)(a + 0x64) = 6;
+    }
+    if (D_800BF870_9d28 == 0 && (u8)(idx - 1) < 5) {
+        *(s16 *)(a + 0x40) = idx - 1;
+    }
+    return a;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004C238);
 
