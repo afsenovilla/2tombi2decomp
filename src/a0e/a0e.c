@@ -2814,7 +2814,76 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80110CA4);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8011141C);
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80111548);
+typedef struct { s16 x, y, z, w; } Drop8;
+
+void func_80111548(u8 *a)
+{
+    Drop8 *p = (Drop8 *)(a + 0x50);
+    s16 i;
+    u16 x0, y0, z0;
+    s16 dx, dy, dz;
+    s16 r;
+
+    switch (a[4]) {
+    case 0:
+        x0 = U(a, 0x2C);
+        y0 = U(a, 0x2E);
+        z0 = U(a, 0x30);
+        H(a, 0x4E) = 3;
+        i = 0;
+        do {
+            dx = (func_8009A450() & 0x3F) - 0x20;
+            dy = (func_8009A450() & 0x3F) - 0x20;
+            dz = (func_8009A450() & 0x3F) - 0x20;
+            p->x = x0 + dx;
+            p->y = y0 + dy;
+            p->z = z0 + dz;
+            if (a[3] == 0x2C) {
+                p->w = (func_8009A450() & 0x3F) + 0x20;
+            } else {
+                p->w = (func_8009A450() & 0xFF) + 0x80;
+            }
+            i++;
+            p[3].x = dx >> 2;
+            p[3].y = dy >> 2;
+            p[3].z = dz >> 2;
+            p++;
+        } while (i < 3);
+        p = (Drop8 *)(a + 0x50);
+        a[4] = 1;
+        a[6] = 0;
+        a[7] = 0;
+        W(a, 0x34) = W(a, 0x38);
+    case 1:
+        r = func_8002B278(a);
+        a[7] += (func_8009A450() >> 11) + 0x20;
+        if ((s8)a[7] < 0) {
+            if ((W(a, 0x34) = W(a, 0x38)) == 0) {
+                a[4] = 2;
+                break;
+            }
+            if (r == 0) {
+                func_80031780(a);
+            } else {
+                a[7] += 0x80;
+            }
+        }
+        i = 0;
+        do {
+            i++;
+            p->x += p[3].x;
+            p->y += p[3].y;
+            p->z += p[3].z;
+            p[3].y++;
+            p++;
+        } while (i < 3);
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_801117CC);
 
