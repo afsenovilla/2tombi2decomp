@@ -972,7 +972,72 @@ void func_801125E4(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80112970);
+#define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
+extern s16 D_800ED098;
+extern u8 D_80068FBC[];
+u8 *func_8007AB20();
+u8 *func_8007AAE8();
+
+u8 *func_80112970(u8 *a, u8 *b, s32 c) {
+    u8 *p;
+    u8 *r;
+    s32 i;
+
+    p = func_8007AB20();
+    if (p == NULL) {
+        return NULL;
+    }
+    p[0x46] = a[0x14A];
+    H(p, 0x54) = 0;
+    H(p, 0x56) = H(a, 0x56);
+    H(p, 0x58) = 0;
+    P(p, 0x1C) = D_80068FBC;
+    p[0x2A] = a[0x2A];
+    p[2] = 0;
+    p[3] = c;
+    p[0x5E] = 0;
+    p[0xB] = b[0xB];
+    if (b[3] == 0) {
+        if (D_800ED098 < 6) {
+        fail:
+            p[4] = 3;
+            goto ret0;
+        }
+        p[8] = p[9] = 5;
+    } else {
+        if (D_800ED098 < 7) {
+            goto fail;
+        }
+        p[8] = p[9] = 6;
+    }
+    H(p, 0x5C) = H(b, 0x5C);
+    p[0xD] = b[0xD];
+    p[0x18] = b[0x18];
+    p[0x19] = b[0x19];
+    p[0x1A] = b[0x1A];
+    W_d1fb(p, 0x3C) = W_d1fb(b, 0x3C);
+    for (i = 0; i < p[9]; i++) {
+        r = func_8007AAE8();
+        ((u8 **)(p + 0xC0))[i] = r;
+        H(r, 6) = H(((u8 **)(b + 0xC0))[i], 6);
+        H(r, 0) = H(((u8 **)(b + 0xC0))[i], 0);
+        H(r, 2) = H(((u8 **)(b + 0xC0))[i], 2);
+        H(r, 4) = H(((u8 **)(b + 0xC0))[i], 4);
+        H(r, 0x38) = H(((u8 **)(b + 0xC0))[i], 0x38);
+        H(r, 0x3A) = H(((u8 **)(b + 0xC0))[i], 0x3A);
+        H(r, 0x3C) = H(((u8 **)(b + 0xC0))[i], 0x3C);
+        H(r, 8) = H(((u8 **)(b + 0xC0))[i], 8);
+        H(r, 0xA) = H(((u8 **)(b + 0xC0))[i], 0xA);
+        H(r, 0xC) = H(((u8 **)(b + 0xC0))[i], 0xC);
+        W_d1fb(r, 0x40) = W_d1fb(((u8 **)(b + 0xC0))[i], 0x40);
+    }
+    b[4] = 2;
+    b[5] = 9;
+    b[6] = 0;
+    return p;
+ret0:
+    return NULL;
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80112BCC);
 
@@ -3199,7 +3264,6 @@ void func_80120068(void *a0)
     }
 }
 
-extern s16 D_800ED098;
 extern u8 D_801453F8[];
 extern u8 D_800BFA32;
 /* func_80120068, inlined */
