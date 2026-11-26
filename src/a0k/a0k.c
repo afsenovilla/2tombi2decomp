@@ -3366,9 +3366,92 @@ s32 func_80113C50(u8 *a)
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_UpdateBerryNutsMinigameController);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80114170);
+extern u8 D_8011CFA0[];
+extern u8 D_8011D0E0[];
+extern u8 D_8011D190[];
+extern u8 D_800BFB07;
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801142C0);
+void func_80114170(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        if (D_800BF80F == 0) {
+            a[6] = 1;
+            func_80042354(1, 3);
+        }
+        break;
+    case 1:
+        a[6] = 2;
+        func_80040CDC(a, D_8001B4DC, D_8011CFA0);
+        a[0x70] = 1;
+        break;
+    case 2:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            if (D_800BFB07 == 0) {
+                a[6]++;
+                func_80040CDC(a, D_8001B4DC, D_8011D0E0);
+                a[0x70] = 1;
+            } else {
+                a[5] = 4;
+                a[6] = 2;
+                func_80040CDC(a, D_8001B4DC, D_8011D190);
+                a[0x70] = 1;
+            }
+        }
+        break;
+    case 3:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[5] = 4;
+            a[6] = 0;
+            func_80042310();
+        }
+        break;
+    }
+}
+
+extern u8 D_8011D140[];
+extern u8 D_8011D168[];
+
+void func_801142C0(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        if (a[0x2B] == 3) {
+            if (D_800BFB07 == 0) {
+                func_80040CDC(a, D_8001B4DC, D_8011D140);
+            } else {
+                func_80040CDC(a, D_8001B4DC, D_8011D168);
+            }
+            a[0x70] = 1;
+            a[6]++;
+            func_80042354(1, 3);
+        }
+        break;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            if (D_800BFB07 != 0) {
+                func_80040CDC(a, D_8001B4DC, D_8011D190);
+                a[0x70] = 1;
+                a[6]++;
+            } else {
+                a[6] = 0;
+                func_80042310();
+            }
+        }
+        break;
+    case 2:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[5] = 5;
+            a[6] = 0;
+            func_80042310();
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_UpdateBerryNutsHostDialogue);
 
