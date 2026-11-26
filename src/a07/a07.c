@@ -2005,7 +2005,43 @@ void func_801140A0(void) {
     D_800BF544_37fb += 0xC;
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80114294);
+void func_8012E2A0(void);
+
+void func_80114294(u8 *a)
+{
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        f_SpawnCircusSceneActorsFromPlacementTable(a, 0);
+        func_80113C20(0);
+        func_8012E2A0();
+        func_8004D8D8(0x16, 0);
+        g = D_800BF808;
+        if (g[0xE] != 0 && g[0xF] == 0xC) {
+            a[3] = g[0xF] + 1;
+            f_SpawnCircusSceneActorsFromPlacementTable(a, a[3]);
+            a[5] = 3;
+            a[7] = 2;
+        }
+        func_800752B4(2);
+        func_80075D24(0x11FFC);
+        break;
+    case 1:
+        if (f_UpdateCircusInteriorSceneTransition(a) != 0) {
+            f_SpawnCircusSceneActorsFromPlacementTable(a, a[3]);
+        }
+        func_80113C20(1);
+        func_80026A68(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007ADD0(a);
+        break;
+    }
+}
 
 #define W(p, o) M2C_FIELD(p, u32 *, o)
 typedef struct {
