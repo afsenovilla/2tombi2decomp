@@ -12119,7 +12119,60 @@ s32 f_UpdateTownCreatureRandomIdle(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureIdleDecision);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureApproachTomba);
+s16 f_UpdateTownCreatureApproachTomba(u8 *a, s32 dist, s32 spd) {
+    u8 *q;
+    s16 res = 0;
+    s32 d;
+    s32 dx, dz;
+    s16 t;
+
+    d = func_800781E0(H_f12c(a, 0x2E) - D_1F800160_71b4, H_f12c(a, 0x36) - D_1F800164_d75f);
+    q = a + 0x60;
+    switch (a[7]) {
+    case 0:
+        if (d < dist) {
+            res = 1;
+            break;
+        }
+        HU(q, 2) &= 0xFFFB;
+        func_801402B8(a, 4, 0);
+        H_f12c(a, 0x4E) = 0;
+        H_f12c(a, 0x42) = 0x3C;
+        a[7]++;
+    case 1:
+        if (d < dist) {
+            res = 1;
+        } else {
+            H_f12c(a, 0x4E) += (spd - H_f12c(a, 0x4E)) >> 2;
+        }
+        t = --H_f12c(a, 0x42);
+        if (t <= 0) {
+            res = 1;
+        }
+        if ((t & 7) == 0) {
+            func_8003116C(0, a + 0x2C, -5);
+        }
+        break;
+    }
+    if (inl_wall(a)) {
+        res = -1;
+    }
+    H_f12c(a, 0x32) += 0x10;
+    f_UpdateTownCreatureTerrainContact(a);
+    dx = H_f12c(a, 0x48) * H_f12c(a, 0x4E);
+    dz = H_f12c(a, 0x4C) * H_f12c(a, 0x4E);
+    if (HU(a, 0x62) & 1) {
+        W_d1fb(a, 0x2C) -= dx;
+        W_d1fb(a, 0x34) -= dz;
+    } else {
+        W_d1fb(a, 0x2C) += dx;
+        W_d1fb(a, 0x34) += dz;
+    }
+    if (res == 0 && a[0x66] == 0x81 && a[0x29] == 0 && a[4] == 1) {
+        W_d1fb(a, 4) = 0x20501;
+    }
+    return res;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureLeapingCharge);
 
