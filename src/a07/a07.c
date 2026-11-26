@@ -4617,7 +4617,46 @@ s32 func_8011EF28(void *arg0) {
     return M2C_FIELD(arg0, u8 *, 0xBF) == 0;
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011EF34);
+extern s32 D_800ECFB0;
+extern s32 D_800ECFB4;
+extern u8 D_80131618[];
+extern u8 D_80131708[];
+extern u8 D_80131690[];
+extern u8 D_80131780[];
+
+s32 func_8011EF34(u8 *a)
+{
+    s32 k;
+
+
+    k = 0xF;
+    if (a[3] & 0x20) {
+        k = 0x10;
+    }
+    if (!(D_800BFE56 & 0x80)) {
+        if (!(a[3] & 0x40)) {
+            if (func_800519E0(a, k, D_800ECFB0, D_80131618) == 0) {
+                goto ret1;
+            }
+            return 0;
+        } else {
+            if (func_800519E0(a, k, D_800ECFB4, D_80131708) == 0) {
+                goto ret1;
+            }
+            return 0;
+        }
+    } else if (!(a[3] & 0x40)) {
+        if (func_800519E0(a, k, D_800ECFB0, D_80131690) == 0) {
+            goto ret1;
+        }
+        return 0;
+    }
+    if (func_800519E0(a, k, D_800ECFB4, D_80131780) != 0) {
+        return 0;
+    }
+ret1:
+    return 1;
+}
 
 extern u8 D_80133900[];
 s32 f_CompleteUseTheSeesawEventIfResolved(void);
@@ -6688,9 +6727,6 @@ s32 func_80129F1C(void *arg0) {
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80129F34);
 
-extern s32 D_800ECFB0;
-extern u8 D_80131618[];
-extern u8 D_80131690[];
 void func_8012A894(u8 *a);
 void func_8012A8F0(void *arg0);
 void f_UpdateCircusIceCandyAndTinyPigActor(u8 *a)
