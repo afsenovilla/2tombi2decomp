@@ -12262,7 +12262,60 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleTownCreatureActor);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureSpawner);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateCrabBasketCarrierSequence);
+void f_UpdateCrabBasketCarrierSequence(u8 *a) {
+    u8 *q = a + 0x60;
+    s32 dx, dz;
+
+    switch (a[7]) {
+    case 0:
+        W_d1fb(a, 0x10) = (s32)f_SpawnCrabBasketRewardActor((s32)a, 0);
+        W_d1fb(a, 0x14) = 0;
+        HU(q, 2) |= 1;
+        H_f12c(a, 0x50) = 0;
+        a[7]++;
+    case 1:
+        func_801402B8(a, 0x23, 8);
+        H_f12c(a, 0x4E) = 0x800;
+        H_f12c(a, 0x40) = 0x14;
+        a[7]++;
+    case 2:
+        dx = H_f12c(a, 0x48) * H_f12c(a, 0x4E);
+        dz = H_f12c(a, 0x4C) * H_f12c(a, 0x4E);
+        if (HU(a, 0x62) & 1) {
+            W_d1fb(a, 0x2C) -= dx;
+            W_d1fb(a, 0x34) -= dz;
+        } else {
+            W_d1fb(a, 0x2C) += dx;
+            W_d1fb(a, 0x34) += dz;
+        }
+        if (--H_f12c(a, 0x40) <= 0) {
+            a[7]++;
+        }
+        break;
+    case 3:
+        func_801402B8(a, 0x24, 8);
+        H_f12c(a, 0x40) = 0x10;
+        a[7]++;
+    case 4:
+        if (--H_f12c(a, 0x40) <= 0) {
+            H_f12c(a, 0x40) = 0x10;
+            a[7]++;
+            HU(q, 2) |= 4;
+        }
+        break;
+    case 5:
+        H_f12c(a, 0x56) += 0x80;
+        if (H_f12c(a, 0x40)-- <= 0) {
+            a[7] = 1;
+            HU(q, 2) ^= 1;
+            H_f12c(a, 0x56) = 0;
+            HU(q, 2) &= 0xFFFB;
+        }
+        break;
+    }
+    f_UpdateTownCreatureTerrainContact(a);
+    H_f12c(a, 0x32) += 0x14;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateLinkedTownCreatureActor);
 
