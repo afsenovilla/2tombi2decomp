@@ -2110,7 +2110,78 @@ void func_8010E7A4(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", f_UpdateEvilPigCenterEffectAttack);
+typedef struct {
+    s16 x, y, z;
+} V3;
+
+void f_UpdateEvilPigCenterEffectAttack(u8 *a)
+{
+    s16 t;
+    s16 k;
+    V3 v;
+
+    if (D_800BF809 != 0) {
+        return;
+    }
+    switch (a[6]) {
+    case 0:
+        if (func_8010BFA8(a) != 0) {
+            goto hit;
+        }
+        k = func_800782B0(a + 0x2C, 0x12C0, 0x1162) & 0xFFF;
+        t = func_800776F8(k, H(a, 0x56), 0x80);
+        H(a, 0x56) = t;
+        if (t == k) {
+            a[6]++;
+            func_80041768(a, 0xC, 6);
+        }
+        break;
+    case 1:
+        if (U(*(u8 **)(a + 0x38), 2) == 0xA) {
+            a[6]++;
+            func_80074590(0x86, 0, 0);
+            v.x = U(*(u8 **)(a + 0xDC), 0x2C);
+            v.y = U(*(u8 **)(a + 0xDC), 0x30);
+            v.z = U(*(u8 **)(a + 0xDC), 0x34);
+            func_80031220(0xB06, &v, 0);
+        }
+        break;
+    case 2:
+        if (a[0x79] == 1) {
+            a[6]++;
+            func_80041768(a, 0, 6);
+            H(a, 0x40) = 6;
+        }
+        break;
+    case 3:
+        if (--H(a, 0x40) == 0) {
+            H(a, 0x40) = 0x46;
+            a[6]++;
+        }
+        H(a, 0x56) = func_800776F8((s16)func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f), H(a, 0x56), 0x80);
+        break;
+    case 4:
+        if (func_8010BFA8(a) != 0) {
+        hit:
+            a[0] = 2;
+            func_80041768(a, 3, 4);
+            f_SelectNextEvilPigAttack(a);
+            a[5] = 1;
+            a[6] = 1;
+            a[7] = 0;
+            break;
+        }
+        if (--H(a, 0x40) == 0) {
+            if (H(a, 0x64) != 2) {
+                a[5] = 0;
+            }
+            a[6] = 0;
+            H(a, 0x64) = 0;
+        }
+        H(a, 0x56) = func_800776F8((s16)func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f), H(a, 0x56), 0x80);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010ECF0);
 
@@ -3944,7 +4015,6 @@ void func_801149D8(PartsOwner49D8 *a)
     *(s16 *)(a->pad + 0x60) = 0;
 }
 
-typedef struct { s16 x, y, z; } V3;
 extern V3 D_8011EC68[];
 void func_80114B38(u8 *a)
 {
