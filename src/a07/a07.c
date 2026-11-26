@@ -3828,7 +3828,28 @@ void func_8011C2D0(u8 *a0)
     }
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011C340);
+void func_8011C340(u8 *a)
+{
+    u8 *d = (u8 *)W_d1fb(a, 0x14) + 0x60;
+    u8 *o = (u8 *)W_d1fb(a, 0x10);
+    u8 *q;
+    s32 x0, x1, x2;
+
+    U_d0c0(d, 4) = U_d0c0(*(u8 **)(a + 0xC0), 0x2C) + ((H(*(u8 **)(a + 0xC0), 0x1A) * -0xA0) >> 12);
+    U_d0c0(d, 6) = U_d0c0(*(u8 **)(a + 0xC0), 0x30) + ((H(*(u8 **)(a + 0xC0), 0x20) * -0xA0) >> 12);
+    U_d0c0(d, 8) = U_d0c0(*(u8 **)(a + 0xC0), 0x34) + ((H(*(u8 **)(a + 0xC0), 0x26) * -0xA0) >> 12);
+    U_d0c0(d, 0xC) = U_d0c0(d, 4);
+    U_d0c0(d, 0xE) = U_d0c0(d, 6);
+    U_d0c0(d, 0x10) = U_d0c0(d, 8);
+    q = *(u8 **)(o + 0xC0);
+    x0 = (((H(q, 0x18) * -0xA0) >> 12) + W_d1fb(q, 0x2C) - H(d, 0xC)) / 20;
+    x1 = (((H(q, 0x1E) * -0xA0) >> 12) + W_d1fb(q, 0x30) - (H(d, 0xE) + 0xC8)) / 20;
+    x2 = (((H(q, 0x24) * -0xA0) >> 12) + W_d1fb(q, 0x34) - H(d, 0x10)) / 20;
+    H(a, 0x40) = 0x14;
+    H(a, 0x4E) = x0;
+    H(a, 0x50) = x1;
+    H(a, 0x52) = x2;
+}
 
 void func_8011C4D0(void *arg0) {
     void *temp_a0;
