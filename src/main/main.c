@@ -13117,7 +13117,54 @@ s32 func_80055864(void) {
     return var_v0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800558B4);
+extern u16 D_1F800194;
+#define SET_STATE(a, s)        \
+    if ((a)[5] != (s)) {       \
+        (a)[5] = (s);          \
+        (a)[6] = 0;            \
+        (a)[7] = 0;            \
+    }
+
+s32 func_800558B4(u8 *a)
+{
+    u16 k;
+
+    if (*(s16 *)(a + 0x16E) == 0 || D_1F800137_104c != 0 || !(a[0x14A] & 2)) {
+        return 0;
+    }
+    if (a[0x14A] & 4) {
+        k = D_1F80018E;
+        if (k & 0x10) {
+            SET_STATE(a, 0xC);
+            return 1;
+        }
+        if (k & 0x4000) {
+            if (k & 0x100) {
+                D_1F800194 = D_1F80018C_c065;
+                SET_STATE(a, 0xA);
+                return 1;
+            }
+            if (k & 0xC00) {
+                D_1F800194 = D_1F80018C_c065;
+                SET_STATE(a, 0xA);
+                return 1;
+            }
+        }
+    } else if (a[0x14A] & 8) {
+        k = D_1F80018E;
+        if (k & 0x4000) {
+            if (k & 0x200) {
+                D_1F800194 = D_1F80018C_c065;
+                SET_STATE(a, 0xA);
+                return 1;
+            }
+        } else if (k & 0x20) {
+            SET_STATE(a, 0xD);
+            return 2;
+        }
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800559F4);
 
@@ -14474,7 +14521,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8005DE54);
 typedef struct { u8 pad0[0x2E]; u16 x; u8 pad30[6]; u16 z; } Pos_E580;
 extern u16 D_1F800188;
 extern u16 D_1F80018A;
-extern u16 D_1F800194;
 void func_8005E580(u8 *a)
 {
     s32 t;
