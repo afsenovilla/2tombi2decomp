@@ -10760,9 +10760,156 @@ s32 func_80125F7C(s32 *pos, s16 *off)
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80126240);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801265AC);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U_d0c0(p, o) (*(u16 *)((u8 *)(p) + (o)))
+extern u16 D_1F800160_3621;
+extern u16 D_1F800164_7d8c;
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80126968);
+s32 func_801265AC(u8 *a)
+{
+    u8 *t = D_800E7E80;
+    u8 *p;
+    s32 ang;
+    u16 b;
+
+    switch (a[0x78]) {
+    case 0: {
+        u16 az = U_d0c0(a, 0x76);
+        u16 tz = U_d0c0(t, 0x36);
+        u16 ax = U_d0c0(a, 0x74);
+        u16 tx = U_d0c0(t, 0x2E);
+        s16 dz = az - tz;
+        s16 dx = ax - tx;
+
+        if (dz * dz + dx * dx < H(a, 0x68) * H(a, 0x68)) {
+            U_d0c0(t, 0x2E) = ax;
+            U_d0c0(t, 0x36) = U_d0c0(a, 0x76);
+            return 1;
+        }
+        ang = func_80085690((s16)tz - (s16)az, (s16)ax - (s16)tx) & 0xFFF;
+        b = ang;
+        switch (H(a, 0x66)) {
+        case -1:
+            H(t, 0x56) = ang;
+        case 0:
+            a[0x78] = 2;
+            break;
+        case 2:
+            b = (ang + 0x800) & 0xFFF;
+        default:
+            H(a, 0x66) = b;
+            a[0x78]++;
+            break;
+        }
+        if (H(a, 0x72) == 0) {
+            t[5] = 0x27;
+            t[6] = 0;
+        }
+        break;
+    }
+    case 1:
+        if (func_80041438(t, H(a, 0x66), 0x100) != 0) {
+            a[0x78]++;
+        }
+        break;
+    case 2:
+        if (H(a, 0x72) == 1) {
+            func_80054D14(t, 0xCE, 4);
+        }
+        a[0x78]++;
+    case 3:
+        if ((H(t, 0x44) = H(a, 0x64) >> 8) == 0) {
+            H(t, 0x44) = 10;
+        }
+        H(a, 0x64) = func_80084080((s16)(U_d0c0(a, 0x76) - U_d0c0(t, 0x36)) * (s16)(U_d0c0(a, 0x76) - U_d0c0(t, 0x36)) +
+                                   (s16)(U_d0c0(a, 0x74) - U_d0c0(t, 0x2E)) * (s16)(U_d0c0(a, 0x74) - U_d0c0(t, 0x2E)));
+        if ((H(a, 0x64) = H(a, 0x64) / H(t, 0x44)) == 0) {
+            H(a, 0x64) = 1;
+        }
+        H(a, 0x64) = 0x1000 / H(a, 0x64);
+        H(a, 0x66) = 0x1000;
+        H(a, 0x74) -= U_d0c0(t, 0x2E);
+        H(a, 0x76) -= U_d0c0(t, 0x36);
+        a[0x78]++;
+        break;
+    case 4:
+        p = *(u8 **)(a + 0x6C);
+        if ((H(a, 0x66) -= H(a, 0x64)) <= 0) {
+            H(a, 0x66) = 0;
+        }
+        H(t, 0x2E) = U_d0c0(p, 4) - H(a, 0x66) * H(a, 0x74) / 4096;
+        H(t, 0x36) = U_d0c0(p, 6) - H(a, 0x66) * H(a, 0x76) / 4096;
+        if (H(a, 0x66) == 0) {
+            H(t, 0x44) = 0;
+            if (H(a, 0x72) == 1) {
+                func_80054D14(t, 0xCD, 4);
+            }
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
+
+s32 func_80126968(u8 *a)
+{
+    u8 *t = D_800E7E80;
+    u16 dx = D_1F800160_3621 - U_d0c0(a, 0x2E);
+    u16 dz = D_1F800164_7d8c - U_d0c0(a, 0x36);
+    s16 ang;
+
+    switch (a[0x78]) {
+    case 0: {
+        s16 sz = dz;
+        s16 sx = dx;
+        s16 e;
+
+        ang = func_80085690(-sz, sx) & 0xFFF;
+        H(a, 0x64) = ang;
+        if (ang == H(a, 0x72)) {
+            return 1;
+        }
+        H(a, 0x66) = func_80084080(sx * sx + sz * sz);
+        e = U_d0c0(a, 0x72) + U_d0c0(a, 0x74);
+        if (e > 0x1000 && e - 0x1000 >= H(a, 0x64)) {
+            H(a, 0x64) += 0x1000;
+        }
+        if (H(a, 0x72) < H(a, 0x64) && H(a, 0x64) <= e) {
+            H(a, 0x76) *= -1;
+        } else if (e < H(a, 0x64)) {
+            H(a, 0x64) -= 0x1000;
+        }
+        t[5] = 0x27;
+        t[6] = 0;
+        H(t, 0x44) = 10;
+        a[0x78]++;
+        break;
+    }
+    case 1:
+        H(a, 0x64) += U_d0c0(a, 0x76);
+        if (H(a, 0x76) >= 0) {
+            if (H(a, 0x64) >= H(a, 0x72)) {
+                H(a, 0x64) = H(a, 0x72);
+                H(t, 0x44) = 0;
+            }
+            ang = func_80085690(-(s16)dz, (s16)dx) + 0x400;
+        } else {
+            if (H(a, 0x72) >= H(a, 0x64)) {
+                H(a, 0x64) = H(a, 0x72);
+                H(t, 0x44) = 0;
+            }
+            ang = func_80085690(-(s16)dz, (s16)dx) - 0x400;
+        }
+        H(t, 0x56) = ang;
+        H(t, 0x2E) = U_d0c0(a, 0x2E) + func_80083F50(-H(a, 0x64)) * H(a, 0x66) / 4096;
+        H(t, 0x36) = U_d0c0(a, 0x36) + func_80083E80(-H(a, 0x64)) * H(a, 0x66) / 4096;
+        if (H(t, 0x44) == 0) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 s32 func_80126C18(u8 *a) {
     s16 y = M2C_FIELD(a, s16 *, 0x32);
