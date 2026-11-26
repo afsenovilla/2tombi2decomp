@@ -1898,7 +1898,41 @@ s32 f_FindTombaSupportInteractionTarget(u8 *a, s32 flag)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80024794);
+extern u8 **D_1F80014C_5007;
+extern u8 D_1F800152_f925;
+
+s32 func_80024794(u8 *a)
+{
+    u8 **l;
+    u8 *b;
+    u8 k;
+
+    if ((u8)(a[0x14A] - 6) < 2) {
+        l = D_1F80014C_5007;
+        D_1F800182_5650 = D_1F800152_f925;
+        while (D_1F800182_5650) {
+            b = *l;
+            D_1F800182_5650--;
+            l++;
+            if (b[0xC] == 4) {
+                k = b[2];
+                if (k == 14 || k == 15 || k == 0x39 || k == 0x32 || k == 0x59 || k == 0x4B || k == 0x4F ||
+                    k == 0x66 || k == 9 || k == 0x33) {
+                    if ((b[0] & 1) && b[0x2B] == 1) {
+                        b[0x2B] = 3;
+                        if (b[2] == 14 || b[2] == 15 || b[2] == 0x39) {
+                            D_800BF808[0x38] = 0x84;
+                        } else {
+                            D_800BF808[0x38] = 0x85;
+                        }
+                        return 1;
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800248D0);
 
