@@ -20775,7 +20775,62 @@ found:
     return NULL;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006FC34);
+extern u8 D_800A29CC_8351[];
+void f_StartActorTimedFrameSequence(u8 *actor, u16 **table, s32 index);
+void func_80070018(u8 *a);
+
+u8 *func_8006FC34(u8 *owner, s32 k)
+{
+    s32 i;
+    u8 *a;
+    s16 *e;
+    u16 kk;
+
+    for (i = 0; i < 3; i++) {
+        a = f_AllocateActor(owner, D_800A4BB8[i], 3, 4);
+        if (a != NULL) {
+            goto found;
+        }
+    }
+    return NULL;
+found:
+    *(void **)(a + 0x1C) = func_80070018;
+    kk = k;
+    a[0x5F] = kk & 0x80;
+    a[3] = kk & 0x7F;
+    *(u8 **)(a + 0x10) = owner;
+    a[0x28] |= 0x80;
+    e = (s16 *)(D_800A29CC_8351 + a[3] * 8);
+    if (a[0x5F] != 0) {
+        *(s32 *)(a + 0x3C) = D_800ECF58_6489;
+        f_StartActorTimedFrameSequence(a, D_80017334, e[0]);
+        a[0xD] = 0;
+        a[0xB] = 0x10;
+        a[0x47] = 0;
+        if (e[1] & 0x8000) {
+            a[0xD] |= 1;
+        }
+        *(s16 *)(a + 0x5C) = e[1] & 0x7FFF;
+        *(s16 *)(a + 0x5A) = 0;
+        a[8] = 0xF0;
+    } else if (f_InitializeSinglePartActorModel(a, e[1], e[0]) != 0) {
+        return NULL;
+    }
+    a[0x5F] |= 2;
+    *(s16 *)(a + 0x68) = e[3];
+    *(s16 *)(a + 0x60) = -0x20;
+    *(s16 *)(a + 0x62) = 0;
+    *(s16 *)(a + 0x54) = 0;
+    *(s16 *)(a + 0x56) = 0;
+    *(s16 *)(a + 0x58) = 0;
+    if (D_800BF816 == 0) {
+        a[0xBE] = 0;
+    } else {
+        a[0xBE] = 1;
+    }
+    *(s16 *)(a + 0x74) = 0;
+    return a;
+}
 
 u8 *f_SpawnAreaLinkedWeaponPickupActor(u8 *owner, s16 id)
 {
