@@ -18724,7 +18724,56 @@ void func_80068A94(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80068BE8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80068E68);
+extern u8 **D_800A4A00[];
+extern u8 D_800A4A44[];
+void f_StartActorSkeletalAnimation(u8 *a, u8 **tbl, s32 i);
+s32 func_80069858(u8 *a, s32 b, s32 c);
+
+void func_80068E68(u8 *a)
+{
+    u8 *m = a + 0x60;
+    u8 k;
+
+    a[1] = 1;
+    if (a[0x46] & 8) {
+        *(s16 *)(a + 0xBE) = 0x400;
+        a[0x46] = 8;
+        *(s16 *)(m + 0xA) = 0x400;
+    } else if (a[0x46] & 1) {
+        *(s16 *)(a + 0xBE) = 0x800;
+        a[0x46] = 1;
+        *(s16 *)(m + 0xA) = 0;
+    } else {
+        *(s16 *)(a + 0xBE) = 0;
+        a[0x46] = 0;
+        *(s16 *)(m + 0xA) = 0;
+    }
+    *(u16 *)(m + 8) = *(u16 *)(a + 0x56);
+    *(s16 *)(a + 0x80) = 0x64;
+    *(s16 *)(a + 0x40) = 0x78;
+    *(s16 *)(a + 0x42) = 0x1E;
+    *(s16 *)(a + 0x44) = 0x6E;
+    *(s16 *)(a + 0x82) = 0xC8;
+    *(s16 *)(a + 0x86) = 0xC8;
+    *(s16 *)(a + 0xB8) = 0x1000;
+    *(s16 *)(a + 0xBA) = 0x1000;
+    *(s16 *)(a + 0xBC) = 0x1000;
+    *(s16 *)(a + 0x84) = 0x64;
+    a[0x2B] = 2;
+    a[0x5E] = 0;
+    a[0x5F] = 0;
+    k = a[3];
+    if (!(k & 0x80)) {
+        f_StartActorSkeletalAnimation(a, D_800A4A00[k & 0x7F], D_800A4A44[k & 0x7F]);
+    }
+    func_80069858(a, 0, 1);
+    if (a[3] & 0x80) {
+        f_UpdateActorUnscaledModelTransforms((s32)a);
+    } else {
+        f_UpdateActorScaledOffsetModelTransforms(a);
+    }
+    a[4]++;
+}
 
 void func_80068FBC(u8 *a)
 {
