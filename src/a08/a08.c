@@ -2,6 +2,7 @@
 #include "game.h"
 #include "m2c.h"
 #include "gte.h"
+#include "psyq/gtemac.h"
 
 extern s8 D_800BF808_c1f7[];
 extern u8 D_1F800137;
@@ -2799,7 +2800,124 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80117628);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80117920);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80117E84);
+typedef struct { s16 m[3][3]; s32 t[3]; } Mat;
+typedef struct { u8 pad[0x3C]; s32 x, y, z; } CamT;
+extern Mat D_1F800000_c2ec;
+extern Mat D_1F8000F8_c2ec;
+extern s32 D_1F800014_c2ec[];
+extern CamT D_1F8000D0_c2ec;
+extern RingVec D_80148668[];
+extern void *D_800BF544;
+extern u32 *D_800ED8C8;
+#define T2_avsz3() __asm__ volatile(".word 0x4B58002D")
+#define T2_rtpt4() __asm__ volatile("nop;nop;nop;nop;.word 0x4A280030;nop;nop;nop;nop")
+#define T2_stotz(r0) __asm__ volatile("swc2 $7, 0( %0 )" : : "r"(r0) : "memory")
+#define T2_stsxy3_f3(r0) __asm__ volatile("addu $12,%0,$0;" "swc2 $12,8($12);" "swc2 $13,12($12);" "swc2 $14,16($12)" : : "r"(r0) : "$12", "$13", "$14", "$15", "memory")
+
+void func_80117E84(u8 *arg0)
+{
+    u8 *a = arg0;
+    Mat *m = &D_1F800000_c2ec;
+    s32 s = H(a, 0x50);
+    s16 c;
+    s32 dq;
+    u32 col;
+    u32 *p;
+    u32 *q;
+    RingVec *v;
+    s16 i;
+    s32 flg;
+    s32 otz;
+    u32 *ot;
+
+    dq = ((s - 0x14) << 7) / H(a, 0x54);
+    m->m[0][1] = 0;
+    m->m[0][2] = 0;
+    m->m[1][0] = 0;
+    m->m[1][2] = 0;
+    m->m[2][0] = 0;
+    m->m[2][1] = 0;
+    m->t[2] = 0;
+    m->t[1] = 0;
+    m->t[0] = 0;
+    m->m[0][0] = s << 4;
+    m->m[1][1] = s << 4;
+    m->m[2][2] = s << 4;
+    c = 0x80 - dq;
+    col = 0x4A000000 | (c << 16) | (c << 8) | c;
+    gte_MulMatrix0(&D_1F8000F8_c2ec, &D_1F800000_c2ec, &D_1F800000_c2ec);
+    gte_ldv0(a + 0x2C);
+    gte_rtv0();
+    gte_stlvnl(D_1F800014_c2ec);
+    m->t[0] += D_1F8000D0_c2ec.x;
+    m->t[1] += D_1F8000D0_c2ec.y;
+    m->t[2] += D_1F8000D0_c2ec.z;
+    gte_SetRotMatrix(m);
+    gte_SetTransMatrix(m);
+    v = D_80148668;
+    p = D_800BF544;
+    for (i = 0; i < 7; i++, v += 2) {
+        gte_ldv3(&v[0], &v[1], &v[2]);
+        T2_rtpt4();
+        gte_stflg(&flg);
+        if (flg < 0) {
+            continue;
+        }
+        T2_avsz3();
+        T2_stotz(&otz);
+        otz += H(a, 0x32);
+        otz = (otz >> (otz >> 10)) + ((otz >> 10) << 9);
+        if ((u32)(otz - 4) >= 0x7FC) {
+            otz = -1;
+        }
+        if (otz <= 0) {
+            continue;
+        }
+        T2_stsxy3_f3(p);
+        p[1] = col;
+        p[5] = 0x55555555;
+        ot = &D_800ED8C8[otz];
+        do {
+            p[0] = *ot | 0x05000000;
+        } while (0);
+        *ot = (u32)p;
+        p += 6;
+        q = p;
+        func_80083DE0(q, 0, 1, 0x35, 0);
+        ot = &D_800ED8C8[otz];
+        do {
+            q[0] = *ot | 0x02000000;
+        } while (0);
+        *ot = (u32)q;
+        q += 3;
+        p = q;
+        T2_stsxy3_f3(p);
+        p[1] = col;
+        p[5] = 0x55555555;
+        *(s16 *)((u8 *)p + 8) += 2;
+        *(s16 *)((u8 *)p + 12) += 2;
+        *(s16 *)((u8 *)p + 16) += 2;
+        *(s16 *)((u8 *)p + 10) += 1;
+        *(s16 *)((u8 *)p + 14) += 1;
+        *(s16 *)((u8 *)p + 18) += 1;
+        ot = &D_800ED8C8[otz];
+        do {
+            p[0] = *ot | 0x05000000;
+        } while (0);
+        *ot = (u32)p;
+        p += 6;
+        q = p;
+        func_80083DE0(q, 0, 1, 0x55, 0);
+        ot = &D_800ED8C8[otz];
+        do {
+            q[0] = *ot | 0x02000000;
+        } while (0);
+        *ot = (u32)q;
+        q += 3;
+        p = q;
+    }
+    D_800BF544 = p;
+}
 
 extern u8 D_800A0B38[];
 extern u8 D_801450DC[];
@@ -3307,7 +3425,6 @@ void func_8011B878(u8 *a)
     }
 }
 
-extern RingVec D_80148668[];
 void func_8011B900(void) {
     s32 i;
     s32 ang;
@@ -7459,7 +7576,6 @@ typedef struct {
 #define T2_stsz1(r0) __asm__ volatile("swc2 $17, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
-extern void *D_800BF544;
 extern s32 D_1F80008C_f832;
 #define T2_lddp(r0) __asm__ volatile("mtc2 %0, $8" : : "r"(r0))
 #define T2_ldrgb(r0) __asm__ volatile("mtc2 %0, $6" : : "r"(r0))
