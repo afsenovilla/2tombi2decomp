@@ -2024,7 +2024,71 @@ s32 func_80024794(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800248D0);
+extern u8 D_800BF873;
+extern u8 **D_1F800140_48d0;
+extern u8 D_1F800146_48d0;
+extern u8 D_80017324[];
+void func_8002F514(s32 kind, s32 owner);
+static inline s32 TestBit_48d0(u8 i)
+{
+    return (D_80017324[i >> 3] >> (i & 7)) & 1;
+}
+
+s32 func_800248D0(u8 *a)
+{
+    u8 **l;
+    u8 *b;
+    s32 k;
+    s32 r;
+    s32 dx;
+    s32 dz;
+    u16 d;
+    u32 w;
+    s32 t;
+    u16 e;
+
+    r = 0;
+    if (D_800BF873 == 0) {
+        l = D_1F800140_48d0;
+        D_1F800182_5650 = D_1F800146_48d0;
+        k = (a[0x17E] & 0xF) - 3;
+        while (D_1F800182_5650) {
+            b = *l;
+            D_1F800182_5650--;
+            l++;
+            if (b[2] < 0x65 && TestBit_48d0(*(volatile u8 *)(b + 2)) && (b[0] & 1)) {
+                func_8002F514(k & 0xFF, (s32)b);
+                r = 1;
+            }
+        }
+    } else {
+        l = D_1F80014C_5007;
+        D_1F800182_5650 = D_1F800152_f925;
+        k = (a[0x17E] & 0xF) - 3;
+        while (D_1F800182_5650) {
+            b = *l;
+            l++;
+            w = *(u32 *)b;
+            D_1F800182_5650--;
+            if ((w & 0xFF00FF) == 0x670001) {
+                dx = (s16)(*(u16 *)(a + 0x2E) - *(u16 *)(b + 0x2E));
+                dz = (s16)(*(u16 *)(a + 0x36) - *(u16 *)(b + 0x36));
+                d = SquareRoot0(dx * dx + dz * dz);
+                if (*(s16 *)(a + 0x80) + 0x2BC < d) {
+                    return;
+                }
+                t = *(u16 *)(a + 0x32) - *(u16 *)(b + 0x32) + 0x1A4;
+                e = *(u16 *)(a + 0x84) + t;
+                if (e > *(s16 *)(a + 0x86) + 0x208) {
+                    return;
+                }
+                func_8002F514(k & 0xFF, (s32)b);
+                r = 1;
+            }
+        }
+    }
+    return r;
+}
 
 void f_UpdateTombaForwardContactProbe(u8 *a)
 {
@@ -6459,7 +6523,6 @@ void func_80036B28(u8 *arg0, u8 *arg1) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80036BAC);
 
-extern u8 D_800BF873;
 s32 func_80036D90(s32 arg0) {
     if ((D_800BF873 != 0) && ((arg0 == 0) || (arg0 == 5))) {
         return 1;
