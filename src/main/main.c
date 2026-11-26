@@ -21293,7 +21293,46 @@ void func_80075D58(void)
     CdMix(D_800BED7C);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_QueueSoundEffectVoice);
+typedef struct { u8 b[12]; } Voice_qsev;
+extern Voice_qsev D_800BE238_3cc4[];
+
+u32 f_QueueSoundEffectVoice(s32 id, s32 pri, s32 c2, s32 c3, s32 c4, s32 c5, s32 c6, s32 c7)
+{
+    s32 i;
+    u8 *best;
+    s32 bp = pri;
+    s32 b0 = 0xFE;
+    volatile s32 idx;
+    u8 *s;
+
+    i = D_800BED78;
+    s = D_800BE238_3cc4[i].b;
+    best = NULL;
+    for (; i < 24; i++, s += 12) {
+        if (id == s[8]) {
+            if (s[1] < bp || (s[1] == bp && s[0] <= b0)) {
+                best = s;
+                idx = i;
+                bp = s[1];
+                b0 = best[0];
+            }
+        }
+    }
+    if (best == NULL) {
+        return 0;
+    }
+    {
+        best[2] = c2;
+        best[3] = c3;
+        best[4] = c4;
+        best[5] = c5;
+        best[6] = c6;
+        best[7] = c7;
+        best[1] = pri;
+        best[0] = 0xFF;
+        return (*(u32 *)best & ~0xFF) | idx;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80075F0C);
 
