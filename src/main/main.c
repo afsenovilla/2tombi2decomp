@@ -17751,7 +17751,43 @@ void func_80065A54(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800660AC);
+extern u8 D_1F800137_9d28;
+
+void func_800660AC(u8 *t)
+{
+    s32 r;
+
+    r = f_AdvanceActorSkeletalAnimation(t);
+    switch (t[6]) {
+    case 0:
+        D_800BF80E_58ec = 0;
+        f_SetTombaAnimationIfChanged(t, 0xC7, 3);
+        *(s16 *)(t + 0x40) = 0;
+        t[6]++;
+        break;
+    case 1:
+        if (*(s16 *)(t + 0x40) == 0xC) {
+            f_PlaySoundEffect(0x26, 0, 0);
+        }
+        (*(s16 *)(t + 0x40))++;
+        if (r == 1) {
+            f_SetTombaAnimationIfChanged(t, 2, 6);
+            *(s16 *)(t + 0x40) = 7;
+            t[6]++;
+        }
+        break;
+    case 2:
+        if (--*(s16 *)(t + 0x40) == 0) {
+            if (D_1F800137_9d28 == 1) {
+                D_800BF80E_58ec = 1;
+            }
+            t[5] = 0x22;
+            t[6] = 0;
+        }
+        break;
+    }
+    f_UpdateTombaTransitionTerrainContact(t, 1);
+}
 
 extern s8 D_1F800236[];
 extern s16 D_800E7EFE;
