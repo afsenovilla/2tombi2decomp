@@ -575,7 +575,87 @@ void func_8010B8B8(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010BABC);
+#define H16(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U16_5dc5(p, o) (*(u16 *)((u8 *)(p) + (o)))
+#define W32(p, o) (*(s32 *)((u8 *)(p) + (o)))
+s32 func_801258A4(s32 *pos, s16 *off);
+
+void func_8010BABC(u8 *a) {
+    s16 *v;
+    s32 c;
+    s32 sn;
+
+    switch (a[6]) {
+    case 0:
+        a[0x146] = 0;
+        func_80053D90(a);
+        func_80054198(a);
+        func_80054D14(a, 0xE0, 4);
+        func_80074590(0x3A, 0, 0);
+        a[0x167] = 0x1E;
+        a[7] = 0;
+        H16(a, 0x40) = 7;
+        H16(a, 0x42) = 0;
+        a[6]++;
+    case 1:
+        a[0x14B] = 3;
+        a[0x147] &= 0x7F;
+        func_8010A8D0(a);
+        func_80054E80(a, 0);
+        c = (func_80083F50(H16(a, 0x56)) * H16(a, 0x44)) >> 4;
+        sn = (func_80083E80(H16(a, 0x56)) * H16(a, 0x44)) >> 4;
+        W32(a, 0x2C) += c;
+        W32(a, 0x34) -= sn;
+        v = D_1F8000C0_65b0;
+        v[0] = 0;
+        v[1] = H16(a, 0x62);
+        v[2] = 0;
+        func_801258A4((s32 *)(a + 0x2C), v);
+        func_80076D68(a);
+        U16_5dc5(a, 0x32) += 10;
+        func_8010B634(a);
+        if (a[0x29] != 0 && (func_8010AEC4(a), a[0x29] != 0)) {
+            if (H16(a, 0x50) > 0x1E00) {
+                func_80074590(3, 0, 0);
+            }
+            H16(a, 0x50) = 0;
+        } else {
+            U16_5dc5(a, 0x50) += 0x800;
+            if (H16(a, 0x50) > 0x3000) {
+                H16(a, 0x50) = 0x3000;
+            }
+            W32(a, 0x30) += H16(a, 0x50) << 8;
+        }
+        if (a[0x167] == 0) {
+            a[5] = 0;
+            a[6] = 0;
+        } else {
+            a[0x167]--;
+        }
+        break;
+    case 2:
+        D_800BF80E = 0;
+        a[0x146] = 0;
+        func_80053D90(a);
+        func_80054198(a);
+        func_80054D14(a, 0xDF, 4);
+        func_80074590(0x3A, 0, 0);
+        H16(a, 0x40) = 0x1E;
+        a[6]++;
+        break;
+    case 3:
+        func_80076D68(a);
+        func_800551C4(a);
+        if (--H16(a, 0x40) == 0) {
+            D_800BF80E = 1;
+            a[4] = 4;
+            a[5] = 0x20;
+            a[6] = 0;
+            a[7] = 0;
+        }
+        break;
+    }
+}
 
 void func_8010BD80(u8 *a)
 {
