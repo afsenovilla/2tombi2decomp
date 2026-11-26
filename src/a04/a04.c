@@ -1244,7 +1244,27 @@ void func_801111EC(void *arg0, void *arg1) {
     }
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80111260);
+void func_80111260(u8 *a, u8 *b)
+{
+    if (func_80024BD8(a, b, *(void **)(b + 0xC0)) != 0) {
+        b[0x29] = 1;
+        *(s16 *)(a + 0x152) = *(u16 *)(b + 0x80) + *(u16 *)(a + 0x80) - 12;
+        if (b[3] == 0x63) {
+            D_1F800137_104c = 2;
+            a[4] = 4;
+            a[0x164] = 1;
+            D_1F800166 = 0;
+            D_1F800190 = 0;
+        } else if (b[3] == 0 || b[3] == 0x62) {
+            a[0x164] = 1;
+        } else {
+            a[0x164] = 9;
+        }
+        a[0x15C] = 0;
+        D_1F800080_ddd3 = b;
+        D_1F800182_5650 = 0;
+    }
+}
 
 void func_80111320(u8 *a, u8 *b) {
     s16 t;
