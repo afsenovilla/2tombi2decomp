@@ -8951,7 +8951,25 @@ void f_RestoreTownBarrelOrientations(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801316CC);
+void func_801316CC(AreaPartsOwner *a)
+{
+    s16 i;
+    s16 k;
+
+    if (!(U(a, 0x60) & 4)) {
+        return;
+    }
+    for (i = 2; i < 4; i++) {
+        k = (i - 1) * 4;
+        if (!(U(a, 0x60) & 2)) {
+            k--;
+        }
+        f_UpdateBarrelLinkedSegmentSequence(a, k);
+        if (!(U(a, 0x60) & 2)) {
+            break;
+        }
+    }
+}
 
 void f_ActivateBarrelLinkedSegmentPair(AreaPartsOwner *a, s16 k0, s16 flag) {
     s16 k = k0;
