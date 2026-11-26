@@ -5413,7 +5413,71 @@ void func_8011D8C8(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8011D9E4);
+typedef struct { u8 pad[0x38]; u8 *p38; u8 pad2[0x24]; s16 st[48]; u8 *parts[5]; } Obj;
+extern u8 *D_800ECFA4;
+extern u8 *D_800ECFA8;
+extern u8 *D_800ECFAC;
+extern u16 D_80135914[][4];
+extern u16 D_8013593C[][4];
+extern u16 D_80135964[][4];
+
+void func_8011D9E4(Obj *a, s32 idx)
+{
+    s16 k = U(a->p38, 4);
+    u8 *base;
+    u16 (*t)[4];
+    u8 *p;
+    s32 i;
+    s32 *o;
+
+    s32 m = k & 0xF;
+    k = m;
+    if (m == a->st[idx]) {
+        return;
+    }
+    switch (m) {
+    case 0:
+        base = D_800ECFA4;
+        t = D_80135914;
+        o = (s32 *)(base + 4);
+        for (i = 0; i < 5; i++) {
+            p = a->parts[i];
+            U(p, 6) = t[i][0];
+            U(p, 0) = t[i][1];
+            U(p, 2) = t[i][2];
+            U(p, 4) = t[i][3];
+            *(u8 **)(p + 0x40) = base + o[i];
+        }
+        break;
+    case 1:
+        base = D_800ECFA8;
+        t = D_8013593C;
+        o = (s32 *)(base + 4);
+        for (i = 0; i < 5; i++) {
+            p = a->parts[i];
+            U(p, 6) = t[i][0];
+            U(p, 0) = t[i][1];
+            U(p, 2) = t[i][2];
+            U(p, 4) = t[i][3];
+            *(u8 **)(p + 0x40) = base + o[i];
+        }
+        break;
+    case 2:
+        base = D_800ECFAC;
+        t = D_80135964;
+        o = (s32 *)(base + 4);
+        for (i = 0; i < 3; i++) {
+            p = a->parts[i];
+            U(p, 6) = t[i][0];
+            U(p, 0) = t[i][1];
+            U(p, 2) = t[i][2];
+            U(p, 4) = t[i][3];
+            *(u8 **)(p + 0x40) = base + o[i];
+        }
+        break;
+    }
+    a->st[idx] = k;
+}
 
 extern u16 D_1F800164_7d8c;
 s32 func_8011DBA4(u8 *a) {
