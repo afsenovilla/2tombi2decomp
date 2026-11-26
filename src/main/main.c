@@ -12757,7 +12757,41 @@ s32 func_8005376C(u8 *p)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800537B8);
+void func_80068FBC(u8 *a);
+#define W_d1fb(p, o) (*(s32 *)((u8 *)(p) + (o)))
+
+u8 *func_800537B8(u8 *a, u8 *src, s32 sub)
+{
+    u8 *o = ((u8 *(*)(void))func_8007AB20)();
+    s32 i;
+
+    if (o != NULL) {
+        o[0x46] = a[0x14A];
+        H(o, 0x54) = 0;
+        H(o, 0x56) = H(a, 0x56);
+        H(o, 0x58) = 0;
+        *(void **)(o + 0x1C) = func_80068FBC;
+        o[0x2A] = a[0x2A];
+        o[2] = 0;
+        o[3] = sub;
+        o[0x5E] = 0;
+        o[0xB] = src[0xB];
+        o[9] = src[9];
+        o[8] = src[8];
+        src[9] = 0;
+        H(o, 0x5C) = H(src, 0x5C);
+        o[0xD] = src[0xD];
+        o[0x18] = src[0x18];
+        o[0x19] = src[0x19];
+        o[0x1A] = src[0x1A];
+        W_d1fb(o, 0x3C) = W_d1fb(src, 0x3C);
+        for (i = 0; i < o[9]; i++) {
+            W_d1fb(o, 0xC0 + i * 4) = W_d1fb(src, 0xC0 + i * 4);
+        }
+        return o;
+    }
+    return NULL;
+}
 
 void func_800538E0(u8 *a, u16 *pos, s32 flag)
 {
