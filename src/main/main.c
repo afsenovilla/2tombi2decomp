@@ -22363,7 +22363,73 @@ FreeNodeA_8313 *f_AllocateActorFromPool4(FreeNodeA_8313 *at, u8 kind, s32 mode, 
     return NULL;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007A464);
+typedef struct Node_a464 {
+    u8 state;
+    u8 pad1[0xB];
+    u8 unkC;
+    u8 padD[0x13];
+    struct Node_a464 *next;
+    struct Node_a464 *prev;
+} Node_a464;
+extern Node_a464 *D_800F273C_f815;
+extern Node_a464 *D_800F2738_69c9;
+extern Node_a464 *D_800F23A0_a9be;
+
+Node_a464 *func_8007A464(Node_a464 *ref, s32 mode)
+{
+    Node_a464 *n = D_800F273C_f815;
+    Node_a464 **tail;
+    Node_a464 **head;
+
+    if (n != NULL) {
+        D_800F2410--;
+        D_800F273C_f815 = n->prev;
+        tail = &D_800F2738_69c9;
+        head = &D_800F23A0_a9be;
+        switch (mode) {
+        case 0:
+            if (ref->next != NULL) {
+                n->next = ref->next;
+                n->prev = ref;
+                ref->next->prev = n;
+                ref->next = n;
+                break;
+            }
+        case 1:
+            n->next = NULL;
+            n->prev = *tail;
+            if (*tail == NULL) {
+                *head = n;
+            } else {
+                (*tail)->next = n;
+            }
+            *tail = n;
+            break;
+        case 2:
+            if (ref->prev != NULL) {
+                n->next = ref;
+                n->prev = ref->prev;
+                ref->prev->next = n;
+                ref->prev = n;
+                break;
+            }
+        case 3:
+            n->prev = NULL;
+            n->next = *head;
+            if (*head == NULL) {
+                *tail = n;
+            } else {
+                (*head)->prev = n;
+            }
+            *head = n;
+            break;
+        }
+        n->state = 2;
+        n->unkC = 1;
+        return n;
+    }
+    return NULL;
+}
 
 typedef struct FreeNodeA { u8 kind0; u8 pad1[9]; u8 uA; u8 padB; u8 uC; u8 padD[0x13]; struct FreeNodeA *prev; struct FreeNodeA *next; } FreeNodeA_A5A8;
 extern FreeNodeA_A5A8 *D_800E8098_a5a8;
