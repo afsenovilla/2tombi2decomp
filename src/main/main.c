@@ -8477,7 +8477,40 @@ void func_80040390(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80040410);
+typedef struct { u16 x, y, z; } V3_0410;
+extern V3_0410 D_800A3B1C[];
+extern s16 D_800A3B28[][2];
+s32 f_AllocateActorModelPart(void);
+void f_SetActorPartModel(u8 *actor, s32 bank, s32 index);
+
+s32 func_80040410(u8 *a, u8 k)
+{
+    s32 i;
+
+    a[8] = 2;
+    if (D_800ED098 < a[8]) {
+        a[4] = 3;
+        return 0;
+    }
+    a[9] = 2;
+    a[0xD] = 0;
+    a[0xB] = 0;
+    *(s16 *)(a + 0x54) = 0;
+    *(s16 *)(a + 0x56) = 0;
+    *(s16 *)(a + 0x58) = 0;
+    for (i = 0; i < a[8]; i++) {
+        ((u8 **)(a + 0xC0))[i] = (u8 *)f_AllocateActorModelPart();
+        *(s16 *)(((u8 **)(a + 0xC0))[i] + 6) = i - 1;
+        *(u16 *)(((u8 **)(a + 0xC0))[i] + 0) = D_800A3B1C[i].x;
+        *(u16 *)(((u8 **)(a + 0xC0))[i] + 2) = D_800A3B1C[i].y;
+        *(u16 *)(((u8 **)(a + 0xC0))[i] + 4) = D_800A3B1C[i].z;
+        *(s16 *)(((u8 **)(a + 0xC0))[i] + 8) = 0;
+        *(s16 *)(((u8 **)(a + 0xC0))[i] + 0xA) = 0;
+        *(s16 *)(((u8 **)(a + 0xC0))[i] + 0xC) = 0;
+        f_SetActorPartModel(((u8 **)(a + 0xC0))[i], 1, D_800A3B28[k][i]);
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80040558);
 
