@@ -2,6 +2,7 @@
 #include "game.h"
 #include "m2c.h"
 #include "gte.h"
+#include "psyq/gtemac.h"
 
 extern s8 D_800BF808[];
 extern u8 D_1F800137;
@@ -9677,7 +9678,118 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013E30C);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013E5D8);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013E738);
+typedef struct { s16 m[3][3]; s32 t[3]; } Mat;
+typedef struct { u8 pad[0x3C]; s32 x, y, z; } CamT;
+extern Mat D_1F800000_8be2;
+extern Mat D_1F8000F8;
+extern s32 D_1F800014[];
+extern CamT D_1F8000D0_b4b6;
+extern RingVec D_8014CE70[];
+extern u32 *D_800ED8C8_065b;
+#define T2_rtpt4() __asm__ volatile("nop;nop;nop;nop;.word 0x4A280030;nop;nop;nop;nop")
+#define T2_stsxy3_f3(r0) __asm__ volatile("addu $12,%0,$0;" "swc2 $12,8($12);" "swc2 $13,12($12);" "swc2 $14,16($12)" : : "r"(r0) : "$12", "$13", "$14", "$15", "memory")
+
+void func_8013E738(u8 *a)
+{
+    Mat *m = &D_1F800000_8be2;
+    s32 s = H(a, 0x50);
+    s16 c;
+    u32 col;
+    u32 *p;
+    u32 *q;
+    RingVec *v;
+    s16 i;
+    s32 flg;
+    s32 otz;
+    u32 *ot;
+
+    m->m[0][1] = 0;
+    m->m[0][2] = 0;
+    m->m[1][0] = 0;
+    m->m[1][2] = 0;
+    m->m[2][0] = 0;
+    m->m[2][1] = 0;
+    m->t[2] = 0;
+    m->t[1] = 0;
+    m->t[0] = 0;
+    m->m[0][0] = s << 4;
+    m->m[1][1] = s << 4;
+    m->m[2][2] = s << 4;
+    c = 0x80 - ((s - 0x14) << 7) / 200;
+    col = 0x4A000000 | (c << 16) | (c << 8) | c;
+    gte_MulMatrix0(&D_1F8000F8, &D_1F800000_8be2, &D_1F800000_8be2);
+    gte_ldv0(a + 0x2C);
+    gte_rtv0();
+    gte_stlvnl(D_1F800014);
+    m->t[0] += D_1F8000D0_b4b6.x;
+    m->t[1] += D_1F8000D0_b4b6.y;
+    m->t[2] += D_1F8000D0_b4b6.z;
+    gte_SetRotMatrix(m);
+    gte_SetTransMatrix(m);
+    v = D_8014CE70;
+    p = D_800BF544_ff0c;
+    for (i = 0; i < 7; i++, v += 2) {
+        gte_ldv3(&v[0], &v[1], &v[2]);
+        T2_rtpt4();
+        gte_stflg(&flg);
+        if (flg < 0) {
+            continue;
+        }
+        T2_avsz3();
+        T2_stotz(&otz);
+        otz += H(a, 0x32);
+        otz = (otz >> (otz >> 10)) + ((otz >> 10) << 9);
+        if ((u32)(otz - 4) >= 0x7FC) {
+            otz = -1;
+        }
+        if (otz <= 0) {
+            continue;
+        }
+        T2_stsxy3_f3(p);
+        p[1] = col;
+        p[5] = 0x55555555;
+        ot = &D_800ED8C8_065b[otz];
+        do {
+            p[0] = *ot | 0x05000000;
+        } while (0);
+        *ot = (u32)p;
+        p += 6;
+        q = p;
+        func_80083DE0(q, 0, 1, 0x35, 0);
+        ot = &D_800ED8C8_065b[otz];
+        do {
+            q[0] = *ot | 0x02000000;
+        } while (0);
+        *ot = (u32)q;
+        q += 3;
+        p = q;
+        T2_stsxy3_f3(p);
+        p[1] = col;
+        p[5] = 0x55555555;
+        *(s16 *)((u8 *)p + 8) += 2;
+        *(s16 *)((u8 *)p + 12) += 2;
+        *(s16 *)((u8 *)p + 16) += 2;
+        *(s16 *)((u8 *)p + 10) += 1;
+        *(s16 *)((u8 *)p + 14) += 1;
+        *(s16 *)((u8 *)p + 18) += 1;
+        ot = &D_800ED8C8_065b[otz];
+        do {
+            p[0] = *ot | 0x05000000;
+        } while (0);
+        *ot = (u32)p;
+        p += 6;
+        q = p;
+        func_80083DE0(q, 0, 1, 0x55, 0);
+        ot = &D_800ED8C8_065b[otz];
+        do {
+            q[0] = *ot | 0x02000000;
+        } while (0);
+        *ot = (u32)q;
+        q += 3;
+        p = q;
+    }
+    D_800BF544_ff0c = p;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013EC14);
 
@@ -9980,7 +10092,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013FAE4);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013FBD0);
 
-extern RingVec D_8014CE70[];
 void func_8013FCF0(void) {
     s32 i;
     s32 ang;

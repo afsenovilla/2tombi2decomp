@@ -1,6 +1,7 @@
 /* Names used by library C taken from other projects (psx_tomba, Tombi-Decomp) for addresses this
  * program knows under another name; addresses read off the retail code by tools/libsweep.py. */
 D_1F800000_6ac3 = 0x1F800000;
+D_1F800000_8be2 = 0x1F800000;
 D_1F800000_d070 = 0x1F800000;
 D_1F800040_b149 = 0x1F800040;
 D_1F800080_ddd3 = 0x1F800080;
@@ -11,6 +12,7 @@ D_1F800098 = 0x1F800098;
 D_1F80009C = 0x1F80009C;
 D_1F80009C_efeb = 0x1F80009C;
 D_1F8000C0_aa14 = 0x1F8000C0;
+D_1F8000D0_b4b6 = 0x1F8000D0;
 D_1F8000D0_b839 = 0x1F8000D0;
 D_1F8000D0_fb20 = 0x1F8000D0;
 D_1F800137 = 0x1F800137;
@@ -42,4 +44,5 @@ D_800E8008_d0cf = 0x800E8008;
 D_800E806C_5739 = 0x800E806C;
 D_800ECF58_742e = 0x800ECF58;
 D_800ECF80_1c35 = 0x800ECF80;
+D_800ED8C8_065b = 0x800ED8C8;
 D_8014CE6C_28ce = 0x8014CE6C;
