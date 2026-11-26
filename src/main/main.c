@@ -12214,7 +12214,68 @@ void func_8004F474(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004F514);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004F6D0);
+void func_8004F6D0(u8 *p)
+{
+    s32 done = 0;
+    u8 *e = p + 0xC;
+    s32 i = done;
+    s32 old = done;
+    s32 j;
+    u8 *d;
+    u8 *s;
+    u8 k;
+
+    for (; i < *(s16 *)(p + 8); i++, e += 0x8C) {
+        if (e[8] >= 3) {
+            old++;
+        }
+        switch (e[0xA]) {
+        case 0:
+            done++;
+            break;
+        case 1:
+            if ((u8)(e[0xB] += 2) >= 8) {
+                d = e + 0x10;
+                s = e + 0x3D;
+                for (j = 0; j < 0x2D; j++) {
+                    *d++ = *s++;
+                }
+                done++;
+                e[0x3D] = 0xFF;
+                e[0xB] = 0;
+                e[0xA] = 0;
+            }
+            break;
+        case 2:
+            *(s16 *)(e + 0xE) -= 0x100;
+            if (*(s16 *)(e + 0xE) < 0) {
+                done++;
+                *(s16 *)(e + 0xE) = 0;
+                e[0xA] = 0;
+            }
+            *(s16 *)(e + 4) = (rsin(*(s16 *)(e + 0xE)) * *(s16 *)(e + 0xC)) / 4096;
+            *(s16 *)(e + 0) = 0xA0 - *(s16 *)(e + 4) / 2;
+            break;
+        }
+    }
+    if (done == *(s16 *)(p + 8)) {
+        if (old) {
+            f_RemoveOldestPopupDisplayEntry(p);
+        }
+        if (*(s16 *)(p + 8) == 0) {
+            p[1] = 0;
+        } else {
+            if (*(s16 *)(p + 0xA) != 0) {
+                f_PromoteNextPopupRequest(p);
+                *(s16 *)(p + 4) = 0;
+                p[1] = 1;
+            } else {
+                *(s16 *)(p + 4) = 0;
+                p[1] = 2;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ForcePromotePopupRequest);
 
