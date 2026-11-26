@@ -12117,7 +12117,74 @@ s32 f_UpdateTownCreatureRandomIdle(u8 *a) {
     return res;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureIdleDecision);
+extern u8 D_8014BEA4[];
+/* func_8014601C, inlined */
+static inline s16 inl_8014601C(u8 *a) {
+    s16 d = func_800781E0(M2C_FIELD(a, s16 *, 0x2E) - D_1F800160_71b4, M2C_FIELD(a, s16 *, 0x36) - D_1F800164_d75f);
+
+    if ((D_800E7FFE & 0x8200) || d > 0x640) {
+        return -1;
+    }
+    if (d >= 0x44D) {
+        return 0;
+    }
+    if (d >= 0x259) {
+        return 1;
+    }
+    return 2;
+}
+
+s32 f_UpdateTownCreatureIdleDecision(u8 *a) {
+    u8 *q = a + 0x60;
+    s32 res = 0;
+    s32 dx, dz;
+
+    switch (a[7]) {
+    case 0:
+        HU(q, 2) &= 0xFFFB;
+        a[7]++;
+    case 1:
+        H_f12c(a, 0x40) = D_8014BEA4[func_8009A450() & 0xF];
+        func_801402B8(a, 0x16, 8);
+        H_f12c(a, 0x48) = H_f12c(a, 0x4A) = H_f12c(a, 0x4C) = 0;
+        a[7]++;
+    case 2:
+        if (H_f12c(a, 0x40)-- > 0) {
+            if (inl_wall(a)) {
+                res = 3;
+                if (func_8009A450() & 0x8000) {
+                    res = 2;
+                }
+                break;
+            }
+            if ((H_f12c(a, 0x4E) = HU(*(u8 **)(a + 0x38), 4)) & 1) {
+                q[7] = 1;
+                if (inl_8014601C(a) > 0) {
+                    res = 4;
+                }
+            }
+            dx = H_f12c(a, 0x48) * H_f12c(a, 0x4E);
+            dz = H_f12c(a, 0x4C) * H_f12c(a, 0x4E);
+            if (HU(a, 0x62) & 1) {
+                W_d1fb(a, 0x2C) -= dx;
+                W_d1fb(a, 0x34) -= dz;
+            } else {
+                W_d1fb(a, 0x2C) += dx;
+                W_d1fb(a, 0x34) += dz;
+            }
+        } else {
+            if (inl_8014601C(a) > 0) {
+                res = 4;
+            } else {
+                res = 1;
+            }
+        }
+        break;
+    }
+    H_f12c(a, 0x32) += 0x10;
+    f_UpdateTownCreatureTerrainContact(a);
+    return res;
+}
 
 s16 f_UpdateTownCreatureApproachTomba(u8 *a, s32 dist, s32 spd) {
     u8 *q;
