@@ -810,9 +810,151 @@ void func_8010B3A8(s32 run)
     }
 }
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010B4C8);
+extern u8 D_800BF80E;
+extern u8 D_8010E28C[];
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010B664);
+s32 func_8010B4C8(u8 *a)
+{
+    u8 *pl = D_800E7E80;
+    u8 *g;
+
+    switch (a[6]) {
+    case 0:
+        if (D_800BF80F == 0) {
+            a[6] = 1;
+            a[7] = 0;
+            D_1F800137 = 2;
+        }
+        break;
+    case 1:
+        switch (a[7]) {
+        case 0:
+            D_800BF80E = 0;
+            pl[4] = 4;
+            pl[5] = 0x3B;
+            pl[6] = 0;
+            pl[7] = 0;
+            func_80054198(pl);
+            func_80054D14(pl, 2, 5);
+            a[7]++;
+            break;
+        case 1:
+            if (D_800BF80E != 0) {
+                a[6] = 2;
+                a[7] = 0;
+            }
+            break;
+        }
+        break;
+    case 2:
+        a[6]++;
+        func_80042354(1, 4);
+        func_80040CDC(a, 0, D_8010E28C);
+        a[0x70] = 1;
+        break;
+    case 3:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            g = (u8 *)&D_800BF870;
+            g[3] = 1;
+            func_80042310();
+            a[6] = 0;
+            g[0x16B] |= 0x1E;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
+
+typedef struct { u16 lo; s16 hi; } Half;
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+extern u8 D_8010E26C[];
+extern s32 D_800BF860_a660;
+
+void func_8010B664(u8 *a)
+{
+    Half v[3];
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        switch (a[5]) {
+        case 0:
+            func_8010B3A8(0);
+            a[0xBF] = 0xF0;
+            H(a, 0x7E) = 0x1C;
+            H(a, 0x7C) = 0x400;
+            a[0] = 1;
+            H(a, 0x7A) = 0x63;
+            a[5]++;
+        case 1:
+            f_ConfigureEvilPigGateForCurrentArea(a, D_8010E26C);
+            break;
+        case 2:
+            g = (u8 *)&D_800BF870;
+            if (g[0x1D1] == 0) {
+                a[4] = 4;
+                a[5] = 0;
+                H(*(u8 **)(a + 0xC4), 0xA) = 0x800;
+                H(*(u8 **)(a + 0xC8), 0xA) = 0x800;
+                v[0].hi = U(a, 0x2E);
+                v[1].hi = U(a, 0x32);
+                v[2].hi = U(a, 0x36) - 0x320;
+                D_800BF860_a660 = func_8003116C(0xA03, v, -0x3C);
+            } else if ((g[0x1CD] & 0x1F) == 0x1F) {
+                a[4] = 1;
+                a[5] = 0;
+                a[0x5E] = 1;
+                H(*(u8 **)(a + 0xC4), 0xA) = 0x800;
+                H(*(u8 **)(a + 0xC8), 0xA) = 0x800;
+            } else {
+                a[4] = 1;
+                a[5] = 0;
+                a[0x5E] = 0;
+            }
+            a[6] = 0;
+            break;
+        }
+        break;
+    case 1:
+        switch (a[0x5E]) {
+        case 0:
+            if (a[5] == 0) {
+                a[5] = 1;
+                a[2] = 0x1F;
+            }
+            break;
+        case 1:
+            func_8010AD9C(a);
+            break;
+        case 2:
+            break;
+        }
+        func_8010B3A8(1);
+        a[1] = 1;
+        func_80077EBC(a);
+        func_80051844(a);
+        a[0x29] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    case 4:
+        if (func_8010B4C8(a) != 0) {
+            a[4] = 1;
+            a[5] = 0;
+            a[6] = 0;
+        }
+        func_8010B3A8(1);
+        a[1] = 1;
+        func_80077EBC(a);
+        func_80051844(a);
+        break;
+    }
+}
 
 extern s16 D_801003F8;
 s32 func_8010B8B4(u8 *a)
