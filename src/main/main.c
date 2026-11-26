@@ -23205,7 +23205,31 @@ s32 func_8007C0D0(u8 *a, s32 b)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C2A4);
+u8 *func_8007C2A4(u8 *p, u16 *x, u8 c2, s32 val, u8 c3)
+{
+    u8 n = val & 0x7F;
+    u16 d;
+    s32 i;
+
+    if (!(val & 0x80) || (u8)(n / 10) != 0) {
+        d = n / 10;
+        *(u16 *)(p + 0) = *x;
+        p[2] = c2;
+        p[3] = c3;
+        *(u16 *)(p + 4) = ((d + 16) % 32) * 8;
+        *(u16 *)(p + 6) = ((d + 16) / 32) * 16 + 0x28;
+        p += 8;
+    }
+    d = n % 10;
+    *x += 8;
+    *(u16 *)(p + 0) = *x;
+    p[2] = c2;
+    p[3] = c3;
+    *(u16 *)(p + 4) = ((d + 16) % 32) * 8;
+    *(u16 *)(p + 6) = ((d + 16) / 32) * 16 + 0x28;
+    *x += 8;
+    return p + 8;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C3CC);
 
