@@ -10215,7 +10215,61 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeDryingRackControllerState);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80139A70);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_DeployDryingRackSegments);
+s32 f_DeployDryingRackSegments(AreaPartsOwner *a)
+{
+    s16 i;
+    u8 *p;
+    AreaPartsOwner *q;
+    s32 m;
+
+    for (i = a->pad[8] - 1; i >= 2; i--) {
+        q = (AreaPartsOwner *)((s32 *)a + i);
+        p = q->parts[0];
+        if (W_d1fb(p, 0x30) + 0x30 < H_f12c(a, 0x64)) {
+            break;
+        }
+        if (H_f12c(p, 0x16) == 2) {
+            continue;
+        }
+        m = i & 1;
+        switch (m) {
+        case 0:
+            H_f12c(p, 0xC) += 0x80;
+            H_f12c(q->parts[0], 0xC) &= 0xFFF;
+            if (i != a->pad[8] - 1) {
+                H_f12c(a->parts[i + 1], 0xC) -= 0x80;
+                H_f12c(a->parts[i + 1], 0xC) &= 0xFFF;
+            }
+            H_f12c(q->parts[0], 0x16) = 1;
+            if (H_f12c(q->parts[0], 0xC) > 0x400) {
+                H_f12c(q->parts[0], 0xC) = 0x400;
+                H_f12c(q->parts[0], 0x16) = 2;
+                H_f12c(a, 0x66) -= 0x30;
+            }
+            break;
+        case 1:
+            H_f12c(p, 0xC) -= 0x80;
+            H_f12c(q->parts[0], 0xC) &= 0xFFF;
+            if (i != a->pad[8] - 1) {
+                H_f12c(a->parts[i + 1], 0xC) += 0x80;
+                H_f12c(a->parts[i + 1], 0xC) &= 0xFFF;
+            }
+            H_f12c(q->parts[0], 0x16) = 1;
+            if (H_f12c(q->parts[0], 0xC) < 0xC00) {
+                H_f12c(q->parts[0], 0xC) = 0xC00;
+                H_f12c(q->parts[0], 0x16) = 2;
+                H_f12c(a, 0x66) -= 0x30;
+            }
+            break;
+        }
+    }
+    if (H_f12c(a->parts[5], 0x16) > 0) {
+        H_f12c(a->parts[2], 0x16) = 1;
+    } else {
+        H_f12c(a->parts[2], 0x16) = 0;
+    }
+    return 0;
+}
 
 #define SLOT(b, i) ((b)->parts[i])
 
