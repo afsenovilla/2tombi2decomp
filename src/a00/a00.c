@@ -8641,7 +8641,264 @@ void func_8012F494(AreaPartsOwner *a)
     f_HandleBarrelSeesawContact(a);
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateBarrelSeesawRide);
+extern u8 D_800E7EE1;
+extern u8 D_800E7FC5;
+extern s32 D_8014A270;
+s32 func_80130788(u8 *a, s32 m);
+void f_ApplyBarrelSeesawContactImpulse(u8 *a);
+
+void f_UpdateBarrelSeesawRide(AreaPartsOwner *a)
+{
+    s16 base;
+    s16 sync;
+    s16 ang;
+    s16 old;
+    s32 r;
+    s16 d;
+
+    sync = 0;
+    if (D_800E7EE1 == 0x31 || D_800E7EE1 == 0x41) {
+        return;
+    }
+    {
+        u8 *g = D_800BF808_1760;
+        if (g[0x39] != 0 || g[1] != 0) {
+            return;
+        }
+    }
+    if (U(a, 0x7A) & 2) {
+        return;
+    }
+    ang = H_f12c(a->parts[1], 8);
+    if (ang > 0x800) {
+        ang |= 0xF000;
+    }
+    old = ang;
+    switch (a->pad[6]) {
+    case 0:
+        if (a->pad[1] != 0 && D_8014A270 == 0) {
+            u8 f;
+            r = 1;
+            if (ang == H_f12c(a, 0x64)) {
+                f = a->pad[0x29];
+                if ((f & 4) && H_f12c(a, 0x44) < 0) {
+                    r = 0;
+                } else if (f & 0x80) {
+                    r = 0;
+                }
+            } else if (ang == H_f12c(a, 0x66)) {
+                f = a->pad[0x29];
+                if (f & 4) {
+                    if (H_f12c(a, 0x44) > 0) {
+                        r = 0;
+                    }
+                } else if (!(f & 0x80)) {
+                    r = 0;
+                }
+            }
+            if (r != 0) {
+                if (ang < 0) {
+                    D_8014A270 = func_80074590(0x81, 0, 0x2A);
+                } else {
+                    D_8014A270 = func_80074590(0x81, -10, -14);
+                }
+            }
+        }
+        H_f12c(a, 0x76) = 0;
+        a->pad[6]++;
+        break;
+    case 4:
+        if (--H_f12c(a, 0x40) < 0) {
+            H_f12c(a, 0x40) = 3;
+            a->pad[6]++;
+        }
+    case 1:
+        r = func_80130788((u8 *)a, 1);
+        if (r == 0 || (U(a, 0x78) & 2)) {
+            if (!(U(a, 0x78) & 1)) {
+                base = U(a, 0x48) + U(a, 0x4E);
+                if (H_f12c(a, 0x4E) * base >= 0) {
+                    s32 h;
+                    a->pad[5] = 0;
+                    a->pad[6] = 0;
+                    h = D_8014A270;
+                    H_f12c(a, 0x48) = 0;
+                    H_f12c(a, 0x4E) = 0;
+                    H_f12c(a, 0x78) = 0;
+                    H_f12c(a, 0x76) = 0;
+                    if (h != 0) {
+                        func_80074AF0(h);
+                        D_8014A270 = 0;
+                    }
+                    break;
+                }
+            }
+        } else if (r == 1 && !(D_800E7FC5 & 1)) {
+            base = (func_80083E80(ang) * -H_f12c(a->parts[2], 4)) >> 12;
+            sync = 1;
+        }
+        H_f12c(a, 0x48) += U(a, 0x4E);
+        if (H_f12c(a, 0x48) > 0x1600) {
+            H_f12c(a, 0x48) = 0x1600;
+        } else if (H_f12c(a, 0x48) < -0x1600) {
+            H_f12c(a, 0x48) = -0x1600;
+        }
+        d = H_f12c(a, 0x48) >> 8;
+        ang += d;
+        if (ang < H_f12c(a, 0x64) || H_f12c(a, 0x66) < ang) {
+            if (a->pad[1] != 0 && old != H_f12c(a, 0x64) && old != H_f12c(a, 0x66)) {
+                func_80074AF0(D_8014A270);
+                D_8014A270 = 0;
+                func_80074590(0x82, 0, 0);
+            }
+            if (ang < 0) {
+                ang = U(a, 0x64);
+                if (U(a, 0x78) & 4) {
+                    break;
+                }
+                if (H_f12c(a, 0x48) < -0xA00) {
+                    H_f12c(a, 0x48) = 0xA00;
+                    H_f12c(a, 0x4E) = -0x200;
+                    a->pad[0x5E] = 1;
+                    a->pad[6]++;
+                } else {
+                    H_f12c(a, 0x48) = 0;
+                    H_f12c(a, 0x4E) = 0;
+                    H_f12c(a, 0x76) = 0;
+                    if (r == 0) {
+                        H_f12c(a, 0x78) = 0;
+                        a->pad[5] = 0;
+                        a->pad[6] = 0;
+                    }
+                }
+            } else if (ang > 0) {
+                ang = U(a, 0x66);
+                if (U(a, 0x78) & 4) {
+                    break;
+                }
+                if (H_f12c(a, 0x48) > 0xA00) {
+                    H_f12c(a, 0x48) = -0xA00;
+                    H_f12c(a, 0x4E) = 0x200;
+                    a->pad[0x5E] = 1;
+                    a->pad[6]++;
+                    if (H_f12c(a, 0x76) == 1) {
+                        H_f12c(a, 0x76) = 2;
+                    }
+                } else {
+                    H_f12c(a, 0x48) = 0;
+                    H_f12c(a, 0x4E) = 0;
+                    H_f12c(a, 0x76) = 0;
+                    if (r == 0) {
+                        H_f12c(a, 0x78) = 0;
+                        a->pad[5] = 0;
+                        a->pad[6] = 0;
+                    }
+                }
+            }
+        } else if (d <= 0) {
+            H_f12c(a, 0x76) = 0;
+        } else if (ang < 0) {
+            H_f12c(a, 0x76) = 1;
+        }
+        break;
+    case 2:
+        if (func_80130788((u8 *)a, 0) == 1 && !(D_800E7FC5 & 1)) {
+            base = (func_80083E80(ang) * -H_f12c(a->parts[2], 4)) >> 12;
+            sync = 1;
+        }
+        H_f12c(a, 0x48) += U(a, 0x4E);
+        if (H_f12c(a, 0x48) > 0x1600) {
+            H_f12c(a, 0x48) = 0x1600;
+        } else if (H_f12c(a, 0x48) < -0x1600) {
+            H_f12c(a, 0x48) = -0x1600;
+        }
+        r = ang;
+        ang += H_f12c(a, 0x48) >> 8;
+        if (r * ang <= 0) {
+            a->pad[6] = 1;
+        }
+        if (ang < H_f12c(a, 0x64) || H_f12c(a, 0x66) < ang) {
+            if (ang < 0) {
+                ang = U(a, 0x64);
+            } else if (ang > 0) {
+                ang = U(a, 0x66);
+            }
+            if (U(a, 0x78) & 1) {
+                if (U(a, 0x78) & 0x8000) {
+                    H_f12c(a, 0x40) = 0xF;
+                } else {
+                    H_f12c(a, 0x40) = 0x1E;
+                }
+                a->pad[6]++;
+            } else {
+                H_f12c(a, 0x48) = 0;
+                H_f12c(a, 0x4E) = 0;
+                H_f12c(a, 0x78) = 0;
+                a->pad[5] = 0;
+                a->pad[6] = 0;
+            }
+            a->pad[0x5E] = 0;
+            H_f12c(a, 0x76) = 0;
+        }
+        break;
+    case 3:
+        if (--H_f12c(a, 0x40) > 0) {
+            break;
+        }
+        if (U(a, 0x78) & 2) {
+            H_f12c(a, 0x48) = 0;
+            H_f12c(a, 0x4E) = 0;
+            H_f12c(a, 0x78) = 0;
+            a->pad[5] = 0;
+            a->pad[6] = 0;
+            break;
+        }
+        if (U(a, 0x78) & 0x8000) {
+            H_f12c(a, 0x48) = 0x1600;
+        } else {
+            H_f12c(a, 0x48) = 0xC00;
+        }
+        if (ang > 0) {
+            H_f12c(a, 0x48) = -H_f12c(a, 0x48);
+        }
+        H_f12c(a, 0x4E) = 0;
+        a->pad[6] = 0;
+        break;
+    case 5:
+        if (--H_f12c(a, 0x40) != 0) {
+            break;
+        }
+        U(a, 0x78) &= 0xFFFB;
+        if (H_f12c(a, 0x78) & 0x8000) {
+            H_f12c(a, 0x48) = 0x1600;
+        } else {
+            H_f12c(a, 0x48) = 0xC00;
+        }
+        if (!(H_f12c(a, 0x68) & 0x8000)) {
+            H_f12c(a, 0x48) = -H_f12c(a, 0x48);
+        }
+        H_f12c(a, 0x4E) = 0;
+        a->pad[6] = 0;
+        break;
+    }
+    H_f12c(a->parts[1], 8) = ang & 0xFFF;
+    f_UpdateBarrelSeesawSupportHeight(a);
+    if (sync != 0) {
+        s16 dd = ((func_80083E80(ang) * -H_f12c(a->parts[2], 4)) >> 12) - base;
+        if (dd < 0) {
+            u8 *g = D_800E7E80;
+            H_f12c(g, 0x32) = U(g, 0x32) - dd;
+        } else {
+            u8 *g = D_800E7E80;
+            H_f12c(g, 0x32) = U(g, 0x32) + dd;
+        }
+    }
+    if (H_f12c(a, 0x78) != 0) {
+        f_HandleBarrelSeesawContact(a);
+    } else {
+        f_ApplyBarrelSeesawContactImpulse((u8 *)a);
+    }
+}
 
 void f_ActivateBarrelLinkedSegmentPair(AreaPartsOwner *a, s16 k0, s16 flag);
 
@@ -8839,7 +9096,6 @@ ret2:
     return 2;
 }
 
-extern s32 D_8014A270;
 s32 f_HandleBarrelSeesawContact(AreaPartsOwner *a)
 {
     s16 k;
