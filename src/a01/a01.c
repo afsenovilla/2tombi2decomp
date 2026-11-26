@@ -2981,7 +2981,69 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80115088);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80115278);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80115428);
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+#define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
+
+void func_80115428(u8 *a)
+{
+    u8 *g = D_800E7E80;
+
+    switch (a[5]) {
+    case 0:
+        if (a[0xBF] == 0) {
+            break;
+        }
+        if (a[0x29] != 0) {
+            a[5] = 1;
+            H(a, 0x40) = 4;
+            D_1F800137 = 2;
+        } else {
+            a[0xBF] = 0;
+        }
+        break;
+    case 1:
+        if (--H(a, 0x40) == -1) {
+            H(a, 0x4A) = 0x400;
+            H(a, 0x50) = -0x80;
+            H(a, 0x52) = 0;
+            a[5]++;
+            g[4] = 4;
+            g[5] = 0x21;
+            g[6] = 0;
+            H(g, 0x4A) = -0x3000;
+            func_80054D14(g, 0x12, 4);
+            H(a, 0x40) = 10;
+            func_80074590(0x25, 0, 0);
+        }
+        break;
+    case 2:
+        if (--H(a, 0x40) == -1) {
+            u8 *s;
+            a[5]++;
+            s = D_800BF808_1760;
+            s[0x31] = 3;
+            s[7] = 2;
+            H(s, 0x32) = 0x10E;
+        }
+    case 3:
+        W(g, 0x30) += H(g, 0x4A) << 8;
+        H(g, 0x4A) += 0x100;
+        if (H(a, 0x4A) != 0) {
+            H(a, 0x4A) += U(a, 0x50);
+            H(P(a, 0xC0), 0x3A) += H(a, 0x4A);
+        } else {
+            H(a, 0x52) += 0x200;
+            H(a, 0x58) = func_80083E80(H(a, 0x52)) >> 4;
+        }
+        break;
+    }
+    H(P(a, 0xC4), 2) = (H(a, 0x60) * U(P(a, 0xC0), 0x3A)) / 4096;
+    H(a, 0x84) = H(a, 0x86) = (U(P(a, 0xC0), 0x3A) * 157) / 4096 + 0x44;
+    func_80051844(a);
+    a[1] = 1;
+    func_80077EBC(a);
+    a[0x29] = 0;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaScenePropActor);
 
