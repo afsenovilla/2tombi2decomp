@@ -8617,7 +8617,58 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80130AC4);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateBarrelLinkedSegmentSequence);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_TriggerBarrelLinkedSegments);
+#define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
+/* f_ActivateBarrelLinkedSegmentPair_d13c, inlined */
+static inline void f_ActivateBarrelLinkedSegmentPair_d13c(AreaPartsOwner *a, s16 k0, s16 flag) {
+    s16 k = k0;
+    s16 t = (flag != 0) << 11;
+    s16 ang;
+
+    if ((a->pad[0x5E] & 2) && M2C_FIELD(a, s16 *, 0x6C) == k) {
+        ang = M2C_FIELD(a, u16 *, 0x6E) & 0xFFF;
+    } else {
+        ang = M2C_FIELD(a->parts[k], u16 *, 0xC);
+    }
+    if (ang == t) {
+        k = k * 4 - 2;
+    } else {
+        k = k * 4 - 4;
+    }
+    if (!(M2C_FIELD(a, u16 *, 0x60) & 2)) {
+        k--;
+    }
+    a->parts[k][0x3E] = 1;
+    a->parts[k + 1][0x3E] = 1;
+}
+
+void f_TriggerBarrelLinkedSegments(AreaPartsOwner *a)
+{
+    s16 k;
+
+    if (a->pad[3] >= 2) {
+        return;
+    }
+    k = U(a, 0x7A) & 3;
+    if (k == 0) {
+        return;
+    }
+    if (a->parts[k][0x3E] & 3) {
+        return;
+    }
+    f_ActivateBarrelLinkedSegmentPair_d13c(a, k, 1);
+    a->parts[k][0x3E] |= 2;
+    switch (U(a, 0x7A) & 3) {
+    case 2:
+        H_f12c(a, 0x72) = 4;
+        break;
+    case 3:
+        H_f12c(a, 0x72) = 8;
+        break;
+    }
+    if (U(a, 0x7A) & 4) {
+        H_f12c(a, 0x72) += 2;
+    }
+}
 
 typedef struct {
     u8 flags;
