@@ -6521,7 +6521,54 @@ void func_80036B28(u8 *arg0, u8 *arg1) {
     *var_s0 = 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80036BAC);
+typedef struct { u8 kind; u8 pad[3]; u8 *text; u8 pad8[4]; } ItemDef_6BAC;
+typedef struct {
+    u8 pad0[0x244];
+    u8 counts[0x100];
+    u8 order[0x100];
+} Inv_6BAC;
+extern Inv_6BAC D_800BF870_6bac;
+extern ItemDef_6BAC D_800A2BE8_6bac[];
+
+void func_80036BAC(void)
+{
+    s32 i;
+    s32 j;
+    s32 n;
+    u8 a[0x40];
+    u8 b[0x40];
+
+    for (i = 0; i < 0x100; i++) {
+        if (D_800BF870_6bac.counts[i] != 0 && D_800A2BE8_6bac[i].kind == 0) {
+            n = 0;
+            func_80036B28(D_800A2BE8_6bac[i].text, a);
+            for (j = 0; j < 0x100; j++) {
+                if (D_800BF870_6bac.counts[j] != 0 && D_800A2BE8_6bac[j].kind == 0) {
+                    func_80036B28(D_800A2BE8_6bac[j].text, b);
+                    if (strcmp(a, b) > 0) {
+                        n++;
+                    }
+                }
+            }
+            D_800BF870_6bac.order[i] = n;
+        }
+    }
+    for (i = 0; i < 0x100; i++) {
+        if (D_800BF870_6bac.counts[i] != 0 && D_800A2BE8_6bac[i].kind != 0) {
+            n = 0;
+            func_80036B28(D_800A2BE8_6bac[i].text, a);
+            for (j = 0; j < 0x100; j++) {
+                if (D_800BF870_6bac.counts[j] != 0 && D_800A2BE8_6bac[j].kind != 0) {
+                    func_80036B28(D_800A2BE8_6bac[j].text, b);
+                    if (strcmp(a, b) > 0) {
+                        n++;
+                    }
+                }
+            }
+            D_800BF870_6bac.order[i] = n;
+        }
+    }
+}
 
 s32 func_80036D90(s32 arg0) {
     if ((D_800BF873 != 0) && ((arg0 == 0) || (arg0 == 5))) {
