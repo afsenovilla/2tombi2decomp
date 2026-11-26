@@ -176,8 +176,7 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010AF38);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010B104);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010B1E8);
-
+typedef struct { u16 x, y, z; } PoolPt;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
 extern u16 D_1F8001A8;
@@ -185,6 +184,33 @@ extern u16 D_1F800194;
 extern s16 D_1F800196;
 extern u16 D_1F8001A0_b0de_1f9a;
 extern u16 D_1F8001A2_7766;
+extern PoolPt D_801418BC[];
+
+void func_8010B1E8(u8 *a) {
+    s32 i;
+    PoolPt *p;
+    s16 dx;
+    s16 dz;
+
+    if (a[0x2A] >= 3) {
+        return;
+    }
+    for (i = 0; i < 3; i++) {
+        dx = U(a, 0x2E) - D_801418BC[i].x;
+        dz = U(a, 0x36) - D_801418BC[i].z;
+        if ((u16)func_80084080(dx * dx + dz * dz) <= H(a, 0x80) + 0x28 &&
+            (u16)(U(a, 0x84) + (U(a, 0x32) - D_801418BC[i].y + 0x50)) <= H(a, 0x86) + 0x50) {
+            if (H(a, 0x4A) < 0 && func_80023290(a) != 0) {
+                a[0x2B] = func_80085690(-dz, dx) >> 4;
+                func_80022C0C(a, 1);
+            }
+            return;
+        }
+    }
+}
+
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
 extern s16 D_1F80019E_3f3f;
 extern s16 D_1F8001A4_f18c;
 extern u8 D_800BF873;
