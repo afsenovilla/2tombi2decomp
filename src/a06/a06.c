@@ -1783,7 +1783,93 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80112838);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80112C60);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80112E24);
+#define W_d1fb(p, o) (*(s32 *)((u8 *)(p) + (o)))
+
+void func_80112E24(u8 *a) {
+    s16 h;
+
+    switch (a[6]) {
+    case 0:
+        func_80053D90(a);
+        a[0x145] = 0;
+        a[0x146] = 0;
+        H(a, 0x4A) = 0;
+        func_80054E24(a, 2, 0);
+        a[0x29] = 0;
+        H(a, 0x42) = 0;
+        if (H(a, 0x142) == 0) {
+            if (H(a, 0x44) == 0) {
+                if (a[0x147] != 0) {
+                    H(a, 0x44) = -0x1000;
+                } else {
+                    H(a, 0x44) = 0x1000;
+                }
+            } else if (H(a, 0x44) > 0) {
+                H(a, 0x44) = U(a, 0x44) + 0x400;
+            } else {
+                H(a, 0x44) = U(a, 0x44) - 0x400;
+            }
+        } else if (H(a, 0x142) > 0) {
+            H(a, 0x44) = 0x1200;
+        } else {
+            H(a, 0x44) = -0x1200;
+        }
+        a[0x144] = 1;
+        a[6]++;
+    case 1:
+        if (a[0x29] == 0 && a[0x181] == 0) {
+            h = H(a, 0x44) / 2;
+            H(a, 0x42)++;
+            W_d1fb(a, 0x2C) += H(a, 0x48) * h;
+            W_d1fb(a, 0x34) += H(a, 0x4C) * h;
+            if (a[0x16B] == 0 && a[0x61] == 0) {
+                func_80054650(a, 0);
+            } else {
+                a[0x5F] &= 0xFB;
+            }
+            H(a, 0x32) += 8;
+            W_d1fb(a, 0x30) += abs(H(a, 0x44)) << 8;
+        } else {
+            H(a, 0x42) = 0;
+            func_80056B48(a, 1);
+            H(a, 0x32) += 0xA;
+        }
+        func_80055D5C(a);
+        func_80076D68(a);
+        if (H(a, 0x142) == 0) {
+            if (H(a, 0x44) > 0) {
+                H(a, 0x44) = U(a, 0x44) + 0x80;
+            } else {
+                H(a, 0x44) = U(a, 0x44) - 0x80;
+            }
+        } else {
+            H(a, 0x44) = U(a, 0x44) + (H(a, 0x142) >> 1);
+        }
+        if (H(a, 0x44) > 0x2400) {
+            H(a, 0x44) = 0x2400;
+        } else if (H(a, 0x44) < -0x2400) {
+            H(a, 0x44) = -0x2400;
+        }
+        func_8005444C(a);
+        if (a[0x29] & 0x80) {
+            if (a[0x144] < 2) {
+                a[0x144] = 0;
+            }
+            func_8005314C(a);
+            a[0x16A] = 0;
+            a[0x177] = 0;
+            a[5] = 0;
+            a[6] = 0;
+            a[7] = 0;
+            func_80054198(a);
+        } else if (H(a, 0x42) >= 5) {
+            H(a, 0x44) = H(a, 0x44) / 2;
+            func_80056D44(a, 0);
+        }
+        break;
+    }
+    func_800551C4(a);
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80113110);
 
