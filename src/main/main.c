@@ -326,7 +326,57 @@ void f_PlayOrStopVoiceLine(s16 id)
     f_StartStreamedAudioRange(ch, s, end, e->mode);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8001D7C4);
+extern s32 D_800BE0E0;
+extern volatile u16 D_800BE0E6;
+extern volatile u16 D_800BE0E8;
+extern volatile u16 D_800BE0EA;
+extern s32 D_1F8001F8;
+extern volatile s32 D_1F8001F4;
+void *CdReadyCallback();
+
+void func_8001D7C4(u8 intr, u8 *result)
+{
+    s32 done;
+    s32 pos;
+    u8 hdr[0x10];
+
+    done = 0;
+    if (intr == 1 && (result[0] & 0x20)) {
+        if (CdDataSync(1) == 0) {
+            CdGetSector(hdr, 3);
+            pos = CdPosToInt(hdr);
+            if (pos != D_800BE0E0 + 1) {
+                done = 1;
+                D_800BE0EA |= 2;
+            } else {
+                D_800BE0E0 = pos;
+                if (D_1F8001F4 >= 0x200) {
+                    CdGetSector((void *)D_1F8001F8, 0x200);
+                    D_1F8001F4 -= 0x200;
+                    D_1F8001F8 += 0x800;
+                    if (D_1F8001F4 == 0) {
+                        done = 1;
+                    }
+                } else if (D_1F8001F4 > 0) {
+                    done = 1;
+                    CdGetSector((void *)D_1F8001F8, D_1F8001F4);
+                    D_1F8001F8 += D_1F8001F4 * 4;
+                    D_1F8001F4 = 0;
+                }
+            }
+        } else {
+            done = 1;
+            D_800BE0E6 += done;
+        }
+    } else {
+        done = 1;
+        D_800BE0E8 += done;
+    }
+    if (done) {
+        CdReadyCallback(0);
+        CdControlF(9, 0);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8001D940);
 
@@ -362,9 +412,7 @@ s32 func_8001DB8C(void *dest, s32 sector, s32 bytes)
     return bytes;
 }
 
-extern s32 D_1F8001F8;
 extern s32 D_1F8001F0;
-extern volatile s32 D_1F8001F4;
 s32 func_8001DC40(void *a, s32 b, s32 c, void *d)
 {
     D_1F8001F8 = (s32)a;
