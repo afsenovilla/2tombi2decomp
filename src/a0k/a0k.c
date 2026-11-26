@@ -3164,7 +3164,81 @@ void f_SpawnBerryNutsScorePopup(u8 *p, s32 n)
     }
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80113488);
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+extern u8 D_8011CC2C[];
+
+void func_80113488(u8 *a)
+{
+    u8 *g;
+
+    switch (a[5]) {
+    case 0:
+        g = (u8 *)&D_800BF870;
+        if (g[0x1B8] == 2) {
+            a[5] = 1;
+            a[6] = 0;
+            break;
+        }
+        switch (a[6]) {
+        case 0:
+            if (a[0x2B] == 3) {
+                a[6] = 1;
+                func_80042354(1, 3);
+            }
+            break;
+        case 1:
+            a[6] = 2;
+            func_80040CDC(a, D_8001B4DC, D_8011CC2C);
+            if (g[0x8C] == 0xFF) {
+                a[0x7A] = 0xB;
+            } else if (g[0x8C] != 0 || g[0x8B] != 0) {
+                a[0x7A] = 5;
+            } else {
+                a[0x7A] = 0;
+            }
+            a[0x70] = 1;
+            break;
+        case 2:
+            func_80041098(a);
+            if (a[0x70] == 0xFF) {
+                a[6] = 0;
+                func_80042310();
+            }
+            break;
+        }
+        break;
+    case 1:
+        switch (a[6]) {
+        case 0:
+            a[6] = 1;
+            H(a, 0x60) = H(a, 0x2E);
+            H(a, 0x62) = H(a, 0x36);
+            H(a, 0x64) = H(a, 0x56);
+            H(a, 0x2E) = 0x44A5;
+            H(a, 0x36) = 0x1F49;
+            H(a, 0x56) = 0x400;
+            func_80077C40(a, D_8001B4DC, 0xA);
+        case 1:
+            H(a, 0x36) -= 0xA;
+            if (D_800BFA28 >= 3) {
+                H(a, 0x40) = 0x3C;
+                a[6]++;
+            }
+            break;
+        case 2:
+            if (--H(a, 0x40) == -1) {
+                a[5] = 0;
+                a[6] = 0;
+                H(a, 0x2E) = H(a, 0x60);
+                H(a, 0x36) = H(a, 0x62);
+                H(a, 0x56) = H(a, 0x64);
+                func_80077C40(a, D_8001B4DC, 5);
+            }
+            break;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801136F0);
 
