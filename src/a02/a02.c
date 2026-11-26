@@ -3618,9 +3618,54 @@ s32 func_80115620(s32 arg0, s32 arg1, s32 arg2) {
     return var_v0 & 0xFFF;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80115794);
-
+typedef struct { s16 lo; s16 hi; } HalfPair;
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U_d0c0(p, o) (*(u16 *)((u8 *)(p) + (o)))
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
 extern s16 D_1F8000EE;
+
+void func_80115794(u8 *a, u8 *t, s32 ang0) {
+    s32 ang = ang0 & 0xFFF;
+    u8 *g;
+    u8 *sc;
+    s16 r;
+    s16 dx;
+    s16 dz;
+    s16 ang2;
+    s16 d;
+    s16 x;
+    s16 z;
+    HalfPair p[3];
+
+    if (a[0x64] == 1) {
+        g = (u8 *)&D_800BF808;
+        if (g[0xE] != 0 && g[0xF] != 7) {
+            r = (u32)(-(func_80083F50(H(a, 0x6E)) * -H(a, 0x6C))) >> 12;
+        } else {
+            r = (u32)(-(func_80083F50(H(a, 0xA)) * -H(a, 0x6C))) >> 12;
+        }
+    } else {
+        r = (u32)(-(func_80083F50(H(a, 0xA)) * (D_1F8000EE + W(a, 0x58)))) >> 12;
+    }
+    x = U_d0c0(t, 0x2E) + ((func_80083F50(ang) * r) >> 12);
+    z = U_d0c0(t, 0x36) - ((func_80083E80(ang) * r) >> 12);
+    p[0].hi = x;
+    p[2].hi = z;
+    if (D_800BF816 == 0) {
+        func_8011518C(p, 0x258);
+    }
+    sc = D_1F8000D0;
+    dz = p[2].hi - U_d0c0(sc, 0xA);
+    dx = p[0].hi - U_d0c0(sc, 2);
+    ang2 = func_80085690(-dz, dx);
+    d = func_80084080(dx * dx + dz * dz);
+    W(D_1F8000D0, 0) += func_80083F50(ang2) * d;
+    W(sc, 8) -= func_80083E80(ang2) * d;
+    if (d < 0x191) {
+        a[0x66] |= 1;
+    }
+}
+
 void func_80115994(u8 *a, s16 b)
 {
     s16 v;
@@ -5574,7 +5619,6 @@ void func_8011A348(u8 *a) {
     }
 }
 
-typedef struct { s16 lo; s16 hi; } HalfPair;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define U_d0c0(p, o) (*(u16 *)((u8 *)(p) + (o)))
 extern u16 D_8012A158[];
