@@ -17965,7 +17965,52 @@ void func_80067FE4(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006804C);
+void func_8006804C(u8 *a)
+{
+    u8 *e;
+    s32 i;
+    s16 v[6];
+
+    e = f_SpawnTransientEffect(0x1B, -0x60);
+    if (e != NULL) {
+        e[0x28] |= 0x80;
+        *(u16 *)(e + 0x2C) = *(u16 *)(a + 0x2E);
+        *(u16 *)(e + 0x2E) = *(u16 *)(a + 0x32) + *(s16 *)(a + 0x62) * 2;
+        *(u16 *)(e + 0x30) = *(u16 *)(a + 0x36);
+        *(s32 *)(e + 0x50) = 0xF00;
+        *(s32 *)(e + 0x54) = 0x40;
+        *(s32 *)(e + 0x58) = 0x40;
+        if (D_800BF80A_8fc3 == 4) {
+            e[0x2A] = 1;
+        } else {
+            e[0x2A] = 0x30;
+        }
+    }
+    *(s16 *)(a + 0x7A) = 0x40;
+    if (D_800BF80A_8fc3 != 4) {
+        v[1] = *(u16 *)(*(u8 **)(a + 0xDC) + 0x2C);
+        v[3] = *(u16 *)(*(u8 **)(a + 0xDC) + 0x30) - 0x40;
+        v[5] = *(u16 *)(*(u8 **)(a + 0xDC) + 0x34);
+        for (i = 0; i < 4; i++) {
+            e = f_SpawnTransientEffectAtFixedPosition(0x1C, v, -0x32);
+            if (e != NULL) {
+                e[0x2A] = i;
+                e[0x28] |= 0x80;
+            }
+        }
+        v[1] = *(u16 *)(*(u8 **)(a + 0xD0) + 0x2C);
+        v[3] = *(u16 *)(*(u8 **)(a + 0xD0) + 0x30) - 0x40;
+        v[5] = *(u16 *)(*(u8 **)(a + 0xD0) + 0x34);
+        for (i = 4; i < 8; i++) {
+            e = f_SpawnTransientEffectAtFixedPosition(0x1C, v, -0x32);
+            if (e != NULL) {
+                e[0x2A] = i;
+                e[0x28] |= 0x80;
+            }
+        }
+        f_PlaySoundEffect(0x34, 3, -10);
+    }
+}
 
 typedef struct {
     u8 pad0[4]; u8 s4; u8 s5; u8 pad6[0x22]; u8 f28; u8 pad29[3];
