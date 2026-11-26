@@ -533,7 +533,6 @@ extern AreaState808_7 D_800BF808;
 extern s16 D_1F80019E;
 extern s16 D_1F8001A4;
 extern s16 D_1F8001A6_46ee;
-
 s32 func_8010B634(u8 *a) {
     u16 r;
     u8 *p;
@@ -1976,7 +1975,130 @@ void func_80111640(u8 *a, u8 *b)
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801117B0);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80111974);
+extern u8 D_1F800150;
+extern u8 **D_1F800148;
+/* func_80112864, inlined */
+static inline void inl_80112864(u8 *a, u8 *b) {
+    s16 d;
+    s32 ang;
+
+    if (func_8002300C(a, b, M2C_FIELD(b, s16 *, 0x80)) == 0) {
+        return;
+    }
+    if (M2C_FIELD(a, s16 *, 0x17E) & 0x8200) {
+        return;
+    }
+    ang = D_1F80009C & 0xFFF;
+    if (D_1F80018E == 0 && D_1F800137 == 0 && !(b[0] & 2)) {
+        d = (ang - M2C_FIELD(a, u16 *, 0x56)) << 4;
+        if (abs(d) <= 0x2000 && (a[5] != 0x1F || b == M2C_FIELD(a, u8 **, 0x10))) {
+            D_1F80018E = 0x1200;
+            D_1F800184 = b;
+            D_800BF840 = 0x4B;
+        }
+    }
+}
+/* func_8011281C, inlined */
+static inline void inl_8011281C(void *arg0, void *arg1) {
+    if (!(M2C_FIELD(arg0, u16 *, 0x17E) & 0x200) && (func_80022F04(arg0, arg1) != 0)) {
+        M2C_FIELD(arg1, s8 *, 0) = 2;
+        M2C_FIELD(arg1, s8 *, 4) = 2;
+    }
+}
+
+void func_80111974(u8 *a) {
+    u8 **l = D_1F800148;
+    u8 *e;
+    u8 *c;
+    s32 i;
+
+    D_1F800182 = D_1F800150;
+    while (D_1F800182 != 0) {
+        e = *l;
+        D_1F800182--;
+        l++;
+        if (e[0] & 1) {
+            switch (e[2]) {
+            case 14:
+            case 15:
+                func_8010FE90(a, e);
+                break;
+            case 12:
+                func_80020868(a, e);
+                break;
+            case 18:
+            case 25:
+            case 29:
+            case 32:
+            case 40:
+                func_8002311C(a, e);
+                break;
+            case 34:
+                func_8011053C(a, e);
+                break;
+            case 31:
+                func_80023764(a, e);
+                break;
+            case 26:
+                func_8010FFF4(a, e);
+                break;
+            case 36:
+                inl_80112864(a, e);
+                break;
+            case 35:
+                func_801114B0(a, e);
+                break;
+            case 30:
+                if (D_1F80027A == 0 && a[0] != 7) {
+                    for (i = 0; i < e[8]; i++) {
+                        c = ((u8 **)(e + 0xC0))[i];
+                        switch (c[0x3E]) {
+                        case 0:
+                            break;
+                        case 1:
+                        case 5:
+                        case 6:
+                        case 7:
+                            if (func_801108A0(a, e, c) != 0) {
+                                goto next;
+                            }
+                            break;
+                        case 2:
+                            if (func_80110AB8(a, e, c) != 0) {
+                                goto next;
+                            }
+                            break;
+                        case 3:
+                            if (func_80110C7C(a, e, c) != 0) {
+                                goto next;
+                            }
+                            break;
+                        case 4:
+                            if (func_80110E20(a, e, c) != 0) {
+                                goto next;
+                            }
+                            break;
+                        case 8:
+                            func_80111184(a, e, c);
+                            break;
+                        }
+                    }
+                }
+                break;
+            case 37:
+                func_801101D4(a, e, 2);
+                break;
+            case 39:
+                func_801101D4(a, e, 3);
+                break;
+            case 41:
+                inl_8011281C(a, e);
+                break;
+            }
+        }
+    next:;
+    }
+}
 
 extern s16 D_1F800272;
 extern s16 D_1F800276;
@@ -2050,8 +2172,6 @@ void func_80111FB4(u8 *a)
     }
 }
 
-extern u8 D_1F800150;
-extern u8 **D_1F800148;
 extern u8 **D_1F80013C;
 extern u8 D_1F800144;
 void func_80112140(void *a)
@@ -2630,7 +2750,6 @@ extern s32 D_801390DC;
 extern s16 D_1F800160;
 extern s16 D_1F800162;
 extern s16 D_1F800164;
-
 void func_80113394(u8 *a) {
     s32 vol = 0x7FFC;
     s32 v;
@@ -3772,7 +3891,6 @@ typedef struct { s16 lo; s16 hi; } HalfPair;
 #define U_d0c0(p, o) (*(u16 *)((u8 *)(p) + (o)))
 #define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
 extern s16 D_1F8000EE;
-
 void func_80115794(u8 *a, u8 *t, s32 ang0) {
     s32 ang = ang0 & 0xFFF;
     u8 *g;
@@ -5830,7 +5948,6 @@ static inline void cam_inl(u8 *a) {
     v[2].hi = D_8012A158[2];
     func_8006CEC4(D_1F8000D0, v, 0);
 }
-
 void f_UpdateLetsMakeAPotSequence(u8 *a) {
     u8 *g;
     s16 x;
@@ -8299,7 +8416,6 @@ static inline u8 *spawn_inl(u8 *a, HalfPair *w) {
     }
     return NULL;
 }
-
 void func_8011F9B4(u8 *a) {
     u8 *e = D_800E8008;
     u8 *p;

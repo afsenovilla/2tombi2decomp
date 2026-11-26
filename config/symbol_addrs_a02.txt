@@ -11,3 +11,4 @@ f_UpdateTabbyHouseSceneController = 0x8011D788; // type:func t2e
 f_UpdateGranActor = 0x801213AC; // type:func t2e
 f_UpdateBlastTheRockSequence = 0x80127A20; // type:func t2e
 f_UpdateTabbyHouseResidentActor = 0x8012816C; // type:func t2e
+jtbl_801092FC = 0x801092FC; // type:jtbl
