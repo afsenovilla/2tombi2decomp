@@ -9233,7 +9233,99 @@ s32 func_801287D0(void *arg0, s32 arg1) {
     return var_a0;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80128864);
+s32 func_80128864(u8 *a, s16 b, u8 *p) {
+    u8 *g = (u8 *)&D_800BF870;
+    s16 y = b;
+    s32 r1, g1, b1, r2, g2, b2;
+    s32 d;
+
+    if (!(HU(g, 0x5E6) & 2) && g[1] < 0xF) {
+        y = b + H(a, 0x40);
+        if (y < -0xBFC) {
+            r1 = 0x80; g1 = 0x80; b1 = 0x80;
+            r2 = 0x80; g2 = 0x80; b2 = 0x80;
+        } else if (y < -0xAF8) {
+            r1 = 0x80; g1 = 0x80; b1 = 0x80;
+            r2 = 0xA0; g2 = 0x60; b2 = 0x50;
+        } else if (y < -0xAA8) {
+            r1 = 0xA0; g1 = 0x60; b1 = 0x50;
+            r2 = 0xA0; g2 = 0x40; b2 = 0x20;
+        } else if (y < -0x968) {
+            r1 = 0xA0; g1 = 0x40; b1 = 0x20;
+            r2 = 0xA0; g2 = 0x40; b2 = 0x20;
+        } else if (y < -0x918) {
+            r1 = 0xA0; g1 = 0x40; b1 = 0x20;
+            r2 = 0xF0; g2 = 0x40; b2 = 0x20;
+        } else if (y < -0x828) {
+            r1 = 0xF0; g1 = 0x40; b1 = 0x20;
+            r2 = 0xF0; g2 = 0x40; b2 = 0x20;
+        } else if (y < -0x7D8) {
+            r1 = 0xF0; g1 = 0x40; b1 = 0x20;
+            r2 = 0xF0; g2 = 0x60; b2 = 0x0;
+        } else if (y < -0x6E8) {
+            r1 = 0xF0; g1 = 0x60; b1 = 0x0;
+            r2 = 0xF0; g2 = 0x60; b2 = 0x0;
+        } else if (y < -0x698) {
+            r1 = 0xF0; g1 = 0x60; b1 = 0x0;
+            r2 = 0xF0; g2 = 0xA0; b2 = 0x0;
+        } else {
+            r1 = 0xF0; g1 = 0xA0; b1 = 0x0;
+            r2 = 0xF0; g2 = 0xA0; b2 = 0x0;
+        }
+        if (y >= -0x917) {
+            if ((D_1F80017C & 3) == 0) {
+                if (H(a, 0x42) == 0) {
+                    H(a, 0x40)--;
+                } else {
+                    H(a, 0x40)++;
+                }
+                if (H(a, 0x40) >= 0) {
+                    H(a, 0x42) = 1 - H(a, 0x42);
+                } else if (H(a, 0x40) < -0x9F) {
+                    H(a, 0x42) = 1 - H(a, 0x42);
+                }
+            }
+            d = H(a, 0x40) >> 2;
+            g1 += d;
+            g2 += d;
+        }
+        p[4] = r1;
+        p[5] = g1;
+        p[6] = b1;
+        p[0x10] = r1;
+        p[0x11] = g1;
+        p[0x12] = b1;
+        p[0x1C] = r2;
+        p[0x1D] = g2;
+        p[0x1E] = b2;
+        p[0x28] = r2;
+        p[0x29] = g2;
+        p[0x2A] = b2;
+    } else {
+        p[4] = 0x80;
+        p[5] = 0x80;
+        p[6] = 0x80;
+        p[0x10] = 0x80;
+        p[0x11] = 0x80;
+        p[0x12] = 0x80;
+        p[0x1C] = 0x80;
+        p[0x1D] = 0x80;
+        p[0x1E] = 0x80;
+        p[0x28] = 0x80;
+        p[0x29] = 0x80;
+        p[0x2A] = 0x80;
+    }
+    if (a[3] == 4) {
+        if (y < -0x1996) {
+            return 0x5C;
+        }
+        return 0;
+    }
+    if (a[3] >= 0xB) {
+        return -0xA;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80128B08);
 
