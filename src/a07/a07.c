@@ -8100,8 +8100,6 @@ void func_8012EB7C(u8 *a, s32 *b) {
     b[2] -= j;
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012EE08);
-
 typedef struct {
     u8 pad0[4];
     s32 flags;
@@ -8122,6 +8120,112 @@ extern ColTable D_8013F718;
 extern ColTable D_8013F724;
 extern s32 D_8013FF58[];
 extern s32 D_1F8001C8[];
+
+s32 func_8012EE08(s32 *pos, s16 *off, s32 flag)
+{
+    s32 best = 0;
+    s32 ret = best;
+    s32 iter = 2;
+    s32 n = best;
+    s32 *v = D_1F8001C8;
+    ColTable *t;
+    ColTri *found[4];
+    u16 *list;
+    u16 *grid;
+    ColTri *tris;
+    ColTri *hit;
+    ColTri *tri;
+    u16 *q;
+    u16 *p;
+    u16 k;
+    u16 cell;
+    s32 m;
+    s32 i, j, inside, d, y, x, z;
+    s32 *e;
+    s16 *pl;
+    s32 w;
+
+    if (D_800BF816 == 0) {
+        t = &D_8013F718;
+    } else {
+        t = &D_8013F724;
+    }
+    list = t->list;
+    grid = t->grid;
+    tris = t->tris;
+    ((V3_9da5 *)v)->x = pos[0] + (off[0] << 16);
+    v[1] = pos[1] + (off[1] << 16);
+    v[2] = pos[2] + (off[2] << 16);
+    while (iter-- > 0) {
+        hit = NULL;
+        x = ((s16 *)v)[1];
+        z = ((s16 *)v)[5];
+        x /= 512;
+        z /= 512;
+        cell = grid[(z << 6) + x];
+        if (cell == 0xFFFF) {
+            return 0;
+        }
+        if (list[cell] != 0xFFFF) {
+            m = cell;
+            do {
+                k = list[m];
+                tri = &tris[k];
+                if (tri->flags & 0x8000) {
+                    if (!(tri->flags & 0x100) || flag != 0) {
+                        for (i = 0; i < n; i++) {
+                            if (tri == found[i]) {
+                                break;
+                            }
+                        }
+                        if (i == n) {
+                            j = 0;
+                            inside = 0;
+                            for (; j < 4; j++) {
+                                d = (((s16 *)v)[1] - tri->e[j][0]) * tri->n[j][0] +
+                                    (((s16 *)v)[5] - tri->e[j][1]) * tri->n[j][1];
+                                D_8013FF58[j] = d;
+                                if (d > 0) {
+                                    goto out;
+                                }
+                            }
+                            inside = 1;
+                        out:
+                            if (inside) {
+                                s32 c1, c2, c3;
+
+                                pl = &tri->a;
+                                w = pl[3] << 12;
+                    y = (tri->a * ((s16 *)v)[1] + pl[2] * ((s16 *)v)[5] + w) / -pl[1];
+                                c1 = y <= best;
+                                c2 = y >= ((s16 *)v)[3];
+                                c3 = y <= ((s16 *)v)[3] + 0x80;
+                                if (c1 && c2 && c3) {
+                                    hit = tri;
+                                    best = y;
+                                    D_8013FF48[0] = D_8013FF58[0];
+                                    D_8013FF48[1] = D_8013FF58[1];
+                                    D_8013FF48[2] = D_8013FF58[2];
+                                    D_8013FF48[3] = D_8013FF58[3];
+                                }
+                            }
+                        }
+                    }
+                }
+            } while (list[++m] != 0xFFFF);
+        }
+        if (hit == NULL) {
+            break;
+        }
+        func_8012EB7C(hit, v);
+        ret = 1;
+        found[n++] = hit;
+    }
+    pos[0] = v[0] - (off[0] << 16);
+    pos[2] = v[2] - (off[2] << 16);
+    return ret;
+}
+
 extern s16 D_1F8001A4;
 extern u16 D_1F8001A6;
 #define U_d0c0(p, o) (*(u16 *)((u8 *)(p) + (o)))
@@ -8442,7 +8546,79 @@ s32 func_8012FC50(u8 *a) {
     return 0;
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012FFD4);
+s32 func_8012FFD4(u8 *a) {
+    u8 *w = *(u8 **)(a + 0x6C);
+    s16 m = U16_5dc5(w, 0xA);
+    s16 sp;
+    s32 dz;
+
+    switch (a[0x78]) {
+    case 0:
+        sp = (s16)U16_5dc5(a, 0x64) >> 8;
+        if (sp == 0) {
+            sp = 10;
+        }
+        dz = U16_5dc5(a, 0x76) - U16_5dc5(a, 0x36);
+        U16_5dc5(a, 0x48) = U16_5dc5(a, 0x74) - U16_5dc5(a, 0x2E);
+        U16_5dc5(a, 0x4C) = dz;
+        H16(a, 0x64) = (s16)func_80084080((s16)dz * (s16)dz + H16(a, 0x48) * H16(a, 0x48)) / (s16)sp;
+        if (H16(a, 0x64) == 0) {
+            H16(a, 0x64) = 1;
+        }
+        H16(a, 0x64) = 0x1000 / H16(a, 0x64);
+        H16(a, 0x44) = 0x1000;
+        if ((s16)m == -1) {
+            H16(a, 0x56) = func_80085690(-H16(a, 0x4C), H16(a, 0x48)) & 0xFFF;
+        } else if ((s16)m == 0) {
+            a[0x78] = 2;
+            return 0;
+        }
+        H16(a, 0x66) = func_80085690(-H16(a, 0x4C), H16(a, 0x48)) & 0xFFF;
+        a[0x78]++;
+    case 1:
+        if (func_80041438(a, H16(a, 0x66), 0x100) != 0) {
+            a[0x78]++;
+        }
+        if ((s16)m == 1) {
+            return 0;
+        }
+    case 2:
+        func_80041768(a, U16_5dc5(a, 0x72) & 0xFFF, 4);
+        if (*(u16 *)(*(u8 **)(a + 0x38) + 2) == 0) {
+            U16_5dc5(a, 0x44) -= U16_5dc5(a, 0x64);
+            if (H16(a, 0x44) <= 0) {
+                H16(a, 0x44) = 0;
+            }
+            U16_5dc5(a, 0x2E) = U16_5dc5(w, 4) - H16(a, 0x44) * H16(a, 0x48) / 4096;
+            U16_5dc5(a, 0x36) = U16_5dc5(w, 6) - H16(a, 0x44) * H16(a, 0x4C) / 4096;
+            func_80130E20(a, 0);
+            if (f_TestCircusActorGroundContact(a) != 0) {
+                if (H16(a, 0x50) > 0x1400) {
+                    func_80074590(3, 0, 0);
+                }
+                H16(a, 0x50) = 0;
+            } else {
+                U16_5dc5(a, 0x50) += 0x800;
+                if (H16(a, 0x50) > 0x3000) {
+                    H16(a, 0x50) = 0x3000;
+                }
+            }
+            W32(a, 0x30) += H16(a, 0x50) << 8;
+        }
+        a[0x29] = 0;
+        if (H16(a, 0x44) == 0) {
+            if (a[0x7B] != 0xFF) {
+                func_80041768(a, a[0x7B], 4);
+            }
+            return 1;
+        }
+        if (func_80042EA4(a, a + 0x68, H16(a, 0x6A)) != 0) {
+            func_800521F4(0, 0, 0xF1, 2);
+        }
+        return 0;
+    }
+    return 0;
+}
 
 s32 func_80130374(u8 *a)
 {
