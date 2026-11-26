@@ -261,7 +261,6 @@ extern PoolPt D_80142294[];
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void func_8010B1F8(u8 *a) {
     s32 i;
     PoolPt *p;
@@ -2036,7 +2035,6 @@ extern u16 D_800ECF54;
 extern s16 D_1F80016C_7096;
 extern s16 D_1F80016E_b7f7;
 extern u16 D_800ECF54;
-
 void func_80113110(u8 *a)
 {
     u8 k;
@@ -4047,7 +4045,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011C614);
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 s32 func_8011C848(u8 *a, s32 m)
 {
     u8 f;
@@ -4740,7 +4737,6 @@ static inline s32 inl_wait(u8 *a, u8 *g) {
     }
     return 0;
 }
-
 void func_8011F71C(u8 *a) {
     u8 *g = D_800E7E80;
 
@@ -9978,7 +9974,6 @@ extern RingVec D_8014CE70[];
 extern u32 *D_800ED8C8_065b;
 #define T2_rtpt4() __asm__ volatile("nop;nop;nop;nop;.word 0x4A280030;nop;nop;nop;nop")
 #define T2_stsxy3_f3(r0) __asm__ volatile("addu $12,%0,$0;" "swc2 $12,8($12);" "swc2 $13,12($12);" "swc2 $14,16($12)" : : "r"(r0) : "$12", "$13", "$14", "$15", "memory")
-
 void func_8013E738(u8 *a)
 {
     Mat *m = &D_1F800000_8be2;

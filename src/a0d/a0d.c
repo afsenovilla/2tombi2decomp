@@ -1917,7 +1917,6 @@ void func_8010E070(u8 *a)
 extern s16 D_800ED098;
 void func_8010E5EC(u8 *a);
 void *func_8007AAE8();
-
 u8 *f_SpawnEarthEvilPigDetachedPartsActor(AreaPartsOwner *a)
 {
     u8 *p = func_8007A980(2, 3, 1);

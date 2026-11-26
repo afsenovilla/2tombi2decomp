@@ -2005,7 +2005,6 @@ static inline void inl_8011281C(void *arg0, void *arg1) {
         M2C_FIELD(arg1, s8 *, 4) = 2;
     }
 }
-
 void func_80111974(u8 *a) {
     u8 **l = D_1F800148;
     u8 *e;

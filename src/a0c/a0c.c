@@ -2986,7 +2986,6 @@ typedef struct { s16 x, y, z, pad; } TrailPt;
 extern TrailPt D_80126968[];
 extern s32 D_80126A68[];
 extern u8 D_80126AE8[];
-
 void func_801116A8(u8 *a)
 {
     u8 *p = *(u8 **)(a + 0x10);
@@ -5550,7 +5549,6 @@ static inline void gpga_move(u8 *a)
     func_8004766C(a);
     func_80049760(a);
 }
-
 void f_UpdateGhostEvilPigGraspActor(u8 *a)
 {
     u8 *t = D_800E7E80;

@@ -652,7 +652,6 @@ static inline void cam_inl(u8 *a)
         H(a, 0x26) = -0x320;
     }
 }
-
 void func_8010C0A4(u8 *a)
 {
     u8 *g;
@@ -2403,7 +2402,6 @@ INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801106A4);
 
 typedef struct { u8 t; s8 st; u8 pad[2]; s32 w; } RingSlot;
 typedef struct { s16 x, y, z, pad; } SV4;
-
 void func_80110800(u8 *a)
 {
     u8 *p = *(u8 **)(a + 0x10);
@@ -4693,7 +4691,6 @@ INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80116B50);
 
 typedef struct { s16 x, y, z; } SV3b;
 extern s16 D_1F8001A6;
-
 u8 func_80116CB0(u8 *a)
 {
     u8 *q = a + 0x60;
@@ -4780,7 +4777,6 @@ end:
 }
 
 extern s16 D_800E7FEE;
-
 void f_UpdateEvilPigBattleProjectile(u8 *a)
 {
     u8 *q = a + 0x60;

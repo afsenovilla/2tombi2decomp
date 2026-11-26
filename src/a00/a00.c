@@ -8646,7 +8646,6 @@ extern u8 D_800E7FC5;
 extern s32 D_8014A270;
 s32 func_80130788(u8 *a, s32 m);
 void f_ApplyBarrelSeesawContactImpulse(u8 *a);
-
 void f_UpdateBarrelSeesawRide(AreaPartsOwner *a)
 {
     s16 base;
@@ -8901,7 +8900,6 @@ void f_UpdateBarrelSeesawRide(AreaPartsOwner *a)
 }
 
 void f_ActivateBarrelLinkedSegmentPair(AreaPartsOwner *a, s16 k0, s16 flag);
-
 void f_RotateSelectedTownBarrel(AreaPartsOwner *a)
 {
     s16 k;

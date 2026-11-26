@@ -333,7 +333,6 @@ extern volatile u16 D_800BE0EA;
 extern s32 D_1F8001F8;
 extern volatile s32 D_1F8001F4;
 void *CdReadyCallback();
-
 void func_8001D7C4(u8 intr, u8 *result)
 {
     s32 done;
@@ -840,7 +839,6 @@ s32 f_SetTombaAnimationIfChanged(u8 *t, s32 anim, s32 blend);
 void f_ReleaseTombaInteractionTarget(u8 *t);
 void func_800538E0(u8 *a, u16 *pos, s32 flag);
 s32 f_PlaySoundEffect();
-
 s32 f_StartActorImpactOrTombaRebound(u8 *b, s16 k, s32 c, s32 anim)
 {
     u8 *t = D_800E7E80_fdb4;
@@ -2141,7 +2139,6 @@ static inline s32 TestBit_48d0(u8 i)
 {
     return (D_80017324[i >> 3] >> (i & 7)) & 1;
 }
-
 s32 func_800248D0(u8 *a)
 {
     u8 **l;
@@ -6637,7 +6634,6 @@ typedef struct {
 } Inv_6BAC;
 extern Inv_6BAC D_800BF870_6bac;
 extern ItemDef_6BAC D_800A2BE8_6bac[];
-
 void func_80036BAC(void)
 {
     s32 i;
@@ -6711,7 +6707,6 @@ extern Gs_76EC D_800BF870_76ec;
 extern char D_80010680[];
 void f_DrawSmallMenuText(s16 x, s32 y, s16 c, s32 d, s32 e);
 u8 f_FormatIntegerText(s32 v, char *out);
-
 void func_800376EC(u8 *a, s16 item, s16 mode, s16 y, s32 c, s32 e)
 {
     s16 x;
@@ -6779,7 +6774,6 @@ extern u8 *D_800BF53C;
 extern u8 D_800C9E68[];
 extern u8 D_800DDE68[];
 extern Gs_84EC D_800BF870_84ec;
-
 void func_800384EC(u8 *a)
 {
     s32 i;
@@ -6879,7 +6873,6 @@ s32 func_80038794(u8 *p)
 }
 
 extern u16 D_800ECF54;
-
 void func_800387E0(u8 *a)
 {
     s16 h;
@@ -8673,7 +8666,6 @@ extern V3_0410 D_800A3B1C[];
 extern s16 D_800A3B28[][2];
 s32 f_AllocateActorModelPart(void);
 void f_SetActorPartModel(u8 *actor, s32 bank, s32 index);
-
 s32 func_80040410(u8 *a, u8 k)
 {
     s32 i;
@@ -11200,7 +11192,6 @@ extern u8 *D_800A58FC[];
 extern u8 D_800BF9CF;
 extern u8 D_800BF870_9d28;
 void f_StartActorTimedFrameSequence(u8 *actor, u16 **table, s32 index);
-
 void f_InitializeSpriteGroundPickupFromRewardSelector(u8 *a)
 {
     u8 *e;
@@ -11723,7 +11714,6 @@ void func_8004C01C(u8 *a)
 extern u8 *D_800A3EDC[];
 s32 f_TestAppleCollectedBit(s32 n);
 s32 f_TestWorldOrOtherPickupCollectedBit(s32 n, u8 other);
-
 u8 *f_SpawnAreaIndexedPersistentPickup(u8 *owner, u8 idx, s32 flag)
 {
     u8 *e;
@@ -13718,7 +13708,6 @@ void f_StartControllerVibration(u8 port, u8 lo, u8 hi, u8 dur)
 }
 
 extern u8 D_800A3F98[];
-
 void func_8005229C(void)
 {
     u8 *s = D_800ECF48_7ec2;
@@ -15918,7 +15907,6 @@ extern u16 D_1F80016A;
 extern u8 D_800BF9C3;
 extern u8 D_800BF81E_9d28;
 extern u8 D_1F800137_9d28;
-
 void func_80059D28(void)
 {
     u8 *t = D_800E7E80_9d28;
@@ -16794,7 +16782,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80061A7C);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80061C64);
 
 s32 f_AdvanceActorSkeletalAnimation();
-
 void func_800620D0(u8 *t)
 {
     f_AdvanceActorSkeletalAnimation(t);
@@ -17379,7 +17366,6 @@ void func_80063ECC(u8 *a)
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80063F9C);
 
 extern u16 D_800A47C4[];
-
 void func_80064358(u8 *t, u8 k, u8 *o)
 {
     u16 *e;
@@ -17647,7 +17633,6 @@ void func_800655A0(void *arg0) {
 }
 
 extern u16 D_1F800192_55dc;
-
 void func_800655DC(u8 *t)
 {
     s32 k;
@@ -17682,7 +17667,6 @@ void func_800655DC(u8 *t)
 }
 
 extern u8 D_800BF808_78e8[];
-
 void func_800656FC(u8 *t)
 {
     s32 k;
@@ -18023,7 +18007,6 @@ void func_80065A54(u8 *a)
     }
 }
 
-
 void func_800660AC(u8 *t)
 {
     s32 r;
@@ -18350,7 +18333,6 @@ void func_80066DE8(u8 *t)
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80066FA8);
 
 extern u16 D_1F80019E_74f4;
-
 void func_800674F4(u8 *t)
 {
     s16 v[6];
@@ -18489,7 +18471,6 @@ void func_8006762C(u8 *a)
 }
 
 extern u8 D_800BF80D_78e8;
-
 void func_800678E8(u8 *t)
 {
     u8 *g;
@@ -18923,7 +18904,6 @@ extern u8 **D_800A4A00[];
 extern u8 D_800A4A44[];
 void f_StartActorSkeletalAnimation(u8 *a, u8 **tbl, s32 i);
 s32 func_80069858(u8 *a, s32 b, s32 c);
-
 void func_80068E68(u8 *a)
 {
     u8 *m = a + 0x60;
@@ -21373,7 +21353,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006F2D0);
 extern s32 D_800ECF58_f9d8[];
 void f_StartActorTimedFrameSequence(u8 *actor, u16 **table, s32 index);
 void func_80070018(u8 *a);
-
 s32 f_InitializeLinkedPickupFromVisualDefinition(u8 *owner, u8 *a, u8 *d, s16 y)
 {
     s32 idx;
@@ -21452,7 +21431,6 @@ found:
 
 void f_StartActorTimedFrameSequence(u8 *actor, u16 **table, s32 index);
 void func_80070018(u8 *a);
-
 u8 *func_8006FC34(u8 *owner, s32 k)
 {
     s32 i;
@@ -21881,7 +21859,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateScriptedInteractionApproach);
 
 extern u8 *D_8001B860_083b[];
 void f_StartActorSkeletalAnimationBlend(u8 *a, void **table, s32 i, s32 blend);
-
 s32 func_80071260(u8 *a)
 {
     s16 s;
@@ -23368,7 +23345,6 @@ void f_OpenSequencedMusicSlot(s16 slot, void *data, s16 mode, s16 id)
 
 extern s16 D_800BED82;
 extern s16 D_800BED84;
-
 u8 *func_800754F4(u8 *a)
 {
     u8 *h = a + 0x51000;

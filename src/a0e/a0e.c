@@ -2809,7 +2809,6 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80110130);
 
 extern s32 D_8012686C[];
 extern s8 D_800BF808_c1f7[];
-
 void func_80110268(u8 *a)
 {
     s32 i;
@@ -2889,7 +2888,6 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80110CA4);
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8011141C);
 
 typedef struct { s16 x, y, z, w; } Drop8;
-
 void func_80111548(u8 *a)
 {
     Drop8 *p = (Drop8 *)(a + 0x50);
@@ -2974,7 +2972,6 @@ extern u32 *D_800ED8C8;
 #define T2_stsxy3_f3(r0) __asm__ volatile("addu $12,%0,$0;" "swc2 $12,8($12);" "swc2 $13,12($12);" "swc2 $14,16($12)" : : "r"(r0) : "$12", "$13", "$14", "$15", "memory")
 #define T2_avsz3() __asm__ volatile(".word 0x4B58002D")
 #define T2_stotz(r0) __asm__ volatile("swc2 $7, 0( %0 )" : : "r"(r0) : "memory")
-
 void func_801117CC(u8 *a)
 {
     Mat *m = &D_1F800000_c2ec;

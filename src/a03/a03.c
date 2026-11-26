@@ -1142,7 +1142,6 @@ void f_UpdateTrolleySteeringInput(u8 *a) {
 #define F16(p, o) M2C_FIELD(p, s16 *, o)
 #define FU16(p, o) M2C_FIELD(p, u16 *, o)
 #define W(p, o) M2C_FIELD(p, s32 *, o)
-
 void f_UpdateUpgradedTrolleyPhysics(u8 *a) {
     u8 *q = a + 0x60;
     TrkMat m;

@@ -517,7 +517,68 @@ void func_8010BC80(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8010BE1C);
+typedef struct { u8 pad[0x38]; u8 *p38; u8 pad2[0x24]; s16 st[48]; u8 *parts[5]; } Obj;
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+extern u8 *D_800ECFDC;
+extern u8 *D_800ECFE0;
+extern u8 *D_800ECFE4;
+extern u16 D_801416BC[][4];
+extern u16 D_801416E4[][4];
+extern u16 D_8014170C[][4];
+s32 func_8010BE1C(u8 *a, u8 *b, u8 *c, s32 mode)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - (*(u16 *)(c + 0x2C) + *(u16 *)(b + 0x60));
+    s16 dz = *(u16 *)(a + 0x36) - (*(u16 *)(c + 0x34) + *(u16 *)(b + 0x64));
+    s32 d = func_80084080(dx * dx + dz * dz);
+    s16 dy;
+    s16 h;
+    s16 e;
+    s16 k;
+    s16 y0;
+    s16 t;
+
+    if ((u16)d > *(s16 *)(a + 0x80) + 0x5A) {
+        return -1;
+    }
+    dy = *(u16 *)(a + 0x32) - (*(u16 *)(c + 0x30) + *(u16 *)(b + 0x62));
+    h = *(u16 *)(a + 0x84) + 0x5A;
+    if ((u16)(dy + h) > *(s16 *)(a + 0x86) + 0xB4) {
+        return -1;
+    }
+    D_1F80009C_baed = func_80085690(-dz, dx);
+    y0 = dy;
+    {
+        s32 d2 = d - 0x5A;
+        e = *(u16 *)(a + 0x80) - d2;
+    }
+    if (dy < 0) {
+        dy = -dy;
+    } else {
+        h = (*(u16 *)(a + 0x86) - *(u16 *)(a + 0x84)) + 0x5A;
+    }
+    t = h - dy;
+    if (y0 < -((k = *(u16 *)(a + 0x84)) / 2)) {
+        return e >= t;
+    }
+    if (e < t) {
+        return 2;
+    }
+    if (D_1F800098 != 0) {
+        return 3;
+    }
+    if (mode != 0) {
+        return 3;
+    }
+    {
+        u16 h2 = *(u16 *)(a + 0x86);
+        D_1F800253 = 4;
+        *(u16 *)(a + 0x32) = *(u16 *)(c + 0x30) + ((h2 - k) + 0x5A);
+    }
+    if (a[0x145] == 1 && *(s16 *)(a + 0x4A) < 0) {
+        *(s16 *)(a + 0x4A) = 0;
+    }
+    return 3;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8010C03C);
 
@@ -6132,7 +6193,63 @@ void func_80129628(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80129744);
+void func_80129744(Obj *a, s32 idx)
+{
+    s16 k = U(a->p38, 4);
+    u8 *base;
+    u16 (*t)[4];
+    u8 *p;
+    s32 i;
+    s32 *o;
+
+    s32 m = k & 0xF;
+    k = m;
+    if (m == a->st[idx]) {
+        return;
+    }
+    switch (m) {
+    case 0:
+        base = D_800ECFDC;
+        t = D_801416BC;
+        o = (s32 *)(base + 4);
+        for (i = 0; i < 5; i++) {
+            p = a->parts[i];
+            U(p, 6) = t[i][0];
+            U(p, 0) = t[i][1];
+            U(p, 2) = t[i][2];
+            U(p, 4) = t[i][3];
+            *(u8 **)(p + 0x40) = base + o[i];
+        }
+        break;
+    case 1:
+        base = D_800ECFE0;
+        t = D_801416E4;
+        o = (s32 *)(base + 4);
+        for (i = 0; i < 5; i++) {
+            p = a->parts[i];
+            U(p, 6) = t[i][0];
+            U(p, 0) = t[i][1];
+            U(p, 2) = t[i][2];
+            U(p, 4) = t[i][3];
+            *(u8 **)(p + 0x40) = base + o[i];
+        }
+        break;
+    case 2:
+        base = D_800ECFE4;
+        t = D_8014170C;
+        o = (s32 *)(base + 4);
+        for (i = 0; i < 3; i++) {
+            p = a->parts[i];
+            U(p, 6) = t[i][0];
+            U(p, 0) = t[i][1];
+            U(p, 2) = t[i][2];
+            U(p, 4) = t[i][3];
+            *(u8 **)(p + 0x40) = base + o[i];
+        }
+        break;
+    }
+    a->st[idx] = k;
+}
 
 typedef struct {
     s16 x, y;
@@ -9242,7 +9359,6 @@ extern u32 *D_800ED8C8;
 #define T2_rtpt4() __asm__ volatile("nop;nop;nop;nop;.word 0x4A280030;nop;nop;nop;nop")
 #define T2_stotz(r0) __asm__ volatile("swc2 $7, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsxy3_f3(r0) __asm__ volatile("addu $12,%0,$0;" "swc2 $12,8($12);" "swc2 $13,12($12);" "swc2 $14,16($12)" : : "r"(r0) : "$12", "$13", "$14", "$15", "memory")
-
 void func_8013C2EC(u8 *a)
 {
     Mat *m = &D_1F800000_c2ec;

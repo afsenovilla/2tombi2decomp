@@ -2813,7 +2813,6 @@ extern u32 *D_800ED8C8;
 #define T2_rtpt4() __asm__ volatile("nop;nop;nop;nop;.word 0x4A280030;nop;nop;nop;nop")
 #define T2_stotz(r0) __asm__ volatile("swc2 $7, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsxy3_f3(r0) __asm__ volatile("addu $12,%0,$0;" "swc2 $12,8($12);" "swc2 $13,12($12);" "swc2 $14,16($12)" : : "r"(r0) : "$12", "$13", "$14", "$15", "memory")
-
 void func_80117E84(u8 *arg0)
 {
     u8 *a = arg0;
@@ -6298,7 +6297,6 @@ void func_80125D88(u8 *a)
 }
 
 extern u8 D_800BFA43;
-
 void func_80125F6C(u8 *a)
 {
     switch (a[5]) {
@@ -9303,7 +9301,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012E61C);
 
 extern u16 D_1F80017C_u16;
 extern u16 D_1F8000F2_e6cc;
-
 void func_8012E6CC(u8 *a)
 {
     u8 *s = a + 0x60;
@@ -10616,7 +10613,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80137B18);
         o[0x47] = a[0x47];                 \
         o[0x2B] = a[0x2B];                 \
     }
-
 void func_80137C5C(u8 *a)
 {
     u8 *o;

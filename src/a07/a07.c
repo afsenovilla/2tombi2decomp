@@ -2006,7 +2006,6 @@ void func_801140A0(void) {
 }
 
 void func_8012E2A0(void);
-
 void func_80114294(u8 *a)
 {
     u8 *g;
@@ -4623,7 +4622,6 @@ extern u8 D_80131618[];
 extern u8 D_80131708[];
 extern u8 D_80131690[];
 extern u8 D_80131780[];
-
 s32 func_8011EF34(u8 *a)
 {
     s32 k;
@@ -8213,7 +8211,6 @@ extern ColTable D_8013F718;
 extern ColTable D_8013F724;
 extern s32 D_8013FF58[];
 extern s32 D_1F8001C8[];
-
 s32 func_8012EE08(s32 *pos, s16 *off, s32 flag)
 {
     s32 best = 0;
@@ -8568,7 +8565,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012F938);
 #define H16(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define U16_5dc5(p, o) (*(u16 *)((u8 *)(p) + (o)))
 #define W32(p, o) (*(s32 *)((u8 *)(p) + (o)))
-
 s32 func_8012FC50(u8 *a) {
     u8 *w = *(u8 **)(a + 0x6C);
     s16 m = U16_5dc5(w, 0xA);

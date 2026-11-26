@@ -481,13 +481,59 @@ struct-member form of a cast access, regswap `member` toggles every one)
   helper's return.
 - A void function whose caller returns its value: keep it void and cast at the caller (s32 changes delay-slot
   filling).
-- CD callback flags are volatile (D_800BE0E0 / E6 / E8 / EA).
+- CD callback flags are volatile (D_800BE0E0 / E6 / E8 / EA), except where a store must follow a volatile load
+  (Round 15 forms).
 - A loop over a struct table `D[i].x` gives one induction variable (`p++` gives two); keep `(a - b) + (c + K)` with
   casts `(s16)(a - b) + (u16)(c + K)`; `lui; subu`: `k = 0x1400; H50 = k; W30 -= k << 8;`.
 - If / else `j` layout: `if (!A && !B && !C) x = 6; else x = 5;`.
 - A table byte loaded `lbu; sll; sra`: u8 table, `s16 x = (s8)p[1]`.
 - Two retail copies of a block are two source copies (do not share a case).
 - A dead store retail keeps on a stack slot: permlines over the statements.
+
+**Round 15 forms**
+- Tomba state handlers (MAIN 0x80062000-0x80068000; overlay callers of func_80056B48 / func_80055D5C / func_8005444C /
+  func_800551C4) take about 2 minutes each from the asm.
+- A pending function can be an exact case body of a matched dispatcher (a04 func_80111260 = case 1 of func_801103F0),
+  or a matched function with another divisor (`magicdiv.py`: a0e func_801117CC = a04 func_8013C2EC with /500).
+- Loads through another pointer (a table entry, an escaped stack array, a scratchpad global) cannot move above a store
+  through the actor pointer: when retail loads early, put the load right after the store it follows, or compute into
+  locals before the stores. MEMBER_AT on the one access (regswap `member`) lets global loads pass actor stores; a
+  MEMBER_AT store of a function pointer likewise.
+- A volatile store cannot pass a volatile load: in MAIN func_8001D7C4 D_800BE0E0 is not volatile (its store follows
+  the volatile D_1F8001F4 load) while D_800BE0E6 / E8 / EA are. A volatile second read keeps a reload CSE would merge.
+- One value per arm (`if (x == 0) v = A; else if (x == 1) v = B; else v = x;`): an initial `v = A;` is hoisted to the
+  function top. Same constant into two fields: the stores in each arm (gcc cross-jumps the shared `sh`).
+- Narrow copies keep `move`s: `u16 kk = k;` before two masks of an s32; `s16 b = ...; s16 n = b; if (..) n = b + 1;`.
+- `k2 = *(s16 *)(t + 0x58) = h;` folds a field write into an assignment (regswap `chain`); chained stores store the
+  rightmost first; `H(b,0xBA) = U(b,0xB8); H(b,0xBC) = U(b,0xB8);` gives `move v1,v0`.
+- Testing a field just masked: `U78 &= 0xFFFB; if (H(a,0x78) & 0x8000)` (signed re-read tests the stored value).
+- `return;` in a non-void function: a branch straight to the epilogue with garbage in v0; an uninitialised local on a
+  default path reads the leftover argument register.
+- `or` operand order: a named s16 local declared first (`m = H & ~0xFF; n = m | lo;`); clamp with a move:
+  `s16 lo = H & 0xFF; if (lo >= 0x80) lo = 0x80;`; colour words with the constant first.
+- Angle wrap with three registers: `s16 dd = t - FU16(q,0x14); if (dd < -0x800) dd += 0x1000; else if (dd > 0x800)
+  dd -= 0x1000;` with `dd = (t = f()) - x;`.
+- Undo constant folding: `d - K` in a block-scoped temporary, the constant in a local (`o = 0x6E`), `x - (h + 0xC8)`
+  for `addu; addiu -200; subu`.
+- A derived base (`addiu s0,s2,-0x146`): `rec = (u16 *)((u8 *)&D_800BF870 + 0x146)` for the writes, `gs` assigned
+  after it for the reads; GameState byte flags per arm `{ u8 *g = (u8 *)&D_800BF870; g[0x162] |= 1 << n; }`.
+- GTE inline stores: one asm string `"addu $12,%0,$0; swc2 $12,8($12); ..."` with clobbers $12-$15 and memory
+  (maspsx rejects `move` in a multi-insn string); four nops around rtpt as a custom asm with `.word 0x4A280030`.
+- Packet walk around a call: `p += 6; q = p; ...; q += 3; p = q;` (stops a giv); packet constants stay in the loop
+  when the OT-link stores are in `do { } while (0)`.
+- Scratchpad matrix pointers in loops: assign them inside the loop body (loop.c hoists them as retail did);
+  D_1F800020 is its own symbol, not `D_1F800000 + 0x20`. The same scratchpad word read as u8 and written as u16: one
+  u16 symbol plus `*(u8 *)&SYM`.
+- Grid row loops: a static inline row helper `p = *(s16 **)(a + 0xC); p += 2; p += xs * H + y; for (; xs <= xe;
+  xs++) { ...; p += H; }` with no block-scoped local in the loop.
+- `bnez` delay slot filled from the target where retail has the fall-through: `__asm__ volatile("");` before the
+  target statement; store flag kept as `beq`: `if (x == 3) return 1; __asm__ volatile(""); return 0;`.
+- Open pattern (5 spawners, ~5 KB: a05 f_SpawnKujaraSummitSceneActorsFromPlacementTable, a04 f_SpawnKujaraRanch...,
+  a07 f_SpawnCircus..., a01 f_SpawnPipeArea...): retail keeps one `lui %hi(D_800BF870)` in a saved register for both
+  `h = &D_800BF870` and an in-loop direct `lbu %lo(D_800BF870)(sN)`; ours re-does the lui in the loop.
+- Splat can leave a jump table as raw `.word` data (a02 D_801092FC): declare it `jtbl_XXXXXXXX = 0x...; //
+  type:jtbl` in config/symbol_addrs_<prog>.txt and re-split; a pending "function" with no prologue that uses saved
+  registers is a split-off tail (a02 func_8010CF30 of func_8010C8E4: merge in the config).
 
 **Switch and jump-table shapes (more)**
 - Duplicate the cases with identical code to get a jump table whose entries share a target (gcc builds the table,
@@ -665,6 +711,12 @@ struct-member form of a cast access, regswap `member` toggles every one)
   target's alias names); permlines misses functions returning a pointer; sibling.py misses ports that differ in
   callee names; nearcopy `--near` counts an alias name of the same address as a difference; regswap's narrowing split
   can rank a pointer truncation best (ignore it).
+
+- Round 15: a scratch data extern with another type than the program's declaration passes ccheck and fails
+  install_c (use an alias name); an earlier prototype with another return type gives "conflicting types"; a void
+  definition whose caller does `return f(x);` needs a cast at the caller; a full scratch prototype breaks m2c's
+  zero-argument callers (K&R); regswap `fork` can produce a variant whose uses are not dominated by the fork (check
+  it); install_c needs one-line macros. Never `rm -rf build/permute` or other shared build dirs wholesale.
 
 ## Decisions (with dates in STATUS)
 

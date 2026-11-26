@@ -3,6 +3,37 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-27: fifteenth round
+
+All code in C: **5104 / 7011 functions (72.8 %, 54.1 % of the bytes)**, from 5015 (52.0 %). main +29 (~11.7 KB, Tomba
+state handlers ~2 minutes each), a04-a08 +23 (~13.9 KB), a00-a01 +15 (~12.8 KB: the last two big barrels, a01 +11),
+a02-a03 +10 (~9.3 KB: the two trolley physics functions), a09 scope +10 (~8.9 KB). The coordinator installed a02
+func_80111974 after declaring its raw-word jump table (jtbl_801092FC in config/symbol_addrs_a02.txt); nearcopy put a01
+func_8010CF68 / func_8011D9E4 into a04 func_8010BE1C / func_80129744. integrate.py: clean build 29 / 29; a7a5ea4 (a02
+func_8010B634) does not link alone. Recipes in AGENTS.md "Round 15 forms".
+
+Near misses (scratch in r15b/<scope>/): a03 f_UpdateStandardTrolleyPhysics 3 (sibling of the matched Upgraded one),
+main func_80053E50 3, a0a func_801179C0 4 and its twin a0e func_80116D48 4 (the 0x500 skeleton has 4 more members,
+a0b func_80116520, a0c func_80116A38, a0d func_801162F4, a0f func_80119CC0: ~7.8 KB behind one `lhu 0x62` placement),
+a06 func_80123948 4, a00 f_UpdateTownBarrelChildTransforms 4, a01 func_8010EFBC 4, a0b func_80116B50 5, a05
+func_80114874 6, main f_SpawnScriptedPresentationActor 6, a01 func_801208B4 6, main func_80036240 7, a04 func_8013D0F8
+15, a01 func_80132FD0 16, a05 f_SpawnKujaraSummitSceneActorsFromPlacementTable 17 (shared-lui spawner pattern, 5
+functions ~5 KB), a06 func_8011D520 18, a01 func_8012702C 20, a02 func_80118C54 22, a00
+f_UpdateBarrelSeesawSupportHeight 22, a07 func_8012DBB4 23, main func_80025B78 24, func_8003E030 58, a0b func_80109F7C
+52 (collision family), a02 func_80115F58 ~66, main func_800696C4 ~68, a06 func_80125338 ~260. Open: a00
+f_InitializeTownBarrelSeesawController (0x710), a0d f_UpdateEarthEvilPigSplitActor (0xF0C), a0g
+f_UpdateCourageTowerInteriorEntranceActor (0x6D0); a02 func_8010CF30 is a split-off tail of func_8010C8E4 (config
+merge needed). Possibly ASM by design: a0a func_8010FD74, a0d func_801131B0 (handwritten mtc2 in normal frames).
+
+Tool work left: jtbl.py accepting raw-word dlabel tables whose entries fall inside the function and never picking a
+table whose labels lie in another function; a census of prologue-less fragments that read saved registers; a
+"reverse inlined" list (pending functions equal to a case body or static inline helper of matched C); a
+strength-reduction (giv) report from the cc1 loop dump; a sched1 dependency probe (which stores each load depends
+on); install_c: cast callers of a void definition, K&R when a scratch prototype clashes with zero-argument calls;
+ccheck: data extern type clashes, prototype return-type clashes, hints for uninitialised locals and lh / lhu of one
+field; regswap: expression per arm, invariant pointer-local placement in loops, copy into a second variable, fork
+dominance check, `-j 1` default; variants: auto-escape `|` in `--set`; tools write PID files (pkill -f is denied).
+
 ## 2026-11-26 (3): fourteenth round
 
 All code in C: **5015 / 7011 functions (71.5 %, 52.0 % of the bytes)**, from 4926 (49.3 %). Same method as round 13.

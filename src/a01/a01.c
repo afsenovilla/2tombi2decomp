@@ -238,7 +238,6 @@ s32 func_8010A530(u8 *a, u8 *b, s32 skip) {
 
 #define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
 extern u8 D_800BFAD6;
-
 void func_8010AA20(u8 *a)
 {
     u8 *b = P(a, 0x158);
@@ -3040,7 +3039,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80115278);
 
 #define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
 #define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
-
 void func_80115428(u8 *a)
 {
     u8 *g = D_800E7E80;
@@ -5573,7 +5571,6 @@ extern u8 *D_800ECFAC;
 extern u16 D_80135914[][4];
 extern u16 D_8013593C[][4];
 extern u16 D_80135964[][4];
-
 void func_8011D9E4(Obj *a, s32 idx)
 {
     s16 k = U(a->p38, 4);
@@ -8066,7 +8063,6 @@ void func_80123BF8(u8 *a) {
 }
 
 extern u8 D_800BF9D4;
-
 void func_80123CFC(u8 *a)
 {
     switch (a[4]) {
@@ -8290,7 +8286,6 @@ static inline s32 step_47c8(u8 *a)
     }
     return 0;
 }
-
 void func_801247C8(u8 *a)
 {
     u8 *e = D_800E7E80;
@@ -9883,7 +9878,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801291F4);
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80129394);
 
 extern u16 D_8013796C[][2];
-
 void f_UpdatePullAndOpenGateSegmentTransform(u8 *a)
 {
     u8 *g = D_800E7E80;
@@ -11799,7 +11793,6 @@ static inline void row(u8 *a, s32 y, s32 xe, s32 l)
         }
     }
 }
-
 void func_8012F188(u8 *a, T2Pt32 *p0, T2Pt32 *p1, T2Pt32 *p2)
 {
     s32 x0, y0, x1, y1, x2, y2, t;

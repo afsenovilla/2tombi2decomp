@@ -5823,7 +5823,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80125A20);
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80125BA4);
 
 u8 func_8010BE54(u8 *a, s32 b);
-
 u8 func_8012640C(u8 *a, s32 b)
 {
     func_8004766C(a);
@@ -7070,7 +7069,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012D0C8);
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012D340);
 
 extern s16 D_8013F208[];
-
 void func_8012D5B8(u8 *a)
 {
     switch (a[7]) {
@@ -8929,7 +8927,6 @@ extern void *D_800BF544;
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
 extern void *D_800BF544;
-
 u32 *func_8013484C(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[3];
