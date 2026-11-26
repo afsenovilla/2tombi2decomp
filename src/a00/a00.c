@@ -8601,7 +8601,46 @@ void f_HandleTownBarrelSeesawController(u8 *a)
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeTownBarrelSeesawController);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8012F494);
+s32 f_HandleBarrelSeesawContact(AreaPartsOwner *a);
+
+void func_8012F494(AreaPartsOwner *a)
+{
+    u16 h;
+    s16 k;
+    s16 t;
+    u8 *p;
+
+    if (a->pad[6] == 0) {
+        f_UpdateBarrelSeesawSupportHeight();
+        a->pad[6]++;
+    }
+    if (U(a, 0x7A) & 2) {
+        return;
+    }
+    if ((U(a, 0x60) & 0xF0) != 0x40) {
+    if (func_80130788(a, 1) != 0) {
+        a->pad[5] = 1;
+        a->pad[6] = 0;
+    } else if (a->pad[3] == 2) {
+        h = U(a, 0x64);
+        if (H_f12c(a, 0x54) != (h & 0xFFF)) {
+            p = a->parts[1];
+            t = U(p, 8) - 4;
+            k = t;
+            if (t > 0x800) {
+                k = t | 0xF000;
+            }
+            if (k <= (s16)h) {
+                k = h;
+            }
+            H_f12c(p, 8) = k & 0xFFF;
+        }
+    }
+    } else if (U(a, 0x78) & 2) {
+        H_f12c(a, 0x78) = 0;
+    }
+    f_HandleBarrelSeesawContact(a);
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateBarrelSeesawRide);
 
