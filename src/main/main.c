@@ -21370,7 +21370,53 @@ void func_8006F138(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006F2D0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeLinkedPickupFromVisualDefinition);
+extern s32 D_800ECF58_f9d8[];
+void f_StartActorTimedFrameSequence(u8 *actor, u16 **table, s32 index);
+void func_80070018(u8 *a);
+
+s32 f_InitializeLinkedPickupFromVisualDefinition(u8 *owner, u8 *a, u8 *d, s16 y)
+{
+    s32 idx;
+    s32 bank;
+    s32 f;
+
+    *(void **)(a + 0x1C) = func_80070018;
+    *(u8 **)(a + 0x10) = owner;
+    *(s16 *)(a + 0x5C) = 0;
+    a[0x28] |= 0x80;
+    idx = *(u16 *)(d + 4);
+    f = d[2] & 0x80;
+    bank = *(u16 *)(d + 2) & 0x7F;
+    a[0x5F] = f;
+    if (f != 0) {
+        *(s32 *)(a + 0x3C) = D_800ECF58_f9d8[bank];
+        if (bank == 0) {
+            f_StartActorTimedFrameSequence(a, D_80017334, idx);
+        } else {
+            f_StartActorTimedFrameSequence(a, D_800A58FC[D_800BF870_9d28], idx);
+        }
+        a[0xB] = 0x10;
+        a[0xD] = 0;
+        a[0x47] = 0;
+        *(s16 *)(a + 0x5A) = 0;
+        a[8] = 0xF0;
+    } else if (f_InitializeSinglePartActorModel(a, bank, idx) != 0) {
+        return 0;
+    }
+    *(s16 *)(a + 0x60) = -0x20;
+    *(s16 *)(a + 0x68) = y;
+    *(s16 *)(a + 0x62) = 0;
+    *(s16 *)(a + 0x54) = 0;
+    *(s16 *)(a + 0x56) = 0;
+    *(s16 *)(a + 0x58) = 0;
+    if (D_800BF816 == 0) {
+        a[0xBE] = 0;
+    } else {
+        a[0xBE] = 1;
+    }
+    *(s16 *)(a + 0x74) = 0;
+    return 1;
+}
 
 extern s16 *D_800A3E80[];
 extern u8 D_800A4BB8[];
