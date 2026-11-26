@@ -600,6 +600,18 @@ def install(a):
                 fm = re.match(r"[^(]*?\b%s\s*\(([^)]*)\)" % re.escape(pr[0]), full)
                 k = (params(fm.group(1)) or 0) if fm else 0
                 few = [c for c in calls(t, pr[0]) + [c for _, b in funcs for c in calls(b, pr[0])] if c < k]
+                late = [w for w in set(re.findall(r"\b[A-Za-z_]\w*\b", full))
+                        if re.search(r"(?m)(^typedef\b[^;]*\b%s\s*;|^\}\s*%s\s*;)" % (w, w), t[at:]) and
+                        not re.search(r"(?m)(^typedef\b[^;]*\b%s\s*;|^\}\s*%s\s*;)" % (w, w), t[:at])]
+                if late:
+                    # a type the target defines only below the insertion point (round 12 a0a pitfall: parse
+                    # error): the K&R declaration with the definition's return type, when that type is not late
+                    kr = re.sub(r"\(([^()]*)\)\s*;\s*$", "();", full)
+                    if not any(re.search(r"\b%s\b" % w, kr) for w in late):
+                        print("prototype of %s from its definition names %s, defined further down: K&R %s" % (
+                            pr[0], ", ".join(sorted(late)), kr))
+                        extra[i] = kr
+                    continue
                 if few:
                     # a call with fewer arguments (an m2c draft, a pass-through dropped) would not compile
                     # against the full prototype: keep the K&R declaration with the definition's return type

@@ -14,8 +14,21 @@ One tools agent, about 90 minutes, the round-12 "Tool work left" list in its ord
   undone). The hack kinds (`const`, `volatile`, `vstore`, `barrier`, `varshift`, `twoset`, `idxlocal`,
   `copyback`) come after the clean ones in the `--max-cands` budget and lose ties.
 - **loophoist.py**: the move_movables() arithmetic per movable and the threshold bounds of the file.
+- **install_c.py**: a prototype taken from a definition whose parameter types the target defines only below the
+  insertion point is declared K&R (`T f();`) instead of the full header (round-12 a0a parse error).
 - Batch over the round-11 / 12 near misses (41 within 23 words; scratch census and driver in the session
-  scratchpad t12/: census.py scores every scratch, batch.sh runs regswap over the best of each):
+  scratchpad t12/: census.py scores every scratch of r11b / r12b and keeps the best per function, batch.sh runs
+  regswap over the best of each): the 14 new kinds alone (75 s each, 4 rounds, pairs on 4) closed **none**;
+  a01 func_8010EFBC 8 -> 4 (`intoarms`: the statement after an if / else into both arms) and a02 func_8010FFF4
+  15 -> 12 (`cmpflip` + `varshift`); the full kind set on top of those found nothing more in 300 s. The census
+  also shows main func_8006DF88 at 0 only with `asm("$4")` (df88r.c; not allowed), and scores that differ from
+  the agents' reports (the reports counted a variant of a `//--` file): a05 func_8013484C 4 (not 1), main
+  func_8007AA38 3. All kinds (old + new, 80 s each) over the 13 near misses within 4 words: see below.
+- Hand tries (t12/try.py: replacements scored one at a time): a00 func_80118B10 (retail loads `a[5]` before
+  `H(a, 0x62)` in case 0: early load, block-scoped temporary, store order, `(*q)++` all stay at 2 or worse),
+  a0c func_8011353C (lui order of two globals: read order swapped, no volatile, pointer locals, direct operands:
+  4-8, worse than the volatile form's 2), main func_8007AA38 (retail keeps `id` in v1, copies it back to a1 and
+  computes `(u8)id` after the test; `s32` / `u16` / `(u8)` kinds of `kind`: 9).
 
 ## 2026-11-25: twelfth round
 
