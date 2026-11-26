@@ -185,7 +185,6 @@ extern s16 D_1F800196;
 extern u16 D_1F8001A0_b0de_1f9a;
 extern u16 D_1F8001A2_7766;
 extern PoolPt D_801418BC[];
-
 void func_8010B1E8(u8 *a) {
     s32 i;
     PoolPt *p;
@@ -248,7 +247,6 @@ static inline void func_8010F110_inl(u8 *a) {
     }
     a[0x145] = 0;
 }
-
 void func_8010B328(u8 *a) {
     s8 *g;
     s16 v[6]; /* unused: retail's frame has the 16 bytes */
@@ -506,7 +504,6 @@ static inline s32 near_inl(u8 *a, u8 *p) {
     D_1F80009C = func_80085690(-dz, dx);
     return 1;
 }
-
 void func_8010C538(u8 *a, u8 *b) {
     s32 r;
 
@@ -861,7 +858,6 @@ void func_8010EF9C(void)
     func_8010F288_inl(p);
 }
 
-
 void func_8010F110(u8 *a) {
     if (func_8012DE84(a, H(a, 0x32)) != 0) {
         D_1F80019E_3f3f = D_1F8001A4_f18c;
@@ -1074,7 +1070,6 @@ s32 func_8010F8D4(u8 *a)
     return D_1F800080;
 }
 
-
 s32 func_8010F98C(u8 *a) {
     u16 k;
 
@@ -1127,7 +1122,6 @@ s32 func_8010F98C(u8 *a) {
 
 #define W_d1fb(p, o) (*(s32 *)((u8 *)(p) + (o)))
 extern u16 D_1F80017C_0fe7;
-
 void func_8010FB44(u8 *a, s32 b) {
     s32 d;
     s16 t;
@@ -1240,7 +1234,6 @@ void func_8010FB44(u8 *a, s32 b) {
 }
 
 extern u16 D_800BFE56;
-
 void func_8010FF9C(u8 *a) {
     s32 m;
     s32 n;
@@ -1374,7 +1367,6 @@ static inline void swim_inl(u8 *a, s32 b) {
         H(a, 0x44) = v;
     }
 }
-
 void func_801100F4(u8 *a) {
     func_80076D68(a);
     switch (a[6]) {
@@ -1459,7 +1451,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80110AA0);
 
 extern s32 D_1F800084;
 extern u16 D_800ECF54;
-
 void func_801114B8(u8 *a) {
     s32 s;
 
@@ -1768,7 +1759,6 @@ void func_801120C4(u8 *a, s32 b) {
 
 extern s32 D_1F800248;
 extern u8 *D_1F800138_p;
-
 void func_80112238(u8 *a) {
     u8 *g;
     s32 k;
@@ -1815,7 +1805,6 @@ void func_80112238(u8 *a) {
 
 extern u16 D_1F800192_4f46;
 extern u8 D_800BF80E;
-
 void func_80112418(u8 *a) {
     s32 s;
 
@@ -8974,7 +8963,6 @@ extern s16 D_1F8001BE_s;
 extern s16 D_1F8001C0;
 extern u8 *D_1F8001E0;
 extern u8 *D_1F8001E8;
-
 s32 func_8012DE84(u8 *a, s16 y) {
     u8 *p;
     s8 h;
@@ -11672,7 +11660,6 @@ extern Range D_8014846C[];
 extern Range D_801484C4[];
 extern Range D_8014851C[];
 extern u8 *D_1F80021C;
-
 void func_8013D670(s16 kind, s16 idx)
 {
     Range *t;

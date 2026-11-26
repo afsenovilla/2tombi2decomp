@@ -10206,7 +10206,6 @@ extern Range D_8014CD34[];
 extern Range D_8014CD70[];
 extern Range D_8014CDA4[];
 extern u8 *D_1F80021C;
-
 void func_801404DC(s16 kind, s16 idx)
 {
     Range *t;

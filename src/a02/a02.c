@@ -579,7 +579,6 @@ void func_8010B8B8(u8 *a)
 #define U16_5dc5(p, o) (*(u16 *)((u8 *)(p) + (o)))
 #define W32(p, o) (*(s32 *)((u8 *)(p) + (o)))
 s32 func_801258A4(s32 *pos, s16 *off);
-
 void func_8010BABC(u8 *a) {
     s16 *v;
     s32 c;
@@ -947,7 +946,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010DBE4);
 #define H16(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define U16_5dc5(p, o) (*(u16 *)((u8 *)(p) + (o)))
 #define W32(p, o) (*(s32 *)((u8 *)(p) + (o)))
-
 void func_8010E1F4(u8 *a) {
     switch (a[6]) {
     case 0:
@@ -10888,7 +10886,6 @@ s32 func_80125F7C(s32 *pos, s16 *off)
 #define H16(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define U16_5dc5(p, o) (*(u16 *)((u8 *)(p) + (o)))
 #define W32(p, o) (*(s32 *)((u8 *)(p) + (o)))
-
 s32 func_80126240(u8 *a) {
     u8 *w = *(u8 **)(a + 0x6C);
     s16 m = U16_5dc5(w, 0xA);
@@ -11634,7 +11631,6 @@ extern Range D_80138FDC[];
 extern Range D_80139028[];
 extern Range D_80139078[];
 extern u8 *D_1F80021C;
-
 void f_UpdateTabbyHouseResidentActor(s16 kind, s16 idx)
 {
     Range *t;

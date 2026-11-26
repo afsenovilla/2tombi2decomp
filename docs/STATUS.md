@@ -3,6 +3,40 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-26 (3): fourteenth round
+
+All code in C: **5015 / 7011 functions (71.5 %, 52.0 % of the bytes)**, from 4926 (49.3 %). Same method as round 13.
+a09 scope +32 (~37 KB: a0a's 0xD04 evil-pig hit / capture state machine and its 5 copies, the evil-pig attack / intro
+skeleton across a0a..a0f, a0k), a04-a08 +16 (~15.5 KB: the a08 Tomba water code and its floor probe func_8012DE84,
+which blocked 16; Tomba state handlers), main +15 (~9 KB), a00 +12 (~5.8 KB: barrel / drying-rack chain), a02-a03 +7
+(~5 KB; a03 +3) plus 7 streamed-audio range table copies the a02 agent generated for a00..a08 (installed by the
+coordinator, a68378b). integrate.py: clean build 29 / 29; 564aca5 and bdda905 do not link alone (alias lines in the
+next commit). Recipes in AGENTS.md "Round 14 forms".
+
+Near misses (scratch in r14b/<scope>/): a0a func_801140D0 1 short (4 members; `li 2280` twice), a0k func_801147D0 1
+short, a05 func_80110380 1 (or operand order), main func_800783DC 3, func_8001D940 ~3, a00 func_8011E7CC 3, a05
+func_8010F0F8 4, a06 func_80112C60 4, a00 func_8013E424 5 (family a06 func_8013F320), f_SelectFeedChicksNpcSpawn 5,
+main func_8002C920 6, f_UpdateActorScaledPartTransforms ~6, a02 func_80125C5C 6, a04 func_80112B50 8, a08
+func_80110AA0 ~9, a01 func_8011D9E4 10 (family a04 func_80129744), main f_PrepareTombaCollisionFrame 13, a02
+func_801152A8 14, func_8010D6B4 16 (one register; same block in pending func_8010D288), a08 func_8010C90C 16, main
+func_8003E264 20, a00 func_80130524 21, func_80130AC4 24 (merged tails), f_UpdateBarrelSeesawSupportHeight 26, main
+func_8003E030 35, a00 f_ResolveActorOnNetBridge 41, a0f func_80109ED8 74 (twin a06 func_8010E908); a08 func_8010E4CC
+only its jump table hoisted. Next targets: a00 f_UpdateBarrelSeesawRide (0x7D4), f_RotateSelectedTownBarrel (0x79C);
+a0d f_UpdateEarthEvilPigSplitActor (0xF0C), a0g f_UpdateCourageTowerInteriorEntranceActor (0x6D0). Possibly not ASM
+by design (splat "Handwritten function" with normal frames): a00 func_8013DD34, func_8013E08C, a01 func_80132690.
+
+Tool work left: a table-switch family generator (cases that load constants and jump to a common tail, any case
+count: the round's gen_audio.py prototype in the scratchpad r14b/a02/) and a sibling.py skeleton-port mode (same case
+structure, tables / constants / callees substituted); nearcopy `--near` trying to delete / add each if-block on an
+"extra block" diff; sbs: unified diff of normalised asm with `--swap s0,s1`, hints for per-arm `lui; addiu`
+(cross-jumped duplication) and commutative `addu` with a parameter base (typed struct), `--real` hiding constants
+splat annotates as symbols; regswap kinds: per-case / per-block split of a variable, early global load into a local,
+copy before test, hoist trailing statements out of an if, initial `v = K` into the else arm, per-global volatile
+toggle, one pointer local per use of a global; regswap `-j` default 1; install_c casts the caller of a void
+definition; ccheck warns on a pointer local to a global assigned twice and on a dropped dead store to a stack slot; a
+duplicate-constant hint (retail loads `li K` twice); workqueue ranks callers of functions matched this session;
+loophoist: which movables flip with N more insns; a cross-jump probe.
+
 ## 2026-11-26 (2): thirteenth round
 
 All code in C: **4926 / 7011 functions (70.3 %, 49.3 % of the bytes)**, from 4847 (47.1 %). The brief changed after

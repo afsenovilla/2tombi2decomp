@@ -1346,7 +1346,6 @@ extern s16 D_1F800244;
 extern u16 D_1F8000F2;
 extern s32 D_800BF850;
 extern u8 D_800E8008[];
-
 void func_8010D158(u8 *a, u8 *b)
 {
     Half v[3];
@@ -1922,7 +1921,6 @@ INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_8010E5EC);
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", f_UpdateEarthEvilPigSplitActor);
 
 extern u8 D_1F80025A;
-
 void f_UpdateEarthEvilPigDetachedPartsAttack(u8 *a)
 {
     s16 t;
@@ -2320,7 +2318,6 @@ void func_8010FEBC(u8 *a)
 }
 
 void func_8010FEBC();
-
 void func_801103AC(u8 *a)
 {
     s16 *t;

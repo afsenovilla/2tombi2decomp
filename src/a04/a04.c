@@ -2099,7 +2099,6 @@ void func_801144FC(u8 *a) {
 }
 
 extern u16 D_800E7E68;
-
 void func_801149B8(u8 *a) {
     s16 v;
     s16 t;
@@ -2311,7 +2310,6 @@ void func_801149B8(u8 *a) {
     }
     func_800551C4(a);
 }
-
 
 void func_801150C4(u8 *a) {
     s16 v;
@@ -9787,7 +9785,6 @@ extern Range D_8014419C[];
 extern Range D_801441A0[];
 extern Range D_80144200[];
 extern u8 *D_1F80021C;
-
 void func_8013E3D4(s16 kind, s16 idx)
 {
     Range *t;

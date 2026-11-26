@@ -896,7 +896,6 @@ void func_8010C628(u8 *a, u8 *b) {
 }
 
 extern u16 D_1F80017C;
-
 void func_8010C7EC(u8 *a, u8 *b, s32 skip)
 {
     u8 *p;
@@ -1906,7 +1905,6 @@ extern s16 D_1F800244;
 extern u16 D_1F8000F2;
 extern s32 D_800BF850;
 extern u8 D_800E8008[];
-
 void func_8010F504(u8 *a, u8 *b)
 {
     Half v[3];
@@ -2924,7 +2922,6 @@ void func_80110FE8(u8 *a)
 }
 
 void func_80110FE8();
-
 void func_801114C4(u8 *a)
 {
     s16 *t;

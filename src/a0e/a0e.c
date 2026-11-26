@@ -991,7 +991,6 @@ static inline void chk(u8 *a, u8 *p)
         }
     }
 }
-
 void func_8010B78C(u8 *a)
 {
     u8 *pl = D_800E7E80;
@@ -1900,7 +1899,6 @@ extern s16 D_1F800240;
 extern s16 D_1F800244;
 extern u16 D_1F8000F2;
 extern u8 D_800E8008[];
-
 void func_8010DD90(u8 *a, u8 *b)
 {
     Half v[3];
@@ -2469,7 +2467,6 @@ void func_8010ECA8(u8 *a)
 }
 
 extern u8 D_1F80025A;
-
 void f_UpdateWaterEvilPigProjectileAttack(u8 *a)
 {
     s16 t;
@@ -2723,7 +2720,6 @@ void func_8010F9B4(u8 *a)
 }
 
 void func_8010F9B4();
-
 void func_8010FE74(u8 *a)
 {
     s16 *t;

@@ -1743,7 +1743,6 @@ extern u8 D_8011AD3C[];
 extern u8 D_80116374[];
 extern u8 D_801162BC[];
 extern u8 D_801162DC[];
-
 void f_UpdateEndingCompletionBranchScript(u8 *a)
 {
     u8 *g;

@@ -76,7 +76,6 @@ void func_8001CBA8(u8 *a, u8 n)
 
 extern u8 D_800BF498[];
 extern u8 D_800BED90[];
-
 void func_8001CC00(void)
 {
     u8 *c;
@@ -2758,7 +2757,6 @@ extern u16 D_8009D57C[];
 void func_8007B2AC(void *arg0);
 #define S_1781(o) (*(s16 *)(a + (o)))
 #define W_3fd2(o) (*(s32 *)(a + (o)))
-
 void func_80027254(u8 *a)
 {
     s16 v;
@@ -3049,7 +3047,6 @@ void func_800281EC(u8 *a0)
 extern u16 D_1F80008C_3e5b[];
 extern s32 D_1F800090_e8ac;
 extern void *D_800BF544;
-
 void func_8002847C(u8 *s, s32 tp)
 {
     s32 *otz = &D_1F800080;
@@ -3541,7 +3538,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80029664);
 
 typedef struct { s32 a, b; } Hist_9B40;
 s32 f_ResolveEffectEightByteStreamPayload();
-
 void func_80029B40(u8 *a)
 {
     u8 *p = *(u8 **)(a + 0x10);
@@ -5898,7 +5894,6 @@ void func_80067DA8();
 void func_8004D6D4(s32 item);
 void func_8004D6F4(s32 item);
 void f_ResetTombaControlState(void *arg0);
-
 void func_80034338(u8 *a)
 {
     s32 r = 0;
@@ -6707,7 +6702,6 @@ void func_8003F174(u8 *a, s32 b);
 s32 func_8003F7D8(u8 *p, u8 *v, s32 *flag);
 char *strcpy();
 char *strcat();
-
 void func_80039F4C(u8 *a)
 {
     s16 sv[16];
@@ -10908,7 +10902,6 @@ extern u8 D_800BF80A_b528;
 s32 f_SetTombaAnimationIfChanged(u8 *t, s32 anim, s32 blend);
 s32 f_UpdateActorUnscaledModelTransforms(s32 arg0);
 void f_SetActorPartModel(u8 *actor, s32 bank, s32 index);
-
 s32 func_8004B528(u8 *a, u8 *b)
 {
     u8 *t = (u8 *)D_800E7E80;
@@ -11307,7 +11300,6 @@ static inline s32 PickupAvail_CE14(u8 *e, u8 *g, s32 i)
     __asm__ volatile("");
     return 1;
 }
-
 void func_8004CE14(u8 *a)
 {
     u8 *g = a + 0x60;
@@ -11582,7 +11574,6 @@ void func_8004D8B0(void)
 
 void func_80040558();
 void func_8004AAC4();
-
 void func_8004D8D8(s32 k, s16 v)
 {
     u8 *e;
@@ -14964,7 +14955,6 @@ block_16:
 }
 
 extern s16 D_800E802A;
-
 void f_SetTombaMiniatureForm(u8 *a, s32 mini)
 {
     s16 s;
@@ -16500,7 +16490,6 @@ extern s16 D_1F80016C_7096;
 extern s16 D_1F80016E_b7f7;
 void func_80064524(void *arg0);
 void func_800645CC(void *arg0);
-
 void func_80063158(u8 *a)
 {
     u8 k;
@@ -22123,7 +22112,6 @@ extern u8 D_1F80027E_1248;
 extern u8 D_1F80023B_0a71;
 void f_SetStreamedAudioVolumeTarget(s32 x);
 s32 f_ControlStreamedAudioTrack(s32 track);
-
 void func_80075824(u8 *a)
 {
     s32 v;
@@ -24522,7 +24510,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C940);
 
 extern u8 D_800ECB88[];
 extern s16 D_1F80017E;
-
 void func_8007CC00(u8 *a)
 {
     u8 *sp = (u8 *)0x1F800000;

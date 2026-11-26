@@ -445,6 +445,50 @@ struct-member form of a cast access, regswap `member` toggles every one)
   list builders; Tomba state handlers (callers of func_80056B48 / func_80055D5C / func_8005444C / func_800551C4) are
   quick from the asm.
 
+**Round 14 forms**
+- Big two-table state machines are quick from `statemachine.py PROG NAME --cases` (a0a's 0xD04 evil-pig state machine
+  in ~10 compiles), then `nearcopy.py <progs> --install` for its exact copies (5 more, 20 KB).
+- Skeleton families copy-edit in 1-2 minutes per member: the evil-pig attack / intro functions of a0a..a0f, the
+  streamed-audio range tables (a02 f_UpdateTabbyHouseResidentActor; a jump table whose cases only load a table, n and
+  base then jump to a common tail: generated from the asm by a script, 7 copies in a00..a08), the a08 Tomba water code
+  (shared `snap_inl` / `swim_inl` / `push_inl` / `near_inl` helpers), the a00 barrel / drying-rack chain. nearcopy
+  `--near` "extra block": try deleting that if-block from the source C.
+- Cross-jumping runs before sched2: to keep two copies of an identical arm, write one arm's statements in another
+  order; for one shared store at the join, end every arm with the same field store; `lui; addiu` of a table in each
+  arm means the table use was written in both arms.
+- `a[5]++` / `a[6]++` in a case whose value is known reuses the switch tree's compare register (regswap `caseinc`).
+- Switch on {0,1} with retail's `beq 1; slti 2; beqz; bnez`: add an empty `case 2: break;`.
+- `x < 7 || x >= 0x13` on one byte folds into a range test; nested ifs keep two `sltiu`.
+- Unused local arrays size the frame: `s32 pad[4];` -> 0x30, `s32 pad[8];` for a leaf with `addiu sp,-32`, `s16 v[6]`.
+- One pointer local per use site of a global (`g`, `g2`, `g3`; not one local assigned twice): retail's repeated
+  `lui` / `addiu`, lower priority.
+- MEMBER_AT stores let global / scratchpad loads move above them; `MEMBER_AT(u8 *, t, 0xD0)` reloads a pointer field
+  after every store through the other pointer; `D[k].field` on an own struct over an alias symbol keeps `lw 4(v1)`
+  (a cast folds the +4 into %lo).
+- Typed parts struct parameter (`typedef struct { u8 pad[0xC0]; u8 *parts[1]; } AreaPartsOwner;`): `a->parts[i]`
+  gives `addu rX, a, idx` (casts give `idx, a`); keep index arithmetic out of the offset (`parts[i + 1]`,
+  `j = a[8] - 1; parts[j]`, `k = (i - 1) * 4; k--;`); `q = a; q += i * 4;` for base-first addu.
+- Flags tested through a `move v0,sN` copy are s16.
+- A constant kept in a register for `mult`: `s = K; s = (x * s) >> 8;`, or a variable later reused for another value.
+- Callee-saved order through global-alloc priority: `x = A; x += B;` adds refs.
+- `__builtin_abs` + narrow copy for a `move a1,v0`: `s32 m = __builtin_abs(t) + 0x20; s16 k = m;`.
+- Boolean argument from a masked bit: `k = x & 0x100; f(a, k != 0);` (`andi; sltu`); direct gives `srl; andi 1`.
+- After `bne` proves a register equals a constant, CSE stores that register: write the constant.
+- Store-flag conversion (`if (x & bit) return 0; return 1;` -> `sltiu`): `__asm__ volatile("")` before `return 1`
+  keeps the branch; a bit test needs `bit = 1 << i` in a variable.
+- Shared return blocks: `goto ret1` / `goto ret0` / `goto ret2` to final labels; a tri-state result: `r = 0` in the
+  else arm, not as an initial value; a 1/0 flag set in a delay slot and tested after an init block is an inlined
+  helper's return.
+- A void function whose caller returns its value: keep it void and cast at the caller (s32 changes delay-slot
+  filling).
+- CD callback flags are volatile (D_800BE0E0 / E6 / E8 / EA).
+- A loop over a struct table `D[i].x` gives one induction variable (`p++` gives two); keep `(a - b) + (c + K)` with
+  casts `(s16)(a - b) + (u16)(c + K)`; `lui; subu`: `k = 0x1400; H50 = k; W30 -= k << 8;`.
+- If / else `j` layout: `if (!A && !B && !C) x = 6; else x = 5;`.
+- A table byte loaded `lbu; sll; sra`: u8 table, `s16 x = (s8)p[1]`.
+- Two retail copies of a block are two source copies (do not share a case).
+- A dead store retail keeps on a stack slot: permlines over the statements.
+
 **Switch and jump-table shapes (more)**
 - Duplicate the cases with identical code to get a jump table whose entries share a target (gcc builds the table,
   then cross-jumps the blocks); `case 1: d = X; break; case 2: d = X; break; default: d = X;` gives separate tree

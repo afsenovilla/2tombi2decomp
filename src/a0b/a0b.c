@@ -1345,7 +1345,6 @@ extern s16 D_1F800244;
 extern u16 D_1F8000F2;
 extern s32 D_800BF850;
 extern u8 D_800E8008[];
-
 void func_8010E22C(u8 *a, u8 *b)
 {
     Half v[3];
@@ -1948,7 +1947,6 @@ s32 func_8010F43C(u8 *a)
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_8010F544);
 
 extern u8 D_1F80025A;
-
 void f_UpdateLastEvilPigProjectileAttack(u8 *a)
 {
     s16 t;
@@ -2212,7 +2210,6 @@ void func_8010FC1C(u8 *a)
 typedef struct { s32 x, y, z; } Vec3;
 void func_8010FC1C();
 extern u8 *D_1F800254_7a89;
-
 void func_80110118(u8 *a)
 {
     s16 *t;

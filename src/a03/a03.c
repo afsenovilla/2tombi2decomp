@@ -253,7 +253,6 @@ void f_UpdateTrolleyMovementAndCamera(u8 *a);
 void f_CollectNearbyTrolleySeeds(void);
 u8 *func_80072DDC();
 void f_UpdateDetachedTrolleyActor(u8 *a);
-
 void f_UpdatePlayerTrolleyActor(u8 *a) {
     u8 *q = a + 0x60;
     u8 *b;
@@ -1038,7 +1037,6 @@ void f_UpdateTrolleyCourseProgressActor(u8 *a) {
 }
 
 extern u8 *D_800E7E90;
-
 void f_UpdateDetachedTrolleyActor(u8 *a) {
     u8 *b = a + 0x60;
 
@@ -1165,7 +1163,6 @@ extern s32 D_800A3F90;
 extern s32 D_800A3F94;
 extern u8 D_1F8000D0[];
 void func_8010EC34(u8 *a, s32 *p0, s32 *p1, s32 *p2);
-
 void func_8010E964(u8 *a) {
     u8 *s = D_1F8000D0;
     s32 p0[2];

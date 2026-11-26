@@ -11214,7 +11214,6 @@ extern Range D_80138F3C[];
 extern Range D_80138F48[];
 extern Range D_80138F58[];
 extern u8 *D_1F80021C;
-
 void func_801342C8(s16 kind, s16 idx)
 {
     Range *t;

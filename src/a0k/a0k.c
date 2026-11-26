@@ -3166,7 +3166,6 @@ void f_SpawnBerryNutsScorePopup(u8 *p, s32 n)
 
 #define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
 extern u8 D_8011CC2C[];
-
 void func_80113488(u8 *a)
 {
     u8 *g;
@@ -3271,7 +3270,6 @@ static inline s32 inl_talk(u8 *a)
     }
     return 0;
 }
-
 void func_801136F0(u8 *a)
 {
     switch (a[5]) {
@@ -3298,7 +3296,6 @@ INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80113854);
 
 extern u8 D_8011CCB4[];
 extern u8 D_8011CCF4[];
-
 void func_80113A7C(u8 *a)
 {
     u8 *g;
@@ -3422,7 +3419,6 @@ extern u8 D_8011CFA0[];
 extern u8 D_8011D0E0[];
 extern u8 D_8011D190[];
 extern u8 D_800BFB07;
-
 void func_80114170(u8 *a)
 {
     switch (a[6]) {
@@ -3465,7 +3461,6 @@ void func_80114170(u8 *a)
 
 extern u8 D_8011D140[];
 extern u8 D_8011D168[];
-
 void func_801142C0(u8 *a)
 {
     switch (a[6]) {

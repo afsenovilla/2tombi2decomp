@@ -524,7 +524,6 @@ void func_8010AA94(u8 *a, u8 *b) {
 
 extern u16 D_1F80017C;
 extern u16 D_800BFE56;
-
 s32 func_8010AC84(u8 *a, u8 *b, s32 skip) {
     u8 *p;
     s16 ang;
@@ -1540,7 +1539,6 @@ extern u8 D_1F800137;
 extern u16 D_1F8000F2;
 extern s32 D_800BF850;
 extern u8 D_800E8008[];
-
 void f_UpdateEvilPigHitAndCaptureState(u8 *a, u8 *b)
 {
     Half v[3];
@@ -2113,7 +2111,6 @@ void func_8010E7A4(u8 *a)
 typedef struct {
     s16 x, y, z;
 } V3;
-
 void f_UpdateEvilPigCenterEffectAttack(u8 *a)
 {
     s16 t;
@@ -2368,7 +2365,6 @@ void f_UpdateEvilPigBattleActor(u8 *a)
 }
 
 void f_UpdateEvilPigBattleActor();
-
 void f_UpdateEvilPigBattleIntroduction(u8 *a)
 {
     s16 *t;

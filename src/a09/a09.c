@@ -812,7 +812,6 @@ void func_8010B3A8(s32 run)
 
 extern u8 D_800BF80E;
 extern u8 D_8010E28C[];
-
 s32 func_8010B4C8(u8 *a)
 {
     u8 *pl = D_800E7E80;
@@ -871,7 +870,6 @@ typedef struct { u16 lo; s16 hi; } Half;
 #define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
 extern u8 D_8010E26C[];
 extern s32 D_800BF860_a660;
-
 void func_8010B664(u8 *a)
 {
     Half v[3];

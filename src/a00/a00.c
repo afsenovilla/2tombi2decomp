@@ -8602,7 +8602,6 @@ void f_HandleTownBarrelSeesawController(u8 *a)
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeTownBarrelSeesawController);
 
 s32 f_HandleBarrelSeesawContact(AreaPartsOwner *a);
-
 void func_8012F494(AreaPartsOwner *a)
 {
     u16 h;
@@ -8693,7 +8692,6 @@ ret2:
 }
 
 extern s32 D_8014A270;
-
 s32 f_HandleBarrelSeesawContact(AreaPartsOwner *a)
 {
     s16 k;
@@ -8917,7 +8915,6 @@ static inline void f_ActivateBarrelLinkedSegmentPair_d13c(AreaPartsOwner *a, s16
     a->parts[k][0x3E] = 1;
     a->parts[k + 1][0x3E] = 1;
 }
-
 void f_TriggerBarrelLinkedSegments(AreaPartsOwner *a)
 {
     s16 k;
@@ -10558,7 +10555,6 @@ u8 *func_80139838(s32 a, u8 b) {
 }
 
 extern u8 D_800BF9EA;
-
 void f_InitializeDryingRackControllerState(AreaPartsOwner *a)
 {
     u8 *g;
@@ -10615,7 +10611,6 @@ void f_InitializeDryingRackControllerState(AreaPartsOwner *a)
 }
 
 extern u8 D_800BF80A;
-
 void func_80139A70(AreaPartsOwner *a)
 {
     u8 *g = D_800E7E80;
@@ -10730,7 +10725,6 @@ s32 f_DeployDryingRackSegments(AreaPartsOwner *a)
 }
 
 #define SLOT(b, i) ((b)->parts[i])
-
 s32 f_RetractDryingRackSegments(AreaPartsOwner *a)
 {
     s16 i;
@@ -10902,7 +10896,6 @@ static inline s32 DryingRackInit(AreaPartsOwner *a)
     f_InitializeDryingRackControllerState(a);
     return 0;
 }
-
 void f_HandleDryingRackController(AreaPartsOwner *a)
 {
     u8 *g;
@@ -14784,7 +14777,6 @@ extern Range D_8014C478[];
 extern Range D_8014C480[];
 extern Range D_8014C4AC[];
 extern u8 *D_1F80021C;
-
 void f_ApplyOverlayModelFrameRange(s16 kind, s16 idx)
 {
     Range *t;

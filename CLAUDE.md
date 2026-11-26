@@ -68,7 +68,7 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   The library compiler also hoists more loop invariants around loops with calls (a `loop_has_call` patch of cc1
   reproduces it per file: `// CC gcc-2.7.2-loop4`, `gcc-2.8.1-loop2`, `gcc-2.8.1-nocse-loop2`, made and sha1
   checked by tools/setup_native.sh; AGENTS.md "Compilers" item 5).
-- What is left (2026-11-26, 4926 / 7011 functions, 49.3 % of the bytes): mostly actor state machines (the NPC ones of
+- What is left (2026-11-26, 5015 / 7011 functions, 52.0 % of the bytes): mostly actor state machines (the NPC ones of
   one skeleton are nearly done: `tools/npcsm.py --list`; AGENTS.md "Round 10 / 11 forms") and dispatchers built from matched handlers (AGENTS.md
   "Order of work" item 3), the big areas a00-a08 above all.
 - Agents' commits do not always link on their own (alias lines committed later): verify with a clean full build
@@ -203,6 +203,7 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   include/actor.h (`T2E` comments).
 - Round 12 (2026-11-25): sibling.py needs a program list (none = nothing searched); Round 12 forms and install_c
   pitfalls in AGENTS.md. Round 13 (2026-11-26): writing new functions straight from the retail asm beats drafts and
-  near-miss work (AGENTS.md "Round 13 forms"); near misses left are mostly scheduling / hoist order.
+  near-miss work (AGENTS.md "Round 13 forms"); near misses left are mostly scheduling / hoist order. Round 14: skeleton
+  families copy-edited or generated from the asm (AGENTS.md "Round 14 forms").
 - `python3 -I tools/vermatch.py`: how much USA code is found in the EU / ES builds.
 - `python3 -I tools/gen_configs.py game/usa [--force] [--out config/eu]`: regenerates the first configs (keeps hand-made ones without --force).

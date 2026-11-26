@@ -1097,7 +1097,6 @@ void func_8010E244(u8 *a)
 #define U_d0c0(p, o) (*(u16 *)((u8 *)(p) + (o)))
 #define W_d1fb(p, o) (*(s32 *)((u8 *)(p) + (o)))
 extern AreaSVec D_1F8000C0_f4ad;
-
 void func_8010E448(u8 *a) {
     s32 s;
     s32 c;
@@ -8724,7 +8723,6 @@ extern Range D_8013FDF0[];
 extern Range D_8013FE1C[];
 extern Range D_8013FE98[];
 extern u8 *D_1F80021C;
-
 void func_80130FB8(s16 kind, s16 idx)
 {
     Range *t;
