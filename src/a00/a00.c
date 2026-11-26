@@ -11823,7 +11823,46 @@ end:
     return 0;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801409C0);
+extern u8 D_8014BED4[];
+extern u8 D_8014BEE4[];
+extern u8 D_8014BEF4[];
+/* func_8014601C, inlined */
+static inline s16 inl_8014601C_4afb(u8 *a) {
+    s16 d = func_800781E0(M2C_FIELD(a, s16 *, 0x2E) - D_1F800160_71b4, M2C_FIELD(a, s16 *, 0x36) - D_1F800164_d75f);
+
+    if ((*(s16 *)(D_800E7E80 + 0x17E) & 0x8200) || d > 0x640) {
+        return -1;
+    }
+    if (d >= 0x44D) {
+        return 0;
+    }
+    if (d >= 0x259) {
+        return 1;
+    }
+    return 2;
+}
+
+s32 func_801409C0(u8 *a) {
+    u8 r = 0;
+    s32 k = func_8009A450() & 0xF;
+    u8 *g = D_800E7E80;
+
+    if (*(s16 *)(g + 0x17E) & 0x8200) {
+        return 0;
+    }
+    switch (inl_8014601C_4afb(a)) {
+    case 0:
+        r = D_8014BED4[k];
+        break;
+    case 1:
+        r = D_8014BEE4[k];
+        break;
+    case 2:
+        r = D_8014BEF4[k];
+        break;
+    }
+    return r;
+}
 
 static inline void inl_move(u8 *a) {
     s32 dx, dz;
