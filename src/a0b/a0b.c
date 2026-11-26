@@ -4549,7 +4549,178 @@ INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80116B50);
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80116CB0);
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", f_UpdateEvilPigBattleProjectile);
+extern s16 D_800E7FEE;
+
+void f_UpdateEvilPigBattleProjectile(u8 *a)
+{
+    u8 *q = a + 0x60;
+    s32 k;
+    s32 k2;
+    s16 ang;
+    s32 m, n;
+    u8 *r;
+    u8 *p;
+    Fix v[3];
+
+    switch (a[4]) {
+    case 0:
+        func_80116B50(a);
+        break;
+    case 1:
+        if (a[3] == 0) {
+        if (D_800BF809 != 0 || D_800E7FEE == 0) {
+            goto done;
+        }
+        switch (a[5]) {
+        case 2:
+            if (--H(a, 0x40) == 0) {
+                a[0] = 1;
+                a[5] = 0;
+                if (a[0x46] != 0) {
+                    if (a[0xBE] == 0) {
+                        H(a, 0x44) += 0x80;
+                    } else {
+                        H(a, 0x44) -= 0x80;
+                    }
+                }
+            }
+        case 0:
+            if (H(q, 0xE) < 0x15E) {
+                H(q, 0xE) += 2;
+            }
+            if (H(a, 0x84) < 0x118) {
+                H(a, 0x80) = H(a, 0x84) += 2;
+            }
+            if (H(a, 0x80) < 0xC8) {
+                H(a, 0x80) += 1;
+            }
+            H(a, 0x82) = U(a, 0x80) << 1;
+            H(a, 0x86) = U(a, 0x84) << 1;
+            H(a, 0xB8) = H(a, 0xBA) = H(a, 0xBC) = H(q, 0xE) * 29;
+            U(q, 6) = U(a, 0x2E);
+            U(q, 8) = U(a, 0x32);
+            U(q, 0xA) = U(a, 0x36);
+            r = a + 0x60;
+            if (a[0x5F] == 0) {
+                ang = H(a, 0x60);
+                m = func_80083F50(ang) * H(a, 0x44);
+                n = -func_80083E80(ang) * H(a, 0x44);
+                W(a, 0x2C) += m;
+                W(a, 0x34) += n;
+            }
+            W(a, 0x30) += H(a, 0x50) << 12;
+            p = r;
+            if (a[0x5F] == 0) {
+                s16 w;
+                if (H(a, 0x44) >= 0) {
+                    w = U(a, 0x80);
+                } else {
+                    w = -U(a, 0x80);
+                }
+                if (func_80045CAC(a, w, 0, H(p, 0)) != 0) {
+                    a[0x5F] = a[0xBE] | 4;
+                }
+            }
+            func_80116CB0(a);
+            if (func_8004766C(a) < 0) {
+                H(q, 4) = 0;
+            }
+            H(a, 0x56) = func_800776F8(H(q, 0), H(a, 0x56), 0x20);
+            k = ((u16)func_80077FB0((H(q, 6) - H(a, 0x2E)) * (H(q, 6) - H(a, 0x2E)) +
+                                    (H(q, 8) - H(a, 0x32)) * (H(q, 8) - H(a, 0x32)) +
+                                    (H(q, 0xA) - H(a, 0x36)) * (H(q, 0xA) - H(a, 0x36))) << 10) / H(a, 0x84);
+            if (a[0xBE] != 0) {
+                H(a, 0x58) -= k;
+            } else {
+                H(a, 0x58) += k;
+            }
+            if (k != 0) {
+                H(q, 0xC) += k;
+                if (H(q, 0xC) > 0xC00) {
+                    func_80074590(0x8E, 0, 0);
+                    H(q, 0xC) = 0;
+                }
+            }
+            if ((a[0x5F] & 4) || H(q, 4) == 0) {
+                a[0] = 2;
+                a[4] = 2;
+                a[6] = 0;
+            } else {
+                H(q, 4)--;
+            }
+            break;
+        case 1:
+            H(a, 0x40) = 0x14;
+            a[5]++;
+            if (a[0x2B] != 0) {
+                H(a, 0x44) = 0;
+            }
+            a[0x46] = a[0x2B];
+            goto done;
+        }
+    done:
+        a[0x29] = 0;
+        a[0x5F] = 0;
+        a[1] = 1;
+        func_80077E7C(a);
+        func_800518FC(a);
+            break;
+        }
+            a[1] = 1;
+            func_80077E7C(a);
+            func_800518FC(a);
+            k2 = ((u16)func_80077FB0((H(q, 6) - H(a, 0x2E)) * (H(q, 6) - H(a, 0x2E)) +
+                                    (H(q, 8) - H(a, 0x32)) * (H(q, 8) - H(a, 0x32)) +
+                                    (H(q, 0xA) - H(a, 0x36)) * (H(q, 0xA) - H(a, 0x36))) << 10) / H(a, 0x84);
+            H(a, 0x58) -= k2;
+            if (k2 != 0) {
+                H(q, 0xC) += k2;
+                H(q, 0x10) += k2;
+                if (H(q, 0xC) > 0xC00) {
+                    func_80074590(0x8E, 0, 0);
+                    H(q, 0xC) = 0;
+                }
+                if (H(q, 0x10) > 0x400) {
+                    H(q, 0x10) = 0;
+                    v[0].hi = U(a, 0x2E);
+                    v[1].hi = U(a, 0x32) + U(a, 0x84);
+                    v[2].hi = U(a, 0x36);
+                    func_8003116C(0xC00, v, -0x50);
+                }
+                H(a, 0x56) = func_800782B0(a + 0x2C, H(q, 6), H(q, 0xA));
+            }
+            U(q, 6) = U(a, 0x2E);
+            U(q, 8) = U(a, 0x32);
+            U(q, 0xA) = U(a, 0x36);
+        break;
+    case 2:
+        switch (a[6]) {
+        case 0:
+            func_8003116C(0xC01, a + 0x2C, -0x50);
+            func_8003116C(0xC06, a + 0x2C, -0x50);
+            func_80074590(0x8D, 0, 0);
+            a[6]++;
+            break;
+        case 1:
+        case 2:
+            a[6]++;
+            break;
+        case 3:
+            a[4] = 3;
+            break;
+        }
+        a[1] = 1;
+        func_80077E7C(a);
+        func_800518FC(a);
+        break;
+    case 3:
+        if (a[3] == 0) {
+            D_1F80025A--;
+        }
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801175B8);
 
