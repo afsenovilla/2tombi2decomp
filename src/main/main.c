@@ -13114,7 +13114,52 @@ void f_UpdateActorUnscaledPartTransforms(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80051464);
+void func_80051464(u8 *a)
+{
+    s32 i;
+    u8 *m;
+    s32 k;
+    s32 *mat;
+    u8 *q;
+    u8 *r;
+
+    for (i = 0; i < a[9]; i++) {
+        if (i >= a[8]) {
+            return;
+        }
+        q = a;
+        q += i * 4;
+        mat = D_1F800000;
+        m = *(u8 **)(q + 0xC0);
+        mat[0] = 0x1000;
+        mat[1] = 0;
+        mat[2] = 0x1000;
+        mat[3] = 0;
+        mat[4] = 0x1000;
+        mat[5] = 0;
+        mat[6] = 0;
+        mat[7] = 0;
+        k = *(s16 *)(m + 6);
+        RotMatrixX(*(s16 *)(m + 8), mat);
+        RotMatrixY(*(s16 *)(m + 0xA), mat);
+        RotMatrixZ(*(s16 *)(m + 0xC), mat);
+        if (k == -1) {
+            MulMatrix0(a + 0x98, mat, m + 0x18);
+            ApplyRotMatrix(m, m + 0x2C);
+            *(s32 *)(m + 0x2C) += *(s32 *)(a + 0xAC);
+            *(s32 *)(m + 0x30) += *(s32 *)(a + 0xB0);
+            *(s32 *)(m + 0x34) += *(s32 *)(a + 0xB4);
+        } else {
+            r = a;
+            r += k * 4;
+            MulMatrix0(*(u8 **)(r + 0xC0) + 0x18, mat, m + 0x18);
+            ApplyRotMatrix(m, m + 0x2C);
+            *(s32 *)(m + 0x2C) += *(s32 *)(*(u8 **)(r + 0xC0) + 0x2C);
+            *(s32 *)(m + 0x30) += *(s32 *)(*(u8 **)(r + 0xC0) + 0x30);
+            *(s32 *)(m + 0x34) += *(s32 *)(*(u8 **)(r + 0xC0) + 0x34);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80051614);
 
@@ -13307,7 +13352,7 @@ s32 func_80051C8C(s32 arg0) {
     M2C_FIELD(arg0, s32 *, 0xAC) = (s32) M2C_FIELD(arg0, s16 *, 0x2E);
     M2C_FIELD(arg0, s32 *, 0xB0) = (s32) M2C_FIELD(arg0, s16 *, 0x32);
     M2C_FIELD(arg0, s32 *, 0xB4) = (s32) M2C_FIELD(arg0, s16 *, 0x36);
-    return func_80051464(arg0);
+    return ((s32 (*)())func_80051464)(arg0);
 }
 
 void func_80051D20(void *arg0, s32 arg1, void *arg2) {
