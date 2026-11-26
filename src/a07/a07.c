@@ -7537,7 +7537,6 @@ u32 *func_8012CDF4(u32 *f, u32 *ot, s32 n, s32 dp)
 }
 
 extern s32 D_1F800090_3460;
-
 u32 *func_8012D2B4(u32 *f, u32 *ot, s32 n, s32 dp)
 {
     s32 rgb;
@@ -8047,7 +8046,6 @@ extern u16 D_1F8001A6;
 #define U_d0c0(p, o) (*(u16 *)((u8 *)(p) + (o)))
 extern u16 D_1F800160_3621;
 extern u16 D_1F800164_7d8c;
-
 s32 func_8012F1BC(s32 *pos, s16 *off, s16 flag)
 {
     s32 fl = 0;

@@ -688,7 +688,6 @@ extern s16 D_1F8000D0[];
 extern S8008 D_800E8008_ef2a;
 #define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
 #define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
-
 void func_8010AFB4(u8 *a, u16 *b)
 {
     s16 v[6];

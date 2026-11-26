@@ -127,7 +127,117 @@ void f_UpdateA00TombaWaterSurfaceMotion(u8 *a, s32 mode) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010A7F8);
+#define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
+extern u16 D_800E7E68;
+extern u16 D_1F800170;
+extern u16 D_1F8001A6;
+extern u16 D_1F8001A8;
+void func_8010A7F8(u8 *a) {
+    func_80076D68(a);
+    switch (a[6]) {
+    case 0:
+        a[0x16A] = 0;
+        H_f12c(a, 0x50) = 0;
+        a[0x17B] = 1;
+        H_f12c(a, 0x58) = 0;
+        a[0x145] = 0;
+        func_80053D90(a);
+        a[0x181] = 1;
+        a[0x146] = 0;
+        a[7] = 0;
+        a[6]++;
+        func_80054D14(a, 0xDC, 4);
+    case 1:
+        func_80055E28(a, 1);
+        if (!(a[0x14A] & 2)) {
+            a[6]++;
+        } else if (a[0x149] & 2) {
+            func_80054D14(a, 0xDD, 6);
+        }
+        func_80056878(a, a[0x14A], 0);
+        func_80056B48(a, 1);
+        func_80055D5C(a);
+        f_UpdateA00TombaWaterSurfaceMotion(a, 0);
+        func_80055390(a);
+        H_f12c(a, 0x16C) = 0;
+        H_f12c(a, 0x6A) = 0;
+        if (func_800489E4(a, H_f12c(a, 0x32)) != 0) {
+            s32 p = D_1F8001A6;
+            s32 q = D_1F8001A8;
+            H_f12c(a, 0x6A) = p;
+            H_f12c(a, 0x16C) = q;
+        }
+        break;
+    case 2:
+        func_80055E28(a, 1);
+        if (a[0x14A] & 2) {
+            func_80054D14(a, 0xDC, 6);
+            a[6]--;
+            func_80056878(a, a[0x14A], 0);
+        } else {
+            func_80054D14(a, 0xDB, 6);
+            if (D_800E7E68 & D_1F800170) {
+                H_f12c(a, 0x40) = 8;
+                H_f12c(a, 0x42) = 1;
+                a[6]++;
+                func_80056878(a, a[0x14A], 1);
+            } else {
+                func_80056878(a, a[0x14A], 0);
+            }
+        }
+        f_UpdateA00TombaWaterSurfaceMotion(a, 0);
+        func_80056B48(a, 1);
+        func_80055D5C(a);
+        func_80055390(a);
+        H_f12c(a, 0x16C) = 0;
+        H_f12c(a, 0x6A) = 0;
+        if (func_800489E4(a, H_f12c(a, 0x32)) != 0) {
+            s32 p = D_1F8001A6;
+            s32 q = D_1F8001A8;
+            H_f12c(a, 0x6A) = p;
+            H_f12c(a, 0x16C) = q;
+        }
+        if ((u16)(D_1F80017C_0fe7 % 15) == 0) {
+            func_80074590(0x33, 0, 0);
+        }
+        break;
+    case 3:
+        func_80076D68(a);
+        func_80055E28(a, 1);
+        if (a[0x14A] & 2) {
+            func_80054D14(a, 0xDC, 6);
+            a[6] = 1;
+            func_80056878(a, a[0x14A], 0);
+        } else {
+            if (D_800E7E68 & D_1F800170) {
+                H_f12c(a, 0x40) = 8;
+                H_f12c(a, 0x42)++;
+                func_80056878(a, a[0x14A], H_f12c(a, 0x42));
+            } else {
+                func_80056878(a, a[0x14A], 0);
+            }
+            if (--H_f12c(a, 0x40) == 0) {
+                a[6]--;
+            }
+        }
+        f_UpdateA00TombaWaterSurfaceMotion(a, 1);
+        func_80056B48(a, 1);
+        func_80055D5C(a);
+        func_80055390(a);
+        H_f12c(a, 0x16C) = 0;
+        H_f12c(a, 0x6A) = 0;
+        if (func_800489E4(a, H_f12c(a, 0x32)) != 0) {
+            s32 p = D_1F8001A6;
+            s32 q = D_1F8001A8;
+            H_f12c(a, 0x6A) = p;
+            H_f12c(a, 0x16C) = q;
+        }
+        if ((u16)(D_1F80017C_0fe7 % 7) == 0) {
+            func_80074590(0x33, 0, 0);
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8010AC20);
 
@@ -763,7 +873,7 @@ void func_8010C780(u8 *a) {
 }
 
 void func_8010C87C(void) {
-    func_8010A7F8();
+    ((void (*)())func_8010A7F8)();
 }
 
 void func_8010C89C(void *a, void *b)
@@ -774,7 +884,6 @@ void func_8010C89C(void *a, void *b)
 }
 
 extern u16 D_1F800172;
-extern u16 D_1F8001A6;
 extern u16 D_1F8001A2;
 s32 func_8010C8E4(u8 *a, u8 *b) {
     b[0x29] = 1;
@@ -2590,7 +2699,6 @@ void func_801167AC(u8 *a) {
 INCLUDE_ASM("asm/a00/nonmatchings/a00", block);
 
 #define HU(p, o) (*(u16 *)((u8 *)(p) + (o)))
-
 void f_UpdateCrabBasketRewardDrop(u8 *a) {
     switch (a[6]) {
     case 0:
@@ -10692,7 +10800,6 @@ void func_8013BAB0(u8 *a) {
 #define P_7be1(p, o) (*(u8 **)((u8 *)(p) + (o)))
 extern u16 D_1F8000D0_fb20[];
 extern u16 D_800E8008_d0cf[];
-
 void func_8013BCC8(u8 *a, u16 *b) {
     s16 v[8];
     u8 *p;
@@ -11846,7 +11953,6 @@ if (D_8014BF04[idx].b[7] & 0x10) { H_f12c(r, 2) |= 8; } else { H_f12c(r, 2) &= 0
 }
 
 s32 func_80145C78(s32 k, u8 *b);
-
 s32 func_8014047C(u8 *a) {
     s32 k;
     s32 t;
@@ -11993,7 +12099,6 @@ static inline s16 inl_8014601C_4afb(u8 *a) {
     }
     return 2;
 }
-
 s32 func_801409C0(u8 *a) {
     u8 r = 0;
     s32 k = func_8009A450() & 0xF;
@@ -12029,7 +12134,6 @@ static inline void inl_move(u8 *a) {
         W_d1fb(a, 0x34) += dz;
     }
 }
-
 s32 f_UpdateTownCreatureKnockbackBounce(u8 *a) {
     u8 *q = a + 0x60;
     s32 res = 0;
@@ -12144,7 +12248,6 @@ s32 f_UpdateTownCreatureKnockbackBounce(u8 *a) {
     return res;
 }
 
-
 s32 func_8014103C(u8 *a) {
     u8 *q = a + 0x60;
     s32 res = 0;
@@ -12227,7 +12330,6 @@ s32 func_8014103C(u8 *a) {
     return res;
 }
 
-
 s32 f_UpdateTownCreatureFleeRun(u8 *a) {
     u8 *q = a + 0x60;
     s32 res = 0;
@@ -12296,7 +12398,6 @@ static inline s16 inl_wall(u8 *a) {
     if (!(HU(q, 2) & 1)) return 1;
     return 0;
 }
-
 s16 f_UpdateTownCreatureStraightRun(u8 *a) {
     u8 *q = a + 0x60;
     s16 res = 0;
@@ -12392,7 +12493,6 @@ static inline void inl_dust(u8 *a) {
         H_f12c(a, 0x40) = (func_8009A450() & 3) + 3;
     }
 }
-
 s32 f_UpdateTownCreatureHopAndBrake(u8 *a) {
     u8 *q = a + 0x60;
     s32 res = 0;
@@ -12676,7 +12776,6 @@ static inline s16 inl_8014601C(u8 *a) {
     }
     return 2;
 }
-
 s32 f_UpdateTownCreatureIdleDecision(u8 *a) {
     u8 *q = a + 0x60;
     s32 res = 0;
@@ -13129,7 +13228,6 @@ static inline s32 inl_wait(u8 *a, s32 b, u8 c) {
     f_UpdateTownCreatureTerrainContact(a);
     return r;
 }
-
 void f_UpdateTownCreatureBehaviorState(u8 *a) {
     u8 *q = a + 0x60;
     s16 r;
@@ -13561,7 +13659,6 @@ static inline s32 inl_out(u8 *a) {
     if (q[6] == 0x81) return y >= -0x81;
     return D_800E7EAA >= 0xC;
 }
-
 void f_HandleTownCreatureActor(u8 *a) {
     u8 *q = a + 0x60;
     s16 v[8];

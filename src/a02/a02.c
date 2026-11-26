@@ -10115,7 +10115,6 @@ extern s32 D_1F800084;
 extern u16 D_8012C928;
 extern u16 D_8012C92A;
 extern u16 D_8012C92C;
-
 u32 *func_80124DB8(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[3];
@@ -10250,7 +10249,6 @@ typedef struct {
     u16 pad3;
 } T2PolyGT4U;
 #define UV(p) ((T2PolyGT4U *)(p))
-
 u32 *func_80125100(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[4];
@@ -10550,7 +10548,6 @@ extern ColTable D_801385C4;
 extern ColTable D_801385D0;
 extern s32 D_1F8001C8[];
 extern s32 D_801390F0[];
-
 s32 func_801258A4(s32 *pos, s16 *off)
 {
     s32 best = 0;
@@ -10662,7 +10659,6 @@ extern s16 D_1F8001A4;
 extern u16 D_1F8001A6;
 extern s16 D_1F800240;
 extern u16 D_1F800242;
-
 s32 func_80125F7C(s32 *pos, s16 *off)
 {
     s32 *v = D_1F8001C8;
@@ -10764,7 +10760,6 @@ INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80126240);
 #define U_d0c0(p, o) (*(u16 *)((u8 *)(p) + (o)))
 extern u16 D_1F800160_3621;
 extern u16 D_1F800164_7d8c;
-
 s32 func_801265AC(u8 *a)
 {
     u8 *t = D_800E7E80;

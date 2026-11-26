@@ -1149,7 +1149,6 @@ extern u16 D_1F80017C_0fe7;
 extern s16 D_800E802E;
 extern u8 D_800BF87D;
 extern u8 D_800BF80F;
-
 void func_8010F304(u8 *a) {
     s32 k;
     u16 r;
@@ -1314,7 +1313,6 @@ void func_8010F304(u8 *a) {
 }
 
 #define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
-
 void func_8010F948(u8 *arg0) {
     u8 *a = arg0;
     s16 v;
@@ -1553,7 +1551,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80110380);
 extern u8 D_800BF809;
 u8 *func_8007A980();
 void func_8012E454();
-
 void func_801105FC(u8 *a) {
     u8 *p;
     s16 v;
@@ -9027,7 +9024,6 @@ extern s32 D_1F800090_3460;
 #define T2_stsxy3_gt4(r0)                                                                                              \
     __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz0(r0) __asm__ volatile("swc2 $16, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_8013590C(u32 *f, u32 *ot, s32 n, s32 dp)
 {
     s32 rgb;

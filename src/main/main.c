@@ -1544,7 +1544,6 @@ extern u16 D_1F800202_eb01;
 extern u16 D_1F800204_6927;
 s32 f_PlaySoundEffect();
 #define H(p, o) (*(u16 *)((u8 *)(p) + (o)))
-
 void func_80023320(u8 *a, u8 *b, u8 *c, s32 flags)
 {
     u8 *t = a + 0x60;
@@ -1952,7 +1951,6 @@ s32 f_FindTombaSupportInteractionTarget(u8 *a, s32 flag)
 
 extern u8 **D_1F80014C_5007;
 extern u8 D_1F800152_f925;
-
 s32 func_80024794(u8 *a)
 {
     u8 **l;
@@ -5666,7 +5664,6 @@ extern u8 D_800BF88F;
 extern u8 D_800BF81A;
 extern u8 D_800BF81B;
 extern u8 D_800BF81D;
-
 s32 func_800349A4(u8 *a, s32 item, s32 mode)
 {
     u8 *t = (u8 *)D_800E7E80;
@@ -5815,7 +5812,6 @@ s32 func_80035088(void *unused, s32 item, s32 mode)
 
 u8 *func_8004DC84(s32 k, s32 mode);
 void f_RemoveItemWithoutMessage(s32 item, s32 count);
-
 s32 func_8003511C(u8 *a, s32 item, s32 mode)
 {
     switch (item) {
@@ -5850,7 +5846,6 @@ s32 func_8003511C(u8 *a, s32 item, s32 mode)
 
 extern u16 D_800BF83A;
 u8 *func_8004DC84(s32 k, s32 mode);
-
 s32 func_80035218(u8 *a, s32 item, s32 mode)
 {
     GameState *g = &D_800BF870;
@@ -12423,7 +12418,6 @@ void func_8005245C(void)
 }
 
 extern u16 D_800ECF48_0f0a[];
-
 s16 func_800524B4(s32 flag)
 {
     s32 flag_p = flag;
@@ -12694,7 +12688,6 @@ s32 func_8005344C(void *arg0) {
 
 extern void *D_800A4480[];
 void func_8007AB20(void);
-
 void func_800534B0(u8 *a, s32 sub, s32 flip, s32 kind)
 {
     u8 *o = ((u8 *(*)(void))func_8007AB20)();
@@ -12797,7 +12790,6 @@ s32 func_8005376C(u8 *p)
 
 void func_80068FBC(u8 *a);
 #define W_d1fb(p, o) (*(s32 *)((u8 *)(p) + (o)))
-
 u8 *func_800537B8(u8 *a, u8 *src, s32 sub)
 {
     u8 *o = ((u8 *(*)(void))func_8007AB20)();
@@ -13146,7 +13138,6 @@ extern u8 D_800A44AC[][3];
 extern void *D_800ED014;
 #define W_d1fb(p, o) (*(s32 *)((u8 *)(p) + (o)))
 #define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
-
 void func_80054790(u8 *a, s32 idx)
 {
     u8 k = D_800A42F8[idx];
@@ -13390,7 +13381,6 @@ extern u16 D_1F800194;
         (a)[6] = 0;            \
         (a)[7] = 0;            \
     }
-
 s32 func_800558B4(u8 *a)
 {
     u16 k;
@@ -13548,7 +13538,6 @@ extern u16 D_800A4574[4];
 #define S8(p, o) (*(s8 *)((u8 *)(p) + (o)))
 #define H(p, o) (*(u16 *)((u8 *)(p) + (o)))
 #define S(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void func_80056878(u8 *a, s32 dir, s32 n)
 {
     u16 *p;
@@ -21333,7 +21322,6 @@ void func_80075D58(void)
 
 typedef struct { u8 b[12]; } Voice_qsev;
 extern Voice_qsev D_800BE238_3cc4[];
-
 u32 f_QueueSoundEffectVoice(s32 id, s32 pri, s32 c2, s32 c3, s32 c4, s32 c5, s32 c6, s32 c7)
 {
     s32 i;
@@ -21790,7 +21778,6 @@ s32 func_80077F3C(ActorPos_778C *a)
 }
 
 #define STEP(k) t = r + (k); sq = t * t; if (x >= sq) { r = t; }
-
 s32 f_IntegerSquareRootRounded(u32 x)
 {
     u16 r;
@@ -22751,7 +22738,6 @@ typedef struct Node_a464 {
 extern Node_a464 *D_800F273C_f815;
 extern Node_a464 *D_800F2738_69c9;
 extern Node_a464 *D_800F23A0_a9be;
-
 Node_a464 *func_8007A464(Node_a464 *ref, s32 mode)
 {
     Node_a464 *n = D_800F273C_f815;
@@ -23605,7 +23591,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C940);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007CC00);
 
 extern u8 D_800BFE4C;
-
 void func_8007CDD4(u16 *r)
 {
     u8 *p = D_800BF544_37fb;

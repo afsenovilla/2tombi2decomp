@@ -1614,7 +1614,6 @@ void func_801133CC(u8 *a, u8 *b, s32 f, s32 g)
 
 #define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
 extern u8 D_800E800B;
-
 void func_801139F4(u8 *a) {
     u8 *t;
     s16 ang;
@@ -1847,7 +1846,6 @@ void func_80113FA4(void *arg0, s32 arg1) {
 }
 
 #define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
-
 void func_8011411C(u8 *a) {
     a[0x16A] = 6;
     switch (a[6]) {
@@ -1953,7 +1951,6 @@ void func_8011411C(u8 *a) {
 }
 
 #define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
-
 void func_801144FC(u8 *a) {
     s16 v;
     s16 t;
@@ -5084,7 +5081,6 @@ void func_80123584(u8 *a) {
 #define P_7be1(p, o) (*(u8 **)((u8 *)(p) + (o)))
 extern u16 D_1F8000D0_fb20[];
 extern u16 D_800E8008_d0cf[];
-
 void func_8012379C(u8 *a, u16 *b) {
     s16 v[8];
     u8 *p;

@@ -12,12 +12,57 @@ typedef struct {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80109F7C);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010A0F0);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+extern u16 D_800ECF54;
+extern u16 D_1F800172;
+s32 func_8010A0F0(u8 *a, u8 *b)
+{
+    u8 *e = *(u8 **)(a + 0x10);
+
+    b[0x29] = 2;
+    func_800635D4(a, 1);
+    func_80076D68(a);
+    if (func_8005444C(a) & 1) {
+        H(a, 0x4A) = 0;
+        H(a, 0x50) = 0;
+        a[0x148] = 0;
+        b[0x29] = 0;
+        a[0x164] = 0;
+        *(s32 *)(a + 0x158) = 0;
+        a[5] = 0;
+        a[6] = 0;
+        func_80054D14(a, 2, 3);
+        return 0;
+    }
+    if (a[0x169] == 0 && (D_800ECF54 & (D_1F800172 | 0x50))) {
+        s32 s = (func_80083F50(H(a, 0x56)) * H(a, 0x152)) >> 12;
+        s32 c = func_80083E80(H(a, 0x56)) * H(a, 0x152);
+        H(a, 0x2E) = U(e, 0x2C) - s;
+        H(a, 0x36) = U(e, 0x34) + (c >> 12);
+        H(a, 0x32) = U(a, 0x64) + (U(e, 0x30) + U(a, 0x156));
+        return D_800ECF54;
+    } else {
+        s32 s = (func_80083F50(H(a, 0x56)) * H(a, 0x152)) >> 12;
+        s32 c = func_80083E80(H(a, 0x56)) * H(a, 0x152);
+        s16 r;
+        s32 s2, c2;
+        H(a, 0x2E) = U(e, 0x2C) - s;
+        H(a, 0x36) = U(e, 0x34) + (c >> 12);
+        r = (func_80083E80(H(a, 0x58)) * H(a, 0x64)) >> 12;
+        s2 = (func_80083F50(H(a, 0x56)) * r) >> 12;
+        c2 = func_80083E80(H(a, 0x56)) * r;
+        H(a, 0x2E) = U(a, 0x2E) - s2;
+        H(a, 0x36) = U(a, 0x36) + (c2 >> 12);
+        H(a, 0x32) = U(e, 0x30) + U(a, 0x156);
+        H(a, 0x32) = U(a, 0x32) + ((func_80083F50(H(a, 0x58)) * H(a, 0x64)) >> 12);
+    }
+    return 0;
+}
 
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern u8 D_1F800137;
 extern u8 D_800BF840;
-extern u16 D_800ECF54;
 extern s16 D_1F80016C;
 extern s16 D_1F80016E;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
@@ -7942,7 +7987,6 @@ static inline s32 inl_wait(u8 *a, u8 *g) {
     }
     return 0;
 }
-
 void f_UpdateMythicalTowerEntranceTransition(u8 *a) {
     u8 *g = D_800E7E80;
 
@@ -10437,7 +10481,6 @@ void func_8012D0A4(u8 *a) {
 #define P_7be1(p, o) (*(u8 **)((u8 *)(p) + (o)))
 extern u16 D_1F8000D0_fb20[];
 extern u16 D_800E8008_d0cf[];
-
 void func_8012D2BC(u8 *a, u16 *b) {
     s16 v[8];
     u8 *p;

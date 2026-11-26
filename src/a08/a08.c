@@ -827,7 +827,6 @@ extern s16 D_1F8001A4_f18c;
 extern u16 D_1F8001A6;
 extern u16 D_1F8001A8;
 extern u16 D_1F8001A2_7766;
-
 void func_801120C4(u8 *a, s32 b) {
     s32 r;
     u16 t, p, q;
@@ -901,7 +900,6 @@ static inline s32 snap_inl(u8 *a) {
     }
     return r;
 }
-
 void func_801125E4(u8 *a) {
     s32 k;
 
@@ -977,7 +975,6 @@ extern s16 D_800ED098;
 extern u8 D_80068FBC[];
 u8 *func_8007AB20();
 u8 *func_8007AAE8();
-
 u8 *func_80112970(u8 *a, u8 *b, s32 c) {
     u8 *p;
     u8 *r;
@@ -1077,7 +1074,6 @@ s32 func_80112F84(u8 *a, u8 *b)
 }
 
 extern u16 D_1F80019E;
-
 s32 func_80113190(u8 *a, u8 *b) {
     s16 v[8];
 
@@ -4805,7 +4801,6 @@ void func_80125190(u8 *a) {
 #define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
 extern u16 D_1F8000D0[];
 extern u16 D_800E8008_d0cf[];
-
 void func_801253A8(u8 *a, u16 *b) {
     s16 v[8];
     u8 *p;
@@ -6602,7 +6597,6 @@ extern void *D_800BF544_ff0c;
 #define T2_stsxy3_gt4(r0)                                                                                              \
     __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz0(r0) __asm__ volatile("swc2 $16, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_8012A06C(u32 *f, u32 *ot, s32 n, s32 dp)
 {
     s32 rgb;

@@ -3,6 +3,37 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-26 (2): thirteenth round
+
+All code in C: **4926 / 7011 functions (70.3 %, 49.3 % of the bytes)**, from 4847 (47.1 %). The brief changed after
+the tools pass closed no near miss: new functions written straight from the retail asm, near misses only with one
+obvious idea left. a04-a08 +22 (~26 KB: 13 by hand, 9 copies; a08 +6 after nothing in round 12), a00-a01 +21 (~20 KB:
+the 12 town-creature states and their 16-case dispatcher f_UpdateTownCreatureBehaviorState 0xF28), main +18 (~6.3 KB),
+a09 scope +9 (~7.4 KB), a02 +6 (~5.1 KB). integrate.py: clean build 29 / 29, all 68 commits link, nearcopy put a06
+func_80112838 into a00 func_8010A7F8 / a0e func_8010AB24 and a0a func_8010B0FC into a01 func_8010A0F0. Recipes in
+AGENTS.md "Round 13 forms", pitfalls in "Tool pitfalls".
+
+Near misses (scratch in r13b/<scope>/): a05 func_80110380 1 (or operand order), a0a func_801140D0 1 short (4
+members; 0x8E8 loaded twice), a0k func_8010BEF8 1 short (family a02 func_8010B068, a07 func_8010D84C), main
+func_8003EA88 2, a0c func_8011353C 2, a04 func_801129C0 4, main f_SelectAreaPlaneVerticalProfile 4, a02 func_80125C5C 5,
+a00 f_UpdateTownCreatureSpawner ~5, a02 func_8010DBE4 6 (scratch has a barrier), main func_80035338 6,
+f_DrawFullscreenOverlay 6, func_800368D0 12 (blocks 6), a00 f_UpdateTownCreatureInteractionLifecycle ~14, a01
+func_8010C498 16, main func_8006042C 21 (store-flag xori), a06 func_80129218 56 (blocks its copy func_8012945C), a08
+func_80116D3C ~100 (one cause: constant 1 in a0), a06 func_80125338 190 (registers only). Pending Tomba state
+handlers: a04 func_80112B50, func_801149B8, func_801150C4; a08 func_801100F4, func_80110AA0, func_801114B8. ASM by
+design candidates: a0l f_DispatchEndingAreaCameraSequence (+ a00 f_UpdateWindmillCollapseParticleActor, a07
+f_UpdateCircusLockerNpcActor), a0l func_80112DEC (+ a00 func_801465EC, a07 func_801311D0); splat "Handwritten
+function": a00 func_8013CDD4, a01 func_80133F38.
+
+Tool work left: variants.py `--toggle` (all combinations of N on/off edits) and a file of literal (old, new)
+replacement sets; regswap kinds: `__builtin_abs`, narrow copy (`u16 b = x`), swapped operands of a repeated test,
+split a term into a temporary, first-store struct-member toggle, pointer walk -> index loop, scc defeater
+(`k = c ? 1 : 0` kept as branches); regswap never ranks a narrowing split of a pointer; ccheck warns on a1 / a2 set
+before a jal with fewer arguments elsewhere, on store-flag conversion (`xori` / `sltu` vs branches) and on a scratch
+extern clashing with the target; sbs hint for redundant zero-extensions; nearcopy / sibling: tolerate a table-choice
+prologue, map callee names, plain symbol names for aliases; nearcopy --install takes a program lock; install_c hoists
+the target's later declaration; permlines finds pointer-returning functions; prio.py label mapping on large functions.
+
 ## 2026-11-26: tools after round 12
 
 One tools agent, about 90 minutes, the round-12 "Tool work left" list in its order.

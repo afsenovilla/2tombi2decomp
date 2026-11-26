@@ -396,6 +396,55 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - A scratch `extern u8 D_800BF870;` clashes with include/game.h's GameState: include game.h and use its member.
 - Writing straight from the retail asm beat the drafts this round (12 of a00's 21 matches first or second try).
 
+**Round 13 forms**
+- Write new functions straight from the retail asm (round 13: 79 functions, most first or second compile); run
+  regswap early in the background on anything under ~35 words off (it closed two from 33 and 7 words).
+- Matched callees work unchanged as `static inline` helpers inside dispatchers (a00's 16-case town-creature
+  dispatcher, 0xF28, second try). A helper whose result is tested: early `return 0`s, `break` where the return sits
+  after the switch, an explicit `default: return 0;`; a result tested through `sll 16`: cast every call `(s16)`.
+- Leftover argument registers: a1 / a2 set before a `jal` whose callee other callers call with fewer arguments are
+  leftovers; call it with fewer arguments.
+- `__builtin_abs(x)` is one insn (`bgez; move; negu` or `bgez; nop; negu`): loads and stores are scheduled across it;
+  `if (x < 0) x = -x;` is a branch that splits the block; `abs()` gives `bgez; nop; negu`.
+- Keep retail's `move` copy: a narrow copy (`u16 b = ang;`); gcc coalesces an s32 copy, not a zero-extend.
+- `H *= -1` (or via an s32 temporary) loads with `lh`, `H = -H` with `lhu`; `(s16)(U(a,0x40) & 0xFF) < 0xA` gives
+  `slti`, without the cast `sltiu`.
+- A comparison re-tested in an else-if (no jump threading): swap the operands of the second test.
+- Range compares: `!(x >= 0xC && x <= 0x1C)` gives `addiu; sltiu; xori`; range cases first (`case 0x5A ... 0x5C:`)
+  for retail's beq / slt / slti tree; falling off the end with no return returns the compare result left in v0.
+- A dead store retail keeps (`H50 = 0; ... H50 = -0xE;`): gcc drops the first only when adjacent; put an unrelated
+  store between them.
+- `u8 r` keeps a separate `move v0,zero` when gcc would merge `return 0` into `return r`.
+- Hidden extra local: `if (t != -1) k = t; else ...` gives the `move sN,vN` in a delay slot.
+- Shared "deny" tail: write it inside the first if (`deny: if (mode == 1) return 1; return 4;`) and `goto deny`;
+  a test reached by `j` with the constant in the delay slot: set the constant per branch and test once.
+- Table base before the index arithmetic: `e = (u8 *)TABLE; e += k * 3;` (`TABLE[k]` multiplies first).
+- Load-delay nops in retail mean source order: field copies before the constant stores.
+- A stack-slot local in a leaf (`sw t2,0(sp)` / `lw`, 8-byte frame) is a `volatile s32`.
+- Scratchpad: `u8 *t = (u8 *)0x1F800000;` + offsets gives `lui` with no `ori`; a literal `*(u32 *)0x1F800004 = x`
+  the `lui at` macro store; an extern struct `lui` + `addiu`. GTE scratch globals as pointer locals
+  (`s32 *otz = &D_1F800080;`); regswap `ptrlocal` `{ s32 *p = &D_1F800088; a = *p; }` for a `lui t0`.
+- Narrow types fix registers: u8 colour parameters, a u16 quotient, `u8 k` keys, an `s16` local holding constants
+  compared with a call result, `s16 mode` parameter (moves its copy after the zero inits).
+- Wraps and scopes steer priorities: `do { } while (0)` around statements using a GTE scratch pointer raises it;
+  block-scoped temporaries per arm lower one; one temporary per branch for callee-saved choices; two scratchpad
+  globals with both `lui`s first: block-scoped s32 locals.
+- gcc 2.8 aliasing: a first store written as a struct member keeps struct-member loads before it (a scalar `*p` /
+  `p[0]` store lets them pass); `*t` loads never pass a store.
+- Index loop `i = cell; do { k = list[i]; ... } while (list[++i] != 0xFFFF);` gives retail's preheader order (a
+  pointer walk puts the giv init before the hoisted invariants); index through the array at the field offset
+  (`((u8 **)(p + 0xC0))[i]`); morph loops: a goto loop over a pointer biased to the record's end (`d[-8]`).
+- One field set to different values per arm: the store in each arm (gcc merges into one `sh`, value in v0);
+  `f(a, 0)` / `f(a, 1)` in both arms for `move a0,s0` in the delay slot; an `or` reusing a call's constant argument
+  register: put it after the call; `H(a,0x42)++; f(.., H(a,0x42));` rather than `++H` in the arguments.
+- Min / max of three: `e = b;` in each arm and `b = e;` after; write each arm of an offset chain in full.
+- A shift operand as a temporary first (`w = pl[3] << 12; y = (a*x + c*z + w) / -pl[1];`) for local-alloc ties.
+- Bytes past the end of GameState: `u8 *g = (u8 *)&D_800BF870; g[0x5E5]`.
+- Families seen this round: the ColTri collision floor searches (a02 func_801258A4 / func_80125F7C -> a0k, a07; a
+  table choice on D_800BF816), the 6-copy func_8010AFB4 / func_801253A8 family, GT3 / GT4 UV-scroll and depth-cued
+  list builders; Tomba state handlers (callers of func_80056B48 / func_80055D5C / func_8005444C / func_800551C4) are
+  quick from the asm.
+
 **Switch and jump-table shapes (more)**
 - Duplicate the cases with identical code to get a jump table whose entries share a target (gcc builds the table,
   then cross-jumps the blocks); `case 1: d = X; break; case 2: d = X; break; default: d = X;` gives separate tree
@@ -566,6 +615,12 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - sibling.py needs a program list (none = nothing searched); variants.py `--set` needs `\|` / `\&` inside single
   quotes, `--alts` blocks may fail without leading indentation. Never `pkill -f` a background tool (blocked): TaskStop
   or let it time out.
+
+- Round 13: nearcopy `--install` in the background races a parallel install_c (half-edited files); install_c drops a
+  scratch `extern` when the target declares the symbol later with another type, then fails "undeclared" (use the
+  target's alias names); permlines misses functions returning a pointer; sibling.py misses ports that differ in
+  callee names; nearcopy `--near` counts an alias name of the same address as a difference; regswap's narrowing split
+  can rank a pointer truncation best (ignore it).
 
 ## Decisions (with dates in STATUS)
 

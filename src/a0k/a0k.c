@@ -4154,7 +4154,6 @@ extern u8 D_800BF816;
 extern s32 D_1F8001C8[];
 extern s16 D_1F8001A4;
 extern u16 D_1F8001A6;
-
 s32 func_8011778C(s32 *pos, s16 *off)
 {
     s32 best = 0;
@@ -4258,7 +4257,6 @@ s32 func_8011778C(s32 *pos, s16 *off)
     return ret;
 }
 
-
 s32 func_80117B24(s32 *pos, s16 *off, s16 flag)
 {
     s32 fl = 0;
@@ -4345,7 +4343,6 @@ s32 func_80117B24(s32 *pos, s16 *off, s16 flag)
     return 0;
 }
 
-
 s32 func_80117DE8(s32 *pos, s16 *off)
 {
     s32 *v = D_1F8001C8;
@@ -4428,7 +4425,6 @@ s32 func_80117DE8(s32 *pos, s16 *off)
 }
 
 #define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
-
 s32 func_80118054(u8 *a)
 {
     u8 *t = D_800E7E80;
@@ -4517,7 +4513,6 @@ s32 func_80118054(u8 *a)
 
 extern u16 D_1F800160;
 extern u16 D_1F800164;
-
 s32 f_UpdateTinyMouseVillageEntranceActor(u8 *a)
 {
     u8 *t = D_800E7E80;

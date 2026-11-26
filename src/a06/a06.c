@@ -1783,7 +1783,6 @@ extern u16 D_800E7E68;
 extern u16 D_1F800170;
 extern u16 D_1F8001A6;
 extern u16 D_1F8001A8;
-
 void func_80112838(u8 *a) {
     func_80076D68(a);
     switch (a[6]) {
@@ -1894,7 +1893,6 @@ void func_80112838(u8 *a) {
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80112C60);
 
 #define W_d1fb(p, o) (*(s32 *)((u8 *)(p) + (o)))
-
 void func_80112E24(u8 *a) {
     s16 h;
 
@@ -5926,7 +5924,6 @@ void func_80126BD8(u8 *a) {
 #define P_7be1(p, o) (*(u8 **)((u8 *)(p) + (o)))
 extern u16 D_1F8000D0_fb20[];
 extern u16 D_800E8008_d0cf[];
-
 void func_80126DF0(u8 *a, u16 *b) {
     s16 v[8];
     u8 *p;

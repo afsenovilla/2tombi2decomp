@@ -414,7 +414,6 @@ s32 func_80109F44(void)
 }
 
 #define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
-
 void f_UpdateTombaWisdomTowerRockAction(u8 *a)
 {
     s16 k;

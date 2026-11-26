@@ -525,7 +525,6 @@ void func_8010AA94(u8 *a, u8 *b) {
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010AC84);
 
 extern u16 D_1F800172;
-
 s32 func_8010B0FC(u8 *a, u8 *b)
 {
     u8 *e = *(u8 **)(a + 0x10);
