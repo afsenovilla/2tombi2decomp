@@ -10217,7 +10217,71 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80139A70);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_DeployDryingRackSegments);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RetractDryingRackSegments);
+#define SLOT(b, i) ((b)->parts[i])
+
+s32 f_RetractDryingRackSegments(AreaPartsOwner *a)
+{
+    s16 i;
+    u8 *p;
+    AreaPartsOwner *q;
+    s16 r;
+    u16 h;
+    s16 d;
+    s32 j;
+
+    if (H_f12c(a->parts[5], 0x16) > 0) {
+        H_f12c(a->parts[2], 0x16) = 1;
+    } else {
+        H_f12c(a->parts[2], 0x16) = 0;
+    }
+    for (i = 1; i < a->pad[8]; i++) {
+        q = (AreaPartsOwner *)((s32 *)a + i);
+        do {
+            do {
+                p = q->parts[0];
+            } while (0);
+        } while (0);
+        r = H_f12c(p, 0xC);
+        __asm__ volatile("");
+        h = U(p, 0xC);
+        if (r == 0) {
+            continue;
+        }
+        if (r < 0x800) {
+            if (r < 0x81) {
+                goto stop;
+            }
+            H_f12c(p, 0xC) = h - 0x80;
+            H_f12c(q->parts[0], 0xC) &= 0xFFF;
+            H_f12c(q->parts[0], 0x16) = 1;
+            d = 0x80;
+        } else {
+            if (r >= 0xF80) {
+                goto stop;
+            }
+            H_f12c(p, 0xC) = h + 0x80;
+            H_f12c(q->parts[0], 0xC) &= 0xFFF;
+            H_f12c(q->parts[0], 0x16) = 1;
+            d = -0x80;
+        }
+        goto next;
+    stop:
+        H_f12c(p, 0xC) = 0;
+        do {
+            H_f12c(q->parts[0], 0x16) = 0;
+            H_f12c(a, 0x66) += 0x30;
+            d = h;
+        } while (0);
+    next:
+        if (i < a->pad[8] - 1) {
+            H_f12c(a->parts[i + 1], 0xC) += d;
+            H_f12c(a->parts[i + 1], 0xC) &= 0xFFF;
+        }
+        break;
+    }
+    j = a->pad[8] - 1;
+    return H_f12c(SLOT(a, j), 0x16) == 0;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013A008);
 
