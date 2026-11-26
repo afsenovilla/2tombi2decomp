@@ -8611,7 +8611,76 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80130524);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80130788);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleBarrelSeesawContact);
+extern s32 D_8014A270;
+
+s32 f_HandleBarrelSeesawContact(AreaPartsOwner *a)
+{
+    s16 k;
+    u8 f;
+    s16 v;
+
+    if (a->pad[0x2B] == 0) {
+        return 0;
+    }
+    H_f12c(a, 0x6C) = a->pad[0x2B];
+    a->pad[0x2B] = 0;
+    if (U(a, 0x7A) & 2) {
+        goto ret0;
+    }
+    k = H_f12c(a, 0x6C);
+    if (a->parts[k][0x3E] & 0xC0) {
+        return 0;
+    }
+    f = a->pad[0x47];
+    if (f & 4) {
+        if ((f & 2) && (U(a, 0x60) & 4)) {
+            H_f12c(a, 0x74) = 0;
+            a->pad[6] = 0;
+            a->pad[5] = 2;
+        } else {
+            a->pad[5] = 3;
+            if (H_f12c(a, 0x78) != 0) {
+                a->parts[0][0x3E] = a->pad[6];
+            }
+            a->pad[6] = 0;
+        }
+        goto ret1;
+    }
+    if (H_f12c(a, 0x78) != 0) {
+        goto ret1;
+    }
+    if (f & 1) {
+        goto ret1;
+    }
+    if ((U(a, 0x60) & 0xF0) == 0x40) {
+        goto ret1;
+    }
+    if (k == 2) {
+        H_f12c(a, 0x48) = -0x2000;
+        H_f12c(a, 0x4E) = 0x80;
+    } else {
+        H_f12c(a, 0x48) = 0x2000;
+        H_f12c(a, 0x4E) = -0x80;
+    }
+    v = H_f12c(a->parts[1], 8);
+    if (v != H_f12c(a, 0x64) && v != H_f12c(a, 0x66) && a->pad[1] != 0 && D_8014A270 == 0) {
+        if (v < 0x800) {
+            D_8014A270 = func_80074590(0x81, 0, 0x2A);
+        } else {
+            D_8014A270 = func_80074590(0x81, -10, -14);
+        }
+    }
+    if (a->pad[1] != 0) {
+        func_80074590(0x82, 0, 0);
+    }
+    a->pad[5] = 1;
+    a->pad[6] = 1;
+    a->pad[0x5E] = 0;
+ret1:
+    return 1;
+ret0:
+    return 0;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80130AC4);
 
