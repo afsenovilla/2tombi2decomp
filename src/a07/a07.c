@@ -8022,9 +8022,198 @@ void func_8012EB7C(u8 *a, s32 *b) {
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012EE08);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012F1BC);
+typedef struct {
+    u8 pad0[4];
+    s32 flags;
+    s16 a, b, c, d;
+    s16 e[4][2];
+    s16 n[4][2];
+    u8 pad30[0];
+} ColTri;
+typedef struct {
+    s32 x, y, z;
+} V3_9da5;
+typedef struct {
+    u16 *list;
+    u16 *grid;
+    ColTri *tris;
+} ColTable;
+extern ColTable D_8013F718;
+extern ColTable D_8013F724;
+extern s32 D_8013FF58[];
+extern s32 D_1F8001C8[];
+extern s16 D_1F8001A4;
+extern u16 D_1F8001A6;
+#define U_d0c0(p, o) (*(u16 *)((u8 *)(p) + (o)))
+extern u16 D_1F800160_3621;
+extern u16 D_1F800164_7d8c;
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012F480);
+s32 func_8012F1BC(s32 *pos, s16 *off, s16 flag)
+{
+    s32 fl = 0;
+    s32 *v = D_1F8001C8;
+    ColTable *t;
+    u16 *list;
+    u16 *grid;
+    ColTri *tris;
+    ColTri *hit;
+    ColTri *tri;
+    u32 k;
+    u16 cell;
+    s32 i;
+    s32 j, inside, d, y, x, z, best;
+    s16 *pl;
+    s32 w;
+
+    if (D_800BF816 == 0) {
+        t = &D_8013F718;
+    } else {
+        t = &D_8013F724;
+    }
+    list = t->list;
+    grid = t->grid;
+    tris = t->tris;
+    ((V3_9da5 *)v)->x = pos[0] + (off[0] << 16);
+    x = ((s16 *)v)[1];
+    v[1] = pos[1] + (off[1] << 16);
+    v[2] = pos[2] + (off[2] << 16);
+    z = ((s16 *)v)[5];
+    x /= 512;
+    z /= 512;
+    cell = grid[(z << 6) + x];
+    if (cell == 0xFFFF) {
+        D_1F8001A4 = 0;
+        return 0xFF;
+    }
+    best = 0;
+    hit = (ColTri *)best;
+    if (list[cell] != 0xFFFF) {
+        i = cell;
+        do {
+            k = list[i];
+            tri = &tris[k];
+            if (!(tri->flags & 0x8800)) {
+                j = 0;
+                inside = 0;
+                for (; j < 4; j++) {
+                    d = (((s16 *)v)[1] - tri->e[j][0]) * tri->n[j][0] + (((s16 *)v)[5] - tri->e[j][1]) * tri->n[j][1];
+                    D_8013FF58[j] = d;
+                    if (d > 0) {
+                        goto out;
+                    }
+                }
+                inside = 1;
+            out:
+                if (inside) {
+                    s32 c1, c2, c3;
+
+                    pl = &tri->a;
+                    w = pl[3] << 12;
+                    y = (tri->a * ((s16 *)v)[1] + pl[2] * ((s16 *)v)[5] + w) / -pl[1];
+                    c1 = y <= best;
+                    c2 = y <= ((s16 *)v)[3];
+                    c3 = ((s16 *)v)[3] - 0x100 < y;
+                    if (c1 && c2 && c3 && !(fl & 0x2000)) {
+                        hit = tri;
+                        fl = tri->flags;
+                        best = y;
+                    }
+                }
+            }
+        } while (list[++i] != 0xFFFF);
+    }
+    if (hit != NULL) {
+        if (flag) {
+            D_1F8001A6 = *(u16 *)&hit->flags;
+        }
+        D_1F8001A4 = best;
+        ((s16 *)pos)[3] = best - off[1];
+        return 1;
+    }
+    D_1F8001A4 = 0;
+    return 0;
+}
+
+s32 func_8012F480(s32 *pos, s16 *off)
+{
+    s32 *v = D_1F8001C8;
+    ColTable *t;
+    u16 *list;
+    u16 *grid;
+    ColTri *tris;
+    ColTri *hit;
+    ColTri *tri;
+    u32 k;
+    u16 cell;
+    s32 i;
+    s32 j, inside, d, y, x, z, best;
+    s16 *pl;
+    s32 w;
+
+    if (D_800BF816 == 0) {
+        t = &D_8013F718;
+    } else {
+        t = &D_8013F724;
+    }
+    list = t->list;
+    grid = t->grid;
+    tris = t->tris;
+    ((V3_9da5 *)v)->x = pos[0] + (off[0] << 16);
+    x = ((s16 *)v)[1];
+    v[1] = pos[1] + ((off[1] - 0x28) << 16);
+    v[2] = pos[2] + (off[2] << 16);
+    z = ((s16 *)v)[5];
+    x /= 512;
+    z /= 512;
+    cell = grid[(z << 6) + x];
+    if (cell == 0xFFFF) {
+        D_1F8001A4 = 0;
+        return 0xFF;
+    }
+    best = 0;
+    hit = (ColTri *)best;
+    if (list[cell] != 0xFFFF) {
+        i = cell;
+        do {
+            k = list[i];
+            tri = &tris[k];
+            j = 0;
+            inside = 0;
+            for (; j < 4; j++) {
+                d = (((s16 *)v)[1] - tri->e[j][0]) * tri->n[j][0] + (((s16 *)v)[5] - tri->e[j][1]) * tri->n[j][1];
+                D_8013FF58[j] = d;
+                if (d > 0) {
+                    goto out;
+                }
+            }
+            inside = 1;
+        out:
+            if (inside) {
+                s32 c1, c2, c3;
+
+                pl = &tri->a;
+                w = pl[3] << 12;
+                y = (tri->a * ((s16 *)v)[1] + pl[2] * ((s16 *)v)[5] + w) / -pl[1];
+                c1 = y <= best;
+                c2 = y >= ((s16 *)v)[3];
+                c3 = y <= ((s16 *)v)[3] + 0x80;
+                if (c1 && c2 && c3) {
+                    hit = tri;
+                    best = y;
+                }
+            }
+        } while (list[++i] != 0xFFFF);
+    }
+    if (hit == NULL) {
+        D_1F8001A4 = 0;
+        return -1;
+    }
+    if (!(hit->flags & 0x8000)) {
+        return 0;
+    }
+    D_1F8001A4 = 0;
+    return 1;
+}
 
 extern u8 *D_800ECF84;
 extern s16 D_1F8000F0;
@@ -8098,9 +8287,151 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012FC50);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012FFD4);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80130374);
+s32 func_80130374(u8 *a)
+{
+    u8 *t = D_800E7E80;
+    u8 *p;
+    s32 ang;
+    u16 b;
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80130730);
+    switch (a[0x78]) {
+    case 0: {
+        u16 az = U_d0c0(a, 0x76);
+        u16 tz = U_d0c0(t, 0x36);
+        u16 ax = U_d0c0(a, 0x74);
+        u16 tx = U_d0c0(t, 0x2E);
+        s16 dz = az - tz;
+        s16 dx = ax - tx;
+
+        if (dz * dz + dx * dx < H(a, 0x68) * H(a, 0x68)) {
+            U_d0c0(t, 0x2E) = ax;
+            U_d0c0(t, 0x36) = U_d0c0(a, 0x76);
+            return 1;
+        }
+        ang = func_80085690((s16)tz - (s16)az, (s16)ax - (s16)tx) & 0xFFF;
+        b = ang;
+        switch (H(a, 0x66)) {
+        case -1:
+            H(t, 0x56) = ang;
+        case 0:
+            a[0x78] = 2;
+            break;
+        case 2:
+            b = (ang + 0x800) & 0xFFF;
+        default:
+            H(a, 0x66) = b;
+            a[0x78]++;
+            break;
+        }
+        if (H(a, 0x72) == 0) {
+            t[5] = 0x27;
+            t[6] = 0;
+        }
+        break;
+    }
+    case 1:
+        if (func_80041438(t, H(a, 0x66), 0x100) != 0) {
+            a[0x78]++;
+        }
+        break;
+    case 2:
+        if (H(a, 0x72) == 1) {
+            func_80054D14(t, 0xCE, 4);
+        }
+        a[0x78]++;
+    case 3:
+        if ((H(t, 0x44) = H(a, 0x64) >> 8) == 0) {
+            H(t, 0x44) = 10;
+        }
+        H(a, 0x64) = func_80084080((s16)(U_d0c0(a, 0x76) - U_d0c0(t, 0x36)) * (s16)(U_d0c0(a, 0x76) - U_d0c0(t, 0x36)) +
+                                   (s16)(U_d0c0(a, 0x74) - U_d0c0(t, 0x2E)) * (s16)(U_d0c0(a, 0x74) - U_d0c0(t, 0x2E)));
+        if ((H(a, 0x64) = H(a, 0x64) / H(t, 0x44)) == 0) {
+            H(a, 0x64) = 1;
+        }
+        H(a, 0x64) = 0x1000 / H(a, 0x64);
+        H(a, 0x66) = 0x1000;
+        H(a, 0x74) -= U_d0c0(t, 0x2E);
+        H(a, 0x76) -= U_d0c0(t, 0x36);
+        a[0x78]++;
+        break;
+    case 4:
+        p = *(u8 **)(a + 0x6C);
+        if ((H(a, 0x66) -= H(a, 0x64)) <= 0) {
+            H(a, 0x66) = 0;
+        }
+        H(t, 0x2E) = U_d0c0(p, 4) - H(a, 0x66) * H(a, 0x74) / 4096;
+        H(t, 0x36) = U_d0c0(p, 6) - H(a, 0x66) * H(a, 0x76) / 4096;
+        if (H(a, 0x66) == 0) {
+            H(t, 0x44) = 0;
+            if (H(a, 0x72) == 1) {
+                func_80054D14(t, 0xCD, 4);
+            }
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
+
+s32 func_80130730(u8 *a)
+{
+    u8 *t = D_800E7E80;
+    u16 dx = D_1F800160_3621 - U_d0c0(a, 0x2E);
+    u16 dz = D_1F800164_7d8c - U_d0c0(a, 0x36);
+    s16 ang;
+
+    switch (a[0x78]) {
+    case 0: {
+        s16 sz = dz;
+        s16 sx = dx;
+        s16 e;
+
+        ang = func_80085690(-sz, sx) & 0xFFF;
+        H(a, 0x64) = ang;
+        if (ang == H(a, 0x72)) {
+            return 1;
+        }
+        H(a, 0x66) = func_80084080(sx * sx + sz * sz);
+        e = U_d0c0(a, 0x72) + U_d0c0(a, 0x74);
+        if (e > 0x1000 && e - 0x1000 >= H(a, 0x64)) {
+            H(a, 0x64) += 0x1000;
+        }
+        if (H(a, 0x72) < H(a, 0x64) && H(a, 0x64) <= e) {
+            H(a, 0x76) *= -1;
+        } else if (e < H(a, 0x64)) {
+            H(a, 0x64) -= 0x1000;
+        }
+        t[5] = 0x27;
+        t[6] = 0;
+        H(t, 0x44) = 10;
+        a[0x78]++;
+        break;
+    }
+    case 1:
+        H(a, 0x64) += U_d0c0(a, 0x76);
+        if (H(a, 0x76) >= 0) {
+            if (H(a, 0x64) >= H(a, 0x72)) {
+                H(a, 0x64) = H(a, 0x72);
+                H(t, 0x44) = 0;
+            }
+            ang = func_80085690(-(s16)dz, (s16)dx) + 0x400;
+        } else {
+            if (H(a, 0x72) >= H(a, 0x64)) {
+                H(a, 0x64) = H(a, 0x72);
+                H(t, 0x44) = 0;
+            }
+            ang = func_80085690(-(s16)dz, (s16)dx) - 0x400;
+        }
+        H(t, 0x56) = ang;
+        H(t, 0x2E) = U_d0c0(a, 0x2E) + func_80083F50(-H(a, 0x64)) * H(a, 0x66) / 4096;
+        H(t, 0x36) = U_d0c0(a, 0x36) + func_80083E80(-H(a, 0x64)) * H(a, 0x66) / 4096;
+        if (H(t, 0x44) == 0) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 extern u8 D_1F8000DC[];
 s32 func_801309E0(u8 *a)
