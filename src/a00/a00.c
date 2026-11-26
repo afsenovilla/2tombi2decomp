@@ -2589,7 +2589,51 @@ void func_801167AC(u8 *a) {
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", block);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateCrabBasketRewardDrop);
+#define HU(p, o) (*(u16 *)((u8 *)(p) + (o)))
+
+void f_UpdateCrabBasketRewardDrop(u8 *a) {
+    switch (a[6]) {
+    case 0:
+        H_f12c(a, 0x2E) = 0x39E0;
+        H_f12c(a, 0x32) = -0xD7A;
+        H_f12c(a, 0x36) = 0x20E0;
+        H_f12c(a, 0xB8) = 0x1800;
+        H_f12c(a, 0xBA) = 0x2000;
+        H_f12c(a, 0xBC) = 0x1800;
+        a[6] = 1;
+        a[0] = 1;
+        H_f12c(a, 0x58) = 0;
+        H_f12c(a, 0x4A) = 0;
+        H_f12c(*(u8 **)(a + 0xC0), 0x38) = 0x1000;
+        H_f12c(*(u8 **)(a + 0xC0), 0x3A) = 0x1000;
+        H_f12c(*(u8 **)(a + 0xC0), 0x3C) = 0x1000;
+        func_8004766C(a);
+    case 1:
+        if (func_8007778C(a)) {
+            func_80051844(a);
+            if (a[0x29] == 0) {
+                if ((H_f12c(a, 0x4A) += 0x100) > 0x3000) {
+                    H_f12c(a, 0x4A) = 0x3000;
+                }
+                W_d1fb(a, 0x30) += H_f12c(a, 0x4A) << 8;
+                func_8004766C(a);
+            } else {
+                H_f12c(a, 0x4A) = 0;
+            }
+        }
+        if (H_f12c(a, 0x32) >= -0x55E) {
+            H_f12c(a, 0x32) = -0x55F;
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (func_8007778C(a)) {
+            func_80051844(a);
+        }
+        break;
+    }
+    a[0x29] = 0;
+}
 
 typedef struct { s16 x, y, z; } SVec3T;
 extern SVec3T D_1F8000C0_4e9b;
