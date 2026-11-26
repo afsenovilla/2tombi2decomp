@@ -4016,7 +4016,58 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011BF84);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011C614);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011C848);
+#define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
+
+s32 func_8011C848(u8 *a, s32 m)
+{
+    u8 f;
+
+    if (H_f12c(a, 0x72) != 0) {
+        return 0;
+    }
+    f = a[0x29];
+
+    if (f & 1) {
+        if (f & 0x80) {
+            if (m != 0) {
+                H_f12c(a, 0x4E) = -0x100;
+            }
+            if (H_f12c(a, 0x48) >= 0) {
+                goto ret2;
+            }
+            return 1;
+        } else {
+            if (m != 0) {
+                H_f12c(a, 0x4E) = 0x100;
+            }
+            if (H_f12c(a, 0x48) <= 0) {
+                goto ret2;
+            }
+            return 1;
+        }
+    }
+    if (f & 4) {
+        if (m != 0) {
+            H_f12c(a, 0x4E) = (H_f12c(a, 0x44) << 7) / H_f12c(a, 0x6A);
+        }
+        if (H_f12c(a, 0x44) * H_f12c(a, 0x48) <= 0) {
+            goto ret2;
+        }
+        return 1;
+    }
+    if (m != 0) {
+        if (H_f12c(a, 0x48) > 0) {
+            H_f12c(a, 0x4E) = -0x80;
+        } else if (H_f12c(a, 0x48) < 0) {
+            H_f12c(a, 0x4E) = 0x80;
+        }
+    }
+    return 0;
+ret2:
+    return 2;
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011C974);
 
