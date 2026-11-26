@@ -567,7 +567,60 @@ void func_8010C928(u8 *a) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010CA24);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010CF68);
+s32 func_8010CF68(u8 *a, u8 *b, u8 *c, s32 mode)
+{
+    s16 dx = *(u16 *)(a + 0x2E) - (*(u16 *)(c + 0x2C) + *(u16 *)(b + 0x60));
+    s16 dz = *(u16 *)(a + 0x36) - (*(u16 *)(c + 0x34) + *(u16 *)(b + 0x64));
+    s32 d = func_80084080(dx * dx + dz * dz);
+    s16 dy;
+    s16 h;
+    s16 e;
+    s16 k;
+    s16 y0;
+    s16 t;
+
+    if ((u16)d > *(s16 *)(a + 0x80) + 0x5A) {
+        return -1;
+    }
+    dy = *(u16 *)(a + 0x32) - (*(u16 *)(c + 0x30) + *(u16 *)(b + 0x62));
+    h = *(u16 *)(a + 0x84) + 0x5A;
+    if ((u16)(dy + h) > *(s16 *)(a + 0x86) + 0xB4) {
+        return -1;
+    }
+    D_1F80009C = func_80085690(-dz, dx);
+    y0 = dy;
+    {
+        s32 d2 = d - 0x5A;
+        e = *(u16 *)(a + 0x80) - d2;
+    }
+    if (dy < 0) {
+        dy = -dy;
+    } else {
+        h = (*(u16 *)(a + 0x86) - *(u16 *)(a + 0x84)) + 0x5A;
+    }
+    t = h - dy;
+    if (y0 < -((k = *(u16 *)(a + 0x84)) / 2)) {
+        return e >= t;
+    }
+    if (e < t) {
+        return 2;
+    }
+    if (D_1F800098 != 0) {
+        return 3;
+    }
+    if (mode != 0) {
+        return 3;
+    }
+    {
+        u16 h2 = *(u16 *)(a + 0x86);
+        D_1F800253 = 4;
+        *(u16 *)(a + 0x32) = *(u16 *)(c + 0x30) + ((h2 - k) + 0x5A);
+    }
+    if (a[0x145] == 1 && *(s16 *)(a + 0x4A) < 0) {
+        *(s16 *)(a + 0x4A) = 0;
+    }
+    return 3;
+}
 
 #define FP(p, o) M2C_FIELD(p, u8 **, o)
 extern u8 D_800BFAD6;
