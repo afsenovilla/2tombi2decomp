@@ -4691,7 +4691,93 @@ s32 func_80116B1C(void *arg0) {
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80116B50);
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80116CB0);
+typedef struct { s16 x, y, z; } SV3b;
+extern s16 D_1F8001A6;
+
+u8 func_80116CB0(u8 *a)
+{
+    u8 *q = a + 0x60;
+    s32 k;
+    s32 n;
+    s16 ang;
+    SV3b v;
+
+    if (a[0x29] == 0) {
+        a[0x29] = func_800455C0(a, 0, (s16)(U(a, 0x86) - U(a, 0x84)), H(a, 0x60));
+        if (a[0x29] != 0) {
+            u16 c0, c1;
+            s32 c2;
+            func_80049674(a);
+            c0 = D_1F8001A0;
+            c1 = D_1F8001A2;
+            c2 = D_1F8001A6;
+            U(a, 0x60) = c0;
+            U(q, 2) = c1;
+            if (c2 & 0x8000) {
+                H(q, 4) = 0;
+            }
+        }
+        if (*(volatile u8 *)(a + 0x29) == 0) {
+            H(a, 0x50) += 0x30;
+            if (H(a, 0x50) > 0x300) {
+                H(a, 0x50) = 0x300;
+            }
+            goto end;
+        }
+    }
+    k = func_80083E80(H(q, 2)) >> 7;
+    if (__builtin_abs(k) > 0x10) {
+        if (k >= 0) {
+            k = 0x10;
+        } else {
+            k = -0x10;
+        }
+    }
+    if (k == 0) {
+        if (a[0xBE] == 0) {
+            k = 4;
+        } else {
+            k = -4;
+        }
+    }
+    if (a[0xBE] == 0) {
+        n = H(a, 0x44) + k;
+        if (n < 0x200) {
+            H(a, 0x44) = U(a, 0x44) + 4;
+        } else {
+            H(a, 0x44) = n;
+            if ((s16)n > 0x300) {
+                H(a, 0x44) = 0x300;
+            }
+        }
+    } else {
+        n = H(a, 0x44) + k;
+        if (n >= -0x1FF) {
+            H(a, 0x44) = U(a, 0x44) - 4;
+        } else {
+            H(a, 0x44) = n;
+            if ((s16)n < -0x300) {
+                H(a, 0x44) = -0x300;
+            }
+        }
+    }
+    MEMBER_AT(s16, a, 0x50) = 0x200;
+    if ((D_1F80017C & 3) == 0) {
+        v.x = U(a, 0x2E);
+        v.y = U(a, 0x32) + U(a, 0x84);
+        v.z = U(a, 0x36);
+        ang = H(q, 0);
+        {
+            s32 px = (func_80083F50(ang) * H(a, 0x80)) >> 14;
+            s32 pz = (-func_80083E80(ang) * H(a, 0x80)) >> 14;
+            v.x += px;
+            v.z += pz;
+        }
+        func_80031220(0xC00, &v, -0x50);
+    }
+end:
+    return a[0x29];
+}
 
 extern s16 D_800E7FEE;
 
@@ -4951,7 +5037,6 @@ void func_80117988(void) {
     func_80075448(0xA, &D_801246AC, 0x10, D_800BED82);
 }
 
-extern s16 D_1F8001A6;
 /* func_801180E8, inlined */
 static inline u8 inl_801180E8(u8 *a)
 {
