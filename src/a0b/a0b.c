@@ -2337,7 +2337,87 @@ INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80110540);
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_801106A4);
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80110800);
+typedef struct { u8 t; s8 st; u8 pad[2]; s32 w; } RingSlot;
+typedef struct { s16 x, y, z, pad; } SV4;
+
+void func_80110800(u8 *a)
+{
+    u8 *p = *(u8 **)(a + 0x10);
+    RingSlot *e = (RingSlot *)(a + 0x50);
+    s32 i;
+    SV4 v;
+
+    switch (a[4]) {
+    case 0:
+        for (i = 0; i < 4; i++) {
+            e[i].t = i * 0x22;
+            e[i].st = 0;
+            e[i].w = 0;
+        }
+        a[4] = 1;
+        a[5] = 0;
+        a[6] = 0;
+        a[7] = 10;
+        H(a, 0x4E) = 0;
+        break;
+    case 2:
+        a[5] -= 2;
+        a[6] -= 5;
+        if (a[6] < 10) {
+            a[6] = 10;
+        }
+        if (a[5] < 3) {
+            a[4] = 3;
+            break;
+        }
+    case 1:
+        for (i = 0; i < 4; i++) {
+            e[i].t += 4;
+            if ((s8)e[i].t < 0) {
+                switch (e[i].st) {
+                case 0:
+                    e[i].st++;
+                    break;
+                case 1:
+                case 2:
+                    break;
+                default:
+                    if (a[4] == 1) {
+                        e[i].st = 0;
+                        e[i].w = 0;
+                        e[i].t += 0x80;
+                    } else {
+                        e[i].t = 0;
+                    }
+                    break;
+                }
+            }
+        }
+        H(a, 0x4E) -= 0x2D;
+        if (a[4] == 1) {
+            u8 c = a[7]--;
+            if (c == 0) {
+                v.x = U(a, 0x2C) + (func_8009A450() & 0x1FF) - 0x100;
+                v.z = U(a, 0x30) + (func_8009A450() & 0x1FF) - 0x100;
+                v.y = U(a, 0x2E) - (func_8009A450() & 0x1FF) - 0xC8;
+                func_80031220(0xC03, &v, -0x1E);
+                a[7] = (func_8009A450() & 3) + 3;
+            }
+            if ((s8)a[6] >= 0) {
+                a[6] += 12;
+            }
+            a[5] = U(p, 0xB8) >> 6;
+            U(a, 0x2C) = U(p, 0x2E);
+            U(a, 0x2E) = U(p, 0x32);
+            U(a, 0x30) = U(p, 0x36);
+        }
+        a[1] = 1;
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_80110A98);
 
