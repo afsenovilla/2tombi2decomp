@@ -9050,7 +9050,78 @@ void f_RotateSelectedTownBarrel(AreaPartsOwner *a)
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80130524);
+void func_80130524(AreaPartsOwner *a)
+{
+    u8 v;
+    u8 f;
+    u8 *p;
+
+    switch (a->pad[6]) {
+    case 0:
+        f = a->pad[0x47];
+        if (f & 0x40) {
+            H_f12c(a->parts[1], 0x12) = 0x20;
+            H_f12c(a, 0x40) = 0x20;
+        } else if (f & 0x80) {
+            H_f12c(a->parts[1], 0x12) = 0x60;
+            H_f12c(a, 0x40) = 0x60;
+        } else {
+            H_f12c(a->parts[1], 0x12) = 0x40;
+            H_f12c(a, 0x40) = 0x40;
+        }
+        if (func_80077768(a->pad[0x46] << 4, H_f12c(a->parts[H_f12c(a, 0x6C)], 0xA), 0) != 0) {
+            H_f12c(a->parts[1], 0x12) = -H_f12c(a->parts[1], 0x12);
+        }
+        a->pad[0x5E] = 4;
+        a->pad[6]++;
+        break;
+    case 1:
+        H_f12c(a->parts[1], 0xA) += U(a->parts[1], 0x12);
+        {
+        u8 *p = a->parts[1];
+        if (H_f12c(p, 0xA) > H_f12c(a, 0x70) + H_f12c(a, 0x40) || H_f12c(p, 0xA) < H_f12c(a, 0x70) - H_f12c(a, 0x40)) {
+            if (H_f12c(p, 0x12) > 0) {
+                H_f12c(p, 0xA) = U(a, 0x70) + U(a, 0x40);
+            } else {
+                H_f12c(p, 0xA) = U(a, 0x70) - U(a, 0x40);
+            }
+            H_f12c(a->parts[1], 0x12) = -H_f12c(a->parts[1], 0x12);
+            H_f12c(a, 0x40) -= 0x10;
+            if (H_f12c(a, 0x40) <= 0) {
+                H_f12c(a, 0x40) = 10;
+                a->pad[0x5E] = 0;
+                a->pad[6]++;
+            }
+        }
+        }
+        break;
+    case 2:
+        p = a->parts[1];
+        if (H_f12c(a, 0x70) < H_f12c(p, 0xA)) {
+            H_f12c(p, 0xA) = U(p, 0xA) - 8;
+        } else {
+            H_f12c(p, 0xA) = U(p, 0xA) + 8;
+        }
+        if (--H_f12c(a, 0x40) == 0) {
+            H_f12c(a->parts[1], 0xA) = U(a, 0x70);
+            if (H_f12c(a, 0x78) != 0) {
+                a->pad[5] = 1;
+                a->pad[6] = a->parts[0][0x3E];
+                a->parts[0][0x3E] = 0;
+            } else {
+                a->pad[5] = 0;
+                a->pad[6] = 0;
+                H_f12c(a, 0x76) = 0;
+                H_f12c(a, 0x48) = 0;
+                H_f12c(a, 0x4E) = 0;
+            }
+        }
+        break;
+    }
+    if (f_HandleBarrelSeesawContact(a) != 0) {
+        H_f12c(a->parts[1], 0xA) = U(a, 0x70);
+    }
+}
 
 s32 func_80130788(u8 *a, s32 m)
 {
