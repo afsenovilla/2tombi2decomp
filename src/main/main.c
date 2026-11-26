@@ -10738,7 +10738,76 @@ void func_8004B4E8(s32 item, u8 v)
     func_80067DA8(D_800E7E80);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004B528);
+extern u8 D_800BF80A_b528;
+s32 f_SetTombaAnimationIfChanged(u8 *t, s32 anim, s32 blend);
+s32 f_UpdateActorUnscaledModelTransforms(s32 arg0);
+void f_SetActorPartModel(u8 *actor, s32 bank, s32 index);
+
+s32 func_8004B528(u8 *a, u8 *b)
+{
+    u8 *t = (u8 *)D_800E7E80;
+    u8 *e;
+    u8 *v;
+
+    switch (a[6]) {
+    case 0:
+        if (D_800BF80A_b528 == 0) {
+            t[4] = 4;
+            t[5] = 0x21;
+            t[6] = 0;
+            f_SetTombaAnimationIfChanged(t, 0xCC, 0);
+            *(s16 *)(a + 0x40) = 0x14;
+            a[6]++;
+        }
+        f_UpdateActorUnscaledModelTransforms(a);
+        return 0;
+    case 1:
+        if (*(s16 *)(a + 0x58) < 0x400) {
+            *(s16 *)(a + 0x58) += 0x40;
+        }
+        f_UpdateActorUnscaledModelTransforms(a);
+        if (*(s16 *)(a + 0x40) == 0xE) {
+            e = (u8 *)f_SpawnTransientEffect(0x20, 0);
+            if (e != NULL) {
+                v = e + 0x50;
+                *(u16 *)(v + 0) = *(u16 *)(MEMBER_AT(u8 *, t, 0xD0) + 0x2C);
+                *(u16 *)(v + 2) = *(u16 *)(MEMBER_AT(u8 *, t, 0xD0) + 0x30);
+                *(u16 *)(v + 4) = *(u16 *)(MEMBER_AT(u8 *, t, 0xD0) + 0x34);
+                if (b != NULL) {
+                    *(u16 *)(v + 8) = *(u16 *)(b + 0x2E);
+                    *(u16 *)(v + 0xA) = *(u16 *)(b + 0x32);
+                    *(u16 *)(v + 0xC) = *(u16 *)(b + 0x36);
+                } else {
+                    *(u16 *)(v + 8) = *(u16 *)(a + 0x60);
+                    *(u16 *)(v + 0xA) = *(u16 *)(a + 0x62);
+                    *(u16 *)(v + 0xC) = *(u16 *)(a + 0x64);
+                }
+                e[0x28] |= 0x80;
+            }
+            if (*(u16 *)(a + 0x5C) != 2) {
+                f_SetActorPartModel(*(u8 **)(a + 0xC0), 1, 0);
+            }
+            f_PlaySoundEffect(7, 0, 0);
+        }
+        if (--*(s16 *)(a + 0x40) == -1) {
+            *(s16 *)(a + 0x40) = 0x1E;
+            a[6]++;
+            return 1;
+        }
+        return 0;
+    case 2:
+        if (*(s16 *)(a + 0x58) < 0x400) {
+            *(s16 *)(a + 0x58) += 0x40;
+        }
+        f_UpdateActorUnscaledModelTransforms(a);
+        if (--*(s16 *)(a + 0x40) == -1) {
+            f_SetTombaAnimationIfChanged(t, 2, 0);
+            return 2;
+        }
+        return 0;
+    }
+    return 0;
+}
 
 s32 f_UpdateActorUnscaledModelTransforms(s32 arg0);
 void f_ResetTombaControlState(void *arg0);
@@ -11042,7 +11111,104 @@ void func_8004CC64(void *a, u8 b)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004CC88);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004CE14);
+extern u8 D_1F800207_9c67;
+extern u8 *D_800A3F00[];
+s32 f_TestWorldOrOtherPickupCollectedBit(s32 n, u8 other);
+s32 f_TestAppleCollectedBit(s32 n);
+s32 func_80077ACC(void *a, s32 x, s32 y, s32 z);
+static inline s32 PickupAvail_CE14(u8 *e, u8 *g, s32 i)
+{
+    s32 flag;
+    s32 bit;
+
+    if (e[0] == 0xFF) {
+        return -1;
+    }
+    flag = e[2] & 0x80;
+    if (!flag && f_TestWorldOrOtherPickupCollectedBit(*(s16 *)(e + 0xA), 0) != 0) {
+        return 0;
+    }
+    bit = 1 << i;
+    if (*(s32 *)(g + 0x14) & bit) {
+        return 0;
+    }
+    if (flag && ((s32 (*)())f_TestAppleCollectedBit)(*(s16 *)(e + 0xA), 0) != 0) {
+        return 0;
+    }
+    if (*(s32 *)(g + 0x14) & bit) {
+        return 0;
+    }
+    __asm__ volatile("");
+    return 1;
+}
+
+void func_8004CE14(u8 *a)
+{
+    u8 *g = a + 0x60;
+    u8 *e;
+    s32 i;
+    s32 r;
+
+    switch (a[4]) {
+    case 0:
+        if (D_800BF873 != 0) {
+            a[4] = 3;
+            break;
+        }
+        a[4] = 1;
+        a[0] = 1;
+        *(u8 **)(g + 0xC) = D_800A3F00[a[3]];
+        *(s32 *)(g + 0x14) = 0;
+        f_SetPickupWhiteTintEnabled(a, 0);
+    case 1:
+        if (D_800BF870.unk0 == 0) {
+            if (a[3] == 1) {
+                if (D_1F800207_9c67 >= 0x1C) {
+                    break;
+                }
+            } else if (a[3] == 2) {
+                if (D_1F800207_9c67 < 0x1C) {
+                    break;
+                }
+            }
+        } else if (D_800BF870.unk0 == 6) {
+            if (D_800BF870.pad1[0] == 0x13) {
+                break;
+            }
+        }
+        e = *(u8 **)(g + 0xC);
+        *(s32 *)(g + 0x10) = 0;
+        for (i = 0;; i++, e += 0x10) {
+            r = PickupAvail_CE14(e, a + 0x60, i);
+            if (r < 0) {
+                break;
+            }
+            if (r == 0) {
+                continue;
+            }
+            if (D_800BF870.unk0 == 1 && D_800BF870.pad1[0] >= 0xF) {
+                r = func_80111CCC(e[0xC]);
+            } else {
+                r = func_80077ACC(a, *(s16 *)(e + 4), *(s16 *)(e + 6), *(s16 *)(e + 8));
+            }
+            if (r != 0) {
+                do {
+                    *(s32 *)(g + 0x10) |= 1 << i;
+                } while (0);
+            }
+        }
+        *(s16 *)(g + 0xA) = i;
+        a[0xB] = 0x1F;
+        a[1] = 1;
+        f_QueueClass5ActorForRender((s32)a);
+        break;
+    case 2:
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D0D4);
 
@@ -11549,7 +11715,6 @@ void func_8004DF94(u8 *a)
     }
 }
 
-extern u8 D_1F800207_9c67;
 s32 func_8004E29C(u8 *a)
 {
     switch (*(s16 *)(a + 0x60)) {
