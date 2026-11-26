@@ -815,6 +815,493 @@ def rewrites(text, func, only):
             ls = lines[:k] + ["%sif (%s) {" % (ind, cond), "%s    %s = %s;" % (ind, x, k2), "%s} else {" % ind,
                               "%s    %s = %s;" % (ind, x, k1), "%s}" % ind] + lines[j + 1:]
             out.append(("perarm %s at line %d" % (v, k - b), join(ls)))
+    out += rewrites_r12(text, lines, func, only, b, e, ds, dsa, names, body_start)
+    return out
+
+
+# ---- round-12 kinds (2026-11-26): the recipes of AGENTS.md "Round 12 forms" as rewrites -------------------------
+LIT = r"(?:0x[0-9A-Fa-f]+|\d+)"
+FLIP = {"<": ">", ">": "<", "<=": ">=", ">=": "<=", "==": "==", "!=": "!="}
+MEMLV = re.compile(r"[\[*]|->|M2C_FIELD|MEMBER_AT|^D_|^\w+F\(")
+
+
+def depth0_split(s, seps):
+    """[(piece, separator after it or '')] of s split at depth-0 occurrences of the strings in seps."""
+    out, depth, i, cur = [], 0, 0, ""
+    while i < len(s):
+        c = s[i]
+        if c in "([":
+            depth += 1
+        elif c in ")]":
+            depth -= 1
+        if depth == 0:
+            hit = next((x for x in seps if s.startswith(x, i)), None)
+            if hit:
+                out.append((cur, hit))
+                cur = ""
+                i += len(hit)
+                continue
+        cur += c
+        i += 1
+    out.append((cur, ""))
+    return out
+
+
+def cmp_op(term):
+    """(left, op, right) of a term with one depth-0 comparison, or None."""
+    depth, hits = 0, []
+    i = 0
+    while i < len(term):
+        c = term[i]
+        if c in "([":
+            depth += 1
+        elif c in ")]":
+            depth -= 1
+        elif depth == 0:
+            two = term[i:i + 2]
+            if two in ("<<", ">>", "->"):
+                i += 2
+                continue
+            if two in ("<=", ">=", "==", "!="):
+                hits.append((i, two))
+                i += 2
+                continue
+            if c in "<>":
+                hits.append((i, c))
+        i += 1
+    if len(hits) != 1:
+        return None
+    i, op = hits[0]
+    return term[:i], op, term[i + len(op):]
+
+
+def cond_span(l):
+    """(start, end) of the condition text of an if / while / `} while` / return line, or None."""
+    m = re.match(r"^\s*(?:\}\s*)?(?:else\s+)?(if|while)\s*\(", l)
+    if m:
+        en = balanced(l, m.end() - 1)
+        return (m.end(), en - 1) if en else None
+    m = re.match(r"^\s*return\s+", l)
+    if m and l.rstrip().endswith(";"):
+        return m.end(), len(l.rstrip()) - 1
+    return None
+
+
+def block_close(lines, k, e):
+    """index of the line closing the block opened at the end of line k."""
+    depth = 0
+    for j in range(k, e):
+        c = re.sub(r"//.*|/\*.*?\*/|\"(?:[^\"\\]|\\.)*\"", "", lines[j])
+        if j == k:
+            c = re.sub(r"^\s*\}", "", c)                 # `} else {` opens the else block
+        for ch in c:
+            if ch in "{}":
+                depth += 1 if ch == "{" else -1
+                if depth == 0:
+                    return j if j > k else None     # `} else {` closes the then block on its own line
+    return None
+
+
+def word_uses(lines, n, lo, hi):
+    return [j for j in range(lo, hi) if re.search(r"(?<![\w.>])\b%s\b" % re.escape(n), lines[j])]
+
+
+def rewrites_r12(text, lines, func, only, b, e, ds, dsa, names, body_start):
+    out = []
+    join = "\n".join
+    ind0 = re.match(r"\s*", lines[ds[0][0]]).group(0) if ds else "    "
+    ins_decl = body_start if dsa else b + 1
+    ps = params(lines, b, func)
+    pnames = [p[2] for p in ps]
+
+    def add_decl(ls, decl):
+        ls = list(ls)
+        ls.insert(ins_decl, ind0 + decl)
+        return ls
+
+    def fresh(base):
+        n, i = base, 0
+        while re.search(r"\b%s\b" % n, text):
+            i += 1
+            n = "%s%d" % (base, i)
+        return n
+
+    # cmpflip: one comparison of a condition with its operands swapped (`a < b` -> `b > a`), and `x < K` <->
+    # `x <= K - 1` / `x > K` <-> `x >= K + 1` (which constant gcc loads; retail's li in a delay slot)
+    if "cmpflip" in only:
+        for k in range(body_start, e):
+            sp = cond_span(lines[k])
+            if not sp:
+                continue
+            s0, s1 = sp
+            cond = lines[k][s0:s1]
+            parts = depth0_split(cond, ("&&", "||"))
+            for pi, (term, sep) in enumerate(parts):
+                co = cmp_op(term)
+                if not co:
+                    continue
+                left, op, right = co
+                lw = re.match(r"\s*", left).group(0)
+                rw = re.search(r"\s*$", right).group(0)
+                news = ["%s%s %s %s%s" % (lw, right.strip(), FLIP[op], left.strip(), rw)]
+                mr = re.fullmatch(r"\s*(-?%s)\s*" % LIT, right)
+                if mr:
+                    v = int(mr.group(1), 0)
+                    alt = {"<": ("<=", v - 1), "<=": ("<", v + 1), ">": (">=", v + 1), ">=": (">", v - 1)}.get(op)
+                    if alt and alt[1] >= 0:
+                        news.append("%s%s %s %d%s" % (lw, left.strip(), alt[0], alt[1], rw))
+                for nt in news:
+                    np = list(parts)
+                    np[pi] = (nt, sep)
+                    nc = "".join(t + s for t, s in np)
+                    ls = list(lines)
+                    ls[k] = lines[k][:s0] + nc + lines[k][s1:]
+                    out.append(("cmpflip %s at line %d" % (nt.strip(), k - b), join(ls)))
+    # varshift: a shift by a literal through a variable (`x >> K` -> `n = K; x >> n`: sllv / srav, retail's
+    # register shift)
+    if "varshift" in only:
+        for k in range(body_start, e):
+            l = lines[k]
+            if l.strip().startswith(("case", "default", "#", "//")) or not l.strip():
+                continue
+            for m in re.finditer(r"(<<|>>)\s*(%s)\b(?!\s*[\w(])" % LIT, l):
+                n = fresh("rs_sh")
+                nl = l[:m.start(2)] + n + l[m.end(2):]
+                ls = list(lines)
+                ls[k] = nl
+                out.append(("varshift %s %s at line %d (initialised)" % (m.group(1), m.group(2), k - b),
+                            join(add_decl(ls, "s32 %s = %s;" % (n, m.group(2))))))
+                if is_stmt(l) or re.match(r"\s*(if|while|switch|return)\b", l):
+                    ls = list(lines)
+                    ls[k] = nl
+                    ls.insert(k, "%s%s = %s;" % (indent(l), n, m.group(2)))
+                    out.append(("varshift %s %s at line %d (set before)" % (m.group(1), m.group(2), k - b),
+                                join(add_decl(ls, "s32 %s;" % n))))
+    # chain: two adjacent stores of one value as a chained assignment (`A = B = K;`: one register, no CSE of A)
+    if "chain" in only:
+        for k in range(body_start, e - 1):
+            m1 = re.match(r"^(\s*)([^=;]+?)\s*=(?!=)\s*([^=;]+?)\s*;\s*$", lines[k])
+            m2 = re.match(r"^(\s*)([^=;]+?)\s*=(?!=)\s*([^=;]+?)\s*;\s*$", lines[k + 1])
+            if not (m1 and m2) or m1.group(1) != m2.group(1) or m1.group(3) != m2.group(3):
+                continue
+            if not is_stmt(lines[k]) or not is_stmt(lines[k + 1]) or m1.group(2).split()[0] in TYPEWORDS:
+                continue
+            for x, y in ((m1.group(2), m2.group(2)), (m2.group(2), m1.group(2))):
+                ls = list(lines)
+                ls[k:k + 2] = ["%s%s = %s = %s;" % (m1.group(1), x, y, m1.group(3))]
+                out.append(("chain %s = %s at line %d" % (x, y, k - b), join(ls)))
+    # latestore: `x++;` / `x += E;` of a memory lvalue as an early load and a late store (`t = x + 1;` some
+    # statements above, `x = t;` in its place: the store in a jal delay slot)
+    if "latestore" in only:
+        for k in range(body_start, e):
+            l = lines[k]
+            m = re.match(r"^(\s*)(.+?)\s*(\+\+|--)\s*;\s*$", l) or re.match(r"^(\s*)(\+\+|--)\s*(.+?)\s*;\s*$", l)
+            if m and m.group(2) in ("++", "--"):
+                lv, rhs = m.group(3), "%s %s 1" % (m.group(3), m.group(2)[0])
+            elif m:
+                lv, rhs = m.group(2), "%s %s 1" % (m.group(2), m.group(3)[0])
+            else:
+                m = re.match(r"^(\s*)(.+?)\s*([-+|&^]|<<|>>)=\s*(.+?)\s*;\s*$", l)
+                if not m:
+                    continue
+                lv, rhs = m.group(2), "%s %s (%s)" % (m.group(2), m.group(3), m.group(4))
+            if not MEMLV.search(lv.strip()) or not is_stmt(l):
+                continue
+            ind = indent(l)
+            ty = expr_type(lv.strip(), text, lines, b, e)
+            t = fresh("rs_ls")
+            ups = []
+            j = k - 1
+            while j >= body_start and len(ups) < 5:
+                lj = lines[j]
+                if not lj.strip():
+                    j -= 1
+                    continue
+                if indent(lj) < ind or re.match(r"\s*(case\b|default\s*:|\w+:\s*$)", lj):
+                    break
+                if indent(lj) == ind:
+                    ups.append(j)
+                j -= 1
+            for at in ups:
+                ls = list(lines)
+                ls[k] = "%s%s = %s;" % (ind, lv, t)
+                ls.insert(at, "%s%s = %s;" % (ind, t, rhs))
+                out.append(("latestore %s from line %d to %d" % (lv.strip(), at - b, k - b),
+                            join(add_decl(ls, "%s %s;" % (ty, t)))))
+    # paramcopy: a pointer parameter received as `void *` and copied into the typed local (retail saves the
+    # argument to its frame slot), a narrow one as s32
+    if "paramcopy" in only:
+        hl = next((i for i in range(max(0, b - 3), b + 1) if re.search(r"\b%s\s*\(" % re.escape(func), lines[i])), None)
+        for i, (t, s, n) in enumerate(ps):
+            if not s and t not in ("u8", "s8", "s16", "u16"):
+                continue
+            if hl is None:
+                break
+            na = fresh("rs_arg%d" % i)
+            newp = ("void *%s" % na) if s else ("s32 %s" % na)
+            m = re.search(r"([(,]\s*)%s\s*%s\s*%s\s*(?=[,)])" % (re.escape(t), re.escape(s).replace("\\*", "\\*\\s*"),
+                                                                 re.escape(n)), lines[hl])
+            if not m:
+                continue
+            ls = list(lines)
+            ls[hl] = lines[hl][:m.start()] + m.group(1) + newp + lines[hl][m.end():]
+            ls.insert(b + 1, "%s%s %s%s = %s;" % (ind0, t, s, n, na))
+            out.append(("paramcopy %s via %s" % (n, newp), join(ls)))
+    # foldeduse: inside `if (V == K) {`, a use of K written as V, or `E + V - K` (which register CSE keeps)
+    if "foldeduse" in only:
+        for k in range(body_start, e):
+            m = re.match(r"^\s*(?:\}\s*else\s+)?if\s*\(\s*([A-Za-z_]\w*)\s*==\s*(%s)\s*\)\s*\{\s*$" % LIT, lines[k])
+            if not m:
+                continue
+            v, kk = m.group(1), m.group(2)
+            c = block_close(lines, k, e)
+            if c is None:
+                continue
+            n_ = 0
+            for j in range(k + 1, c):
+                lj = lines[j]
+                for mm in re.finditer(r"(?<![\w\[])%s\b(?![\w\]])" % re.escape(kk), lj):
+                    if lj.strip().startswith("case"):
+                        continue
+                    ls = list(lines)
+                    ls[j] = lj[:mm.start()] + v + lj[mm.end():]
+                    out.append(("foldeduse %s for %s at line %d" % (v, kk, j - b), join(ls)))
+                ma = re.match(r"^(\s*)([^=;]+?)\s*=(?!=)\s*(.+?);\s*$", lj)
+                if ma and is_stmt(lj) and n_ < 6 and not re.fullmatch(LIT, ma.group(3).strip()):
+                    n_ += 1
+                    ls = list(lines)
+                    ls[j] = "%s%s = %s + %s - %s;" % (ma.group(1), ma.group(2), ma.group(3), v, kk)
+                    out.append(("foldeduse + %s - %s at line %d" % (v, kk, j - b), join(ls)))
+    # oneexpr: `v = E; ... use(v) ...` with v dead after the use -> one expression (raises the pseudo's priority)
+    if "oneexpr" in only:
+        for k in range(body_start, e - 1):
+            m = re.match(r"^(\s*)([A-Za-z_]\w*)\s*=(?!=)\s*(.+?);\s*$", lines[k])
+            if not m or m.group(2) not in names or not is_stmt(lines[k]):
+                continue
+            v, ex = m.group(2), m.group(3)
+            if re.search(r"(?<![\w.>])\b%s\b" % re.escape(v), ex):
+                continue
+            k2 = k + 1
+            while k2 < e and not lines[k2].strip():
+                k2 += 1
+            if k2 >= e or indent(lines[k2]) != m.group(1):
+                continue
+            l2 = lines[k2]
+            if len(re.findall(r"(?<![\w.>])\b%s\b" % re.escape(v), l2)) != 1 or assigns_to(l2, v):
+                continue
+            if not (is_stmt(l2) or re.match(r"\s*(if|switch|return)\b", l2)):
+                continue
+            end = k2 + 1
+            if re.search(r"\{\s*$", l2):
+                end = (block_close(lines, k2, e) or e - 1) + 1
+                if word_uses(lines, v, k2 + 1, end):
+                    continue
+            if not dead_after(lines, v, end, e):
+                continue
+            ls = list(lines)
+            ls[k2] = sub_name(l2, v, "(%s)" % ex)
+            del ls[k]
+            out.append(("oneexpr %s into line %d" % (v, k2 - b), join(ls)))
+    # blockscope: a local declared in the innermost block that holds all its uses, or one local per block
+    # when its uses sit in disjoint blocks (pointer locals re-materialised per block)
+    if "blockscope" in only:
+        opens = []                                          # (open line, close line) of the body's blocks
+        for k in range(body_start, e):
+            if re.search(r"\{\s*$", re.sub(r"//.*", "", lines[k])) and not re.match(r"\s*(switch)\b", lines[k]):
+                c = block_close(lines, k, e)
+                if c:
+                    opens.append((k, c))
+        for (i, t, n, s, a, init) in ds:
+            if a or init:
+                continue
+            us = word_uses(lines, n, body_start, e)
+            if not us:
+                continue
+            inner = [(o, c) for o, c in opens if o < us[0] and c > us[-1]]
+            if inner:
+                o, c = max(inner)
+                ls = list(lines)
+                ls.insert(o + 1, "%s    %s %s%s;" % (indent(lines[o]), t, s, n))
+                del ls[i]
+                out.append(("blockscope %s into the block at line %d" % (n, o - b), join(ls)))
+            groups = {}
+            for u in us:
+                cont = [(o, c) for o, c in opens if o < u <= c - 0 and c > u]
+                if not cont:
+                    groups = None
+                    break
+                groups.setdefault(min(cont), []).append(u)      # the outermost block holding it
+            if groups and len(groups) > 1:
+                bl = sorted(groups)
+                if all(bl[q][1] <= bl[q + 1][0] for q in range(len(bl) - 1)):
+                    ls = list(lines)
+                    for q, (o, c) in reversed(list(enumerate(bl))):
+                        nn = "%s_b%d" % (n, q)
+                        for j in range(o + 1, c):
+                            ls[j] = sub_name(ls[j], n, nn)
+                        ls.insert(o + 1, "%s    %s %s%s;" % (indent(lines[o]), t, s, nn))
+                    del ls[i]
+                    out.append(("blockscope %s: one local per block (%d)" % (n, len(bl)), join(ls)))
+    # loops (for twoset / accum)
+    loops = []
+    for k in range(body_start, e):
+        if re.match(r"^\s*(for|while)\s*\(.*\{\s*$", lines[k]) or re.match(r"^\s*do\s*\{\s*$", lines[k]):
+            c = block_close(lines, k, e)
+            if c:
+                loops.append((k, c))
+    # twoset: a literal of a statement inside a loop through a variable set twice (top and just before the use:
+    # not loop-movable, the constant stays in the loop)
+    if "twoset" in only:
+        seen = 0
+        for o, c in loops:
+            for j in range(o + 1, c):
+                lj = lines[j]
+                if not (is_stmt(lj) or re.match(r"\s*(if|switch)\b", lj)) or seen > 40:
+                    continue
+                for mm in re.finditer(r"(?<![\w.\[])(%s)\b(?![\w.\]])" % LIT, lj):
+                    if int(mm.group(1), 0) in (0,):
+                        continue
+                    seen += 1
+                    n = fresh("rs_k")
+                    ls = list(lines)
+                    ls[j] = lj[:mm.start()] + n + lj[mm.end():]
+                    ls.insert(j, "%s%s = %s;" % (indent(lj), n, mm.group(1)))
+                    ls.insert(body_start, "%s%s = %s;" % (ind0, n, mm.group(1)))
+                    out.append(("twoset %s at line %d" % (mm.group(1), j - b), join(add_decl(ls, "s32 %s;" % n))))
+    # accum: `v += K;` in a loop with a counter i -> uses of v as `v + i * K` (no loop-carried add)
+    if "accum" in only:
+        for o, c in loops:
+            hdr = lines[o]
+            ctr = None
+            mh = re.match(r"^\s*for\s*\(\s*(\w+)\s*=.*;\s*(?:\+\+\s*(\w+)|(\w+)\s*\+\+)\s*\)", hdr)
+            if mh:
+                ctr = mh.group(2) or mh.group(3)
+            else:
+                for j in range(o + 1, c):
+                    mi = re.match(r"^\s*(\w+)\s*\+\+\s*;\s*$", lines[j]) or re.match(r"^\s*\+\+\s*(\w+)\s*;\s*$", lines[j])
+                    if mi and mi.group(1) in names:
+                        ctr = mi.group(1)
+            if not ctr:
+                continue
+            for j in range(o + 1, c):
+                ma = re.match(r"^(\s*)(\w+)\s*\+=\s*(.+?);\s*$", lines[j]) or \
+                    re.match(r"^(\s*)(\w+)\s*=\s*\2\s*\+\s*(.+?);\s*$", lines[j])
+                if not ma or ma.group(2) not in names or ma.group(2) == ctr:
+                    continue
+                v, kk = ma.group(2), ma.group(3)
+                if word_uses(lines, v, c + 1, e) and not dead_after(lines, v, c + 1, e):
+                    continue
+                if any(assigns_to(lines[q], v) for q in range(o + 1, c) if q != j):
+                    continue
+                for desc, after in (("", "(%s + 1)" % ctr), (" (every use i * K)", ctr)):
+                    ls = list(lines)
+                    for q in range(o + 1, c):
+                        if q != j:
+                            ls[q] = sub_name(ls[q], v, "(%s + %s * (%s))" % (v, after if q > j else ctr, kk))
+                    del ls[j]
+                    out.append(("accum %s += %s by %s%s" % (v, kk, ctr, desc), join(ls)))
+    # idxlocal: a literal inside an index as an early local (`a[i + 3]` -> `a[i + n3]`)
+    if "idxlocal" in only:
+        for k in range(body_start, e):
+            l = lines[k]
+            for mb in re.finditer(r"\[([^\[\]]+)\]", l):
+                for mm in re.finditer(r"(?<![\w.])(%s)\b(?![\w.])" % LIT, mb.group(1)):
+                    if not re.search(r"[A-Za-z_]", mb.group(1)):
+                        continue                        # a constant index alone: an address, not a register
+                    n = fresh("rs_i")
+                    p0 = mb.start(1) + mm.start(1)
+                    ls = list(lines)
+                    ls[k] = l[:p0] + n + l[p0 + len(mm.group(1)):]
+                    out.append(("idxlocal %s at line %d" % (mm.group(1), k - b),
+                                join(add_decl(ls, "s32 %s = %s;" % (n, mm.group(1))))))
+    # copyback: a parameter used through a copy up to one of its later uses, then copied back
+    # (`t = p; ... p = t;`: retail's move v1,a1 ... move a1,v1)
+    if "copyback" in only:
+        for t, s, n in ps:
+            us = [u for u in word_uses(lines, n, body_start, e) if not assigns_to(lines[u], n)]
+            for u in us[1:6]:
+                if not (is_stmt(lines[u]) or re.match(r"\s*(if|switch|return|while)\b", lines[u])):
+                    continue
+                cb = fresh("rs_cb")
+                ls = list(lines)
+                for q in range(body_start, u):
+                    ls[q] = sub_name(ls[q], n, cb)
+                ls.insert(u, "%s%s = %s;" % (indent(lines[u]), n, cb))
+                out.append(("copyback %s before line %d" % (n, u - b),
+                            join(add_decl(ls, "%s %s%s = %s;" % (t, s, cb, n)))))
+    # retshape: return structure: a `return X;` as a goto to the function's final `return X;`, identical
+    # returns sharing one label (at each of them in turn), and `if (c) { ...; return X; } REST; return X;` as
+    # an if / else falling through to the final return
+    if "retshape" in only:
+        rets = [(k, m.group(1).strip()) for k in range(body_start, e)
+                for m in [re.search(r"\breturn\b\s*([^;]*);", lines[k])] if m]
+        last = max((k for k in range(body_start, e) if lines[k].strip()), default=None)
+        lastret = next(((k, x) for k, x in rets if k == last), None)
+        lab = fresh("rs_ret")
+        if lastret:
+            for k, x in rets:
+                if k != lastret[0] and x == lastret[1]:
+                    ls = list(lines)
+                    ls[k] = re.sub(r"\breturn\b\s*[^;]*;", "goto %s;" % lab, ls[k], count=1)
+                    ls[lastret[0]] = "%s:\n%s" % (lab, ls[lastret[0]])
+                    out.append(("retshape return %s at line %d -> goto the final return" % (x or "-", k - b),
+                                join(ls)))
+        byv = {}
+        for k, x in rets:
+            byv.setdefault(x, []).append(k)
+        for x, ks in byv.items():
+            if len(ks) < 2:
+                continue
+            for home in ks:
+                ls = list(lines)
+                for k in ks:
+                    if k != home:
+                        ls[k] = re.sub(r"\breturn\b\s*[^;]*;", "goto %s;" % lab, ls[k], count=1)
+                ls[home] = "%s:\n%s" % (lab, ls[home])
+                out.append(("retshape returns %s share the one at line %d" % (x or "-", home - b), join(ls)))
+        if lastret:
+            bi = indent(lines[lastret[0]])
+            for k in range(body_start, lastret[0]):
+                if indent(lines[k]) != bi or not re.match(r"^\s*if\s*\(.*\)\s*\{\s*$", lines[k]):
+                    continue
+                arms = if_arms(lines, k, e)
+                if not arms or arms[1][0] is not None:
+                    continue
+                (t0, t1), _, close = arms
+                lastin = max((j for j in range(t0, t1) if lines[j].strip()), default=None)
+                if lastin is None or not re.match(r"^\s*return\b\s*%s\s*;\s*$" % re.escape(lastret[1]), lines[lastin]):
+                    continue
+                rest = lines[close + 1:lastret[0]]
+                if not any(x.strip() for x in rest) or any(re.match(r"^\s*\w+:\s*$", x) for x in rest):
+                    continue
+                ls = lines[:lastin] + lines[lastin + 1:close] + [bi + "} else {"] + \
+                    ["    " + x if x.strip() else x for x in rest] + [bi + "}"] + lines[lastret[0]:]
+                out.append(("retshape if at line %d falls through to the final return" % (k - b), join(ls)))
+    # intoarms: the statement after an if / else copied into the end of each arm (undoes gcc's cross-jump
+    # of the shared tail; no else: an else arm with it alone)
+    if "intoarms" in only:
+        for k in range(body_start, e):
+            if not re.match(r"^\s*if\s*\(.*\)\s*\{\s*$", lines[k]):
+                continue
+            arms = if_arms(lines, k, e)
+            if not arms:
+                continue
+            (t0, t1), (e0, e1), close = arms
+            nx = close + 1
+            while nx < e and not lines[nx].strip():
+                nx += 1
+            if nx >= e or not is_stmt(lines[nx]) or indent(lines[nx]) != indent(lines[k]):
+                continue
+            st = lines[nx].strip()
+            ai = indent(lines[k]) + "    "
+            ls = list(lines)
+            del ls[nx]
+            if e0 is None:
+                ls[close:close + 1] = [ai + st, indent(lines[k]) + "} else {", ai + st, indent(lines[k]) + "}"]
+            else:
+                ls[close:close] = [ai + st]
+                ls[t1:t1] = [ai + st]
+            out.append(("intoarms line %d into both arms of the if at line %d" % (nx - b, k - b), join(ls)))
     return out
 
 
@@ -1142,6 +1629,9 @@ NARROWING = False
 SIZES = {"u8": 1, "s8": 1, "char": 1, "s16": 2, "u16": 2, "short": 2, "s32": 4, "u32": 4, "int": 4, "long": 4}
 # first in every round: the cheap rewrites that often decide a register; then every kind in turn up to --max-cands
 FIRST = ("wrap", "volatile")
+# kinds that read like a hack in the C (a dead variable, a volatile, a constant in a register): after the clean ones
+# in the --max-cands budget, and a clean rewrite wins a tie
+HACKS = {"const", "volatile", "vstore", "barrier", "varshift", "twoset", "idxlocal", "copyback"}
 
 
 def kind_of(desc):
@@ -1158,7 +1648,8 @@ def fair(cands, limit):
     by = collections.OrderedDict()
     for c in cands:
         by.setdefault(kind_of(c[0]), []).append(c)
-    order = [k for k in FIRST if k in by] + [k for k in by if k not in FIRST]
+    order = [k for k in FIRST if k in by] + [k for k in by if k not in FIRST and k not in HACKS] + \
+        [k for k in by if k not in FIRST and k in HACKS]
     out, i = [], 0
     while len(out) < limit:
         added = False
@@ -1185,7 +1676,8 @@ def main():
     ap.add_argument("--out")
     ap.add_argument("--only", default="decl,split,reuse,fork,copy,keep,wrap,temp,load,const,member,volatile,goto,"
                                       "ternary,pathsplit,callres,abs,callcopy,barrier,swapif,perbranch,ptrlocal,"
-                                      "emptycase,caseinc,vstore,perarm")
+                                      "emptycase,caseinc,vstore,perarm,cmpflip,varshift,chain,latestore,paramcopy,"
+                                      "foldeduse,oneexpr,blockscope,twoset,accum,idxlocal,copyback,retshape,intoarms")
     ap.add_argument("--hacks", action="store_true", help="also the `const` kind (constants pulled into early "
                     "locals): a match that needs it is usually a sign of another source shape; off by default")
     ap.add_argument("--skip", default="", help="kinds left out of --only")
@@ -1237,6 +1729,7 @@ def main():
             with cf.ThreadPoolExecutor(a.j) as ex:
                 scores = list(ex.map(lambda kv: sc(kv[1][1], kv[0] + 1), enumerate(cands)))
             ranked = sorted((s, i) for i, s in enumerate(scores) if s is not None)
+            ranked.sort(key=lambda si: (si[0], kind_of(cands[si[1]][0]) in HACKS))
             print("round %d: %d rewrites, best %s" % (rnd + 1, len(cands),
                   "%d (%s)" % (ranked[0][0], cands[ranked[0][1]][0]) if ranked else "-"), flush=True)
             pick = None
@@ -1249,6 +1742,7 @@ def main():
                 with cf.ThreadPoolExecutor(a.j) as ex:
                     s2 = list(ex.map(lambda kv: sc(kv[1][2], kv[0] + 1), enumerate(jobs)))
                 r2 = sorted((s, i) for i, s in enumerate(s2) if s is not None)
+                r2.sort(key=lambda si: (si[0], (kind_of(jobs[si[1]][0]) in HACKS) + (kind_of(jobs[si[1]][1]) in HACKS)))
                 print("round %d: %d pairs, best %s" % (rnd + 1, len(jobs), r2[0][0] if r2 else "-"), flush=True)
                 if r2 and r2[0][0] < best:
                     d1, d2, t2 = jobs[r2[0][1]]

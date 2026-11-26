@@ -172,7 +172,13 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   `callcopy`, `barrier` (`__asm__ volatile("");`), `swapif`, `perbranch`, `ptrlocal`; ccheck prints `score N`
   (regswap's aligned count) for another length and warns on calls with another argument count than the target's
   definition. `python3 -I tools/loophoist.py FILE.c F --prog P`: gcc's loop movables (cc1 -dL; moved or not, the
-  value) and the constants loaded before vs inside each loop, ours and retail. `tools/statemachine.py PROG NAME
+  value) and the constants loaded before vs inside each loop, ours and retail; since 2026-11-26 per movable
+  `[s*l, need T>=X, edge +/-N insns]` (gcc's threshold x savings x lifetime >= insn count; `--threshold T`, default
+  26 / 52 in loops with / without a call) and the threshold bounds the file implies.
+  regswap kinds 2026-11-26: `cmpflip`, `varshift`, `chain`, `latestore`, `paramcopy`, `foldeduse`, `oneexpr`,
+  `blockscope`, `twoset`, `accum`, `idxlocal`, `copyback`, `retshape` (return structure: goto the final return,
+  shared return labels, fall through), `intoarms` (undo a cross-jump); hack kinds ranked after clean ones
+  (AGENTS.md "Tool pitfalls"). `tools/statemachine.py PROG NAME
   --cases`: the retail asm per case block (exits, calls) in build/statemachine/<prog>/<name>.cases.txt.
   `python3 -I tools/prio.py FILE.c [F] --prog P [--sched]`: gcc 2.8's pseudo priorities and hard registers from the
   cc1 dumps next to retail's register for each (what priority a pseudo would need); `--sched` the scheduler

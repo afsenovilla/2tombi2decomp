@@ -3,6 +3,20 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-26: tools after round 12
+
+One tools agent, about 90 minutes, the round-12 "Tool work left" list in its order.
+
+- **regswap.py**: 14 new kinds (AGENTS.md "Tool pitfalls", regswap kinds since 2026-11-26): `cmpflip`, `varshift`,
+  `chain`, `latestore`, `paramcopy`, `foldeduse`, `oneexpr`, `blockscope`, `twoset`, `accum`, `idxlocal`,
+  `copyback`, `retshape` (the return-structure variants: goto to the final return, shared return labels, fall
+  through to the final return), `intoarms` (the statement after an if / else into both arms: a cross-jump
+  undone). The hack kinds (`const`, `volatile`, `vstore`, `barrier`, `varshift`, `twoset`, `idxlocal`,
+  `copyback`) come after the clean ones in the `--max-cands` budget and lose ties.
+- **loophoist.py**: the move_movables() arithmetic per movable and the threshold bounds of the file.
+- Batch over the round-11 / 12 near misses (41 within 23 words; scratch census and driver in the session
+  scratchpad t12/: census.py scores every scratch, batch.sh runs regswap over the best of each):
+
 ## 2026-11-25: twelfth round
 
 All code in C: **4847 / 7011 functions (69.1 %, 47.1 % of the bytes)**, from 4778 after the tools pass (45.5 %).

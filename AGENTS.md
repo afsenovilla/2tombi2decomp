@@ -531,6 +531,23 @@ struct-member form of a cast access, regswap `member` toggles every one)
   (the use after an if / else put into both arms with each arm's value, the local gone); `ptrlocal` (globals
   through pointer locals in a block, for runs of 1-4 statements or a whole case). Multi-declarator lines
   (`s32 a, b;`) count as locals now (they used to stop the declaration scan, so most kinds saw no locals).
+- regswap kinds since 2026-11-26 (the round-12 recipes; clean kinds are tried before the hack kinds `const`,
+  `volatile`, `vstore`, `barrier`, `varshift`, `twoset`, `idxlocal`, `copyback`, and win a tie): `cmpflip` (one
+  comparison of a condition with its operands swapped, `x < K` <-> `x <= K - 1`), `varshift` (`x >> K` ->
+  `n = K; x >> n`), `chain` (two adjacent stores of one value as `A = B = K;`), `latestore` (`x++` of a memory
+  lvalue as `t = x + 1;` one to five statements above and `x = t;` in its place), `paramcopy` (a pointer
+  parameter received as `void *` and copied into the typed local, a narrow one as s32), `foldeduse` (in `if (V ==
+  K) {`, a K written as V, or `E + V - K`), `oneexpr` (`v = E;` merged into its one next use), `blockscope` (a
+  local declared in the innermost block holding its uses, or one local per block when the uses sit in disjoint
+  blocks), `twoset` (a literal in a loop through a variable set at the top and just before the use: not
+  loop-movable), `accum` (`v += K` in a counted loop -> `v + i * K`), `idxlocal` (a literal inside an index as a
+  local), `copyback` (a parameter used through a copy up to a later use, then copied back), `retshape` (the
+  return structure: a `return X;` as a goto to the final `return X;`, identical returns sharing one label at each
+  of them in turn, `if (c) { ...; return X; } REST; return X;` as an if / else falling through), `intoarms` (the
+  statement after an if / else copied into both arms: undoes a cross-jump). Over the 41 round-11 / 12 near misses
+  (2026-11-26) they closed none alone; `intoarms` took a01 func_8010EFBC from 8 to 4 and cmpflip + varshift a02
+  func_8010FFF4 from 15 to 12. tools/loophoist.py prints the move_movables() arithmetic per movable (`s*l`,
+  `need T>=X`, `edge +/-N insns`, the lifetime it would need) and the threshold bounds the file's fates imply.
 - install_c: a prototype the target has for a function used as a value (`void f(void);`) is rewritten to the
   installed definition's header (conflicting types otherwise; a02 func_8010CFAC); a prototype from a definition
   further down is K&R when some call passes fewer arguments.
