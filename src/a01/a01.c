@@ -8233,7 +8233,73 @@ void f_UpdateMythicalTowerEntranceTransition(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80124CF8);
+void func_80124CF8(u8 *a)
+{
+    u8 *g = D_800E7E80;
+    s32 done;
+    u16 t;
+
+    switch (a[5]) {
+    case 0:
+        if (D_800BF871 == 6) {
+            a[0] = 2;
+            a[5] = 1;
+            H(a, 0x50) = 0x400;
+            func_80072EFC(a);
+        } else {
+            a[5] = 2;
+        }
+        break;
+    case 1:
+        if (func_80072F14(a) != 0) {
+            a[0] = 1;
+            a[5]++;
+            D_800BF871 = 1;
+        }
+        break;
+    case 2:
+        if (a[0x29] != 0 && g[0x29] != 0 && g[0x17B] == 0) {
+            a[5] = 3;
+            D_1F800137 = 2;
+            a[0xD] |= 4;
+            P(a, 0xC0)[0x3F] = 0xD0;
+        }
+        break;
+    case 3:
+        done = 0;
+        switch (a[0x46]) {
+        case 0:
+            H(a, 0x50) -= 0x10;
+            if (H(a, 0x50) < -0x300) {
+                H(a, 0x50) = -0x300;
+                done = 1;
+            }
+            break;
+        case 1:
+            H(a, 0x50) += 0x10;
+            if (H(a, 0x50) > 0x300) {
+                H(a, 0x50) = 0x300;
+                done = 1;
+            }
+            break;
+        }
+        t = D_1F80017C;
+        H(a, 0x56) = U(a, 0x5A) + U(a, 0x50);
+        if (!(t & 0xF)) {
+            func_80074590(0xD, -0x1D, 0);
+        }
+        if (done) {
+            u8 *s;
+            a[5]++;
+            D_1F800236 = 1;
+            s = D_800BF808_1760;
+            s[0x31] = 1;
+            s[7] = 2;
+            H(s, 0x32) = 0x1000;
+        }
+        break;
+    }
+}
 
 void func_80124F14(u8 *a) {
     u8 one;
