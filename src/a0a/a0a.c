@@ -524,7 +524,51 @@ void func_8010AA94(u8 *a, u8 *b) {
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010AC84);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_8010B0FC);
+extern u16 D_1F800172;
+
+s32 func_8010B0FC(u8 *a, u8 *b)
+{
+    u8 *e = *(u8 **)(a + 0x10);
+
+    b[0x29] = 2;
+    func_800635D4(a, 1);
+    func_80076D68(a);
+    if (func_8005444C(a) & 1) {
+        H(a, 0x4A) = 0;
+        H(a, 0x50) = 0;
+        a[0x148] = 0;
+        b[0x29] = 0;
+        a[0x164] = 0;
+        *(s32 *)(a + 0x158) = 0;
+        a[5] = 0;
+        a[6] = 0;
+        func_80054D14(a, 2, 3);
+        return 0;
+    }
+    if (a[0x169] == 0 && (D_800ECF54 & (D_1F800172 | 0x50))) {
+        s32 s = (func_80083F50(H(a, 0x56)) * H(a, 0x152)) >> 12;
+        s32 c = func_80083E80(H(a, 0x56)) * H(a, 0x152);
+        H(a, 0x2E) = U(e, 0x2C) - s;
+        H(a, 0x36) = U(e, 0x34) + (c >> 12);
+        H(a, 0x32) = U(a, 0x64) + (U(e, 0x30) + U(a, 0x156));
+        return D_800ECF54;
+    } else {
+        s32 s = (func_80083F50(H(a, 0x56)) * H(a, 0x152)) >> 12;
+        s32 c = func_80083E80(H(a, 0x56)) * H(a, 0x152);
+        s16 r;
+        s32 s2, c2;
+        H(a, 0x2E) = U(e, 0x2C) - s;
+        H(a, 0x36) = U(e, 0x34) + (c >> 12);
+        r = (func_80083E80(H(a, 0x58)) * H(a, 0x64)) >> 12;
+        s2 = (func_80083F50(H(a, 0x56)) * r) >> 12;
+        c2 = func_80083E80(H(a, 0x56)) * r;
+        H(a, 0x2E) = U(a, 0x2E) - s2;
+        H(a, 0x36) = U(a, 0x36) + (c2 >> 12);
+        H(a, 0x32) = U(e, 0x30) + U(a, 0x156);
+        H(a, 0x32) = U(a, 0x32) + ((func_80083F50(H(a, 0x58)) * H(a, 0x64)) >> 12);
+    }
+    return 0;
+}
 
 extern s8 D_1F80027E[];
 extern u8 D_800BFA1A;
