@@ -864,7 +864,58 @@ void func_8010DA78(u8 *a)
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010DBE4);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010E1F4);
+#define H16(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U16_5dc5(p, o) (*(u16 *)((u8 *)(p) + (o)))
+#define W32(p, o) (*(s32 *)((u8 *)(p) + (o)))
+
+void func_8010E1F4(u8 *a) {
+    switch (a[6]) {
+    case 0:
+        func_80054D14(a, 0x63, 6);
+        H16(a, 0x44) = -0x1400;
+        a[6] = 2;
+        H16(a, 0x4A) = -0x2E00;
+        H16(a, 0x7C) = 0x800;
+        a[0x145] = 1;
+        break;
+    case 1:
+        func_80054D14(a, 0x63, 6);
+        H16(a, 0x44) = 0x1400;
+        H16(a, 0x4A) = -0x2E00;
+        H16(a, 0x7C) = 0;
+        a[0x145] = 1;
+        a[6]++;
+        break;
+    case 2:
+        func_80076D68(a);
+        H16(a, 0x56) = func_800776F8(H16(a, 0x7C), H16(a, 0x56), 0x80);
+        U16_5dc5(a, 0x4A) += 0x360;
+        if (H16(a, 0x4A) > 0) {
+            a[0x145] = 2;
+            a[6]++;
+        }
+        W32(a, 0x2C) += H16(a, 0x44) << 8;
+        W32(a, 0x30) += H16(a, 0x4A) << 8;
+        break;
+    case 3:
+        func_80076D68(a);
+        H16(a, 0x56) = func_800776F8(H16(a, 0x7C), H16(a, 0x56), 0x80);
+        U16_5dc5(a, 0x4A) += 0x360;
+        if (H16(a, 0x4A) > 0x2E00) {
+            H16(a, 0x4A) = 0x2E00;
+        }
+        W32(a, 0x2C) += H16(a, 0x44) << 8;
+        W32(a, 0x30) += H16(a, 0x4A) << 8;
+        if (func_8010B634(a) != 0) {
+            func_80074590(3, 0, 0);
+            a[0x145] = 0;
+            H16(a, 0x44) = 0;
+            a[5] = 0;
+            a[6] = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010E3D8);
 
