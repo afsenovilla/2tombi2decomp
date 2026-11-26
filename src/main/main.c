@@ -13532,7 +13532,63 @@ void f_StartControllerVibration(u8 port, u8 lo, u8 hi, u8 dur)
     v[6] = 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005229C);
+extern u8 D_800A3F98[];
+
+void func_8005229C(void)
+{
+    u8 *s = D_800ECF48_7ec2;
+
+    if (D_1F80019A == 1) {
+        s[6] = 0;
+    }
+    if (D_800FB167 == 0 && *(u16 *)(s + 2) != 0) {
+        switch (s[6]) {
+        case 0:
+            if (*(u16 *)(s + 4) != 0) {
+                s[4] = 0;
+                s[5] = 0;
+                PadSetAct(0, s + 4, 2);
+            }
+            if (PadGetState(0) == 6) {
+                PadSetActAlign(0, D_800A3F98);
+            }
+            break;
+        case 1:
+            if (PadGetState(0) == 6) {
+                PadSetActAlign(0, D_800A3F98);
+                s[6] = 2;
+            }
+            break;
+        case 2:
+            if (s[7] != 0) {
+                s[7]--;
+            } else {
+                s[4] = 0;
+                s[5] = 0;
+                PadSetAct(0, s + 4, 2);
+                s[7] = 0;
+                s[6] = 3;
+            }
+            break;
+        case 3:
+            if (PadGetState(0) == 6) {
+                PadSetActAlign(0, D_800A3F98);
+                s[6] = 0;
+            }
+            break;
+        }
+    } else if (D_800FB167 == 1 && *(u16 *)(s + 2) != 0) {
+        if (*(u16 *)(s + 4) != 0) {
+            s[4] = 0;
+            s[5] = 0;
+            PadSetAct(0, s + 4, 2);
+        }
+        if (PadGetState(0) == 6) {
+            PadSetActAlign(0, D_800A3F98);
+            s[6] = 0;
+        }
+    }
+}
 
 extern u8 D_800ECF48_7ec2[];
 extern u8 D_800A3FA0[];
