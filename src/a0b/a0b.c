@@ -1947,7 +1947,86 @@ s32 func_8010F43C(u8 *a)
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_8010F544);
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", f_UpdateLastEvilPigProjectileAttack);
+extern u8 D_1F80025A;
+
+void f_UpdateLastEvilPigProjectileAttack(u8 *a)
+{
+    s16 t;
+    s16 k;
+
+    if (D_800BF809 != 0) {
+        return;
+    }
+    switch (a[6]) {
+    case 0:
+        if (func_80077768((s16)func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f), H(a, 0x60), 0) != 0) {
+            a[0xBE] = 1;
+        } else {
+            a[0xBE] = 0;
+        }
+        if (D_1F80025A != 0) {
+            H(a, 0x64) = 3;
+            a[5] = 2;
+            a[6] = 0;
+            a[7] = 0;
+            break;
+        }
+        a[6]++;
+        break;
+    case 1:
+        if (func_8010C948(a) != 0) {
+            goto hit;
+        }
+        if (a[0xBE] == 0) {
+            k = U(a, 0x60);
+        } else {
+            k = U(a, 0x60) + 0x800;
+        }
+        k &= 0xFFF;
+        t = func_800776F8(k, H(a, 0x56), 0x100);
+        H(a, 0x56) = t;
+        if (t == k) {
+            func_80041768(a, 0xD, 5);
+            a[6]++;
+        }
+        break;
+    case 2:
+        if (a[0x79] == 1) {
+            a[6]++;
+            func_80074590(0x8C, 0, 0);
+            f_SpawnLastEvilPigBattleProjectile(a);
+            H(a, 0x40) = 0x28;
+        }
+        break;
+    case 3:
+        if (func_8010C948(a) != 0) {
+            goto hit;
+        }
+        if (--H(a, 0x40) == 0) {
+            a[6]++;
+            func_80041768(a, 0, 6);
+            H(a, 0x40) = 0x1E;
+        }
+        break;
+    case 4:
+        if (func_8010C948(a) != 0) {
+        hit:
+            a[0] = 2;
+            func_80041768(a, 3, 4);
+            func_8010CA34(a);
+            a[5] = 1;
+            a[6] = 1;
+            a[7] = 0;
+            break;
+        }
+        if (--H(a, 0x40) == 0) {
+            a[5] = 0;
+            a[6] = 0;
+            H(a, 0x64) = 0;
+        }
+        break;
+    }
+}
 
 extern u8 D_800BF808_1760[];
 extern u8 D_800ECF58_742e[];
@@ -4436,7 +4515,6 @@ void func_80117988(void) {
 }
 
 extern s16 D_1F8001A6;
-extern u8 D_1F80025A;
 /* func_801180E8, inlined */
 static inline u8 inl_801180E8(u8 *a)
 {

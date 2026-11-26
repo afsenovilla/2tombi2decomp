@@ -1921,9 +1921,85 @@ INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_8010E5EC);
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", f_UpdateEarthEvilPigSplitActor);
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", f_UpdateEarthEvilPigDetachedPartsAttack);
-
 extern u8 D_1F80025A;
+
+void f_UpdateEarthEvilPigDetachedPartsAttack(u8 *a)
+{
+    s16 t;
+    s16 k;
+
+    if (D_800BF809 != 0) {
+        return;
+    }
+    switch (a[6]) {
+    case 0:
+        if (*(s32 *)(*(u8 **)(a + 0xE0) + 0x40) == 0) {
+            goto hit;
+        }
+        if (func_80077768((s16)func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f), H(a, 0x60), 0) != 0) {
+            a[0xBE] = 1;
+        } else {
+            a[0xBE] = 0;
+        }
+        a[6]++;
+    case 1:
+        if (func_8010B874(a) != 0) {
+            goto hit;
+        }
+        if (a[0xBE] == 0) {
+            k = U(a, 0x60);
+        } else {
+            k = U(a, 0x60) + 0x800;
+        }
+        k &= 0xFFF;
+        t = func_800776F8(k, H(a, 0x56), 0x100);
+        H(a, 0x56) = t;
+        if (t == k) {
+            func_80041768(a, 0xC, 5);
+            a[6]++;
+        }
+        break;
+    case 2:
+    {
+        u16 w = U(*(u8 **)(a + 0x38), 2);
+        if (w == 0x1E) {
+            a[6]++;
+            func_80074590(0x86, 0, 0);
+            H(a, 0x40) = w;
+            f_SpawnEarthEvilPigDetachedPartsActor(a);
+        }
+        break;
+    }
+    case 3:
+        if (func_8010B874(a) != 0) {
+            goto hit;
+        }
+        if (--H(a, 0x40) == 0) {
+            a[6]++;
+            func_80041768(a, 0, 6);
+            H(a, 0x40) = 0x3C;
+        }
+        break;
+    case 4:
+        if (func_8010B874(a) != 0) {
+        hit:
+            a[0] = 2;
+            func_80041768(a, 3, 4);
+            func_8010B960(a);
+            a[5] = 1;
+            a[6] = 1;
+            a[7] = 0;
+            break;
+        }
+        if (--H(a, 0x40) == 0) {
+            a[5] = 0;
+            a[6] = 0;
+            H(a, 0x64) = 0;
+        }
+        break;
+    }
+}
+
 extern M2C_UNK f_UpdateEarthEvilPigSplitActor;
 void func_8010FA2C(u8 *a)
 {
