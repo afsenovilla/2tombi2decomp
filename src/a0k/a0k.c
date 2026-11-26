@@ -3240,7 +3240,59 @@ void func_80113488(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_801136F0);
+extern u8 D_8011CC5C[];
+static inline s32 inl_talk(u8 *a)
+{
+    u8 *g;
+
+    switch (a[6]) {
+    case 0:
+        a[6] = 1;
+        func_80040CDC(a, D_8001B4DC, D_8011CC5C);
+        g = (u8 *)&D_800BF870;
+        if (g[0x8C] == 0xFF) {
+            a[0x7A] = 0xC;
+        } else if (g[0x8C] != 0) {
+            a[0x7A] = 8;
+        } else if (g[0x8B] != 0) {
+            a[0x7A] = 6;
+        } else {
+            a[0x7A] = 1;
+        }
+        a[0x70] = 1;
+        return 0;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[6] = 0;
+            return 1;
+        }
+        return 0;
+    }
+    return 0;
+}
+
+void func_801136F0(u8 *a)
+{
+    switch (a[5]) {
+    case 0:
+        a[5] = 1;
+        func_80112350(a);
+    case 1:
+        if (a[0x2B] == 3) {
+            func_80042354(1, 3);
+            a[6] = 0;
+            a[5]++;
+        }
+        break;
+    case 2:
+        if (inl_talk(a)) {
+            a[5] = 1;
+            func_80042310();
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_80113854);
 
