@@ -635,7 +635,47 @@ INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010AB24);
 
 INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010AF4C);
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010B09C);
+extern u16 D_1F80019E_7f82;
+extern s16 D_1F8001A4_f18c;
+
+s32 func_8010B09C(u8 *a, u8 *b) {
+    s16 v[8];
+
+    switch ((U(b, 0x6A) >> 8) & 0xF) {
+    case 1:
+        v[1] = U(a, 0x2E);
+        v[3] = D_1F80019E_7f82;
+        v[5] = U(a, 0x36);
+        if (b[0x145] != 0) {
+            func_800312D4(0xF06, v, -0xA);
+            v[3] += 0x50;
+            func_800312D4(0xF0C, v, -0xA);
+            func_80074590(7, 0, 0);
+            return 2;
+        }
+        func_800312D4(8, v, -0x50);
+        return 1;
+    case 2:
+        if (func_800489E4(a, H(a, 0x32)) == 0) {
+            return 0;
+        }
+        if (H(b, 0x32) + H(b, 0x84) - D_1F8001A4_f18c < 0x15) {
+            return 4;
+        }
+        v[1] = U(a, 0x2E);
+        v[3] = D_1F8001A4_f18c;
+        v[5] = U(a, 0x36);
+        func_800312D4(0xF06, v, -0xA);
+        if ((s16)abs(H(b, 0x44)) > 0x1000) {
+            v[1] = U(a, 0x2E);
+            v[3] = D_1F8001A4_f18c;
+            v[5] = U(a, 0x36);
+            func_800312D4(8, v, -0x50);
+        }
+        return 3;
+    }
+    return 0;
+}
 
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern u8 D_80118034[];
@@ -1354,7 +1394,6 @@ extern ArenaPt D_8011AB28[];
 extern s16 D_1F800160_71b4;
 extern s16 D_1F800164_d75f;
 extern s16 D_1F800162;
-extern s16 D_1F8001A4_f18c;
 extern u8 D_1F80025B;
 void func_8010CD54(u8 *a)
 {
