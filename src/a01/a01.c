@@ -7883,11 +7883,101 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012464C);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801247C8);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdateMythicalTowerEntranceTransition);
+#define HU(p, o) (*(u16 *)((u8 *)(p) + (o)))
+extern u8 D_800BF916;
+extern s8 D_800BF81F;
+extern u8 D_1F800236;
+static inline void inl_gate(u8 *a, u8 *g) {
+    s32 done = 0;
+    u16 f;
+
+    switch (a[0x46]) {
+    case 0:
+        if ((H(a, 0x50) -= 0x10) < -0x300) {
+            H(a, 0x50) = -0x300;
+            done = 1;
+        }
+        break;
+    case 1:
+        if ((H(a, 0x50) += 0x10) > 0x300) {
+            H(a, 0x50) = 0x300;
+            done = 1;
+        }
+        break;
+    }
+    f = D_1F80017C;
+    H(a, 0x56) = H(a, 0x5A) + H(a, 0x50);
+    if ((f & 0xF) == 0) {
+        func_80074590(0xD, -0x1D, 0);
+    }
+    if (done) {
+        a[5] = 2;
+        a[0] = 2;
+        H(a, 0x40) = 0xF;
+        g[4] = 4;
+        g[5] = 0x24;
+        g[6] = 0;
+        D_800BF81F = 0;
+    }
+}
+static inline s32 inl_wait(u8 *a, u8 *g) {
+    switch (a[6]) {
+    case 0:
+        a[6] = 1;
+        func_8004ED94(0x42, 0x41);
+        func_80074590(0x19, 0, 0xF);
+        D_1F800137 = 0;
+        break;
+    case 1:
+        if (a[0x29] != 0) {
+            return 0;
+        }
+        if ((g[0x147] & 1) != a[0x5F]) {
+            return 0;
+        }
+        a[6] = 0;
+        return 1;
+    default:
+        return 0;
+    }
+    return 0;
+}
+
+void f_UpdateMythicalTowerEntranceTransition(u8 *a) {
+    u8 *g = D_800E7E80;
+
+    switch (a[5]) {
+    case 0:
+        if (D_800BF916 >= 3) {
+            inl_gate(a, g);
+        } else if (a[0x29] != 0 && g[0x29] != 0 && g[0x17B] == 0) {
+            a[5] = 1;
+            D_1F800137 = 2;
+        }
+        break;
+    case 1:
+        if (inl_wait(a, g)) {
+            a[5] = 0;
+            break;
+        }
+        if (D_800BF916 >= 3) {
+            inl_gate(a, g);
+        }
+        break;
+    case 2:
+        do {
+            a[5] = 3;
+        } while (0);
+        D_1F800236 = 1;
+        D_800BF808_1760[7] = 2;
+        D_800BF808_1760[0x31] = 1;
+        H(D_800BF808_1760, 0x32) = 0x1000;
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80124CF8);
 
-extern u8 D_1F800236;
 void func_80124F14(u8 *a) {
     u8 one;
     switch (a[5]) {
@@ -8006,11 +8096,9 @@ extern u8 D_801374C4[];
 extern u8 D_801374D4[];
 extern DoorPt D_801374E4[];
 extern u8 D_800BF9FC;
-extern u8 D_800BF916;
 extern u8 D_800BFA3E;
 extern u8 D_800BF9DB;
 extern u8 D_800E7FF4;
-extern s8 D_800BF81F;
 void func_8012B324();
 void f_UpdatePipeAreaEntranceAndDoorActor(u8 *a)
 {
