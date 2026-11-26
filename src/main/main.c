@@ -11462,7 +11462,67 @@ void func_8004D8B0(void)
     } while (i >= 0);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8004D8D8);
+void func_80040558();
+void func_8004AAC4();
+
+void func_8004D8D8(s32 k, s16 v)
+{
+    u8 *e;
+    u8 *a;
+    s32 flag;
+    s32 r;
+
+    if (D_800BF873 != 0) {
+        return;
+    }
+    for (e = D_800A3F00[k]; e[0] != 0xFF; e += 0x10) {
+        flag = e[2] & 0x80;
+        if (!flag) {
+            r = f_TestWorldOrOtherPickupCollectedBit(*(s16 *)(e + 0xA), 0);
+        } else {
+            r = ((s32 (*)())f_TestAppleCollectedBit)(*(s16 *)(e + 0xA), 0);
+        }
+        if (r != 0) {
+            continue;
+        }
+        a = f_AllocateActor(0, e[0], e[1], e[2] & 0x7F);
+        if (a == NULL) {
+            continue;
+        }
+        if (e[1] == 2) {
+            *(void **)(a + 0x1C) = func_80040558;
+            a[2] = 8;
+        } else {
+            *(void **)(a + 0x1C) = func_8004AAC4;
+        }
+        *(s32 *)(a + 0x2C) = *(s16 *)(e + 4) << 16;
+        *(s32 *)(a + 0x30) = *(s16 *)(e + 6) << 16;
+        *(s32 *)(a + 0x34) = *(s16 *)(e + 8) << 16;
+        a[0x2A] = e[0xC];
+        a[3] = e[3];
+        *(s16 *)(a + 0x54) = 0;
+        *(s16 *)(a + 0x56) = 0;
+        *(s16 *)(a + 0x58) = 0;
+        if (a[0xC] == 2 && a[2] == 8) {
+            *(u16 *)(a + 0xE) = *(u16 *)(e + 0xA);
+            a[0x5E] = e[0xD];
+            *(u16 *)(a + 0x60) = *(u16 *)(e + 0xE) & 0xFFF;
+            *(s16 *)(a + 0x62) = *(s16 *)(e + 0xE) >> 12;
+            a[3] &= 0x7F;
+            *(s16 *)(a + 0x68) = e[3] >> 7;
+            *(s16 *)(a + 0x6A) = e[2];
+        } else {
+            *(s16 *)(a + 0x60) = 1;
+            *(u16 *)(a + 0x62) = *(u16 *)(e + 0xA);
+            a[0x5E] = e[0xD];
+        }
+        *(s16 *)(a + 0x64) = 1;
+        if (flag) {
+            *(s16 *)(a + 0x64) = 5;
+        }
+        *(s16 *)(a + 0x66) = v;
+    }
+}
 
 typedef struct { s16 vx, vy, vz, pad; } SVec_9DD0;
 extern SVec_9DD0 D_1F8000C0_18ff;
