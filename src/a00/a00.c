@@ -12926,7 +12926,402 @@ s32 f_UpdateTownCreatureJumpingAttack(u8 *a) {
     return res;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureBehaviorState);
+/* f_UpdateTownCreatureTurnaround, inlined */
+static inline s32 inl_turn(u8 *a) {
+    s32 r = 0;
+    u8 *q = a + 0x60;
+
+    switch (a[7]) {
+    case 0:
+        M2C_FIELD(q, u16 *, 2) &= ~4;
+        func_801402B8(a, 0x1A, 8);
+        M2C_FIELD(a, s16 *, 0x4E) = 0;
+        a[7] = 1;
+    case 1:
+        if (M2C_FIELD(M2C_FIELD(a, u8 **, 0x38), u16 *, 4) != 0) {
+            M2C_FIELD(q, u16 *, 2) ^= 1;
+            M2C_FIELD(a, s16 *, 0x56) += 0x800;
+            func_801402B8(a, 7, 0);
+            a[7] = 2;
+        }
+        break;
+    default:
+        if (a[7] >= 0x14) {
+            r = 1;
+        } else {
+            a[7]++;
+        }
+        break;
+    }
+    M2C_FIELD(a, s16 *, 0x32) += 0x10;
+    f_UpdateTownCreatureTerrainContact(a);
+    return r;
+}
+/* func_801461E4, inlined */
+static inline s32 inl_wait(u8 *a, s32 b, u8 c) {
+    u16 *f = (u16 *)(a + 0x60);
+    s32 r = 0;
+
+    if (a[7] == 0) {
+        f[1] &= 0xFFFB;
+        func_801402B8(a, (s16)b, 8);
+        a[7] = c;
+        M2C_FIELD(a, s16 *, 0x4E) = 0;
+    }
+    if (a[7] < 2) {
+        r = 1;
+    } else {
+        a[7]--;
+    }
+    M2C_FIELD(a, s16 *, 0x32) += 0x10;
+    f_UpdateTownCreatureTerrainContact(a);
+    return r;
+}
+
+void f_UpdateTownCreatureBehaviorState(u8 *a) {
+    u8 *q = a + 0x60;
+    s16 r;
+    u16 t;
+
+    switch (a[5]) {
+    case 0:
+        HU(q, 2) &= 0xFFFB;
+        W_d1fb(a, 4) = 0x101;
+    case 1:
+        switch (a[6]) {
+        case 0:
+            H_f12c(a, 6) = 1;
+        case 1:
+            switch ((s16)f_UpdateTownCreatureIdleDecision(a)) {
+            case 1:
+                if ((s8)--q[4] > 0) {
+                    W_d1fb(a, 4) = 0x201;
+                } else {
+                    W_d1fb(a, 4) = 0x301;
+                    q[4] = (func_8009A450() >> 8) & 3;
+                }
+                break;
+            case 2:
+                W_d1fb(a, 4) = 0x501;
+                break;
+            case 3:
+                W_d1fb(a, 4) = 0x401;
+                break;
+            case 4:
+                t = ((s32 (*)())func_801409C0)(a, inl_8014601C(a));
+                if (t == 0) {
+                    W_d1fb(a, 4) = 0x301;
+                } else {
+                    a[5] = t;
+                    a[6] = 0;
+                }
+                break;
+            }
+            break;
+        }
+        break;
+    case 2:
+        switch (a[6]) {
+        case 0:
+            H_f12c(a, 6) = 1;
+        case 1:
+            if ((s16)f_UpdateTownCreatureRandomIdle(a)) {
+                W_d1fb(a, 4) = 0x101;
+            }
+            break;
+        }
+        break;
+    case 5:
+        switch (a[6]) {
+        case 0:
+            H_f12c(a, 6) = 1;
+        case 1:
+            if ((s16)f_UpdateTownCreatureRandomIdle(a)) {
+                H_f12c(a, 6) = 2;
+            }
+            break;
+        case 2:
+            if ((s16)f_UpdateTownCreatureVerticalLaunch(a)) {
+                H_f12c(a, 6) = 3;
+            }
+            break;
+        case 3:
+            if ((s16)f_UpdateTownCreatureLaunchLanding(a)) {
+                W_d1fb(a, 4) = 0x101;
+            }
+            break;
+        }
+        break;
+    case 4:
+        switch (a[6]) {
+        case 0:
+            H_f12c(a, 6) = 1;
+        case 1:
+            if ((s16)f_UpdateTownCreatureRandomIdle(a)) {
+                H_f12c(a, 6) = 2;
+            }
+            break;
+        case 2:
+            if ((s16)inl_turn(a)) {
+                W_d1fb(a, 4) = 0x101;
+            }
+            break;
+        }
+        break;
+    case 3:
+        switch (a[6]) {
+        case 0:
+            H_f12c(a, 6) = 1;
+        case 1:
+            if ((s16)inl_wait(a, 5, 0x2D)) {
+                if (func_8009A450() & 0x8000) {
+                    W_d1fb(a, 4) = 0x101;
+                } else {
+                    H_f12c(a, 6) = 2;
+                }
+            }
+            break;
+        case 2:
+            if ((s16)inl_turn(a)) {
+                W_d1fb(a, 4) = 0x101;
+            }
+            break;
+        }
+        break;
+    case 6:
+        switch (a[6]) {
+        case 0:
+        case 1:
+            f_UpdateTownCreatureFaceTomba(a);
+            break;
+        case 2:
+            if ((s16)func_80141AC4(a, 0x20, 0x500)) {
+                H_f12c(a, 6) = 3;
+            }
+            break;
+        case 3:
+            if ((s16)func_80141AC4(a, 0, 0x1900)) {
+                H_f12c(a, 6) = 4;
+            }
+            if (inl_wall(a)) {
+                W_d1fb(a, 4) = 0xA01;
+            }
+            break;
+        case 4:
+            if ((s16)f_UpdateTownCreatureHopAndBrake(a)) {
+                H_f12c(a, 6) = 5;
+            }
+            if (inl_wall(a)) {
+                W_d1fb(a, 4) = 0xA01;
+            }
+            break;
+        case 5:
+            if ((s16)inl_wait(a, 0xA, 0x5A)) {
+                W_d1fb(a, 4) = 0x101;
+            }
+            break;
+        }
+        break;
+    case 7:
+        switch (a[6]) {
+        case 0:
+        case 1:
+            f_UpdateTownCreatureFaceTomba(a);
+            break;
+        case 2:
+            if ((s16)f_UpdateTownCreatureStraightRun(a)) {
+                H_f12c(a, 6) = 3;
+            }
+            break;
+        case 3:
+            if ((s16)inl_wait(a, 5, 0x2D)) {
+                W_d1fb(a, 4) = 0x101;
+            }
+            break;
+        }
+        break;
+    case 11:
+        switch (a[6]) {
+        case 0:
+        case 1:
+            f_UpdateTownCreatureFaceTomba(a);
+            break;
+        case 2:
+            r = f_UpdateTownCreatureApproachTomba(a, 0x300, 0x1E00);
+            if (r == -1) {
+                W_d1fb(a, 4) = 0xA01;
+            } else if (r != 0) {
+                H_f12c(a, 6) = 3;
+            } else if (inl_wall(a)) {
+                W_d1fb(a, 4) = 0xA01;
+            }
+            break;
+        case 3:
+            r = f_UpdateTownCreatureLeapingCharge(a);
+            if (r == -1) {
+                W_d1fb(a, 4) = 0xA01;
+            } else if (r != 0) {
+                H_f12c(a, 6) = 4;
+            } else if (inl_wall(a)) {
+                W_d1fb(a, 4) = 0xA01;
+            }
+            break;
+        case 4:
+            if ((s16)inl_wait(a, 0xA, 0x3C)) {
+                W_d1fb(a, 4) = 0x101;
+            }
+            break;
+        }
+        break;
+    case 13:
+        switch (a[6]) {
+        case 0:
+        case 1:
+            f_UpdateTownCreatureFaceTomba(a);
+            break;
+        case 2:
+            r = f_UpdateTownCreatureExtendedLeap(a);
+            if (r == -1) {
+                W_d1fb(a, 4) = 0xA01;
+            } else if (r != 0) {
+                H_f12c(a, 6) = 3;
+            }
+            break;
+        case 3:
+            if ((s16)inl_wait(a, 5, 0x2D)) {
+                W_d1fb(a, 4) = 0x101;
+            }
+            break;
+        }
+        break;
+    case 12:
+        switch (a[6]) {
+        case 0:
+        case 1:
+            f_UpdateTownCreatureFaceTomba(a);
+            break;
+        case 2:
+            if (func_800781E0(H_f12c(a, 0x2E) - D_1F800160_71b4, H_f12c(a, 0x36) - D_1F800164_d75f) < 0x320) {
+                H_f12c(a, 6) = 3;
+                break;
+            }
+            r = f_UpdateTownCreatureApproachTomba(a, 0x320, 0x1E00);
+            if (r == -1) {
+                W_d1fb(a, 4) = 0xA01;
+            } else if (r != 0) {
+                H_f12c(a, 6) = 3;
+            }
+            break;
+        case 3:
+            r = f_UpdateTownCreatureJumpingAttack(a);
+            if (r == -1) {
+                W_d1fb(a, 4) = 0xA01;
+            } else if (r != 0) {
+                if (D_800E7E80_d97c & 2) {
+                    W_d1fb(a, 4) = 0xF01;
+                } else {
+                    W_d1fb(a, 4) = 0x101;
+                }
+            }
+            break;
+        }
+        break;
+    case 8:
+        switch (a[6]) {
+        case 0:
+        case 1:
+            f_UpdateTownCreatureFaceTomba(a);
+            break;
+        case 2:
+            if ((s16)func_8014103C(a)) {
+                H_f12c(a, 6) = 3;
+            }
+            break;
+        case 3:
+            if ((s16)func_80141AC4(a, 0x20, 0x500)) {
+                H_f12c(a, 6) = 4;
+            }
+            break;
+        case 4:
+            if ((s16)f_UpdateTownCreatureFleeRun(a)) {
+                H_f12c(a, 6) = 5;
+            }
+            if (inl_wall(a)) {
+                W_d1fb(a, 4) = 0xA01;
+            }
+            break;
+        case 5:
+            if ((s16)inl_wait(a, 0x1F, 0x32)) {
+                H_f12c(a, 6) = 6;
+            }
+            break;
+        case 6:
+            if ((s16)inl_wait(a, 5, 0x2D)) {
+                W_d1fb(a, 4) = 0x101;
+            }
+            break;
+        }
+        break;
+    case 14:
+        switch (a[6]) {
+        case 0:
+            H_f12c(a, 6) = 1;
+        case 1:
+            if ((s16)inl_wait(a, 0x2F, 0x1E)) {
+                W_d1fb(a, 4) = 0x101;
+            }
+            break;
+        }
+        break;
+    case 15:
+        switch (a[6]) {
+        case 0:
+            H_f12c(a, 6) = 1;
+        case 1:
+            if ((s16)inl_wait(a, 0x30, 0x1E)) {
+                W_d1fb(a, 4) = 0x101;
+            }
+            break;
+        }
+        break;
+    case 9:
+        switch (a[6]) {
+        case 0:
+            H_f12c(a, 6) = 1;
+        case 1:
+            if ((s16)f_UpdateTownCreatureKnockbackBounce(a)) {
+                H_f12c(a, 6) = 2;
+            }
+            break;
+        case 2:
+            if ((s16)f_UpdateTownCreaturePostKnockbackRecovery(a)) {
+                W_d1fb(a, 4) = 0x101;
+            }
+            break;
+        }
+        break;
+    case 10:
+        switch (a[6]) {
+        case 0:
+            H_f12c(a, 6) = 1;
+        case 1:
+            r = f_UpdateTownCreatureKnockbackBounce(a);
+            if (a[7] < 3) {
+                H_f12c(a, 0x58) = 0;
+            }
+            if (r) {
+                H_f12c(a, 6) = 2;
+            }
+            break;
+        case 2:
+            if ((s16)f_UpdateTownCreaturePostKnockbackRecovery(a)) {
+                W_d1fb(a, 4) = 0x101;
+            }
+            break;
+        }
+        break;
+    }
+}
 
 s32 f_UpdateTownCreatureVariantActivation(u8 *a) {
     u8 *q = a + 0x60;
