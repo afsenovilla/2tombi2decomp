@@ -9709,7 +9709,162 @@ void f_UpdatePullAndOpenGateSegment(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_SynchronizePullAndOpenGateAssembly);
+void f_SynchronizePullAndOpenGateAssembly(u8 *a)
+{
+    u8 m = a[0x47];
+    s32 k;
+
+    if (m == 3) {
+        switch (a[5]) {
+        case 0:
+            if (a[0x29] == 0) {
+                return;
+            }
+            a[5] = 1;
+            k = (u16)(U(P(a, 0xC0), 0x3A) / 320);
+            if (k == 0) {
+                k = 1;
+            } else if (k >= 5) {
+                k = 4;
+            }
+            H(a, 0x7C) = 0;
+            H(a, 0x7E) = k * 8;
+            func_80074590(0x81, 0, 0);
+            if (a[3] >= 0xB) {
+                a[4] = 6;
+            }
+            return;
+        case 1:
+            if (a[0x29] == 0) {
+                a[5] = 0;
+            }
+            return;
+        }
+        return;
+    }
+    switch (a[5]) {
+    case 0:
+        if (a[0x29] != 0) {
+            if (a[3] == 2) {
+                u8 *g = (u8 *)&D_800BF870;
+                if (!(g[0x196] & 2)) {
+                    func_80042354(1, 1);
+                    g[0x196] |= 2;
+                }
+            } else if (a[3] == 4 && m == 0) {
+                u8 *g = (u8 *)&D_800BF870;
+                if (!(g[0x196] & 4)) {
+                    func_80042354(1, 1);
+                    g[0x196] |= 4;
+                }
+            }
+            a[5]++;
+            k = (u16)(U(P(a, 0xC0), 0x3A) / 320);
+            if (k == 0) {
+                k = 1;
+            } else if (k >= 5) {
+                k = 4;
+            }
+            H(a, 0x7C) = 0;
+            H(a, 0x7E) = k * 8;
+            switch (a[0x47]) {
+            case 0:
+                a[0x5E] = 1;
+                a[0x46] = 0;
+                P(a, 0x10)[0x5E] = 1;
+                P(a, 0x10)[0x46] = 0;
+                P(a, 0x14)[0x5E] = 1;
+                P(a, 0x14)[0x46] = 0;
+                P(a, 0x3C)[0x5E] = 1;
+                P(a, 0x3C)[0x46] = 0;
+                break;
+            case 1:
+                a[0x5E] = 1;
+                a[0x46] = 1;
+                P(a, 0x10)[0x5E] = 1;
+                P(a, 0x10)[0x46] = 1;
+                P(a, 0x14)[0x5E] = 1;
+                P(a, 0x14)[0x46] = 1;
+                P(a, 0x3C)[0x5E] = 1;
+                P(a, 0x3C)[0x46] = 1;
+                break;
+            case 2:
+                break;
+            }
+            func_80074590(0x81, 0, 0);
+        } else if (a[0xBF] != 0) {
+            a[5] = 2;
+            switch (a[0x47]) {
+            case 0:
+                a[0x5E] = 1;
+                a[0x46] = 0;
+                P(a, 0x10)[0x5E] = 1;
+                P(a, 0x10)[0x46] = 0;
+                P(a, 0x14)[0x5E] = 1;
+                P(a, 0x14)[0x46] = 0;
+                P(a, 0x3C)[0x5E] = 1;
+                P(a, 0x3C)[0x46] = 0;
+                break;
+            case 1:
+                a[0x5E] = 1;
+                a[0x46] = 1;
+                P(a, 0x10)[0x5E] = 1;
+                P(a, 0x10)[0x46] = 1;
+                P(a, 0x14)[0x5E] = 1;
+                P(a, 0x14)[0x46] = 1;
+                P(a, 0x3C)[0x5E] = 1;
+                P(a, 0x3C)[0x46] = 1;
+                break;
+            case 2:
+                break;
+            }
+        }
+        break;
+    case 1:
+        if (a[0x29] == 0) {
+            a[5] = 0;
+            switch (a[0x47]) {
+            case 0:
+                a[0x5E] = 0;
+                P(a, 0x10)[0x5E] = 0;
+                P(a, 0x14)[0x5E] = 0;
+                P(a, 0x3C)[0x5E] = 0;
+                break;
+            case 1:
+                a[0x5E] = 0;
+                P(a, 0x10)[0x5E] = 0;
+                P(a, 0x14)[0x5E] = 0;
+                P(a, 0x3C)[0x5E] = 0;
+                break;
+            case 2:
+                break;
+            }
+        }
+        break;
+    case 2:
+        if (a[0xBF] == 0) {
+            a[5] = 0;
+            switch (a[0x47]) {
+            case 0:
+                a[0x5E] = 0;
+                P(a, 0x10)[0x5E] = 0;
+                P(a, 0x14)[0x5E] = 0;
+                P(a, 0x3C)[0x5E] = 0;
+                break;
+            case 1:
+                a[0x5E] = 0;
+                P(a, 0x10)[0x5E] = 0;
+                P(a, 0x14)[0x5E] = 0;
+                P(a, 0x3C)[0x5E] = 0;
+                break;
+            case 2:
+                break;
+            }
+        }
+        break;
+    }
+    f_UpdatePullAndOpenGateSegment(a);
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaInteractiveSceneryActor);
 
