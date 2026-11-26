@@ -11825,8 +11825,6 @@ end:
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801409C0);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureKnockbackBounce);
-
 static inline void inl_move(u8 *a) {
     s32 dx, dz;
 
@@ -11840,6 +11838,121 @@ static inline void inl_move(u8 *a) {
         W_d1fb(a, 0x34) += dz;
     }
 }
+
+s32 f_UpdateTownCreatureKnockbackBounce(u8 *a) {
+    u8 *q = a + 0x60;
+    s32 res = 0;
+    s32 dx, dz;
+    u32 d;
+
+    switch (a[7]) {
+    case 0:
+        HU(q, 2) &= 0xFFFB;
+        func_801402B8(a, 8, 8);
+        d = (HU(a, 0x56) - HU(a, 0x60)) & 0xFFF;
+        if (HU(q, 2) & 1) {
+            if (d > 0x400 && d < 0xC00) {
+                H_f12c(a, 0x4E) = 0x33D0;
+            } else {
+                HU(q, 2) ^= 1;
+                H_f12c(a, 0x4E) = -0x33D0;
+            }
+        } else {
+            if (d > 0x400 && d < 0xC00) {
+                HU(q, 2) ^= 1;
+                H_f12c(a, 0x4E) = -0x33D0;
+            } else {
+                H_f12c(a, 0x4E) = 0x33D0;
+            }
+        }
+        H_f12c(a, 0x50) = -0x2C;
+        H_f12c(a, 0x40) = 0x16;
+        H_f12c(a, 0x58) = 0;
+        if (a[0] == 3) {
+            func_800331D8(a, W_d1fb(a, 0xC4), -0x64, 0);
+            a[0x1B] |= 0x40;
+        }
+        f_UpdateTownCreatureTerrainContact(a);
+        a[7]++;
+    case 1:
+        inl_move(a);
+        H_f12c(a, 0x32) += H_f12c(a, 0x50);
+        if (H_f12c(a, 0x50) < 0x3C) {
+            H_f12c(a, 0x50) += 4;
+        }
+        if (H_f12c(a, 0x4E) < 0) {
+            if ((H_f12c(a, 0x4E) += 0x300) > -0x1145) {
+                H_f12c(a, 0x4E) = -0x1145;
+            }
+        } else {
+            if ((H_f12c(a, 0x4E) -= 0x300) < 0x1145) {
+                H_f12c(a, 0x4E) = 0x1145;
+            }
+        }
+        if (H_f12c(a, 0x40) > 0) {
+            H_f12c(a, 0x40)--;
+        }
+        H_f12c(a, 0x58) = (-(func_80083E80(0x400 - H_f12c(a, 0x40) * 46) << 13)) >> 12;
+        f_UpdateTownCreatureTerrainContact(a);
+        if (H_f12c(a, 0x50) >= 0) {
+            a[7]++;
+            H_f12c(a, 0x58) = (-(func_80083E80(0x400 - H_f12c(a, 0x40) * 46) << 13) + 0x400) >> 12;
+            func_801402B8(a, 0x22, 0xB);
+        }
+        break;
+    case 2:
+        dx = H_f12c(a, 0x48) * H_f12c(a, 0x4E);
+        dz = H_f12c(a, 0x4C) * H_f12c(a, 0x4E);
+        if (HU(q, 2) & 1) {
+            W_d1fb(a, 0x2C) -= dx;
+            W_d1fb(a, 0x34) -= dz;
+        } else {
+            W_d1fb(a, 0x2C) += dx;
+            W_d1fb(a, 0x34) += dz;
+        }
+        H_f12c(a, 0x32) += H_f12c(a, 0x50);
+        if (H_f12c(a, 0x50) < 0x3C) {
+            H_f12c(a, 0x50) += 4;
+        }
+        if (H_f12c(a, 0x40) > 0) {
+            H_f12c(a, 0x40)--;
+        }
+        H_f12c(a, 0x58) = (-(func_80083E80(0x400 - H_f12c(a, 0x40) * 46) << 13) + 0x400) >> 12;
+        f_UpdateTownCreatureTerrainContact(a);
+        if (a[0x29] != 0) {
+            H_f12c(a, 0x50) = 0;
+            a[7] += 1;
+            H_f12c(a, 0x42) = 7;
+            H_f12c(a, 0x50) = -0xE;
+            if (a[4] == 2 && (a[0] & 2)) {
+                a[0] = 7;
+            }
+        }
+        break;
+    case 3:
+        H_f12c(a, 0x32) += H_f12c(a, 0x50);
+        if (H_f12c(a, 0x50) < 0x3C) {
+            H_f12c(a, 0x50) += 4;
+        }
+        if (H_f12c(a, 0x4E) < -0xA0) {
+            if ((H_f12c(a, 0x4E) += 0x2580) > -0xA) {
+                H_f12c(a, 0x4E) = -0xA0;
+            }
+        } else if (H_f12c(a, 0x4E) > 0xA0) {
+            if ((H_f12c(a, 0x4E) -= 0x2580) < 0xA) {
+                H_f12c(a, 0x4E) = 0xA0;
+            }
+        }
+        inl_move(a);
+        f_UpdateTownCreatureTerrainContact(a);
+        if (--H_f12c(a, 0x42) == -1 || a[0x29] != 0) {
+            res = 1;
+        }
+        break;
+    }
+    return res;
+}
+
 
 s32 func_8014103C(u8 *a) {
     u8 *q = a + 0x60;
@@ -12991,7 +13104,7 @@ s32 func_8014601C(u8 *a) {
 s16 func_801460A4(void *arg0) {
     s16 temp_v0;
 
-    temp_v0 = f_UpdateTownCreatureKnockbackBounce();
+    temp_v0 = ((s32 (*)())f_UpdateTownCreatureKnockbackBounce)();
     if ((u8) M2C_FIELD(arg0, u8 *, 7) < 3U) {
         M2C_FIELD(arg0, s16 *, 0x58) = 0;
     }
