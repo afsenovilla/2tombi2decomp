@@ -10230,7 +10230,152 @@ u32 *func_80124DB8(u32 *f, u32 *ot, s32 n)
     return f;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80125100);
+typedef struct {
+    u32 tag;
+    u32 rgb0;
+    u16 x0, y0;
+    u8 u0, v0;
+    u16 clut;
+    u32 rgb1;
+    u16 x1, y1;
+    u8 u1, v1;
+    u16 tpage;
+    u32 rgb2;
+    u16 x2, y2;
+    u8 u2, v2;
+    u16 pad2;
+    u32 rgb3;
+    u16 x3, y3;
+    u8 u3, v3;
+    u16 pad3;
+} T2PolyGT4U;
+#define UV(p) ((T2PolyGT4U *)(p))
+
+u32 *func_80125100(u32 *f, u32 *ot, s32 n)
+{
+    s32 sz[4];
+    T2PolyGT4 *p = D_800BF544;
+    u32 m = 0xFFF0F0F0;
+    s32 *flg = (s32 *)&D_1F800080;
+    s32 *otz = &D_1F800084;
+    u32 c;
+    u32 w;
+    u32 mode;
+    s32 b, v, e;
+    u32 *o;
+
+    while (n-- != 0) {
+        T2_ldv1p(f);
+        c = f[1];
+        p->rgb2 = c & m;
+        T2_rtps();
+        p->uv1 = f[3];
+        p->rgb3 = (c << 4) & m;
+        T2_stflg(flg);
+        if (*flg >= 0) {
+            T2_stsxy(&p->x3);
+            T2_ldv3p(f);
+            w = f[0];
+            p->rgb0 = w & m;
+            T2_rtpt();
+            p->rgb1 = (w << 4) & m;
+            T2_stflg(flg);
+            if (*flg >= 0) {
+                T2_nclip();
+                p->uv0 = f[2];
+                T2_stopz(flg);
+                if (*flg > 0) {
+                    T2_stsxy3_gt4(p);
+                    if ((p->x0 < 320 || p->x1 < 320 || p->x2 < 320 || p->x3 < 320) &&
+                        (p->y0 < 240 || p->y1 < 240 || p->y2 < 240 || p->y3 < 240)) {
+                        c >>= 24;
+                        mode = c & 3;
+                        if (mode != 0) {
+                            T2_stsz0(&sz[0]);
+                            T2_stsz1(&sz[1]);
+                            T2_stsz2(&sz[2]);
+                            T2_stsz3(&sz[3]);
+if (mode == 1) {
+                                s32 x;
+
+                                x = sz[1];
+                                if (x < sz[0]) {
+                                    x = sz[0];
+                                }
+                                b = sz[3];
+                                if (b < sz[2]) {
+                                    b = sz[2];
+                                }
+                                if (b < x) {
+                                    b = x;
+                                }
+                            } else {
+                                s32 y;
+
+                                y = sz[1];
+                                if (sz[0] < y) {
+                                    y = sz[0];
+                                }
+                                b = sz[3];
+                                if (sz[2] < b) {
+                                    b = sz[2];
+                                }
+                                if (y < b) {
+                                    b = y;
+                                }
+                            }
+                            do {
+                                *otz = b >> 2;
+                            } while (0);
+                        } else {
+                            T2_avsz4();
+                            T2_stotz(otz);
+                        }
+                        do {
+                            e = *otz >> 10;
+                            *otz = (*otz >> e) + (e << 9);
+                        } while (0);
+                        do {
+                            if ((u32)(*otz - 4) >= 0x7FC) {
+                                *otz = -1;
+                            }
+                        } while (0);
+                        if (*otz >= 0) {
+                            v = f[4];
+                            p->uv2 = v;
+                            p->uv3 = (u32)v >> 16;
+                            if (c & 0x10) {
+                                UV(p)->u0 += D_8012C92C >> 4;
+                                UV(p)->u1 += D_8012C92C >> 4;
+                                UV(p)->u2 += D_8012C92C >> 4;
+                                UV(p)->u3 += D_8012C92C >> 4;
+                            } else if (c & 8) {
+                                UV(p)->u0 += D_8012C92A >> 4;
+                                UV(p)->u1 += D_8012C92A >> 4;
+                                UV(p)->u2 += D_8012C92A >> 4;
+                                UV(p)->u3 += D_8012C92A >> 4;
+                            } else if (c & 4) {
+                                UV(p)->u0 += D_8012C928 >> 4;
+                                UV(p)->u1 += D_8012C928 >> 4;
+                                UV(p)->u2 += D_8012C928 >> 4;
+                                UV(p)->u3 += D_8012C928 >> 4;
+                            }
+                            do {
+                                o = ot + *otz;
+                                p->tag = *o | 0x0C000000;
+                                *o = (u32)p;
+                            } while (0);
+                            p++;
+                        }
+                    }
+                }
+            }
+        }
+        f += 11;
+    }
+    D_800BF544 = p;
+    return f;
+}
 
 void func_8012555C(u32 *p, void *b)
 {
