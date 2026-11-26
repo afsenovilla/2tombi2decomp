@@ -4515,4 +4515,65 @@ s32 func_80118054(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_UpdateTinyMouseVillageEntranceActor);
+extern u16 D_1F800160;
+extern u16 D_1F800164;
+
+s32 f_UpdateTinyMouseVillageEntranceActor(u8 *a)
+{
+    u8 *t = D_800E7E80;
+    u16 dx = D_1F800160 - U(a, 0x2E);
+    u16 dz = D_1F800164 - U(a, 0x36);
+    s16 ang;
+
+    switch (a[0x78]) {
+    case 0: {
+        s16 sz = dz;
+        s16 sx = dx;
+        s16 e;
+
+        ang = func_80085690(-sz, sx) & 0xFFF;
+        H(a, 0x64) = ang;
+        if (ang == H(a, 0x72)) {
+            return 1;
+        }
+        H(a, 0x66) = func_80084080(sx * sx + sz * sz);
+        e = U(a, 0x72) + U(a, 0x74);
+        if (e > 0x1000 && e - 0x1000 >= H(a, 0x64)) {
+            H(a, 0x64) += 0x1000;
+        }
+        if (H(a, 0x72) < H(a, 0x64) && H(a, 0x64) <= e) {
+            H(a, 0x76) *= -1;
+        } else if (e < H(a, 0x64)) {
+            H(a, 0x64) -= 0x1000;
+        }
+        t[5] = 0x27;
+        t[6] = 0;
+        H(t, 0x44) = 10;
+        a[0x78]++;
+        break;
+    }
+    case 1:
+        H(a, 0x64) += U(a, 0x76);
+        if (H(a, 0x76) >= 0) {
+            if (H(a, 0x64) >= H(a, 0x72)) {
+                H(a, 0x64) = H(a, 0x72);
+                H(t, 0x44) = 0;
+            }
+            ang = func_80085690(-(s16)dz, (s16)dx) + 0x400;
+        } else {
+            if (H(a, 0x72) >= H(a, 0x64)) {
+                H(a, 0x64) = H(a, 0x72);
+                H(t, 0x44) = 0;
+            }
+            ang = func_80085690(-(s16)dz, (s16)dx) - 0x400;
+        }
+        H(t, 0x56) = ang;
+        H(t, 0x2E) = U(a, 0x2E) + func_80083F50(-H(a, 0x64)) * H(a, 0x66) / 4096;
+        H(t, 0x36) = U(a, 0x36) + func_80083E80(-H(a, 0x64)) * H(a, 0x66) / 4096;
+        if (H(t, 0x44) == 0) {
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
