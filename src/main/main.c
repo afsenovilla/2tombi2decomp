@@ -21862,7 +21862,74 @@ u8 *func_8007566C(s16 idx, u8 *buf)
     return buf + hdr[1];
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80075824);
+extern u8 D_1F80027E_1248;
+extern u8 D_1F80023B_0a71;
+void f_SetStreamedAudioVolumeTarget(s32 x);
+s32 f_ControlStreamedAudioTrack(s32 track);
+
+void func_80075824(u8 *a)
+{
+    s32 v;
+    s32 x;
+    s32 y;
+    s32 step;
+    u8 m;
+    u8 k;
+
+    m = D_1F80019A;
+    if (m != 2) {
+        v = (*(s16 *)(a + 0x28) * 0x47FF) >> 15;
+    } else if ((k = D_1F800137_104c) == 1) {
+        if (D_800BE0E4 & 2) {
+            v = 0x7FFF;
+        } else if (D_800BE0E4 & 8) {
+            v = (D_800FB165 * 0x7FFF) / 9;
+        } else {
+            v = 0x7FFF;
+            v = (*(s16 *)(a + 0x28) * v) >> 15;
+        }
+        *(u32 *)a |= 3;
+    } else {
+        y = *(s16 *)(a + 0x2C);
+        x = *(s16 *)(a + 0x2A);
+        step = 0x100;
+        if (k == m) {
+            step = 0x400;
+        }
+        if (y < x) {
+            y += step;
+            if (x < y) {
+                y = x;
+            }
+        } else if (x < y) {
+            y -= step;
+            if (y < x) {
+                y = x;
+            }
+        }
+        v = *(s16 *)(a + 0x28);
+        v = (v * y) >> 15;
+        MEMBER_AT(s16, a, 0x2C) = y;
+        if (D_1F80027E_1248 != 0) {
+            v = (v * 5) >> 2;
+            if (v >= 0x7FFF) {
+                v = 0x7FFF;
+            }
+        }
+        if (v < 0x11 && a[0x33] != 0 && D_1F80027A == 0) {
+            f_SetStreamedAudioVolumeTarget(0x47FF);
+            ((s32 (*)())f_ControlStreamedAudioTrack)(D_1F80023B_0a71, 1);
+            a[0x33] = 0;
+        }
+        *(s16 *)(a + 0x30) += (*(s16 *)(a + 0x2E) - *(s16 *)(a + 0x30)) >> 3;
+        v = (v * *(s16 *)(a + 0x30)) >> 13;
+    }
+    *(s16 *)(a + 0x12) = v;
+    *(s16 *)(a + 0x10) = v;
+    *(s16 *)(a + 0x6) = 0x3FFF;
+    *(s16 *)(a + 0x4) = 0x3FFF;
+    *(u32 *)a |= 0xC0;
+}
 
 void func_80075A30(void)
 {
@@ -22818,7 +22885,6 @@ u8 f_FormatIntegerText(s32 v, char *out)
 }
 
 extern u8 D_800BF9D4;
-extern u8 D_1F80027E_1248;
 extern s32 D_1F800248;
 extern u8 D_1F800246;
 extern s32 D_1F80024C;
@@ -22827,7 +22893,6 @@ extern u8 D_1F800259;
 extern u8 D_1F80025A;
 extern u8 D_1F80025B;
 extern s32 D_1F800214_f5da;
-extern u8 D_1F80023B_0a71;
 void f_SetDoubleBufferedClearColor(u8 r, u8 g, u8 b);
 void func_800796DC(void)
 {
