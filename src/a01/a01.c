@@ -9511,7 +9511,98 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801291F4);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80129394);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePullAndOpenGateSegmentTransform);
+extern u16 D_8013796C[][2];
+
+void f_UpdatePullAndOpenGateSegmentTransform(u8 *a)
+{
+    u8 *g = D_800E7E80;
+    u8 *p;
+    u16 y;
+    u16 *t;
+
+    switch (a[0x46]) {
+    case 0:
+        switch (a[0x47]) {
+        case 0:
+            p = P(a, 0xC0);
+            y = U(p, 0x3A);
+            if (y >= (s16)D_8013796C[a[3]][0]) {
+                H(p, 0x3A) = D_8013796C[a[3]][0];
+                a[0x5E] = 2;
+                P(a, 0x10)[0x5E] = 0;
+                P(a, 0x14)[0x5E] = 2;
+                P(a, 0x3C)[0x5E] = 2;
+                return;
+            }
+            H(p, 0x3A) = y + (H(a, 0x4A) >> 8);
+            H(a, 0x86) = U(P(a, 0xC0), 0x3A) + U(a, 0x84);
+            if (a[3] == 4 && D_1F800137 != 0 && H(g, 0x32) >= -0x1194) {
+                return;
+            }
+            if (a[0x29] != 0) {
+                H(g, 0x156) += H(a, 0x4A) >> 8;
+            }
+            return;
+        case 1:
+            H(P(a, 0xC0), 0x3A) = U(a, 0x70) - U(P(P(a, 0x14), 0xC0), 0x3A);
+            H(a, 0x86) = U(P(a, 0xC0), 0x3A) + U(a, 0x84);
+            return;
+        case 2:
+            H(P(a, 0xC0), 0x12) += H(a, 0x4A) >> 8;
+            p = P(a, 0xC0);
+            if (H(p, 0x12) >= 0x50) {
+                H(p, 0x12) = U(p, 0x12) - 0x50;
+            }
+            break;
+        default:
+            return;
+        }
+        break;
+    case 1:
+        switch (a[0x47]) {
+        case 0:
+            H(P(a, 0xC0), 0x3A) = U(a, 0x70) - U(P(P(a, 0x14), 0xC0), 0x3A);
+            H(a, 0x86) = U(P(a, 0xC0), 0x3A) + U(a, 0x84);
+            return;
+        case 1:
+            p = P(a, 0xC0);
+            y = U(p, 0x3A);
+            if (y >= (s16)D_8013796C[a[3]][1]) {
+                H(p, 0x3A) = D_8013796C[a[3]][1];
+                a[0x5E] = 2;
+                P(a, 0x10)[0x5E] = 0;
+                P(a, 0x14)[0x5E] = 2;
+                P(a, 0x3C)[0x5E] = 2;
+                return;
+            }
+            H(p, 0x3A) = y + (H(a, 0x4A) >> 8);
+            H(a, 0x86) = U(P(a, 0xC0), 0x3A) + U(a, 0x84);
+            if (a[3] == 2 && D_1F800137 != 0 && H(g, 0x32) >= -0x1A2C) {
+                return;
+            }
+            if (a[0x29] != 0) {
+                H(g, 0x156) += H(a, 0x4A) >> 8;
+            }
+            return;
+        case 2:
+            H(P(a, 0xC0), 0x12) -= H(a, 0x4A) >> 8;
+            p = P(a, 0xC0);
+            if (H(p, 0x12) <= 0x50) {
+                H(p, 0x12) = U(p, 0x12) + 0x50;
+            }
+            break;
+        default:
+            return;
+        }
+        break;
+    default:
+        return;
+    }
+    {
+        u8 *q = P(a, 0xC0);
+        H(q, 0x3A) = U(q, 0x12) + U(q, 0x16);
+    }
+}
 
 #define C0 (*(u8 **)(a + 0xC0))
 void f_UpdatePullAndOpenGateSegment(u8 *a) {
