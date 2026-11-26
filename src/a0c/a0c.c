@@ -2982,7 +2982,76 @@ void func_801114C4(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_801116A8);
+typedef struct { s16 x, y, z, pad; } TrailPt;
+extern TrailPt D_80126968[];
+extern s32 D_80126A68[];
+extern u8 D_80126AE8[];
+
+void func_801116A8(u8 *a)
+{
+    u8 *p = *(u8 **)(a + 0x10);
+    s16 *q = (s16 *)(a + 0x50);
+    s32 i;
+
+    switch (a[4]) {
+    case 0:
+        H(a, 0x50) = 0x1000;
+        a[4] = 1;
+        a[5] = 0;
+        q[1] = 0x1E;
+        q[2] = 0;
+        H(a, 0x32) = -0x32;
+        U(a, 0x2C) = U(p, 0x2E);
+        U(a, 0x2E) = U(p, 0x32);
+        U(a, 0x30) = U(p, 0x36);
+        for (i = 0; i < 0x20; i++) {
+            D_80126968[i].x = U(a, 0x2C) + (func_8009A450() & 0xFF) - 0x80;
+            D_80126968[i].y = U(a, 0x2E) + (func_8009A450() & 0xFF) - 0x80;
+            D_80126968[i].z = U(a, 0x30) + (func_8009A450() & 0xFF) - 0x80;
+            if (i < 3) {
+                D_80126A68[i] = 0;
+            } else {
+                D_80126A68[i] = 0x206080;
+            }
+            D_80126AE8[i] = 0x21 - i;
+        }
+    case 1:
+        a[1] = p[1];
+        U(a, 0x2C) = U(p, 0x2E);
+        U(a, 0x2E) = U(p, 0x32);
+        U(a, 0x30) = U(p, 0x36);
+        for (i = 0x1F; i > 0; i--) {
+            D_80126968[i].x = D_80126968[i - 1].x;
+            D_80126968[i].y = D_80126968[i - 1].y;
+            D_80126968[i].z = D_80126968[i - 1].z;
+        }
+        D_80126968[0].x = U(a, 0x2C);
+        D_80126968[0].y = U(a, 0x2E);
+        D_80126968[0].z = U(a, 0x30);
+        if (q[1] < 0xB4) {
+            q[1] += 10;
+        }
+        if (q[0] > 0) {
+            q[0] -= 0x200;
+        }
+        q[2] = (q[2] + 1) & 0x1F;
+        q[3] += 0x44;
+        break;
+    case 2:
+        q[1] += 10;
+        H(a, 0x50) += 0x100;
+        if (H(a, 0x50) >= 0x1000) {
+            a[4] = 3;
+            break;
+        }
+        q[2] = (q[2] + 1) & 0x1F;
+        a[1] = 1;
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_80111964);
 
