@@ -2293,7 +2293,85 @@ s32 func_80110714(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", f_UpdateGhostEvilPigRandomRicochetVolley);
+void f_UpdateGhostEvilPigRandomRicochetVolley(u8 *a)
+{
+    s16 t;
+    s16 k;
+
+    if (D_800BF809 != 0) {
+        return;
+    }
+    switch (a[6]) {
+    case 0:
+        a[6]++;
+        a[7] = (func_8009A450() & 0x300) >> 8;
+    case 1:
+        if (f_TestTombaOverlapsEvilPig(a) != 0) {
+            goto hit;
+        }
+        if (func_80077768((s16)func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f), H(a, 0x60), 0) != 0) {
+            a[0xBE] = 1;
+        } else {
+            a[0xBE] = 0;
+        }
+        a[6]++;
+        break;
+    case 2:
+        if (a[0xBE] == 0) {
+            k = U(a, 0x60);
+        } else {
+            k = U(a, 0x60) + 0x800;
+        }
+        k &= 0xFFF;
+        t = func_800776F8(k, H(a, 0x56), 0x100);
+        H(a, 0x56) = t;
+        if (t == k) {
+            func_80041768(a, 0xC, 5);
+            a[6]++;
+        }
+        break;
+    case 3:
+        if (U(*(u8 **)(a + 0x38), 2) == 0x10) {
+            a[6]++;
+            func_80074590(0xA, 0, 0);
+            f_SpawnGhostEvilPigRicochetProjectile(a, 0);
+            H(a, 0x40) = 0x28;
+        }
+        break;
+    case 4:
+        if (f_TestTombaOverlapsEvilPig(a) != 0) {
+            goto hit;
+        }
+        if (--H(a, 0x40) == 0) {
+            a[6]++;
+            func_80041768(a, 0, 6);
+            if (a[7] != 0) {
+                a[7]--;
+                a[6] = 1;
+            } else {
+                H(a, 0x40) = 0x3C;
+            }
+        }
+        break;
+    case 5:
+        if (f_TestTombaOverlapsEvilPig(a) != 0) {
+        hit:
+            a[0] = 2;
+            func_80041768(a, 3, 4);
+            func_8010DD0C(a);
+            a[5] = 1;
+            a[6] = 1;
+            a[7] = 0;
+            break;
+        }
+        if (--H(a, 0x40) == 0) {
+            a[5] = 0;
+            a[6] = 0;
+            H(a, 0x64) = 0;
+        }
+        break;
+    }
+}
 
 void f_UpdateGhostEvilPigGraspAttack(u8 *a)
 {
@@ -2372,7 +2450,88 @@ void f_UpdateGhostEvilPigGraspAttack(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", f_UpdateGhostEvilPigTripleRicochetVolley);
+void f_UpdateGhostEvilPigTripleRicochetVolley(u8 *a)
+{
+    s16 t;
+    s16 k;
+
+    if (D_800BF809 != 0) {
+        return;
+    }
+    switch (a[6]) {
+    case 0:
+        a[7] = 3;
+        a[6]++;
+    case 1:
+        if (f_TestTombaOverlapsEvilPig(a) != 0) {
+            goto hit;
+        }
+        if (func_80077768((s16)func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f), H(a, 0x60), 0) != 0) {
+            a[0xBE] = 1;
+        } else {
+            a[0xBE] = 0;
+        }
+        a[6]++;
+        break;
+    case 2:
+        if (f_TestTombaOverlapsEvilPig(a) != 0) {
+            goto hit;
+        }
+        if (a[0xBE] == 0) {
+            k = U(a, 0x60);
+        } else {
+            k = U(a, 0x60) + 0x800;
+        }
+        k &= 0xFFF;
+        t = func_800776F8(k, H(a, 0x56), 0x100);
+        H(a, 0x56) = t;
+        if (t == k) {
+            func_80041768(a, 0xC, 5);
+            a[6]++;
+        }
+        break;
+    case 3:
+        if (U(*(u8 **)(a + 0x38), 2) == 0x10) {
+            a[6]++;
+            func_80074590(0xA, 0, 0);
+            f_SpawnGhostEvilPigRicochetProjectile(a, 1);
+            H(a, 0x40) = 0x14;
+        }
+        break;
+    case 4:
+        if (f_TestTombaOverlapsEvilPig(a) != 0) {
+            goto hit;
+        }
+        if (--H(a, 0x40) == 0) {
+            a[6]++;
+            func_80041768(a, 0, 6);
+            if (a[7] != 0) {
+                a[7]--;
+                a[6] = 1;
+            } else {
+                H(a, 0x40) = 0x3C;
+            }
+        }
+        break;
+    case 5:
+        if (f_TestTombaOverlapsEvilPig(a) != 0) {
+        hit:
+            a[0] = 2;
+            func_80041768(a, 3, 4);
+            func_8010DD0C(a);
+            a[5] = 1;
+            a[6] = 1;
+            a[7] = 0;
+            break;
+        }
+        if (--H(a, 0x40) == 0) {
+            a[5] = 0;
+            a[6] = 0;
+            H(a, 0x64) = 0;
+        }
+        break;
+    }
+}
 
 extern u8 D_800BF808_1760[];
 extern u8 D_800ECF58_742e[];
