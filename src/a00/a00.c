@@ -11827,8 +11827,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801409C0);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureKnockbackBounce);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8014103C);
-
 static inline void inl_move(u8 *a) {
     s32 dx, dz;
 
@@ -11842,6 +11840,89 @@ static inline void inl_move(u8 *a) {
         W_d1fb(a, 0x34) += dz;
     }
 }
+
+s32 func_8014103C(u8 *a) {
+    u8 *q = a + 0x60;
+    s32 res = 0;
+    s32 f;
+
+    switch (a[7]) {
+    case 0:
+        HU(q, 2) &= 0xFFFB;
+        if ((func_8009A450() >> 12) & 1) {
+            q[4] = 1;
+        } else {
+            q[4] = 2;
+        }
+        a[7]++;
+    case 1:
+        func_801402B8(a, 0x19, 8);
+        H_f12c(a, 0x42) = 0x14;
+        a[7]++;
+    case 2:
+        if (HU(*(u8 **)(a + 0x38), 4) != 0) {
+            H_f12c(a, 0x4E) = 0x600;
+            H_f12c(a, 0x32) += HU(*(u8 **)(a + 0x38), 4);
+        } else {
+            H_f12c(a, 0x4E) = 0;
+            H_f12c(a, 0x32) += 0x10;
+        }
+        inl_move(a);
+        f_UpdateTownCreatureTerrainContact(a);
+        f = 0;
+        if (a[0x66] == 0x81 && a[0x29] == 0 && a[4] == 1) {
+            W_d1fb(a, 4) = 0x20501;
+            f = 1;
+        }
+        if (f == 0) {
+            if (--H_f12c(a, 0x42) == -1 || (HU(*(u8 **)(a + 0x38), 4) != 0 && a[0x29] != 0)) {
+                a[7]++;
+            }
+        }
+        break;
+    case 3:
+        H_f12c(a, 0x4E) = 0;
+        func_801402B8(a, 7, 4);
+        H_f12c(a, 0x42) = 2;
+        a[7]++;
+    case 4:
+        if (--H_f12c(a, 0x42) == -1) {
+            a[7]++;
+        }
+        H_f12c(a, 0x32) += 0x10;
+        f_UpdateTownCreatureTerrainContact(a);
+        break;
+    case 5:
+        func_801402B8(a, 0x18, 8);
+        H_f12c(a, 0x42) = 0x14;
+        a[7]++;
+    case 6:
+        if (HU(*(u8 **)(a + 0x38), 4) != 0) {
+            H_f12c(a, 0x4E) = -0x600;
+            H_f12c(a, 0x32) += HU(*(u8 **)(a + 0x38), 4);
+        } else {
+            H_f12c(a, 0x4E) = 0;
+            H_f12c(a, 0x32) += 0x10;
+        }
+        inl_move(a);
+        f_UpdateTownCreatureTerrainContact(a);
+        f = 0;
+        if (a[0x66] == 0x81 && a[0x29] == 0 && a[4] == 1) {
+            W_d1fb(a, 4) = 0x20501;
+            f = 1;
+        }
+        if (f == 0) {
+            if (H_f12c(a, 0x42)-- <= 0 || (HU(*(u8 **)(a + 0x38), 4) != 0 && a[0x29] != 0)) {
+                if (((s8 *)q)[4]-- <= 0) {
+                    res = 1;
+                }
+            }
+        }
+        break;
+    }
+    return res;
+}
+
 
 s32 f_UpdateTownCreatureFleeRun(u8 *a) {
     u8 *q = a + 0x60;
