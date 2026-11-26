@@ -8615,7 +8615,134 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleBarrelSeesawContact);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80130AC4);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateBarrelLinkedSegmentSequence);
+void f_UpdateBarrelLinkedSegmentSequence(AreaPartsOwner *a, s16 k)
+{
+    s16 i;
+    s16 w;
+    s16 snd = 1;
+    s16 done = 0;
+
+    for (i = 0; i < 4; i++, k++) {
+        switch (a->parts[k][0x3E]) {
+        case 1:
+            H_f12c(a->parts[k], 0x14) = 0x100;
+            if (i & 1) {
+                H_f12c(a->parts[k], 0x10) = U(a->parts[k], 0xC) + 0x400;
+                a->parts[k][0x3E] += 1;
+            } else {
+                H_f12c(a->parts[k], 0x10) = U(a->parts[k], 0xC) - 0x400;
+                a->parts[k][0x3E] = 5;
+            }
+            H_f12c(a->parts[k], 0x38) = 0;
+            break;
+        case 2:
+        case 7:
+            H_f12c(a->parts[k], 0xC) += U(a->parts[k], 0x14);
+            if (H_f12c(a->parts[k], 0xC) < H_f12c(a->parts[k], 0x10)) {
+                continue;
+            }
+            H_f12c(a->parts[k], 0xC) = U(a->parts[k], 0x10);
+            if (U(a->parts[k], 0x38) != 0) {
+            a->parts[k][0x3E] = 0;
+            w = U(a->parts[k], 6);
+            if (k == H_f12c(a, 0x72) || done != 0) {
+                if (done == 0) {
+                    if (D_1F800137 == 0) {
+                        a->pad[5] = 3;
+                        if (H_f12c(a, 0x78) != 0) {
+                            a->parts[0][0x3E] = a->pad[6];
+                        }
+                        a->pad[6] = 0;
+                        a->pad[0x46] = 0;
+                        a->pad[0x47] = 0x40;
+                        H_f12c(a, 0x6C) = U(a, 0x7A) & 3;
+                    }
+                    H_f12c(a, 0x72) = 0;
+                    H_f12c(a, 0x7A) = U(a, 0x7A) << 4;
+                    a->parts[w][0x3E] |= 1;
+                    a->parts[w][0x3E] &= 0xBF;
+                    if (a->pad[1] != 0 && snd != 0) {
+                        func_80074590(0x18, 0, 0x14);
+                        snd = 0;
+                    }
+                    done = 1;
+                } else {
+                    done = 0;
+                }
+            } else {
+                a->parts[w][0x3E] &= 0x7F;
+                if (a->pad[1] != 0 && snd != 0) {
+                    func_80074590(0x18, 3, -4);
+                    snd = 0;
+                }
+            }
+            } else {
+                H_f12c(a->parts[k], 0x38) = 5;
+                a->parts[k][0x3E]++;
+            }
+            break;
+        case 3:
+        case 6:
+            if (--U(a->parts[k], 0x38) != 0) {
+                continue;
+            }
+            if (i & 1) {
+                H_f12c(a->parts[k], 0x10) = U(a->parts[k], 0xC) - 0x400;
+            } else {
+                H_f12c(a->parts[k], 0x10) = U(a->parts[k], 0xC) + 0x400;
+            }
+            H_f12c(a->parts[k], 0x38) = 1;
+            a->parts[k][0x3E]++;
+            break;
+        case 4:
+        case 5:
+            H_f12c(a->parts[k], 0xC) -= U(a->parts[k], 0x14);
+            if (H_f12c(a->parts[k], 0xC) > H_f12c(a->parts[k], 0x10)) {
+                continue;
+            }
+            H_f12c(a->parts[k], 0xC) = U(a->parts[k], 0x10);
+            if (U(a->parts[k], 0x38) != 0) {
+            a->parts[k][0x3E] = 0;
+            w = U(a->parts[k], 6);
+            if (k == H_f12c(a, 0x72) || done != 0) {
+                if (done == 0) {
+                    if (D_1F800137 == 0) {
+                        a->pad[5] = 3;
+                        if (H_f12c(a, 0x78) != 0) {
+                            a->parts[0][0x3E] = a->pad[6];
+                        }
+                        a->pad[6] = 0;
+                        a->pad[0x46] = 0;
+                        a->pad[0x47] = 0x40;
+                        H_f12c(a, 0x6C) = U(a, 0x7A) & 3;
+                    }
+                    H_f12c(a, 0x72) = 0;
+                    H_f12c(a, 0x7A) = U(a, 0x7A) << 4;
+                    a->parts[w][0x3E] |= 1;
+                    a->parts[w][0x3E] &= 0xBF;
+                    if (a->pad[1] != 0 && snd != 0) {
+                        func_80074590(0x18, 0, 0x14);
+                        snd = 0;
+                    }
+                    done = 1;
+                } else {
+                    done = 0;
+                }
+            } else {
+                a->parts[w][0x3E] &= 0x7F;
+                if (a->pad[1] != 0 && snd != 0) {
+                    func_80074590(0x18, 3, -4);
+                    snd = 0;
+                }
+            }
+            } else {
+                H_f12c(a->parts[k], 0x38) = 5;
+                a->parts[k][0x3E]++;
+            }
+            break;
+        }
+    }
+}
 
 #define M2C_FIELD(expr, type, offset) (*(type)((u8 *)(expr) + (offset)))
 /* f_ActivateBarrelLinkedSegmentPair_d13c, inlined */
