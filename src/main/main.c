@@ -14810,7 +14810,50 @@ block_16:
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_SetTombaMiniatureForm);
+extern s16 D_800E802A;
+
+void f_SetTombaMiniatureForm(u8 *a, s32 mini)
+{
+    s16 s;
+    s16 b;
+    s16 c;
+    s16 d;
+    s16 e;
+    s16 f;
+    s16 g;
+
+    if (mini == 0) {
+        if (*(s16 *)(a + 0x17E) & 0x8000) {
+            *(s16 *)(a + 0x32) -= 0x46;
+        }
+        *(s16 *)(a + 0x17E) &= 0x7FFF;
+    } else {
+        if (!(*(s16 *)(a + 0x17E) & 0x8000)) {
+            *(s16 *)(a + 0x32) += 0x46;
+        }
+        *(s16 *)(a + 0x17E) |= 0x8000;
+    }
+    mini++;
+    s = 0x1000 / mini;
+    b = 50 / mini;
+    c = 100 / mini;
+    d = 140 / mini;
+    e = 270 / mini;
+    f = 30 / mini;
+    g = 240 / mini;
+    *(s16 *)(a + 0xB8) = s;
+    *(s16 *)(a + 0xBA) = s;
+    *(s16 *)(a + 0xBC) = s;
+    *(s16 *)(a + 0x80) = b;
+    *(s16 *)(a + 0x82) = c;
+    *(s16 *)(a + 0x84) = d;
+    *(s16 *)(a + 0x86) = e;
+    *(s16 *)(a + 0x62) = d;
+    *(s16 *)(a + 0x64) = d;
+    *(s16 *)(a + 0x66) = c;
+    *(s16 *)(a + 0x68) = f;
+    D_800E802A = g;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_RebuildTombaAppearanceModelParts);
 
