@@ -785,7 +785,67 @@ void func_8001FC50(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_StartActorImpactOrTombaRebound);
+extern u8 D_800E7E80_fdb4[];
+u8 *f_SpawnFlaggedTransientEffectAtFixedPosition(s32 id, u8 *pos, s16 y);
+s32 f_SpawnImpactTransientEffect(s32 kind, u8 *pos, s16 flag, u16 *rot);
+s32 f_SetTombaAnimationIfChanged(u8 *t, s32 anim, s32 blend);
+void f_ReleaseTombaInteractionTarget(u8 *t);
+void func_800538E0(u8 *a, u16 *pos, s32 flag);
+s32 f_PlaySoundEffect();
+
+s32 f_StartActorImpactOrTombaRebound(u8 *b, s16 k, s32 c, s32 anim)
+{
+    u8 *t = D_800E7E80_fdb4;
+    s16 v[6];
+
+    if (k >= 0 && c != 0x10 && t[0x46] == 0xE5) {
+        b[0] = 2;
+        b[0x2B] = (D_1F80009C + 0x800) >> 4;
+        b[4] = 2;
+        b[5] = 2;
+        b[6] = 0;
+        t[5] = 2;
+        t[6] = 1;
+        t[7] = 0;
+        t[0x145] = 1;
+        t[0x144] = 0;
+        t[0x29] = 0;
+        f_ReleaseTombaInteractionTarget(t);
+        f_PlaySoundEffect(0x1D, 0, 0);
+        *(s16 *)(t + 0x58) = 0;
+        f_SetTombaAnimationIfChanged(t, 0x13, 2);
+        if (t[0x181] == 0) {
+            func_800538E0(t, (u16 *)(t + 0x2C), 0);
+        } else {
+            t[0x181] = 0;
+        }
+        v[1] = *(u16 *)(t + 0x2E);
+        v[3] = *(u16 *)(t + 0x32) + *(u16 *)(t + 0x62);
+        v[5] = *(u16 *)(t + 0x36);
+        f_SpawnImpactTransientEffect(1, (u8 *)v, 0, (u16 *)(t + 0x56));
+        f_PlaySoundEffect(0xD, -6, 0);
+    } else {
+        t[0x78] = k & 0xF;
+        t[0x144] = 2;
+        t[4] = 1;
+        *(s16 *)(t + 0x58) = 0;
+        t[5] = c;
+        t[6] = 0;
+        if (t[0x46] == 0xE5) {
+            f_SetTombaAnimationIfChanged(t, anim, 0);
+        } else {
+            f_SetTombaAnimationIfChanged(t, anim, 4);
+        }
+        f_ReleaseTombaInteractionTarget(t);
+        b[0] = 2;
+        b[4] = 2;
+        b[5] = 1;
+        b[6] = 0;
+        *(u8 **)(t + 0x10) = b;
+        f_SpawnFlaggedTransientEffectAtFixedPosition(7, t + 0x2C, -0x14);
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTombaActorImpactResponse);
 
