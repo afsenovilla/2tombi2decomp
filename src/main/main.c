@@ -6533,7 +6533,77 @@ s32 func_80039E80(u8 *s, u8 *p)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80039F4C);
+typedef struct { u8 pad[4]; u8 *name; u8 pad2[4]; } EvName_9F4C;
+extern EvName_9F4C D_800A33C8_9f4c[];
+extern u8 *D_800A3A8C;
+extern char D_80014A1C[];
+void func_8003F174(u8 *a, s32 b);
+s32 func_8003F7D8(u8 *p, u8 *v, s32 *flag);
+char *strcpy();
+char *strcat();
+
+void func_80039F4C(u8 *a)
+{
+    s16 sv[16];
+    char buf[32];
+    s32 flag;
+    u8 *s;
+    u8 *q;
+    u8 *p;
+    s32 i;
+    s32 n;
+    u32 *ot;
+
+    func_8003F174(a, 1);
+    sv[0] = -3;
+    sv[1] = -7;
+    sv[2] = -1;
+    sv[4] = 5;
+    sv[5] = -7;
+    sv[6] = -1;
+    sv[8] = -3;
+    sv[9] = 9;
+    sv[10] = -1;
+    sv[12] = 5;
+    sv[13] = 9;
+    sv[14] = -1;
+    if (a[3] == 2) {
+        strcpy(buf, D_800A3A8C);
+        strcat(buf, D_80014A1C);
+        s = (u8 *)buf;
+    } else {
+        s = D_800A33C8_9f4c[*(s16 *)(a + 0x60)].name;
+    }
+    for (i = 0; i < a[9] && i < a[8] && *s != 0; i++, s++) {
+        if (func_80039E80(s, D_800BF544) == -1) {
+            continue;
+        }
+        p = D_800BF544;
+        D_800BF544 = p + 0x28;
+        SetRotMatrix(((u8 **)(a + 0xC0))[i] + 0x18);
+        SetTransMatrix(((u8 **)(a + 0xC0))[i] + 0x18);
+        n = func_8003F7D8(p, (u8 *)sv, &flag) - 1;
+        if (n < 0) {
+            continue;
+        }
+        if (*(u16 *)(p + 0x8) < 0x140 || *(u16 *)(p + 0x10) < 0x140 || *(u16 *)(p + 0x18) < 0x140 ||
+            *(u16 *)(p + 0x20) < 0x140) {
+            if (*(u16 *)(p + 0xA) < 0xF0 || *(u16 *)(p + 0x12) < 0xF0 || *(u16 *)(p + 0x1A) < 0xF0 ||
+                *(u16 *)(p + 0x22) < 0xF0) {
+                p[7] = 0x2D;
+                *(u16 *)(p + 0x16) = 0x1F;
+                if (a[3] == 2) {
+                    *(u16 *)(p + 0xE) = 0x7C7F;
+                } else {
+                    *(u16 *)(p + 0xE) = 0x7DFF;
+                }
+                ot = D_800ED8C8 + n;
+                *(u32 *)p = *ot | 0x9000000;
+                *ot = (u32)p;
+            }
+        }
+    }
+}
 
 extern u8 D_800BF80E_58ec;
 extern s32 D_1F800184;
