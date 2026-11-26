@@ -21639,7 +21639,48 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ApproachShortCoordinate);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateScriptedInteractionApproach);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80071260);
+extern u8 *D_8001B860_083b[];
+void f_StartActorSkeletalAnimationBlend(u8 *a, void **table, s32 i, s32 blend);
+
+s32 func_80071260(u8 *a)
+{
+    s16 s;
+    u16 k;
+    s32 dx;
+    s32 dy;
+
+    switch (a[6]) {
+    case 0:
+        f_StartActorSkeletalAnimationBlend(a, D_8001B860_083b, 0, 8);
+        MEMBER_AT(s16, a, 0x64) = 0x400;
+        dx = MEMBER_AT(u16, a, 0x2E) - D_1F800160;
+        dy = MEMBER_AT(u16, a, 0x32) - D_1F800162;
+        MEMBER_AT(s16, a, 0x4E) = dx;
+        MEMBER_AT(s16, a, 0x50) = dy;
+        MEMBER_AT(s16, a, 0x52) = MEMBER_AT(u16, a, 0x36) - D_1F800164;
+        a[6]++;
+        break;
+    case 1:
+        MEMBER_AT(s16, a, 0x64) -= 0x40;
+        if (MEMBER_AT(s16, a, 0x64) < 0) {
+            MEMBER_AT(s16, a, 0x64) = 0;
+        }
+        s = rsin(MEMBER_AT(s16, a, 0x64));
+        MEMBER_AT(s16, a, 0x2E) = D_1F800160 + s * MEMBER_AT(s16, a, 0x4E) / 4096;
+        MEMBER_AT(s16, a, 0x32) = D_1F800162 + s * MEMBER_AT(s16, a, 0x50) / 4096;
+        MEMBER_AT(s16, a, 0x36) = D_1F800164 + s * MEMBER_AT(s16, a, 0x52) / 4096;
+        k = MEMBER_AT(s16, a, 0x64) * 3;
+        MEMBER_AT(s16, a, 0xBC) = k;
+        MEMBER_AT(s16, a, 0xBA) = k;
+        MEMBER_AT(s16, a, 0xB8) = k;
+        if (k == 0) {
+            a[5] = 0;
+            return 1;
+        }
+        return 0;
+    }
+    return 0;
+}
 
 void func_800713F8(u8 *a)
 {
