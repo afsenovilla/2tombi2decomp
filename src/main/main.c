@@ -119,7 +119,7 @@ extern s8 D_1F800090[];
 s32 f_SetActorModelResources(void *, s32, s32);
 s32 func_8001DC40(void *, s32, s32, void *);
 void SpuSetCommonAttr(void *);
-void func_8002847C(void *, s32, s32);
+void func_8002847C(u8 *s, s32 tp);
 typedef struct CdMixAttr {
     /* 0x00 */ u32 mask;
     /* 0x04 */ u8 pad4[0x14];
@@ -3005,7 +3005,57 @@ void func_800281EC(u8 *a0)
     } while (i < *(s16 *)(a + 0x4E));
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8002847C);
+extern u16 D_1F80008C_3e5b[];
+extern s32 D_1F800090_e8ac;
+extern void *D_800BF544;
+
+void func_8002847C(u8 *s, s32 tp)
+{
+    s32 *otz = &D_1F800080;
+    s32 *sx = &D_1F800084_8c7c;
+    s32 *sy = &D_1F800088;
+    u16 *org = D_1F80008C_3e5b;
+    s32 *dq = &D_1F800090_e8ac;
+    u8 *t = D_800BF544;
+    u32 *ot;
+    s32 n;
+    s32 v;
+    s32 pad[8];
+
+    tp <<= 22;
+    do {
+        n = *(s32 *)(s + 4);
+        *(s16 *)(t + 0x08) = org[0] + ((*(s8 *)(s + 0x1C) * *sx) >> 16);
+        *(s16 *)(t + 0x14) = org[0] + ((*(s8 *)(s + 0x1D) * *sx) >> 16);
+        *(s16 *)(t + 0x20) = org[0] + ((*(s8 *)(s + 0x20) * *sx) >> 16);
+        *(s16 *)(t + 0x2C) = org[0] + ((*(s8 *)(s + 0x21) * *sx) >> 16);
+        *(s16 *)(t + 0x0A) = org[1] + ((*(s8 *)(s + 0x1E) * *sy) >> 16);
+        *(s16 *)(t + 0x16) = org[1] + ((*(s8 *)(s + 0x1F) * *sy) >> 16);
+        *(s16 *)(t + 0x22) = org[1] + ((*(s8 *)(s + 0x22) * *sy) >> 16);
+        *(s16 *)(t + 0x2E) = org[1] + ((*(s8 *)(s + 0x23) * *sy) >> 16);
+        *(s32 *)(t + 0x0C) = *(s32 *)s + tp;
+        *(s32 *)(t + 0x18) = n & 0x7FFFFF;
+        v = *(s32 *)(s + 8);
+        *(s32 *)(t + 0x24) = v;
+        *(s32 *)(t + 0x30) = v >> 16;
+        gte_lddp(*dq);
+        gte_ldrgb3(s + 0xC, s + 0x10, s + 0x14);
+        gte_dpct();
+        gte_strgb3(t + 4, t + 0x10, t + 0x1C);
+        gte_ldrgb(s + 0x18);
+        gte_dpcs();
+        gte_strgb(t + 0x28);
+        t[7] = 0x3E;
+        do {
+            ot = D_800ED8C8 + *otz;
+            *(u32 *)t = *ot | 0xC000000;
+            *ot = (u32)t;
+        } while (0);
+        t += 0x34;
+        s += 0x24;
+    } while (n > 0);
+    D_800BF544 = t;
+}
 
 void func_800286CC(u8 *a)
 {
@@ -3033,7 +3083,7 @@ void func_800286CC(u8 *a)
         *o2 = (u32)(*otz * (sc >> 16)) >> 8;
         t = (*(s32 **)(a + 0x50))[c];
         *otz = (u32)(*otz * (sc & 0xFFFF)) >> 8;
-        func_8002847C(t, 0, 0);
+        ((void (*)())func_8002847C)(t, 0, 0);
     }
 }
 
@@ -3047,7 +3097,6 @@ extern u8 D_8009F05C[];
 extern void (*D_800A4AA0[])(u8 *);
 extern s32 (*D_800A3B78[])(u8 *);
 extern u8 D_800A1CD4[];
-extern s32 D_1F800090_e8ac;
 void func_800288AC(u8 *a)
 {
     s32 *z = &D_1F800090_e8ac;
@@ -5294,7 +5343,7 @@ void func_800328BC(void *arg0, M2C_UNK arg1) {
 void f_DrawEffectPrimitiveListWithoutDepthCue(void *list)
 {
     *(s32 *)D_1F800090 = 0;
-    func_8002847C(list, 0, 0);
+    ((void (*)())func_8002847C)(list, 0, 0);
 }
 
 void func_80032918(u8 *a)
@@ -6327,7 +6376,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80036DFC);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800376EC);
 
 extern void *D_800174BC;
-extern void *D_800BF544;
 extern s16 D_801003F8;
 void func_80037894(u8 *ui, s16 y, u8 c)
 {
