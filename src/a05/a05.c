@@ -1145,7 +1145,205 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010F0F8);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010F304);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8010F948);
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+
+void func_8010F948(u8 *arg0) {
+    u8 *a = arg0;
+    s16 v;
+    s16 t;
+    s16 r;
+    s16 s;
+    u32 k;
+
+    switch (a[6]) {
+    case 0:
+        a[0x145] = 0;
+        a[0x146] = 0;
+        func_80053D90(a);
+        func_80054E24(a, 0, 0);
+        H(a, 0x4A) = 0;
+        H(a, 0x50) = 0;
+        a[0x148] = 0;
+        H(a, 0x32) += 8;
+        func_8005444C(a);
+        a[0x29] = 0;
+        if (H(a, 0x142) == 0) {
+            if (H(a, 0x44) == 0) {
+                if (a[0x147] != 0) {
+                    H(a, 0x44) = -0x1400;
+                } else {
+                    H(a, 0x44) = 0x1400;
+                }
+            } else if (H(a, 0x44) > 0) {
+                H(a, 0x44) = U(a, 0x44) + 0x200;
+            } else {
+                H(a, 0x44) = U(a, 0x44) - 0x200;
+            }
+        } else if (H(a, 0x142) > 0) {
+            H(a, 0x44) = 0x1400;
+        } else {
+            H(a, 0x44) = -0x1400;
+        }
+        if (a[0x147] == 0) {
+            H(a, 0x14C) = 0x40;
+            H(a, 0x14E) = 0x40;
+        } else {
+            H(a, 0x14C) = 0x7C0;
+            H(a, 0x14E) = -0x40;
+        }
+        H(a, 0x40) = 0;
+        a[0x149] = a[0x14A] = a[0x147] + 2;
+        a[6]++;
+    case 1:
+        if (H(a, 0x40)++ >= 0xC) {
+            H(a, 0x40) = 0;
+        }
+        func_80056B48(a, 0);
+        func_80055D5C(a);
+        func_80076D68(a);
+        H(a, 0x32) += 8;
+        W(a, 0x30) += (abs(H(a, 0x44)) / 2) << 8;
+        func_8005444C(a);
+        func_80056C00(a, 1);
+        t = U(a, 0x44) + (H(a, 0x142) >> 1);
+        H(a, 0x44) = t;
+        k = (u32)(t << 16) >> 31;
+        s = 0x7C0;
+        if (a[0x147] != k) {
+            a[0x177] |= 1;
+            if (k == 0) {
+                s = 0x40;
+            }
+            r = func_800776F8(s, H(a, 0x14C), 0x40);
+            H(a, 0x14C) = r;
+            if (r == s) {
+                a[0x177] = 0;
+                H(a, 0x14E) = 0;
+                a[0x147] = 1 - a[0x147];
+            } else if (a[0x147] != 0) {
+                H(a, 0x14E) = r - 0x800;
+            } else {
+                H(a, 0x14E) = r;
+            }
+        }
+        if (H(a, 0x44) > 0x4000) {
+            H(a, 0x44) = 0x4000;
+        } else if (H(a, 0x44) < -0x4000) {
+            H(a, 0x44) = -0x4000;
+        }
+        if (a[0x29] != 0) {
+            a[0x16A] = 0;
+            if (func_80055824() != 0) {
+                a[5] = 2;
+                a[6] = 0;
+                a[7] = 0;
+            } else if (func_800532A0(a) == 0 || H(a, 0x44) == 0) {
+                v = H(a, 0x44);
+                if (abs(v) < 0x1500) {
+                    a[6] = 4;
+                    a[7] = 0;
+                } else {
+                    if (v < 0) {
+                        H(a, 0x44) = -0x2000;
+                        a[0x147] = 1;
+                    } else {
+                        H(a, 0x44) = 0x2000;
+                        a[0x147] = 0;
+                    }
+                    a[0] = 3;
+                    H(a, 0x172) = 0x1E;
+                    a[0x16A] = 0;
+                    a[7] = 0;
+                    H(a, 0x4A) = -0x2000;
+                    a[6]++;
+                    func_80054D14(a, 0x69, 6);
+                }
+            }
+        } else {
+            func_80056D44(a, 0);
+        }
+        break;
+    case 2:
+        if ((s16)(H(a, 0x44) += 0xE0) >= 0) {
+            H(a, 0x44) = 0;
+        }
+        func_80056B48(a, 1);
+        func_80055D5C(a);
+        func_80076D68(a);
+        if ((s16)(H(a, 0x4A) += 0x200) > 0x3E00) {
+            H(a, 0x4A) = 0x3E00;
+        }
+        W(a, 0x30) += H(a, 0x4A) << 8;
+        func_800541F4(a);
+        if (H(a, 0x4A) > 0) {
+            if (a[7] == 0) {
+                a[0x144] = 1;
+                a[7] = 1;
+            }
+            func_8005444C(a);
+            if (a[0x29] != 0) {
+                func_8005314C(a);
+                if (a[0x144] < 2) {
+                    a[0x144] = 0;
+                }
+                a[6]++;
+                func_80054198(a);
+                func_80054D14(a, 0x66, 4);
+            }
+        }
+        break;
+    case 3:
+        if (func_80076D68(a) != 2) {
+            a[0x16A] = 0;
+            a[5] = 0;
+            a[6] = 0;
+            a[7] = 0;
+        }
+        break;
+    case 4:
+        func_80056B48(a, 0);
+        func_80055D5C(a);
+        func_80076D68(a);
+        H(a, 0x32) += 8;
+        func_8005444C(a);
+        v = H(a, 0x44);
+        t = abs(v) - 0xA0;
+        if (t < 0) {
+            t = 0;
+        }
+        if (v < 0) {
+            H(a, 0x44) = -t;
+        } else {
+            H(a, 0x44) = t;
+        }
+        if (H(a, 0x44) > 0x2400) {
+            H(a, 0x44) = 0x2400;
+        } else if (H(a, 0x44) < -0x2400) {
+            H(a, 0x44) = -0x2400;
+        }
+        func_80056C00(a, 0);
+        if (a[0x29] != 0) {
+            if (func_80055824() != 0) {
+                a[0x16A] = 0;
+                a[5] = 2;
+                a[6] = 0;
+                a[7] = 0;
+            } else if (abs(H(a, 0x44)) < 0xA00) {
+                if (func_800532A0(a) == 0) {
+                    a[0x16A] = 0;
+                    a[5] = 0;
+                    a[6] = 0;
+                    a[7] = 0;
+                    func_80054198(a);
+                } else {
+                    a[6] = 1;
+                }
+            }
+        }
+        break;
+    }
+    func_800551C4(a);
+}
 
 extern u16 D_800ECF54;
 extern s16 D_1F80016C;
