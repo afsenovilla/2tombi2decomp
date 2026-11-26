@@ -8643,7 +8643,155 @@ void func_8012F494(AreaPartsOwner *a)
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateBarrelSeesawRide);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RotateSelectedTownBarrel);
+void f_ActivateBarrelLinkedSegmentPair(AreaPartsOwner *a, s16 k0, s16 flag);
+
+void f_RotateSelectedTownBarrel(AreaPartsOwner *a)
+{
+    s16 k;
+    s16 b;
+    s16 n;
+
+    switch (a->pad[6]) {
+    case 0:
+        H_f12c(a->parts[H_f12c(a, 0x6C)], 0xC) = U(a->parts[H_f12c(a, 0x6C)], 0xC) & 0xFFF;
+        a->pad[0x46] = func_80077768(a->pad[0x46] << 4, H_f12c(a->parts[H_f12c(a, 0x6C)], 0xA), 0);
+        if (a->pad[0x47] & 0x80) {
+            k = 0x1800;
+            H_f12c(a->parts[H_f12c(a, 0x6C)], 0x14) = 0x380;
+            H_f12c(a->parts[1], 0x12) = 0xE;
+            H_f12c(a->parts[1], 0x14) = -2;
+        } else {
+            k = 0x800;
+            H_f12c(a->parts[H_f12c(a, 0x6C)], 0x14) = 0x240;
+            H_f12c(a->parts[1], 0x12) = 0x10;
+            H_f12c(a->parts[1], 0x14) = -8;
+        }
+        H_f12c(a, 0x74) = 1;
+        if (a->pad[0x46] != 0) {
+            H_f12c(a->parts[1], 0x12) = -H_f12c(a->parts[1], 0x12);
+            H_f12c(a->parts[1], 0x14) = -H_f12c(a->parts[1], 0x14);
+        }
+        if (!(a->pad[0x47] & 1)) {
+            a->pad[0x46] ^= 1;
+        }
+        if (a->pad[0x46] != 0) {
+            a->pad[0x5E] = 3;
+            H_f12c(a, 0x6E) = U(a->parts[H_f12c(a, 0x6C)], 0xC) + k;
+        } else {
+            a->pad[0x5E] = 2;
+            H_f12c(a, 0x6E) = U(a->parts[H_f12c(a, 0x6C)], 0xC) - k;
+            H_f12c(a->parts[H_f12c(a, 0x6C)], 0x14) = -H_f12c(a->parts[H_f12c(a, 0x6C)], 0x14);
+        }
+        {
+        s16 i = H_f12c(a, 0x6C);
+        u8 *p = a->parts[i];
+        u8 f = p[0x3E];
+        if (f & 1) {
+            p[0x3E] = f | 0x80;
+        } else if (!(f & 0x10) && (H_f12c(a, 0x62) & 0xFF00) != 0xFF00) {
+            b = (U(a, 0x62) & 0x7F00) >> 8;
+            k = b;
+            if (i == 3 && !(H_f12c(a, 0x62) & 0x8000)) {
+                k = b + 1;
+            }
+            if (k < 5) {
+                func_8004CBD8(a, k + 1);
+                a->parts[H_f12c(a, 0x6C)][0x3E] |= 0x80;
+            } else {
+                a->parts[H_f12c(a, 0x6C)][0x3E] |= 0x10;
+            }
+        }
+        }
+        if (a->pad[1] != 0) {
+            func_80074590(0x83, 0, 0);
+        }
+        a->pad[6]++;
+        break;
+    case 1:
+        H_f12c(a->parts[H_f12c(a, 0x6C)], 0xC) += U(a->parts[H_f12c(a, 0x6C)], 0x14);
+        {
+        u8 *p = a->parts[H_f12c(a, 0x6C)];
+        s16 v = H_f12c(p, 0x14);
+        if ((v > 0 && H_f12c(p, 0xC) >= H_f12c(a, 0x6E)) || (v < 0 && H_f12c(p, 0xC) <= H_f12c(a, 0x6E))) {
+            H_f12c(a->parts[H_f12c(a, 0x6C)], 0x12) = H_f12c(a->parts[H_f12c(a, 0x6C)], 0x14) / 2;
+            a->pad[6]++;
+            H_f12c(a, 0x74) = 0;
+            a->pad[0x5E] |= 0x80;
+        } else {
+            H_f12c(a->parts[H_f12c(a, 0x6C)], 0x14) -= H_f12c(a->parts[H_f12c(a, 0x6C)], 0x14) >> 3;
+        }
+        }
+        break;
+    case 2:
+        H_f12c(a->parts[H_f12c(a, 0x6C)], 0xC) += U(a->parts[H_f12c(a, 0x6C)], 0x14);
+        if ((a->pad[0x5E] & 1) ? H_f12c(a->parts[H_f12c(a, 0x6C)], 0xC) < H_f12c(a, 0x6E)
+                               : H_f12c(a->parts[H_f12c(a, 0x6C)], 0xC) > H_f12c(a, 0x6E)) {
+            H_f12c(a->parts[H_f12c(a, 0x6C)], 0xC) = U(a, 0x6E) & 0xFFF;
+            if ((H_f12c(a, 0x62) & 0xFF00) != 0xFF00) {
+                b = (U(a, 0x62) & 0x7F00) >> 8;
+                n = b;
+                if (H_f12c(a, 0x6C) == 3 && !(H_f12c(a, 0x62) & 0x8000)) {
+                    n = b + 1;
+                }
+                if (H_f12c(a->parts[H_f12c(a, 0x6C)], 0xC) == 0) {
+                    { u8 *g = (u8 *)&D_800BF870; g[0x162] &= ~(1 << n); }
+                } else {
+                    { u8 *g = (u8 *)&D_800BF870; g[0x162] |= 1 << n; }
+                }
+            }
+            H_f12c(a, 0x76) = 0;
+            H_f12c(a, 0x78) = 0;
+            H_f12c(a, 0x48) = 0;
+            H_f12c(a, 0x4E) = 0;
+            {
+            u8 *p = a->parts[H_f12c(a, 0x6C)];
+            u8 f = p[0x3E];
+            if (f & 0x80) {
+                if (f & 1) {
+                    if ((s16)f_SpawnNestChickFromParent((u8 *)a) != 0) {
+                        H_f12c(a, 0x7A) = 0;
+                        a->parts[H_f12c(a, 0x6C)][0x3E] &= 0xFE;
+                        f_ActivateBarrelLinkedSegmentPair(a, H_f12c(a, 0x6C), 0);
+                    } else {
+                        a->parts[H_f12c(a, 0x6C)][0x3E] &= 0x7F;
+                    }
+                } else if (!(f & 0x10)) {
+                    p[0x3E] = f | 0x10;
+                    f_ActivateBarrelLinkedSegmentPair(a, H_f12c(a, 0x6C), 0);
+                }
+            }
+            }
+            a->pad[5] = 0;
+            a->pad[6] = 0;
+            a->pad[0x5E] = 0;
+        } else {
+            H_f12c(a->parts[H_f12c(a, 0x6C)], 0x14) -= U(a->parts[H_f12c(a, 0x6C)], 0x12);
+        }
+        break;
+    }
+    if (f_HandleBarrelSeesawContact(a) != 0) {
+        H_f12c(a->parts[H_f12c(a, 0x6C)], 0xC) = U(a, 0x6E) & 0xFFF;
+        b = (U(a, 0x62) & 0x7F00) >> 8;
+        n = b;
+        if (H_f12c(a, 0x6C) == 3 && !(U(a, 0x62) & 0x8000)) {
+            n = b + 1;
+        }
+        if (H_f12c(a->parts[H_f12c(a, 0x6C)], 0xC) == 0) {
+            { u8 *g = (u8 *)&D_800BF870; g[0x162] &= ~(1 << n); }
+        } else {
+            { u8 *g = (u8 *)&D_800BF870; g[0x162] |= 1 << n; }
+        }
+    }
+    switch (H_f12c(a, 0x74)) {
+    case 0:
+        H_f12c(a->parts[1], 0xA) = U(a, 0x70);
+        break;
+    case 1:
+        H_f12c(a->parts[1], 0xA) += U(a->parts[1], 0x12);
+        H_f12c(a->parts[1], 0x12) += U(a->parts[1], 0x14);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80130524);
 
