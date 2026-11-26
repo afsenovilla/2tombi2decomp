@@ -809,7 +809,61 @@ s32 func_8010F8D4(u8 *a)
     return D_1F800080;
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8010F98C);
+extern u16 D_1F8001A8;
+extern u16 D_1F800194;
+extern s16 D_1F800196;
+extern u16 D_1F8001A0_b0de_1f9a;
+extern u16 D_1F8001A2_7766;
+
+s32 func_8010F98C(u8 *a) {
+    u16 k;
+
+    if (D_1F800137 != 0) {
+        return 0;
+    }
+    if ((H(a, 0x16C) & 0xC000) != 0xC000) {
+        return 0;
+    }
+    func_8004766C(a);
+    if ((*(s32 *)(a + 0x148) & 0xA0000) == 0xA0000) {
+        func_80047B5C(a, 1);
+        if (D_1F8001A8 & 2) {
+            a[0x61] = 0x20;
+            D_1F80018E = 0x1100;
+            D_1F800194 = D_1F8001A2_7766 & 0xFFF;
+            D_1F800196 = D_1F8001A0_b0de_1f9a & 0xFFF;
+            if (a[5] != 0x2A) {
+                a[5] = 0x2A;
+                a[6] = 0;
+            }
+            return 3;
+        }
+    }
+    func_80047B5C(a, 0);
+    k = D_1F8001A8;
+    if (k & 8) {
+        D_1F80018E = 0x2000;
+        D_1F800194 = D_1F8001A2_7766 & 0xFFF;
+        D_1F800196 = D_1F8001A0_b0de_1f9a & 0xFFF;
+        if (a[5] != 0x2B) {
+            a[5] = 0x2B;
+            a[6] = 0;
+        }
+        return 2;
+    }
+    if ((*(s32 *)(a + 0x148) & 0x60000) == 0x60000 && (k & 4)) {
+        a[0x61] = 0x10;
+        D_1F80018E = 0x1000;
+        D_1F800194 = D_1F8001A2_7766 & 0xFFF;
+        D_1F800196 = D_1F8001A0_b0de_1f9a & 0xFFF;
+        if (a[5] != 0x2A) {
+            a[5] = 0x2A;
+            a[6] = 0;
+        }
+        return 1;
+    }
+    return 0;
+}
 
 #define W_d1fb(p, o) (*(s32 *)((u8 *)(p) + (o)))
 extern s16 D_1F80019E_3f3f;
@@ -993,8 +1047,6 @@ void func_8010FF9C(u8 *a) {
 
 #define W_d1fb(p, o) (*(s32 *)((u8 *)(p) + (o)))
 extern u16 D_1F8001A6;
-extern u16 D_1F8001A8;
-extern u16 D_1F8001A2_7766;
 extern u16 D_800E7E68;
 extern u16 D_1F800170;
 static inline s32 snap_inl(u8 *a) {
@@ -1147,9 +1199,6 @@ void func_801100F4(u8 *a) {
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80110AA0);
 
-extern u16 D_1F800194;
-extern s16 D_1F800196;
-extern u16 D_1F8001A0_b0de_1f9a;
 extern s32 D_1F800084;
 extern u16 D_800ECF54;
 
