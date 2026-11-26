@@ -9451,7 +9451,39 @@ loop:
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_BeginScriptedBarrelRotation);
+void f_BeginScriptedBarrelRotation(AreaPartsOwner *a)
+{
+    s16 ang;
+    s16 t;
+
+    ang = H_f12c(a->parts[1], 8);
+    if (ang > 0x800) {
+        ang |= 0xF000;
+    }
+    if (a->pad[6] != 0) {
+        return;
+    }
+    a->pad[0x5E] = 0;
+    if ((U(a, 0x60) & 0xF0) == 0x40) {
+        a->pad[5] = 0;
+        return;
+    }
+    switch (U(a, 0x68) & 0x7FFF) {
+    case 0:
+        t = U(a, 0x64);
+        break;
+    case 1:
+        t = (H_f12c(a, 0x64) + H_f12c(a, 0x66)) / 2;
+        break;
+    case 2:
+        t = U(a, 0x66);
+        break;
+    }
+    H_f12c(a, 0x48) = (t - ang) << 4;
+    H_f12c(a, 0x40) = 0x10;
+    a->pad[5] = 1;
+    a->pad[6] = 4;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateBarrelSeesawSupportHeight);
 
