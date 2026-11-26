@@ -10414,7 +10414,164 @@ s32 func_80137A90(u8 *a)
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80137B18);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80137C5C);
+#define P0(p) (*(u8 **)((u8 *)(p) + 0xC0))
+#define FOLLOW(a, o)                       \
+    U(a, 0x2E) = U(P0(o), 0x2C);           \
+    U(a, 0x32) = U(P0(o), 0x30);           \
+    U(a, 0x36) = U(P0(o), 0x34);           \
+    U(a, 0x56) = U(o, 0x56);               \
+    U(P0(a), 0xC) = U(P0(o), 0xC);         \
+    U(a, 0x60) = U(o, 0x60);               \
+    a[0xBE] = o[0xBE];                     \
+    a[0xBF] = o[0xBF];                     \
+    if (a[4] == 1) {                       \
+        o[0x47] = a[0x47];                 \
+        o[0x2B] = a[0x2B];                 \
+    }
+
+void func_80137C5C(u8 *a)
+{
+    u8 *o;
+    u8 *q;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        if (func_80051B70(a, 0x17, 0x12) != 0) {
+            break;
+        }
+        W_d1fb(a, 0x3C) = D_800ECFB8;
+        a[0xD] |= 4;
+        P0(a)[0x3F] = 0xFD;
+        o = (u8 *)W_d1fb(a, 0x10);
+        H(a, 0x80) = 0x78;
+        H(a, 0x82) = 0xF0;
+        H(a, 0x84) = 0x8C;
+        a[0] = 1;
+        H(a, 0x86) = 0xA0;
+        a[0x47] = 0;
+        a[0x2B] = 0;
+        if (o == NULL) {
+            break;
+        }
+        FOLLOW(a, o);
+        if (o[1] != 0) {
+            a[1] = 1;
+            goto die;
+        }
+        break;
+    case 1:
+        o = (u8 *)W_d1fb(a, 0x10);
+        if (o != NULL) {
+            FOLLOW(a, o);
+            if (o[1] != 0) {
+                a[1] = 1;
+                func_80077E7C(a);
+                func_800517F8(a);
+            }
+        }
+        a[0x47] = 0;
+        break;
+    case 2:
+        q = (u8 *)W_d1fb(a, 0x10);
+        switch (a[5]) {
+        case 1:
+            switch (a[6]) {
+            case 0:
+                q[6] = 0x80;
+                q[4] = 2;
+                q[5] = 1;
+                q[0] = 2;
+                H(a, 0x84) = 0xA0;
+                H(a, 0x86) = 0xB4;
+                a[0xD] |= 4;
+                P0(a)[0x3F] = 3;
+                a[6]++;
+            case 1:
+                o = (u8 *)W_d1fb(a, 0x10);
+                if (o == NULL) {
+                    break;
+                }
+                FOLLOW(a, o);
+                if (o[1] != 0) {
+                    a[1] = 1;
+                    goto die;
+                }
+                break;
+            case 2:
+                W_d1fb(q, 0x10) = 0;
+                q[0x5E] = 1;
+                a[0x2A] = q[0x2A];
+                U(a, 0x56) = U(q, 0x56);
+                W_d1fb(a, 0x10) = 0;
+                a[6]++;
+            case 3:
+                if (func_8007778C(a) != 0) {
+                die:
+                    func_80077E7C(a);
+                    func_800517F8(a);
+                }
+                break;
+            }
+            break;
+        case 0:
+        case 2:
+            if (func_8007778C(a) != 0) {
+                func_80077E7C(a);
+                func_800517F8(a);
+            }
+            switch (a[6]) {
+            case 0:
+                W_d1fb(q, 0x10) = 0;
+                q[0x5E] = 1;
+                a[0x2A] = q[0x2A];
+                U(a, 0x56) = U(q, 0x56);
+                W_d1fb(a, 0x10) = 0;
+                if (func_80077768(a[0x2B] << 4, H(a, 0x56), 0) != 0) {
+                    H(a, 0x48) = -func_80083F50(H(a, 0x56)) >> 4;
+                    H(a, 0x4C) = func_80083E80(H(a, 0x56)) >> 4;
+                } else {
+                    H(a, 0x48) = func_80083F50(H(a, 0x56)) >> 4;
+                    H(a, 0x4C) = -func_80083E80(H(a, 0x56)) >> 4;
+                }
+                H(a, 0x4A) = -0x200;
+                H(a, 0x44) = 0x1000;
+                H(a, 0x40) = 0x14;
+                a[6]++;
+                break;
+            case 1:
+                U(a, 0x58) += 0x180;
+                W_d1fb(a, 0x2C) += H(a, 0x48) * H(a, 0x44);
+                W_d1fb(a, 0x34) += H(a, 0x4C) * H(a, 0x44);
+                W_d1fb(a, 0x30) += H(a, 0x4A) * H(a, 0x44);
+                func_8004766C(a);
+                if (H(a, 0x40) != 0) {
+                    H(a, 0x40)--;
+                } else if (func_800495DC(a, 0x5A, 0x5A) != 0) {
+                    if (a[1] != 0) {
+                        func_80074590(0x1B, 0, 0);
+                        func_800315D4(a + 0x2C);
+                    }
+                set3:
+                    a[4] = 3;
+                    break;
+                }
+                H(a, 0x4A) += 0x30;
+                if (H(a, 0x4A) > 0x1000) {
+                    H(a, 0x4A) = 0x1000;
+                }
+                break;
+            }
+            break;
+        case 0xB:
+            goto set3;
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_8013829C(s32 arg0) {
     void *temp_a0;
