@@ -17084,7 +17084,68 @@ void func_80063ECC(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80063F9C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80064358);
+extern u16 D_800A47C4[];
+
+void func_80064358(u8 *t, u8 k, u8 *o)
+{
+    u16 *e;
+    s16 vx;
+    s16 vy;
+    s16 anim;
+    s32 h;
+    s32 c;
+    s32 d;
+    s32 k2;
+    s32 m;
+
+    o[0x29] = 0;
+    t[0x144] = 0;
+    t[7] = 0;
+    t[6]++;
+    e = &D_800A47C4[k * 3];
+    vx = e[0];
+    vy = e[1];
+    anim = e[2];
+    if (k == 0) {
+        f_SetTombaJumpLaunchVelocity(t, 0);
+        vy = *(u16 *)(t + 0x4A) + 0xA80;
+    }
+    f_SetTombaAnimationIfChanged(t, anim, 0);
+    if (vx != 0) {
+        vx += t[0x168] << 10;
+    }
+    if (vy < 0) {
+        vy -= t[0x168] << 10;
+    }
+    if (t[0x147] != 0) {
+        *(s16 *)(t + 0x44) = -vx;
+    } else {
+        *(s16 *)(t + 0x44) = vx;
+    }
+    *(s16 *)(t + 0x4A) = vy;
+    h = *(u16 *)(t + 0x58) & 0xFFF;
+    k2 = *(s16 *)(t + 0x58) = h;
+    if (k2 != 0) {
+        if (k2 > 0x800) {
+            m = h + 0x100;
+            *(s16 *)(t + 0x58) = m;
+            if (m >= 0x1000) {
+                *(s16 *)(t + 0x58) = 0;
+            }
+        } else {
+            *(s16 *)(t + 0x58) = h - 0x100;
+            if (*(s16 *)(t + 0x58) < 0) {
+                *(s16 *)(t + 0x58) = 0;
+            }
+        }
+    }
+    if (k == 0) {
+        c = (rcos(*(s16 *)(t + 0x56)) * *(s16 *)(o + 0x80)) >> 12;
+        d = rsin(*(s16 *)(t + 0x56)) * *(s16 *)(o + 0x80);
+        *(s16 *)(t + 0x2E) -= c;
+        *(s16 *)(t + 0x36) += d >> 12;
+    }
+}
 
 void func_80064524(void *arg0) {
     u8 temp_v1;
