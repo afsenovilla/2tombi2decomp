@@ -6549,7 +6549,43 @@ s32 func_80036DC4(s32 i)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80036DFC);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800376EC);
+typedef struct { u8 b0; u8 kind; u8 b2; u8 b3; char *text; u8 pad[4]; } ItemDef_76EC;
+typedef struct { u8 pad[0x244]; u8 counts[0x100]; } Gs_76EC;
+extern ItemDef_76EC D_800A2BE8_76ec[];
+extern Gs_76EC D_800BF870_76ec;
+extern char D_80010680[];
+void f_DrawSmallMenuText(s16 x, s32 y, s16 c, s32 d, s32 e);
+u8 f_FormatIntegerText(s32 v, char *out);
+
+void func_800376EC(u8 *a, s16 item, s16 mode, s16 y, s32 c, s32 e)
+{
+    s16 x;
+    ItemDef_76EC *d;
+    char buf[8];
+
+    if (mode == 0) {
+        x = 0x2C;
+    } else if (mode == 1) {
+        x = 0xBC;
+    } else {
+        x = mode;
+    }
+    if (D_800A2BE8_76ec[item].b3 != 0) {
+        f_DrawSmallMenuText(x, (s16)(y - 4), c, (s32)D_800A2BE8_76ec[item].text, e);
+    } else {
+        f_DrawSmallMenuText(x, y, c, (s32)D_800A2BE8_76ec[item].text, e);
+    }
+    if (a[8] == 0 && D_800A2BE8_76ec[item].b0 != 0 && D_800BF870_76ec.counts[item] >= 2) {
+        if (mode == 0) {
+            x = 0x80;
+        } else {
+            x = 0x110;
+        }
+        f_DrawSmallMenuText(x, y, c, (s32)D_80010680, e + 3);
+        f_FormatIntegerText(D_800BF870_76ec.counts[item], buf);
+        f_DrawSmallMenuText(x + 8, y, c, (s32)buf, e + 3);
+    }
+}
 
 extern void *D_800174BC;
 extern s16 D_801003F8;
