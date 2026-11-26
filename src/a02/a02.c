@@ -10526,11 +10526,237 @@ void func_80125618(u8 *a, s32 *b) {
     b[2] -= j;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_801258A4);
+typedef struct {
+    s32 w[4];
+} V4;
+typedef struct {
+    u8 pad0[4];
+    s32 flags;
+    s16 a, b, c, d;
+    s16 e[4][2];
+    s16 n[4][2];
+    u8 pad30[0];
+} ColTri;
+typedef struct {
+    s32 x, y, z;
+} V3;
+typedef struct {
+    u16 *list;
+    u16 *grid;
+    ColTri *tris;
+} ColTable;
+extern ColTable D_801385B8;
+extern ColTable D_801385C4;
+extern ColTable D_801385D0;
+extern s32 D_1F8001C8[];
+extern s32 D_801390F0[];
+
+s32 func_801258A4(s32 *pos, s16 *off)
+{
+    s32 best = 0;
+    s32 ret = best;
+    s32 iter = 2;
+    s32 n = best;
+    s32 *v = D_1F8001C8;
+    ColTable *t;
+    ColTri *found[4];
+    u16 *list;
+    u16 *grid;
+    ColTri *tris;
+    ColTri *hit;
+    ColTri *tri;
+    u16 *q;
+    u16 *p;
+    u16 k;
+    u16 cell;
+    s32 m;
+    s32 i, j, inside, d, y, x, z;
+    s32 *e;
+    s16 *pl;
+    s32 w;
+
+    if (D_800BF808_1760[0xE] == 0) {
+        t = &D_801385B8;
+    } else if (D_800BF808_1760[0xF] == 7) {
+        t = &D_801385D0;
+    } else {
+        t = &D_801385C4;
+    }
+    list = t->list;
+    grid = t->grid;
+    tris = t->tris;
+    ((V3 *)v)->x = pos[0] + (off[0] << 16);
+    v[1] = pos[1] + (off[1] << 16);
+    v[2] = pos[2] + (off[2] << 16);
+    while (iter-- > 0) {
+        hit = NULL;
+        x = ((s16 *)v)[1];
+        z = ((s16 *)v)[5];
+        x /= 512;
+        z /= 512;
+        cell = grid[(z << 6) + x];
+        if (cell == 0xFFFF) {
+            return 0;
+        }
+        if (list[cell] != 0xFFFF) {
+            m = cell;
+            do {
+                k = list[m];
+                tri = &tris[k];
+                if (tri->flags & 0x8000) {
+                    for (i = 0; i < n; i++) {
+                        if (tri == found[i]) {
+                            break;
+                        }
+                    }
+                    if (i == n) {
+                        j = 0;
+                        inside = 0;
+                        for (; j < 4; j++) {
+                            d = (((s16 *)v)[1] - tri->e[j][0]) * tri->n[j][0] +
+                                (((s16 *)v)[5] - tri->e[j][1]) * tri->n[j][1];
+                            D_801390F0[j] = d;
+                            if (d > 0) {
+                                goto out;
+                            }
+                        }
+                        inside = 1;
+                    out:
+                        if (inside) {
+                            s32 c1, c2, c3;
+
+                            pl = &tri->a;
+                            w = pl[3] << 12;
+                y = (tri->a * ((s16 *)v)[1] + pl[2] * ((s16 *)v)[5] + w) / -pl[1];
+                            c1 = y <= best;
+                            c2 = y >= ((s16 *)v)[3];
+                            c3 = y <= ((s16 *)v)[3] + 0x80;
+                            if (c1 && c2 && c3) {
+                                hit = tri;
+                                best = y;
+                                D_801390E0[0] = D_801390F0[0];
+                                D_801390E0[1] = D_801390F0[1];
+                                D_801390E0[2] = D_801390F0[2];
+                                D_801390E0[3] = D_801390F0[3];
+                            }
+                        }
+                    }
+                }
+            } while (list[++m] != 0xFFFF);
+        }
+        if (hit == NULL) {
+            break;
+        }
+        func_80125618(hit, v);
+        ret = 1;
+        found[n++] = hit;
+    }
+    pos[0] = v[0] - (off[0] << 16);
+    pos[2] = v[2] - (off[2] << 16);
+    return ret;
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80125C5C);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80125F7C);
+extern s16 D_1F8001A4;
+extern u16 D_1F8001A6;
+extern s16 D_1F800240;
+extern u16 D_1F800242;
+
+s32 func_80125F7C(s32 *pos, s16 *off)
+{
+    s32 *v = D_1F8001C8;
+    ColTable *t;
+    u16 *list;
+    u16 *grid;
+    ColTri *tris;
+    ColTri *h1;
+    ColTri *h2;
+    ColTri *tri;
+    u16 *q;
+    u16 *p;
+    u32 k;
+    u16 cell;
+    s32 i;
+    s32 j, inside, d, y, x, z, b1, b2;
+    s16 *pl;
+    s32 w;
+
+    if (D_800BF808_1760[0xE] == 0) {
+        t = &D_801385B8;
+    } else if (D_800BF808_1760[0xF] == 7) {
+        t = &D_801385D0;
+    } else {
+        t = &D_801385C4;
+    }
+    list = t->list;
+    grid = t->grid;
+    tris = t->tris;
+    ((V3 *)v)->x = pos[0] + (off[0] << 16);
+    x = ((s16 *)v)[1];
+    v[1] = pos[1] + (off[1] << 16);
+    v[2] = pos[2] + (off[2] << 16);
+    z = ((s16 *)v)[5];
+    x /= 512;
+    z /= 512;
+    cell = grid[(z << 6) + x];
+    if (cell == 0xFFFF) {
+        D_1F8001A4 = 0;
+        return 0xFF;
+    }
+    b1 = 0;
+    b2 = b1;
+    h1 = (ColTri *)b1;
+    h2 = (ColTri *)b1;
+    if (list[cell] != 0xFFFF) {
+        i = cell;
+        do {
+            k = list[i];
+            tri = &tris[k];
+            for (j = 0; j < 4; j++) {
+                d = (((s16 *)v)[1] - tri->e[j][0]) * tri->n[j][0] + (((s16 *)v)[5] - tri->e[j][1]) * tri->n[j][1];
+                D_801390F0[j] = d;
+                if (d > 0) {
+                    inside = 0;
+                    goto out;
+                }
+            }
+            inside = 1;
+        out:
+            if (inside) {
+                pl = &tri->a;
+                w = pl[3] << 12;
+                y = (tri->a * ((s16 *)v)[1] + pl[2] * ((s16 *)v)[5] + w) / -pl[1];
+                D_1F800242 = tri->flags;
+                D_1F800240 = y;
+                if (tri->flags & 0x8000) {
+                    if (y <= b2) {
+                        h2 = tri;
+                        b2 = y;
+                    }
+                } else {
+                    if (y <= b1) {
+                        h1 = tri;
+                        b1 = y;
+                    }
+                }
+            }
+        } while (list[++i] != 0xFFFF);
+    }
+    if (h1 == NULL) {
+        if (h2 == NULL) {
+            D_1F8001A4 = 0;
+            return -1;
+        }
+    } else if (h2 == NULL) {
+        return 0;
+    }
+    if (h1 == NULL || b2 - 0x80 < b1) {
+        D_1F8001A4 = 0;
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80126240);
 
