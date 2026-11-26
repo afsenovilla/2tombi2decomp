@@ -3,7 +3,255 @@
 #include "m2c.h"
 #include "gte.h"
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateTombaTrolleyRaceActor);
+#define H16(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U16(p, o) (*(u16 *)((u8 *)(p) + (o)))
+extern u8 D_8011C0E8[];
+extern s8 D_800BF808[];
+extern s8 D_800BF80D;
+extern u8 D_800BF80E;
+extern u8 D_800BF81E;
+extern s8 D_800BF9FB;
+extern s32 D_800ECFA4;
+extern u8 D_1F800137;
+extern s16 D_800BF9F6;
+extern u16 D_1F800160;
+extern u16 D_1F800162;
+extern u16 D_1F800164;
+extern u16 D_1F800168;
+extern u16 D_1F80016A;
+s32 func_8010E820(void *arg0);
+void func_80109BC8(u8 *a);
+s32 f_UpdateTrolleyRetryMenu(void);
+/* func_80109C48, inlined */
+static inline s32 inl_9C48(u8 *t, s32 anim, s32 blend)
+{
+    if (t[0x46] == (u8)anim) {
+        return 0;
+    }
+    t[0x46] = anim;
+    func_80054790(t, anim);
+    if ((s16)blend == 0) {
+        func_80077C40(t, D_8011C0E8, anim);
+    } else {
+        func_80077CFC(t, D_8011C0E8, anim, (s16)blend);
+    }
+    return 1;
+}
+
+void f_UpdateTombaTrolleyRaceActor(u8 *a) {
+    u8 *t;
+    u8 *tq;
+    s8 *g;
+    u16 *rec;
+    u8 *gs;
+    s32 k;
+    s32 r;
+    u8 *p;
+    u8 *p2;
+
+    switch (a[4]) {
+    case 0:
+        func_80058648(a, 0);
+        *(s32 *)(a + 0x3C) = D_800ECFA4;
+        a[1] = 1;
+        U16(a, 0x56) = 0;
+        U16(a, 0x58) = 0;
+        inl_9C48(a, 0xB, 0);
+        U16(a, 0x42) = 0x3C;
+        U16(a, 0x40) = 0;
+        D_800BF80E = 0;
+        a[6] = 0;
+        a[0x2B] = 0;
+        *(s32 *)(a + 0x14) = 0;
+        func_800752B4(0);
+        func_80075D24(0x11FFC);
+        break;
+    case 1:
+        if (a[5] != 0 && a[5] == a[4]) {
+            U16(a, 0x40)++;
+        }
+        t = *(u8 **)(a + 0x10);
+        if (t[4] == 1) {
+            tq = t + 0x60;
+            if (t[5] >= 6) {
+                k = a[6];
+                switch (k) {
+                case 0:
+                    if (!(tq[0x12] & 1) || (H16(*(u8 **)(t + 0x60), 6) & 0x8000)) {
+                        goto inc;
+                    }
+                    inl_9C48(a, 0xB - H16(tq, 0x16), 0);
+                    U16(a, 0x84) = 0x60;
+                    break;
+                case 1:
+                    inl_9C48(a, 0xB - H16(tq, 0x16), 0);
+                    U16(a, 0x84) = 0x60;
+                    if (H16(t, 0x4A) < 0) {
+                        break;
+                    }
+                    U16(a, 0x4A) = 0x1400;
+                    a[6]++;
+                    inl_9C48(a, 1, 4);
+                case 2:
+                    U16(a, 0x84) += H16(a, 0x4A) >> 8;
+                    U16(a, 0x4A) -= 0xDB;
+                    if (H16(a, 0x4A) >= 0) {
+                        break;
+                    }
+                    goto inc;
+                case 3:
+                    U16(a, 0x84) += H16(a, 0x4A) >> 8;
+                    U16(a, 0x4A) -= 0xDB;
+                    if (H16(a, 0x84) < 0x60) {
+                        inl_9C48(a, 3, 4);
+                    inc:
+                        a[6]++;
+                    }
+                    break;
+                default:
+                    U16(a, 0x84) = 0x60;
+                    if ((tq[0x12] & 1) && !(H16(*(u8 **)tq, 6) & 0x8000)) {
+                        a[6] = 0;
+                    }
+                    break;
+                }
+                func_80076D68(a);
+            } else {
+                U16(a, 0x84) = 0x60;
+            }
+        }
+        do {
+            g = D_800BF808;
+        } while (0);
+        if (((u8 *)g)[0x31] == 0 && g[5] < 2) {
+            if (g[5] == 1) {
+                g[5] = 2;
+                D_800BF808[0] = 0;
+                a[4] = 2;
+                a[5] = 0;
+                t[4] = 2;
+                t[5] = 0;
+                a[0x2B] = 0;
+            } else if ((s16)func_8010E820(t) != 0) {
+                g[6] = 1;
+                D_800BF808[0] = 0;
+                a[4] = 2;
+                a[5] = 4;
+                rec = (u16 *)((u8 *)&D_800BF870 + 0x146);
+                rec[0] = U16(a, 0x40);
+                func_80109BC8(a);
+                gs = (u8 *)&D_800BF870;
+                if (gs[0x97] != 0xFF) {
+                    if (H16(gs, 0x148) == 0) {
+                        rec[1] = U16(a, 0x40);
+                    } else if (H16(a, 0x40) < H16(gs, 0x148)) {
+                        U16(gs, 0x148) = U16(a, 0x40);
+                    }
+                    if (H16(a, 0x40) < D_800BF9F6) {
+                        D_800BF9F6 = 0x834;
+                        *(u8 **)(a + 0x14) = func_8007E038(0x18, 3);
+                        ((u8 *)&D_800BF9F6)[5] = 4;
+                    } else {
+                        *(u8 **)(a + 0x14) = func_8007E038(0x28, 3);
+                        ((u8 *)&D_800BF9F6)[5] = 3;
+                        func_8004FB20();
+                    }
+                } else if (gs[0x99] != gs[0x97]) {
+                    if (H16(a, 0x40) < H16(gs, 0x148)) {
+                        rec[1] = U16(a, 0x40);
+                    }
+                    if (H16(a, 0x40) < H16(gs, 0x186)) {
+                        *(u8 **)(a + 0x14) = func_8007E038(0x18, 3);
+                        gs[0x18B] = 4;
+                    } else {
+                        *(u8 **)(a + 0x14) = func_8007E038(0x28, 3);
+                        gs[0x18B] = 3;
+                        func_8004FB20();
+                    }
+                } else {
+                    if (H16(a, 0x40) < H16(gs, 0x148)) {
+                        rec[1] = U16(a, 0x40);
+                        *(u8 **)(a + 0x14) = func_8007E038(0x19, 3);
+                    }
+                    gs[0x18B] = 3;
+                }
+            } else if (a[5] == 1) {
+                p2 = (u8 *)&D_800BF870;
+                if (p2[0x99] != 0xFF && H16(a, 0x40) == H16(p2, 0x186)) {
+                    func_8004ED94(0x35, 0x41);
+                }
+                D_800BF81E = 1;
+            }
+        }
+        break;
+    case 2:
+        switch (a[5]) {
+        case 0:
+            U16(a, 0x42) = 0x5A;
+            a[5]++;
+            break;
+        case 1:
+            if (--H16(a, 0x42) == 0) {
+                a[5]++;
+                D_800BF808[0] = 0;
+                D_800BF808[7] = 2;
+                p = *(u8 **)(a + 0x14);
+                D_1F800137 = 2;
+                if (p != NULL && p[4] < 2) {
+                    p[4] = 2;
+                }
+            }
+            break;
+        case 2:
+            r = f_UpdateTrolleyRetryMenu();
+            if (r == 1) {
+                D_800BF80D = 3;
+                a[5]++;
+            } else if (r == 2) {
+                D_800BF808[0x31] = 3;
+                *(s16 *)(D_800BF808 + 0x32) = 0x104;
+                D_800BF9FB = 3;
+                a[5]++;
+            }
+            break;
+        case 4:
+            U16(a, 0x42) = 0x5A;
+            a[5]++;
+            break;
+        case 5:
+            if (--H16(a, 0x42) == 0) {
+                func_80074590(0x8B, 0, 0);
+                U16(a, 0x42) = 0x5A;
+                if (*(u8 *)&D_800BF9FB == 3) {
+                    a[5] = 1;
+                } else {
+                    a[5]++;
+                }
+            }
+            break;
+        case 6:
+            if (--H16(a, 0x42) == 0) {
+                a[5]++;
+                D_1F800137 = 2;
+                D_800BF808[7] = 2;
+                *(s16 *)(D_800BF808 + 0x32) = 0x104;
+                D_800BF808[0x31] = 3;
+            }
+            break;
+        }
+        if (D_800BF80E != 0) {
+            t = *(u8 **)(a + 0x10);
+            inl_9C48(a, 0xB - H16(t, 0x76), 0);
+            func_80076D68(a);
+        }
+        break;
+    }
+    D_1F800160 = U16(a, 0x2E);
+    D_1F800162 = U16(a, 0x32);
+    D_1F800164 = U16(a, 0x36);
+    D_1F80016A = U16(a, 0x58);
+    D_1F800168 = U16(a, 0x56);
+}
 
 typedef struct { u8 pad[0xC0]; u8 *parts[64]; } PartOwner;
 extern u8 D_1F800000[];
@@ -89,7 +337,6 @@ typedef struct CdMixAttr {
       s32 mix;
       u8 pad1C[0xC];
 } CdMixAttr;
-extern u8 D_8011C0E8[];
 typedef struct SVec { s16 vx, vy, vz, pad; } SVec;
 typedef struct { u8 pad0[0xC]; s32 x; s32 y; s32 z; } CameraTarget;
 typedef struct Range8b { s32 sector; s32 size; } Range8b;
@@ -239,9 +486,6 @@ void func_8010B328(void) {
 typedef struct { s32 w[8]; } Blk20;
 #define U16(p, o) (*(u16 *)((u8 *)(p) + (o)))
 extern s32 D_1F80020C;
-extern u8 D_1F800137;
-extern s8 D_800BF80D;
-extern u8 D_800BF80E;
 extern u8 D_800BF80F;
 extern s32 D_8011BAE8;
 extern u8 *D_8011BB34;
@@ -1068,7 +1312,6 @@ INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateStandardTrolleyPhysics);
 #define F16(p, o) M2C_FIELD(p, s16 *, o)
 #define FU16(p, o) M2C_FIELD(p, u16 *, o)
 #define FP(p, o) M2C_FIELD(p, u8 **, o)
-extern s8 D_800BF808[];
 extern u8 D_80111BA8[];
 /* func_8010E834, inlined */
 static inline void inl_8010E834(u8 *a) {
@@ -1878,7 +2121,6 @@ loop:
 }
 
 extern u8 D_800BF808_1760[];
-extern s8 D_800BF9FB;
 extern u8 *D_1F800138;
 extern u8 D_1F800136;
 void f_UpdateTrolleyCourseOverlayActor(void) {
