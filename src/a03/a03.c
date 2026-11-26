@@ -931,7 +931,69 @@ void f_UpdateTrolleyCourseProgressActor(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateDetachedTrolleyActor);
+extern u8 D_1F800137;
+extern u8 *D_800E7E90;
+
+void f_UpdateDetachedTrolleyActor(u8 *a) {
+    u8 *b = a + 0x60;
+
+    switch (a[4]) {
+    case 0:
+        func_80074590(0x8C, 0, 0x14);
+        D_1F80020C |= 7;
+        f_InitializeTrolleyModelAndTrackState(a);
+        a[4] = 1;
+        a[5] = 0;
+        a[6] = 0;
+        switch (a[3]) {
+        case 0:
+            if (H16(b, 0xE) < 0) {
+                H16(a, 0x4E) = (H16(a, 0x9C) * 15) >> 11;
+                H16(a, 0x50) = (H16(a, 0xA2) * 15) >> 11;
+                H16(a, 0x52) = (H16(a, 0xA8) * 15) >> 11;
+            } else {
+                H16(a, 0x4E) = (H16(a, 0x9C) * -30) >> 12;
+                H16(a, 0x50) = (H16(a, 0xA2) * -30) >> 12;
+                H16(a, 0x52) = (H16(a, 0xA8) * -30) >> 12;
+            }
+            break;
+        case 1:
+            H16(a, 0x4E) = (H16(a, 0x9A) * 15) >> 11;
+            H16(a, 0x50) = (H16(a, 0xA0) * 15) >> 11;
+            H16(a, 0x52) = (H16(a, 0xA6) * 15) >> 11;
+            break;
+        }
+        D_800E7E90 = a;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            a[5]++;
+        case 1:
+            H16(a, 0x4E) += H16(a, 0x4E) >> 5;
+            H16(a, 0x50) += H16(a, 0x50) >> 5;
+            H16(a, 0x52) += H16(a, 0x52) >> 5;
+            H16(a, 0x2E) += H16(a, 0x4E);
+            H16(a, 0x32) += H16(a, 0x50);
+            H16(a, 0x36) += H16(a, 0x52);
+            a[1] = 1;
+            W32(a, 0xAC) = H16(a, 0x2E);
+            W32(a, 0xB0) = H16(a, 0x32);
+            W32(a, 0xB4) = H16(a, 0x36);
+            func_80077EBC(a);
+            func_80051300(a);
+            break;
+        }
+        if (D_1F800137 == 2 && D_800BF80D == 2) {
+            a[4] = 3;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern M2C_UNK D_8011B748;
 s32 func_8010E820(void *arg0) {
@@ -1501,7 +1563,6 @@ extern u8 D_800BF808_1760[];
 extern s8 D_800BF9FB;
 extern u8 *D_1F800138;
 extern u8 D_1F800136;
-extern u8 D_1F800137;
 void f_UpdateTrolleyCourseOverlayActor(void) {
     u8 *a = D_1F800138;
     s32 r;
