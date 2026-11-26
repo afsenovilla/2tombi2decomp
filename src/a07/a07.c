@@ -8702,7 +8702,141 @@ s32 f_TestCircusActorGroundContact(u8 *p)
     return p[0x29];
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80130FB8);
+typedef struct { u16 a, b; } Range;
+extern Range D_8013F8AC[];
+extern Range D_8013F8C4[];
+extern Range D_8013F924[];
+extern Range D_8013F994[];
+extern Range D_8013F9AC[];
+extern Range D_8013FA3C[];
+extern Range D_8013FAA4[];
+extern Range D_8013FAEC[];
+extern Range D_8013FBBC[];
+extern Range D_8013FC38[];
+extern Range D_8013FC70[];
+extern Range D_8013FCAC[];
+extern Range D_8013FCE4[];
+extern Range D_8013FD28[];
+extern Range D_8013FD40[];
+extern Range D_8013FD78[];
+extern Range D_8013FDD4[];
+extern Range D_8013FDF0[];
+extern Range D_8013FE1C[];
+extern Range D_8013FE98[];
+extern u8 *D_1F80021C;
+
+void func_80130FB8(s16 kind, s16 idx)
+{
+    Range *t;
+    s32 n, base;
+    u8 *p;
+    switch (kind) {
+    case 0:
+        t = D_8013F8AC;
+        n = 0x3;
+        base = 0;
+        break;
+    case 1:
+        t = D_8013F8C4;
+        n = 0x1B;
+        base = 0x396;
+        break;
+    case 2:
+        t = D_8013F924;
+        n = 0xB;
+        base = 0x83;
+        break;
+    case 3:
+        t = D_8013F994;
+        n = 0x2;
+        base = 0;
+        break;
+    case 4:
+        t = D_8013F9AC;
+        n = 0x8;
+        base = 0x26E;
+        break;
+    case 5:
+        t = D_8013FA3C;
+        n = 0x1C;
+        base = 0x21C;
+        break;
+    case 6:
+        t = D_8013FAA4;
+        n = 0x18;
+        base = 0x94;
+        break;
+    case 7:
+        t = D_8013FAEC;
+        n = 0x1;
+        base = 0x114;
+        break;
+    case 8:
+        t = D_8013FBBC;
+        n = 0x7;
+        base = 0x106;
+        break;
+    case 9:
+        t = D_8013FC38;
+        n = 0x15;
+        base = 0x268;
+        break;
+    case 10:
+        t = D_8013FC70;
+        n = 0x1E;
+        base = 0x267;
+        break;
+    case 11:
+        t = D_8013FCAC;
+        n = 0xF;
+        base = 0x438;
+        break;
+    case 12:
+        t = D_8013FCE4;
+        n = 0xC;
+        base = 0x15D;
+        break;
+    case 13:
+        t = D_8013FD28;
+        n = 0xC;
+        base = 0x24D;
+        break;
+    case 14:
+        t = D_8013FD40;
+        n = 0x1F;
+        base = 0x1C8;
+        break;
+    case 15:
+        t = D_8013FD78;
+        n = 0xE;
+        base = 0x1F8;
+        break;
+    case 16:
+        t = D_8013FDD4;
+        n = 0x1F;
+        base = 0x2E2;
+        break;
+    case 17:
+        t = D_8013FDF0;
+        n = 0x11;
+        base = 0x218;
+        break;
+    case 18:
+        t = D_8013FE1C;
+        n = 0xA;
+        base = 0x143;
+        break;
+    case 19:
+        t = D_8013FE98;
+        n = 0x2;
+        base = 0x61;
+        break;
+    default:
+        return;
+    }
+    p = D_1F80021C + t[idx].a * 32 + base * 32;
+    func_8001D2A8(n, p, p + (t[idx].b + 1) * 32, 0);
+}
 
 // ASM by design: hand-written GTE routine (no stack frame, trapping add / addi / sub, `or rd, $zero, rs` moves: never emitted by gcc 2.8.1).
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801311D0);

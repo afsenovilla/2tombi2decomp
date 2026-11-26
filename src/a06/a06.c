@@ -10188,7 +10188,117 @@ void func_8014046C(u8 *p)
     func_80027768(D_8014C39C, *(s16 *)(p + 0x4E), *(s16 *)(p + 0x32), 0);
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801404DC);
+typedef struct { u16 a, b; } Range;
+extern Range D_8014CA60[];
+extern Range D_8014CA78[];
+extern Range D_8014CA8C[];
+extern Range D_8014CB10[];
+extern Range D_8014CB20[];
+extern Range D_8014CB34[];
+extern Range D_8014CB64[];
+extern Range D_8014CBA4[];
+extern Range D_8014CBF4[];
+extern Range D_8014CC7C[];
+extern Range D_8014CCD4[];
+extern Range D_8014CCEC[];
+extern Range D_8014CD0C[];
+extern Range D_8014CD34[];
+extern Range D_8014CD70[];
+extern Range D_8014CDA4[];
+extern u8 *D_1F80021C;
+
+void func_801404DC(s16 kind, s16 idx)
+{
+    Range *t;
+    s32 n, base;
+    u8 *p;
+    switch (kind) {
+    case 0:
+        t = D_8014CA60;
+        n = 0x3;
+        base = 0;
+        break;
+    case 1:
+        t = D_8014CA78;
+        n = 0x16;
+        base = 0x4A7;
+        break;
+    case 2:
+        t = D_8014CA8C;
+        n = 0xD;
+        base = 0;
+        break;
+    case 3:
+        t = D_8014CB10;
+        n = 0x1C;
+        base = 0x1AC;
+        break;
+    case 4:
+        t = D_8014CB20;
+        n = 0xD;
+        base = 0x24C;
+        break;
+    case 5:
+        t = D_8014CB34;
+        n = 0x1D;
+        base = 0x26A;
+        break;
+    case 6:
+        t = D_8014CB64;
+        n = 0x6;
+        base = 0x334;
+        break;
+    case 7:
+        t = D_8014CBA4;
+        n = 0x13;
+        base = 0x399;
+        break;
+    case 8:
+        t = D_8014CBF4;
+        n = 0x14;
+        base = 0x313;
+        break;
+    case 9:
+        t = D_8014CC7C;
+        n = 0x12;
+        base = 0;
+        break;
+    case 10:
+        t = D_8014CCD4;
+        n = 0x12;
+        base = 0x227;
+        break;
+    case 11:
+        t = D_8014CCEC;
+        n = 0xE;
+        base = 0x162;
+        break;
+    case 12:
+        t = D_8014CD0C;
+        n = 0x8;
+        base = 0x194;
+        break;
+    case 13:
+        t = D_8014CD34;
+        n = 0xD;
+        base = 0x2B9;
+        break;
+    case 14:
+        t = D_8014CD70;
+        n = 0x1;
+        base = 0x40;
+        break;
+    case 15:
+        t = D_8014CDA4;
+        n = 0x2;
+        base = 0x61;
+        break;
+    default:
+        return;
+    }
+    p = D_1F80021C + t[idx].a * 32 + base * 32;
+    func_8001D2A8(n, p, p + (t[idx].b + 1) * 32, 0);
+}
 
 void func_801406A4(s32 i)
 {

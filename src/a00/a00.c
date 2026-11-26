@@ -14772,7 +14772,81 @@ void func_80146478(u32 *p, void *b)
     f_UpdateWindmillCollapseParticleActor(func_801465EC(p, b, lo), b, packed >> 16);
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ApplyOverlayModelFrameRange);
+typedef struct { u16 a, b; } Range;
+extern Range D_8014C214[];
+extern Range D_8014C22C[];
+extern Range D_8014C2A8[];
+extern Range D_8014C2AC[];
+extern Range D_8014C330[];
+extern Range D_8014C398[];
+extern Range D_8014C454[];
+extern Range D_8014C478[];
+extern Range D_8014C480[];
+extern Range D_8014C4AC[];
+extern u8 *D_1F80021C;
+
+void f_ApplyOverlayModelFrameRange(s16 kind, s16 idx)
+{
+    Range *t;
+    s32 n, base;
+    u8 *p;
+    switch (kind) {
+    case 0:
+        t = D_8014C214;
+        n = 0x3;
+        base = 0;
+        break;
+    case 1:
+        t = D_8014C22C;
+        n = 0x16;
+        base = 0;
+        break;
+    case 2:
+        t = D_8014C2A8;
+        n = 0x15;
+        base = 0;
+        break;
+    case 3:
+        t = D_8014C2AC;
+        n = 0x10;
+        base = 0;
+        break;
+    case 4:
+        t = D_8014C330;
+        n = 0x1D;
+        base = 0;
+        break;
+    case 5:
+        t = D_8014C398;
+        n = 0x5;
+        base = 0;
+        break;
+    case 6:
+        t = D_8014C454;
+        n = 0x18;
+        base = 0;
+        break;
+    case 7:
+        t = D_8014C478;
+        n = 0x4;
+        base = 0;
+        break;
+    case 8:
+        t = D_8014C480;
+        n = 0x1A;
+        base = 0;
+        break;
+    case 9:
+        t = D_8014C4AC;
+        n = 0x9;
+        base = 0;
+        break;
+    default:
+        return;
+    }
+    p = D_1F80021C + t[idx].a * 32 + base * 32;
+    func_8001D2A8(n, p, p + (t[idx].b + 1) * 32, 0);
+}
 
 // ASM by design: hand-written GTE routine (no stack frame, trapping add / addi / sub, `or rd, $zero, rs` moves: never emitted by gcc 2.8.1).
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801465EC);

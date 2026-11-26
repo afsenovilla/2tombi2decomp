@@ -9776,7 +9776,75 @@ void func_8013E1DC(void *arg0) {
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", f_SpawnSnowFireflyAuxiliaryActor);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013E3D4);
+typedef struct { u16 a, b; } Range;
+extern Range D_80143FAC[];
+extern Range D_80143FC4[];
+extern Range D_8014407C[];
+extern Range D_80144094[];
+extern Range D_801440E8[];
+extern Range D_8014414C[];
+extern Range D_8014419C[];
+extern Range D_801441A0[];
+extern Range D_80144200[];
+extern u8 *D_1F80021C;
+
+void func_8013E3D4(s16 kind, s16 idx)
+{
+    Range *t;
+    s32 n, base;
+    u8 *p;
+    switch (kind) {
+    case 0:
+        t = D_80143FAC;
+        n = 0x3;
+        base = 0;
+        break;
+    case 1:
+        t = D_80143FC4;
+        n = 0x3;
+        base = 0xB4;
+        break;
+    case 2:
+        t = D_8014407C;
+        n = 0xF;
+        base = 0x3A0;
+        break;
+    case 3:
+        t = D_80144094;
+        n = 0xE;
+        base = 0;
+        break;
+    case 4:
+        t = D_801440E8;
+        n = 0x1F;
+        base = 0;
+        break;
+    case 5:
+        t = D_8014414C;
+        n = 0x17;
+        base = 0x385;
+        break;
+    case 6:
+        t = D_8014419C;
+        n = 0x14;
+        base = 0x303;
+        break;
+    case 7:
+        t = D_801441A0;
+        n = 0x1B;
+        base = 0x396;
+        break;
+    case 8:
+        t = D_80144200;
+        n = 0x2;
+        base = 0x61;
+        break;
+    default:
+        return;
+    }
+    p = D_1F80021C + t[idx].a * 32 + base * 32;
+    func_8001D2A8(n, p, p + (t[idx].b + 1) * 32, 0);
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013E510);
 

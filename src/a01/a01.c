@@ -11199,6 +11199,98 @@ s32 func_801341E8(u8 *poly, u8 *v, s32 *flag) {
     return otz;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801342C8);
+typedef struct { u16 a, b; } Range;
+extern Range D_80138C94[];
+extern Range D_80138CAC[];
+extern Range D_80138D1C[];
+extern Range D_80138D28[];
+extern Range D_80138D6C[];
+extern Range D_80138DB0[];
+extern Range D_80138E50[];
+extern Range D_80138E8C[];
+extern Range D_80138ED0[];
+extern Range D_80138EE8[];
+extern Range D_80138F3C[];
+extern Range D_80138F48[];
+extern Range D_80138F58[];
+extern u8 *D_1F80021C;
+
+void func_801342C8(s16 kind, s16 idx)
+{
+    Range *t;
+    s32 n, base;
+    u8 *p;
+    switch (kind) {
+    case 0:
+        t = D_80138C94;
+        n = 0x3;
+        base = 0;
+        break;
+    case 1:
+        t = D_80138CAC;
+        n = 0x1B;
+        base = 0;
+        break;
+    case 2:
+        t = D_80138D1C;
+        n = 0x5;
+        base = 0x30D;
+        break;
+    case 3:
+        t = D_80138D28;
+        n = 0x1B;
+        base = 0x1E0;
+        break;
+    case 4:
+        t = D_80138D6C;
+        n = 0x14;
+        base = 0x65;
+        break;
+    case 5:
+        t = D_80138DB0;
+        n = 0xF;
+        base = 0;
+        break;
+    case 6:
+        t = D_80138E50;
+        n = 0x7;
+        base = 0x3D;
+        break;
+    case 7:
+        t = D_80138E8C;
+        n = 0x10;
+        base = 0x22C;
+        break;
+    case 8:
+        t = D_80138ED0;
+        n = 0x15;
+        base = 0x8;
+        break;
+    case 9:
+        t = D_80138EE8;
+        n = 0x14;
+        base = 0x18E;
+        break;
+    case 10:
+        t = D_80138F3C;
+        n = 0x9;
+        base = 0x14E;
+        break;
+    case 11:
+        t = D_80138F48;
+        n = 0xA;
+        base = 0xE5;
+        break;
+    case 12:
+        t = D_80138F58;
+        n = 0x9;
+        base = 0x272;
+        break;
+    default:
+        return;
+    }
+    p = D_1F80021C + t[idx].a * 32 + base * 32;
+    func_8001D2A8(n, p, p + (t[idx].b + 1) * 32, 0);
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", f_UpdatePipeAreaTrolleyNpcDialogue);
