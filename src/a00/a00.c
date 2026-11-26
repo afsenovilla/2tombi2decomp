@@ -12182,7 +12182,79 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureJumpingAttack);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureBehaviorState);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureVariantActivation);
+s32 f_UpdateTownCreatureVariantActivation(u8 *a) {
+    u8 *q = a + 0x60;
+    s32 res = 0;
+    s32 k;
+
+    switch (a[7]) {
+    case 0:
+    case 1:
+        switch (a[3]) {
+        case 2:
+            k = 7;
+            break;
+        case 3:
+        case 4:
+            k = 0x1B;
+            break;
+        case 5:
+            k = 6;
+            break;
+        case 1:
+        default:
+            k = 0x12;
+            break;
+        }
+        func_801402B8(a, k, 0);
+        HU(q, 2) &= 0xFFFB;
+        f_UpdateTownCreatureTerrainContact(a);
+        a[7] = 2;
+    case 2:
+        if ((u32)func_80078240(D_1F800160_71b4 - H_f12c(a, 0x2E), D_1F800162 - H_f12c(a, 0x32), D_1F800164_d75f - H_f12c(a, 0x36)) < 0x3C0) {
+            a[7]++;
+        }
+        break;
+    case 3:
+        switch (a[3]) {
+        case 2:
+            k = 7;
+            res = 1;
+            break;
+        case 3:
+        case 4:
+            k = 0x1D;
+            break;
+        case 5:
+            k = 0x34;
+            break;
+        case 1:
+        default:
+            k = 0x13;
+            break;
+        }
+        func_801402B8(a, k, 8);
+        H_f12c(a, 0x40) = 0x28;
+        a[7]++;
+    case 4:
+        if (--H_f12c(a, 0x40) <= 0) {
+            a[7]++;
+        }
+        break;
+    case 5:
+        func_801402B8(a, 7, 8);
+        H_f12c(a, 0x40) = 0x1E;
+        a[7]++;
+    case 6:
+        if (--H_f12c(a, 0x40) <= 0) {
+            res = 1;
+        }
+        break;
+    }
+    H_f12c(a, 0x32) += 0x10;
+    f_UpdateTownCreatureTerrainContact(a);
+    return res;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownCreatureInteractionLifecycle);
 
