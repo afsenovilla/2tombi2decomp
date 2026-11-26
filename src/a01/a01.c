@@ -11027,7 +11027,123 @@ void func_8012EE14(u8 *a)
     func_8012F188(a, &v0, &v1, &v2);
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012F188);
+typedef struct { u8 pad[0x10]; s16 list[1]; } T2Grid;
+s32 func_8012F864(s32 x, s32 y);
+static inline void row(u8 *a, s32 y, s32 xe, s32 l)
+{
+    s32 xs;
+    s16 *p;
+    u8 *g;
+    u8 n;
+
+    if (y >= 0 && y < H(a, 0xA)) {
+        if (xe >= H(a, 8)) {
+            xe = H(a, 8) - 1;
+        }
+        xs = l;
+        if (xs < 0) {
+            xs = 0;
+        }
+        g = (u8 *)&D_800BF870;
+        if (g[1] == 0x15 && xs < 0x1B) {
+            xs = 0x1B;
+        }
+        p = *(s16 **)(a + 0xC);
+        p += 2;
+        p += xs * H(a, 0xA) + y;
+        for (; xs <= xe; xs++) {
+            if (*p != -1) {
+                if (D_80139000 == 0 || (s16)func_8012F864(xs, y) != 0) {
+                    n = a[6];
+                    if (n < 0xFE) {
+                        a[6] = n + 1;
+                        ((T2Grid *)a)->list[n] = *p;
+                    }
+                }
+            }
+            p += H(a, 0xA);
+        }
+    }
+}
+
+void func_8012F188(u8 *a, T2Pt32 *p0, T2Pt32 *p1, T2Pt32 *p2)
+{
+    s32 x0, y0, x1, y1, x2, y2, t;
+    s32 dx1, dx2, dy1, dy2;
+    s32 l, r;
+    s32 sl1, sl2, sl3;
+    s32 y;
+
+    x0 = p0->vx;
+    y0 = p0->vy;
+    x1 = p1->vx;
+    y1 = p1->vy;
+    x2 = p2->vx;
+    y2 = p2->vy;
+    if (y1 == y0 && y1 == y2) {
+        return;
+    }
+    if (y1 < y0) {
+        s32 t1 = x0; x0 = x1; x1 = t1;
+        t1 = y0; y0 = y1; y1 = t1;
+    }
+    if (y2 < y0) {
+        s32 t2 = x0; x0 = x2; x2 = t2;
+        t2 = y0; y0 = y2; y2 = t2;
+    }
+    if (y2 < y1) {
+        s32 t3 = x1; x1 = x2; x2 = t3;
+        t3 = y1; y1 = y2; y2 = t3;
+    }
+    dx1 = x1 - x0;
+    dx2 = x2 - x0;
+    dy1 = y1 - y0;
+    dy2 = y2 - y0;
+    if (y1 == y0) {
+        if (x0 < x1) {
+            l = x0 << 16;
+            r = x1 << 16;
+        } else {
+            l = x1 << 16;
+            r = x0 << 16;
+        }
+        sl1 = 0;
+    } else {
+        r = x0 << 16;
+        l = r;
+        sl1 = (dx1 << 16) / dy1;
+    }
+    r += 0x10000;
+    if (y1 == y2) {
+        sl2 = 0;
+    } else {
+        sl2 = ((x2 - x1) << 16) / (y2 - y1);
+    }
+    sl3 = (dx2 << 16) / dy2;
+    if (-dy2 * dx1 + dx2 * dy1 > 0) {
+        for (y = y0; y < y1; y++) {
+            row(a, y, r >> 16, l >> 16);
+            l += sl1;
+            r += sl3;
+        }
+        for (; y <= y2; y++) {
+            row(a, y, r >> 16, l >> 16);
+            l += sl2;
+            r += sl3;
+        }
+    } else {
+        for (y = y0; y < y1; y++) {
+            row(a, y, r >> 16, l >> 16);
+            r += sl1;
+            l += sl3;
+        }
+        for (; y <= y2; y++) {
+            row(a, y, r >> 16, l >> 16);
+            l += sl3;
+            r += sl2;
+        }
+    }
+}
 
 s32 func_8012F864(s32 x, s32 y) {
     return D_80138FFC_e406[y * 52 + x] & D_80139000;
