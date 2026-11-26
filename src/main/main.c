@@ -74,7 +74,48 @@ void func_8001CBA8(u8 *a, u8 n)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8001CC00);
+extern u8 D_800BF498[];
+extern u8 D_800BED90[];
+
+void func_8001CC00(void)
+{
+    u8 *c;
+    u8 *p;
+    u8 *q;
+    s32 i;
+
+    InitCARD(1);
+    StartCARD();
+    c = D_800BF498;
+    _bu_init();
+    ChangeClearPAD(0);
+    memset(c, 0, 0x5C);
+    i = 0;
+    EnterCriticalSection();
+    *(s32 *)(c + 0x1C) = OpenEvent(0xF4000001, 4, 0x2000, NULL);
+    *(s32 *)(c + 0x20) = OpenEvent(0xF4000001, 0x8000, 0x2000, NULL);
+    *(s32 *)(c + 0x24) = OpenEvent(0xF4000001, 0x100, 0x2000, NULL);
+    *(s32 *)(c + 0x28) = OpenEvent(0xF4000001, 0x2000, 0x2000, NULL);
+    *(s32 *)(c + 0x2C) = OpenEvent(0xF0000011, 4, 0x2000, NULL);
+    *(s32 *)(c + 0x30) = OpenEvent(0xF0000011, 0x8000, 0x2000, NULL);
+    *(s32 *)(c + 0x34) = OpenEvent(0xF0000011, 0x100, 0x2000, NULL);
+    *(s32 *)(c + 0x38) = OpenEvent(0xF0000011, 0x2000, 0x2000, NULL);
+    ExitCriticalSection();
+    EnableEvent(*(s32 *)(c + 0x1C));
+    EnableEvent(*(s32 *)(c + 0x20));
+    EnableEvent(*(s32 *)(c + 0x24));
+    EnableEvent(*(s32 *)(c + 0x28));
+    EnableEvent(*(s32 *)(c + 0x2C));
+    EnableEvent(*(s32 *)(c + 0x30));
+    EnableEvent(*(s32 *)(c + 0x34));
+    EnableEvent(*(s32 *)(c + 0x38));
+    func_8001CBA8(c, 0);
+    func_8001CBA8(c, 1);
+    for (; i < 15; i++) {
+        memset(D_800BED90 + i * 0x3C, 0, 0x3C);
+        memset(D_800BED90 + 0x384 + i * 0x3C, 0, 0x3C);
+    }
+}
 
 extern u16 D_1F8001A2;
 extern s32 D_1F800080;
