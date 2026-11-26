@@ -178,7 +178,8 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   regswap kinds 2026-11-26: `cmpflip`, `varshift`, `chain`, `latestore`, `paramcopy`, `foldeduse`, `oneexpr`,
   `blockscope`, `twoset`, `accum`, `idxlocal`, `copyback`, `retshape` (return structure: goto the final return,
   shared return labels, fall through), `intoarms` (undo a cross-jump); hack kinds ranked after clean ones
-  (AGENTS.md "Tool pitfalls"). `tools/statemachine.py PROG NAME
+  (AGENTS.md "Tool pitfalls"); install_c declares a definition prototype K&R when it names a type defined further
+  down. `tools/statemachine.py PROG NAME
   --cases`: the retail asm per case block (exits, calls) in build/statemachine/<prog>/<name>.cases.txt.
   `python3 -I tools/prio.py FILE.c [F] --prog P [--sched]`: gcc 2.8's pseudo priorities and hard registers from the
   cc1 dumps next to retail's register for each (what priority a pseudo would need); `--sched` the scheduler

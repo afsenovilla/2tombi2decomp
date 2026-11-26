@@ -548,6 +548,10 @@ struct-member form of a cast access, regswap `member` toggles every one)
   (2026-11-26) they closed none alone; `intoarms` took a01 func_8010EFBC from 8 to 4 and cmpflip + varshift a02
   func_8010FFF4 from 15 to 12. tools/loophoist.py prints the move_movables() arithmetic per movable (`s*l`,
   `need T>=X`, `edge +/-N insns`, the lifetime it would need) and the threshold bounds the file's fates imply.
+  Example (a04 func_8010FF6C, 2 off: retail's hoisted `lui s4` comes before `li s6,1`): the literal 1 in the
+  loop needs T>=30 (s*l 9 against 265 insns, edge -31), so it is not hoisted and the `one = 1;` local before the
+  loop stays; placing `one = 1;` inside the loop (top, after the counter store, in the while condition) gives 2 / 5
+  / 18: the order of moved insns follows their order in the loop.
 - install_c: a prototype the target has for a function used as a value (`void f(void);`) is rewritten to the
   installed definition's header (conflicting types otherwise; a02 func_8010CFAC); a prototype from a definition
   further down is K&R when some call passes fewer arguments.
@@ -556,7 +560,7 @@ struct-member form of a cast access, regswap `member` toggles every one)
   for every tool run as `python3 tools/X.py`): the work queue is tools/workqueue.py.
 
 - install_c (round 12): a prototype taken from a definition can land above the typedef it names (parse error: move
-  the typedef up); a multi-line `#define` ending with `}` can still be taken for a function (end it with
+  the typedef up; since 2026-11-26 install_c declares it K&R when the type is defined further down); a multi-line `#define` ending with `}` can still be taken for a function (end it with
   `} /* end */`); alias renaming skips macro bodies (use the alias name inside a macro); callee prototypes with a
   narrow return type (`s16 f()`) change every caller in the file (keep s32, narrow at the use).
 - sibling.py needs a program list (none = nothing searched); variants.py `--set` needs `\|` / `\&` inside single

@@ -23,7 +23,14 @@ One tools agent, about 90 minutes, the round-12 "Tool work left" list in its ord
   15 -> 12 (`cmpflip` + `varshift`); the full kind set on top of those found nothing more in 300 s. The census
   also shows main func_8006DF88 at 0 only with `asm("$4")` (df88r.c; not allowed), and scores that differ from
   the agents' reports (the reports counted a variant of a `//--` file): a05 func_8013484C 4 (not 1), main
-  func_8007AA38 3. All kinds (old + new, 80 s each) over the 13 near misses within 4 words: see below.
+  func_8007AA38 3. All kinds (old + new, 80 s each, pairs on 4) over the 12 near misses within 4 words (main
+  func_801140D0's scratch skipped: asm register): **nothing better** for any of them. These near misses are
+  scheduling order (order only), loop-hoist order and one-instruction register choices that the rewrite catalogue
+  does not reach; the next step there is prio.py `--sched` / loophoist arithmetic by hand, not more kinds.
+- Ideas left: a scheduler-order kind driven by prio.py `--sched` (which insn needs a higher priority -> which
+  statement to move or split); a loop-movable order kind (constants set inside the loop after a given insn, from
+  loophoist's order of moved insns); statemachine.py jump tables through a hoisted register and unlabeled rodata;
+  install_c alias renaming inside `#define` bodies; a `--kinds-new` shortcut for regswap.
 - Hand tries (t12/try.py: replacements scored one at a time): a00 func_80118B10 (retail loads `a[5]` before
   `H(a, 0x62)` in case 0: early load, block-scoped temporary, store order, `(*q)++` all stay at 2 or worse),
   a0c func_8011353C (lui order of two globals: read order swapped, no volatile, pointer locals, direct operands:
