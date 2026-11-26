@@ -3012,7 +3012,80 @@ void func_801123F0(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_8011290C);
+void func_801123F0();
+extern u8 *D_1F800254;
+
+void func_8011290C(u8 *a)
+{
+    s16 *t;
+
+    switch (a[5]) {
+    case 0:
+        func_80110D4C(a);
+        break;
+    case 1:
+        if (H(a, 0x6A) != -1) {
+            func_8006CBD0(D_800E8008, D_8011AEF0 + H(a, 0x6A) * 12);
+            t = &D_8011D770[H(a, 0x6A) * 3];
+            U(a, 0x2E) = t[0];
+            U(a, 0x32) = t[1];
+            U(a, 0x36) = t[2];
+            H(a, 0x6A)++;
+            if (*(s16 *)(D_8011AEF0 + H(a, 0x6A) * 12) == 0) {
+                H(a, 0x6A) = -1;
+            }
+        }
+        switch (a[6]) {
+        case 0:
+            a[1] = 1;
+            D_1F800254 = func_8003116C(0x1003, a + 0x2C, 0);
+            a[6]++;
+        case 1:
+        {
+            u8 *p = D_1F800254;
+            U(p, 0x2C) = U(a, 0x2E);
+            U(p, 0x2E) = U(a, 0x32);
+            U(p, 0x30) = U(a, 0x36);
+            a[1] = 1;
+            H(a, 0x56) = func_800782B0(a + 0x2C, D_1F800160_71b4, D_1F800164_d75f);
+            if (H(a, 0x6A) == -1) {
+                a[0x47] = 1;
+                a[0x70] = 2;
+                a[6]++;
+            }
+            break;
+        }
+        case 2:
+            a[1] = a[0x47];
+            func_80041098(a);
+            if ((s8)a[0x70] <= 0) {
+                a[6]++;
+            }
+            break;
+        case 3:
+        {
+            u8 *g;
+            a[0] = 1;
+            *(void **)(a + 0x1C) = func_801123F0;
+            a[5] = 1;
+            a[6] = 0;
+            func_8006E1E4();
+            func_80042310();
+            g = (u8 *)&D_800BF870;
+            H(a, 0x58) = 0;
+            g[0x1AA] |= 0x20;
+            break;
+        }
+        }
+        if (a[1] == 0) {
+            a[1] = 1;
+            func_80077E7C(a);
+            func_8004190C(a);
+            func_800518FC(a);
+        }
+        break;
+    }
+}
 
 void func_80112B80(u8 *a, s32 k)
 {
