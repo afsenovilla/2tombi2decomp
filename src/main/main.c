@@ -24485,7 +24485,61 @@ Glyph_C8C8 *func_8007C8C8(Glyph_C8C8 *g, s32 c, u16 *x, u8 y)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007C940);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007CC00);
+extern u8 D_800ECB88[];
+extern s16 D_1F80017E;
+
+void func_8007CC00(u8 *a)
+{
+    u8 *sp = (u8 *)0x1F800000;
+    u8 last;
+    u8 *e;
+    u8 *p;
+    s32 i;
+    u8 c;
+    u32 *ot;
+
+    if (a[0x47] == 1 && a[3] == 1) {
+        last = 0x12;
+        *(u16 *)(sp + 0xE) = 0x7CBE;
+    } else {
+        last = 0xFF;
+    }
+    e = D_800ECB88;
+    i = 0;
+    p = D_800BF544;
+    sp[7] = 0x65;
+    *(u16 *)(sp + 0x10) = 8;
+    *(u16 *)(sp + 0x12) = 0x10;
+    for (; i < D_1F80017E; p += 0x14, i++, e += 8) {
+        c = e[3] & 0x7F;
+        if (c != last && last != 0x12) {
+            last = c;
+            *(u16 *)(sp + 0xE) = ((last + 0x1F0) << 6) | 0x3F;
+        }
+        p[7] = sp[7];
+        *(u16 *)(p + 0xE) = *(u16 *)(sp + 0xE);
+        *(u16 *)(p + 8) = *(u16 *)(e + 0);
+        *(u16 *)(p + 0xA) = e[2];
+        p[0xC] = e[4];
+        p[0xD] = e[6];
+        if (!(e[3] & 0x80)) {
+            *(u16 *)(p + 0x10) = *(u16 *)(sp + 0x10);
+        } else {
+            *(u16 *)(p + 0x10) = *(u16 *)(sp + 0x10) << 1;
+        }
+        *(u16 *)(p + 0x12) = *(u16 *)(sp + 0x12);
+        do {
+            ot = D_800ED8C8;
+            *(u32 *)p = ot[2] | 0x4000000;
+            ot[2] = (u32)p;
+        } while (0);
+    }
+    D_800BF544 = p + 0xC;
+    SetDrawMode(p, 0, 0, 0x1F, NULL);
+    ot = D_800ED8C8;
+    *(u32 *)p = ot[2] | 0x2000000;
+    ot[2] = (u32)p;
+}
 
 extern u8 D_800BFE4C;
 void func_8007CDD4(u16 *r)
