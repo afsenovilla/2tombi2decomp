@@ -11193,7 +11193,57 @@ s32 f_GrantNonGemPickupReward(u8 *a)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_InitializeSpriteGroundPickupFromRewardSelector);
+extern u8 D_800A29CC_8351[];
+extern s32 D_800ECF58_6489;
+extern s32 D_800ECF80;
+extern u8 *D_800A58FC[];
+extern u8 D_800BF9CF;
+extern u8 D_800BF870_9d28;
+void f_StartActorTimedFrameSequence(u8 *actor, u16 **table, s32 index);
+
+void f_InitializeSpriteGroundPickupFromRewardSelector(u8 *a)
+{
+    u8 *e;
+    u16 f;
+
+    a[0xB] = 0x11;
+    *(s16 *)(a + 0x7A) = 0x1300;
+    *(s16 *)(a + 0x7C) = 0x1300;
+    *(s16 *)(a + 0x7E) = 0x1300;
+    a[0x47] = 0;
+    *(s16 *)(a + 0x5A) = 0;
+    a[0xD] = 0;
+    *(s16 *)(a + 0x54) = 0;
+    *(s16 *)(a + 0x56) = 0;
+    *(s16 *)(a + 0x58) = 0;
+    if (a[3] == 0x18) {
+        if (D_800BF9CF == 0) {
+            a[3] = 0x18;
+        } else if (D_800BF9CF == 1) {
+            a[3] = 0x19;
+        }
+    }
+    e = D_800A29CC_8351 + a[3] * 8;
+    f = *(u16 *)(e + 2);
+    if (*(s16 *)(e + 2) & 0x8000) {
+        a[0xD] |= 1;
+    }
+    if ((f & 0x7FFF) == 1) {
+        *(s16 *)(a + 0x5C) = 0;
+        *(s32 *)(a + 0x3C) = D_800ECF80;
+        f_StartActorTimedFrameSequence(a, D_800A58FC[D_800BF870_9d28], *(s16 *)e);
+    } else {
+        *(s16 *)(a + 0x5C) = f & 0x7FFF;
+        *(s32 *)(a + 0x3C) = D_800ECF58_6489;
+        f_StartActorTimedFrameSequence(a, D_80017334, *(s16 *)e);
+    }
+    *(s16 *)(a + 0x80) = e[4];
+    *(s16 *)(a + 0x82) = e[4] * 2;
+    *(s16 *)(a + 0x84) = e[5];
+    *(s16 *)(a + 0x86) = e[5] * 2;
+    *(u16 *)(a + 0x68) = *(u16 *)(e + 6);
+    a[0x2B] = 0;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8004A9A4);
 
@@ -12134,7 +12184,6 @@ s32 func_8004DBC0(s32 id)
     return 0;
 }
 
-extern s32 D_800ECF58_6489;
 void f_StartActorTimedFrameSequence(u8 *actor, u16 **table, s32 index);
 void func_8004DF94(u8 *a);
 void func_8004E414(u8 *a);
@@ -15821,7 +15870,6 @@ void func_80059C60(void)
 extern u8 D_800E7E80_9d28[];
 extern u8 D_800BF808_9d28[];
 extern u8 D_1F800230_9d28;
-extern u8 D_800BF870_9d28;
 extern u16 D_1F800168_9d28;
 extern u16 D_1F80016A;
 extern u8 D_800BF9C3;
@@ -21313,7 +21361,6 @@ found:
     return NULL;
 }
 
-extern u8 D_800A29CC_8351[];
 void f_StartActorTimedFrameSequence(u8 *actor, u16 **table, s32 index);
 void func_80070018(u8 *a);
 
