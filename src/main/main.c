@@ -5890,7 +5890,86 @@ void func_800342EC(u8 *a, s16 x, s16 y, u8 c)
     f_DrawPackedUiSpriteFrame(&pos, D_800174C4, *(void **)(a + 4), &q);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80034338);
+extern u8 D_800BF88C;
+extern u8 D_800BF88E_dc04;
+extern u8 D_800BF88F;
+void func_8004EDDC(s16 a, s16 b);
+void func_80067DA8();
+void func_8004D6D4(s32 item);
+void func_8004D6F4(s32 item);
+void f_ResetTombaControlState(void *arg0);
+
+void func_80034338(u8 *a)
+{
+    s32 r = 0;
+    u8 *t = (u8 *)D_800E7E80;
+    u8 *g = D_800BF808;
+    u8 k;
+    u8 *g_f;
+
+    if (g[0x12] != 0) {
+        r = 1;
+        do {
+            func_8004EDDC(t[0x6C], D_800BF88C);
+        } while (0);
+    }
+    if (g[0x13] != 0) {
+        r = 1;
+        func_8004EDDC(t[0x6D] + 10, D_800BF88D + 10);
+        func_80067DA8(t);
+    }
+    k = g[0x15];
+    if (k == 1) {
+        if (t[0x6F] == 0) {
+            r = 1;
+            func_8004D6D4(D_800BF88F);
+        } else {
+            r = 1;
+            func_8004EDDC(t[0x6F], D_800BF88F);
+        }
+    } else if (k == 2) {
+        r = 1;
+        func_8004D6F4(t[0x6F]);
+        D_800BF88F = 0;
+        t[0x6F] = 0;
+    } else if (k == 0x82) {
+        r = 1;
+        D_800BF88F = 0;
+        t[0x6F] = 0;
+    }
+    g_f = D_800BF808;
+    k = g_f[0x14];
+    if (k == 1) {
+        if (t[0x6E] == 0) {
+            r = 1;
+            func_8004D6D4(D_800BF88E_dc04);
+        } else {
+            r = 1;
+            func_8004EDDC(t[0x6E], D_800BF88E_dc04);
+        }
+    } else if (k == 2) {
+        func_8004D6F4(t[0x6E]);
+        g_f[0x14] = 0;
+        D_800BF88E_dc04 = 0;
+        t[0x6E] = 0;
+        (*(u8 **)(t + 0x74))[4] = 3;
+        *(u8 **)(t + 0x74) = NULL;
+    }
+    g_f = D_800BF808;
+    if (g_f[2] != 0) {
+        r = 1;
+    }
+    if (r) {
+        f_ResetTombaControlState(t);
+        t[4] = 4;
+        t[5] = 0x11;
+        t[6] = 0;
+        D_1F800137_104c = 2;
+        t[0] |= 2;
+    }
+    memset(a, 0, 4);
+    g_f[0x16] = 0;
+}
 
 s32 func_80034548(s32 arg0) {
     func_80033FF4(arg0, 0x65);
@@ -5950,8 +6029,6 @@ typedef struct { u8 b0; u8 kind; u8 pad[10]; } ItemDef_49A4;
 extern ItemDef_49A4 D_800A2BE8_614d[];
 extern u16 D_800BF89E;
 extern u8 D_800BF881;
-extern u8 D_800BF88C;
-extern u8 D_800BF88F;
 extern u8 D_800BF81A;
 extern u8 D_800BF81B;
 extern u8 D_800BF81D;
