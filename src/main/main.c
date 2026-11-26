@@ -13195,7 +13195,147 @@ void f_SetTombaJumpLaunchVelocity(u8 *t, s32 boost)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaHorizontalMovementSpeed);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80056878);
+extern u16 D_800A455C[][4];
+extern u16 D_800A4574[4];
+#define U8(p, o) (*(u8 *)((u8 *)(p) + (o)))
+#define S8(p, o) (*(s8 *)((u8 *)(p) + (o)))
+#define H(p, o) (*(u16 *)((u8 *)(p) + (o)))
+#define S(p, o) (*(s16 *)((u8 *)(p) + (o)))
+
+void func_80056878(u8 *a, s32 dir, s32 n)
+{
+    u16 *p;
+    u16 dec;
+    u16 lim;
+    u16 acc;
+    u16 brk;
+    u16 u;
+    s16 s;
+    u16 u_f;
+
+    if (U8(a, 0x174) & 0x30) {
+        p = D_800A4574;
+    } else {
+        p = D_800A455C[U8(a, 0x6D)];
+    }
+    acc = p[1];
+    dec = p[0] - 0x100;
+    lim = p[3];
+    brk = lim - 0x200;
+    if (n != 0) {
+        if (n > 16) {
+            n = 16;
+        }
+        acc = n * 128 + 0x200;
+        H(a, 0x15E) = p[2] + 0x400;
+    } else {
+        switch (S8(a, 0x14B)) {
+        case 0:
+            H(a, 0x15E) = p[2] - 0x700;
+            break;
+        case 1:
+            H(a, 0x15E) = 0xC0F;
+            break;
+        case 2:
+            H(a, 0x15E) = 0x100F;
+            break;
+        default:
+            H(a, 0x15E) = p[2] - 0x700;
+            break;
+        }
+    }
+    dir &= 3;
+    switch (dir) {
+    case 0: {
+        s32 f;
+
+        f = U8(a, 0x149);
+        if (f & 2) {
+            if (!(f & 1)) {
+                H(a, 0x44) += dec;
+            }
+        end0:
+            U8(a, 0x149) = 0;
+            return;
+        }
+        s = S(a, 0x44);
+        u = H(a, 0x44);
+        if (s > 0) {
+            if (s < (s16)dec) {
+                H(a, 0x44) = dec;
+                goto end0;
+            }
+            if (S(a, 0x15E) < s) {
+                H(a, 0x44) = u - brk;
+                if ((s16)H(a, 0x44) < S(a, 0x15E)) {
+                    H(a, 0x44) = H(a, 0x15E);
+                }
+                goto end0;
+            }
+            H(a, 0x44) = u + acc;
+            if (S(a, 0x15E) < (s16)H(a, 0x44)) {
+                H(a, 0x44) = H(a, 0x15E);
+            }
+            goto end0;
+        }
+        H(a, 0x44) = u + lim;
+        goto end0;
+    }
+    case 1: {
+        s32 f;
+
+        f = U8(a, 0x149);
+        if (f & 2) {
+            if (f & 1) {
+                H(a, 0x44) -= dec;
+            }
+            U8(a, 0x149) = dir;
+            return;
+        }
+        s = S(a, 0x44);
+        u_f = H(a, 0x44);
+        if (s >= 0) {
+            H(a, 0x44) = u_f - lim;
+            U8(a, 0x149) = dir;
+            return;
+        }
+        if (-(s16)dec < s) {
+            H(a, 0x44) = -dec;
+        } else if (s < -S(a, 0x15E)) {
+            H(a, 0x44) = u_f + brk;
+            if ((s16)H(a, 0x44) > -S(a, 0x15E)) {
+                H(a, 0x44) = -H(a, 0x15E);
+            }
+        } else {
+            H(a, 0x44) = u_f - acc;
+            if ((s16)H(a, 0x44) < -S(a, 0x15E)) {
+                H(a, 0x44) = -H(a, 0x15E);
+            }
+        }
+        U8(a, 0x149) = 1;
+        return;
+    }
+    case 2:
+    case 3: {
+        s = S(a, 0x44);
+        u_f = H(a, 0x44);
+        if (s > 0) {
+            H(a, 0x44) = u_f - 0x80;
+            if ((s16)H(a, 0x44) > 0) {
+                break;
+            }
+        } else {
+            H(a, 0x44) = u_f + 0x80;
+            if ((s16)H(a, 0x44) < 0) {
+                break;
+            }
+        }
+        H(a, 0x44) = 0;
+        U8(a, 0x149) = U8(a, 0x14A) & 3;
+        break;
+    }
+    }
+}
 
 typedef struct { u8 pad[0x40]; void *p40; void *p44; } UiBankB_F58;
 extern UiBankB_F58 D_800ECF58_674d;
