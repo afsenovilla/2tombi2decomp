@@ -1727,7 +1727,411 @@ void func_8010DC4C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_8010DD90);
+typedef struct {
+    u16 lo;
+    s16 hi;
+} Half;
+extern u8 D_1F800250;
+extern s16 D_1F800240;
+extern s16 D_1F800244;
+extern u16 D_1F8000F2;
+extern u8 D_800E8008[];
+
+void func_8010DD90(u8 *a, u8 *b)
+{
+    Half v[3];
+    s32 s, c;
+    s16 v44;
+
+    switch (a[5]) {
+    case 0:
+    case 2:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+    case 10:
+    case 11:
+        switch (a[6]) {
+        case 0:
+            {
+                u8 *g = (u8 *)&D_800BF808;
+                if (g[0x39] != 0) {
+                    g[1] = 0;
+                    g[0x39] = 0;
+                }
+            }
+            a[0] = 8;
+            D_1F800246_6eef = 0;
+            a[0x5E] = 0;
+            D_1F800250 = 0;
+            if (a[5] == 2) {
+                if (b[0x147] != 0) {
+                    a[0xBE] = 0;
+                    H(a, 0x44) = -0x1000;
+                } else {
+                    a[0xBE] = 1;
+                    H(a, 0x44) = 0x1000;
+                }
+            } else if (func_80077768(H(a, 0x60), a[0x2B] << 4, 0) != 0) {
+                a[0xBE] = 0;
+                H(a, 0x44) = -0x1000;
+            } else {
+                a[0xBE] = 1;
+                H(a, 0x44) = 0x1000;
+            }
+            H(a, 0x4A) = -0x3400;
+            a[6]++;
+            func_80041768(a, 9, 4);
+            func_8004130C(a, 0);
+            break;
+        case 1:
+            if ((H(a, 0x4A) += 0x360) > 0) {
+                a[0x18] = a[0x19] = a[0x1A] = 0x80;
+                a[6]++;
+                a[0xD] |= 2;
+            }
+            W(a, 0x30) += H(a, 0x4A) << 8;
+            func_80076D68(a);
+            func_80041A1C(a, 1);
+            if (a[0x5F] == 0) {
+                s16 h = (H(a, 0x86) - H(a, 0x84)) / 2;
+                s16 q = H(a, 0x84) / 2;
+                s16 d = U(a, 0x80);
+                s16 ang;
+                if (a[0xBE] == 0) {
+                    ang = U(a, 0x60);
+                } else {
+                    ang = U(a, 0x60) + 0x800;
+                }
+                if (func_80045CAC(a, d, h, ang) != 0 || func_80045CAC(a, d, (s16)-q, ang) != 0) {
+                    a[0x5F] = a[0xBE] + 2;
+                }
+            }
+            func_80041AC0(a);
+            func_8004130C(a, 0);
+            break;
+        case 2:
+            H(a, 0x4A) += 0x360;
+            if (H(a, 0x4A) > 0x3000) {
+                H(a, 0x4A) = 0x3000;
+            }
+            func_80076D68(a);
+            func_80041A1C(a, 1);
+            W(a, 0x30) += H(a, 0x4A) << 8;
+            if (a[0x5F] == 0) {
+                s16 h = (H(a, 0x86) - H(a, 0x84)) / 2;
+                s16 q = H(a, 0x84) / 2;
+                s16 d = U(a, 0x80);
+                s16 ang;
+                if (a[0xBE] == 0) {
+                    ang = U(a, 0x60);
+                } else {
+                    ang = U(a, 0x60) + 0x800;
+                }
+                if (func_80045CAC(a, d, h, ang) != 0 || func_80045CAC(a, d, (s16)-q, ang) != 0) {
+                    a[0x5F] = a[0xBE] + 2;
+                }
+            }
+            func_80041AC0(a);
+            func_8004130C(a, 0);
+            a[0x19] = a[0x1A] = (a[0x18] -= 0x10);
+            if (a[0x18] == 0) {
+                a[1] = 2;
+                a[0] = 2;
+                a[0x2B] = 0;
+                a[4] = 1;
+                H(a, 0x40) = 0x3C;
+                func_8010C598(a);
+                a[5] = 1;
+                a[6] = 3;
+                a[7] = 0;
+                H(a, 0x54) = 0;
+                H(a, 0x58) = 0;
+            }
+            break;
+        }
+        break;
+    case 1:
+        switch (a[6]) {
+        case 0:
+            H(a, 0x80) = 0x64;
+            H(a, 0x82) = 0xC8;
+            if (D_800BF870.unk0 == 0xD) {
+                H(a, 0x84) = 0x10E;
+                H(a, 0x86) = 0x208;
+            } else {
+                H(a, 0x84) = 0x64;
+                H(a, 0x86) = 0xC8;
+            }
+            D_1F800250 = 0;
+            D_1F800246_6eef = 1;
+            func_80041718(a, 5, 4);
+            a[6]++;
+            func_80074590(0x87, 0, 0);
+            H(a, 0x40) = 0x5A;
+             
+        case 1:
+            if (H(a, 0x40) == 0) {
+                if (D_800BF870.unk0 == 0xF) {
+                    func_80074590(0x8C, 0, 0);
+                }
+                if (U(b, 4) != 0x301 || (b[5] == 3 && b[6] >= 3)) {
+                    a[6]++;
+                } else if (b[0] == 1 && b[5] == 3 && b[6] < 3) {
+                    H(a, 0x2E) = H(b, 0x2E);
+                    H(a, 0x36) = H(b, 0x36);
+                    {
+                        u8 e = b[0x2A];
+                        H(a, 0x58) = 0;
+                        a[0] = 8;
+                        a[0x2A] = e;
+                    }
+                    b[0x2B] = U(b, 0x140) >> 4;
+                    if (func_80022D08(b, a, 1, 1) == 0) {
+                        b[4] = 2;
+                        b[5] = 2;
+                        b[6] = 0;
+                        b[7] = 0;
+                        H(b, 0x172) = 0x78;
+                    }
+                }
+            } else {
+                H(a, 0x40)--;
+            }
+             
+        case 2:
+        {
+            s16 r = func_800776F8((s16)func_800782B0(a + 0x2C, D_1F800240, D_1F800244), H(a, 0x56), 0x80);
+            s16 x = D_1F800240;
+            H(a, 0x56) = r;
+            H(b, 0x56) = r;
+            v[0].hi = x;
+            v[1].hi = U(b, 0x32);
+            v[2].hi = D_1F800244;
+        }
+            func_8006CBA8(v);
+            break;
+        }
+        break;
+    case 3:
+        switch (a[6]) {
+        case 0:
+            D_1F800250 = 0;
+            a[0] = 4;
+            MEMBER_AT(s16, a, 0x80) = 0x64;
+            MEMBER_AT(s16, a, 0x82) = 0xC8;
+            MEMBER_AT(s16, a, 0x84) = 0x64;
+            MEMBER_AT(s16, a, 0x86) = 0xC8;
+            a[0x2B] = 0;
+            {
+                u8 *g = (u8 *)&D_800BF808;
+                g[0x39] = 1;
+                g[1] = 1;
+            }
+            D_1F800246_6eef = 2;
+            H(b, 0x56) = H(a, 0x56) = func_800776F8((s16)func_800782B0(a + 0x2C, D_1F800240, D_1F800244), H(a, 0x56), 0x80);
+            func_80041718(a, 6, 4);
+            a[6]++;
+            v[0].hi = D_1F800240;
+            v[1].hi = U(b, 0x32);
+            v[2].hi = D_1F800244;
+            func_8006CBA8(v);
+            H(a, 0x44) = 0x40;
+            H(a, 0x40) = 0x5A;
+            if (((((0xC00 - D_1F8000F2) & 0xFFF) - U(a, 0x56)) & 0xFFF) < 0x800) {
+                H(a, 0x6A) = 0x200;
+            } else {
+                H(a, 0x6A) = -0x200;
+            }
+            break;
+        case 1:
+            H(a, 0x58) = (U(a, 0x58) + 0x200) & 0xFFF;
+            s = (func_80083F50(H(a, 0x56)) * H(a, 0x44)) >> 12;
+            c = func_80083E80(H(a, 0x56));
+            H(a, 0x2E) += s;
+            H(a, 0x36) += -(c * H(a, 0x44)) >> 12;
+            if (a[0x2B] == 0) {
+                func_8010C0B8(D_800E8008, a, H(a, 0x6A));
+            }
+            if (a[0x5E] != 0) {
+                D_1F800246_6eef = 0;
+                a[6] = 4;
+                a[7] = 0;
+            } else if (H(a, 0x40) == 0) {
+                a[0] = 8;
+                a[6] = 7;
+                a[7] = 0;
+            } else {
+                H(a, 0x40)--;
+            }
+            break;
+        case 2:
+        {
+            s16 t;
+            s16 k;
+            s32 m;
+            H(a, 0xB8) -= 0x80;
+            if (H(a, 0xB8) < 0xC00) {
+                H(a, 0xB8) = 0xC00;
+            }
+            t = H(a, 0x6A);
+            m = __builtin_abs(t) + 0x20;
+            k = m;
+            {
+                s16 bb = H(a, 0xB8);
+                s16 r58 = (U(a, 0x58) + 0x200) & 0xFFF;
+                H(a, 0xBA) = bb;
+                H(a, 0xBC) = bb;
+                H(a, 0x58) = r58;
+            }
+            if ((s16)m > 0x380) {
+                k = 0x380;
+            }
+            if (t < 0) {
+                H(a, 0x6A) = -k;
+            } else {
+                H(a, 0x6A) = k;
+            }
+            func_8010C0B8(D_800E8008, a, H(a, 0x6A));
+            break;
+        }
+        case 3:
+            a[1] = 2;
+            H(a, 0xB8) = 0x1000;
+            H(a, 0xBA) = 0x1000;
+            H(a, 0xBC) = 0x1000;
+            func_8010C0B8(D_800E8008, a, H(a, 0x6A));
+            break;
+        case 4:
+        case 6:
+            if (a[6] == 6) {
+                func_8010C0B8(D_800E8008, a, H(a, 0x6A));
+            }
+            func_8006CBA8(a + 0x2C);
+            switch (a[7]) {
+            case 0:
+                if (a[6] == 4) {
+                    H(a, 0x4A) = -0x1000;
+                    H(a, 0x44) = -0x1400;
+                    H(a, 0x50) = 0x200;
+                    func_80074590(0xE, 0, 0);
+                } else {
+                    H(a, 0x44) = -0x3000;
+                    H(a, 0x4A) = 0;
+                    H(a, 0x50) = 0x40;
+                }
+                H(a, 0x40) = 0x10;
+                a[7]++;
+                goto end;
+            case 1:
+                H(a, 0x58) -= 0x200;
+                if ((H(a, 0x4A) += H(a, 0x50)) > 0) {
+                    a[0x18] = a[0x19] = a[0x1A] = 0x80;
+                    a[7]++;
+                    a[0xD] |= 2;
+                }
+                break;
+            case 2:
+                a[0x19] = a[0x1A] = (a[0x18] -= 8);
+                if (--H(a, 0x40) == 0) {
+                    if (a[6] == 6) {
+                        D_1F800246_6eef = 0;
+                        if (D_800BF870.unk0 == 0xE && H(a, 0x6E) == 1) {
+                            D_1F800137 = 2;
+                            D_800BF850 = 1;
+                            a[6] = 9;
+                        } else {
+                            a[6] = 5;
+                        }
+                    } else {
+                        a[6] = 5;
+                    }
+                    a[7] = 0;
+                }
+                H(a, 0x58) -= 0x200;
+                H(a, 0x4A) += 0x200;
+                if (H(a, 0x4A) > 0x2000) {
+                    H(a, 0x4A) = 0x2000;
+                }
+                break;
+            default:
+                goto end;
+            }
+            W(a, 0x30) += H(a, 0x4A) << 8;
+            W(a, 0x2C) += (func_80083F50(H(a, 0x56)) * H(a, 0x44)) >> 4;
+            W(a, 0x34) -= (func_80083E80(H(a, 0x56)) * H(a, 0x44)) >> 4;
+            break;
+        case 5:
+            a[0x2B] = 0;
+            a[1] = 2;
+            func_8010C598(a);
+            H(a, 0x40) = 0x5A;
+            a[4] = 1;
+            a[5] = 1;
+            a[0] = 2;
+            a[6] = 3;
+            a[7] = 0;
+            H(a, 0x54) = 0;
+            H(a, 0x58) = 0;
+            H(a, 0x56) = 0;
+            break;
+        case 7:
+        {
+            s32 t;
+            func_8006CBA8(a + 0x2C);
+            H(a, 0x44) -= 8;
+            if (H(a, 0x44) < 0x10) {
+                H(a, 0x44) = 0x10;
+            }
+            t = (U(a, 0x58) + (U(a, 0x44) << 3)) & 0xFFF;
+            H(a, 0x58) = t;
+            if (H(a, 0x44) == 0x10 && (u32)((t + 0x80) & 0xFFF) < 0x101) {
+                H(a, 0x58) = 0;
+                a[6]++;
+            }
+            s = (func_80083F50(H(a, 0x56)) * H(a, 0x44)) >> 12;
+            c = func_80083E80(H(a, 0x56));
+            H(a, 0x2E) += s;
+            H(a, 0x36) += -(c * H(a, 0x44)) >> 12;
+            break;
+        }
+        case 8:
+            D_1F800246_6eef = 0;
+            a[1] = 2;
+            a[0x2B] = 0;
+            a[0] = 0xA;
+            func_8010C598(a);
+            a[4] = 1;
+            a[5] = 1;
+            a[6] = 0;
+            a[7] = 0;
+            H(a, 0x54) = 0;
+            H(a, 0x58) = 0;
+            break;
+        case 9:
+            a[1] = 2;
+            if (D_800BF850 == 0x80) {
+                a[6] = 5;
+                a[7] = 0;
+            }
+            break;
+        }
+        break;
+    }
+end:
+    a[0x5E] = 0;
+    a[0x29] = 0;
+    a[0x5F] = 0;
+    if (a[1] == 0) {
+        func_80077E7C(a);
+        a[1] = 1;
+        func_8004190C(a);
+        func_800518FC(a);
+    }
+}
 
 extern u8 *D_1F80024C_2bfb;
 extern u16 D_1F8001A0;
@@ -1808,7 +2212,6 @@ void func_8010EA94(u8 *a)
 
 extern u8 D_800BF80E;
 extern u8 D_800BF80F;
-extern u8 D_800E8008[];
 extern u8 D_801181F8[];
 extern s16 D_80119D70[];
 extern s32 D_8011ADA8[];
@@ -2302,7 +2705,6 @@ void func_80112940(u8 *a)
 }
 
 extern S8 D_80126F8C[];
-extern u8 D_1F800250;
 void func_80112AEC(u8 *a)
 {
     u8 *t = D_1F80024C_2bfb;
@@ -3685,7 +4087,6 @@ extern s32 D_80125050[];
 extern u8 D_80124CB8[];
 extern u8 D_80017FC0[];
 extern u8 D_1F800236;
-extern s16 D_1F800240;
 typedef struct { u8 pad[0x5E6]; u16 f5E6; } GameState5E6;
 #define G ((u8 *)&D_800BF870)
 void func_80115D20(u8 *a)
