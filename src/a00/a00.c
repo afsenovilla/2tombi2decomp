@@ -13829,7 +13829,165 @@ void f_UpdateKainenHouseFallingParticleActor(u8 *a)
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013C7F0);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013C9C0);
+typedef struct { s16 x, y, z; } V3C9C0;
+extern u8 D_80109FC0[];
+extern s32 D_80109FC4[];
+extern V3C9C0 D_80109FD6[];
+
+void func_8013C9C0(u8 *a)
+{
+    u8 *q = a + 0x50;
+
+    switch (a[4]) {
+    case 0:
+        W_d1fb(a, 0x50) = D_80109FC4[a[3] - 1];
+        W_d1fb(a, 4) = 0x10001;
+        {
+            V3C9C0 *t = &D_80109FD6[a[3]];
+
+            H_f12c(a, 0x2C) = t->x;
+            H_f12c(a, 0x2E) = t->y;
+            H_f12c(a, 0x30) = t->z;
+        }
+        *(u8 **)(a + 0x3C) = D_80109FC0;
+        H_f12c(a, 0x32) = -0x46;
+        W_d1fb(a, 0x48) = 0;
+        H_f12c(a, 0x4C) = 0;
+        if (D_800BF9E0 >= 6) {
+            a[5] = 7;
+            D_80109FC0[0] = 8;
+        } else {
+            a[5] = 0;
+            D_80109FC0[0] = 0x10;
+        }
+    case 1:
+        {
+            u8 *b = D_800E7E80;
+
+            if (b[0x16B] == 1) {
+                return;
+            }
+            if (D_800BF9E0 >= 0x14) {
+                a[4] = 3;
+                return;
+            }
+            if (D_800BF816 == 1) {
+                return;
+            }
+            if (b[0x2A] >= 0x11) {
+                return;
+            }
+        }
+        if (--a[6] == 0) {
+            a[6] = 3;
+            if (++a[7] >= 6) {
+                a[7] = 0;
+            }
+        }
+        switch (a[5]) {
+        case 0:
+            a[5] = 1;
+            H_f12c(q, 6) = 0;
+        case 1:
+            if (D_800BF9E0 >= 6) {
+                q[4] = 0x18;
+                a[5] = 2;
+                func_80074590(7, 0, 0);
+                func_80074590(0x94, 0, 0);
+            }
+            break;
+        case 2:
+            if (H_f12c(q, 6) < -0xC7) {
+                a[5] = 3;
+                q[4] = 0x18;
+            } else {
+                H_f12c(q, 6) -= 6;
+            }
+            break;
+        case 3:
+            if (H_f12c(q, 6) < 0) {
+                H_f12c(q, 6) += 6;
+            } else {
+                a[5] = 4;
+                q[4] = 0x60;
+            }
+            break;
+        case 4:
+            if ((s8)--q[4] < 0) {
+                a[5] = 5;
+                q[4] = 0x18;
+            }
+            break;
+        case 5:
+            if (H_f12c(q, 6) >= -0xC7) {
+                H_f12c(q, 6) -= 6;
+            } else {
+                a[5] = 6;
+                q[4] = 0x18;
+                D_80109FC0[0] = 8;
+            }
+            break;
+        case 6:
+            if (H_f12c(q, 6) < 0) {
+                H_f12c(q, 6) += 6;
+            } else {
+                D_800BF9E0 = 7;
+                a[5] = 7;
+            }
+            break;
+        case 7:
+            if (D_800BF9E0 == 0x10) {
+                a[5] = 8;
+                q[4] = 0x1E;
+                func_80074590(7, 0, 0);
+                func_80074590(0x94, 0, 0);
+            }
+            break;
+        case 8:
+            if (H_f12c(q, 6) >= -0xC7) {
+                H_f12c(q, 6) -= 3;
+            } else {
+                D_800BF9E0 = 0x11;
+                a[5] = 9;
+                q[4] = 0x78;
+            }
+            break;
+        case 9:
+            if (H_f12c(q, 6) < 0) {
+                H_f12c(q, 6) += 3;
+            }
+            if ((s8)--q[4] < 0) {
+                a[5] = 10;
+            }
+            break;
+        case 10:
+            a[4] = 3;
+            break;
+        }
+        if (a[3] == 1 || a[3] == 3) {
+            switch (a[5]) {
+            case 1:
+            case 2:
+            case 6:
+            case 7:
+            case 8:
+                break;
+            case 3:
+            case 4:
+            case 5:
+            case 9:
+            case 10:
+                return;
+            }
+        }
+        func_8002B278(a);
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013CDD4);
 
