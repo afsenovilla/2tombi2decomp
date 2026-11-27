@@ -1473,7 +1473,228 @@ void func_80110CB8(void) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", f_SpawnPipeAreaSceneActorsFromPlacementTable);
+extern u8 D_800BF808_s01[];
+extern u8 D_800BF871_s01;
+extern u8 *D_80134FA4[];
+extern u8 D_80134FC0[];
+void func_80111BE0(void);
+u8 *func_80072DDC(u8 *a, s32 b, s32 c, s32 d);
+
+static inline u8 *GS01(void)
+{
+    return (u8 *)&D_800BF870;
+}
+
+static inline u8 *GB01(void)
+{
+    return D_800BF808_s01;
+}
+
+void f_SpawnPipeAreaSceneActorsFromPlacementTable(u8 *a, s32 mode)
+{
+    u8 *e;
+    u8 *p;
+
+    if (D_800BF871_s01 >= 0xF) {
+        e = D_80134FC0;
+    } else {
+        e = D_80134FA4[mode];
+    }
+    H(a, 8) = 0;
+    if (e[0] == 0xFF) {
+        return;
+    }
+    do {
+        if (e[0xB] == 1 && ((U(GS01(), 0x5E6) >> D_800BF870.unk0) & 1)) {
+            goto next;
+        }
+        if (e[0xB] == 2 && GS01()[3] != 0) {
+            goto next;
+        }
+        if (mode != 0 && H(a, 8) >= 0xF) {
+            goto next;
+        }
+        switch (e[0xA]) {
+
+        case 0:
+            break;
+        case 1:
+            if (mode == 6) {
+                GB01()[0x45] = 1;
+            } else {
+                GB01()[0x45] = 0;
+            }
+            U(GB01(), 8) = U(e, 4);
+            if (GB01()[0xF] == 2) {
+                U(GB01(), 0xA) = U(e, 6) - 0xDC;
+            } else {
+                U(GB01(), 0xA) = U(e, 6);
+            }
+            U(GB01(), 0xC) = U(e, 8);
+            break;
+        case 2:
+            if (GS01()[3] != 0) {
+                goto next;
+            }
+            func_80133574(0, e[3]);
+            goto next;
+        case 4:
+            switch (e[3]) {
+            case 0:
+                if (GS01()[0x51] == 0xFF) {
+                    goto next;
+                }
+                if (GS01()[0x191] & 2) {
+                    goto next;
+                }
+                break;
+            case 3:
+                if ((u32)(GS01()[0x18A] - 0x15) < 4) {
+                    goto spawn;
+                }
+                goto next;
+            }
+            break;
+        case 6:
+            if (GS01()[0x18A] < 0x15) {
+                goto next;
+            }
+            if (GS01()[0x18A] < 0x19) {
+                break;
+            }
+            func_80111BE0();
+            goto next;
+        case 7:
+            if (e[3] == 1) {
+                if (GS01()[0x18D] & 4) {
+                    goto next;
+                }
+            } else {
+                if (GS01()[0x18D] & 8) {
+                    goto next;
+                }
+            }
+            break;
+        case 8:
+            if (GS01()[0x18C] & 2) {
+                goto next;
+            }
+            break;
+        case 9:
+            if (GS01()[0x18C] & 1) {
+                goto next;
+            }
+            break;
+        case 10:
+            if (e[3] == 0) {
+                if (GS01()[0x53] == 0) {
+                    break;
+                }
+                goto next;
+            } else if (e[3] == 1) {
+                if (GS01()[0x18A] == 0x14) {
+                    break;
+                }
+                goto next;
+            }
+            break;
+        case 12:
+            if (GS01()[0x53] == 0) {
+                break;
+            }
+            goto next;
+        case 13:
+            if (e[3] == 3) {
+                if (GS01()[0x18C] & 0x40) {
+                    goto next;
+                }
+            } else if (e[3] == 1) {
+                if (GS01()[0x18C] & 0x80) {
+                    goto next;
+                }
+            }
+            break;
+        case 14:
+            if (GS01()[0xA0] != 0xFF) {
+                break;
+            }
+            if (GS01()[0x7F] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 15:
+            if (GS01()[0x196] & 8) {
+                goto next;
+            }
+            break;
+        case 16:
+            if (GS01()[3] != 0) {
+                goto next;
+            }
+            if (GS01()[0x18F] == e[3]) {
+                break;
+            }
+            goto next;
+        case 17:
+            if (((GS01()[0x17C] >> (e[3] * 2)) & 3) < 2) {
+                break;
+            }
+            goto next;
+        case 18:
+            if (GS01()[3] != 0) {
+                goto next;
+            }
+            if (((GS01()[0x17C] >> ((e[3] & 1) * 2)) & 3) == 2) {
+                break;
+            }
+            goto next;
+        case 19:
+            if ((GS01()[0x1B3] >> e[3]) & 1) {
+                goto next;
+            }
+            break;
+        case 20:
+            if (GS01()[0x196] & 0x10) {
+                goto next;
+            }
+            break;
+        case 21:
+            if (GS01()[0x75] == 0) {
+                goto next;
+            }
+            break;
+        case 22:
+            if (GS01()[0x196] & 0x20) {
+                goto next;
+            }
+            break;
+        case 23:
+            if (!(U(GS01(), 0x5E6) & 2)) {
+                goto next;
+            }
+            break;
+        }
+    spawn:
+        p = func_80072DDC(a, e[0], e[1], e[2]);
+        if (p != NULL) {
+            *(s32 *)(p + 0x2C) = H(e, 4) << 16;
+            *(s32 *)(p + 0x30) = H(e, 6) << 16;
+            *(s32 *)(p + 0x34) = H(e, 8) << 16;
+            p[3] = e[3];
+            H(p, 0x54) = 0;
+            H(p, 0x56) = 0;
+            H(p, 0x58) = 0;
+            *(s32 *)(p + 0x1C) = *(s32 *)(e + 0xC);
+            if (mode != 0) {
+                *(u8 **)(a + (H(a, 8) << 2) + 0xC) = p;
+                H(a, 8)++;
+            }
+        }
+    next:
+        e += 0x10;
+    } while (e[0] != 0xFF);
+}
+
 
 extern ClutCycle D_801352CC[];
 extern s8 D_80138FD0[];
