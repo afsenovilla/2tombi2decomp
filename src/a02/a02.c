@@ -4952,7 +4952,6 @@ static inline void inl_801167C4(u8 *a, s32 ang) {
     c[5] = z;
     a[0x66] |= 1;
 }
-
 void func_80115F58(u8 *a) {
     u8 *t = D_800E7E80;
     Pos pos;

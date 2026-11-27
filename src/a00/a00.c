@@ -958,7 +958,6 @@ extern u8 D_800BF808_cc90[];
 extern u8 D_800BF8BC;
 extern u8 D_800E7EAC[];
 extern V3CC90 D_80146ED8[];
-
 void f_UpdateA00InteriorCamera(u8 *a)
 {
     u8 *g = D_800BF808_cc90;
@@ -1103,7 +1102,6 @@ static inline void inl_8010DC74(u8 *a, s32 target, s32 step)
         }
     }
 }
-
 void f_UpdateFishermensTownCamera(u8 *a)
 {
     u8 *b = D_800E7E80;
@@ -3134,7 +3132,6 @@ static inline u8 *GB00(void)
 {
     return D_800BF808_s00;
 }
-
 void f_SpawnFishermensTownActorsFromPlacementTable(u8 *a, s32 mode)
 {
     u8 *e;
@@ -6120,7 +6117,6 @@ s32 func_801205EC(u8 *a) {
 }
 
 extern u8 D_8014E1A4[];
-
 void func_801206F4(u8 *a)
 {
     switch (a[6]) {
@@ -13935,7 +13931,6 @@ typedef struct { s16 x, y, z; } V3C9C0;
 extern u8 D_80109FC0[];
 extern s32 D_80109FC4[];
 extern V3C9C0 D_80109FD6[];
-
 void func_8013C9C0(u8 *a)
 {
     u8 *q = a + 0x50;

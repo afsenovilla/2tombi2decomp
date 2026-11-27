@@ -1205,7 +1205,6 @@ extern u8 *D_1F80024C_d2d8;
 extern u8 D_800BF808_d2d8[];
 extern u8 D_1F8000D0_d2d8[];
 void func_8010D108(u8 *a, u8 *b);
-
 void func_8010D2D8(u8 *a)
 {
     u8 *b;

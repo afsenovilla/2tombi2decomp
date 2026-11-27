@@ -3991,7 +3991,6 @@ extern u8 D_800A3E58[];
 extern u8 D_800BFAE7;
 extern u8 D_800BF822;
 extern void func_80041098(u8 *);
-
 void f_UpdateCircusClothesLockerActor(u8 *a)
 {
     s32 t;
@@ -6529,7 +6528,6 @@ extern void func_80040D68(u8 *, u8 *);
 extern void func_80077E7C(u8 *);
 extern s32 func_80041438(u8 *, s32, s32);
 extern void func_8004190C(u8 *);
-
 void f_UpdateCircusCharlesHintDialogue(u8 *a)
 {
     u8 *g;
@@ -8694,7 +8692,6 @@ typedef struct { s16 m[3][3]; s32 t[3]; } Mat;
 extern u8 D_800BF918;
 extern u32 *D_800ED8C8;
 extern Mat D_1F8000F8;
-
 void func_8012DA14(u8 *a)
 {
     u16 *i;
@@ -8738,7 +8735,6 @@ void func_8012DA14(u8 *a)
 }
 
 extern s32 D_1F800080;
-
 u32 *func_8012DBB4(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[3];
@@ -8829,7 +8825,6 @@ u32 *func_8012DBB4(u32 *f, u32 *ot, s32 n)
 }
 
 extern s32 D_80143D2C;
-
 u32 *func_8012DE60(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[4];

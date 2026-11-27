@@ -992,7 +992,6 @@ extern u8 *D_1F80024C_be48;
 extern u8 D_800BF808_be48[];
 extern u8 D_1F8000D0_be48[];
 void func_8010BC78(u8 *a, u8 *b);
-
 void func_8010BE48(u8 *a)
 {
     u8 *g;
@@ -4455,7 +4454,6 @@ static inline void Parts6E5C(u8 *a, s16 v)
     H(P(a, 0xC8), 0xC) = t;
     H(P(a, 0xCC), 0xC) = t;
 }
-
 void func_80116E5C(u8 *a)
 {
     u8 *b;

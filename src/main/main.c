@@ -14873,7 +14873,6 @@ extern u8 D_800A44D0[];
 extern u8 D_800A44EC[];
 extern u8 D_800A44D8[];
 void f_StartActorSkeletalAnimationBlend(u8 *a, void **table, s32 i, s32 blend);
-
 void func_8005490C(u8 *a, s32 mode, s32 n)
 {
     u8 *t;
@@ -15233,7 +15232,6 @@ s32 func_800552EC(u8 *a)
 }
 
 extern u8 D_800BF84D;
-
 s32 func_80055390(u8 *a)
 {
     s32 r;
@@ -15477,7 +15475,6 @@ s32 func_800558B4(u8 *a)
 }
 
 extern u16 D_1F800196;
-
 s32 func_800559F4(u8 *a)
 {
     u16 f;
@@ -16636,7 +16633,6 @@ void func_8006228C(void *arg0);
 void func_800624B4(u8 *a);
 void func_80065A54(u8 *a);
 void func_800660AC(u8 *t);
-
 void func_80058918(u8 *a)
 {
     if ((D_800ECF54 & D_1F800170) || (a[0x174] & 0x30)) {
@@ -16925,7 +16921,6 @@ void func_800658E4(u8 *t);
 void func_800655A0(void *arg0);
 void func_80065990(u8 *a);
 void func_800661E0(void *arg0);
-
 void func_80058F5C(u8 *a)
 {
     switch (a[5]) {
@@ -17666,7 +17661,6 @@ void func_8005A910(void *arg0) {
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005A970);
 
 s32 f_AdvanceActorSkeletalAnimation();
-
 void func_8005ACC8(u8 *a)
 {
     s32 r;
@@ -17928,7 +17922,6 @@ s32 func_8005B5E4(u8 *a)
 
 extern u16 D_800A4694[];
 s32 func_8005C138(u8 *a, u8 *b);
-
 void func_8005B63C(u8 *a)
 {
     u8 *o = *(u8 **)(a + 0x10);
@@ -18329,7 +18322,6 @@ s32 func_8005C138(u8 *a, u8 *b)
     return 0;
 }
 
-
 void func_8005C26C(u8 *a)
 {
     u8 *o = *(u8 **)(a + 0x10);
@@ -18536,7 +18528,6 @@ void func_8005C26C(u8 *a)
 }
 
 extern u8 D_1F800252;
-
 void func_8005C8A0(u8 *a)
 {
     s32 m;
@@ -18720,7 +18711,6 @@ void func_8005C8A0(u8 *a)
 extern u8 D_800A46C4[];
 s32 func_800633B0(u8 *a);
 #define C3B0(a) ((s32 (*)(u8 *, s32))func_800633B0)(a, 1)
-
 void func_8005CDF8(u8 *a)
 {
     s32 m;
@@ -18837,7 +18827,6 @@ void func_8005CDF8(u8 *a)
         break;
     }
 }
-
 
 void func_8005D16C(u8 *a)
 {
@@ -18962,7 +18951,6 @@ void func_8005D16C(u8 *a)
 }
 
 void func_8006483C(u8 *t, s32 mode);
-
 void func_8005D530(u8 *a)
 {
     u16 t;
@@ -19918,7 +19906,6 @@ extern u32 D_800FB170[];
 extern s16 D_800A46E4[];
 void func_80067FE4(void *arg0);
 void f_ApplyTombaClothesAppearanceAndPhysics(u8 *a);
-
 void f_UpdateTombaEquipmentChangeAction(u8 *a)
 {
     u8 *g;
@@ -20339,7 +20326,6 @@ void func_8005FB54(u8 *a)
 }
 
 s32 f_AdvanceActorSkeletalAnimation();
-
 void func_80060064(u8 *a)
 {
     s32 r;
@@ -20475,7 +20461,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006042C);
 extern u8 D_1F800237_a80;
 void func_80063B94(u8 *t, s32 mode);
 #define C32C(a, k) ((s16)((s32 (*)(u8 *, s32))func_8006032C)(a, k))
-
 void func_80060544(u8 *a, s32 k)
 {
     switch (a[7]) {
@@ -21886,7 +21871,6 @@ extern u8 D_800A47A4[];
 extern u8 D_800A47B4[];
 void func_80064358(u8 *t, u8 k, u8 *o);
 void func_80063ECC(u8 *a);
-
 void func_80063F9C(u8 *t)
 {
     u8 *w = *(u8 **)(t + 0x158);
@@ -22104,7 +22088,6 @@ void func_800645CC(void *arg0) {
 }
 
 s32 func_800633B0(u8 *a);
-
 void func_800645E0(u8 *a)
 {
     u8 v;
@@ -24225,7 +24208,6 @@ void func_80068A94(u8 *a)
 extern u8 D_800A4A58[];
 s32 func_80069858(u8 *a, s32 b, s32 c);
 s32 f_TestActorVisibilityWithXYZOffset(u8 *a, s32 x, s32 y, s32 z);
-
 void func_80068BE8(u8 *a)
 {
     u8 k;
@@ -24457,7 +24439,6 @@ void func_8006923C(u8 *a)
 
 void func_8006ACAC(u8 *a);
 void func_8006B020(u8 *a, s32 mode);
-
 void func_80069300(u8 *a)
 {
     u8 *p = a + 0x60;

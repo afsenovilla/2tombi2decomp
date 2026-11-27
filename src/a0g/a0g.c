@@ -597,7 +597,6 @@ static inline void inl_8010B91C(u8 *a, s16 id)
         break;
     }
 }
-
 void f_UpdateCourageTowerInteriorEntranceActor(u8 *a)
 {
     u8 k;

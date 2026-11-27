@@ -3,6 +3,36 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-27 (3): seventeenth round (agents back on Opus)
+
+All code in C: **5302 / 7011 functions (75.6 %, 60.0 % of the bytes)**, from 5233 (57.7 %): ~68 KB (round 16 on Fable
+~100 KB). main +25 (~27.8 KB: Tomba state handlers and the two 60-case dispatchers func_80058918 / func_80058F5C),
+a04-a08 +27 (~17.9 KB: the GT3 / GT4 list builders and their dispatchers in a04..a08, including the a06 leads), a00-a01
++9 (~10.3 KB: both spawners and the four camera-zone functions), a09 scope +7 (~9.9 KB: the a0k spawner, three
+camera-zone functions, a0g f_UpdateCourageTowerInteriorEntranceActor, a0f func_80116E5C), a02-a03 +1 (0x850, the
+a02 camera-zone function: a02 / a03 have 27 hard functions left). integrate.py: clean build 29 / 29, all 68 commits
+link, sweeps nothing. All shared-lui spawners and camera-zone functions are matched. Recipes in AGENTS.md "Round 17
+forms".
+
+Near misses (scratch in r17b/<scope>/): main func_8005A970 2, a04 func_8011DA24 2, a02 func_8010FFF4 3 short, a00
+f_HandleKainenInteraction 5, a02 func_80110E20 5, a0k func_8010BEF8 5 (family a02 func_8010B068, a07 func_8010D84C),
+a00 func_80127D1C ~6 lines, a08 func_8010D9AC 6, main func_80053968 7 lines, a04 func_801178A0 8, a00
+func_80133D6C ~8 lines, a01 func_80111620 ~8, a02 func_80111184 15, a0d f_UpdateEarthEvilPigSplitActor 18 (0xF0C,
+same length, two scheduling spots), a06 func_80129218 + twin func_8012945C 18 short, a01 func_8010CA24 ~100 (twin
+of a00 f_ResolveTombaOrientedWallContact), a08 f_UpdateRareCrabPickupActor ~180, a02 func_80127170 ~250. Next: a01
+func_80132358 (dispatcher shape of a06 func_8013CD34 / a04 func_801185F0), the a0b func_80114608 family (3 more
+members matched this round), main func_80060C60 (0xE1C), func_80068698. ASM by design despite Tomba2Edit names: a05
+func_8013AC90 / f_UpdateThreeSistersCutsceneActorC, a04 func_8013F418 / f_UpdateThirdReadyOrNotKujaraDialogue, a08
+func_80140FBC / f_UpdateWaterTempleRaftNpcActor.
+
+Tool work left (adds to the round-16 list): a dispatcher generator from the jump table (each case's call and tail
+written in full, in retail label order); install_c: name the function whose code changed on a link DIFF, no
+prototypes for functions the target already calls, warn on a prototype inserted before implicit callers; a local-
+alloc tie view from the `-dl` dump; regswap kinds inlineidx, armstore, stmtptr, store before increment, if / else for
+skip-block constants, extra trailing argument, builtin_abs, an asm barrier in one arm against store-flag, stop CSE
+reusing a switch-value register; prio.py: which pass deletes an argument move present in .greg; sbs: delay slots
+marked, "branch target off by one insn"; loophoist: which hoisted HIGH got which register.
+
 ## 2026-11-27 (2): sixteenth round (agents on Fable)
 
 All code in C: **5233 / 7011 functions (74.6 %, 57.7 % of the bytes)**, from 5104 (54.1 %): ~100 KB, the best round

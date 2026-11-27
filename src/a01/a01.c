@@ -331,7 +331,6 @@ extern s16 D_1F8000D0_ae30[];
 extern u8 D_800BF808_ae30[];
 extern u8 D_800E7EAC[];
 extern V3AE30 D_80134BFC[];
-
 s32 func_8010AE30(u8 *a)
 {
     u8 *g = D_800BF808_ae30;
@@ -401,7 +400,6 @@ extern s16 D_1F8000EE_af6c;
         pos.z = Z; \
         func_8006CEC4(D_1F8000D0_af6c, &pos, 0xE0); \
     }
-
 void func_8010AF6C(u8 *a, u8 *b)
 {
     a[0x72] = 0;
@@ -554,7 +552,6 @@ extern s16 D_1F8000D0_b604[];
 extern u8 D_800E7E80[];
 extern u8 D_800BF816;
 extern u8 D_800BF871;
-
 void func_8010B604(u8 *a)
 {
     u8 *b = D_800E7E80;
@@ -1873,7 +1870,6 @@ static inline u8 *GB01(void)
 {
     return D_800BF808_s01;
 }
-
 void f_SpawnPipeAreaSceneActorsFromPlacementTable(u8 *a, s32 mode)
 {
     u8 *e;
@@ -2078,7 +2074,6 @@ void f_SpawnPipeAreaSceneActorsFromPlacementTable(u8 *a, s32 mode)
         e += 0x10;
     } while (e[0] != 0xFF);
 }
-
 
 extern ClutCycle D_801352CC[];
 extern s8 D_80138FD0[];

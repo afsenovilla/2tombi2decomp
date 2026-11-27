@@ -68,7 +68,7 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   The library compiler also hoists more loop invariants around loops with calls (a `loop_has_call` patch of cc1
   reproduces it per file: `// CC gcc-2.7.2-loop4`, `gcc-2.8.1-loop2`, `gcc-2.8.1-nocse-loop2`, made and sha1
   checked by tools/setup_native.sh; AGENTS.md "Compilers" item 5).
-- What is left (2026-11-27, 5233 / 7011 functions, 57.7 % of the bytes): mostly actor state machines (the NPC ones of
+- What is left (2026-11-27, 5302 / 7011 functions, 60.0 % of the bytes): mostly actor state machines (the NPC ones of
   one skeleton are nearly done: `tools/npcsm.py --list`; AGENTS.md "Round 10 / 11 forms") and dispatchers built from matched handlers (AGENTS.md
   "Order of work" item 3), the big areas a00-a08 above all.
 - Agents' commits do not always link on their own (alias lines committed later): verify with a clean full build
@@ -207,6 +207,7 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   families copy-edited or generated from the asm (AGENTS.md "Round 14 forms"). Round 15: a jump table splat left
   as raw words is declared `type:jtbl` in config/symbol_addrs_<prog>.txt (AGENTS.md "Round 15 forms"). Round 16
   (the user's choice: agents on Fable, ~100 KB, the best round): AGENTS.md "Round 16 forms" (shared-lui spawners,
-  gcc's scheduler model, camera-zone template); tools/jtbl.py orders retail candidates by table address.
+  gcc's scheduler model, camera-zone template); tools/jtbl.py orders retail candidates by table address. Round 17
+  (back on Opus, the user's choice; ~68 KB): AGENTS.md "Round 17 forms"; drop narrow prototypes from scratches.
 - `python3 -I tools/vermatch.py`: how much USA code is found in the EU / ES builds.
 - `python3 -I tools/gen_configs.py game/usa [--force] [--out config/eu]`: regenerates the first configs (keeps hand-made ones without --force).

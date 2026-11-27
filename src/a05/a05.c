@@ -7004,7 +7004,6 @@ static inline s32 step_47c8(u8 *a)
     }
     return 0;
 }
-
 void Door(u8 *a)
 {
     u8 *e = D_800E7E80;
@@ -8044,7 +8043,6 @@ static inline u8 *f4608_part(u8 *a, s32 k)
 {
     return ((A4608 *)a)->part[k];
 }
-
 void func_8012E454(u8 *a)
 {
     u8 *t = D_800E7E80;
@@ -10030,7 +10028,6 @@ extern s32 D_80143D2C;
 extern s32 D_1F800080_e4a3;
 extern s32 D_1F800084;
 extern s32 D_1F800088;
-
 u32 *func_80134B74(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[4];
@@ -10581,7 +10578,6 @@ extern u8 D_800BF918;
 extern Mat D_1F8000F8;
 u32 *func_80134B74();
 #define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
-
 void func_8013606C(u8 *a)
 {
     u8 *g;
@@ -10651,7 +10647,6 @@ u32 *func_8007FDB0();
 u32 *func_8008007C();
 u32 *func_8013AC90();
 u32 *f_UpdateThreeSistersCutsceneActorC();
-
 void func_801362CC(u32 *a0, void *a1)
 {
     u32 *s1;

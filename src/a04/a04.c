@@ -3370,7 +3370,6 @@ extern s32 D_1F800080_e4a3;
 extern s32 D_1F800084;
 extern s32 D_1F800088;
 extern u8 D_1F800207_9c67;
-
 u32 *func_801175FC(u32 *f, u32 *ot, s32 n)
 {
     s32 *otz = (s32 *)0x1F800004;
@@ -3546,7 +3545,6 @@ extern Mat D_1F8000F8_c2ec;
 u32 *func_801175FC();
 u32 *func_801178A0();
 #define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
-
 void func_801185F0(u8 *a)
 {
     u16 *i;
@@ -3988,7 +3986,6 @@ static inline u8 *f4608_part(u8 *a, s32 k)
 {
     return ((A4608 *)a)->part[k];
 }
-
 void func_801196C8(u8 *a)
 {
     u8 *t = D_800E7E80;
@@ -5646,7 +5643,6 @@ extern s32 (*D_800A3B78[])(u8 *);
 extern int rand(void);
 extern u8 *(*D_800A2444[])(void);
 extern void func_80083DE0(void *, s32, s32, s32, s32);
-
 void func_8011DCE4(u8 *a)
 {
     u8 *g = D_800E7E80;
@@ -9255,7 +9251,6 @@ set:
     a[8] = v;
     a[9] = v;
 }
-
 
 extern u8 D_8013FBDC[];
 extern u8 D_80017FE8[];

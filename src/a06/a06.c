@@ -3173,7 +3173,6 @@ extern void func_80083DE0(void *, s32, s32, s32, s32);
 extern u8 D_800BF871;
 void func_8013FCF0(void);
 void func_8013D668(void);
-
 void func_80115D3C(u8 *a)
 {
     u8 *g;
@@ -4824,7 +4823,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011BF84);
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void func_8011C614(AreaPartsOwner *a)
 {
     u8 v;
@@ -5077,7 +5075,6 @@ extern s32 func_8007778C();
 extern s32 func_8011D100();
 extern s32 func_800517F8();
 extern s32 func_8007A624();
-
 void func_8011D520(u8 *a)
 {
     u8 *g;
@@ -5669,7 +5666,6 @@ void func_8011F71C(u8 *a) {
 #define P_7be1(p, o) (*(u8 **)((u8 *)(p) + (o)))
 #define P_7be1(p, o) (*(u8 **)((u8 *)(p) + (o)))
 #define P_7be1(p, o) (*(u8 **)((u8 *)(p) + (o)))
-
 void func_8011F9E4(u8 *a)
 {
     u8 *g = D_800E7E80;
@@ -10819,7 +10815,6 @@ void func_8013CBA0(RECT16 *a) {
 typedef struct { s16 m[3][3]; s32 t[3]; } Mat;
 extern u32 *D_800ED8C8_065b;
 extern Mat D_1F8000F8;
-
 void func_8013CD34(u8 *a)
 {
     u16 *i;
@@ -10869,7 +10864,6 @@ void func_8013CD34(u8 *a)
 
 extern s32 D_1F800080_e4a3;
 extern u16 D_8014A450;
-
 u32 *func_8013CF00(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[3];
@@ -10966,7 +10960,6 @@ u32 *func_8013CF00(u32 *f, u32 *ot, s32 n)
 }
 
 extern s32 D_80143D2C;
-
 u32 *func_8013D1E4(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[4];

@@ -1658,7 +1658,6 @@ extern Spd0K D_801186C8[];
 extern Spd0K D_801186D8[];
 extern u8 D_800BF8FB;
 s16 func_800776F8();
-
 void func_8010E7EC(u8 *a)
 {
     Spd0K *e;
@@ -2293,7 +2292,6 @@ static inline u8 *GB(void)
 {
     return D_800BF808;
 }
-
 void f_SpawnTinyMouseVillageActorsFromPlacementTable(u8 *a, s32 mode)
 {
     u8 *e;

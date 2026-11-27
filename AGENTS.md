@@ -580,6 +580,38 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - Byte-aligned struct copy from an extern (`typedef struct { u8 v[0x30]; } T; T tbl = D_X;`): the lwl / lwr loop.
 - Target prototypes still apply at install: copy the callee's real narrow-parameter prototypes into the scratch.
 
+**Round 17 forms**
+- GT3 / GT4 list builders with flg / otz at D_1F800080 / 84 (a04..a08 and a01 families, with their dispatchers
+  `gte_SetRotMatrix(&D_1F8000F8)` + one loop per arm): `u32 m = 0xFFF0F0F0;` as a local; `c >>= 24; mode = c & 3;`;
+  `*otz = b >> 2;` inside every min / max arm (more refs, cross-jumping merges them); `do { e = *otz >> 10; *otz =
+  ...; } while (0);`; UV scroll `if (c & 8) { u32 u = D_8014A450 >> 4; *(u8 *)&p->uvN += u; }`; skip tests with
+  `goto next`; own locals per arm in the dispatcher, `w >>= 16;` between the two calls, `m = tbl + *i` with `u32 *tbl`.
+- Dispatchers and handler tails (the 60-case Tomba dispatchers): write the shared tails in full in every case
+  (cross-jumping after sched1 merges them as retail did); a goto only where retail jumps into the middle of another
+  case or onto the call itself.
+- CSE forgets an actor field once another byte field is stored (`a[7] = 2; a[6]++;` reloads a[6]); compute a value
+  into a local before an intervening store to force a reload. `if (x == K) m = 0; else m = f();` stops CSE carrying K
+  into a saved register (`m = 0; if (x != K) m = f();` does).
+- A register named by an argument: a value kept in a2 / a3 up to a call is that call's extra argument (pass it; a
+  global passed as an extra argument to a K&R callee and read through `D_800BF870.pad1[..]` reuses a3).
+- `__builtin_abs(H)` on an `lh` value in the same register gives the always-negating `bgez v0; negu v0`.
+- Camera-zone tables: a pointer local declared before the D_800BF808 pointer (lui order = declaration order);
+  `V3 *t = &T[g[0xF]]` uses one index, direct `T[..].x/.y/.z` reloads it for z; the `== 2` arm and the else arm each
+  get their full func_8006E3F4 / func_8006CEC4 code but share one function-scope `pos`.
+- An index scaled after its subtraction (`addiu -5; sll`): pass it through `static inline s32 Idx5(u8 *g) { return
+  g[0xF] - 5; }` (RTL inlining hides the PLUS from the tree folder); `static inline s32 Sub250(s32 m) { return m -
+  0xFA; }` likewise stops `S30 - (m - 0xFA)` becoming `(S30 + 0xFA) - m`.
+- A full scratchpad address kept in a saved register and shared with an inlined helper: assign the pointer as its own
+  statement after the call.
+- Keeping the parameter out of a0: a block-scoped local loaded early and stored last lands in a0.
+- Two-byte table entries: `struct { u8 m, k; } T[]; T[a[3]].k`.
+- `case 3: default:` moves gcc's case-tree pivot; an empty `case 2: break;` after `case 0:` falling into `case 1:`
+  gives the `beq 1; slti 2; beqz; bnez` tree.
+- Spawners without mode (a0k): the GS() / GB() accessors also stop the 0xFF constant being hoisted. All spawners are
+  matched now.
+- Do-while with a return inside: `continue; ret1: return 1;` at the end of the body puts the return block before the
+  loop test.
+
 **Switch and jump-table shapes (more)**
 - Duplicate the cases with identical code to get a jump table whose entries share a target (gcc builds the table,
   then cross-jumps the blocks); `case 1: d = X; break; case 2: d = X; break; default: d = X;` gives separate tree
@@ -769,6 +801,11 @@ struct-member form of a cast access, regswap `member` toggles every one)
   defined only in the target file (install_c is fine); `ccheck | tail && install_c` installs even on failure;
   `git add X; git commit -- ... $(git ls-files -m ...)` leaves a staged alias file behind (name it explicitly);
   never `rm -rf build/tmp_regswap_*` while other agents run.
+
+- Round 17: install_c inserts a scratch's narrow prototypes (`s32 f(s16)`) above later functions of the target, whose
+  calls then change; the link DIFF shows up far away (a jump table or data pointer). Drop narrow prototypes from
+  scratches (K&R or none); `extern void f(u8 *);` breaks callers that use the value; a prototype with fewer
+  parameters than an existing call fails "too few arguments".
 
 ## Decisions (with dates in STATUS)
 

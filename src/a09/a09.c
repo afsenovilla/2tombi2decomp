@@ -234,7 +234,6 @@ typedef struct { s16 xl, x, yl, y, zl, z; } Pos9D04;
 #define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
 extern s16 D_1F8000D0[];
-
 void func_80109D04(u8 *a)
 {
     u8 *b;

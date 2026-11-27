@@ -5918,7 +5918,6 @@ extern void func_8004D604(s32, s32);
 extern void func_8004ED94(s32, s32);
 extern void func_80051B04(void *, s32, s32);
 extern void func_80042310();
-
 s32 f_InsertPigNosePanelIntoTempleTower(u8 *a)
 {
     u8 *e = D_800E7E80;
@@ -9126,7 +9125,6 @@ extern u8 D_80145A6D;
 extern u16 D_80145A6E;
 extern Mat D_1F8000F8;
 u32 *func_80140FBC();
-
 void func_8012A7CC(u8 *a)
 {
     u16 *i;
@@ -9560,7 +9558,6 @@ static inline void EvilTalk(u8 *a)
         func_800517F8(a);
     }
 }
-
 void f_UpdateLastEvilPigAccessActor(u8 *a)
 {
     switch (a[4]) {
@@ -10566,7 +10563,6 @@ void func_8012E274(u8 *a)
 
 extern u8 *func_8007A980(s32, s32, s32);
 void func_8012E274(u8 *a);
-
 u8 *func_8012E61C(s16 kind, u8 *owner, u16 *pos)
 {
     u8 *p = func_8007A980(1, 2, 0);
