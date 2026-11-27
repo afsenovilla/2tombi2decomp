@@ -24222,7 +24222,77 @@ void func_80068A94(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80068BE8);
+extern u8 D_800A4A58[];
+s32 func_80069858(u8 *a, s32 b, s32 c);
+s32 f_TestActorVisibilityWithXYZOffset(u8 *a, s32 x, s32 y, s32 z);
+
+void func_80068BE8(u8 *a)
+{
+    u8 k;
+    s32 t;
+    s32 dx;
+    s32 dz;
+
+    switch (a[5]) {
+    case 0:
+        f_PlaySoundEffect(D_800A4A58[a[3] & 0x7F], 0, 0);
+        k = a[3] & 0x7F;
+        if (k == 7 || k == 0xB) {
+            a[5] = 3;
+            a[6] = 0;
+            func_8012C7CC(a);
+            break;
+        }
+        H_f12c(a, 0x40) = 0x3C;
+        H_f12c(a, 0x4A) = -0x2000;
+        H_f12c(a, 0x44) = -0x14;
+        a[5]++;
+    case 1:
+        H_f12c(a, 0x58) -= 0x200;
+        H_f12c(a, 0x4A) += 0x200;
+        if (H_f12c(a, 0x4A) > 0x3000) {
+            H_f12c(a, 0x4A) = 0x3000;
+        }
+        W_d1fb(a, 0x30) += H_f12c(a, 0x4A) << 8;
+        t = (rcos(H_f12c(a, 0xBE)) * H_f12c(a, 0x44)) >> 4;
+        dx = H_f12c(a, 0x48) * t;
+        W_d1fb(a, 0x2C) += dx;
+        dz = H_f12c(a, 0x4C) * t;
+        W_d1fb(a, 0x34) += dz;
+        if (!(a[0x46] & 8)) {
+            H_f12c(a, 0x56) = ratan2(-dz, dx);
+        }
+        if (func_80069858(a, 1, 0) != 0 || --H_f12c(a, 0x40) == 0) {
+            f_PlaySoundEffect(0x1B, 0, 0);
+            f_SpawnActorImpactEffectPair(a + 0x2C);
+            a[4] = 3;
+        }
+        if (f_TestActorVisibilityWithXYZOffset(a, 0, 0, 0) != 0) {
+            if (a[3] & 0x80) {
+                f_UpdateActorUnscaledModelTransforms((s32)a);
+            } else {
+                f_UpdateActorScaledOffsetModelTransforms(a);
+            }
+        } else {
+            a[4] = 3;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8012C7CC(a);
+        if (f_TestActorVisibilityWithXYZOffset(a, 0, 0, 0) != 0) {
+            if (a[3] & 0x80) {
+                f_UpdateActorUnscaledModelTransforms((s32)a);
+            } else {
+                f_UpdateActorScaledOffsetModelTransforms(a);
+            }
+        } else {
+            a[4] = 3;
+        }
+        break;
+    }
+}
 
 extern u8 **D_800A4A00[];
 extern u8 D_800A4A44[];
