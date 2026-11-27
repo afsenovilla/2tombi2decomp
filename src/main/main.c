@@ -18402,7 +18402,175 @@ void func_8006670C(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80066878);
+typedef struct { u8 pad0[0x3A]; u16 x; u8 pad3C[2]; u16 y; u8 pad40[2]; u16 z; u8 pad44[0x20]; u8 u64; } Cam_762C;
+extern u8 D_800BF80D_78e8;
+extern Cam_762C D_800E8008_a455;
+
+void func_80066878(u8 *t)
+{
+    u8 *g;
+    s32 k;
+
+    switch (t[6]) {
+    case 0:
+        f_PlaySoundEffect(0x24, 0, 0);
+        D_800BF80D_78e8 = 1;
+        t[0x145] = 0;
+        t[0x146] = 0;
+        f_ClearTombaInteractionState(t);
+        t[0x61] = 0;
+        func_800663A8(t, 0);
+    case 1:
+        func_80066478(t);
+        t[0x144] = 0;
+        break;
+    case 2:
+        func_80066538(t);
+        t[0x144] = 0;
+        if (t[0x29] != 0) {
+            t[0x145] = 0;
+            if ((rand() & 3) == 0) {
+                *(s16 *)(t + 0x40) = 0x14;
+                *(s16 *)(t + 0x58) = 0;
+                t[6] = 7;
+                f_SetTombaAnimationIfChanged(t, 0xD1, 4);
+                D_800E8008_a455.u64 = 8;
+                D_800E8008_a455.x = D_1F800160;
+                D_800E8008_a455.y = D_1F800162;
+                D_800E8008_a455.z = D_1F800164;
+            } else {
+                *(s16 *)(t + 0x40) = 0x14;
+                *(s16 *)(t + 0x42) = 0;
+                t[6]++;
+                f_SetTombaAnimationIfChanged(t, 0x5A, 0);
+                if (*(s16 *)(t + 0x17E) >= 0) {
+                    *(s16 *)(t + 0x62) = 0x40;
+                    *(u16 *)(t + 0x32) += 0x4C;
+                } else {
+                    *(s16 *)(t + 0x62) = 0x20;
+                    *(u16 *)(t + 0x32) += 0x26;
+                }
+            }
+        } else if (*(s16 *)(t + 0x6A) & 0x8000) {
+            k = *(u16 *)(t + 0x6A) & 0xF00;
+            if (k == 0x100 || k == 0x200) {
+                t[5] = 4;
+                t[6] = 1;
+            } else if (k == 0x700) {
+                *(s16 *)(t + 0x40) = 3;
+                t[5] = 5;
+                t[6] = 1;
+                t[7] = 0;
+            }
+        } else if (*(s16 *)(t + 0x40) > 0x28) {
+            t[5] = 7;
+            t[6] = 0;
+            t[7] = 0;
+        }
+        break;
+    case 3:
+        if (*(s16 *)(t + 0x40) == 0) {
+            *(s16 *)(t + 0x58) -= 0x200;
+            if (*(s16 *)(t + 0x58) < 0) {
+                *(s16 *)(t + 0x42) = 1;
+            }
+        } else {
+            *(u16 *)(t + 0x58) = (*(u16 *)(t + 0x58) - 0x200) & 0xFFF;
+        }
+        f_AdvanceTombaAlongMovementVector(t, 1);
+        f_UpdateTombaMovementOrientation(t);
+        *(u16 *)(t + 0x32) += 8;
+        f_ResolveTombaGroundTerrainContact(t);
+        if (*(s16 *)(t + 0x40) == 0) {
+            if (*(s16 *)(t + 0x42) == 1) {
+                *(s16 *)(t + 0x58) = 0;
+                f_SetTombaAnimationIfChanged(t, 0x58, 4);
+                t[6]++;
+                func_8005245C();
+                if (*(s16 *)(t + 0x17E) < 0) {
+                    *(s16 *)(t + 0x62) = 0x46;
+                } else {
+                    *(s16 *)(t + 0x62) = 0x8C;
+                }
+                if (t[0x29] != 0) {
+                    *(s16 *)(t + 0x40) = 0x78;
+                    do {
+                f_SpawnLinkedActorSpriteRingEffect(t, *(void **)(t + 0xC4), -0x64, 0);
+                t[0x1B] |= 0x40;
+            } while (0);
+            f_PlaySoundEffect(0x10, 0, 0);
+                } else {
+                    *(s16 *)(t + 0x40) = 0x32;
+                }
+                D_800E8008_a455.u64 = 8;
+                D_800E8008_a455.x = D_1F800160;
+                D_800E8008_a455.y = D_1F800162;
+                D_800E8008_a455.z = D_1F800164;
+            }
+        } else {
+            *(s16 *)(t + 0x40) -= 1;
+            if (*(s16 *)(t + 0x6A) & 0x8000) {
+                k = *(u16 *)(t + 0x6A) & 0xF00;
+                if (k == 0x100 || k == 0x200) {
+                    t[5] = 4;
+                    t[6] = 1;
+                } else if (k == 0x700) {
+                    *(s16 *)(t + 0x40) = 3;
+                    t[5] = 5;
+                    t[6] = 1;
+                    t[7] = 0;
+                }
+            }
+        }
+        f_UpdateTombaLostGroundSupportMotion(t, 1);
+        break;
+    case 4:
+        if (--*(s16 *)(t + 0x40) == 0) {
+            func_800662D8(t, 0);
+            D_800BF808[5] = 2;
+            D_800BF808[7] = 2;
+            t[6]++;
+            func_8005245C();
+        }
+        f_AdvanceActorSkeletalAnimation(t);
+        f_ResolveTombaGroundTerrainContact(t);
+        if (D_800BF816 == 0 && t[0x29] != 0 && D_800BF870_9d28 != 4) {
+            D_1F8000D0_fb20[3] -= 8;
+        }
+        f_UpdateTombaLostGroundSupportMotion(t, 1);
+        break;
+    case 5:
+        g = D_800BF808;
+        if (g[7] == 0) {
+            g[5] = 3;
+            t[6]++;
+        }
+    case 6:
+        f_AdvanceActorSkeletalAnimation(t);
+        break;
+    case 7:
+        f_AdvanceActorSkeletalAnimation(t);
+        *(u16 *)(t + 0x56) += 0x80;
+        if (--*(s16 *)(t + 0x40) == 0) {
+            f_SetTombaAnimationIfChanged(t, 0xD2, 6);
+            *(s16 *)(t + 0x40) = 0x14;
+            t[6]++;
+        }
+        break;
+    case 8:
+        f_AdvanceActorSkeletalAnimation(t);
+        if (--*(s16 *)(t + 0x40) == 0) {
+            t[6] = 4;
+            *(s16 *)(t + 0x40) = 0x5A;
+            do {
+                f_SpawnLinkedActorSpriteRingEffect(t, *(void **)(t + 0xC4), -0x64, 0);
+                t[0x1B] |= 0x40;
+            } while (0);
+            f_PlaySoundEffect(0x10, 0, 0);
+        }
+        break;
+    }
+}
 
 void func_80066DE8(u8 *t)
 {
@@ -18656,8 +18824,6 @@ void func_800674F4(u8 *t)
 
 typedef struct { u8 unk0; u8 pad1[0x5E5]; u16 f5E6; } GsArea_762C;
 extern GsArea_762C D_800BF870_762c;
-typedef struct { u8 pad0[0x3A]; u16 x; u8 pad3C[2]; u16 y; u8 pad40[2]; u16 z; u8 pad44[0x20]; u8 u64; } Cam_762C;
-extern Cam_762C D_800E8008_a455;
 void func_8006762C(u8 *a)
 {
     s32 pad[4];
@@ -18749,7 +18915,6 @@ void func_8006762C(u8 *a)
     }
 }
 
-extern u8 D_800BF80D_78e8;
 void func_800678E8(u8 *t)
 {
     u8 *g;
