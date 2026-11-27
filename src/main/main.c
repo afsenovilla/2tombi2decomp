@@ -18462,7 +18462,155 @@ void func_80066DE8(u8 *t)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80066FA8);
+extern u8 D_800BFAD7;
+
+void func_80066FA8(u8 *t)
+{
+    s16 v[6];
+    u8 *g;
+
+    switch (t[6]) {
+    case 0:
+        f_PlaySoundEffect(0x23, 0, 0);
+        f_ClearTombaInteractionState(t);
+        t[0x145] = 0;
+        t[0x146] = 0;
+        t[0x61] = 0;
+        t[7] = 0;
+        f_ResetTombaControlState(t);
+        f_SetTombaAnimationIfChanged(t, 0x5A, 0);
+        f_UpdateTombaModelOrientationFromFacing(t);
+        g = &D_800BF870_9d28;
+        *(s16 *)(t + 0x58) = 0;
+        switch (D_800BF870_9d28) {
+        case 0xA:
+            if (g[0x266] != 0) {
+                goto skip;
+            }
+        case 6:
+            if (!(t[0] & 2)) {
+                f_ApplyTombaEnvironmentalDamage(t, 1);
+            }
+        skip:
+            t[0x29] = 0;
+            t[0] = 6;
+            *(s16 *)(t + 0x4E) = (*(s16 *)(t + 0x7A) - *(s16 *)(t + 0x2E)) / 64;
+            *(s16 *)(t + 0x50) = (*(s16 *)(t + 0x7C) - *(s16 *)(t + 0x32)) / 64;
+            *(s16 *)(t + 0x52) = (*(s16 *)(t + 0x7E) - *(s16 *)(t + 0x36)) / 64;
+            *(s16 *)(t + 0x4A) = -0x4000;
+            *(s16 *)(t + 0x40) = 0x44;
+            t[6] = 3;
+            goto end;
+        }
+        if (t[0x147] == 0) {
+            *(s16 *)(t + 0x44) = 0x3800;
+        } else {
+            *(s16 *)(t + 0x44) = -0x3800;
+        }
+        t[6]++;
+    case 1:
+        if (D_1F80017C_0fe7 & 1) {
+            v[1] = *(u16 *)(t + 0x2E);
+            v[3] = *(u16 *)(t + 0x32) + 0x50;
+            v[5] = *(u16 *)(t + 0x36);
+            f_SpawnFlaggedTransientEffectAtFixedPosition(8, (u8 *)v, -0x50);
+        }
+        *(u16 *)(t + 0x58) = (*(u16 *)(t + 0x58) + 0x200) & 0xFFF;
+        f_AdvanceTombaAlongMovementVector(t, 1);
+        f_UpdateTombaMovementOrientation(t);
+        if (t[0x2A] == 0x1D) {
+            if (*(s16 *)(t + 0x2E) >= 0x4204) {
+                break;
+            }
+        } else if (t[0x2A] == 0x1F) {
+            if (*(s16 *)(t + 0x36) < 0x2775) {
+                break;
+            }
+        } else {
+            break;
+        }
+        t[7] = 0;
+        t[6]++;
+        *(s16 *)(t + 0x4E) = (*(s16 *)(t + 0x7A) - *(s16 *)(t + 0x2E)) / 32;
+        *(s16 *)(t + 0x50) = (*(s16 *)(t + 0x7C) - *(s16 *)(t + 0x32)) / 32;
+        *(s16 *)(t + 0x52) = (*(s16 *)(t + 0x7E) - *(s16 *)(t + 0x36)) / 32;
+        *(s16 *)(t + 0x4A) = -0x3000;
+        *(s16 *)(t + 0x40) = 0x22;
+        if (D_800BFAD7 == 0) {
+            f_ApplyTombaEnvironmentalDamage(t, 1);
+        }
+        break;
+    case 2:
+        *(u16 *)(t + 0x58) = (*(u16 *)(t + 0x58) + 0x200) & 0xFFF;
+        if (*(s16 *)(t + 0x40) != 0) {
+            *(s16 *)(t + 0x40) -= 1;
+            *(u16 *)(t + 0x2E) += *(u16 *)(t + 0x4E);
+            *(u16 *)(t + 0x36) += *(u16 *)(t + 0x52);
+            *(u16 *)(t + 0x32) += *(u16 *)(t + 0x50);
+        }
+        f_UpdateTombaMovementOrientation(t);
+        *(s16 *)(t + 0x4A) += 0x300;
+        if (*(s16 *)(t + 0x4A) > 0x3E00) {
+            *(s16 *)(t + 0x4A) = 0x3E00;
+        }
+        *(s32 *)(t + 0x30) += *(s16 *)(t + 0x4A) << 8;
+        if (*(s16 *)(t + 0x4A) > 0x2000) {
+            f_ResolveTombaGroundTerrainContact(t);
+        }
+        if (t[0x29] != 0) {
+            D_1F800253 = 0;
+            *(s16 *)(t + 0x4A) = 0;
+            f_PlaySoundEffect(3, 0, 0);
+            *(s16 *)(t + 0x58) = 0;
+            if (D_800BFAD7 != 0) {
+                t[0] = 1;
+            } else {
+                t[0] &= 3;
+            }
+            *(s16 *)(t + 0x172) = 0x1E;
+            f_ResetTombaControlState(t);
+            f_SetTombaAnimationIfChanged(t, 2, 0);
+            t[4] = 1;
+            t[5] = 0;
+            t[6] = 0;
+            t[7] = 0;
+        }
+        break;
+    case 3:
+        *(u16 *)(t + 0x58) = (*(u16 *)(t + 0x58) + 0x200) & 0xFFF;
+        if (*(s16 *)(t + 0x40) != 0) {
+            *(s16 *)(t + 0x40) -= 1;
+            *(u16 *)(t + 0x2E) += *(u16 *)(t + 0x4E);
+            *(u16 *)(t + 0x32) += *(u16 *)(t + 0x50);
+            *(u16 *)(t + 0x36) += *(u16 *)(t + 0x52);
+        }
+        f_UpdateTombaMovementOrientation(t);
+        *(s16 *)(t + 0x4A) += 0x200;
+        if (*(s16 *)(t + 0x4A) > 0x3E00) {
+            *(s16 *)(t + 0x4A) = 0x3E00;
+        }
+        *(s32 *)(t + 0x30) += *(s16 *)(t + 0x4A) << 8;
+        if (*(s16 *)(t + 0x4A) > 0x2000) {
+            f_ResolveTombaGroundTerrainContact(t);
+        }
+        if (t[0x29] != 0) {
+            D_1F800253 = 0;
+            *(s16 *)(t + 0x4A) = 0;
+            f_PlaySoundEffect(3, 0, 0);
+            *(s16 *)(t + 0x58) = 0;
+            t[0] = 3;
+            *(s16 *)(t + 0x172) = 0x1E;
+            f_ResetTombaControlState(t);
+            f_SetTombaAnimationIfChanged(t, 2, 0);
+            t[4] = 1;
+            t[5] = 0;
+            t[6] = 0;
+            t[7] = 0;
+        }
+        break;
+    }
+end:;
+}
 
 extern u16 D_1F80019E_74f4;
 void func_800674F4(u8 *t)
@@ -18510,7 +18658,6 @@ typedef struct { u8 unk0; u8 pad1[0x5E5]; u16 f5E6; } GsArea_762C;
 extern GsArea_762C D_800BF870_762c;
 typedef struct { u8 pad0[0x3A]; u16 x; u8 pad3C[2]; u16 y; u8 pad40[2]; u16 z; u8 pad44[0x20]; u8 u64; } Cam_762C;
 extern Cam_762C D_800E8008_a455;
-extern u8 D_800BFAD7;
 void func_8006762C(u8 *a)
 {
     s32 pad[4];
