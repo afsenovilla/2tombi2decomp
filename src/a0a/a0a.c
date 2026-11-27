@@ -3019,7 +3019,40 @@ void func_80111238(u8 *a)
     *(u16 *)(a + 0xA) = t;
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80111264);
+extern u8 D_8011BF30[];
+
+void func_80111264(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+    s32 w;
+
+    switch (a[4]) {
+    case 0:
+        H(a, 0x48) = 0xC0;
+        H(a, 0x4A) = 0xC0;
+        H(a, 0x32) = -0xA;
+        a[4] = 1;
+    case 1:
+        w = W(a, 0x38);
+        W(a, 0x34) = w;
+        if (w == 0) {
+            W(a, 0x38) = (s32)D_8011BF30;
+            W(a, 0x34) = (s32)D_8011BF30;
+        }
+        H(a, 0x2C) = U(o, 0x2E) + ((H(W(o, 0xC0), 0x1A) * 5) >> 8);
+        H(a, 0x2E) = U(o, 0x32) + ((H(W(o, 0xC0), 0x20) * 5) >> 8);
+        H(a, 0x30) = U(o, 0x36) + ((H(W(o, 0xC0), 0x26) * 5) >> 8);
+        a[7] = 0x80 - o[0x18];
+        if (o[4] < 2) {
+            a[1] = o[1];
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 typedef struct {
     u8 v[0x30];
