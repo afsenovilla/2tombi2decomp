@@ -2248,7 +2248,6 @@ extern u8 D_800E8008_399c[];
 extern u8 D_800E7E80_399c[];
 extern s32 D_1F800184_399c;
 extern s16 D_1F8000D0_399c[];
-
 void func_8011399C(void)
 {
     u8 *g = D_800BF808_399c;
@@ -2312,7 +2311,6 @@ extern u8 D_1F8000D0_3ad8[];
         c[3] = v[1]; \
         c[5] = v[2]; \
     }
-
 s32 func_80113AD8(u8 *a, u8 *b)
 {
     Pos3AD8 pos;
@@ -2417,7 +2415,6 @@ extern s16 D_1F8000D0_3ddc[];
     H(a, 0xE) = U(b, 0x32); \
     H(a, 0x12) = U(b, 0x36); \
     func_8006E3F4(a, a + 8)
-
 void func_80113DDC(u8 *a, u8 *b)
 {
     Pos3DDC pos;
@@ -2527,7 +2524,6 @@ extern s16 D_1F8000D0_4118[];
     if (func_8006CEC4(D_1F8000D0_4118, &pos, 0xE0) != 0) { \
         a[0x66] = 3; \
     }
-
 void func_80114118(u8 *a, u8 *b)
 {
     Pos4118 pos;
@@ -2645,7 +2641,6 @@ extern u8 D_800BF8E3;
         c[3] = Y; \
         c[5] = Z; \
     }
-
 void func_801144D4(u8 *a, u8 *b)
 {
     Pos44D4 pos;
@@ -2788,7 +2783,6 @@ extern s16 D_1F8000D0_4a70[];
     } else { \
         a[0x74] = 0; \
     }
-
 void func_80114A70(u8 *a)
 {
     u8 *b = D_800E7E80_4a70;
@@ -2891,7 +2885,6 @@ static inline u8 *GB08(void)
 {
     return D_800BF808_s08;
 }
-
 void f_SpawnWaterTempleSceneActorsFromPlacementTable(u8 *a, s32 mode)
 {
     u8 *e;
@@ -7142,9 +7135,216 @@ void func_80125F6C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", f_UpdateWaterTempleInteriorEnvironmentActor);
-
+typedef struct { u8 pad[0xC0]; u8 *parts[16]; } A6090;
+#define PT(a, i) (((A6090 *)(a))->parts[i])
+extern u8 D_8014595C[][2];
+extern s16 *D_80145934[];
+extern u8 D_800BF922;
 extern u8 D_8014597C[];
+#define DOORSEQ(a) \
+    { \
+        u8 *p = PT(a, 1); \
+        switch ((a)[5]) { \
+        case 0: \
+            (a)[5]++; \
+            H(p, 0xE) = H(p, 0xA); \
+            func_80072FE0(a); \
+            break; \
+        case 1: \
+            if (D_800BF818 == 2) { \
+                H(a, 0x40) = 0; \
+                (a)[5]++; \
+            } \
+            break; \
+        case 2: \
+            H(a, 0x40)++; \
+            if (H(a, 0x40) >= 0x19) { \
+                if (func_80073194(a) != 0) { \
+                    (a)[5]++; \
+                } \
+            } \
+            break; \
+        case 3: \
+            if (D_800BF818 == 3) { \
+                (a)[5]++; \
+            } \
+            break; \
+        case 4: \
+            if (func_8007302C(a) != 0) { \
+                (a)[5]++; \
+            } \
+            break; \
+        case 5: \
+            break; \
+        } \
+    }
+static inline s32 Talk6090(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        if (D_800BF80F == 0) {
+            a[6] = 1;
+            func_80042354(1, 2);
+            func_80040CDC(a, 0, D_8014597C);
+            a[0x70] = 1;
+        }
+        break;
+    case 1:
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[6] = 0;
+            func_80042310();
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
+
+void f_UpdateWaterTempleInteriorEnvironmentActor(u8 *a)
+{
+    s16 *d;
+    s32 i;
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        a[8] = D_8014595C[a[3]][0];
+        if (D_800ED098 < a[8]) {
+            a[4] = 3;
+            break;
+        }
+        a[9] = a[8];
+        a[4]++;
+        a[0xD] = 0;
+        a[0xB] = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x58) = 0;
+        d = D_80145934[a[3]];
+        for (i = 0; i < a[8]; i++) {
+            PT(a, i) = func_8007AAE8();
+            H(PT(a, i), 6) = *d++;
+            H(PT(a, i), 0) = *d++;
+            H(PT(a, i), 2) = *d++;
+            H(PT(a, i), 4) = *d++;
+            H(PT(a, i), 8) = *d++;
+            H(PT(a, i), 0xA) = *d++;
+            H(PT(a, i), 0xC) = *d++;
+            func_80051B04(PT(a, i), 0xC, *d++);
+        }
+        a[0xBF] = 1;
+        switch (a[3]) {
+        case 0:
+            H(a, 0x56) = 0x2CC;
+            a[0x46] = 1;
+            break;
+        case 1:
+            H(a, 0x56) = -0x127;
+            a[0x46] = 1;
+            break;
+        case 2:
+            g = (u8 *)&D_800BF870;
+            if (g[0x6F] != 0xFF) {
+                func_80051B04(PT(a, 3), 0xC, 0x74);
+            }
+            if (g[0x1CA] >= 5) {
+                W_d1fb(PT(a, 2), 0x40) = 0;
+            }
+            if (g[0x1CF] & 0x10) {
+                H(PT(a, 4), 2) = -0x2DC;
+                a[6] = 0xA;
+            }
+            H(a, 0x56) = 0x127;
+            a[0x46] = 1;
+            break;
+        case 3:
+        case 4:
+            a[0x46] = 1;
+            H(a, 0x56) = 0;
+            break;
+        case 5:
+            a[0x46] = 0;
+            H(a, 0x56) = 0x400;
+            break;
+        case 6:
+            H(a, 0x56) = -0x2D8;
+            a[0xBF] = 0;
+            break;
+        case 7:
+        case 8:
+            H(a, 0x56) = 0;
+            a[0xBF] = 0;
+            break;
+        case 9:
+            H(a, 0x56) = 0x127;
+            if (D_800BFA43 >= 7) {
+                a[8] = 1;
+                a[5] = 0xA;
+            }
+            a[0xBF] = 0;
+            break;
+        }
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            DOORSEQ(a)
+            break;
+        case 1:
+            DOORSEQ(a)
+            break;
+        case 2:
+            func_80125D88(a);
+            break;
+        case 3:
+            DOORSEQ(a)
+            if (D_800BF922 == 0xFF) {
+                a[1] = 1;
+                func_800517F8(a);
+            }
+            return;
+        case 4:
+            DOORSEQ(a)
+            break;
+        case 5:
+            DOORSEQ(a)
+            break;
+        case 6:
+        case 7:
+            break;
+        case 8:
+            switch (a[5]) {
+            case 0:
+                if (D_800BF8F5 == 0xFF) {
+                    a[5] = 2;
+                } else {
+                    a[5] = 1;
+                }
+                break;
+            case 1:
+                if (Talk6090(a)) {
+                    a[5]++;
+                }
+                break;
+            case 2:
+                break;
+            }
+            break;
+        case 9:
+            func_80125F6C(a);
+            break;
+        }
+        a[1] = 1;
+        func_800517F8(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
+
 void func_801267D4(u8 *a)
 {
     s32 s = a[5];
@@ -7196,7 +7396,6 @@ void func_801267D4(u8 *a)
 }
 
 #define PART(a) (*(u8 **)((a) + ((a)[8] << 2) + 0xC0))
-
 s32 func_801268D8(u8 *a0, u16 *src, s32 n, s32 d, s32 e)
 {
     s16 buf[7];
@@ -7294,7 +7493,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801277E0);
 typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner;
 typedef struct { s16 v[4]; } PartInit;
 extern PartInit D_801459C4[];
-extern u8 D_800BF922;
 void func_801279DC(PartsOwner *a)
 {
     s32 i;
@@ -11980,7 +12178,6 @@ extern u8 D_801474AC[];
 extern u8 D_800A3D70[];
 extern u8 D_8014744C[];
 extern u8 D_80147434[];
-
 void func_80139E58(u8 *a)
 {
     u8 *b;

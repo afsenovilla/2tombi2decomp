@@ -118,7 +118,9 @@ def place(res, start, fname, pending, prog, tables, used, canon):
     if fa is None:
         raise SystemExit("jtbl: no address for %s (%s)" % (fname, prog))
     cands = sorted((n for n, e in tables.items() if n not in used and e and all(fa <= x < fa + 0x8000 for x in e)),
-                   key=lambda n: min(tables[n]))
+                   key=lambda n: int(n.split("_")[-1], 16) if re.match(r"jtbl_[0-9A-Fa-f]{8}$", n) else min(tables[n]))
+    # candidates in the tables' own address order, which is gcc's emission order (the lowest label tied for
+    # same-shape tables sharing targets: a08 f_UpdateWaterTempleInteriorEnvironmentActor)
     body = res[start:]
     defined = set()   # .L<addr> names already placed (aliased labels, a label shared by two tables)
     for lab, ents, _ in pending:
