@@ -19433,7 +19433,86 @@ void func_80064E48(u8 *a)
     f_UpdateTombaModelOrientationFromFacing(a);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006506C);
+void func_8006506C(u8 *a)
+{
+    u16 v;
+
+    switch (a[6]) {
+    case 0:
+        f_ResetTombaControlState(a);
+        H_f12c(a, 0x6A) = 0;
+        if ((W_d1fb(a, 0x17C) & 0x4400200) == 0x200) {
+            a[6] = 3;
+            a[7] = 0;
+            f_SetTombaAnimationIfChanged(a, 0x40, 3);
+            if (a[0x15C] & 2) {
+                H_f12c(a, 0x32) += 0x20;
+                func_80062D8C(a, 0x81);
+            }
+            break;
+        }
+        if (a[0x15C] & 2) {
+            f_SetTombaAnimationIfChanged(a, 0x18, 3);
+            a[6] = 2;
+            a[7] = 0;
+            break;
+        }
+        f_SetTombaAnimationIfChanged(a, 0x40, 3);
+        a[7] = 0;
+        a[6]++;
+    case 1:
+        f_AdvanceActorSkeletalAnimation(a);
+        v = D_800ECF54;
+        if (v & 0x10) {
+            f_SetTombaAnimationIfChanged(a, 0x41, 0);
+            func_80062D8C(a, 0);
+            if (!(D_1F80017C_0fe7 & 3)) {
+                f_PlaySoundEffect(5, 3, -0x3C);
+            }
+        } else if (v & 0x40) {
+            func_80062D8C(a, 1);
+            if (!(D_1F80017C_0fe7 & 3)) {
+                f_PlaySoundEffect(5, -2, -0x3C);
+            }
+        } else {
+            f_SetTombaAnimationIfChanged(a, 0x40, 4);
+            func_80062D8C(a, 2);
+        }
+        if (func_80055824()) {
+            a[5] = 4;
+            a[6] = 2;
+            a[0x164] = 0;
+            a[7] = 0;
+            W_d1fb(a, 0x158) = 0;
+            H_f12c(a, 0x58) = 0;
+            H_f12c(a, 0x40) = 8;
+            f_PlaySoundEffect(0x1D, 0, 0);
+            f_ReadTombaDirectionalInput(a, 0);
+            a[0x149] = (a[0x14A] & 1) + 2;
+            f_SetTombaAnimationIfChanged(a, 0x14, 0);
+        }
+        break;
+    case 2:
+        f_AdvanceActorSkeletalAnimation(a);
+        if ((D_800E7E68 & 0x10) || func_80055824()) {
+            a[5] = 7;
+            a[6] = 2;
+            a[7] = 0;
+        } else if (D_800ECF54 & 0x40) {
+            H_f12c(a, 0x32) += 0x10;
+            func_80062D8C(a, 1);
+            a[6] = 1;
+        }
+        break;
+    case 3:
+        f_AdvanceActorSkeletalAnimation(a);
+        func_80062D8C(a, 0x81);
+        if (!(D_1F80017C_0fe7 & 3)) {
+            f_PlaySoundEffect(5, -2, -0x3C);
+        }
+        break;
+    }
+}
 
 void func_80065374(void) {
     switch (D_800BF870.unk0) {                           /* irregular */
