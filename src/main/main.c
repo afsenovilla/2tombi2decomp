@@ -18142,7 +18142,126 @@ void func_8005C8A0(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005CDF8);
+extern u8 D_800A46C4[];
+s32 func_800633B0(u8 *a);
+#define C3B0(a) ((s32 (*)(u8 *, s32))func_800633B0)(a, 1)
+
+void func_8005CDF8(u8 *a)
+{
+    s32 m;
+    s32 r;
+
+    switch (a[6]) {
+    case 0:
+        a[0xBF] = 0;
+        a[0xBE] = 0;
+        f_ResetTombaControlState(a);
+        f_ReadTombaDirectionalInput(a, 0);
+        a[0x14A] = D_800A46C4[a[0x147] * 16 + a[0x14A]];
+        if (a[0x175] != 0) {
+            a[0x146] = 2;
+            func_80053670(a, 1, 1);
+            func_80054B34(a, 1, a[0x160]);
+            a[6] = 2;
+            if (C3B0(a)) {
+                a[0x146] = 0;
+            }
+            break;
+        }
+        a[0x146] = 1;
+        func_80053670(a, 0, 1);
+        func_80054B34(a, 0, a[0x160]);
+        a[6]++;
+        if (C3B0(a)) {
+            a[0x146] = 0;
+            break;
+        }
+        if (func_800557EC(a)) {
+            a[0x147] = 1 - a[0x147];
+            f_UpdateTombaModelOrientationFromFacing(a);
+            func_80054C08(a, 0);
+            f_PlaySoundEffect(0x1D, 0, 0);
+            a[5] = 6;
+            a[7] = 0;
+            f_ClearTombaInteractionState(a);
+        }
+        break;
+    case 1:
+        m = f_AdvanceActorSkeletalAnimation(a);
+        if (C3B0(a)) {
+            a[0x146] = 0;
+            break;
+        }
+        if (func_800557EC(a)) {
+            a[0x147] = 1 - a[0x147];
+            f_UpdateTombaModelOrientationFromFacing(a);
+            func_80054C08(a, 0);
+            f_PlaySoundEffect(0x1D, 0, 0);
+            a[5] = 6;
+            a[7] = 0;
+            f_ClearTombaInteractionState(a);
+            break;
+        }
+        if (m == 0) {
+            break;
+        }
+        if (func_8005376C(a)) {
+            break;
+        }
+        r = func_80055704(a, 0);
+        if (r == 2) {
+            a[0x146] = r;
+            func_80053670(a, 1, 1);
+            a[6]++;
+            break;
+        }
+        a[5] = 4;
+        a[6] = 0;
+        a[7] = 0;
+        a[0x146] = 0;
+        break;
+    case 2:
+        f_ReadTombaDirectionalInput(a, 0);
+        a[0x14A] = D_800A46C4[a[0x147] * 16 + a[0x14A]];
+        func_80054B34(a, 1, a[0x160]);
+        if (C3B0(a)) {
+            a[0x146] = 0;
+            break;
+        }
+        if (func_800557EC(a)) {
+            a[0x147] = 1 - a[0x147];
+            f_UpdateTombaModelOrientationFromFacing(a);
+            func_80054C08(a, 1);
+            H_f12c(a, 0x58) = 0;
+            f_PlaySoundEffect(0x1D, 0, 0);
+            a[5] = 6;
+            a[7] = 0;
+            f_ClearTombaInteractionState(a);
+            break;
+        }
+        r = func_80055704(a, 1);
+        switch (r) {
+        case 2:
+            f_AdvanceActorSkeletalAnimation(a);
+            break;
+        case 0:
+            a[0xBF] = 0;
+            a[0x146] = 3;
+            func_80053670(a, 0, 8);
+            func_80054B34(a, 0, a[0x160]);
+            a[0xBE] = 0;
+            a[6] = 1;
+            break;
+        case -1:
+            a[5] = 4;
+            a[6] = 0;
+            a[7] = 0;
+            a[0x146] = 0;
+            break;
+        }
+        break;
+    }
+}
 
 
 void func_8005D16C(u8 *a)
