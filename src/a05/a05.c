@@ -10540,7 +10540,55 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80138C64);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80138E88);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801390B8);
+typedef struct { u8 b0, b1, b2, b3; s16 x, y; } P90B8;
+extern s16 D_1F8000D0_90b8[];
+
+void func_801390B8(u8 *a)
+{
+    P90B8 *v;
+    s32 i;
+    s32 x0;
+    s32 y0;
+
+    v = (P90B8 *)(a + 0x2C);
+    switch (a[4]) {
+    case 0:
+        {
+            s16 *c;
+
+            a[7] = 0xFF;
+            c = D_1F8000D0_90b8;
+            x0 = c[5] + ((c[0x1C] * 75) >> 8);
+            y0 = c[3];
+        }
+        for (i = 0; i < 0xB; i++, v++) {
+            v->b0 = func_8009A450();
+            v->b1 = (func_8009A450() & 7) + 6;
+            v->b2 = (func_8009A450() & 3) + 6;
+            v->b3 = 3;
+            v->x = x0 + (func_8009A450() & 0x3FF) - 0x200;
+            v->y = y0 - 0x1F4;
+        }
+        v = (P90B8 *)(a + 0x2C);
+        a[4] = 1;
+    case 1:
+        a[7]--;
+        if (a[7] == 0) {
+            a[4] = 2;
+            break;
+        }
+        for (i = 0; i < 0xB; i++, v++) {
+            v->b0 += v->b1;
+            v->y += v->b1;
+        }
+        a[1] = 1;
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80139260);
 
