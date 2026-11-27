@@ -234,7 +234,8 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   scripted with `--poke FRAME:ADDR=BYTE` and `--trace-pos N`; the libgte math shims that rounded differently
   (ratan2, SquareRoot0, RotMatrix, RotTransPers, ...) are gone (retail code interpreted), gte.c divides with UNR
   (`tools/gte_diff.py` vs tools/psxemu/gte.py); the window shows the 224-line TV window (`--dump-tv`); viewer
-  `--renderer NAME`, `--linear`, F12 screenshots, its SDL / renderer info in tomba2.log. Native code must never dereference KUSEG: `build/port/tomba2 --no-kuseg` tallies any site (0 expected);
+  `--renderer NAME`, `--linear`, F12 screenshots, its SDL / renderer info in tomba2.log; `--keys-off` (voices
+  reported off) + `tools/emu_compare.py --port-args=--keys-off` compare past the emulator's missing SPU. Native code must never dereference KUSEG: `build/port/tomba2 --no-kuseg` tallies any site (0 expected);
   fixes go in gen_t2.py (`kuseg_link_stores`, `kuseg_field38`) or mips_interp.c `kcell`.
 - Reference emulator (docs/EMU.md; Tombi-Decomp's tools/psxemu adapted, HLE at the port's shim boundary with the
   port's timing and virtual disc): `python3 -I tools/emu_run.py --frames N --dump-frames DIR [--dump-every K]

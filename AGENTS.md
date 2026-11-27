@@ -854,7 +854,8 @@ struct-member form of a cast access, regswap `member` toggles every one)
   (MulMatrix0 / ApplyMatrix / ApplyMatrixSV leave their matrix in RT: game code uses it); leave it to the
   interpreter, or check a shim with
   `tools/emu_shimcheck.py` and the GTE with `tools/gte_diff.py` (gte.c vs tools/psxemu/gte.py). The game shows a
-  224-line TV window (DISPENV.screen 0,8 256x224): the viewer crops to it, `--dump-frames` does not.
+  224-line TV window (DISPENV.screen 0,8 256x224): the viewer crops to it, `--dump-frames` does not. Compare with
+  the emulator past the first sound-dependent frame with `--port-args=--keys-off` (its SPU reports every voice off).
 - Byte-matching only; tools/nonmatching.py is kept unused.
 - USA is the reference; EU in config/eu/.
 - The licensed-region module at the end of boot.c [0x80011A0C, 0x80012D2C) is library-style files in
