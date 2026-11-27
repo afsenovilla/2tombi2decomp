@@ -2355,7 +2355,108 @@ s32 func_80113AD8(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80113DDC);
+typedef struct { s16 xl, x, yl, y, zl, z; } Pos3DDC;
+extern s16 D_1F8000D0_3ddc[];
+#define COPY3DDC() \
+    a[0x64] |= 0x80; \
+    H(a, 0xA) = U(b, 0x2E); \
+    H(a, 0xE) = U(b, 0x32); \
+    H(a, 0x12) = U(b, 0x36); \
+    func_8006E3F4(a, a + 8)
+
+void func_80113DDC(u8 *a, u8 *b)
+{
+    Pos3DDC pos;
+
+    switch (a[3]) {
+    case 0:
+        a[3]++;
+        if (b[0x2A] == 1) {
+            s16 *c = D_1F8000D0_3ddc;
+
+            c[1] = 0x167F;
+            c[3] = U(b, 0x32) - 0x258;
+            c[5] = 0x2219;
+        } else if (b[0x2A] == 5) {
+            s16 *c = D_1F8000D0_3ddc;
+
+            c[1] = 0x2EFF;
+            c[3] = U(b, 0x32) - 0x258;
+            c[5] = 0xB1C;
+        } else if (b[0x2A] == 0x25) {
+            s16 *c = D_1F8000D0_3ddc;
+
+            c[1] = 0x18BF;
+            c[3] = -0x16D2;
+            c[5] = 0x253D;
+        }
+    case 1:
+        a[0x72] = 0;
+        a[0x64] &= 0x7F;
+        switch (b[0x2A]) {
+        case 1:
+            if (H(b, 0x2E) < 0x1C29) {
+                COPY3DDC();
+                pos.x = 0x167F;
+                pos.y = U(b, 0x32) - 0x258;
+                pos.z = 0x2219;
+                if (func_8006CEC4(D_1F8000D0_3ddc, &pos, 0xE0) != 0) {
+                    a[0x66] = 3;
+                }
+            }
+            break;
+        case 3:
+        case 4:
+        case 5:
+            if (H(b, 0x2E) >= 0x3201) {
+                COPY3DDC();
+                pos.x = 0x2EFF;
+                pos.y = U(b, 0x32);
+                pos.z = 0xB1C;
+                if (func_8006CEC4(D_1F8000D0_3ddc, &pos, 0xE0) != 0) {
+                    a[0x66] = 3;
+                }
+            }
+            break;
+        case 7:
+            a[0x72] = 0x40;
+            H(a, 0x8C) = 0x6D2;
+            break;
+        case 8:
+        case 9:
+        case 10:
+            a[0x72] = 0x40;
+            H(a, 0x8C) = 0x580;
+            break;
+        case 0x25:
+            if (H(b, 0x2E) < 0x1E54) {
+                COPY3DDC();
+                pos.x = 0x18BF;
+                pos.y = -0x16D2;
+                pos.z = 0x253D;
+                if (func_8006CEC4(D_1F8000D0_3ddc, &pos, 0xE0) != 0) {
+                    a[0x66] = 3;
+                }
+            } else if (H(b, 0x2E) < 0x1FC2) {
+                COPY3DDC();
+                pos.x = 0x1A93;
+                pos.y = -0x1699;
+                pos.z = 0x2182;
+                if (func_8006CEC4(D_1F8000D0_3ddc, &pos, 0xE0) != 0) {
+                    a[0x66] = 3;
+                }
+            } else if (H(b, 0x2E) >= 0x2261) {
+                H(a, 0x26) = -0x2BC;
+            }
+            break;
+        case 0x23:
+        case 0x24:
+            H(a, 0x26) = -0x2BC;
+            break;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80114118);
 
