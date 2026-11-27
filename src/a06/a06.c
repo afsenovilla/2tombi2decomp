@@ -3169,7 +3169,57 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80115A04);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80115BC8);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80115D3C);
+extern void func_80083DE0(void *, s32, s32, s32, s32);
+extern u8 D_800BF871;
+void func_8013FCF0(void);
+void func_8013D668(void);
+
+void func_80115D3C(u8 *a)
+{
+    u8 *g;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        f_SpawnDonglinForestSceneActorsFromPlacementTable(a, 0);
+        func_80115BC8(0);
+        func_8013D668();
+        if (D_800BF871 < 6) {
+            func_8004D8D8(0xA, 0);
+        } else if (D_800BF871 >= 9) {
+            func_8004D8D8(0x12, 0);
+        }
+        func_8013FCF0();
+        g = D_800BF808_1760;
+        if (g[0xE] != 0) {
+            u32 k = g[0xF];
+            switch ((u8)k) {
+            case 4:
+            case 9:
+                a[3] = k + 1;
+                f_SpawnDonglinForestSceneActorsFromPlacementTable(a, a[3]);
+                a[5] = 3;
+                break;
+            }
+        }
+        func_800752B4(0);
+        func_80075D24(0x1FFF);
+        break;
+    case 1:
+        if (func_80026AD0(a) != 0) {
+            f_SpawnDonglinForestSceneActorsFromPlacementTable(a, a[3]);
+        }
+        func_80115A04(a);
+        func_80115BC8(1);
+        func_80026A68(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007ADD0(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80115E9C);
 
@@ -5569,10 +5619,8 @@ void func_8011F71C(u8 *a) {
 }
 
 #define P_7be1(p, o) (*(u8 **)((u8 *)(p) + (o)))
-extern u8 D_800BF871;
 #define P_7be1(p, o) (*(u8 **)((u8 *)(p) + (o)))
 #define P_7be1(p, o) (*(u8 **)((u8 *)(p) + (o)))
-extern void func_80083DE0(void *, s32, s32, s32, s32);
 
 void func_8011F9E4(u8 *a)
 {
