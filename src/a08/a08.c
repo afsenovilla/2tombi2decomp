@@ -2242,7 +2242,61 @@ void func_8011370C(u8 *a)
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80113780);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011399C);
+extern u8 D_800BF808_399c[];
+extern u8 D_800BF817_399c;
+extern u8 D_800E8008_399c[];
+extern u8 D_800E7E80_399c[];
+extern s32 D_1F800184_399c;
+extern s16 D_1F8000D0_399c[];
+
+void func_8011399C(void)
+{
+    u8 *g = D_800BF808_399c;
+    u8 *cam = D_800E8008_399c;
+    u8 *t = D_800E7E80_399c;
+    s32 k;
+
+    g[0xE] = 0;
+    cam[0x64] = 0;
+    cam[3] = 0;
+    D_1F800184_399c = 0;
+    if (t[0x181] == 0) {
+        t[5] = 0x24;
+        t[6] = 0;
+        t[7] = 0;
+        func_80054198(t);
+    } else {
+        t[0] = 7;
+        t[0x181] = 1;
+        g[6] = 0;
+        t[5] = 0x2C;
+        t[6] = 0;
+        func_80054198(t);
+    }
+    k = D_800BF817_399c;
+    if (k == 0) {
+        H(t, 0x2E) = 0x1E5B;
+        H(t, 0x36) = 0x2D6E;
+    } else if (k == 1) {
+        H(t, 0x2E) = 0x1AA7;
+        H(t, 0x36) = 0x28B1;
+    } else if (k == 5) {
+        t[6] = 5;
+    } else if (k == 7) {
+        H(t, 0x2E) = 0x3680;
+        H(t, 0x36) = 0x14BD;
+    } else if (k == 8) {
+        s16 *c = D_1F8000D0_399c;
+
+        c[1] = 0x3AE2;
+        c[3] = -0x2943;
+        c[5] = 0x9E4;
+    } else if (k == 9) {
+        H(t, 0x2E) = 0x31BE;
+        H(t, 0x36) = 0x19FC;
+    }
+    t[0x16B] = 0;
+}
 
 typedef struct { s16 xl, x, yl, y, zl, z; } Pos3AD8;
 typedef struct { s16 x, y, z; } Ent3AD8;
