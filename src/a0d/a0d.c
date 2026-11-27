@@ -2695,7 +2695,46 @@ void func_801107B0(u8 *a)
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_801108F0);
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80110A98);
+typedef struct {
+    u8 a, b;
+    s8 c;
+    u8 d;
+} E0A98;
+
+void func_80110A98(u8 *a)
+{
+    E0A98 *q = (E0A98 *)(a + 0x34);
+    s32 i;
+
+    switch (a[4]) {
+    case 0:
+        for (i = 0; i < 0x15; i++) {
+            q[i].a = (func_8009A450() & 0x3F) + 0x40;
+            q[i].b = (func_8009A450() & 0x3F) + 0x40;
+            q[i].c = func_8009A450() & 0x7F;
+            q[i].d = (func_8009A450() & 0x7F) + 0x40;
+        }
+        a[4] = 1;
+        H(a, 0x2E) += 0x32;
+        H(a, 0x32) -= H(a, 0x32) >> 2;
+    case 1:
+        for (i = 0; i < 0x15; i++) {
+            q[i].c += 6;
+            if (q[i].c < 0) {
+                q[i].a = (func_8009A450() & 0x3F) + 0x40;
+                q[i].b = (func_8009A450() & 0x3F) + 0x40;
+                q[i].c = func_8009A450() & 0x3F;
+                q[i].d = (func_8009A450() & 0x7F) + 0x40;
+            }
+        }
+        func_8002B278(a);
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80110C14);
 
