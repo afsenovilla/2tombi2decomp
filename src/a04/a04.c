@@ -9044,7 +9044,114 @@ s32 func_8013632C(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", f_UpdateSantaBringTheBigSackConversation);
+extern u8 D_80141E20[];
+extern u8 D_80141E30[];
+extern u8 D_80141EC0[];
+extern u8 D_80141ED8[];
+extern u8 D_80141F50[];
+extern u8 D_80142078[];
+extern u8 D_80142098[];
+extern u8 D_800BF808_1760[];
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+void f_UpdateSantaBringTheBigSackConversation(u8 *a)
+{
+    u8 *g;
+    u8 *t;
+    u8 *p;
+    u8 v;
+    u8 *q;
+
+    switch (a[5]) {
+    case 0:
+        func_8007778C(a);
+        if (a[0x2B] == 3) {
+            func_80042354(1, 1);
+            func_80040D68(a, D_80141E20);
+            a[0x70] = 2;
+            a[6] = 0;
+            a[5]++;
+        }
+        break;
+    case 1:
+        a[1] = 1;
+        func_80077E7C(a);
+        if (a[0x70] == 0xFF) {
+            switch (a[6]) {
+            case 0:
+                g = (u8 *)&D_800BF870;
+                if (g[0x271] != 0) {
+                    func_80040D68(a, D_80141ED8);
+                } else {
+                    if (g[0x190] != 0) {
+                        t = D_80141EC0;
+                    } else {
+                        t = D_80141E30;
+                        g[0x190] = 1;
+                    }
+                    func_80040D68(a, t);
+                }
+                a[0x70] = 2;
+                a[6]++;
+                break;
+            case 1:
+                if (D_800BF8C8 == 0xFF) {
+                    func_80040D68(a, D_80141F50);
+                    p = D_800BF844;
+                    a[0x70] = 2;
+                    *(u8 **)(a + 0x14) = p;
+                    a[6]++;
+                } else {
+                    a[5] = 0;
+                }
+                break;
+            case 2:
+                func_80040D68(a, D_80142078);
+                a[0x70] = 2;
+                a[6]++;
+                break;
+            case 3:
+                func_80040D68(a, D_80142098);
+                a[0x70] = 2;
+                a[6]++;
+                break;
+            case 4:
+                p = D_800BF808_1760;
+                if (*(u8 **)(p + 0x58) != NULL) {
+                    (*(u8 **)(p + 0x58))[4] = 2;
+                    (*(u8 **)(p + 0x58))[5] = 0;
+                }
+                a[4] = 2;
+                v = 0x10;
+                goto set;
+            }
+        }
+        if (a[6] == 3) {
+            H(a, 0x50) += 0x20;
+            H(a, 0x32) = func_80083E80(H(a, 0x50)) / 64 - 0x1BBC;
+            q = *(u8 **)(a + 0x14);
+            H(q, 0x2E) = H(a, 0x2E) + 0x11;
+            H(q, 0x32) = H(a, 0x32) + 0x11;
+            H(q, 0x36) = H(a, 0x36) + 0x11;
+            H(q, 0x56) = H(a, 0x56);
+            H(q, 0x58) = H(a, 0x58);
+        }
+        break;
+    }
+    a[8] = 0x10;
+    a[9] = 0x10;
+    func_80041098(a);
+    func_8004190C(a);
+    if (a[0x47] != 0) {
+        a[8] = 0x10;
+        a[9] = 0x10;
+        return;
+    }
+    v = 0xF;
+set:
+    a[8] = v;
+    a[9] = v;
+}
+
 
 extern u8 D_8013FBDC[];
 extern u8 D_80017FE8[];
