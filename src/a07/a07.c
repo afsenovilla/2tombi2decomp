@@ -1876,7 +1876,143 @@ s32 f_UpdateCircusInteriorSceneTransition(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", f_SpawnCircusSceneActorsFromPlacementTable);
+extern u8 D_800BF808_s07[];
+extern u8 D_800BF871_s07;
+extern u8 *D_801321D4[];
+u8 *func_80072DDC();
+static inline u8 *GS07(void)
+{
+    return (u8 *)&D_800BF870;
+}
+static inline u8 *GB07(void)
+{
+    return D_800BF808_s07;
+}
+
+void f_SpawnCircusSceneActorsFromPlacementTable(u8 *a, s32 mode)
+{
+    u8 *e;
+    u8 *p;
+
+    H(a, 8) = 0;
+    e = D_801321D4[mode];
+    if (e[0] == 0xFF) {
+        return;
+    }
+    do {
+        if (e[0xB] == 1 && ((U_d0c0(GS07(), 0x5E6) >> D_800BF870.unk0) & 1)) {
+            goto next;
+        }
+        if (e[0xB] == 2 && GS07()[3] != 0) {
+            goto next;
+        }
+        if (mode != 0 && H(a, 8) >= 0xF) {
+            goto next;
+        }
+        switch (e[0xA]) {
+
+        case 0:
+            break;
+        case 1:
+            if (mode == 10) {
+                GB07()[0x45] = 1;
+            } else {
+                GB07()[0x45] = 0;
+            }
+            U_d0c0(GB07(), 8) = U_d0c0(e, 4);
+            U_d0c0(GB07(), 0xA) = U_d0c0(e, 6);
+            U_d0c0(GB07(), 0xC) = U_d0c0(e, 8);
+            break;
+        case 5:
+            if (GS07()[0x166] < 8) {
+                break;
+            }
+            goto next;
+        case 6:
+            if (GS07()[0x166] == 9) {
+                break;
+            }
+            goto next;
+        case 8:
+            if (GS07()[0x68] == 0) {
+                goto next;
+            }
+            if (GS07()[0x1D5] & 1) {
+                goto next;
+            }
+            break;
+        case 10:
+            if (GS07()[0x1D5] & 2) {
+                goto next;
+            }
+            break;
+        case 16:
+            if (GS07()[0x9F] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 17:
+            if (GS07()[0x1B9] == 10) {
+                break;
+            }
+            goto next;
+        case 18:
+            if (GS07()[0xA3] != 0xFF) {
+                break;
+            }
+            if (GS07()[0x7F] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 20:
+            if (GS07()[3] == 0) {
+                goto next;
+            }
+            if ((GS07()[0x1CD] >> e[3]) & 1) {
+                goto next;
+            }
+            break;
+        case 22:
+            if (GS07()[0x1DE] < 3) {
+                break;
+            }
+            if (GS07()[0x1D8] != 2) {
+                break;
+            }
+            goto next;
+        case 23:
+            if (GS07()[0x3E] == 0) {
+                goto next;
+            }
+            if (GS07()[0xCC] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 24:
+            if (GS07()[0x164] != 0) {
+                goto next;
+            }
+            break;
+        }
+        p = func_80072DDC(a, e[0], e[1], e[2]);
+        if (p != NULL) {
+            *(s32 *)(p + 0x2C) = H(e, 4) << 16;
+            *(s32 *)(p + 0x30) = H(e, 6) << 16;
+            *(s32 *)(p + 0x34) = H(e, 8) << 16;
+            p[3] = e[3];
+            H(p, 0x54) = 0;
+            H(p, 0x56) = 0;
+            H(p, 0x58) = 0;
+            *(s32 *)(p + 0x1C) = *(s32 *)(e + 0xC);
+            if (mode != 0) {
+                *(u8 **)(a + (H(a, 8) << 2) + 0xC) = p;
+                H(a, 8)++;
+            }
+        }
+    next:
+        e += 0x10;
+    } while (e[0] != 0xFF);
+}
 
 typedef struct { s16 x, y, w, h; } ClutRect;
 typedef struct {
