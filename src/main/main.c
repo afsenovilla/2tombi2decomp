@@ -18511,7 +18511,85 @@ void func_800678E8(u8 *t)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80067A40);
+void func_80067A40(u8 *t)
+{
+    s16 v[6];
+    s32 id;
+    u8 *g;
+    u16 x, y;
+
+    f_AdvanceActorSkeletalAnimation(t);
+    switch (t[6]) {
+    case 0:
+        t[6] = 1;
+        D_800BF808[5] = 2;
+        D_800BF808[7] = 2;
+        func_800662D8(t, 0);
+        break;
+    case 1:
+        g = D_800BF808;
+        if (g[7] == 0) {
+            func_8005245C();
+            g[5] = 3;
+            t[6]++;
+        }
+        break;
+    case 2:
+        break;
+    }
+    switch (t[7]) {
+    case 0:
+        *(s16 *)(t + 0x4A) += 0x360;
+        if (*(s16 *)(t + 0x4A) > 0x3E00) {
+            *(s16 *)(t + 0x4A) = 0x3E00;
+        }
+        *(s32 *)(t + 0x30) += *(s16 *)(t + 0x4A) << 8;
+        f_ResolveTombaGroundTerrainContact(t);
+        if (t[0x29] != 0) {
+            f_ResetTombaControlState(t);
+            f_SetTombaAnimationIfChanged(t, 0xD2, 3);
+            t[7] = 1;
+        } else if (*(s16 *)(t + 0x6A) & 0x8000) {
+            s32 k = *(u16 *)(t + 0x6A) & 0xF00;
+            if (k == 0x100 || k == 0x200) {
+                t[7] = 2;
+                f_ResetTombaControlState(t);
+                f_SetTombaAnimationIfChanged(t, 0x71, 0);
+                f_UpdateTombaModelOrientationFromFacing(t);
+                x = *(u16 *)(t + 0x2E);
+                y = D_1F80019E_74f4;
+                *(s16 *)(t + 0x4A) = 0x2400;
+                *(s16 *)(t + 0x58) = 0;
+                v[1] = x;
+                v[3] = y;
+                v[5] = *(u16 *)(t + 0x36);
+                if (D_800BF870_9d28 == 0) {
+                    f_SpawnTransientEffectAtFixedPosition(0x10D, v, -10);
+                } else {
+                    if (D_800BF870_9d28 == 6) {
+                        id = 0x704;
+                    } else if (D_800BF870_9d28 == 8) {
+                        id = 0x909;
+                    } else if (D_800BF870_9d28 == 0xE) {
+                        id = 0xF06;
+                    } else {
+                        goto skip;
+                    }
+                    f_SpawnFlaggedTransientEffectAtFixedPosition(id, (u8 *)v, -10);
+                }
+            skip:;
+            }
+        }
+        break;
+    case 1:
+        *(u16 *)(t + 0x32) += 8;
+        f_ResolveTombaGroundTerrainContact(t);
+        break;
+    case 2:
+        func_800674F4(t);
+        break;
+    }
+}
 
 void func_80067CA4(u8 *a)
 {
