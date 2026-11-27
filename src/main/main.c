@@ -13527,7 +13527,58 @@ void func_80051464(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80051614);
+extern u8 D_800E7E80_c930[];
+extern s32 D_1F800040_97ac[];
+#define W_d1fb(p, o) (*(s32 *)((u8 *)(p) + (o)))
+
+void func_80051614(void *arg0, void *v, s32 idx, s32 scaled)
+{
+    u8 *a;
+    u8 *part;
+    s32 *rot;
+    s32 *sm;
+    s16 y;
+    s16 z;
+    s32 x;
+    u8 *t;
+
+    a = arg0;
+    t = D_800E7E80_c930;
+    part = *(u8 **)(t + idx * 4 + 0xC0);
+    if (scaled != 0) {
+        rot = D_1F800020_edd9;
+        sm = D_1F800040_97ac;
+        y = H_f12c(a, 0xBA);
+        x = H_f12c(a, 0xB8);
+        sm[1] = 0;
+        sm[3] = 0;
+        sm[5] = 0;
+        sm[6] = 0;
+        sm[7] = 0;
+        sm[0] = x;
+        z = H_f12c(a, 0xBC);
+        sm[2] = y;
+        sm[4] = z;
+        RotMatrix_gte(a + 0x54, rot);
+        MulMatrix0(rot, sm, D_1F800000);
+        MulMatrix0(part + 0x18, D_1F800000, a + 0x98);
+    } else {
+        RotMatrix_gte(a + 0x54, D_1F800000);
+        MulMatrix0(part + 0x18, D_1F800000, a + 0x98);
+    }
+    ApplyRotMatrix(v, a + 0xAC);
+    W_d1fb(a, 0xAC) += W_d1fb(part, 0x2C);
+    W_d1fb(a, 0xB0) += W_d1fb(part, 0x30);
+    W_d1fb(a, 0xB4) += W_d1fb(part, 0x34);
+    U(a, 0x2E) = U(a, 0xAC);
+    U(a, 0x32) = U(a, 0xB0);
+    U(a, 0x36) = U(a, 0xB4);
+    if (scaled != 0) {
+        f_UpdateActorScaledPartTransforms(a);
+    } else {
+        f_UpdateActorUnscaledPartTransforms(a);
+    }
+}
 
 void f_SetIdentityMatrix(s32 *m)
 {
@@ -16416,7 +16467,6 @@ void func_8005950C(u8 *a)
 }
 
 typedef struct { u8 pad[0xC0]; u8 *parts[1]; } Parts_97AC;
-extern s32 D_1F800040_97ac[];
 extern s32 D_1F800060_97ac[];
 #define PART(i) (((Parts_97AC *)a)->parts[i])
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
