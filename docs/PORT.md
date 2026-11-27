@@ -109,6 +109,40 @@ What stage 2 changed (each item with its headless check):
   walks back, and the "Use up and Circle to look inside" hint appears (the script above; same frames with native
   or interpreted overlays).
 
+### 0.1 Playing it on a PC
+
+**Linux** (x86-64 with 32-bit support, any distribution with the packages below):
+
+```
+sudo apt-get install -y git python3 python3-pip cmake ninja-build gcc-multilib libsdl2-dev
+git clone <this repository> && cd <it>
+bash tools/disc_unpack.sh /path/to/your/Tomba2_USA.bin game/usa   # -> game/usa/ (files) + game/usa.img (image)
+bash tools/session_bootstrap.sh --no-build                       # the PS1 toolchain (once; asks for sudo)
+bash port/play.sh                                                # matching build, port build, then the window
+```
+
+**Windows 10 / 11: through WSL2** (the port is an i386 Linux program that maps the PS1 RAM at its own address;
+WSL2 runs it unchanged, WSLg shows the SDL2 window and plays the sound):
+
+```
+wsl --install -d Ubuntu-24.04        # in an administrator PowerShell, once; reboot, open "Ubuntu" from the Start menu
+# then in the Ubuntu window, the Linux steps above, with the disc image from the Windows side, e.g.
+bash tools/disc_unpack.sh "/mnt/c/Users/YOU/Games/Tomba2 (USA).bin" game/usa
+bash port/play.sh                    # options pass through: bash port/play.sh --viewer-arg --fullscreen
+```
+
+The disc dump is the player's own: a raw `.bin` (2352-byte sectors; the `.cue` is not needed), a zip or 7z of it.
+Saves go to `game/usa/tomba2_mc0.mcd` (`--save-dir DIR` to change). Keys: arrows, X = Cross, Z = Square,
+S = Triangle, D = Circle, Q / W = L1 / R1, A / E = L2 / R2, Return = Start, Backspace = Select, F11 = fullscreen,
+F = window size, Escape = quit; a game controller works too. Checked here: the same binaries under
+`SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy` (no display in the container); not yet checked on a real WSL2.
+
+**A native Windows build** (no WSL) is not done. T1 had one for its fixed-address prototype
+(`port/runtime/sys_win32_i386.c`, mingw-w64 i686, the viewer as a second exe) and dropped it for its native-pointer
+`port2/`: Windows keeps its own memory in the KUSEG mirror range the game's masked pointers use, and COFF needed
+generator changes (thunks, data definitions). The plan for T2 is the same as T1's: the native-pointer port once
+the decomp is complete; until then WSL2.
+
 ## 1. Status: stage 1, milestone P0 (2026-11-27)
 
 ```
@@ -223,6 +257,10 @@ software SPU, its MDEC, its SDL window) are taken over one by one as they are ne
 | `shims/pad.c`, `shims/libc.c` | `port/shims` | `memset` left to the game's own |
 | `shims/sound_stub.c` | new | silent libsnd / libspu with the return values the game waits for |
 | `tools/gen_t2.py` | rewritten after `port/tools/gen_port.py` | host-cpp + item split instead of T1's line filter (§2); no GTE macro translation yet (those functions are interpreted) |
+| `runtime/window.c`, `tools/view/tomba2_view.c` | `port/runtime/window.c`, `port/tools/view/tombi_view.c` | names, 320x240, 60 Hz audio frames (stage 2) |
+| `shims/card.c` | `port/shims/card.c` | `tomba2_mc*.mcd` in `--save-dir` (default the data dir), T2's libcard names (stage 2) |
+| `shims/sound.c` | `port/shims/sound.c` | `SsVabOpenHead` + `SsVabTransBody`, `SsUtSetDetVVol`, `SpuWrite`, output through `audio.c` (stage 2) |
+| `shims/audio.c` | new | XA ADPCM from the disc image (psx-spx), the 44.1 kHz output, the CD mix (stage 2) |
 
 ## 4. Memory map and files
 
@@ -245,23 +283,24 @@ moves 3 sectors per vblank (the audio itself is not played yet). Movies: `StGetN
 frame number is past the end (T1's trick), so DEMO.BIN's player (`func_801075F8`: `frameCount >= limit`) ends the
 movie at once.
 
-## 5. Open points (stage 2: free gameplay in A00, then the title screen natively)
+## 5. Open points (stage 3)
 
-1. **The crash at frame 5637** in attract demo 2: an interpreted overlay function (`func_80132DC0`) reads through a
-   bad pointer after native `f_BuildActorModelPartPrimitives` / `func_8008007C` / `func_8007FDB0`. Same hunt as the
-   first two: `--trace-interp` for the arguments, gdb on the native caller (`handle SIGSEGV nostop noprint pass`;
-   the binary has symbols and frame pointers), then a missing forwarded argument, a narrow return value or a
-   conflicting prototype (the 13 renamed definitions: callers see `int f()`). Also the reverse case is unhandled:
-   a `void` C function whose asm caller uses `$v0` (`func_8001CE90` returns `func_8001CE04`'s value by tail call; it
-   worked here because the native epilogue keeps `eax`).
-2. **Input to free gameplay in A00**: the tutorial dialogues need their buttons (Triangle for the journal); a
-   longer `--pad-script`, then walking (T1's M1 script is the model).
-3. **GTE inline asm** to C (T1's `translate_gte_define`) so the 33 + 21 MAIN functions left to the interpreter become
-   native; then the overlays' C (OPN / SOP / GAME / DEMO first, A00 next) with per-overlay renames and dispatch on the
-   resident overlay (T1 §2.2; the area overlays and SOP share 0x80108F9C, GAME / DEMO 0x80106228, OPN / CRD
-   0x8018A000). The overlay loads are already logged by file.
-4. **Sound** (T1 `port2/shims/sound.c`: software SPU, libsnd kept as compiled code; then XA through the virtual
-   disc), **memory card** (`port2/shims/card.c`), **movies** (`port2/shims/mdec.c` + the `St*` ring), the **SDL2
-   window** (`port2/runtime/sdl.c`), real-time pacing at 60 Hz (USA).
-5. The boot exe (`SCUS_944.54`: legal screen, then it loads MAIN.EXE) is skipped; running it first would need its
-   own symbol table in the port (it is a separate program with its own copy of the library).
+Stage 1's list is done except where noted: the 5637 crash, free play in A00, the overlays' C and the GTE asm
+natively, the SDL2 window and 60 Hz pacing, XA audio, sound effects, the memory card (§0).
+
+1. **Check on real hardware**: `bash port/play.sh` on a desktop Linux and on WSL2 (window, keyboard / controller,
+   sound latency, the pacing line at exit); a save at a save point and a load from the title (the card shim is
+   only checked as far as "No data" here).
+2. **Movies** (`OP.STR`, `LOGO.STR`, `END.STR`: skipped): T1 `port2/shims/mdec.c` + the `St*` ring over the disc
+   image, with the movie's XA audio through `shims/audio.c`.
+3. **More of the game**: scripted runs into other areas (A01..A0L, the area overlays are native already) and
+   their boss / minigame overlays; each crash hunted with `--no-ovl-native` frame diffs, `--ovl-interp`,
+   `--interp-range` and gdb (§0). MAIN's 21 functions the host compiler rejects and the overlays' 20 (generated
+   `dropped_<prog>.txt`) stay interpreted; MAIN's own asm (main() = func_80050B08, 228 functions) too until matched.
+   Still unhandled in general: a `void` C function whose asm callers read `$v0` (`func_8001CE90` passes
+   `func_8001CE04`'s result on; it works because the native epilogue keeps `eax`).
+4. **Reverb** and the remaining libsnd calls (`SsSetReservedVoice`, `SsSetStereo`, ...) in `shims/sound.c`.
+5. **Native Windows**: WSL2 for now (§0.1); a native exe means T1's `sys_win32_i386.c` plus its COFF generator
+   changes and the KUSEG question, or (better) the native-pointer port once the decomp is complete.
+6. The boot exe (`SCUS_944.54`: legal screen, then it loads MAIN.EXE) is skipped; running it first would need its
+   own symbol table in the port.

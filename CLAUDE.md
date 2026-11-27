@@ -222,4 +222,7 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   needs `libsdl2-dev`; keyboard / controller; 60 Hz), free play in A00; crash hunts with `--interp-range LO-HI|all`
   (bisection against the retail code) and `--watch-pc ADDR`. All overlay C is native (`<ovl>_` names, dispatch on
   the resident overlay); `--no-ovl-native` / `--ovl-interp NAME` give the interpreted reference for frame diffs.
+  GTE inline asm is translated to C; XA music / voices come from the raw image `game/usa.img` (`--disc`), sound
+  effects from a software SPU (`--dump-audio F.wav`); memory cards `tomba2_mc0.mcd` in `--save-dir` (default
+  game/usa). Players: `bash port/play.sh` (Linux, or WSL2 on Windows: docs/PORT.md §0.1).
 - `python3 -I tools/gen_configs.py game/usa [--force] [--out config/eu]`: regenerates the first configs (keeps hand-made ones without --force).

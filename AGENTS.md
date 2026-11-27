@@ -829,7 +829,11 @@ struct-member form of a cast access, regswap `member` toggles every one)
   address. Check any port change by frame diffs against `--no-ovl-native` (pixel-identical expected), and when
   they differ bisect with `--ovl-interp NAME`, `--interp-range` and `--interp ADDR` (only calls from interpreted
   code, thunks and pointers are redirected: test a native caller and its callee together). Matched overlay C
-  becomes native at the next port build.
+  becomes native at the next port build. Generator rules learnt in stage 2: arities by address for an overlay's
+  own names of MAIN functions; `p->fn()` with an empty argument list gets the caller's arguments; block-scope
+  prototypes are not calls; a dropped static helper drops its callers; GTE inline asm is translated
+  (`translate_asm`). Keep `game/usa.img`: the port reads XA audio from it (the extracted XA files have no
+  subheaders).
 - Byte-matching only; tools/nonmatching.py is kept unused.
 - USA is the reference; EU in config/eu/.
 - The licensed-region module at the end of boot.c [0x80011A0C, 0x80012D2C) is library-style files in

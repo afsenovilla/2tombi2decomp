@@ -5,7 +5,9 @@ The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
 ## 2026-11-27 (5): port stage 2 (playable A00 in a window)
 
-The user wants a playable PC MVP (title + A00). docs/PORT.md §0 has the commands and the details.
+The user wants a playable PC MVP (title + A00). docs/PORT.md §0 has the commands and the details; §0.1 the
+player's steps (`bash port/play.sh` on Linux or WSL2 on Windows); §5 the stage-3 list (real-hardware check,
+movies, other areas, reverb, native Windows).
 
 - The frame-5637 attract-demo crash is fixed: MAIN C calling an overlay function by name with fewer arguments than
   the overlay's asm reads (`func_800633B0(a)` -> A01 `func_8010ACB8(a)` reading `$a1`). gen_t2.py now takes arities

@@ -10,7 +10,8 @@
   (`src/main/main.c` f_AdvanceActorTimedFrameSequence, from its src/AnimAdvance.c).
 - The native port (`port/`) is adapted from Tombi-Decomp's `port/` and `port2/` (MIT, same author and contributors):
   the runtime (i386 address space, MIPS interpreter, threads, GTE), the software GPU, the Psy-Q shims, the SDL2
-  viewer (`port/tools/view/tomba2_view.c`, `port/runtime/window.c`) and the generator design; each file says what it took (docs/PORT.md §3).
+  viewer (`port/tools/view/tomba2_view.c`, `port/runtime/window.c`), the memory card (`port/shims/card.c`), the
+  software SPU and libsnd (`port/shims/sound.c`) and the generator design; each file says what it took (docs/PORT.md §3).
 - Library C (files under `src/*/psyq/`) is adapted from these MIT-licensed decompilations of Sony's Psy-Q libraries;
   each file says where it came from (`// Source: ...`):
   [psx_tomba](https://github.com/hansbonini/psx_tomba) (MIT per its README; its base headers are fetched into
