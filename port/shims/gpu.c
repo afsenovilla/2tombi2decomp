@@ -475,7 +475,23 @@ void SetDrawMode(DR_MODE *p, int dfe, int dtd, int tpage, RECT *tw) {
     p->code[1] = get_tw(tw);
 }
 typedef struct { u32 tag; u32 code[1]; } DR_AREA;
-void SetDrawArea(DR_AREA *p, RECT *r) { p = KSEG0(p); p->tag = (p->tag & 0xFFFFFF) | (2u << 24); p->code[0] = get_cs(r->x, r->y); }
+/* SetDrawArea: E3 (top left) and E4 (bottom right) as the retail code (src/main/psyq/libgpu/SetDrawArea.c); the shim
+   wrote only E3 and left the second word stale, so the drawing area's bottom right was never set by the game's
+   DR_AREA packets (a stale word such as 0x05202020 is a GP0 no-op): HUD and effect clipping went wrong */
+typedef struct { u32 tag; u32 code[2]; } DR_AREA2;
+void SetDrawArea(DR_AREA *p0, RECT *r) {
+    DR_AREA2 *p = KSEG0(p0);
+    p->tag = (p->tag & 0xFFFFFF) | (2u << 24);
+    p->code[0] = get_cs(r->x, r->y);
+    p->code[1] = get_ce((s16)((u16)r->x + (u16)r->w - 1), (s16)((u16)r->y + (u16)r->h - 1));
+}
+/* T2's names (config/symbol_addrs_main.txt) of the libgpu encoders: without these the retail callers (SetDrawEnv
+   runs as retail code) would reach logged stubs returning 0 */
+u32 f_EncodeGpuDrawAreaTopLeftCommand(s16 x, s16 y) { return get_cs(x, y); }
+u32 f_EncodeGpuDrawAreaBottomRightCommand(s16 x, s16 y) { return get_ce(x, y); }
+u32 func_80082220(int dfe, int dtd, u16 tpage) { return get_mode(dfe, dtd, tpage); }
+u32 func_80082370(s16 x, s16 y) { return get_ofs(x, y); }
+u32 func_8008238C(RECT *r) { return get_tw(KSEG0(r)); }
 void SetDrawOffset(DR_AREA *p, u16 *ofs) { p = KSEG0(p); p->tag = (p->tag & 0xFFFFFF) | (1u << 24); p->code[0] = get_ofs(ofs[0], ofs[1]); }
 void SetTexWindow(DR_AREA *p, RECT *tw) { p = KSEG0(p); p->tag = (p->tag & 0xFFFFFF) | (1u << 24); p->code[0] = get_tw(tw); }
 

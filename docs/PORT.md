@@ -259,6 +259,16 @@ build/port/tomba2 --frames 1700 --save-dir S --dump-frames D2 --dump-every 10 --
   missing on the routes checked). `python3 -I tools/gte_diff.py [--n N] [--ops RTPS,...] [--raw]` compiles gte.c
   with a driver (build/gte_diff/drv, gcc -m32) and compares every register after each command with gte.py on random
   states: 0 differences in all 22 commands (6000 states).
+- **SetDrawArea** (`shims/gpu.c`): it now writes E4 (bottom right) as well as E3, as the retail code does; the
+  stale second word left the game's clip windows open on the right and bottom (attract demo 1: the vitality HUD's
+  32-pixel window at x 144 showed two bombs instead of one). T2's names of the libgpu encoders
+  (`f_EncodeGpuDrawAreaTopLeftCommand`, `f_EncodeGpuDrawAreaBottomRightCommand`, `func_80082220` get_mode,
+  `func_80082370` get_ofs, `func_8008238C` get_tw) are shims too (they were logged stubs returning 0 for retail
+  callers such as SetDrawEnv). The emulator still stubs them (its DR_AREA packets are zeros).
+- **Rasteriser check by packet replay**: with RAM and packets equal, the remaining picture differences against the
+  emulator are one 5-bit step on textured gouraud polygons (gpu.py truncates the interpolated colour / UV, gpu.c
+  rounds): a per-packet replay of attract frame 1226 (emulator GPU state + one packet through both rasterisers) shows
+  nothing else (320 of 841 packets, all `3c` / `34`).
 - **Interpreter page 0**: `mips_interp.c ma` maps every KUSEG address below 0x200000 to KSEG0, page 0 included (an
   interpreted store through a null pointer + 0xA at attract frame 5771 reached the host's page 0: on Windows an
   emulated access, 24 in 6000 frames under Wine). Linux and Wine frames equal (60 attract dumps).

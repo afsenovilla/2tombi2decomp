@@ -73,6 +73,18 @@ docs/PORT.md §0.3 has the details and the checks.
   differ, was 1); NCS / NCT / NCDS / NCDT / CC / CDP added. New `tools/gte_diff.py`: gte.c against
   tools/psxemu/gte.py on random register states: all 22 commands equal on 6000 realistic states (`--raw` states
   differ only where gte.py keeps unmasked 32-bit control registers).
+- **SetDrawArea** (`shims/gpu.c`): the shim wrote the DR_AREA's E3 (top left) but not its E4 (bottom right): the
+  second word stayed whatever the primitive buffer held before (a GP0 no-op such as 0x05202020), so the game's clip
+  windows had no right / bottom edge. Found as the first differing GP0 packets of attract demo 1 (frame 1282 on):
+  the vitality HUD sets a 32-pixel window (144,256 32x224) to show one bomb; the port showed two. Now as the
+  retail code (E3 + E4); the libgpu encoders under T2's names (f_EncodeGpuDrawAreaTopLeftCommand / BottomRight,
+  func_80082220 get_mode, func_80082370 get_ofs, func_8008238C get_tw) are bound to the shims, so retail callers
+  (SetDrawEnv) no longer reach stubs returning 0. The reference emulator has the same stubs: its DR_AREA packets
+  are zero words (no clipping at all, three bombs), a limitation to fix there (machine.py: these are pure).
+- **Rasteriser vs the emulator's**: replaying one frame's packets (attract 1226) from the emulator's GPU state
+  through the port's gpu.c, packet by packet (a 32-bit driver around shims/gpu.c, scratchpad gpudrv/): 320 of 841
+  packets give other texels, all textured gouraud polygons, one 5-bit step: gpu.py truncates the interpolated
+  colour and UV, the port rounds to nearest (as Mednafen-style renderers do with their half-unit bias). Left as is.
 - **Interpreter page 0** (`runtime/mips_interp.c ma`): KUSEG 0x0-0xFFFF is RAM too (the kernel area); an interpreted
   store through a null pointer + 0xA (attract mode, frame 5771) went to the host's page 0 (emulated and counted on
   Windows: 24 accesses under Wine). Now served from KSEG0; Wine's tally is back to func_80051E00's 4 page-0 reads.
