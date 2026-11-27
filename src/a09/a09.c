@@ -230,7 +230,43 @@ void func_80109CA0(void *arg0) {
     func_8003315C(arg0);
 }
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_80109D04);
+typedef struct { s16 xl, x, yl, y, zl, z; } Pos9D04;
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+extern s16 D_1F8000D0[];
+
+void func_80109D04(u8 *a)
+{
+    u8 *b;
+    Pos9D04 pos;
+
+    a[0x72] = 0;
+    a[0x64] &= 0x7F;
+    b = D_800E7E80;
+    if (b[0x2A] != 2) {
+        if (H(b, 0x2E) < 0x8FC) {
+            a[0x72] = 3;
+        } else if (H(b, 0x2E) >= 0x10CD) {
+            a[0x72] = 2;
+        }
+        return;
+    }
+    a[0x64] |= 0x80;
+    if (H(b, 0x32) < -0x398) {
+        H(a, 0xE) = U(b, 0x32);
+    } else {
+        H(a, 0xE) = -0x398;
+    }
+    H(a, 0xA) = U(b, 0x2E);
+    H(a, 0x12) = U(b, 0x36);
+    func_8006E3F4(a, a + 8);
+    pos.x = 0x781;
+    pos.y = -0x500;
+    pos.z = 0x699;
+    if (func_8006CEC4(D_1F8000D0, &pos, 0xE0) != 0) {
+        a[0x66] = 3;
+    }
+}
 
 typedef struct {
     u8 pad0[5];
@@ -733,7 +769,6 @@ void func_8010AD9C(u8 *a) {
 typedef struct { u8 pad[0x3A]; s16 x; s16 p1; s16 y; s16 p2; s16 z; } S8008;
 extern u8 D_800BF80F;
 extern u16 D_1F80017C;
-extern s16 D_1F8000D0[];
 extern S8008 D_800E8008_ef2a;
 #define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
 #define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
