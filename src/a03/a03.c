@@ -1306,7 +1306,175 @@ void f_UpdateUpgradedTrolleyPhysics(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a03/nonmatchings/a03", f_UpdateStandardTrolleyPhysics);
+void f_UpdateStandardTrolleyPhysics(u8 *a) {
+    u8 *q = a + 0x60;
+    TrkMat m;
+    TrkMat r;
+    TrkMat m2;
+    s16 sv[8];
+    s32 ty;
+    s32 ang;
+    s32 e;
+    u16 e0;
+    s16 t;
+    s32 d;
+    s32 v;
+    s32 s;
+    s32 k;
+    s16 dd;
+    s32 z;
+    s32 e2;
+    TrkNode *n;
+
+    if (q[0x12] & 1) {
+        m = *(TrkMat *)(a + 0x98);
+        ty = m.t[1];
+        F16(q, 0xA) += F16(q, 0xC) >> 4;
+        n = f_SampleAirborneTrolleyTrack(*(TrkNode **)(a + 0x60), F16(q, 0xA), (s16 *)(a + 0x64), &m);
+        *(TrkNode **)(a + 0x60) = n;
+        e = F16(q, 0xE);
+        if (e >= 0x2AB) {
+            ang = e;
+        } else if (e < -0x2AA) {
+            ang = e;
+        } else {
+            ang = (func_80083E80((e << 10) / 0x2AA) * 0x2AA) >> 12;
+        }
+        func_80051794(&r);
+        func_80084D10(ang, &r);
+        func_80084250(&m, &r);
+        func_8010BBB8(a, &m, ang);
+        if (F16(q, 0xE) > 0x1000) {
+            F16(q, 0xE) = 0x1000;
+        }
+        if (F16(q, 0xE) < -0x1000) {
+            F16(q, 0xE) = -0x1000;
+        }
+        e0 = F16(q, 0xE);
+        dd = (t = func_80085690(m.m[2][0], m.m[0][0])) - FU16(q, 0x14);
+        if (dd < -0x800) {
+            dd += 0x1000;
+        } else if (dd > 0x800) {
+            dd -= 0x1000;
+        }
+        F16(q, 0xE) += F16(q, 0x10) >> 4;
+        F16(q, 0x10) += (((F16(q, 0xC) * dd) >> 6) * 3) >> 5;
+        F16(q, 0x10) += F16(q, 0x16) * 14;
+        F16(q, 0x14) = t;
+        if ((s16)(e0 ^ FU16(q, 0xE)) < 0) {
+            v = (F16(q, 0x10) * 4) >> 3;
+            F16(q, 0x10) = v;
+            if (a[4] == 1 && __builtin_abs(v) > 0xC8) {
+                func_800521F4(0, 0, 0x90, 1);
+            }
+        }
+        if (F16(q, 0xE) > 0) {
+            F16(q, 0x10) -= 0x44;
+        } else {
+            F16(q, 0x10) += 0x44;
+        }
+        if (F16(q, 0x10) > 0) {
+            F16(q, 0x10) -= 3;
+            if (F16(q, 0x10) < 0) {
+                F16(q, 0x10) = 0;
+            }
+        } else {
+            F16(q, 0x10) += 3;
+            if (F16(q, 0x10) > 0) {
+                F16(q, 0x10) = 0;
+            }
+        }
+        if ((s16)(FU16(q, 0x10) ^ FU16(q, 0xE)) >= 0) {
+            F16(q, 0x10) -= (F16(q, 0x10) * 3) >> 3;
+        }
+        if (m.m[1][0] < 0) {
+            F16(q, 0xC) += (func_80083E80(m.m[1][0] >> 2) * 41) >> 12;
+        } else {
+            F16(q, 0xC) += (func_80083E80(m.m[1][0] >> 2) * 53) >> 12;
+        }
+        e2 = F16(q, 0xE);
+        d = __builtin_abs(e2);
+        d -= 0x71;
+        if (d > 0) {
+            F16(q, 0xC) -= (d * 40) / 569;
+            if (F16(q, 0xE) < 0) {
+                k = 0xA0;
+                q[0x12] |= 4;
+            } else {
+                k = -0xA0;
+                q[0x12] |= 2;
+            }
+            func_8010C678(a, k);
+            func_8010C678(a, k);
+            if (a[4] == 1) {
+                F16(q, 0x1A) += F16(q, 0xC) >> 4;
+                if (F16(q, 0x1A) > 0x4E2) {
+                    F16(q, 0x1A) -= 0x4E2;
+                    func_80074590(0x82, 0, -0x41);
+                }
+            }
+        }
+        if (q[0x12] & 8) {
+            func_8010C678(a, 0xA0);
+            func_8010C678(a, -0xA0);
+            func_8010C678(a, 0xA0);
+            func_8010C678(a, -0xA0);
+            q[0x12] |= 6;
+            if (!(FU16(a, 0x40) & 3)) {
+                func_80074590(0x82, 0, -0x41);
+            }
+            F16(q, 0xC) -= 0x30;
+        }
+        if (a[4] == 1) {
+            F16(q, 0x18) += F16(q, 0xC) >> 4;
+            if (F16(q, 0x18) > 0x8CA) {
+                F16(q, 0x18) -= 0x8CA;
+                func_80074590(0x80, 0, -0x14);
+            }
+        }
+        if (ty + F16(a, 0x4A) + 0x8D < m.t[1] && m.m[1][0] < 0) {
+            F16(q, 0xE) = 0;
+            F16(q, 0x10) = 0;
+            q[0x12] &= 0xFE;
+            F16(a, 0x4A) = m.t[1] - ty;
+            func_8010BBB8(a, &m, 0);
+            *(TrkMat *)(a + 0x98) = m;
+            return;
+        }
+        F16(a, 0x4A) = m.t[1] - ty;
+        *(TrkMat *)(a + 0x98) = m;
+    } else {
+        F16(q, 0xA) += F16(q, 0xC) >> 4;
+        *(TrkNode **)(a + 0x60) = f_SampleGroundedTrolleyTrack(*(TrkNode **)(a + 0x60), F16(q, 0xA), sv, &m2);
+        F16(a, 0xA8) = 0x1000;
+        F16(a, 0xA0) = 0x1000;
+        F16(a, 0x98) = 0x1000;
+        F16(a, 0xA6) = 0;
+        F16(a, 0xA4) = 0;
+        F16(a, 0xA2) = 0;
+        F16(a, 0x9E) = 0;
+        F16(a, 0x9C) = 0;
+        F16(a, 0x9A) = 0;
+        func_80084EB0(M2C_FIELD(*(TrkNode **)(a + 0x60), s16 *, 0xA) - 0x400, a + 0x98);
+        W(a, 0xAC) = sv[0];
+        W(a, 0xB4) = sv[2];
+        F16(q, 0xA) = sv[3];
+        W(a, 0xB0) += F16(a, 0x4A) >> 4;
+        F16(a, 0x4A) += 0x47;
+        if (a[4] == 1 && sv[1] < W(a, 0xB0)) {
+            func_800521F4(0, 0, 0x90, 1);
+            func_80074590(0x83, 0, 0);
+            F16(q, 0xE) = 0;
+            F16(q, 0x10) = 0;
+            F16(a, 0x4A) = 0;
+            q[0x12] |= 1;
+            z = -(abs(D_8011BAEC.h) + 0x17) - F16(a, 0x8A);
+            W(a, 0xAC) += (z * F16(a, 0x9A)) >> 12;
+            W(a, 0xB0) += (z * F16(a, 0xA0)) >> 12;
+            W(a, 0xB4) += (z * F16(a, 0xA6)) >> 12;
+        }
+    }
+}
 
 #define F16(p, o) M2C_FIELD(p, s16 *, o)
 #define FU16(p, o) M2C_FIELD(p, u16 *, o)
