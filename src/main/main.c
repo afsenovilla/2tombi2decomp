@@ -15869,7 +15869,121 @@ void func_8005950C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800597AC);
+typedef struct { u8 pad[0xC0]; u8 *parts[1]; } Parts_97AC;
+extern s32 D_1F800040_97ac[];
+extern s32 D_1F800060_97ac[];
+#define PART(i) (((Parts_97AC *)a)->parts[i])
+#define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+
+void func_800597AC(u8 *a)
+{
+    u8 save;
+    s32 i;
+    s32 k;
+    s32 f1;
+    s32 f2;
+    s32 v;
+    s16 *rv;
+    s32 *sm;
+    s32 *m40;
+    u8 *m20;
+    s32 *m60;
+    u8 *rot;
+    u8 *src;
+
+    save = a[8];
+    if ((U(a, 0x17E) & 0x20) && a[0x179] != 0) {
+        a[8] = a[9];
+    }
+    sm = D_1F800000;
+    f_SetScaleMatrix(sm, H_f12c(a, 0xB8), H_f12c(a, 0xBA), H_f12c(a, 0xBC));
+    rv = D_1F8000C0;
+    D_1F8000C0[0] = U(a, 0x54);
+    rv[1] = U(a, 0x56);
+    m40 = D_1F800040_97ac;
+    rv[2] = U(a, 0x58);
+    RotMatrix_gte(rv, m40);
+    v = 0;
+    if (a[0x177] & 1) {
+        v = U(a, 0x14E);
+    }
+    m20 = D_1F800020;
+    D_1F8000C0[0] = 0;
+    rv[1] = v;
+    rv[2] = 0;
+    RotMatrixZXY(rv, m20);
+    rot = a + 0x98;
+    MulMatrix0(m20, sm, rot);
+    MulMatrix2(m40, rot);
+    src = a + 0x88;
+    ApplyMatrix(rot, src, a + 0xAC);
+    W_d1fb(a, 0xAC) += H_f12c(a, 0x2E);
+    W_d1fb(a, 0xB0) += H_f12c(a, 0x32);
+    W_d1fb(a, 0xB4) += H_f12c(a, 0x36);
+    if (a[0x164] == 5) {
+        MulMatrix(rot, *(u8 **)(a + 0x10) + 0x18);
+    }
+    f2 = 0;
+    if (a[0x145] == 0 && (a[0x146] & 3)) {
+        D_1F8000C0[0] = U(a, 0x54);
+        rv[1] = U(a, 0x56);
+        rv[2] = 0;
+        RotMatrix_gte(rv, m40);
+        m60 = D_1F800060_97ac;
+        MulMatrix0(m20, sm, m60);
+        MulMatrix2(m40, m60);
+        ApplyMatrix(m60, src, m60 + 5);
+        m60[5] += H_f12c(a, 0x2E);
+        m60[6] += H_f12c(a, 0x32);
+        m60[7] += H_f12c(a, 0x36);
+        f1 = 1;
+    } else {
+        f1 = 0;
+    }
+    for (i = 0; i < a[9]; i++) {
+        s32 *r00 = D_1F800000;
+        u8 *r20 = D_1F800020;
+        s32 *r40 = D_1F800040_97ac;
+        s32 *r60 = D_1F800060_97ac;
+        if (i >= a[8]) {
+            break;
+        }
+        k = H_f12c(PART(i), 6);
+        f_SetScaleMatrix(r00, H_f12c(PART(i), 0x38), H_f12c(PART(i), 0x3A), H_f12c(PART(i), 0x3C));
+        RotMatrix_gte(PART(i) + 8, r20);
+        MulMatrix0(r20, r00, r40);
+        if (k < 0) {
+            if (f1 == 0) {
+                MulMatrix0(a + 0x98, r40, PART(i) + 0x18);
+                ApplyRotMatrix(PART(i), PART(i) + 0x2C);
+                W_d1fb(PART(i), 0x2C) += W_d1fb(a, 0xAC);
+                W_d1fb(PART(i), 0x30) += W_d1fb(a, 0xB0);
+                W_d1fb(PART(i), 0x34) += W_d1fb(a, 0xB4);
+            } else if (f2 == 0) {
+                MulMatrix0(r60, r40, PART(i) + 0x18);
+                ApplyRotMatrix(PART(i), PART(i) + 0x2C);
+                W_d1fb(PART(i), 0x2C) += r60[5];
+                W_d1fb(PART(i), 0x30) += r60[6];
+                W_d1fb(PART(i), 0x34) += r60[7];
+                f2 = 1;
+            } else {
+                MulMatrix0(a + 0x98, r40, PART(i) + 0x18);
+                ApplyRotMatrix(PART(i), PART(i) + 0x2C);
+                W_d1fb(PART(i), 0x2C) += W_d1fb(a, 0xAC);
+                W_d1fb(PART(i), 0x30) += W_d1fb(a, 0xB0);
+                W_d1fb(PART(i), 0x34) += W_d1fb(a, 0xB4);
+            }
+        } else {
+            MulMatrix0(PART(k) + 0x18, r40, PART(i) + 0x18);
+            ApplyRotMatrix(PART(i), PART(i) + 0x2C);
+            W_d1fb(PART(i), 0x2C) += W_d1fb(PART(k), 0x2C);
+            W_d1fb(PART(i), 0x30) += W_d1fb(PART(k), 0x30);
+            W_d1fb(PART(i), 0x34) += W_d1fb(PART(k), 0x34);
+        }
+    }
+    a[8] = save;
+}
 
 extern void *D_800A4BBC[];
 extern u8 D_800BF830;
