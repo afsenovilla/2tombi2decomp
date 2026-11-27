@@ -2318,7 +2318,262 @@ void func_80114CB8(void) {
     func_80051FB4();
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", f_SpawnWaterTempleSceneActorsFromPlacementTable);
+extern u8 D_800BF808_s08[];
+extern u8 D_800BF871_s08;
+extern u8 D_80141928[];
+extern u8 D_801419C8[];
+extern u8 D_80141A28[];
+extern u8 D_80141AD8[];
+extern u8 *D_80141E68[];
+u8 *func_8012B89C(u8 *a, s32 i);
+static inline u8 *GS08(void)
+{
+    return (u8 *)&D_800BF870;
+}
+static inline u8 *GB08(void)
+{
+    return D_800BF808_s08;
+}
+
+void f_SpawnWaterTempleSceneActorsFromPlacementTable(u8 *a, s32 mode)
+{
+    u8 *e;
+    u8 *p;
+
+    if (mode == 0) {
+        if (D_800BF871_s08 < 9) {
+            e = D_80141928;
+        } else if (D_800BF871_s08 < 0x10) {
+            e = D_801419C8;
+        } else if (D_800BF871_s08 < 0x15) {
+            e = D_80141A28;
+        } else {
+            e = D_80141AD8;
+        }
+    } else {
+        e = D_80141E68[mode];
+    }
+    H(a, 8) = 0;
+    if (e[0] == 0xFF) {
+        return;
+    }
+    do {
+        if (e[0xB] == 1 && ((U(GS08(), 0x5E6) >> D_800BF870.unk0) & 1)) {
+            goto next;
+        }
+        if (e[0xB] == 2 && GS08()[3] != 0) {
+            goto next;
+        }
+        if (mode != 0 && H(a, 8) >= 0xF) {
+            goto next;
+        }
+        switch (e[0xA]) {
+        case 0:
+            break;
+        case 1:
+            if (mode == 6 || mode == 8) {
+                GB08()[0x45] = 1;
+            } else {
+                GB08()[0x45] = 0;
+            }
+            U(GB08(), 8) = U(e, 4);
+            U(GB08(), 0xA) = U(e, 6);
+            U(GB08(), 0xC) = U(e, 8);
+            break;
+        case 2:
+            if (!(GS08()[0x15D] & 2)) {
+                break;
+            }
+            goto next;
+        case 3:
+            if (GS08()[0x1C3] == 1) {
+                break;
+            }
+            goto next;
+        case 4:
+            if (GS08()[0x1C8] == 0) {
+                break;
+            }
+            goto next;
+        case 5:
+            if (GS08()[0xA5] != 0xFF) {
+                break;
+            }
+            if (GS08()[0x7F] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 6:
+            if (!(GS08()[0x1CF] & 0x20)) {
+                break;
+            }
+            goto next;
+        case 7:
+            if (GS08()[0x26B] != 0) {
+                goto next;
+            }
+            if (GS08()[0x6F] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 8:
+            if (e[3] != 0) {
+                break;
+            }
+            if (GS08()[0x1CB] < 2) {
+                break;
+            }
+            goto next;
+        case 9:
+            if (GS08()[3] == 0) {
+                goto next;
+            }
+            if (!((GS08()[0x1CD] >> e[3]) & 1)) {
+                break;
+            }
+            goto next;
+        case 10:
+            if (GS08()[0x72] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 11:
+            if (GS08()[0x1CB] < 2) {
+                goto next;
+            }
+            if (!(GS08()[0x1CF] & 0x40)) {
+                break;
+            }
+            goto next;
+        case 12:
+            switch (e[3]) {
+            case 0:
+                if (GS08()[0x71] != 0xFF) {
+                    break;
+                }
+                goto next;
+            case 1:
+                if (GS08()[0x71] == 0xFF) {
+                    goto spawn;
+                }
+                goto next;
+            }
+            break;
+        case 13:
+            if (GS08()[0x71] != 0xFF) {
+                goto next;
+            }
+            p = func_8012B89C(0, 0);
+            if (p != NULL) {
+                H(p, 0x2E) = 0x3425;
+                H(p, 0x32) = -0x15FE;
+                H(p, 0x36) = 0x1033;
+                H(p, 0x56) = 0x114;
+            }
+            goto next;
+        case 14:
+            switch (e[3]) {
+            case 2:
+                if (GS08()[0x1C8] == 2) {
+                    break;
+                }
+                goto next;
+            case 3:
+                if (GS08()[0x1C8] == 0) {
+                    goto next;
+                }
+                break;
+            }
+            break;
+        case 15:
+            switch (e[3]) {
+            case 0:
+                if (GS08()[0x6E] != 0xFF) {
+                    break;
+                }
+                goto next;
+            case 1:
+                if (GS08()[0x6E] == 0xFF) {
+                    goto spawn;
+                }
+                goto next;
+            }
+            break;
+        case 16:
+            if (!(GS08()[0x1D7] & 0x80)) {
+                goto next;
+            }
+            break;
+        case 17:
+            if (!(GS08()[0x1D9] & 4)) {
+                break;
+            }
+            goto next;
+        case 18:
+            if (GS08()[0x1DE] < 4) {
+                break;
+            }
+            goto next;
+        case 19:
+            if (GS08()[0x1DE] >= 3) {
+                break;
+            }
+            goto next;
+        case 20:
+            if (GS08()[0x1C1] < 10) {
+                break;
+            }
+            goto next;
+        case 22:
+            if (GS08()[0xCD] & 0x80) {
+                goto next;
+            }
+        case 21:
+            if (GS08()[0x3F] == 0) {
+                goto next;
+            }
+            break;
+        case 23:
+            if (GS08()[0x74] == 0) {
+                break;
+            }
+            goto next;
+        case 24:
+            if (GS08()[0x1E4] == 0) {
+                break;
+            }
+            goto next;
+        case 25:
+            if (GS08()[0x73] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 26:
+            if (GS08()[3] == 0) {
+                goto next;
+            }
+            break;
+        }
+    spawn:
+        p = func_80072DDC(a, e[0], e[1], e[2]);
+        if (p != NULL) {
+            *(s32 *)(p + 0x2C) = H(e, 4) << 16;
+            *(s32 *)(p + 0x30) = H(e, 6) << 16;
+            *(s32 *)(p + 0x34) = H(e, 8) << 16;
+            p[3] = e[3];
+            H(p, 0x54) = 0;
+            H(p, 0x56) = 0;
+            H(p, 0x58) = 0;
+            *(s32 *)(p + 0x1C) = *(s32 *)(e + 0xC);
+            if (mode != 0) {
+                *(u8 **)(a + (H(a, 8) << 2) + 0xC) = p;
+                H(a, 8)++;
+            }
+        }
+    next:
+        e += 0x10;
+    } while (e[0] != 0xFF);
+}
 
 extern ClutCycle D_80142EA8[];
 extern s8 D_801485CC[];
