@@ -4246,7 +4246,46 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_RunWinsWindmillCutscene);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleWinConversationState);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8011A804);
+extern u8 D_800BF8CD;
+extern u8 D_80148884[];
+
+void func_8011A804(u8 *a)
+{
+    u8 *g;
+
+    switch (a[5]) {
+    case 0:
+        g = D_800BF808_1760;
+        if (g[0xE] != 0 && g[0xF] == 2) {
+            a[1] = 1;
+            func_80077E7C(a);
+            if (a[0x2B] == 3 && D_1F800207_9c67 == 0x2A) {
+                func_80042354(1, 1);
+                if (D_800BF8CD == 0xFF) {
+                    a[0x7A] = 0x26;
+                } else {
+                    a[0x7A] = 0x25;
+                }
+                func_80040D68(a, D_80148884);
+                a[0x70] = 2;
+                a[6] = 0;
+                a[5]++;
+            }
+        }
+        break;
+    case 1:
+        a[1] = 1;
+        func_80077E7C(a);
+        func_80041098(a);
+        if (a[0x70] == 0xFF) {
+            a[5] = 0;
+        }
+        break;
+    }
+    if (a[1] != 0) {
+        func_8004190C(a);
+    }
+}
 
 extern s32 D_800ECF58_a4fb[];
 extern u8 D_801485F8[];
