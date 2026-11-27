@@ -1143,7 +1143,139 @@ void func_8010CFAC(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010D288);
+extern u16 D_800E7E68;
+extern u16 D_1F800174;
+extern u16 D_1F800166;
+extern u16 D_1F800190;
+extern s16 D_1F8001C6;
+extern u8 D_800BF81E;
+static inline s32 d288_grab(u8 *a) {
+    s32 r;
+
+    if (D_800E7E68 & D_1F800174) {
+        r = func_8010B068(a);
+        if (r != 0) {
+            if (r == 1) {
+                a[0] = 3;
+                a[4] = 4;
+                a[5] = 0x25;
+                a[6] = 0;
+                D_1F800166 = 0;
+                D_1F800190 = 0;
+            }
+            return 1;
+        }
+        return 0;
+    }
+    return 0;
+}
+
+void func_8010D288(u8 *a) {
+    s16 *v;
+    s32 c;
+    s32 sn;
+    s32 x;
+    s32 t;
+    s32 s;
+    u8 *e;
+    PosV w;
+
+    switch (a[6]) {
+    case 0:
+        H16(a, 0x44) = 0;
+        if (a[0x165] != 0) {
+            func_80054D14(a, 0x11, 4);
+        } else {
+            func_80054D14(a, 2, 4);
+        }
+        H16(a, 0x14E) = 0;
+        a[7] = 0;
+        a[6]++;
+    case 1:
+    case 2:
+    case 3:
+        func_8010B2D0(a);
+        func_8010A8D0(a);
+        c = (func_80083F50(H16(a, 0x56)) * H16(a, 0x44)) >> 4;
+        sn = (func_80083E80(H16(a, 0x56)) * H16(a, 0x44)) >> 4;
+        W32(a, 0x2C) += c;
+        W32(a, 0x34) -= sn;
+        v = D_1F8000C0_65b0;
+        v[0] = 0;
+        v[1] = H16(a, 0x62);
+        v[2] = 0;
+        func_801258A4((s32 *)(a + 0x2C), v);
+        if (d288_grab(a) == 0) {
+            if (a[0x147] & 0x80) {
+                if (D_1F800137 == 0) {
+                    s = func_80076D68(a);
+                    if (a[0x165] != 0) {
+                        func_80054D14(a, 0x11, 2);
+                    } else {
+                        if (a[0x46] == 0x11) {
+                            func_80054D14(a, 2, 2);
+                        }
+                        func_8005A39C(a, s);
+                    }
+                } else {
+                    func_80054D14(a, 2, 4);
+                    func_80076D68(a);
+                }
+            } else {
+                a[5] = 1;
+                a[6] = 0;
+                func_80054E80(a, 1);
+                {
+                    u8 *q = a + 0x2C;
+
+                    w.x = *(s16 *)(q + 2);
+                    w.y = *(s16 *)(q + 6) + *(s16 *)(a + 0x84);
+                    w.z = *(s16 *)(q + 0xA);
+                }
+                e = func_8003116C(0x35, &w, -0x5A);
+                if (e != NULL) {
+                    e[0x28] |= 0x80;
+                }
+            }
+        }
+        break;
+    }
+    func_8010B634(a);
+    if (a[0x29] != 0) {
+        if (H16(a, 0x50) > 0x1E00) {
+            func_80074590(3, 0, 0);
+        }
+        H16(a, 0x50) = 0;
+    } else {
+        U16_5dc5(a, 0x50) += 0x800;
+        if (H16(a, 0x50) > 0x3000) {
+            H16(a, 0x50) = 0x3000;
+        }
+        W32(a, 0x30) += H16(a, 0x50) << 8;
+    }
+    if (a[5] < 2 && (H16(a, 0x6A) & 0xF000) == 0x1000 && abs((s16)(-0x8000 - (U16_5dc5(a, 0x56) << 4))) < 0x2001) {
+        a[5] = 5;
+        a[6] = 0;
+        a[7] = 0;
+    }
+    if (a[5] == 0) {
+        if (a[4] != 4) {
+            t = 0x6C;
+            if (H16(a, 0x17E) & 0x8000) {
+                t = 0x82;
+            }
+            x = U16_5dc5(a, 0x2E) - 0x2300;
+            if ((u16)(t + x) <= t * 2 && (u32)(U16_5dc5(a, 0x36) - 0x2937) < 0x9F &&
+                (u16)(U16_5dc5(a, 0x32) + 0xDAC) < 0x141) {
+                D_1F8001C6 = 1;
+                a[5] = 6;
+                a[6] = 0;
+                a[7] = 0;
+            }
+        }
+        D_800BF81E = 1;
+    }
+}
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010D6B4);
 
@@ -1337,8 +1469,6 @@ void func_8010EBA8(u8 *a)
 }
 
 extern u16 D_1F800170;
-extern u16 D_1F800166;
-extern u16 D_1F800190;
 /* func_8010F948, inlined */
 static inline void inl_8010F948(u8 *a)
 {
@@ -1640,7 +1770,6 @@ void func_8010F01C(u8 *a) {
     }
 }
 
-extern u16 D_800E7E68;
 extern u8 D_800BF80F;
 void func_8010F63C(u8 *a) {
     u16 held;
@@ -1691,7 +1820,6 @@ void func_8010F63C(u8 *a) {
     }
 }
 
-extern s16 D_1F8001C6;
 s32 func_8010F798(u8 *a) {
     s32 r;
     s32 d;
