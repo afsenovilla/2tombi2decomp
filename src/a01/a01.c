@@ -12431,7 +12431,118 @@ void func_801321C4(RECT16 *a) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80132358);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80132690);
+extern void func_80083DE0(void *, s32, s32, s32, s32);
+#define K_lddp(r0) __asm__ volatile("mtc2 %0, $8" : : "r"(r0))
+#define K_ldrgb(r0) __asm__ volatile("lw $24, %0;" "nop;" "mtc2 $24, $6" : : "m"(*(r0)) : "$24")
+#define K_dpcs() __asm__ volatile("nop;" "nop;" ".word 0x4A780010")
+#define K_strgb2(r0) __asm__ volatile("swc2 $22, 0( %0 )" : : "r"(r0) : "memory")
+static inline void K_depth2(s32 z, u32 *c)
+{
+    K_lddp(z >> 2);
+    K_ldrgb(c);
+    K_dpcs();
+    K_strgb2(c);
+}
+
+u32 *func_80132690(u32 *f, u32 *ot, s32 n)
+{
+    s32 sz[3];
+    s32 *otz = (s32 *)0x1F800004;
+    T2PolyGT3 *p = D_800BF544_ff0c;
+    u32 m = 0xFFF0F0F0;
+    s32 *flg = (s32 *)0x1F800000;
+    u32 c;
+    u32 mode;
+    s32 a, b, e;
+    u32 *o;
+
+    while (n-- != 0) {
+        T2_ldv3t(f);
+        p->rgb0 = f[0];
+        T2_rtpt();
+        p->uv0 = f[2];
+        p->uv1 = f[3];
+        c = f[1];
+        T2_stflg(flg);
+        if (*flg >= 0) {
+            T2_nclip();
+            p->rgb1 = c & m;
+            T2_stopz(flg);
+            if (*flg > 0) {
+                do {
+                    T2_stsxy3_gt3(p);
+                } while (0);
+                if ((p->x0 < 320 || p->x1 < 320 || p->x2 < 320) && (p->y0 < 240 || p->y1 < 240 || p->y2 < 240)) {
+                    p->rgb2 = (c << 4) & m;
+                    T2_stsz1(&sz[0]);
+                    T2_stsz2(&sz[1]);
+                    T2_stsz3(&sz[2]);
+                    mode = c >> 24;
+                    switch (mode) {
+                    case 1:
+                        a = sz[0];
+                        b = sz[1];
+                        if (b < a) {
+                            e = sz[2];
+                            if (e < a) {
+                                e = a;
+                            }
+                            *otz = e >> 2;
+                        } else {
+                            e = sz[2];
+                            if (e < b) {
+                                e = b;
+                            }
+                            *otz = e >> 2;
+                        }
+                        break;
+                    case 2:
+                        a = sz[0];
+                        b = sz[1];
+                        if (a < b) {
+                            e = sz[2];
+                            if (a < e) {
+                                e = a;
+                            }
+                            *otz = e >> 2;
+                        } else {
+                            e = sz[2];
+                            if (b < e) {
+                                e = b;
+                            }
+                            *otz = e >> 2;
+                        }
+                        break;
+                    default:
+                        T2_avsz3();
+                        T2_stotz(otz);
+                        break;
+                    }
+                    e = *otz >> 10;
+                    *otz = (*otz >> e) + (e << 9);
+                    if ((u32)(*otz - 4) >= 0x7FC) {
+                        *otz = -1;
+                    }
+                    if (*otz >= 0) {
+                        K_depth2(sz[0], &p->rgb0);
+                        K_depth2(sz[1], &p->rgb1);
+                        K_depth2(sz[2], &p->rgb2);
+                        p->uv2 = ((u16 *)f)[0x11];
+                        do {
+                            o = ot + *otz;
+                            p->tag = *o | 0x09000000;
+                            *o = (u32)p;
+                        } while (0);
+                        p++;
+                    }
+                }
+            }
+        }
+        f += 9;
+    }
+    D_800BF544_ff0c = p;
+    return f;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801329C4);
 
