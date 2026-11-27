@@ -18421,7 +18421,98 @@ void f_UpdateTombaClingVerticalMotion(u8 *a, u8 *b, s32 f)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80062D8C);
+void func_80062D8C(u8 *a, s32 k)
+{
+    s32 v;
+    s16 sp;
+    s16 h;
+    s32 r;
+    s32 i;
+    u16 x;
+    u16 y;
+
+    if ((k & 0x80) && (a[0x17D] & 2)) {
+        H_f12c(a, 0x50) += 4;
+        if (H_f12c(a, 0x50) >= 0x1E) {
+            H_f12c(a, 0x50) = 0x1E;
+        }
+        v = -U(a, 0x50) << 8;
+    } else {
+        k &= 3;
+        i = k;
+        if (a[0x165] != 0) {
+            i = k + 3;
+        }
+        v = -(s16)(D_800A4700[i] << 8);
+    }
+    sp = v;
+    W_d1fb(a, 0x2C) += H_f12c(a, 0x48) * sp;
+    W_d1fb(a, 0x34) += H_f12c(a, 0x4C) * sp;
+    W_d1fb(a, 0x30) += H_f12c(a, 0x4A) * sp;
+    h = 0x25;
+    H_f12c(a, 0x2E) += (rcos(H_f12c(a, 0x56)) * 8) >> 12;
+    H_f12c(a, 0x36) -= (rsin(H_f12c(a, 0x56)) * 8) >> 12;
+    if (H_f12c(a, 0x17E) >= 0) {
+        h = 0x4A;
+    }
+    if (k == 0) {
+        f_ResolveTombaOverheadTerrainContact(a, 1);
+    }
+    a[0x17D] = 0;
+    r = func_80046A44(a, h, (s16)-U(a, 0x68), h);
+    if (r != 0) {
+        a[0x17D] = (*(u16 *)D_1F8001A6 >> 11) & 3;
+        func_80048654(a);
+        x = *(u16 *)D_1F8001A0;
+        y = D_1F8001A2 + 0x400;
+        H_f12c(a, 0x140) = x;
+        H_f12c(a, 0x142) = y;
+        f_ApplyTombaFacingYaw(a);
+        H_f12c(a, 0x58) = H_f12c(a, 0x142);
+    }
+    switch (r) {
+    case 0:
+        a[0x164] = 0;
+        W_d1fb(a, 0x158) = 0;
+        H_f12c(a, 0x50) = 0;
+        f_DetachTombaFromSupport(a, 0);
+        return;
+    case 2:
+    case 3:
+        if ((s16)v > 0) {
+            if (a[0x46] != 0x18) {
+                f_PlaySoundEffect(4, 0, 0);
+                f_SetTombaAnimationIfChanged(a, 0x18, 0);
+            }
+            a[6] = 2;
+            return;
+        }
+        break;
+    case 1:
+        if (sp < 0) {
+            if (k & 1) {
+                if (a[0x17D] & 1) {
+                    f_SetTombaAnimationIfChanged(a, 0x42, 0);
+                } else {
+                    f_SetTombaAnimationIfChanged(a, 0x43, 0);
+                }
+            }
+        } else if (sp != 0) {
+            return;
+        }
+        break;
+    default:
+        return;
+    }
+    if (f_ResolveTombaGroundTerrainContact(a) & 1) {
+        H_f12c(a, 0x50) = 0;
+        a[0x164] = 0;
+        W_d1fb(a, 0x158) = 0;
+        a[5] = 0;
+        a[6] = 0;
+        f_SetTombaAnimationIfChanged(a, 2, 3);
+    }
+}
 
 typedef struct { u8 pad[0x147]; u8 b147; u8 pad148[0x14]; u8 b15C; } A3098;
 void func_80063098(u8 *a)
