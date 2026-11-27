@@ -2626,7 +2626,56 @@ void func_80115438(void)
     g[0x16B] = 0;
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801154D4);
+typedef struct { s16 xl, x, yl, y, zl, z; } Pos54D4;
+typedef struct { s16 x, y, z; } Ent54D4;
+extern u8 D_800BF808_54d4[];
+extern u8 D_800BF817_54d4;
+extern u8 D_800E7EAC_54d4[];
+extern u8 D_800E8008_54d4[];
+extern Ent54D4 D_801422BC[];
+extern s16 D_1F8000D0_54d4[];
+
+s32 func_801154D4(u8 *a, u8 *b)
+{
+    Pos54D4 pos;
+    u8 *g = D_800BF808_54d4;
+
+    switch (g[0xF]) {
+    case 8:
+        H(b, 0x2E) = 0x2380;
+        if (H(b, 0x36) < 0x34B8) {
+            H(b, 0x36) = 0x34B8;
+        }
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 5:
+    case 6:
+    case 10:
+        func_8006E3F4(a, D_800E7EAC_54d4);
+        {
+            Ent54D4 *v = &D_801422BC[D_800BF817_54d4];
+
+            pos.x = v->x;
+            pos.y = v->y;
+            pos.z = v->z;
+        }
+        func_8006CEC4(D_1F8000D0_54d4, &pos, 0);
+        a[0x66] = 3;
+        return 1;
+    case 4:
+    case 7:
+    case 9:
+    default:
+        {
+            u8 *t = D_800E8008_54d4;
+
+            t[0x64] &= 0x7F;
+        }
+        return 0;
+    }
+}
 
 void func_801155C4(u8 *p, u8 *a1)
 {
