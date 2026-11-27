@@ -833,7 +833,8 @@ struct-member form of a cast access, regswap `member` toggles every one)
   own names of MAIN functions; `p->fn()` with an empty argument list gets the caller's arguments; block-scope
   prototypes are not calls; a dropped static helper drops its callers; GTE inline asm is translated
   (`translate_asm`). Keep `game/usa.img`: the port reads XA audio from it (the extracted XA files have no
-  subheaders).
+  subheaders). Windows: WSL2 runs the Linux build (`bash port/play.sh`); the native exe (T1's Win32 runtime,
+  `port/cmake/mingw-i686.cmake`) builds but is untested (Wine aborts in the cloud container).
 - Byte-matching only; tools/nonmatching.py is kept unused.
 - USA is the reference; EU in config/eu/.
 - The licensed-region module at the end of boot.c [0x80011A0C, 0x80012D2C) is library-style files in

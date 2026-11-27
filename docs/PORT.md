@@ -144,8 +144,12 @@ exception handler instead of SIGSEGV, the PS1 RAM as a section mapped at 0x80000
 `runtime/sys_lookup.c`, shared by both hosts; `gen_t2.py link` skips the stdcall-decorated Win32 imports. T2 maps
 the KUSEG mirror by default on Windows too (relaunching itself with the range reserved when Windows has blocks
 there, T1's trick): the native code draws through masked KUSEG pointers so much that `--no-kuseg` (every access
-emulated in the fault handler) runs about ten times slower (Linux, 6600 frames). That is the open risk T1 hit on
-real Windows 10 (blocks of the range in use by the host).
+emulated in the fault handler) runs about ten times slower (Linux, the A00 script to frame 9700: 49.6 million emulated accesses). The sites are the
+primitive builders (`func_8005019C`, `func_8004FFB4`, `func_8007FDB0`, `func_8007FCC8`, SOP's `func_80109C80` /
+`func_801099B4` / `func_8010C26C`, A00's `f_DrawTownCreatureGt4Batch` / `Gt3Batch` / `func_80115598`, the
+`SetDrawMode` / `LoadImage` shims): T1's generator rewrite of the masked-pointer idioms (`& 0xFFFFFF` ->
+`| 0x80000000`, its `port_kuseg_mask`) would remove them. That is the open risk T1 hit on real Windows 10
+(blocks of the range in use by the host).
 
 ```
 sudo apt-get install -y gcc-mingw-w64-i686
