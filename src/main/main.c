@@ -17668,7 +17668,61 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8006042C);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80060544);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80060A80);
+extern s32 D_1F80020C_a80;
+extern u16 D_1F800200_a80;
+extern u16 D_1F800202_a80;
+extern u16 D_1F800204_a80;
+extern s16 D_1F800178_a80;
+extern u8 D_1F800237_a80;
+
+void func_80060A80(u8 *t, s32 mode)
+{
+    s16 ang;
+    s32 r;
+    s16 x;
+    s16 y;
+    s16 z;
+    s16 yaw;
+    u16 dx;
+    u16 dy;
+    u16 dz;
+    u8 *o;
+
+    ang = U(t, 0x4E) - 0x400;
+    r = (rcos(ang) * D_1F80020C_a80) >> 12;
+    y = (rsin(ang) * D_1F80020C_a80) >> 12;
+    if (mode < 2) {
+        if (D_1F800237_a80 == 0) {
+            yaw = U(t, 0x140);
+        } else {
+            yaw = U(t, 0x140) + 0x800;
+        }
+        x = (rcos(yaw) * r) >> 12;
+        z = -(rsin(yaw) * r) >> 12;
+    } else {
+        x = (rcos(D_1F800178_a80) * r) >> 12;
+        z = -(rsin(D_1F800178_a80) * r) >> 12;
+    }
+    if (!(mode & 1)) {
+        o = *(u8 **)(t + 0xDC);
+        dx = U(t, 0x2E) - U(o, 0x2C);
+        dy = U(t, 0x32) - U(o, 0x30);
+        dz = U(t, 0x36) - U(o, 0x34);
+    } else {
+        dx = U(t, 0x2E) - U(t, 0x14C);
+        dy = U(t, 0x32) - U(t, 0x14E);
+        dz = U(t, 0x36) - U(t, 0x150);
+    }
+    MEMBER_AT(u16, t, 0x2E) = dx + (D_1F800200_a80 - x);
+    MEMBER_AT(u16, t, 0x32) = dy + (D_1F800202_a80 - y);
+    MEMBER_AT(u16, t, 0x36) = dz + (D_1F800204_a80 - z);
+    if (mode < 2) {
+        f_UpdateTombaMovementOrientation(t);
+        f_ResolveTombaOverheadTerrainContact(t, 1);
+        f_UpdateTombaForwardTerrainContact(t, 0);
+        f_ResolveTombaGroundTerrainContact(t);
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80060C60);
 
