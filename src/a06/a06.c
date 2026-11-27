@@ -4771,7 +4771,75 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011BC18);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011BF84);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011C614);
+#define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
+
+void func_8011C614(AreaPartsOwner *a)
+{
+    u8 v;
+    u8 f;
+    u8 *p;
+
+    switch (a->pad[6]) {
+    case 0:
+        f = a->pad[0x47];
+        if (f & 0x40) {
+            H_f12c(a->parts[1], 0x12) = 0x20;
+            H_f12c(a, 0x40) = 0x20;
+        } else if (f & 0x80) {
+            H_f12c(a->parts[1], 0x12) = 0x60;
+            H_f12c(a, 0x40) = 0x60;
+        } else {
+            H_f12c(a->parts[1], 0x12) = 0x40;
+            H_f12c(a, 0x40) = 0x40;
+        }
+        if (func_80077768(a->pad[0x46] << 4, H_f12c(a->parts[H_f12c(a, 0x6C)], 0xA), 0) != 0) {
+            H_f12c(a->parts[1], 0x12) = -H_f12c(a->parts[1], 0x12);
+        }
+        a->pad[0x5E] = 4;
+        a->pad[6]++;
+        break;
+    case 1:
+        H_f12c(a->parts[1], 0xA) += U(a->parts[1], 0x12);
+        {
+        u8 *p = a->parts[1];
+        if (H_f12c(p, 0xA) > H_f12c(a, 0x70) + H_f12c(a, 0x40) || H_f12c(p, 0xA) < H_f12c(a, 0x70) - H_f12c(a, 0x40)) {
+            if (H_f12c(p, 0x12) > 0) {
+                H_f12c(p, 0xA) = U(a, 0x70) + U(a, 0x40);
+            } else {
+                H_f12c(p, 0xA) = U(a, 0x70) - U(a, 0x40);
+            }
+            H_f12c(a->parts[1], 0x12) = -H_f12c(a->parts[1], 0x12);
+            H_f12c(a, 0x40) -= 0x10;
+            if (H_f12c(a, 0x40) <= 0) {
+                H_f12c(a, 0x40) = 10;
+                a->pad[0x5E] = 0;
+                a->pad[6]++;
+            }
+        }
+        }
+        break;
+    case 2:
+        p = a->parts[1];
+        if (H_f12c(a, 0x70) < H_f12c(p, 0xA)) {
+            H_f12c(p, 0xA) = U(p, 0xA) - 8;
+        } else {
+            H_f12c(p, 0xA) = U(p, 0xA) + 8;
+        }
+        if (--H_f12c(a, 0x40) == 0) {
+            H_f12c(a->parts[1], 0xA) = U(a, 0x70);
+            a->pad[5] = 0;
+            a->pad[6] = 0;
+            H_f12c(a, 0x48) = 0;
+            H_f12c(a, 0x4E) = 0;
+        }
+        break;
+    }
+    if (func_8011C974(a) != 0) {
+        H_f12c(a->parts[1], 0xA) = U(a, 0x70);
+    }
+}
 
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
