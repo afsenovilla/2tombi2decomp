@@ -10281,7 +10281,229 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_ResolveActorOnNetBridge);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80134FD8);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateRopeSwingInteraction);
+extern s16 D_8014A7B8[][4];
+static inline void RopeSync(u8 *a)
+{
+    u8 *p = P(a, 0x10);
+
+    H_f12c(a, 0x32) = U(a, 0x60) + ((func_80083E80(H_f12c(a, 0x48)) * H_f12c(a, 0x4A)) >> 12);
+    H_f12c(p, 0x4E) = U(a, 0x2E);
+    H_f12c(p, 0x50) = U(a, 0x32) + 0x3C;
+    H_f12c(p, 0x52) = U(a, 0x36);
+}
+static inline void RopeBob(u8 *a)
+{
+    switch (a[3]) {
+    case 0:
+    case 1:
+    case 2:
+        if (H_f12c(a, 0x4A) > 0) {
+            U(a, 0x48) += 0x88;
+            H_f12c(a, 0x4A)--;
+            if (H_f12c(a, 0x4A) <= 0) {
+                H_f12c(P(a, 0x10), 0x40) = 0;
+                H_f12c(a, 0x4A) = 0;
+            }
+        } else {
+            H_f12c(a, 0x4A) = 0;
+        }
+        RopeSync(a);
+        break;
+    }
+}
+static inline void RopeSetAngles(u8 *a, s16 x)
+{
+    s32 y = -(x * 3) >> 1;
+
+    switch (a[3]) {
+    case 0:
+    case 1:
+        H_f12c(PT(a, 0), 0xC) = x;
+        H_f12c(PT(a, 1), 0xC) = x;
+        H_f12c(PT(a, 2), 0xC) = y;
+        H_f12c(PT(a, 3), 0xC) = y;
+        break;
+    }
+}
+static inline void RopeFollow(u8 *a, u8 *g)
+{
+    switch (a[3]) {
+    case 0:
+    case 1:
+        if (g[0x147] != 0) {
+            RopeSetAngles(a, -U(g, 0x58));
+        } else {
+            RopeSetAngles(a, U(g, 0x58));
+        }
+        break;
+    }
+}
+
+void f_UpdateRopeSwingInteraction(u8 *a)
+{
+    u8 *g = D_800E7E80;
+    s16 *lim;
+    s16 ang;
+    s16 d;
+
+    switch (a[6]) {
+    case 0:
+        if (a[0x29] != 0) {
+            goto grab;
+        }
+        if (H_f12c(a, 0x4A) == 0) {
+            a[6] = 1;
+        }
+        RopeBob(a);
+        break;
+    case 1:
+        if (a[0x29] != 0) {
+            goto grab;
+        }
+        if (a[0x2B] != 0) {
+            a[0x2B] = 0;
+        } else {
+            U(a, 0x48) += 0x33;
+            H_f12c(a, 0x4A) = (u32)func_80083F50(H_f12c(a, 0x42)) >> 7;
+            H_f12c(a, 0x42) = U(a, 0x42) + 0x22 + (func_8009A450() >> 9);
+        }
+        RopeSync(a);
+        break;
+    case 2:
+    grab:
+        H_f12c(P(a, 0x10), 0x40) = 1;
+        H_f12c(a, 0x48) = 0x200;
+        H_f12c(a, 0x4A) = 0x32;
+        func_80074590(0x92, 4, 0);
+        H_f12c(a, 0x42) = 0;
+        a[6] = 3;
+    case 3:
+        RopeBob(a);
+        if (a[0x29] == 0) {
+            a[6] = 7;
+            break;
+        }
+        U(a, 0x44) = U(g, 0x44);
+        RopeFollow(a, g);
+        if (g[0x168] >= 3) {
+            a[6] = 4;
+        }
+        break;
+    case 4:
+        H_f12c(P(a, 0x10), 0x40) = 2;
+        H_f12c(a, 0x62) = U(g, 0x58);
+        a[6] = 5;
+    case 5:
+        H_f12c(a, 0x62) = U(g, 0x58);
+        if (a[0x29] == 0) {
+            a[6] = 7;
+            break;
+        }
+        U(a, 0x44) = U(g, 0x44);
+        lim = D_8014A7B8[a[3]];
+        if ((g[0x147] != 0 && a[3] == 1) || (g[0x147] == 0 && a[3] == 0)) {
+            H_f12c(a, 0x2E) = U(a, 0x2E) + ((func_80083F50(H_f12c(a, 0x56)) * (g[0x168] - 2) * 6) >> 12);
+            H_f12c(a, 0x36) = U(a, 0x36) + ((func_80083E80(H_f12c(a, 0x56)) * (g[0x168] - 2) * 6) >> 12);
+            H_f12c(a, 0x48) = U(g, 0x58);
+        } else {
+            H_f12c(a, 0x2E) = U(a, 0x2E) - ((func_80083F50(H_f12c(a, 0x56)) * (g[0x168] - 2) * 6) >> 12);
+            H_f12c(a, 0x36) = U(a, 0x36) - ((func_80083E80(H_f12c(a, 0x56)) * (g[0x168] - 2) * 6) >> 12);
+            H_f12c(a, 0x48) = -U(g, 0x58);
+        }
+        {
+            s16 x = H_f12c(a, 0x2E);
+            u16 v = lim[0];
+
+            if (x < (s16)v) {
+                H_f12c(a, 0x2E) = v;
+            } else {
+                v = lim[1];
+                if ((s16)v < x) {
+                    H_f12c(a, 0x2E) = v;
+                }
+            }
+        }
+        {
+            s16 x = H_f12c(a, 0x36);
+            u16 v = lim[2];
+
+            if (x < (s16)v) {
+                H_f12c(a, 0x36) = v;
+            } else {
+                u16 w = lim[3];
+
+                if ((s16)w < x) {
+                    H_f12c(a, 0x36) = w;
+                }
+            }
+        }
+        if (g[0x168] < 3) {
+            H_f12c(P(a, 0x10), 0x40) = 1;
+            a[6] = 3;
+        }
+        RopeFollow(a, g);
+        H_f12c(a, 0x4A) = 0x32;
+        RopeSync(a);
+        H_f12c(a, 0x42)--;
+        if (H_f12c(a, 0x42) < 0) {
+            H_f12c(a, 0x42) = 0xA;
+            func_80074590(0x97, 0, 0);
+        }
+        break;
+    case 7:
+        a[6] = 8;
+        if (g[0x147] != 0) {
+            H_f12c(a, 0x44) = -U(a, 0x44);
+        }
+    case 8:
+        RopeBob(a);
+        if (a[0x29] != 0) {
+            a[6] = 2;
+            break;
+        }
+        ang = U(PT(a, 0), 0xC);
+        d = H_f12c(a, 0x44);
+        ang &= 0xFFF;
+        if (d > 0) {
+            d -= 10;
+            if (d < 0) {
+                d = 0;
+            }
+        } else {
+            d += 10;
+            if (d > 0) {
+                d = 0;
+            }
+        }
+        if (ang > 0x800) {
+            ang += d;
+            if (ang < 0x1000) {
+                if (d < 0x96) {
+                    d += 0x1E;
+                }
+            } else {
+                goto wrap;
+            }
+        } else {
+            ang += d;
+            if (ang <= 0) {
+            wrap:
+                if (abs(d) < 0x8C) {
+                    ang = 0;
+                    d = 0;
+                    a[6] = 0;
+                }
+            } else {
+                if (d >= -0x95) {
+                    d -= 0x1E;
+                }
+            }
+        }
+        H_f12c(a, 0x44) = d;
+        RopeSetAngles(a, ang);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80135D64);
 
