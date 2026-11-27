@@ -3,6 +3,42 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-28 (3): reference emulator
+
+Tombi-Decomp's `tools/psxemu` (MIT, same author) adapted to Tomba! 2 USA as the native port's reference (docs/EMU.md):
+retail MIPS for all game code and the pure Psy-Q libraries, HLE at the port's shim boundary with the port's
+semantics (the virtual disc, VSync / spin vblanks, pad script, threads, events), the port's dump layout.
+
+- `python3 -I tools/emu_run.py --frames N --dump-frames DIR [--dump-every K] [--dump-vram] [--ram-at F,...]
+  [--dump-packets all|F,...] [--pad-script ...] [--save-state F] [--load-state F] [--port-math ratan2,SquareRoot0]`;
+  `python3 -I tools/emu_compare.py --route title|attract|a00 [--ram-at ...] [--packets-at ...]` (port vs emulator
+  per frame: pixels with diff images, VRAM regions, first differing GP0 packet, named RAM ranges, BIN/ loads);
+  `tools/emu_portdump.py` (gdb script: RAM + packets from the unchanged port binary); `python3 -I
+  tools/emu_shimcheck.py` (the port's libgte / math shims against retail on random inputs); `tools/test_psxemu.py`.
+  RAM dump layout defined for both: 2 MB RAM from 0x80000000 + 1 KB scratchpad (0x200400 bytes).
+- Boots: title (frame ~175), attract demos (A00 at 1065, A01 at 3956), New Game, story text, A00 load (1473), OPN
+  (1621), the opening (checked to frame ~3400; a thread that closed itself was resurrected by ChangeTh and the run
+  stopped "out of threads": fixed, the full a00 route not yet re-run). Loads at the same frames as the port.
+- Speed: CPython ~5 M instructions/s: title 30-40 frames/s, gameplay 5-8 (attract route ~15 min, a00 ~30).
+  pypy3 7.3.15 + numpy: 10x slower (exec'd blocks): not used.
+- T1's GPU drew the bottom row of every polygon: changed to the top-left fill rule (the title then matched the port
+  pixel for pixel).
+- **Port differences found** (frame, what, cause; details docs/EMU.md):
+  1. attract demo 1, frame 1216 (visible from 1219): f_RebuildCameraViewTransform's `ratan2` gives 117 in the port,
+     118 in retail (0x1F8000F0): the port's ratan2 shim (port/shims/psyq.c, a binary search on its sine table) is
+     off by one for ~44 % of inputs. Then every actor and the picture differ (frame 1300: Tomba and the HUD
+     elsewhere).
+  2. SquareRoot0 shim: exact isqrt; retail is Sony's table approximation (99 for 10000): ~98 % of inputs differ.
+  3. RotMatrix shim: 296 / 300 random angles off by 1-2 in some elements; with 1 and 2 replaced in the emulator,
+     the A00 story-text scene (frame 800, 44 % of the pixels) still differs in vertex positions only (game state
+     equal): RotMatrix.
+  4. RotTransPers: 1 / 300 random cases a screen y off by one (GTE divide in port/runtime/gte.c or gpu.py's).
+  Equal: rsin, rcos, RotMatrixX/Y/Z, MulMatrix0, ApplyMatrix, ApplyMatrixSV; the title's frames, VRAM and packets.
+  Fix for the port (its agent's call): take the retail ratan2 / RotMatrix (matched C in src/main/psyq/libgte) and
+  SquareRoot0 (asm: interpreted) instead of the shims, then re-run `emu_compare.py --route attract` / `a00`.
+- Not emulated: sound output (SpuGetAllKeysStatus reports all voices off), MDEC, card contents, SCUS_944.54.
+- Next: re-run the a00 route after the thread fix; the next difference after the port takes the retail math.
+
 ## 2026-11-28: port stage 3 (Windows)
 
 The user's machine has Windows only: the goal was a zip to unzip and play with their own disc image (no toolchain,

@@ -232,4 +232,14 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   `WINEPREFIX=<scratch>/wp WINEARCH=win32 WINEDEBUG=-all wine build/port-win/tomba2.exe ...`; frame dumps must equal
   Linux's. Native code must never dereference KUSEG: `build/port/tomba2 --no-kuseg` tallies any site (0 expected);
   fixes go in gen_t2.py (`kuseg_link_stores`, `kuseg_field38`) or mips_interp.c `kcell`.
+- Reference emulator (docs/EMU.md; Tombi-Decomp's tools/psxemu adapted, HLE at the port's shim boundary with the
+  port's timing and virtual disc): `python3 -I tools/emu_run.py --frames N --dump-frames DIR [--dump-every K]
+  [--dump-vram] [--ram-at F,...] [--dump-packets all|F,...] [--pad-script ...] [--save-state F | --load-state F]
+  [--port-math ratan2,SquareRoot0]` (the port's dump names; RAM dumps = 2 MB RAM + 1 KB scratchpad);
+  `python3 -I tools/emu_compare.py --route title|attract|a00 [--ram-at F,...] [--packets-at F,...]` (port vs
+  emulator per frame: pixels + diff images, VRAM, first differing GP0 packet, named RAM ranges, BIN/ loads;
+  build/emu_compare/<route>/report.txt; RAM / packets from the unchanged port through gdb, tools/emu_portdump.py);
+  `python3 -I tools/emu_shimcheck.py` (the port's libgte shims vs retail on random inputs). CPython ~5 M
+  instructions/s (gameplay 5-8 frames/s; pypy is 10x slower). Found 2026-11-28: the port's ratan2, SquareRoot0 and
+  RotMatrix shims differ from retail (attract frame 1216 onwards).
 - `python3 -I tools/gen_configs.py game/usa [--force] [--out config/eu]`: regenerates the first configs (keeps hand-made ones without --force).

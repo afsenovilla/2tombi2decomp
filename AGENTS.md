@@ -857,3 +857,14 @@ struct-member form of a cast access, regswap `member` toggles every one)
   (2026-11-24) added globals and NPC field meanings (docs/TOMBA2EDIT.md, `T2E` comments in include/actor.h), no
   function names and nothing that matches. Re-check new releases for `decomp/` changes; `import_names.py` takes
   only function starts.
+- Reference emulator (2026-11-28, docs/EMU.md): `tools/psxemu` is Tombi-Decomp's Python PlayStation adapted to T2
+  with the HLE at the native port's shim boundary and the port's semantics (VSync / spin vblanks, the virtual disc
+  with its LBAs from 1000, the pad script), so a port vs emulator difference is the port's native code or a shim's
+  implementation, never timing. Pure libraries (libc, libgte, libgpu helpers) run as retail MIPS even where the port
+  has a shim. Use `tools/emu_compare.py` for any port graphics bug: take the first differing frame, then RAM every
+  frame before it from a `--save-state` (both sides: `--ram-at`), the first differing byte, then a store hook in the
+  emulator (`cpu.set_store_hook`) and a gdb hardware watchpoint in the port (`port_frame`, `$pc`,
+  `port_mips_cur_pc`): the writing pc names the function, its inputs the shim. Math shims can be checked alone with
+  `tools/emu_shimcheck.py`. Pitfalls: T1's gpu.py drew polygons' bottom rows (now the top-left rule); a thread that
+  CloseTh's itself and then ChangeTh's must not be saved back (it filled the 16 slots); pypy is slower than CPython
+  here (exec'd blocks); the emulator's stops are resumable (a stop inside VSync resumes at its return address).
