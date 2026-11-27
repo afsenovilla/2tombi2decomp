@@ -13,6 +13,9 @@ The user wants a playable PC MVP (title + A00). docs/PORT.md §0 has the command
 - New debugging switches: `--interp-range LO-HI|all` (bisection against the retail code), `--watch-pc ADDR`.
 - `--window`: T1's SDL2 viewer process (`port/tools/view/tomba2_view.c` -> `build/port/tomba2-view`), 60 Hz.
 - Free play in A00 checked headless (walking, jumping on a barrel, the "look inside" hint).
+- All overlay C is native (`<ovl>_` names, dispatch on the resident overlay + its first code words): 4308 native
+  functions; frame dumps identical to the interpreted overlays (A00 play script, 20000 attract frames). Function
+  names used as values are their retail addresses (actor update pointers compared with data-set ones).
 - Installed in the container: `libsdl2-dev` (apt, 64-bit: the viewer is a host-native process).
 
 ## 2026-11-27 (4): port stage 1 (milestone P0: title screen, attract demos, New Game into A00)

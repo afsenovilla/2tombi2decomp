@@ -61,6 +61,10 @@ int port_main(int argc, char **argv) {
         else if (streq(argv[i], "--realtime")) port_realtime = 1;
         else if (streq(argv[i], "--hz") && i + 1 < argc) port_hz = atoi_(argv[++i]);
         else if (streq(argv[i], "--trace-cd")) port_trace_cd = 1;
+        else if (streq(argv[i], "--ovl-interp") && i + 1 < argc) {
+            extern const char *port_ovl_interp[8];
+            for (int k = 0; k < 8; k++) if (!port_ovl_interp[k]) { port_ovl_interp[k] = argv[++i]; break; }
+        }
         else if (streq(argv[i], "--no-ovl-native")) { extern int port_ovl_native; port_ovl_native = 0; }
         else if (streq(argv[i], "--window")) { extern int port_window; port_window = 1; }
         else if (streq(argv[i], "--headless")) { extern int port_window; port_window = 0; }

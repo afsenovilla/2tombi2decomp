@@ -14,7 +14,7 @@ set(GEN ${CMAKE_CURRENT_BINARY_DIR}/gen)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 # 1. preprocess + split the game sources into ${GEN}/src (re-run on every configure)
-set(PORT_PROGS main CACHE STRING "programs whose C is compiled into the port")
+set(PORT_PROGS "main;opn;game;demo;sop;crd;a00;a01;a02;a03;a04;a05;a06;a07;a08;a09;a0a;a0b;a0c;a0d;a0e;a0f;a0g;a0h;a0i;a0j;a0k;a0l" CACHE STRING "programs whose C is compiled into the port (overlays: per-overlay names, dispatch on the resident one)")
 execute_process(COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_t2.py sources ${GEN} ${PORT_PROGS}
                 RESULT_VARIABLE gen_rc)
 if(gen_rc)
@@ -23,6 +23,10 @@ endif()
 include(${GEN}/sources.cmake)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
              ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen_t2.py ${ROOT}/src/main/main.c ${ROOT}/build/main.elf)
+foreach(p ${PORT_PROGS})
+  file(GLOB _c ${ROOT}/src/${p}/*.c)
+  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${_c} ${ROOT}/build/${p}.elf)
+endforeach()
 
 # 2. target: i386, freestanding (the game's structures hold 32-bit pointers; the game's libc names must not meet a
 #    host libc)

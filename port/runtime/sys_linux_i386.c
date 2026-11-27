@@ -146,6 +146,15 @@ u32p port_force_interp[8];      /* --interp ADDR: run that function in the MIPS 
 u32p port_interp_lo, port_interp_hi;   /* --interp-range LO-HI: every game function in [LO, HI) interpreted (bisection) */
 int port_ovl_native = 1;               /* --no-ovl-native: overlay code always in the interpreter (stage-1 behaviour) */
 static int ovl_resident[8];            /* per load address (index of port_ovls), the overlay file read there last */
+const char *port_ovl_interp[8];        /* --ovl-interp NAME: that overlay's code stays in the interpreter (bisection) */
+static int ovl_disabled(int i) {
+    for (int k = 0; k < 8 && port_ovl_interp[k]; k++) {
+        const char *a = port_ovl_interp[k], *b = port_ovls[i].name;
+        while (*a && *a == *b) { a++; b++; }
+        if (!*a && !*b) return 1;
+    }
+    return 0;
+}
 static int ovl_slot(u32p vram) {
     static u32p slots[8]; static int n;
     for (int i = 0; i < n; i++) if (slots[i] == vram) return i;
@@ -161,18 +170,17 @@ void port_ovl_loaded(const char *file) {
 }
 static const PortFunc *find_ovl(u32p a) {
     /* the entries for this address (one per overlay with C for it): the resident overlay's, if its code is in RAM;
-       else any whose code is in RAM (two overlays with the same bytes there); else none: the interpreter */
+       else none: the interpreter.  (Never another overlay's whose first words match: a common prologue made A01's
+       native code run for an asm-only A03 function at the same address.) */
     int lo = 0, hi = port_funcmap_count;
     while (lo < hi) { int m = (lo + hi) / 2; if (port_funcmap[m].addr < a) lo = m + 1; else hi = m; }
     const u32p *ram = (const u32p *)a;
-    const PortFunc *any = 0;
     for (int i = lo; i < port_funcmap_count && port_funcmap[i].addr == a; i++) {
         const PortFunc *f = &port_funcmap[i];
         if (!f->ovl || ram[0] != f->w0 || ram[1] != f->w1) continue;
-        if (ovl_resident[ovl_slot(port_ovls[f->ovl].vram)] == f->ovl) return f;
-        if (!any) any = f;
+        if (ovl_resident[ovl_slot(port_ovls[f->ovl].vram)] == f->ovl) return ovl_disabled(f->ovl) ? 0 : f;
     }
-    return any;
+    return 0;
 }
 const PortFunc *port_lookup_func(u32p a) {
     int lo = 0, hi = port_funcmap_count - 1;

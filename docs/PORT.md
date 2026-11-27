@@ -45,8 +45,31 @@ What stage 2 changed (each item with its headless check):
   through pipes by `runtime/window.c`; the game binary stays i386 and freestanding), 320x240 frames, 60 Hz pacing
   (`port_hz` defaults to 60: USA/NTSC). Checked with `SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy` and the
   viewer's own `--dump DIR:N` (the title screen arrives at 58-60 frames/s, none skipped).
-- **Free play in A00** works with the stage-1 interpreter set-up: after the opening and the journal tutorial Tomba
-  walks, jumps onto a barrel, walks back, and the "Use up and Circle to look inside" hint appears (the script above).
+- **The overlays' C is native** (all 27: OPN, GAME, DEMO, SOP, CRD, A00..A0L; 3416 functions, 4308 native in all
+  with MAIN's 892). gen_t2.py compiles `src/<ovl>/*.c` with every name the overlay's ELF defines in the overlay
+  region renamed `<ovl>_NAME` (a `-include`d header of `#define`s: the overlays share load addresses and names);
+  the link step resolves prefixed names by address in that overlay's ELF. `funcmap` entries carry the overlay and
+  the function's first two code words (from `build/<ovl>.bin`); the virtual disc marks an overlay resident when
+  sector 0 of `BIN/<OVL>.BIN` is read, and `port_lookup` takes an overlay's native function only while that
+  overlay is the resident one at its load address and its first words are in RAM, else the interpreter runs the
+  bytes (`--no-ovl-native`: always the interpreter; `--ovl-interp NAME`: one overlay interpreted).
+  **Check: pixel-identical frame dumps** with native and interpreted overlays: the A00 play script (212 frames)
+  and 20000 frames of attract mode (80 frames: demos in A00, A01, A03).
+- Generator fixes the overlays needed (each found by a frame diff against `--no-ovl-native`):
+  - **a game function named as a value is its retail address** (`((void *)0x8010B37Cu)`): the A03 trolley HUD
+    compares an actor's update pointer with `f_UpdatePlayerTrolleyActor`, which the spawn data set to the retail
+    address; a call through such a pointer reaches the native code by the SIGSEGV trampoline, and the shims
+    (threads, VSync / CD callbacks) already take retail addresses. `((T (*)())f)(...)` stays a direct call.
+  - arities of MAIN functions under an overlay's own name for them (`func_80076D68` =
+    `f_AdvanceActorSkeletalAnimation`), by address;
+  - a call through a function pointer with an empty argument list gets the caller's arguments
+    (`func_800412CC`: `a->fn()` with `a` still in `$a0`; this also fixed the story-text scene, black in stage 1);
+  - block-scope prototypes are not calls; a dropped `static` helper takes its callers with it; every error line of
+    a renamed definition counts as fixed by the rename (A08 lost 19 functions to the old rule).
+
+- **Free play in A00**: after the opening and the journal tutorial Tomba walks, pushes and jumps onto a barrel,
+  walks back, and the "Use up and Circle to look inside" hint appears (the script above; same frames with native
+  or interpreted overlays).
 
 ## 1. Status: stage 1, milestone P0 (2026-11-27)
 

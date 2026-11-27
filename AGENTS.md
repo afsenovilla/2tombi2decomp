@@ -824,7 +824,12 @@ struct-member form of a cast access, regswap `member` toggles every one)
   results are extended for MIPS callers. A port crash is bisected against the retail code: `--interp-range all`
   first (all MAIN functions interpreted), then `--interp-range LO-HI` on the upper bound with a fixed low bound
   (a native caller hides a native callee from the range), then gdb watchpoints and `--watch-pc`. `--window` runs
-  T1's SDL2 viewer process (`build/port/tomba2-view`, needs `libsdl2-dev`).
+  T1's SDL2 viewer process (`build/port/tomba2-view`, needs `libsdl2-dev`). The overlays' C is native with
+  `<ovl>_` names and dispatch on the resident overlay; a game function named as a value compiles to its retail
+  address. Check any port change by frame diffs against `--no-ovl-native` (pixel-identical expected), and when
+  they differ bisect with `--ovl-interp NAME`, `--interp-range` and `--interp ADDR` (only calls from interpreted
+  code, thunks and pointers are redirected: test a native caller and its callee together). Matched overlay C
+  becomes native at the next port build.
 - Byte-matching only; tools/nonmatching.py is kept unused.
 - USA is the reference; EU in config/eu/.
 - The licensed-region module at the end of boot.c [0x80011A0C, 0x80012D2C) is library-style files in

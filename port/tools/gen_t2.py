@@ -188,7 +188,48 @@ def to_extern(text):
 
 
 
-def emit(items, syms, funcs, rename, drop, native, arity=None, forwarded=None):
+IDENT = re.compile(r"[A-Za-z_]\w*")
+
+
+def retail_func_ptrs(text, addrs):
+    """A game function named as a value (`*(void **)(b + 0x1C) = f_UpdateDetachedTrolleyActor;`,
+    `if (*(void **)(a + 0x1C) == f_UpdatePlayerTrolleyActor)`) is its retail address, as in the retail image: actor
+    update pointers set by the game's data and by C must compare equal, and a call through one reaches the native
+    code through the SIGSEGV trampoline.  Calls, declarations (`name(`, `name[`) and members are left alone."""
+    if not addrs:
+        return text
+    out, i = [], 0
+    for m in IDENT.finditer(text):
+        nm = m.group(0)
+        if nm not in addrs:
+            continue
+        a, b = m.start(), m.end()
+        j = b
+        while j < len(text) and text[j] in " \t\n":
+            j += 1
+        if j < len(text) and text[j] in "([":
+            continue
+        if j < len(text) and text[j] == ")":      # `((T (*)())NAME)(...)`: a call through a cast stays direct
+            j2 = j + 1
+            while j2 < len(text) and text[j2] in " \t\n":
+                j2 += 1
+            if j2 < len(text) and text[j2] == "(":
+                continue
+        k = a - 1
+        while k >= 0 and text[k] in " \t\n":
+            k -= 1
+        if k >= 0 and (text[k] == "." or text[k - 1:k + 1] == "->"):
+            continue
+        amp = k >= 0 and text[k] == "&" and not (k > 0 and text[k - 1] in "&")
+        start = k if amp else a
+        out.append(text[i:start])
+        out.append("((void *)0x%08Xu)" % addrs[nm])
+        i = b
+    out.append(text[i:])
+    return "".join(out)
+
+
+def emit(items, syms, funcs, rename, drop, native, arity=None, forwarded=None, fptrs=None):
     out, spans, n_func, n_asm, n_ext = [], [], 0, 0, 0
     line = 2
     for k, it in enumerate(items):
@@ -206,6 +247,8 @@ def emit(items, syms, funcs, rename, drop, native, arity=None, forwarded=None):
                     native.append((name, syms.get(name), ret_kind(head, name)))
                 if arity:
                     body = forward_short_calls(body, arity, forwarded if forwarded is not None else [])
+                    body = forward_indirect_calls(body, c_arity(head), forwarded if forwarded is not None else [])
+                body = retail_func_ptrs(body, fptrs)
                 if name in rename:
                     h = re.sub(r"\b%s\b(?=\s*\()" % name, name + "__def", head, count=1)
                     piece = h + body + '\n__asm__(".globl %s\\n.set %s, %s__def");\n' % (name, name, name)
@@ -226,6 +269,9 @@ def emit(items, syms, funcs, rename, drop, native, arity=None, forwarded=None):
                 if names and all(nm in syms for nm in names) and "{" not in st.split("=")[0]:
                     piece = "\n" + to_extern(st) + "\n"
                     n_ext += 1
+                elif "=" in txt:   # a table the C defines: its function pointers are retail addresses too
+                    e = txt.index("=")
+                    piece = txt[:e] + retail_func_ptrs(txt[e:], fptrs)
                 else:
                     piece = txt
         out.append(piece)
@@ -359,6 +405,10 @@ def top_split(s):
 CALL_RE = re.compile(r"(?:\(\s*\([^;{}()]*\(\s*\*\s*\)\s*\([^()]*\)\s*\)\s*([A-Za-z_]\w*)\s*\)|\b([A-Za-z_]\w*))\s*\(")
 
 
+TYPE_WORDS = {"void", "int", "char", "short", "long", "unsigned", "signed", "u8", "s8", "u16", "s16", "u32", "s32",
+              "M2C_UNK", "M2C_UNK8", "M2C_UNK16", "M2C_UNK32"}
+
+
 def forward_short_calls(body, arity, fixed):
     """Append PORT_ARG(i) to the calls in body that pass fewer arguments than the callee reads."""
     out, i, n = [], 0, 0
@@ -368,7 +418,12 @@ def forward_short_calls(body, arity, fixed):
             out.append(body[i:])
             break
         name = m.group(1) or m.group(2)
-        if name not in arity or (m.start() > 0 and body[m.start() - 1] in ".>"):
+        # a block-scope prototype (`extern void f();`, `u8 *f();`) is not a call: an identifier right before the
+        # name (a type), or a type word and stars (`x * f()` stays a call)
+        before = re.search(r"([A-Za-z_]\w*)\s*(\**)\s*$", body[max(0, m.start() - 40):m.start()])
+        decl = m.group(2) and before and before.group(1) not in ("return", "case", "else", "do", "sizeof") and \
+            (not before.group(2) or before.group(1) in TYPE_WORDS)
+        if name not in arity or decl or (m.start() > 0 and body[m.start() - 1] in ".>"):
             out.append(body[i:m.end()])
             i = m.end()
             continue
@@ -394,6 +449,42 @@ def forward_short_calls(body, arity, fixed):
 _OTHER = {}
 OVL_BASE = 0x80106228          # lowest overlay load address (GAME / DEMO); areas + SOP 0x80108F9C, OPN / CRD 0x8018A000
 OVL_END = 0x80200000
+
+
+_MAIN_BY_ADDR = []
+_MAIN_CODE = {}
+
+
+def code_addrs(syms, funcs):
+    """{name: retail address} of every function name the C may use as a value: the program's own (prefixed for an
+    overlay), MAIN's (Psy-Q included), and the program's other names for MAIN function addresses."""
+    if not _MAIN_CODE:
+        ms, mf = retail_syms("main"), func_names("main")
+        _MAIN_CODE.update({n: ms[n] for n in mf if n in ms})
+    out = dict(_MAIN_CODE)
+    main_addrs = set(_MAIN_CODE.values())
+    for n in funcs:
+        if n in syms:
+            out[n] = syms[n]
+    for n, a in syms.items():
+        if a in main_addrs and n not in out:
+            out[n] = a
+    return out
+
+
+
+def main_arity_by_addr():
+    if not _MAIN_BY_ADDR:
+        ms = retail_syms("main")
+        out = {}
+        for dp, _, fs in os.walk(os.path.join(ROOT, "asm", "main")):
+            if os.sep + "data" in dp:
+                continue
+            for f in fs:
+                if f.endswith(".s") and f[:-2] in ms:
+                    out[ms[f[:-2]]] = asm_arity(os.path.join(dp, f))
+        _MAIN_BY_ADDR.append(out)
+    return _MAIN_BY_ADDR[0]
 
 
 def ovl_vram(prog):
@@ -427,6 +518,46 @@ def other_arities(prog):
     return _OTHER[prog]
 
 
+def forward_indirect_calls(body, nparams, fixed):
+    """A call through a function pointer with an empty argument list (`p->fn()`, `M2C_FIELD(a, T (**)(), 0x74)()`)
+    relied on $a0-$a3 still holding the caller's own arguments (func_800412CC: `a->update()` with `a` in $a0): pass
+    them on (PORT_ARG; extra arguments are harmless under cdecl).  `(*)()` / `(**)()` in a cast type are not calls."""
+    n = min(nparams, 4)
+    if n <= 0 or "()" not in body:
+        return body
+    out, i = [], 0
+    while True:
+        k = body.find("()", i)
+        if k < 0:
+            out.append(body[i:])
+            break
+        j = k - 1
+        while j >= 0 and body[j].isspace():
+            j -= 1
+        call = False
+        if j >= 0 and body[j] == ")":   # (not `tbl[i]()`: its declared type may say `(void)`)
+            d, m = 0, j            # the matching '(' of the group before the "()"
+            while m >= 0:
+                if body[m] == ")":
+                    d += 1
+                elif body[m] == "(":
+                    d -= 1
+                    if d == 0:
+                        break
+                m -= 1
+            inner = body[m + 1:j].strip()
+            # (a cast to a `(void)` prototype says the callee takes nothing: `((u8 *(*)(void))func_8007AB20)()`)
+            call = m >= 0 and inner != "" and set(inner) - set("* ") != set() and \
+                not re.search(r"\(\s*void\s*\)", inner)
+        if call:
+            out.append(body[i:k] + "(" + ", ".join("PORT_ARG(%d)" % a for a in range(n)) + ")")
+            fixed.append("<indirect>")
+        else:
+            out.append(body[i:k + 2])
+        i = k + 2
+    return "".join(out)
+
+
 # ------------------------------------------------------------------------------------------------ sources
 HOST_CPP = ["gcc", "-m32", "-E", "-P", "-w", "-undef", "-D__GNUC__=2", "-DMIPSEL", "-D_LANGUAGE_C", "-DPORT", "-DSKIP_ASM",
             "-DINCLUDE_ASM(F,N)=", "-DINCLUDE_RODATA(F,N)=", "-D__i386__=0"]
@@ -454,6 +585,7 @@ def sources(outdir, progs):
             syms.update({v: syms[k] for k, v in prefix.items()})
             funcs = dict(funcs)
             funcs.update({prefix[k]: v for k, v in list(funcs.items()) if k in prefix})
+        fptrs = code_addrs(syms, funcs)
         cfiles = sorted(f for f in os.listdir(os.path.join(ROOT, "src", prog)) if f.endswith(".c"))
         for cf in cfiles:
             path = os.path.join(ROOT, "src", prog, cf)
@@ -476,6 +608,13 @@ def sources(outdir, progs):
             for nm, k in other_arities(prog).items():
                 if nm not in arity:
                     arity[nm] = k
+            if prog != "main":
+                # MAIN functions under another name in this overlay's symbols (func_80076D68 for
+                # f_AdvanceActorSkeletalAnimation): the arity of the MAIN function at that address
+                by_addr = main_arity_by_addr()
+                for nm, a in syms.items():
+                    if a < OVL_BASE and nm not in arity and a in by_addr:
+                        arity[nm] = by_addr[a]
             for it in items:
                 if it[0] == "func" and it[1] and not re.search(r"\bstatic\b", it[2]):
                     arity[it[1]] = c_arity(it[2])
@@ -493,16 +632,20 @@ def sources(outdir, progs):
             for attempt in range(12):
                 forwarded = []
                 out, spans, n_func, n_asm, n_ext, n_err = emit(items, syms, funcs, rename, drop, native_tmp := [],
-                                                               arity, forwarded)
+                                                               arity, forwarded, fptrs)
                 text = '#include "port_prelude.h"\n' + "".join(out)
                 errs = host_errors(text, outdir)
+                if os.environ.get("GEN_DEBUG"):
+                    lines = text.split("\n")
+                    for l_, m_ in errs[:10]:
+                        print("[gen_t2 debug] %s:%d: %s | %s" % (cf, l_, m_, lines[l_ - 1].strip()[:120]))
                 if not errs:
                     break
                 for line, msg in errs:
                     m = re.search(r"conflicting types for '(\w+)'|too many arguments to function '(\w+)'", msg)
                     if m:
                         m = re.match(r"(\w+)", m.group(1) or m.group(2))
-                    if m and m.group(1) not in rename:
+                    if m:   # (every error line of a renamed name: the rename fixes them all next pass)
                         rename.add(m.group(1))
                         continue
                     k = item_at(spans, line)
@@ -510,6 +653,13 @@ def sources(outdir, progs):
                         drop.add(k)
                     else:
                         print("[gen_t2] %s:%d: %s" % (cf, line, msg))
+                # a dropped static helper takes its callers with it (they would call an undefined name)
+                gone = {items[k][1] for k in drop if items[k][1] and re.search(r"\bstatic\b", items[k][2])}
+                while gone:
+                    more = {k for k, it in enumerate(items) if it[0] == "func" and k not in drop and
+                            re.search(r"\b(%s)\s*\(" % "|".join(map(re.escape, gone)), it[3])}
+                    drop |= more
+                    gone = {items[k][1] for k in more if re.search(r"\bstatic\b", items[k][2])}
             else:
                 print("[gen_t2] %s: errors left after the fix-up passes" % cf)
             native.extend((prog, n, a, r) for n, a, r in native_tmp)
