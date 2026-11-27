@@ -634,10 +634,51 @@ s32 func_8010A828(s32 arg0, s32 arg1, s32 arg2) {
 
 INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010A99C);
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", func_8010AB3C);
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+extern u8 D_1F8000D0[];
+extern u16 D_1F800240_4cfe;
+void func_8010F7B0(s16 *a, s16 m);
+
+void func_8010AB3C(u8 *a, u8 *b, s32 ang)
+{
+    s16 v[6];
+    u8 *c = D_1F8000D0;
+    s32 t = ang & 0xFFF;
+    s16 dist = -U(c, 0x1E);
+    s32 x;
+
+    x = U(b, 0x2E) + ((func_80083F50(t) * dist) >> 12);
+    v[5] = U(b, 0x36) - ((func_80083E80(t) * dist) >> 12);
+    v[1] = x;
+    func_8010F7B0(v, 0x190);
+    H(c, 2) = v[1];
+    H(c, 0xA) = v[5];
+    switch (a[5]) {
+    case 0:
+        H(c, 6) = U(W(b, 0x10), 0x32) - 0x1F4;
+        a[0x66] = 3;
+        break;
+    case 1:
+        H(a, 0x86) = U(c, 0x12) + D_1F800240_4cfe;
+        H(a, 0x88) = U(c, 6) + D_1F800240_4cfe;
+        H(a, 0x6A) = 0;
+        a[5] = 2;
+        break;
+    case 2:
+        H(c, 0x12) = U(a, 0x86) + (func_80083E80(H(a, 0x6A)) >> 7) - D_1F800240_4cfe;
+        H(c, 6) = U(a, 0x88) + (func_80083E80(H(a, 0x6A)) >> 7) - D_1F800240_4cfe;
+        H(a, 0x6A) += 0x100;
+        if (H(a, 0x6A) > 0x1000) {
+            a[5] = 0;
+        }
+        func_800521F4(0, 0, 0x81, 6);
+        break;
+    }
+}
 
 #define S16F(p, o) (((struct { u8 pad[o]; s16 v; } *)(p))->v)
-extern u8 D_1F8000D0[];
 extern s16 D_1F8000EE;
 extern u8 D_800E8008[];
 extern u8 D_1F800236;
