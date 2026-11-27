@@ -9077,7 +9077,135 @@ u8 *func_80133E8C(u8 *a, s16 k)
     return e;
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80134000);
+typedef struct { s32 x, y, z; } Pos4000;
+typedef struct { s16 a, b, c, d; } Ent4000;
+extern s32 D_8013F4E8[];
+extern s32 D_8013F4F8[];
+extern s32 D_800ECF58_a4fb[];
+extern u8 D_80017334[];
+extern Ent4000 D_800A29CC[];
+#define COPYPOS(a, b) \
+    (a)[0x2A] = (b)[0x2A]; \
+    *(Pos4000 *)((a) + 0x2C) = *(Pos4000 *)((b) + 0x2C); \
+    func_8004766C(a); \
+    func_80049760(a); \
+    if ((a)[3] & 0x80) { \
+        s16 t_ = D_1F8001A0; \
+        H(a, 0x58) = 0; \
+        H(a, 0x54) = 0; \
+        H(a, 0x56) = t_; \
+    } else { \
+        H(a, 0x5A) = 0; \
+        H(a, 0x58) = 0; \
+        H(a, 0x56) = 0; \
+        H(a, 0x54) = 0; \
+    }
+
+void func_80134000(u8 *a, u8 *b)
+{
+    u8 k;
+    s32 *def;
+
+    H(a, 0x64) = 0;
+    H(a, 0x62) = 0;
+    H(a, 0x60) = 0;
+    a[0xBE] = 0;
+    switch (k = a[3] & 0x1F) {
+    case 4:
+    case 5:
+    case 6:
+        def = D_8013F4E8;
+        if (func_800519E0(a, def[0], D_800ECF58_a4fb[def[1]], def[2]) != 0) {
+            a[4] = 3;
+        } else {
+            W(a, 0x3C) = D_800ECF58_a4fb[def[3]];
+            COPYPOS(a, b)
+        }
+        func_80077C40(a, D_80142108, 0);
+        break;
+    case 8:
+    case 9:
+    case 10:
+    case 11:
+        def = D_8013F4F8;
+        if (func_800519E0(a, def[0], D_800ECF58_a4fb[def[1]], def[2]) != 0) {
+            a[4] = 3;
+        } else {
+            W(a, 0x3C) = D_800ECF58_a4fb[def[3]];
+            COPYPOS(a, b)
+        }
+        if (k < 10) {
+            H(a, 0x70) = 0;
+            func_80077C40(a, D_80141E14_7ad9, 2);
+        } else {
+            H(a, 0x70) = 2;
+            func_80077C40(a, D_80141E14_7ad9, 0);
+        }
+        if (k & 1) {
+            a[0xBE] = 1;
+            H(a, 0x56) = (H(a, 0x56) + 0x800) & 0xFFF;
+        }
+        break;
+    case 12:
+    case 13:
+    case 14:
+    case 15:
+        H(a, 0x62) = 0x50;
+        if (func_80040410(a, k - 0xC) == 0) {
+            a[4] = 3;
+            break;
+        }
+        COPYPOS(a, b)
+        break;
+    case 16:
+    case 17:
+    case 18:
+    case 19:
+        W(a, 0x3C) = D_800ECF58_a4fb[0];
+        func_80077B38(a, D_80017334, 0);
+        a[0xD] = 0;
+        a[0xB] = 0x10;
+        H(a, 0x5A) = 0;
+        COPYPOS(a, b)
+        a[0xB] = 0x11;
+        H(a, 0x7A) = H(a, 0x7C) = H(a, 0x7E) = 0x1300;
+        a[0xD] |= 1;
+        H(a, 0x5C) = D_800A29CC[k - 0x10].b;
+        break;
+    case 20:
+        W(a, 0x3C) = D_800ECF58_a4fb[0];
+        func_80077B38(a, D_80017334, 0xBD);
+        a[0xD] = 0;
+        a[0xB] = 0x10;
+        H(a, 0x5A) = 0;
+        COPYPOS(a, b)
+        break;
+    case 24:
+        W(a, 0x3C) = D_800ECF80;
+        func_80077B38(a, D_80140E40_ebd8, 7);
+        a[0xD] = 0;
+        a[0xB] = 0x10;
+        H(a, 0x5A) = 0;
+        COPYPOS(a, b)
+        break;
+    case 25:
+        W(a, 0x3C) = D_800ECF80;
+        func_80077B38(a, D_80140E40_ebd8, 2);
+        a[0xD] = 0;
+        a[0xB] = 0x10;
+        H(a, 0x5A) = 0;
+        COPYPOS(a, b)
+        break;
+    case 26:
+        W(a, 0x3C) = D_800ECF80;
+        func_80077B38(a, D_80140E40_ebd8, 6);
+        a[0xD] = 0;
+        a[0xB] = 0x10;
+        H(a, 0x5A) = 0;
+        COPYPOS(a, b)
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801344F4);
 
