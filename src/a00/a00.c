@@ -8599,7 +8599,192 @@ void f_HandleTownBarrelSeesawController(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeTownBarrelSeesawController);
+typedef struct { s16 a, b, c, d, e; } SeesawRow;
+#define B(p, o) (*(u8 *)((u8 *)(p) + (o)))
+#define PT(p, i) (((AreaPartsOwner *)(p))->parts[i])
+extern u8 D_8014A334[];
+extern u16 D_8014A340[];
+extern SeesawRow D_8014A274[];
+extern SeesawRow D_8014A2EC[];
+extern u8 *D_800ECFAC;
+u8 *func_8007AAE8();
+
+void f_InitializeTownBarrelSeesawController(u8 *a)
+{
+    s32 i;
+    s32 j;
+    s32 *tbl;
+    u8 *base;
+    u8 *q;
+    u16 f;
+    s32 r;
+
+    for (i = 0; i < 5; i++) {
+        U(a, 0x60 + i * 2) = D_8014A340[D_8014A334[a[3]] * 5 + i];
+    }
+    if (a[3] != 0) {
+        H_f12c(a, 0x70) = 0;
+    } else {
+        H_f12c(a, 0x70) = -0xAA;
+    }
+    a[0] = 1;
+    a[4]++;
+    base = D_800ECFAC;
+    r = 4; a[0xD] = r;
+    a[0xB] = 0;
+    a[9] = 0;
+tbl = (s32 *)(base + r);
+    switch (U(a, 0x60) & 1) {
+    case 1:
+        if (U(a, 0x60) & 2) {
+            a[8] = 0xC;
+        } else {
+            a[8] = 7;
+        }
+        for (i = j = 0; i < a[8]; i++, j++, a[9]++) {
+            q = func_8007AAE8();
+            if (q == NULL) {
+                a[4] = 3;
+                return;
+            }
+            if (!(U(a, 0x60) & 2) && i == 3) {
+                j++;
+            }
+            PT(a, i) = q;
+            H_f12c(q, 6) = D_8014A274[j].a;
+            H_f12c(PT(a, i), 0) = D_8014A274[j].b;
+            H_f12c(PT(a, i), 2) = D_8014A274[j].c;
+            H_f12c(PT(a, i), 4) = D_8014A274[j].d;
+            H_f12c(PT(a, i), 8) = 0;
+            H_f12c(PT(a, i), 0xA) = 0;
+            H_f12c(PT(a, i), 0xC) = 0;
+            B(PT(a, i), 0x3E) = 0;
+            B(PT(a, i), 0x3F) = 0;
+            switch (j) {
+            case 0:
+                W_d1fb(PT(a, i), 0x40) = (s32)(base + (&tbl[D_8014A274[j].e])[a[0x60] >> 4]);
+                break;
+            case 1:
+                W_d1fb(PT(a, i), 0x40) = (s32)(base + (&tbl[D_8014A274[j].e])[(U(a, 0x60) & 0xF00) >> 8]);
+                break;
+            case 3:
+                H_f12c(PT(a, i), 0xA) = 0x800;
+            case 2:
+                B(PT(a, i), 0x3F) = 3;
+                W_d1fb(PT(a, i), 0x40) = (s32)(base + (&tbl[D_8014A274[j].e])[(U(a, 0x60) & 4) >> 2]);
+                break;
+            default:
+                W_d1fb(PT(a, i), 0x40) = (s32)(base + tbl[D_8014A274[j].e]);
+                break;
+            }
+        }
+        break;
+    case 0:
+        if (U(a, 0x60) & 4) {
+            a[8] = 7;
+        } else {
+            a[8] = 3;
+        }
+        for (i = 0; i < a[8]; i++, a[9]++) {
+            q = func_8007AAE8();
+            if (q == NULL) {
+                a[4] = 3;
+                return;
+            }
+            PT(a, i) = q;
+            H_f12c(q, 6) = D_8014A2EC[i].a;
+            H_f12c(PT(a, i), 0) = D_8014A2EC[i].b;
+            H_f12c(PT(a, i), 2) = D_8014A2EC[i].c;
+            H_f12c(PT(a, i), 4) = D_8014A2EC[i].d;
+            H_f12c(PT(a, i), 8) = 0;
+            H_f12c(PT(a, i), 0xA) = 0;
+            H_f12c(PT(a, i), 0xC) = 0;
+            B(PT(a, i), 0x3E) = 0;
+            B(PT(a, i), 0x3F) = 0;
+            switch (i) {
+            case 0:
+                W_d1fb(PT(a, i), 0x40) = (s32)(base + (&tbl[D_8014A2EC[i].e])[a[0x60] >> 4]);
+                break;
+            case 1:
+                W_d1fb(PT(a, i), 0x40) = (s32)(base + (&tbl[D_8014A2EC[i].e])[(U(a, 0x60) & 0xF00) >> 8]);
+                break;
+            case 2:
+                B(PT(a, i), 0x3F) = 3;
+                W_d1fb(PT(a, i), 0x40) = (s32)(base + (&tbl[D_8014A2EC[i].e])[(U(a, 0x60) & 4) >> 2]);
+                break;
+            default:
+                W_d1fb(PT(a, i), 0x40) = (s32)(base + tbl[D_8014A2EC[i].e]);
+                break;
+            }
+        }
+        break;
+    }
+    f = U(a, 0x60);
+    H_f12c(a, 0x80) = 0x64;
+    H_f12c(a, 0x82) = 0xC8;
+    H_f12c(a, 0x84) = 0x7D;
+    H_f12c(a, 0x86) = 0xFA;
+    if (f & 8) {
+        if (f & 1) {
+            H_f12c(PT(a, 1), 0xC) = 0xAA;
+        } else {
+            H_f12c(PT(a, 0), 0xC) = 0xAA;
+        }
+    }
+    H_f12c(a, 0x6A) = 0x2DF;
+    switch (a[3]) {
+    case 0:
+        H_f12c(a, 0x6A) = 0x320;
+        H_f12c(PT(a, 2), 4) = -0x320;
+        H_f12c(PT(a, 3), 4) = H_f12c(a, 0x6A);
+        H_f12c(PT(a, 1), 0xA) = H_f12c(a, 0x70);
+        H_f12c(PT(a, 1), 8) = 0xF0;
+        break;
+    case 3:
+        H_f12c(PT(a, 1), 8) = -0xC0;
+        break;
+    case 0xB:
+        H_f12c(a, 0x6A) = 0x2DE;
+        H_f12c(PT(a, 2), 4) = -0x2DE;
+        H_f12c(PT(a, 1), 8) = 0;
+        break;
+    default:
+        H_f12c(PT(a, 1), 8) = H_f12c(a, 0x64);
+        break;
+    }
+    U(PT(a, 1), 8) &= 0xFFF;
+    f_RestoreTownBarrelOrientations(a);
+    f_UpdateBarrelSeesawSupportHeight(a);
+    f_UpdateTownBarrelChildTransforms(a);
+    H_f12c(a, 0x6E) = 0;
+    H_f12c(a, 0x72) = 0;
+    H_f12c(a, 0x76) = 0;
+    H_f12c(a, 0x7A) = 0;
+    f_SpawnAquaticPlantActors(a);
+    if (a[3] < 3) {
+        f_SpawnSegmentedTownActor(a);
+        if (a[3] < 2) {
+            r = f_EnsureCarriedChickActor(a);
+            H_f12c(a, 0x7A) = r;
+            i = r & 3;
+            if (i != 0) {
+                H_f12c(a, 0x7A) = r << 4;
+                B(PT(a, i), 0x3E) |= 3;
+            }
+        }
+        f_HideCollectedBarrelLinkedPickups(a);
+    }
+    if (a[3] == 0) {
+        func_8004CBD8(a, 0);
+    } else if (a[3] == 1) {
+        func_8004CBD8(a, 6);
+    }
+    if (D_800BF89C == 2 && a[3] == 0) {
+        a[5] = 5;
+    }
+    a[0x29] = 0;
+    a[0x2B] = 0;
+}
 
 s32 f_HandleBarrelSeesawContact(AreaPartsOwner *a);
 void func_8012F494(AreaPartsOwner *a)
