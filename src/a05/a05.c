@@ -7659,7 +7659,62 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012F280);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012F404);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012F548);
+typedef struct { s16 x, y, z; } V8012F548;
+typedef struct { u8 pad[0xC0]; u8 *parts[13]; } A8012F548;
+extern V8012F548 D_8013F354[];
+extern V8012F548 D_8013F36C[];
+extern V8012F548 D_8013F38C[];
+extern s16 D_8013F384[];
+u8 *func_8007AAE8();
+#define PT(a, i) (((A8012F548 *)(a))->parts[i])
+
+void func_8012F548(u8 *a)
+{
+    s32 i;
+
+    if (D_800ED098 < 0xD) {
+        a[4] = 3;
+        return;
+    }
+    a[8] = 0xD;
+    a[9] = 0xD;
+    a[0xD] = 0;
+    a[0xB] = 0;
+    H(a, 0x54) = 0;
+    H(a, 0x56) = -0x177;
+    H(a, 0x58) = 0;
+    for (i = 0; i < 0xD; i++) {
+        PT(a, i) = func_8007AAE8();
+        H(PT(a, i), 6) = -1;
+        H(PT(a, i), 8) = 0;
+        H(PT(a, i), 0xA) = 0;
+        H(PT(a, i), 0xC) = 0;
+    }
+    for (i = 0; i < 4; i++) {
+        H(PT(a, i), 0) = D_8013F354[i].x;
+        H(PT(a, i), 2) = D_8013F354[i].y;
+        H(PT(a, i), 4) = D_8013F354[i].z;
+        func_80051B04(PT(a, i), 0xC, 0x1C);
+        H(PT(a, i + 4), 0) = D_8013F36C[i].x;
+        if (3 - i < (D_800BF9C4 >> 4) + 2) {
+            H(PT(a, i + 4), 2) = D_8013F36C[i].y;
+        } else {
+            H(PT(a, i + 4), 2) = 0x38;
+        }
+        H(PT(a, i + 4), 4) = D_8013F36C[i].z;
+        func_80051B04(PT(a, i + 4), 0xC, 0x16);
+        H(PT(a, i + 8), 0) = D_8013F38C[i].x;
+        H(PT(a, i + 8), 2) = D_8013F38C[i].y;
+        H(PT(a, i + 8), 4) = D_8013F38C[i].z;
+        H(PT(a, i + 8), 0xC) = 0x1000;
+        func_80051B04(PT(a, i + 8), 0xC, D_8013F384[i]);
+    }
+    H(PT(a, 12), 0) = -0x280;
+    H(PT(a, 12), 2) = -0x3E0;
+    H(PT(a, 12), 4) = 0x60;
+    func_80051B04(PT(a, 12), 0xC, 0x1B);
+    H(a, 0x7E) = 0;
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8012F7C0);
 
