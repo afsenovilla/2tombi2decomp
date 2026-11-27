@@ -67,6 +67,12 @@ What stage 2 changed (each item with its headless check):
   - block-scope prototypes are not calls; a dropped `static` helper takes its callers with it; every error line of
     a renamed definition counts as fixed by the rename (A08 lost 19 functions to the old rule).
 
+- **The GTE inline asm is translated** (T1's `translate_gte_define`, applied to the cpp-expanded `__asm__`
+  statements: `lhu $12, 0(%0)`, `mtc2`, `lwc2` / `swc2`, `.word` GTE commands, `ctc2` / `cfc2`, a scratch register
+  file per function; empty `__asm__ volatile("")` barriers dropped): MAIN's 33 inline-asm functions and the
+  overlays' 177 but 16 are native (4485 native functions). Frame dumps unchanged (both checks above).
+  `port_prelude.h` declares the GTE entry points.
+
 - **Free play in A00**: after the opening and the journal tutorial Tomba walks, pushes and jumps onto a barrel,
   walks back, and the "Use up and Circle to look inside" hint appears (the script above; same frames with native
   or interpreted overlays).

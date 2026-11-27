@@ -162,6 +162,96 @@ def func_name(toks):
 
 
 ASM_RE = re.compile(r"\b(__asm__|asm|__asm)\b")
+ASM_STMT = re.compile(r'\b(?:__asm__|__asm|asm)\s*(?:volatile|__volatile__)?\s*\(\s*((?:"(?:[^"\\]|\\.)*"\s*)*)'
+                      r"((?::[^;]*?)?)\)\s*;")
+
+
+def translate_asm(body):
+    """MIPS inline asm in a function body (the GTE macros after cpp: `lhu $12, 0(%0); mtc2 $12, $9; ...`,
+    `.word 0x4A180001`) -> C on the software GTE (runtime/gte.c) and a scratch register file; an empty asm
+    statement (a scheduling barrier) -> nothing.  T1's translate_gte_define, applied to the expanded statements.
+    Returns None when an instruction is outside the subset (the function stays retail code)."""
+    def one(m):
+        code = "".join(re.findall(r'"((?:[^"\\]|\\.)*)"', m.group(1))).replace("\\n", "\n").replace("\\t", " ")
+        rest = m.group(2)
+        secs = rest[1:].split(":") if rest.startswith(":") else []
+        if len(secs) > 0 and secs[0].strip():
+            raise ValueError("asm outputs")
+        ins_ops = re.findall(r'"r"\s*\(((?:[^()]|\((?:[^()]|\([^()]*\))*\))*)\)', secs[1]) if len(secs) > 1 else []
+        c = []
+
+        def val(x):
+            x = x.strip()
+            if x.startswith("%"):
+                return "(unsigned long)(%s)" % ins_ops[int(x[1:])]
+            r = reg(x)
+            return "0ul" if r == 0 else "_r[%d]" % r
+
+        def reg(x):
+            x = x.strip().lstrip("$")
+            names = {"zero": 0, "at": 1, "v0": 2, "v1": 3, "a0": 4, "a1": 5, "a2": 6, "a3": 7, "t0": 8, "t1": 9,
+                     "t2": 10, "t3": 11, "t4": 12, "t5": 13, "t6": 14, "t7": 15}
+            return names[x] if x in names else int(x)
+
+        def addr(x):
+            q = re.match(r"(-?(?:0x[0-9A-Fa-f]+|\d+))?\(\s*(%\d+|\$\w+)\s*\)$", x.replace(" ", ""))
+            if not q:
+                raise ValueError("address " + x)
+            return "((unsigned char *)%s + %s)" % (val(q.group(2)), q.group(1) or "0")
+
+        for ins in re.split(r"[;\n]", code.replace("\t", " ")):
+            ins = ins.strip()
+            if not ins or ins == "nop":
+                continue
+            op, _, rest_ = ins.partition(" ")
+            a = [x.strip() for x in rest_.split(",")] if rest_.strip() else []
+            if op == ".word":
+                c.append("port_gte_op(%s & 0x1FFFFFFu);" % a[0])
+            elif op == "lwc2":
+                c.append("port_gte_mtc2(%d, *(unsigned long *)%s);" % (reg(a[0]), addr(a[1])))
+            elif op == "swc2":
+                c.append("*(unsigned long *)%s = port_gte_mfc2(%d);" % (addr(a[1]), reg(a[0])))
+            elif op == "mtc2":
+                c.append("port_gte_mtc2(%d, %s);" % (reg(a[1]), val(a[0])))
+            elif op == "ctc2":
+                c.append("port_gte_ctc2(%d, %s);" % (reg(a[1]), val(a[0])))
+            elif op == "mfc2":
+                c.append("_r[%d] = port_gte_mfc2(%d);" % (reg(a[0]), reg(a[1])))
+            elif op == "cfc2":
+                c.append("_r[%d] = port_gte_cfc2(%d);" % (reg(a[0]), reg(a[1])))
+            elif op in ("lw", "lhu", "lh", "lbu", "lb"):
+                t = {"lw": "unsigned long", "lhu": "unsigned short", "lh": "short", "lbu": "unsigned char",
+                     "lb": "signed char"}[op]
+                c.append("_r[%d] = (unsigned long)(long)*(%s *)%s;" % (reg(a[0]), t, addr(a[1])))
+            elif op in ("sw", "sh", "sb"):
+                t = {"sw": "unsigned long", "sh": "unsigned short", "sb": "unsigned char"}[op]
+                c.append("*(%s *)%s = (%s)%s;" % (t, addr(a[1]), t, val(a[0])))
+            elif op in ("addiu", "addi"):
+                c.append("_r[%d] = %s + (unsigned long)(%s);" % (reg(a[0]), val(a[1]), a[2]))
+            elif op in ("addu", "add", "subu", "sub", "and", "or", "xor"):
+                o = {"addu": "+", "add": "+", "subu": "-", "sub": "-", "and": "&", "or": "|", "xor": "^"}[op]
+                c.append("_r[%d] = %s %s %s;" % (reg(a[0]), val(a[1]), o, val(a[2])))
+            elif op in ("sra", "srl", "sll"):
+                e = {"sra": "(unsigned long)((long)%s >> %s)", "srl": "%s >> %s", "sll": "%s << %s"}[op]
+                c.append("_r[%d] = %s;" % (reg(a[0]), e % (val(a[1]), a[2])))
+            elif op == "move":
+                c.append("_r[%d] = %s;" % (reg(a[0]), val(a[1])))
+            else:
+                raise ValueError("instruction " + ins)
+        if not c:
+            return ";"
+        used[0] = True
+        return "{ " + " ".join(c) + " }"
+    used = [False]
+    try:
+        out = ASM_STMT.sub(one, body)
+    except (ValueError, IndexError, KeyError):
+        return None
+    if used[0]:   # one scratch register file per function (a macro may leave a value for the next one)
+        k = out.index("{")
+        out = out[:k + 1] + " unsigned long _r[32];" + out[k + 1:]
+    return out
+
 DATA_NAME = re.compile(r"\b([A-Za-z_]\w*)\s*(?:\[[^\]]*\]\s*)*(?:=|;|,)")
 
 
@@ -237,6 +327,10 @@ def emit(items, syms, funcs, rename, drop, native, arity=None, forwarded=None, f
         piece = ""
         if it[0] == "func":
             _, name, head, body = it
+            if ASM_RE.search(body) and not ASM_RE.search(head):
+                t = translate_asm(body)
+                if t is not None and not ASM_RE.search(t):
+                    body = t
             if ASM_RE.search(head + body) or name is None or k in drop:
                 n_asm += k not in drop
                 if name and not re.search(r"\bstatic\b", head) and name not in rename:
