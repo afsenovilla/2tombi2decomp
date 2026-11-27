@@ -35,6 +35,9 @@ ROUTES = {
     "title": dict(frames=400, every=25, pad=""),
     "attract": dict(frames=6000, every=100, pad=""),
     "a00": dict(frames=10600, every=100, pad=A00_SCRIPT),
+    # attract demo 1 handed to the pad script at the A00 net wall (docs/PORT.md §0.4): onto the net, then up
+    "net": dict(frames=2760, every=50, pad="2560:right:40,2600:right+cross:15,2615:right:30,2650:up:400",
+                port="--keys-off --demo-takeover 2550", emu="--demo-takeover 2550"),
 }
 
 
@@ -318,6 +321,8 @@ def main():
     a.frames = a.frames or r.get("frames")
     a.every = a.every or r.get("every", 100)
     a.pad_script = r.get("pad", "") if a.pad_script is None else a.pad_script
+    a.port_args = (r.get("port", "") + " " + a.port_args).strip()
+    a.emu_args = (r.get("emu", "") + " " + a.emu_args).strip()
     if not a.frames:
         ap.error("--route or --frames")
     a.python = a.python or find_python()

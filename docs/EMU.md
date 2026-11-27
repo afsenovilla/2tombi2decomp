@@ -41,7 +41,8 @@ python3 -I tools/psxemu/t2syms.py                    # rebuild syms/main_usa.csv
   another frame means the timing no longer agrees). Default OUT: `build/emu_compare/<route>`.
 - Routes: `title` (400 frames, every 25), `attract` (6000, every 100, no input: title, the demo in A00, back to the
   title, the demo in A01), `a00` (the 10600-frame play script of docs/PORT.md §0: New Game, story text, A00 opening,
-  journal tutorial, free play).
+  journal tutorial, free play), `net` (2760, every 50: attract demo 1 handed to the pad script at the A00 net by
+  `--demo-takeover 2550` on both sides, the port with `--keys-off`: onto the net and up, docs/PORT.md §0.4).
 - Speed (this container, CPython 3.13): about 5 M MIPS instructions/s: the title at 30-40 frames/s, loading screens
   100+, gameplay 5-8 frames/s; the attract route takes about 15 minutes, a00 about 30. pypy3 7.3.15 (with numpy
   1.26 in a venv) was **10x slower** (0.5 M instructions/s): every basic block is Python source compiled with

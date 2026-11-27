@@ -73,7 +73,8 @@ Report a problem
 ----------------
 Please send:
 - tomba2.log (next to the launcher, or in %APPDATA%\Tomba2-port): it names your Windows graphics driver
-  (the "tomba2-view:" lines), the disc image and where the game was;
+  (the "tomba2-view:" lines), the disc image and where the game was; if the sound stutters, its
+  "audio underrun" / "XA queue ran dry" lines say when and why;
 - screenshots of what looks wrong: F12 in the game window (tomba2_shot_NNN.bmp next to the launcher),
   or Print Screen / Win+Shift+S;
 - what you did just before (area, menu, how long you played), and your saves folder if it is about saving.

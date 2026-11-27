@@ -345,8 +345,11 @@ build/port/tomba2 --frames 2760 --trace-pos 10 --demo-takeover 2550 \
   unchanged, same speed (the A00 script in 48 s).
 - **Broader sweep** (native vs `--interp-range all`, positions every 5 vblanks + frame dumps): four Load Game routes
   from the user's card (two seeded random walks, a 8000-frame walk right to the Tiny Mouse's House with jumps and
-  dialogue, a walk left onto the back lane) and the attract route: identical after the two fixes. Not reached: A01
-  and later areas by play (the story gates them).
+  dialogue, a walk left onto the back lane), 20000 attract frames (demos in A00, A01, A03, twice each: 200 dumps)
+  and seeded random play handed over by `--demo-takeover` in the A01 demo (from 4200 to its end at 5880) and the A03
+  demo (7100-8690): identical after the fixes. Not reached by play: A01 and later areas outside the demos (the
+  story gates them). Windows (Wine 9.0, the new zip): the climb route and 60 attract dumps byte-identical to Linux;
+  `--no-kuseg` on Linux: 0 native low accesses on the climb route.
 - **Music** (`shims/audio.c`, `tools/view/tomba2_view.c`): the user's log paced 59.43 vblanks/s overall, i.e. the game
   produced ~1 % less audio than the device played; the viewer kept 2-6 frames in its ring and re-primed 33 ms of
   silence at each underrun, so the ring ran dry every few seconds (a test run with SDL's dummy audio driver: the old
