@@ -19109,7 +19109,81 @@ void func_80064BA0(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80064E48);
+void func_80064E48(u8 *a)
+{
+    s16 k;
+    s32 v;
+
+    switch (a[6]) {
+    case 0:
+        (*(volatile u8 *)(a + 6))++;
+        a[0x15C] = 0;
+        a[7] = 0;
+        if (H_f12c(a, 0x44) < 0) {
+            H_f12c(a, 0x44) = -H_f12c(a, 0x44);
+        }
+        k = H_f12c(a, 0x44);
+        if (k < 0xA00) {
+            a[0x169] = 8;
+        } else if (k >= 0x1000) {
+            a[0x169] = 0x20;
+        } else {
+            a[0x169] = 0x10;
+        }
+        a[0x168] = a[0x169] >> 4;
+    case 1:
+        func_80063F9C(a);
+        break;
+    case 2:
+        a[0x144] = 0;
+        f_PlaySoundEffect(0x1E, 0, 0);
+        a[6]++;
+        a[0x164] = 0;
+        W_d1fb(a, 0x158) = 0;
+        H_f12c(a, 0x58) &= 0xFFF;
+        if (H_f12c(a, 0x4A) >= 0) {
+            H_f12c(a, 0x40) = 3;
+        } else {
+            H_f12c(a, 0x40) = 2;
+        }
+    case 3:
+        if (H_f12c(a, 0x58) != 0) {
+            if (H_f12c(a, 0x58) > 0x800) {
+                H_f12c(a, 0x58) += 0x100;
+                if (H_f12c(a, 0x58) >= 0x1000) {
+                    H_f12c(a, 0x58) = 0;
+                }
+            } else {
+                H_f12c(a, 0x58) -= 0x100;
+                if (H_f12c(a, 0x58) < 0) {
+                    H_f12c(a, 0x58) = 0;
+                }
+            }
+        }
+        f_AdvanceTombaAlongMovementVector(a, 1);
+        f_UpdateTombaMovementOrientation(a);
+        f_UpdateTombaAirborneMotion(a, 1);
+        f_AdvanceActorSkeletalAnimation(a);
+        if (H_f12c(a, 0x40) != 0) {
+            H_f12c(a, 0x40)--;
+        }
+        if (H_f12c(a, 0x4A) >= -0xDFF && H_f12c(a, 0x40) == 0) {
+            a[5] = 2;
+            a[6] = 1;
+        } else if (f_TryStartTombaContactAction(a, 1)) {
+            a[0x144] = 0;
+            a[6] = 0;
+            if (a[0x29] != 0) {
+                a[5] = 5;
+                a[7] = 0;
+            } else {
+                a[5] = 6;
+            }
+        }
+        break;
+    }
+    f_UpdateTombaModelOrientationFromFacing(a);
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8006506C);
 
