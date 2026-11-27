@@ -1538,7 +1538,60 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010D0B0);
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010D30C);
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010D5D8);
+extern s8 D_80109070[];
+extern u8 D_8010E548[];
+
+void func_8010D5D8(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        W(a, 0x50) = 0x100;
+        W(a, 0x54) = 0x100;
+        a[1] = 1;
+        a[4] = 1;
+        H(a, 0x48) = 0;
+        H(a, 0x4A) = 0;
+        H(a, 0x4C) = 0;
+        H(a, 0x4E) = 0x78;
+    case 1:
+        if ((u16)((u32)D_1F80017C % 45) == 0) {
+            func_80074590(0x38, D_80109070[(func_8009A450() >> 9) & 6], 0);
+        }
+        {
+            s32 w = W(a, 0x38);
+            W(a, 0x34) = w;
+            if (w == 0) {
+                W(a, 0x34) = (s32)D_8010E548;
+            }
+        }
+        MEMBER_AT(s16, a, 0x48) += func_80083F50(D_1F80017C >> 7) >> 5;
+        MEMBER_AT(s16, a, 0x4A) += func_80083F50(D_1F80017C >> 4) >> 7;
+        MEMBER_AT(s16, a, 0x4C) += func_80083F50(D_1F80017C << 1) >> 6;
+        a[1] = 1;
+        break;
+    case 2:
+        switch (a[5]) {
+        case 0:
+            a[5] = 1;
+        case 1:
+            W(a, 0x50) -= 0x10;
+            if (W(a, 0x50) < 0) {
+                W(a, 0x50) = 0;
+            }
+            W(a, 0x54) -= 0x10;
+            a[6]++;
+            if (a[6] >= 0x11) {
+                a[4] = 3;
+            }
+            a[1] = 1;
+            break;
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 typedef struct { s16 x, y, z, pad; } AreaSVec;
 typedef struct {
