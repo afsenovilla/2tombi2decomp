@@ -39,6 +39,22 @@ semantics (the virtual disc, VSync / spin vblanks, pad script, threads, events),
 - Not emulated: sound output (SpuGetAllKeysStatus reports all voices off), MDEC, card contents, SCUS_944.54.
 - Next: re-run the a00 route after the thread fix; the next difference after the port takes the retail math.
 
+## 2026-11-28 (2): port stage 4 (the user's first real-Windows run)
+
+The user ran the stage-3 zip on Windows 11: "it starts, but it is full of graphical errors and it does not save".
+Their tomba2.log (13293 frames, 59.18 vblank/s, no crash) showed the save screen idle after CRD.BIN loaded.
+docs/PORT.md §0.3 has the details and the checks.
+
+- **Saving fixed** (`shims/card.c`): CRD.BIN writes and reads the save file with `open(name, 0x8002 / 0x8001)`
+  (O_NOWAIT) and then polls the SwCARD "I/O end" event (TestEvent); the shim never raised it for file transfers, so
+  the screen stayed on "Saving game..." for ever (reproduced headless: the same ~650 interpreted calls per 100
+  frames as the user's log). Now an O_NOWAIT read / write raises SwCARD I/O end (an error raises SwCARD error).
+  Checked: pause menu -> Load data with the CRD mode byte poked to "save" (`--poke 9448:800BF4D4=1` ...):
+  "Saving game... / Save OK", the file `BASCUSP94454T2-00` (01, 000:02:18, Town of the Fishermen) in
+  tomba2_mc0.mcd; a fresh run: Title -> Load Game -> slot 1 -> the file -> "Load Completed" -> A00 at the saved
+  place. Test hooks: `--poke FRAME:ADDR=BYTE`, `--trace-pos N` (the player's position).
+- The display's TV window is logged (`[gpu] display 320x240, screen 0,8 256x224`).
+
 ## 2026-11-28: port stage 3 (Windows)
 
 The user's machine has Windows only: the goal was a zip to unzip and play with their own disc image (no toolchain,

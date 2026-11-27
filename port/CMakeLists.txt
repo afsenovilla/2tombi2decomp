@@ -44,6 +44,10 @@ endif()
 # semantics of the original compiler: unsigned char, wrapping signed arithmetic, no type-based alias analysis
 set(PORT_GAME_FLAGS -O1 -w -std=gnu89 -funsigned-char -fwrapv -fno-strict-aliasing -fno-delete-null-pointer-checks
     -fno-omit-frame-pointer)
+# experiments: -DPORT_GAME_EXTRA_FLAGS="-ftrivial-auto-var-init=pattern" (uninitialised locals show as frame diffs)
+set(PORT_GAME_EXTRA_FLAGS "" CACHE STRING "extra compiler flags for the game C")
+separate_arguments(_port_game_extra UNIX_COMMAND "${PORT_GAME_EXTRA_FLAGS}")
+list(APPEND PORT_GAME_FLAGS ${_port_game_extra})
 
 add_library(game OBJECT ${PORT_GAME_SOURCES})
 target_include_directories(game PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)

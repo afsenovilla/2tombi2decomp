@@ -846,6 +846,9 @@ struct-member form of a cast access, regswap `member` toggles every one)
   differing from Linux; `port_low_emulate` also covers `mov moffs` (page-0 constants such as `*(u8 **)0x110`). The
   exe reads the disc image itself (`--disc .bin/.img/.cue/.iso`, MAIN.EXE by SHA-1) and embeds no game bytes (the
   overlay funcmap holds hashes of the first code bytes, not the words).
+  Stage 4 (2026-11-28): BIOS card file calls opened with O_NOWAIT (0x8000) end with the SwCARD I/O-end event and
+  CRD.BIN waits for it (the save hung on "Saving game..." without it); script card tests with `--poke
+  FRAME:ADDR=BYTE` (CRD's mode byte 0x800BF4D4: 1 = save) and `--trace-pos N` (docs/PORT.md §0.3).
 - Byte-matching only; tools/nonmatching.py is kept unused.
 - USA is the reference; EU in config/eu/.
 - The licensed-region module at the end of boot.c [0x80011A0C, 0x80012D2C) is library-style files in

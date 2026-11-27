@@ -230,7 +230,8 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   itself: `--disc X.bin|.img|.cue|.iso` (default game/usa.img), MAIN.EXE checked by SHA-1 (`--no-verify`). Test bed:
   `mkdir -p /run/user/0 && chmod 700 /run/user/0` (else Wine 9.0 aborts, `free(): invalid pointer`), then
   `WINEPREFIX=<scratch>/wp WINEARCH=win32 WINEDEBUG=-all wine build/port-win/tomba2.exe ...`; frame dumps must equal
-  Linux's. Native code must never dereference KUSEG: `build/port/tomba2 --no-kuseg` tallies any site (0 expected);
+  Linux's. Stage 4 (docs/PORT.md §0.3): saving works (O_NOWAIT card transfers raise SwCARD I/O end); card tests
+  scripted with `--poke FRAME:ADDR=BYTE` and `--trace-pos N`. Native code must never dereference KUSEG: `build/port/tomba2 --no-kuseg` tallies any site (0 expected);
   fixes go in gen_t2.py (`kuseg_link_stores`, `kuseg_field38`) or mips_interp.c `kcell`.
 - Reference emulator (docs/EMU.md; Tombi-Decomp's tools/psxemu adapted, HLE at the port's shim boundary with the
   port's timing and virtual disc): `python3 -I tools/emu_run.py --frames N --dump-frames DIR [--dump-every K]

@@ -209,6 +209,34 @@ the EU MAIN.EXE). The window under Wine with `SDL_VIDEODRIVER=dummy`: frames arr
 a real Windows 10 / 11 machine (the window, the controller, the sound device, SmartScreen, which KUSEG blocks it
 commits), the file dialog by hand, long play past A00.
 
+### 0.3 Stage 4 (2026-11-28): the user's first real-Windows run
+
+The user's report: "it starts, but it is full of graphical errors, and it does not save the game"; their
+`tomba2.log` (a 13293-frame run on Windows 11 at 59.18 vblank/s, no crash) showed CRD.BIN loaded at frames 10433 and
+10851 and then the interpreter nearly idle (~650 calls per 100 frames, a static screen).
+
+- **Saving** (`shims/card.c`): CRD.BIN's save (`func_8018AEB8`) creates the file with `open(name, 0x10200)` (one
+  block), then opens it with `0x8002` (O_NOWAIT | write), clears the four SwCARD events with TestEvent and writes
+  0x980 bytes; the load (`func_8018B660`) opens with `0x8001`, seeks to 0x380 and reads 0x600 the same way. On the
+  console the BIOS returns at once and raises SwCARD (0xF4000001) "I/O end" (spec 4) when the transfer is done; the
+  shim did the transfer but raised nothing, so CRD waited for ever on "Saving game..." (reproduced headless with
+  the user's numbers). An O_NOWAIT read / write now raises I/O end (a failed one SwCARD error, 0x8000). Checked:
+  save, then a fresh run Title -> Load Game -> "Load Completed" -> A00 at the saved place (commands below).
+  The save screen is reached from the pause menu's Load data with CRD's mode byte (D_800BF498.x3C, 0x800BF4D4:
+  0 load from the pause menu, 1 save as from a save point, 0x81 load from the title) poked to 1 while CRD starts:
+
+```
+P=""; for f in $(seq 9448 2 9478); do P="$P --poke $f:800BF4D4=1"; done
+build/port/tomba2 --frames 10100 $P --save-dir S --dump-frames D --dump-every 10 --pad-script \
+  400:start,600:cross,800:cross,1000:cross,1200:cross,1400:start,6000:circle:10x50/60,9300:start:10,9400:down:4,\
+9440:cross:4,9700:cross:4,9800:cross:4,9850:left:4,9880:cross:4      # slot 1, file 01, "OK to save?" Yes
+build/port/tomba2 --frames 1700 --save-dir S --dump-frames D2 --dump-every 10 --pad-script \
+  300:right:4,400:cross:4,700:cross:4,900:cross:4,1000:left:4,1050:cross:4      # Load Game, slot 1, file 01, Yes
+```
+
+  Test hooks for scripted runs: `--poke FRAME:ADDR=BYTE` (repeatable, 16), `--trace-pos N` (the player actor's
+  position, 16.16, every N vblanks). The save point actor is MAIN's func_800739AC (A00 has two, at x 4200 / 14870).
+
 ## 1. Status: stage 1, milestone P0 (2026-11-27)
 
 ```

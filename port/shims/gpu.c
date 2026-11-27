@@ -330,7 +330,19 @@ void *PutDrawEnv(void *env) {
     return env;
 }
 void *GetDrawEnv(void *env) { memcpy(env, cur_drawenv, sizeof cur_drawenv); return env; }
-void *PutDispEnv(void *env) { memcpy(cur_dispenv, env, sizeof cur_dispenv); return env; }
+void *PutDispEnv(void *env) {
+    /* DISPENV: RECT disp (VRAM area), RECT screen (the TV window: 0 = the default 256 x 240), isinter, isrgb24 */
+    static s16 last[6] = { -1 };
+    s16 *d = (s16 *)env;
+    if (d[2] != last[0] || d[3] != last[1] || d[4] != last[2] || d[5] != last[3] || d[6] != last[4] || d[7] != last[5]) {
+        static int n;
+        if (n++ < 16 || port_verbose)
+            port_printf("[gpu] display %dx%d, screen %d,%d %dx%d, inter %d, 24-bit %d (frame %d)\n", d[2], d[3], d[4], d[5],
+                        d[6], d[7], ((u8 *)env)[16], ((u8 *)env)[17], port_frame);
+        for (int i = 0; i < 6; i++) last[i] = d[2 + i];
+    }
+    memcpy(cur_dispenv, env, sizeof cur_dispenv); return env;
+}
 void *GetDispEnv(void *env) { memcpy(env, cur_dispenv, sizeof cur_dispenv); return env; }
 
 /* --patch-tex FILE (mods: button prompts, docs/PORT.md "Mods"): VRAM rects re-applied after every LoadImage that

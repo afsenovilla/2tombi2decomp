@@ -85,6 +85,7 @@ void port_vblank(void) {
     port_frame++;
     { extern void port_pad_vblank(void); port_pad_vblank(); }
     cd_vblank();
+    { extern void port_card_vblank(void); port_card_vblank(); }
     { extern void port_audio_vblank(void); port_audio_vblank(); }
     for (int i = 0; i < 4; i++) if (vsync_cbs[i]) call_psx(vsync_cbs[i]);
     if (port_vsync_event_fn) call_psx(port_vsync_event_fn);

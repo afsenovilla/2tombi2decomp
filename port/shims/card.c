@@ -11,7 +11,7 @@
  * (only the card raises any). */
 #include "port_runtime.h"
 
-typedef unsigned char u8; typedef unsigned short u16; typedef unsigned int u32;
+typedef unsigned char u8; typedef unsigned short u16; typedef unsigned int u32; typedef int s32;
 extern int port_verbose;
 void *memcpy(void *d, const void *s, unsigned int n);
 void *memset(void *d, int c, unsigned int n);
@@ -39,6 +39,37 @@ void DeliverEvent(u32 desc, u32 spec) {
 }
 void UnDeliverEvent(u32 desc, u32 spec) {
     for (int i = 0; i < NEV; i++) if (events[i].used && events[i].desc == desc && events[i].spec == spec) events[i].pending = 0;
+}
+
+/* ================================================================== test hooks (scripted runs)
+   --trace-pos N: the player actor's position every N vblanks.  --poke FRAME:ADDR=BYTE (repeatable): a byte of PS1
+   memory set at that vblank (e.g. the CRD menu's mode, 0x800BF4D4: 0 load from the pause menu, 1 save) */
+int port_trace_pos;
+static struct { int frame; u32 addr; u8 val; } pokes[16];
+static int n_pokes;
+static u32 hexnum(const char **s) {
+    u32 v = 0; const char *p = *s;
+    if (p[0] == '0' && (p[1] | 32) == 'x') p += 2;
+    for (;; p++) { int c = *p, d = c >= '0' && c <= '9' ? c - '0' : (c | 32) >= 'a' && (c | 32) <= 'f' ? (c | 32) - 'a' + 10 : -1; if (d < 0) break; v = v * 16 + d; }
+    *s = p; return v;
+}
+void port_add_poke(const char *spec) {
+    int f = 0; while (*spec >= '0' && *spec <= '9') f = f * 10 + *spec++ - '0';
+    if (*spec++ != ':' || n_pokes >= 16) port_fatal("--poke FRAME:ADDR=BYTE");
+    u32 a = hexnum(&spec);
+    if (*spec++ != '=') port_fatal("--poke FRAME:ADDR=BYTE");
+    pokes[n_pokes].frame = f; pokes[n_pokes].addr = a; pokes[n_pokes].val = (u8)hexnum(&spec); n_pokes++;
+}
+void port_card_vblank(void) {
+    if (port_trace_pos && port_frame % port_trace_pos == 0) {
+        s32 *q = (s32 *)(0x800E7E80u + 0x2C);
+        port_printf("[port] frame %d: player at %d %d %d\n", port_frame, q[0], q[1], q[2]);
+    }
+    for (int i = 0; i < n_pokes; i++)
+        if (pokes[i].frame == port_frame) {
+            *(u8 *)(0x80000000u | (pokes[i].addr & 0x1FFFFFu)) = pokes[i].val;
+            port_printf("[port] --poke %08x = %02x (frame %d)\n", pokes[i].addr, pokes[i].val, port_frame);
+        }
 }
 
 /* ================================================================== the card images */
@@ -226,10 +257,21 @@ static int file_xfer(int fd, u8 *buf, int len, int write_) {
     }
     fds[fd].pos += len;
     if (write_) card_flush(n);
+    if (port_verbose) port_printf("[port] card %d: %s %d bytes%s\n", n + 1, write_ ? "wrote" : "read", len, fds[fd].mode & 0x8000 ? " (async)" : "");
+    /* O_NOWAIT (0x8000): the BIOS returns at once and signals the end with the SwCARD "I/O end" event, which CRD.BIN
+       polls (TestEvent) after clearing it: without the event the save screen waited forever (the user's first
+       Windows run).  Here the transfer is done, so the event is raised now. */
+    if (fds[fd].mode & 0x8000) DeliverEvent(0xF4000001u, 4);
     return len;
 }
-int read(int fd, void *buf, int len) { return file_xfer(fd, buf, len, 0); }
-int write(int fd, const void *buf, int len) { return file_xfer(fd, (u8 *)buf, len, 1); }
+/* an O_NOWAIT transfer that fails ends with the SwCARD "error" event (CRD.BIN polls it with the I/O end one) */
+static int xfer(int fd, u8 *buf, int len, int write_) {
+    int r = file_xfer(fd, buf, len, write_);
+    if (r < 0 && fd >= 0 && fd < NFD && fds[fd].used && (fds[fd].mode & 0x8000)) DeliverEvent(0xF4000001u, 0x8000);
+    return r;
+}
+int read(int fd, void *buf, int len) { return xfer(fd, buf, len, 0); }
+int write(int fd, const void *buf, int len) { return xfer(fd, (u8 *)buf, len, 1); }
 int erase(const char *path) {
     const char *name; int n = parse_name(path, &name);
     u8 *c = card(n);
