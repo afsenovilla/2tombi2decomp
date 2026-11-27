@@ -3012,7 +3012,63 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80117C58);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80117E18);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80117F68);
+typedef struct {
+    s16 x, y, w, h;
+} Rect7F68;
+typedef struct { unsigned addr : 24; unsigned len : 8; } PTag7F68;
+typedef struct {
+    PTag7F68 tag;
+    u32 code[5];
+} Move7F68;
+extern Move7F68 *D_800BF544_2976;
+extern u32 *D_800ED8C8;
+#define setaddr_(p, _addr) (((PTag7F68 *)(p))->addr = (u32)(_addr))
+#define getaddr_(p) (u32)(((PTag7F68 *)(p))->addr)
+#define ADDPRIM(ot, p) setaddr_(p, getaddr_(ot)), setaddr_(ot, p)
+
+void func_80117F68(void)
+{
+    Rect7F68 r;
+    Move7F68 *p;
+    Move7F68 *q;
+    s32 i;
+    s32 j;
+
+    for (i = 0; i < 0x10; i++) {
+        j = (i * 0xDD * 4) / 16 + 0x100;
+        r.x = ((i & 0xF) << 4) + 0x280;
+        p = D_800BF544_2976;
+        r.y = 0x100;
+        r.w = 0x10;
+        r.h = 0x4B;
+        func_80083CE0(p, &r, 0x2F0, 0xB5);
+        D_800BF544_2976 = p + 1;
+        ADDPRIM(&D_800ED8C8[j], p);
+        j = (i * 0xDD * 4) / 16 + 0x100;
+        r.x = ((i & 0xF) << 4) + 0x280;
+        r.y = 0x180;
+        r.w = 0x10;
+        r.h = 0x4F;
+        func_80083CE0(p + 1, &r, 0x230, 0x1B1);
+        D_800BF544_2976 = p + 2;
+        ADDPRIM(&D_800ED8C8[j], p + 1);
+    }
+    q = D_800BF544_2976;
+    r.x = 0x370;
+    r.y = 0x100;
+    r.w = 0x10;
+    r.h = 0x4B;
+    func_80083CE0(q, &r, 0x2F0, 0xB5);
+    D_800BF544_2976 = q + 1;
+    ADDPRIM(&D_800ED8C8[0x7FF], q);
+    r.x = 0x370;
+    r.y = 0x180;
+    r.w = 0x10;
+    r.h = 0x4F;
+    func_80083CE0(q + 1, &r, 0x230, 0x1B1);
+    D_800BF544_2976 = q + 2;
+    ADDPRIM(&D_800ED8C8[0x7FF], q + 1);
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801181E8);
 
@@ -9580,7 +9636,6 @@ extern s32 D_1F800014_c2ec[];
 extern CamT D_1F8000D0_c2ec;
 extern RingVec D_801442E0[];
 extern void *D_800BF544;
-extern u32 *D_800ED8C8;
 #define T2_avsz3() __asm__ volatile(".word 0x4B58002D")
 #define T2_rtpt4() __asm__ volatile("nop;nop;nop;nop;.word 0x4A280030;nop;nop;nop;nop")
 #define T2_stotz(r0) __asm__ volatile("swc2 $7, 0( %0 )" : : "r"(r0) : "memory")
