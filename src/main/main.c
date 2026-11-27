@@ -16878,7 +16878,71 @@ void func_8005ACC8(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005AEE4);
+void func_8005AEE4(u8 *a)
+{
+    s32 n;
+    s32 r;
+    s32 m;
+
+    n = 1;
+    f_ReadTombaDirectionalInput(a, n);
+    f_UpdateTombaHorizontalMovementSpeed(a, a[0x14A]);
+    f_AdvanceTombaAlongMovementVector(a, n);
+    f_UpdateTombaMovementOrientation(a);
+    switch (a[6]) {
+    case 0:
+        f_PlaySoundEffect(0x1D, 0, 0);
+        H_f12c(a, 0x58) = 0;
+        f_SetTombaAnimationIfChanged(a, 0x14, 2);
+        if (a[0x181] == 0) {
+            func_800538E0(a, (u16 *)(a + 0x2C), 0);
+        } else {
+            a[0x181] = 0;
+        }
+        a[6]++;
+    case 1:
+        f_AdvanceActorSkeletalAnimation(a);
+        f_UpdateTombaAirborneMotion(a, 0);
+        func_80057C08(a, 0);
+        break;
+    case 2:
+        m = f_AdvanceActorSkeletalAnimation(a);
+        H_f12c(a, 0x32) += 8;
+        f_ResolveTombaGroundTerrainContact(a);
+        if (func_800532A0(a) == 0) {
+            n = func_80055390(a);
+            if (n == 0 && func_800558B4(a) == 0) {
+                a[0x14A] &= 0xE;
+                a[0x14A] |= a[0x147];
+                if (a[0x149] & 2) {
+                    if (m == 1) {
+                        a[5] = 0;
+                        a[6] = 0;
+                        a[7] = 0;
+                        if (a[0x165] != 0) {
+                            f_SetTombaAnimationIfChanged(a, 0x11, 2);
+                        } else {
+                            f_SetTombaAnimationIfChanged(a, 2, 6);
+                        }
+                    }
+                } else {
+                    a[5] = 1;
+                    a[6] = 0;
+                    f_UpdateTombaGroundMovementAnimation(a, 1);
+                    func_800538E0(a, (u16 *)(a + 0x2C), 0);
+                }
+            }
+        }
+        if (a[0x29] & 0x80) {
+            if (func_80055C30(a) == 0 && n == 0) {
+                func_800559F4(a);
+            }
+        }
+        f_UpdateTombaLostGroundSupportMotion(a, 0);
+        break;
+    }
+    f_UpdateTombaModelOrientationFromFacing(a);
+}
 
 s32 func_8005B134(s32 unused, u8 *a)
 {
