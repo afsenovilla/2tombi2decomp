@@ -10505,7 +10505,113 @@ void f_UpdateRopeSwingInteraction(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80135D64);
+typedef struct { s16 a, b, c, d; } RopeRow;
+extern RopeRow D_8014A780[];
+extern s16 D_8014A7A0[][4];
+extern s16 D_800ED098;
+extern s16 D_1F8000DA;
+extern u16 D_800E7E84;
+static inline void RopeInitParts(u8 *a)
+{
+    s32 i;
+    u8 *q;
+    RopeRow *r;
+
+    switch (a[3]) {
+    case 0:
+    case 1:
+        if (D_800ED098 < 4) {
+            a[4] = 3;
+            break;
+        }
+        a[8] = 4;
+        a[9] = 4;
+        r = D_8014A780;
+        for (i = 0; i < a[8]; i++) {
+            q = func_8007AAE8();
+            PT(a, i) = q;
+            H_f12c(q, 6) = -1;
+            H_f12c(PT(a, i), 0) = r->a;
+            H_f12c(PT(a, i), 2) = r->b;
+            H_f12c(PT(a, i), 4) = r->c;
+            W_d1fb(PT(a, i), 8) = 0;
+            W_d1fb(PT(a, i), 0xC) = 0;
+            func_80051B04(PT(a, i), 0xC, r->d);
+            r++;
+        }
+        break;
+    }
+}
+
+void func_80135D64(u8 *a)
+{
+    s32 k;
+
+    switch (a[4]) {
+    case 0:
+        RopeInitParts(a);
+        a[4] = 1;
+        a[0] = 1;
+        H_f12c(a, 0x80) = 0x1E;
+        H_f12c(a, 0x82) = 0x3C;
+        H_f12c(a, 0x84) = 0x32;
+        H_f12c(a, 0x86) = 0x64;
+        a[5] = 0;
+        a[6] = 0;
+        a[0xD] = 0;
+        a[0xB] = 0;
+        a[0x29] = 0;
+        H_f12c(a, 0x2E) = D_8014A7A0[a[3]][0];
+        H_f12c(a, 0x32) = D_8014A7A0[a[3]][1];
+        H_f12c(a, 0x36) = D_8014A7A0[a[3]][2];
+        H_f12c(a, 0x54) = 0;
+        H_f12c(a, 0x56) = D_8014A7A0[a[3]][3];
+        H_f12c(a, 0x58) = 0;
+        if (a[3] == 0 && D_1F800160_71b4 > H_f12c(a, 0x2E)) {
+            H_f12c(a, 0x2E) = D_8014A7B8[0][1];
+        }
+        H_f12c(a, 0x48) = 0x200;
+        H_f12c(a, 0x4A) = 0;
+        H_f12c(a, 0x60) = U(a, 0x32);
+        H_f12c(a, 0x4A) = 0x32;
+        f_UpdateRopeSwingInteraction(a);
+        func_800517F8(a);
+        break;
+    case 1:
+        k = 0;
+        if (a[3] == 0 && D_800E7E84 == 0x302) {
+            k = D_1F800160_71b4 < D_8014A7B8[0][1];
+        }
+        if (D_800E7EAA == 0x1C || D_800E7EAA == 0x26) {
+            k = 1;
+        }
+        if (k != 0) {
+            H_f12c(a, 0x2E) = D_8014A7A0[a[3]][0];
+            H_f12c(a, 0x32) = D_8014A7A0[a[3]][1];
+            H_f12c(a, 0x36) = D_8014A7A0[a[3]][2];
+        }
+        if (D_1F800207_9c67 < 0x16) {
+            break;
+        }
+        if (D_1F800207_9c67 == 0x17 && D_1F8000DA < 0x2AF8) {
+            break;
+        }
+        if (D_800E7EAA >= 0x20) {
+            break;
+        }
+        if (func_8007778C(a) == 0) {
+            break;
+        }
+        f_UpdateRopeSwingInteraction(a);
+        func_800517F8(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 u8 *func_801360F4(s32 a, u8 b) {
     u8 *p = func_8007A980(2, 4, 0);
@@ -10680,7 +10786,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013681C);
 #define BPART(a, i) (*(u8 **)((u8 *)(a) + (i) * 4 + 0xC0))
 typedef struct { s32 x, y, z; } BV3W;
 typedef struct { s16 a, b, c, d, e; } BRow5;
-extern s16 D_800ED098;
 extern BRow5 D_8014A7E4[];
 extern u8 D_800BF822;
 void func_80136954(u8 *a) {
