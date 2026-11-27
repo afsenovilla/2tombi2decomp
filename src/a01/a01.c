@@ -325,7 +325,56 @@ s32 func_8010ACB8(s32 arg0, s32 arg1) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010AD08);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010AE30);
+typedef struct { s16 xl, x, yl, y, zl, z; } PosAE30;
+typedef struct { s16 x, y, z; } V3AE30;
+extern s16 D_1F8000D0_ae30[];
+extern u8 D_800BF808_ae30[];
+extern u8 D_800E7EAC[];
+extern V3AE30 D_80134BFC[];
+
+s32 func_8010AE30(u8 *a)
+{
+    u8 *g = D_800BF808_ae30;
+
+    switch (g[0xF]) {
+    case 0:
+    case 1:
+        {
+            PosAE30 pos;
+            V3AE30 *t;
+
+            func_8006E3F4(a, D_800E7EAC);
+            t = &D_80134BFC[g[0xF]];
+            pos.x = t->x;
+            pos.y = t->y;
+            pos.z = t->z;
+            func_8006CEC4(D_1F8000D0_ae30, &pos, 0);
+            a[0x66] = 3;
+        }
+        return 1;
+    case 4:
+        func_8006E3F4(a, D_800E7EAC);
+        {
+            s16 *c = D_1F8000D0_ae30;
+
+            c[1] = 0x2995;
+            c[3] = -0x14AB;
+            c[5] = 0x3D03;
+        }
+        return 1;
+    case 5:
+        func_8006E3F4(a, D_800E7EAC);
+        {
+            s16 *c = D_1F8000D0_ae30;
+
+            c[1] = 0x1B64;
+            c[3] = -0x17AE;
+            c[5] = 0x1F76;
+        }
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010AF6C);
 
