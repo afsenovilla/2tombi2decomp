@@ -763,7 +763,189 @@ void func_8010BD80(u8 *a)
     *(s32 *)(a + 0x30) += *(s16 *)(a + 0x50) << 8;
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010BEBC);
+extern s16 D_1F80018E;
+extern s16 D_1F80026C;
+extern s16 D_1F800270;
+extern s16 D_1F800272;
+extern s16 D_1F800276;
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+/* f_CalculateYawFromPositionToPoint, inlined (int parameters) */
+static inline s32 bebc_yaw(u8 *a, s32 x, s32 z) {
+    return func_80085690(H(a, 0x36) - z, x - H(a, 0x2E));
+}
+
+void func_8010BEBC(u8 *a) {
+    u8 *b = *(u8 **)(a + 0x10);
+    s32 dx;
+    s32 dz;
+    register s32 t asm("$2");
+    u8 *p2;
+
+    switch (a[6]) {
+    case 0:
+        func_80054198(a);
+        if (H(a, 0x152) == 0x1200) {
+            func_80042354(1, 1);
+            func_80054D14(a, 2, 6);
+            H(a, 0x7C) = bebc_yaw(a, H(b, 0x2E), H(b, 0x36)) & 0xFFF;
+            a[6] = 5;
+        } else if (H(a, 0x152) == 0x1400) {
+            func_80054D14(a, 2, 6);
+            H(a, 0x7C) = bebc_yaw(a, H(b, 0x2E), H(b, 0x36)) & 0xFFF;
+            a[6] = 8;
+            func_8006E1C0(1);
+        } else if (H(a, 0x152) == 0x1800) {
+            func_80054D14(a, 2, 6);
+            H(a, 0x7C) = bebc_yaw(a, H(b, 0x2E), H(b, 0x36)) & 0xFFF;
+            a[6] = 0xA;
+        } else if (D_800BF870.unk0 == 7 && H(a, 0x152) == 0x1000) {
+            a[6] = 2;
+        } else {
+            if (H(a, 0x152) == 0x1500) {
+                D_1F800137 = 2;
+            }
+            if (H(a, 0x152) == 0x1000) {
+                s32 p = *(u16 *)&D_1F800272;
+                s32 q = *(u16 *)&D_1F800276;
+                H(a, 0x7A) = p;
+                H(a, 0x7E) = q;
+            } else {
+                s32 p = *(u16 *)&D_1F80026C;
+                s32 q = *(u16 *)&D_1F800270;
+                H(a, 0x7A) = p;
+                H(a, 0x7E) = q;
+            }
+            do {
+                dx = H(b, 0x2E) + H(a, 0x7A) - H(a, 0x2E);
+                dz = H(b, 0x36) - H(a, 0x7E) - H(a, 0x36);
+                H(a, 0x7C) = func_80085690(-dz, dx) & 0xFFF;
+                dx = (dx << 8) / 16;
+                dz = (dz << 8) / 16;
+            } while (0);
+            /* an opaque copy: the stores below go through the call's a0 */
+            __asm__("" : "=r"(p2) : "0"(a));
+            H(p2, 0x4E) = dx;
+            H(p2, 0x52) = dz;
+            H(p2, 0x40) = 0x10;
+            p2[6]++;
+            func_80054D14(p2, 4, 6);
+        }
+        break;
+    case 1:
+        func_80076D68(a);
+        W(a, 0x2C) += H(a, 0x4E) << 8;
+        W(a, 0x34) += H(a, 0x52) << 8;
+        if ((s16)(H(a, 0x40) % 7) == 0) {
+            func_80074590(0, 5, 0);
+        }
+        if (--H(a, 0x40) == 0) {
+            goto inc;
+        }
+        break;
+    case 2:
+        func_80076D68(a);
+        if (H(a, 0x152) == 0x1100) {
+            if (b[3] < 0x64 && H(a, 0x36) > H(b, 0x36)) {
+                t = (U_d0c0(b, 0x56) + 0x400) & 0xFFF;
+            } else {
+                t = (U_d0c0(b, 0x56) - 0x400) & 0xFFF;
+            }
+        } else if (H(a, 0x152) == 0x1500) {
+            t = 0x400;
+        } else if (D_800BF870.unk0 == 7 && H(a, 0x152) == 0x1000) {
+            t = func_800782B0(a + 0x2C, H(b, 0x2E), H(b, 0x36)) & 0xFFF;
+        } else {
+            t = (U_d0c0(b, 0x56) - 0x400) & 0xFFF;
+        }
+        b = (u8 *)t;
+        H(a, 0x56) = func_800776F8((s32)b, H(a, 0x56), 0x100);
+        if (H(a, 0x56) == (s32)b) {
+            if (H(a, 0x152) == 0x1000) {
+                func_80054D14(a, 0xCD, 6);
+            inc:
+                a[6]++;
+            } else {
+                a[6] = 4;
+            }
+        }
+        break;
+    case 3:
+        if (func_80076D68(a) == 1) {
+            a[6]++;
+        }
+        break;
+    case 4:
+        if (H(a, 0x152) == 0x1000) {
+            a[5] = 2;
+            a[6] = 0;
+            b[0xBF] = 1;
+            func_80054D14(a, 0xCE, 3);
+            if (D_800BF870.unk0 == 7) {
+                break;
+            }
+        } else {
+            a[5] = 3;
+            a[6] = 0;
+        }
+        H(a, 0x2E) = U_d0c0(b, 0x2E) + U_d0c0(a, 0x7A);
+        H(a, 0x36) = U_d0c0(b, 0x36) - U_d0c0(a, 0x7E);
+        break;
+    case 5:
+        func_80076D68(a);
+        H(a, 0x56) = func_800776F8(H(a, 0x7C), H(a, 0x56), 0x100);
+        if (H(a, 0x56) == H(a, 0x7C)) {
+            a[5] = 4;
+            a[6] = 0;
+        }
+        break;
+    case 6:
+        func_80054D14(a, 2, 6);
+        a[6]++;
+        H(a, 0x7C) = bebc_yaw(a, H(b, 0x2E), H(b, 0x36)) & 0xFFF;
+    case 7:
+        H(a, 0x56) = func_800776F8(H(a, 0x7C), H(a, 0x56), 0x100);
+        func_80076D68(a);
+        if (D_1F80018E != 0x4400 && D_1F80018E != 0x4800) {
+            a[0x61] = 0;
+            func_80054198(a);
+            a[5] = 0;
+            a[6] = 0;
+            a[7] = 0;
+        }
+        break;
+    case 8:
+        func_80076D68(a);
+        H(a, 0x56) = func_800776F8(H(a, 0x7C), H(a, 0x56), 0x100);
+        if (H(a, 0x56) == H(a, 0x7C)) {
+            H(a, 0x40) = 0x3C;
+            a[6]++;
+            b[0] = 3;
+            b[4] = 2;
+            b[5] = 2;
+            b[6] = 0;
+        }
+        break;
+    case 9:
+        func_80076D68(a);
+        if (--H(a, 0x40) == 0) {
+            func_8006E1E4();
+            func_80054198(a);
+            a[5] = 0;
+            a[6] = 0;
+            a[7] = 0;
+        }
+        break;
+    case 10:
+        func_80076D68(a);
+        H(a, 0x56) = func_800776F8(H(a, 0x7C), H(a, 0x56), 0x100);
+        if (H(a, 0x56) == H(a, 0x7C)) {
+            a[5] = 0x1B;
+            a[6] = 0;
+            a[7] = 0;
+        }
+        break;
+    }
+}
 
 extern u8 D_800BFE55;
 extern u16 D_1F80017C;
@@ -771,7 +953,6 @@ extern u16 D_1F800210;
 extern u16 D_800BF812;
 #define S16(p, o) (*(s16 *)((u8 *)(p) + (o)))
 extern s32 D_1F80009C_baed;
-extern s16 D_1F80018E;
 extern u8 *D_1F800184;
 extern u16 D_1F80008C;
 void func_8010C510(u8 *a)
@@ -2099,8 +2280,6 @@ void func_80111974(u8 *a) {
     }
 }
 
-extern s16 D_1F800272;
-extern s16 D_1F800276;
 void func_80111D24(u8 *a, u8 *b)
 {
     s32 s;
