@@ -6639,7 +6639,40 @@ void func_801267D4(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801268D8);
+#define PART(a) (*(u8 **)((a) + ((a)[8] << 2) + 0xC0))
+
+s32 func_801268D8(u8 *a0, u16 *src, s32 n, s32 d, s32 e)
+{
+    s16 buf[7];
+    u8 *a = a0;
+    s32 i;
+
+    if (D_800ED098 <= 0) {
+        return 1;
+    }
+    for (i = 0; i < 7; i++) {
+        if (i < n) {
+            buf[i] = *src++;
+        } else {
+            buf[i] = 0;
+        }
+    }
+    PART(a) = func_8007AAE8();
+    *(s16 *)(PART(a) + 6) = buf[0];
+    *(s16 *)(PART(a) + 0) = buf[1];
+    *(s16 *)(PART(a) + 2) = buf[2];
+    *(s16 *)(PART(a) + 4) = buf[3];
+    *(s16 *)(PART(a) + 8) = buf[4];
+    *(s16 *)(PART(a) + 0xA) = buf[5];
+    *(s16 *)(PART(a) + 0xC) = buf[6];
+    *(s16 *)(PART(a) + 0x38) = 0x1000;
+    *(s16 *)(PART(a) + 0x3A) = 0x1000;
+    *(s16 *)(PART(a) + 0x3C) = 0x1000;
+    func_80051B04(PART(a), d, e);
+    a[8]++;
+    a[9]++;
+    return 0;
+}
 
 extern u8 D_800BFA3B;
 extern s32 D_1F800214;
