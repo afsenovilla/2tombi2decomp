@@ -13123,7 +13123,122 @@ u8 *func_80133900(s32 a) {
     return p;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80133958);
+extern u8 D_80138B8C[];
+extern u8 D_80138B6C[];
+extern u8 D_80137BE8[];
+void func_8012E868();
+void func_8012E974();
+static inline void ApplyVelocity_3958(u8 *a)
+{
+    W(a, 0x2C) += H(a, 0x4E) << 8;
+    W(a, 0x30) += H(a, 0x50) << 8;
+    W(a, 0x34) += H(a, 0x52) << 8;
+    func_8007778C(a);
+}
+
+void func_80133958(u8 *a)
+{
+    s32 *q = (s32 *)(a + 0x60);
+    s32 k;
+    s32 v;
+    u8 c;
+
+    switch (a[4]) {
+    case 0:
+        H(a, 0x80) = 0x38;
+        H(a, 0x82) = 0x70;
+        H(a, 0x84) = 0x8C;
+        H(a, 0x86) = 0xF0;
+        a[0] = 1;
+        a[0xB] = 0x20;
+        switch (a[3]) {
+        case 0:
+            *(void **)(a + 0x18) = func_8012E868;
+            W(a, 0x60) = 0;
+            v = (s32)(D_80138B8C + (func_8009A450() & 7));
+            q[2] = v;
+            q[1] = v;
+            q[3] = (s32)D_80138B6C;
+            a[6] = 5;
+            a[7] = 0;
+            break;
+        case 1:
+            *(void **)(a + 0x18) = func_8012E974;
+            H(a, 0x44) = 0x800;
+            q[2] = (s32)D_80137BE8;
+            q[1] = (s32)(D_80137BE8 + 4);
+            W(a, 0x60) = (s32)(D_80137BE8 + 4);
+            q[3] = 0;
+            a[6] = 0x10;
+            a[5] = 0;
+            H(a, 0x40) = 0x140;
+            H(a, 0x42) = 0;
+            break;
+        }
+        a[4] = 1;
+        a[5] = 0;
+    case 1:
+        if (D_1F800137 != 0) {
+            func_8007778C(a);
+            break;
+        }
+        c = a[6]--;
+        if (c == 0) {
+            a[4] = 2;
+            break;
+        }
+        k = a[3];
+        switch (k) {
+        case 0:
+            v = q[2];
+            q[1] = v;
+            if (v == 0) {
+                q[2] = (s32)D_80138B8C;
+                q[1] = (s32)D_80138B8C;
+            }
+            H(a, 0x32) = U(a, 0x32) - (a[6] << 3);
+            q[0] += 0x190019;
+            a[7]++;
+            break;
+        case 1:
+            func_8004766C(a);
+            if (func_8004951C(a, 0, -0x8C) != 0) {
+                a[0] = 2;
+                a[4] = 2;
+                return;
+            }
+            v = q[1];
+            q[0] = v;
+            if (v == 0) {
+                v = q[2] + 4;
+                q[1] = v;
+                q[0] = v;
+            }
+            H(a, 0x70) = U(a, 0x40) + (func_80083F50(H(a, 0x42)) >> 6);
+            H(a, 0x72) = U(a, 0x40) + (func_80083E80(H(a, 0x42)) >> 6);
+            H(a, 0x40) = U(a, 0x40) + 0xC;
+            H(a, 0x42) = U(a, 0x42) + (func_8009A450() & 0xFF);
+            switch (a[5]) {
+            case 0:
+                if (a[6] < 4) {
+                    a[0] = 2;
+                    a[5] = 1;
+                }
+                break;
+            case 1:
+                q[3] += (u32)(0x1000 - q[3]) >> 3;
+                break;
+            }
+            break;
+        }
+        ApplyVelocity_3958(a);
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_80133958();
 
