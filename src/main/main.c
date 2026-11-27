@@ -24455,7 +24455,85 @@ void func_8006923C(u8 *a)
     *(u16 *)(a + 0x56) = *(u16 *)(p + 8);
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80069300);
+void func_8006ACAC(u8 *a);
+void func_8006B020(u8 *a, s32 mode);
+
+void func_80069300(u8 *a)
+{
+    u8 *p = a + 0x60;
+    s16 ang;
+    s32 t;
+
+    switch (a[4]) {
+    case 0:
+        a[0x5F] = 0;
+        func_8006ACAC(a);
+        a[0] = 2;
+        a[0x2B] = 0;
+        a[4]++;
+        H_f12c(p, 8) = U(a, 0x56);
+        H_f12c(p, 0xA) = 0;
+        H_f12c(p, 0xE) = 0;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            a[1] = 1;
+            func_8006923C(a);
+            a[5]++;
+            break;
+        case 1:
+            a[1] = 1;
+            func_8006B020(a, 2);
+            if (--H_f12c(a, 0x40) == 0) {
+                f_PlaySoundEffect(0xB, 0, 0);
+                H_f12c(a, 0x40) = 0x14;
+                a[0] = 1;
+                H_f12c(a, 0x54) = 0;
+                H_f12c(a, 0x42) = 0x1E;
+                a[5]++;
+                func_8006918C(a, 1);
+            }
+            break;
+        case 2:
+            a[5]++;
+        case 3:
+            if (--H_f12c(a, 0x40) == 0 || a[0x2B] != 0) {
+                H_f12c(a, 0x44) = 0;
+                a[0] = 2;
+                a[4] = 2;
+            }
+            break;
+        }
+        if (a[5] >= 3) {
+            if (a[0x46] & 1) {
+                ang = 0x800 - U(p, 0xA);
+            } else {
+                ang = U(p, 0xA);
+            }
+            W_d1fb(a, 0x30) += ((rsin(ang) * 80 / 100) * H_f12c(a, 0x44)) << 4;
+            t = (rcos(ang) * H_f12c(a, 0x44)) >> 4;
+            W_d1fb(a, 0x2C) += H_f12c(a, 0x48) * t;
+            W_d1fb(a, 0x34) += H_f12c(a, 0x4C) * t;
+            func_8006918C(a, 0);
+            if (func_80077ACC(a, H_f12c(a, 0x2E), H_f12c(a, 0x32), H_f12c(a, 0x36)) == 0 && --H_f12c(a, 0x42) == 0) {
+                a[0] = 2;
+                a[4] = 3;
+            }
+        }
+        break;
+    case 2:
+        a[1] = 1;
+        a[4]++;
+        f_SpawnTransientEffectAtFixedPosition(0x2F, (s32)(a + 0x2C), -0xA);
+        break;
+    case 3:
+        if (H_f12c(p, 0xE) == 0) {
+            D_1F800251--;
+        }
+        func_8007AB44(a);
+        break;
+    }
+}
 
 extern u16 D_800A4A6C_tbl2[][2];
 void func_80069634(u8 *a)
