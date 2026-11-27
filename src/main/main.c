@@ -17781,7 +17781,196 @@ s32 func_800634A8(s32 arg0) {
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaSupportSwingMotion);
+extern s16 D_800A4710[];
+extern s16 D_800A4738[];
+
+void f_UpdateTombaSupportSwingMotion(u8 *t, s32 flags)
+{
+    s16 *rec;
+    s16 maxv;
+    s32 hit;
+    s32 d;
+
+    if (flags & 2) {
+        rec = D_800A4738;
+    } else {
+        rec = D_800A4710;
+        rec += t[0x168] * 4;
+    }
+    maxv = rec[2];
+    hit = 0;
+    if (!(flags & 1)) {
+        if (D_800ECF54 & (s16)(D_1F80016C_4910 | D_1F80016E_cd4b)) {
+            if (t[0x147] == (t[0x14A] & 1)) {
+                if (++t[0x169] > 0x40) {
+                    t[0x169] = 0x40;
+                }
+            } else {
+                if ((s8)--t[0x169] < 0) {
+                    t[0x169] = 0;
+                    if (t[0x168] == 0) {
+                        hit = 1;
+                    }
+                }
+            }
+        }
+    } else {
+        if ((s8)--t[0x169] < 0) {
+            t[0x169] = 0;
+        }
+    }
+    t[0x167] = 0;
+    switch (t[7]) {
+    case 0:
+        t[0x166] = 0;
+        if (t[0x168] < 2) {
+            if (!(flags & 1)) {
+                U(t, 0x58) = 0x200;
+                H_f12c(t, 0x44) = 0x60;
+            } else {
+                U(t, 0x58) = 0x300;
+                H_f12c(t, 0x44) = 0x70;
+            }
+            t[7] = 6;
+        } else {
+            U(t, 0x58) = 0x300;
+            H_f12c(t, 0x44) = maxv;
+            t[7] = 4;
+        }
+        break;
+    case 1:
+        t[0x167] = 1;
+        U(t, 0x58) -= U(t, 0x44);
+        if (rec[3] >= (U(t, 0x58) & 0xFFF)) {
+            if (t[0x168] >= 3) {
+                t[0x166] = 4;
+                t[7] = 4;
+            } else {
+                H_f12c(t, 0x44) = 0;
+                t[0x166] |= 1;
+                t[7]++;
+            }
+        } else {
+            H_f12c(t, 0x44) -= rec[1];
+            if (H_f12c(t, 0x44) < 0) {
+                if (t[0x168] < 2 || !((U(t, 0x58) & 0xFFF) > ((rec[3] + 0xF0) & 0xFFF))) {
+                    t[0x166] |= 1;
+                }
+                H_f12c(t, 0x44) = 0;
+                t[7]++;
+            }
+        }
+        break;
+    case 2:
+        U(t, 0x58) += U(t, 0x44);
+        H_f12c(t, 0x44) += rec[0];
+        if (H_f12c(t, 0x44) > maxv) {
+            H_f12c(t, 0x44) = maxv;
+        }
+        if ((s16)(U(t, 0x58) & 0xFFF) < 0x800) {
+            if (hit) {
+                t[7] = 1;
+                t[0x147] = t[0x14A] & 1;
+                U(t, 0x58) = 0x1000 - U(t, 0x58);
+            } else {
+                t[7]++;
+            }
+        }
+        break;
+    case 3:
+        U(t, 0x58) += U(t, 0x44);
+        if ((U(t, 0x58) & 0xFFF) >= 0x1000 - rec[3]) {
+            H_f12c(t, 0x44) = 0;
+            t[0x166] |= 2;
+            t[7]++;
+        } else {
+            H_f12c(t, 0x44) -= rec[1];
+            if (H_f12c(t, 0x44) < 0) {
+                if (t[0x168] < 2 || !((U(t, 0x58) & 0xFFF) < ((0xF10 - rec[3]) & 0xFFF))) {
+                    t[0x166] |= 2;
+                }
+                H_f12c(t, 0x44) = 0;
+                t[7]++;
+            }
+        }
+        break;
+    case 4:
+        U(t, 0x58) -= U(t, 0x44);
+        H_f12c(t, 0x44) += rec[0];
+        if (H_f12c(t, 0x44) > maxv) {
+            H_f12c(t, 0x44) = maxv;
+        }
+        if ((s16)(U(t, 0x58) & 0xFFF) > 0xD00) {
+            if (t[0x166] < 3) {
+                t[7] = 1;
+                break;
+            }
+            t[0x166] = 0;
+            if ((t[0x169] >> 4) != t[0x168]) {
+                if ((s8)((t[0x169] >> 4) - t[0x168]) > 0) {
+                    if (++t[0x168] > 4) {
+                        t[0x168] = 4;
+                    }
+                } else {
+                    t[0x168]--;
+                }
+            }
+            if (t[0x168] < 3) {
+                if (flags & 2) {
+                    H_f12c(t, 0x44) = maxv;
+                    t[7] = 1;
+                } else if (hit) {
+                    t[7] = 3;
+                    t[0x147] = t[0x14A] & 1;
+                    U(t, 0x58) = 0x1000 - U(t, 0x58);
+                } else if (D_800A4710[t[0x168] * 4 + 2] < H_f12c(t, 0x44)) {
+                    t[7]++;
+                } else {
+                    H_f12c(t, 0x44) = D_800A4710[t[0x168] * 4 + 2];
+                    t[7] = 1;
+                }
+            } else {
+                t[7] = 1;
+                f_PlaySoundEffect(6, 0, 0);
+            }
+        }
+        break;
+    case 5:
+        t[0x167] = 1;
+        U(t, 0x58) -= U(t, 0x44);
+        H_f12c(t, 0x44) -= 0x20;
+        if (H_f12c(t, 0x44) < 0) {
+            H_f12c(t, 0x44) = 0;
+            t[7] = 2;
+            t[0x166] |= 1;
+        }
+        break;
+    case 6:
+        U(t, 0x58) -= U(t, 0x44);
+        if ((s16)(U(t, 0x58) & 0xFFF) > 0xD00) {
+            if (!(flags & 1)) {
+                t[7] = 1;
+            } else {
+                t[7] = 7;
+            }
+        }
+        break;
+    case 7:
+        d = 0x12;
+        if (flags & 2) {
+            d = 0x20;
+        }
+        t[0x167] = 1;
+        U(t, 0x58) -= U(t, 0x44);
+        H_f12c(t, 0x44) -= d;
+        if (H_f12c(t, 0x44) < 0) {
+            H_f12c(t, 0x44) = 0;
+            t[7] = 2;
+            t[0x166] |= 1;
+        }
+        break;
+    }
+}
 
 extern u8 *D_800A4784[];
 extern u8 *D_800A4794[];
