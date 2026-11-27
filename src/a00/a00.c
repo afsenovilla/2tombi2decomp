@@ -6514,7 +6514,46 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80124C6C);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleSmallFishActor);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnSmallFishActor);
+extern u8 D_800BF9E7;
+extern u8 D_800BF9E8;
+extern u8 D_800BF9CC;
+void f_HandleSmallFishActor();
+
+u8 *f_SpawnSmallFishActor(u8 *a, u8 kind, u8 bit)
+{
+    u8 *p;
+
+    switch (kind) {
+    case 0:
+        if ((D_800BF9E7 >> bit) & 1) {
+            return NULL;
+        }
+        break;
+    case 1:
+    case 5:
+        if ((D_800BF9E8 >> bit) & 1) {
+            return NULL;
+        }
+        break;
+    }
+    p = func_80072DDC(a, 1, 2, 0xF);
+    if (p != NULL) {
+        *(void **)(p + 0x1C) = f_HandleSmallFishActor;
+        *(s16 *)(p + 0x60) = bit;
+        p[3] = kind;
+        p[0x5E] = 0;
+        if (kind == 0) {
+            if (!((D_800BF9CC >> a[3]) & 1)) {
+                return p;
+            }
+            *(s16 *)(p + 0x2E) = *(u16 *)(a + 0x2E);
+            *(s16 *)(p + 0x32) = *(u16 *)(a + 0x32);
+            *(s16 *)(p + 0x36) = *(u16 *)(a + 0x36);
+            p[0x5E] = 1;
+        }
+    }
+    return p;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801253E8);
 
