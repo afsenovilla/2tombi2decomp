@@ -27796,7 +27796,74 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8007F498);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007F73C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007F8F8);
+extern char *D_800A2854_f8f8[];
+extern u8 D_800FB160_f8f8[];
+extern u8 D_800FB166;
+extern char D_800172F0[];
+extern char D_800172FC[];
+extern char D_80017300[];
+
+void func_8007F8F8(void)
+{
+    char *txt[4];
+    s16 ys[2];
+    s32 i;
+    u8 *cfg;
+    s32 c;
+
+    f_DrawTallMenuText(0x30, 0x20, 0, (s32)D_800A2854_f8f8[0x10], 0);
+    ys[0] = 0x40;
+    ys[1] = 0x58;
+    txt[0] = D_800A2854_f8f8[0x20];
+    txt[1] = D_800A2854_f8f8[0x23];
+    for (i = 0; i < 2; i++) {
+        c = 0;
+        if (D_800BF808[0] == i) {
+            c = 8;
+        }
+        f_DrawTallMenuText(0x40, ys[i], c, (s32)txt[i], 0);
+    }
+    f_DrawMenuSelectionCursor(0x2C, (s16)(ys[D_800BF808[0]] + 4), 0);
+    f_DrawTallMenuText(0xE0, (s16)(ys[0] + 3), 0, (s32)D_800172F0, 0);
+    txt[0] = D_800A2854_f8f8[0x21];
+    txt[1] = D_800A2854_f8f8[0x22];
+    for (i = 0; i < 2; i++) {
+        cfg = D_800FB160_f8f8;
+        c = 0;
+        if (i == cfg[7]) {
+            c = 3;
+        }
+        f_DrawTallMenuText((s16)(i * 0x30 + 0xC4), (s16)(ys[0] + 3), c, (s32)txt[i], 0);
+    }
+    f_DrawTallMenuText(0xE0, (s16)(ys[1] + 3), 0, (s32)D_800172F0, 0);
+    txt[0] = D_800172FC;
+    txt[1] = D_80017300;
+    for (i = 0; i < 2; i++) {
+        cfg = D_800FB160_f8f8;
+        c = 0;
+        if (i == cfg[6]) {
+            c = 3;
+        }
+        f_DrawTallMenuText((s16)(i * 0x28 + 0xCC), (s16)(ys[1] + 3), c, (s32)txt[i], 0);
+    }
+    if (D_800FB166 == 0) {
+        txt[0] = D_800A2854_f8f8[0x24];
+        txt[1] = D_800A2854_f8f8[0x25];
+        txt[2] = D_800A2854_f8f8[0x26];
+        txt[3] = D_800A2854_f8f8[0x27];
+    } else {
+        txt[3] = D_800A2854_f8f8[0x24];
+        txt[2] = D_800A2854_f8f8[0x25];
+        txt[1] = D_800A2854_f8f8[0x26];
+        txt[0] = D_800A2854_f8f8[0x27];
+    }
+    f_DrawSmallMenuText(0xB6, 0x6E, 0, (s32)txt[0], 0);
+    f_DrawSmallMenuText(0xC8, 0x86, 0, (s32)txt[1], 0);
+    f_DrawSmallMenuText(0xC0, 0xA4, 0, (s32)txt[2], 0);
+    f_DrawSmallMenuText((s16)(0x78 - func_80079528((u8 *)txt[3]) * 8), 0x88, 0, (s32)txt[3], 0);
+    f_DrawUiSpriteResource(D_800ECF58_ad48, 0xA0, 0x92, 0, 0xE1);
+    func_8007FC24();
+}
 
 typedef struct {
     u32 tag;
