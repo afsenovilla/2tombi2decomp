@@ -8599,7 +8599,96 @@ void func_8012D880(RECT16 *a) {
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012DA14);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012DBB4);
+extern s32 D_1F800080;
+
+u32 *func_8012DBB4(u32 *f, u32 *ot, s32 n)
+{
+    s32 sz[3];
+    T2PolyGT3 *p = D_800BF544;
+    u32 m = 0xFFF0F0F0;
+    s32 *flg = &D_1F800080;
+    s32 *otz = &D_1F800084;
+    u32 c;
+    u32 mode;
+    s32 b, e;
+    u32 *o;
+
+    while (n-- != 0) {
+        T2_ldv3t(f);
+        p->rgb0 = f[0];
+        T2_rtpt();
+        p->uv0 = f[2];
+        p->uv1 = f[3];
+        c = f[1];
+        T2_stflg(flg);
+        if (*flg >= 0) {
+            T2_nclip();
+            p->rgb1 = c & m;
+            T2_stopz(flg);
+            if (*flg > 0) {
+                T2_stsxy3_gt3(p);
+                if ((p->x0 < 320 || p->x1 < 320 || p->x2 < 320) && (p->y0 < 240 || p->y1 < 240 || p->y2 < 240)) {
+                    p->rgb2 = (c << 4) & m;
+                    c >>= 24; mode = c & 3;
+                    if (mode != 0) {
+                        T2_stsz1(&sz[0]);
+                        T2_stsz2(&sz[1]);
+                        T2_stsz3(&sz[2]);
+                        if (mode == 1) {
+                            if (sz[0] > sz[1]) {
+                                b = sz[2];
+                                if (b < sz[0]) {
+                                    b = sz[0];
+                                }
+                                *otz = b >> 2;
+                            } else {
+                                b = sz[2];
+                                if (b < sz[1]) {
+                                    b = sz[1];
+                                }
+                                *otz = b >> 2;
+                            }
+                        } else {
+                            if (sz[0] < sz[1]) {
+                                b = sz[2];
+                                if (sz[0] < b) {
+                                    b = sz[0];
+                                }
+                                *otz = b >> 2;
+                            } else {
+                                b = sz[2];
+                                if (sz[1] < b) {
+                                    b = sz[1];
+                                }
+                                *otz = b >> 2;
+                            }
+                        }
+                    } else {
+                        T2_avsz3();
+                        T2_stotz(otz);
+                    }
+                    e = *otz >> 10;
+                    *otz = (*otz >> e) + (e << 9);
+                    if ((u32)(*otz - 4) >= 0x7FC) {
+                        *otz = -1;
+                    }
+                    if (*otz >= 0) {
+                        p->uv2 = ((u16 *)f)[0x11];
+                        do {
+                            o = ot + *otz;
+                            p->tag = *o | 0x09000000;
+                            *o = (u32)p;
+                        } while (0);
+                        p++;
+                    }
+                }
+            }
+        }
+        f += 9;
+    }
+    D_800BF544 = p;
+    return f;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012DE60);
 
