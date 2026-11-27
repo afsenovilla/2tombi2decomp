@@ -13125,7 +13125,26 @@ u8 *func_80133900(s32 a) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80133958);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80133CAC);
+void func_80133958();
+
+u8 *func_80133CAC(s16 kind, u8 *owner, u16 *pos, u16 *vel) {
+    u8 *p = func_8007A980(3, 2, 0);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    *(void **)(p + 0x1C) = func_80133958;
+    *(u8 **)(p + 0x10) = owner;
+    p[2] = 0x21;
+    p[3] = kind;
+    *(s16 *)(p + 0x2E) = pos[0];
+    *(s16 *)(p + 0x32) = pos[1];
+    *(s16 *)(p + 0x36) = pos[2];
+    *(s16 *)(p + 0x4E) = vel[0];
+    *(s16 *)(p + 0x50) = vel[1];
+    *(s16 *)(p + 0x52) = vel[2];
+    return p;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80133D74);
 
