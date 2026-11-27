@@ -4103,7 +4103,111 @@ void func_801196C8(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80119B34);
+void func_80119B34(u8 *a)
+{
+    s32 i;
+    s32 k;
+    s32 n;
+    u8 *q;
+    u8 *p;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        a[0xB] = 0;
+        a[0xD] = 0;
+        func_801195AC(a, 0);
+        a[0x46] = 1;
+        H(a, 0xBC) = 0x1000;
+        H(a, 0xBA) = 0x1000;
+        H(a, 0xB8) = 0x1000;
+        H(a, 0x42) = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x56) = 0;
+        H(a, 0x58) = 0;
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            p = f4608_part(a, a[0x46] - 1);
+            H(p, 0x3A) += 0x800;
+            p = f4608_part(a, a[0x46] - 1);
+            if (U(p, 0x3A) >= 0x1000) {
+                H(p, 0x3A) = 0x1000;
+            }
+            H(a, 0x42)++;
+            if (H(a, 0x42) >= a[0x46] * 2) {
+                H(f4608_part(a, a[0x46] - 1), 0x3A) = 0x1000;
+                func_801195AC(a, a[0x46]);
+                a[0x46]++;
+                if (a[0x46] >= 4) {
+                    a[5]++;
+                }
+            }
+            break;
+        case 1:
+            p = f4608_part(a, a[0x46] - 1);
+            H(p, 0x3A) += 0x800;
+            p = f4608_part(a, a[0x46] - 1);
+            if (U(p, 0x3A) >= 0x1000) {
+                H(p, 0x3A) = 0x1000;
+                a[5]++;
+            }
+            break;
+        case 2:
+            break;
+        }
+        a[1] = (*(u8 **)(a + 0x10))[1];
+        if (a[1] != 0) {
+            func_80051844(a);
+        }
+        break;
+    case 2:
+        switch (a[5]) {
+        case 0:
+            func_80074590(0x2D, 0xB, -0x32);
+            k = a[0x46] - 1;
+            n = func_800270F8(W(f4608_part(a, k), 0x40));
+            for (i = 0; i < 6; i++) {
+                if (i >= n) {
+                    break;
+                }
+                q = func_8007B26C();
+                if (q != 0) {
+                    q[1] = 1;
+                    H(q, 0xC) = 0x800;
+                    q[2] = i;
+                    H(q, 0x1E) = U(f4608_part(a, k), 0x2C);
+                    H(q, 0x22) = U(f4608_part(a, k), 0x30);
+                    H(q, 0x26) = U(f4608_part(a, k), 0x34);
+                    func_80027058(q, W(f4608_part(a, k), 0x40), i);
+                }
+            }
+            D_800ED098++;
+            *--D_800E7E74 = (s32)((A4608 *)a)->part[k];
+            a[9]--;
+            a[0x46]--;
+            if (a[0x46] == 0) {
+                a[4] = 3;
+            } else {
+                H(a, 0x40) = 3;
+                a[5]++;
+            }
+            break;
+        case 1:
+            if (--H(a, 0x40) == 0) {
+                a[5]--;
+            }
+            break;
+        }
+        a[1] = 1;
+        func_80051844(a);
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_80119B34();
 void func_80119F24(u8 *a, u8 k)
