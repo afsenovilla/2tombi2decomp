@@ -5895,7 +5895,52 @@ void func_80123018(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80123318);
+#define MOD3318(d, k) \
+    t = ((d) * (k)) / 128; \
+    v = t; \
+    if (t > 0xFF) { \
+        v = 0xFF; \
+    } \
+    (d) = v
+
+void func_80123318(u8 *a, u8 *p, u8 *end)
+{
+    u8 v;
+    s32 t;
+    u8 *p_p = p;
+
+    while (p_p < end) {
+        switch (p_p[7] & 0xFC) {
+        case 0x34:
+            MOD3318(p_p[4], a[0x18]);
+            MOD3318(p_p[0x10], a[0x18]);
+            MOD3318(p_p[0x1C], a[0x18]);
+            MOD3318(p_p[5], a[0x19]);
+            MOD3318(p_p[0x11], a[0x19]);
+            MOD3318(p_p[0x1D], a[0x19]);
+            MOD3318(p_p[6], a[0x1A]);
+            MOD3318(p_p[0x12], a[0x1A]);
+            MOD3318(p_p[0x1E], a[0x1A]);
+            p_p += 0x28;
+            break;
+        case 0x3C:
+            MOD3318(p_p[4], a[0x18]);
+            MOD3318(p_p[0x10], a[0x18]);
+            MOD3318(p_p[0x1C], a[0x18]);
+            MOD3318(p_p[0x28], a[0x18]);
+            MOD3318(p_p[5], a[0x19]);
+            MOD3318(p_p[0x11], a[0x19]);
+            MOD3318(p_p[0x1D], a[0x19]);
+            MOD3318(p_p[0x29], a[0x19]);
+            MOD3318(p_p[6], a[0x1A]);
+            MOD3318(p_p[0x12], a[0x1A]);
+            MOD3318(p_p[0x1E], a[0x1A]);
+            MOD3318(p_p[0x2A], a[0x1A]);
+            p_p += 0x34;
+            break;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80123860);
 
