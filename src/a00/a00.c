@@ -2726,7 +2726,164 @@ void func_80115B88(s32 arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnFishermensTownActorsFromPlacementTable);
+extern u8 D_800BF808_s00[];
+extern u8 *D_80148064[];
+static inline u8 *GS00(void)
+{
+    return (u8 *)&D_800BF870;
+}
+static inline u8 *GB00(void)
+{
+    return D_800BF808_s00;
+}
+
+void f_SpawnFishermensTownActorsFromPlacementTable(u8 *a, s32 mode)
+{
+    u8 *e;
+    u8 *p;
+
+    H_f12c(a, 8) = 0;
+    e = D_80148064[mode];
+    if (e[0] == 0xFF) {
+        return;
+    }
+    do {
+        if (mode != 0 && H_f12c(a, 8) >= 0xF) {
+            goto next;
+        }
+        switch (e[0xA]) {
+        case 0:
+            break;
+        case 1:
+            U(GB00(), 8) = U(e, 4);
+            U(GB00(), 0xA) = U(e, 6);
+            U(GB00(), 0xC) = U(e, 8);
+            break;
+        case 2:
+            if (GS00()[0x2C] == 2) {
+                break;
+            }
+            goto next;
+        case 5:
+            if (GS00()[0x4C] == 0xFF) {
+                goto next;
+            }
+            if ((GS00()[0x173] >> (e[3] - 3)) & 1) {
+                break;
+            }
+            goto next;
+        case 6:
+            if (e[3] == 0 && GS00()[0x17F] != 0) {
+                goto next;
+            }
+            if (e[3] == 1 && GS00()[0x17F] != 1) {
+                goto next;
+            }
+            break;
+        case 7:
+            switch (e[3]) {
+            case 0 ... 1:
+                if (GS00()[0x175] < 2) {
+                    goto next;
+                }
+                if ((GS00()[0x173] >> e[3]) & 1) {
+                    goto next;
+                }
+                break;
+            case 20:
+                if (GS00()[0x170] < 0x11) {
+                    goto spawn;
+                }
+                goto next;
+            }
+            break;
+        case 8:
+            if ((GS00()[0x16F] & 0x30) == 0x10) {
+                break;
+            }
+            goto next;
+        case 9:
+            if (GS00()[0x268] != 0) {
+                break;
+            }
+            goto next;
+        case 11:
+            if (GS00()[0x175] == 4) {
+                break;
+            }
+            goto next;
+        case 13:
+            if (GS00()[0x175] == 2) {
+                break;
+            }
+            goto next;
+        case 14:
+            switch (e[3]) {
+            case 0:
+                if (GS00()[0x48] != 0xFF) {
+                    break;
+                }
+                goto next;
+            case 1:
+                if (GS00()[0x48] != 0xFF) {
+                    goto next;
+                }
+                if (GS00()[0x16E] != 0) {
+                    goto next;
+                }
+                break;
+            }
+            break;
+        case 15:
+            if (GS00()[0x87] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 16:
+            if ((GS00()[0x1B3] >> e[3]) & 1) {
+                goto next;
+            }
+            break;
+        case 17:
+            switch (e[3]) {
+            case 0:
+                if (GS00()[0x4C] != 0xFF) {
+                    break;
+                }
+                goto next;
+            case 1:
+                if (GS00()[0x4D] != 0) {
+                    goto spawn;
+                }
+                goto next;
+            }
+            break;
+        case 18:
+            if (GS00()[0x17E] & 2) {
+                goto next;
+            }
+            break;
+        }
+    spawn:
+        p = func_80072DDC(a, e[0], e[1], e[2]);
+        if (p != NULL) {
+            *(s32 *)(p + 0x2C) = H_f12c(e, 4) << 16;
+            *(s32 *)(p + 0x30) = H_f12c(e, 6) << 16;
+            *(s32 *)(p + 0x34) = H_f12c(e, 8) << 16;
+            p[3] = e[3];
+            H_f12c(p, 0x54) = 0;
+            H_f12c(p, 0x56) = 0;
+            H_f12c(p, 0x58) = 0;
+            *(s32 *)(p + 0x1C) = *(s32 *)(e + 0xC);
+            if (mode != 0) {
+                *(u8 **)(a + (H_f12c(a, 8) << 2) + 0xC) = p;
+                H_f12c(a, 8)++;
+            }
+        }
+    next:
+        e += 0x10;
+    } while (e[0] != 0xFF);
+}
 
 #define GS1(o) (g1[o])
 #define GS2(o) (g2[o])
