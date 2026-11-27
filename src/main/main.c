@@ -16892,7 +16892,315 @@ void func_80058F24(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80058F5C);
+void func_8005A910(void *arg0);
+void func_8005ACC8(u8 *a);
+void func_8005AEE4(u8 *a);
+void func_800645E0(u8 *a);
+void func_8005C8A0(u8 *a);
+void func_8005D16C(u8 *a);
+void func_80064BA0(u8 *a);
+void func_80064E48(u8 *a);
+void func_8005E580(u8 *a);
+void func_8005E8FC(u8 *a);
+void func_8005EC70(u8 *t);
+void func_8005EF48(u8 *t);
+void func_8005FB54(u8 *a);
+void func_8005F1B0(void *arg0);
+void func_8006506C(u8 *a);
+void func_80065374(void);
+void func_800653F4(void *arg0);
+void func_80060064(u8 *a);
+void func_80061A7C(u8 *t);
+void func_80061C64(u8 *a);
+void func_800620D0(u8 *t);
+void func_8006228C(void *arg0);
+void func_800624B4(u8 *a);
+void func_80065A54(u8 *a);
+void func_800660AC(u8 *t);
+void func_800654D4(u8 *a);
+void func_800655DC(u8 *t);
+void func_800656FC(u8 *t);
+void func_8006585C(u8 *t);
+void func_800658E4(u8 *t);
+void func_800655A0(void *arg0);
+void func_80065990(u8 *a);
+void func_800661E0(void *arg0);
+
+void func_80058F5C(u8 *a)
+{
+    switch (a[5]) {
+    case 0:
+        func_8005A910(a);
+        if (D_1F800137_104c == 0) {
+            a[5] = 0x20;
+            a[6] = 0;
+        }
+        break;
+    case 1:
+        func_8005ACC8(a);
+        break;
+    case 2:
+        func_8005AEE4(a);
+        func_800531DC(a);
+        break;
+    case 3:
+        a[0x17B] = 1;
+        func_8005B63C(a);
+        if (a[0x29] != 0) {
+            f_ClearTombaInteractionState(a);
+            a[0x144] = 0;
+            f_ResetTombaControlState(a);
+            a[5] = 0;
+            a[6] = 0;
+            a[7] = 0;
+        }
+        break;
+    case 4:
+        a[0x17B] = 1;
+        func_800645E0(a);
+        func_80058F24(a);
+        func_800531DC(a);
+        break;
+    case 5:
+    case 50:
+        a[0x17B] = 1;
+        func_8005C8A0(a);
+        break;
+    case 6:
+        a[0x17B] = 1;
+        func_8005D16C(a);
+        break;
+    case 7:
+        a[0x17B] = 1;
+        func_80064BA0(a);
+        func_80058F24(a);
+        break;
+    case 8:
+        a[0x17B] = 1;
+        func_80064E48(a);
+        func_80058F24(a);
+        break;
+    case 9:
+        func_8005CDF8(a);
+        break;
+    case 10:
+        func_8005D530(a);
+        break;
+    case 11:
+        func_8005DE54(a);
+        break;
+    case 12:
+        func_8005E580(a);
+        break;
+    case 13:
+        func_8005E8FC(a);
+        break;
+    case 14:
+        func_8005EC70(a);
+        break;
+    case 15:
+        func_8005EF48(a);
+        break;
+    case 16:
+        func_8005C26C(a);
+        if (a[0x78] == 7) {
+            break;
+        }
+        a[0x17B] = 1;
+        if (D_1F800137_104c != 0) {
+            f_ClearTombaInteractionState(a);
+            a[0x144] = 0;
+            f_ResetTombaControlState(a);
+            a[5] = 0;
+            a[6] = 0;
+            a[7] = 0;
+        }
+        break;
+    case 17:
+        a[0x17B] = 1;
+        f_UpdateTombaEquipmentChangeAction(a);
+        break;
+    case 18:
+        a[0x17B] = 1;
+        func_8005FB54(a);
+        if (D_1F800137_104c == 0) {
+            a[5] = 0x20;
+            a[6] = 0;
+        }
+        break;
+    case 19:
+        a[0x17B] = 1;
+        func_8005F1B0(a);
+        break;
+    case 20:
+        func_8006506C(a);
+        func_80058F24(a);
+        func_800531DC(a);
+        break;
+    case 21:
+        ((void (*)())func_80065374)(a);
+        func_80058F24(a);
+        func_800531DC(a);
+        break;
+    case 22:
+        func_800653F4(a);
+        func_80058F24(a);
+        func_800531DC(a);
+        break;
+    case 23:
+        func_80060064(a);
+        break;
+    case 24:
+        if (D_800BF870.unk0 == 4) {
+            func_801139F4(a);
+        } else if (D_800BF870.unk0 == 6) {
+            func_801144F4(a);
+        } else if (D_800BF870.unk0 == 0xE) {
+            func_8010AF4C(a);
+        }
+        break;
+    case 25:
+        a[0x17B] = 1;
+        func_80060C60(a);
+        func_80058F24(a);
+        break;
+    case 26:
+        if (D_800BF870.unk0 == 5) {
+            func_80110380(a);
+        } else {
+            func_8010B73C(a);
+        }
+        break;
+    case 27:
+        func_80061A7C(a);
+        break;
+    case 28:
+        func_80061C64(a);
+        break;
+    case 29:
+        if (D_800BF870.unk0 == 0) {
+            func_8010C87C(a);
+        } else if (D_800BF870.unk0 == 6) {
+            func_801145EC(a);
+        } else if (D_800BF870.unk0 == 8) {
+            func_801135C8(a);
+            if (D_1F800137_104c == 0) {
+                a[5] = 0x2D;
+                a[6] = 0;
+            }
+        } else if (D_800BF870.unk0 == 0xE) {
+            func_8010B3E8(a);
+        }
+        break;
+    case 51:
+        if (D_800BF870.unk0 == 5) {
+            func_8010F948(a);
+        } else if (D_800BF870.unk0 == 0x12) {
+            func_80109F7C(a);
+        }
+        break;
+    case 52:
+        func_8011411C(a);
+        break;
+    case 53:
+        func_801144FC(a);
+        break;
+    case 54:
+        if (D_800BF870.unk0 == 6) {
+            func_80112E24(a);
+        } else {
+            func_801149B8(a);
+        }
+        break;
+    case 55:
+        func_801150C4(a);
+        break;
+    case 56:
+        func_800620D0(a);
+        break;
+    case 57:
+        func_8006228C(a);
+        break;
+    case 58:
+        a[0x17B] = 1;
+        func_800624B4(a);
+        break;
+    case 42:
+        func_801135E8(a);
+        break;
+    case 43:
+        func_80113608(a);
+        break;
+    case 30:
+        func_800654D4(a);
+        if (D_1F800137_104c == 0) {
+            a[5] = 0x20;
+            a[6] = 0;
+        }
+        break;
+    case 31:
+        func_800655DC(a);
+        break;
+    case 32:
+        func_800656FC(a);
+        break;
+    case 33:
+        func_8006585C(a);
+        if (D_1F800137_104c == 0) {
+            a[5] = 0x20;
+            a[6] = 0;
+        }
+        break;
+    case 34:
+        func_800658E4(a);
+        if (D_1F800137_104c == 0) {
+            a[5] = 0x20;
+            a[6] = 0;
+        }
+        break;
+    case 35:
+        func_800655A0(a);
+        break;
+    case 36:
+        a[0x17B] = 1;
+        func_80065A54(a);
+        break;
+    case 37:
+        func_800660AC(a);
+        if (D_1F800137_104c == 0) {
+            a[5] = 0x20;
+            a[6] = 0;
+        }
+        break;
+    case 38:
+        func_80065990(a);
+        if (D_1F800137_104c == 0) {
+            a[5] = 0x20;
+            a[6] = 0;
+        }
+        break;
+    case 40:
+        func_800661E0(a);
+        if (D_1F800137_104c == 0) {
+            a[5] = 0x20;
+            a[6] = 0;
+        }
+        break;
+    case 41:
+        func_8010F304(a);
+        break;
+    case 44:
+        a[0x17B] = 1;
+        func_801125E4(a);
+        break;
+    case 45:
+        func_80112418(a);
+        break;
+    case 59:
+        func_801097C8(a);
+        break;
+    }
+}
 
 extern u8 D_1F800232;
 extern u16 D_1F800166_b02d;
