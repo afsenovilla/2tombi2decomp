@@ -809,6 +809,12 @@ struct-member form of a cast access, regswap `member` toggles every one)
 
 ## Decisions (with dates in STATUS)
 
+- Native port, stage 1 (2026-11-27): `port/` follows Tombi-Decomp's fixed-address `port/` (PS1 RAM at 0x80000000 in
+  an i386 process, MIPS interpreter for code without C, Psy-Q shims), not its native-pointer `port2/`, because T2 is
+  not fully matched yet. Build: `cmake -S port -B build/port -G Ninja && cmake --build build/port`; run
+  `build/port/tomba2 --frames N --dump-frames DIR`. It only reads src/, build/main.elf and asm/main/: matching work
+  needs no change for it. Port pitfalls: gcc 2.8 accepted conflicting declarations (`int f();` then `u8 *f(...)`),
+  the host does not (gen_t2.py renames such definitions); functions with inline asm stay interpreted. docs/PORT.md.
 - Byte-matching only; tools/nonmatching.py is kept unused.
 - USA is the reference; EU in config/eu/.
 - The licensed-region module at the end of boot.c [0x80011A0C, 0x80012D2C) is library-style files in

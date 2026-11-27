@@ -103,6 +103,8 @@ Can start once 2.1 exists.
 
 Starts when MAIN is mostly C (the port needs C for the engine; asm functions can be machine-translated meanwhile as T1
 did).
+Stage 1 (2026-11-27, docs/PORT.md): `port/` on T1's fixed-address model (`port/`, not `port2/`) so that the
+interpreter runs what has no C; boots headless to the title screen and the attract demo.
 - [ ] **7.1 Runtime**: copy T1's `port2/runtime` (software/GL renderer, SDL, GTE/GPU/SPU shims, CD from the user's
   disc), adapt to T2's libraries (Psy-Q 4.4) and memory map.
 - [ ] **7.2 Generator** (T1's `port2/tools/gen2.py` + fixes.txt approach) over our `src/` and the remaining asm.

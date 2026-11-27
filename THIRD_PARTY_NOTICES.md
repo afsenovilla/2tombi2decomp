@@ -8,6 +8,9 @@
 - Tools adapted from [Tombi-Decomp](https://github.com/afsenovilla/Tombi-Decomp) (MIT, "afsenovilla and
   Tombi-Decomp contributors"). Game C adapted from its matched C says so in a comment above the function
   (`src/main/main.c` f_AdvanceActorTimedFrameSequence, from its src/AnimAdvance.c).
+- The native port (`port/`) is adapted from Tombi-Decomp's `port/` and `port2/` (MIT, same author and contributors):
+  the runtime (i386 address space, MIPS interpreter, threads, GTE), the software GPU, the Psy-Q shims and the
+  generator design; each file says what it took (docs/PORT.md §3).
 - Library C (files under `src/*/psyq/`) is adapted from these MIT-licensed decompilations of Sony's Psy-Q libraries;
   each file says where it came from (`// Source: ...`):
   [psx_tomba](https://github.com/hansbonini/psx_tomba) (MIT per its README; its base headers are fetched into

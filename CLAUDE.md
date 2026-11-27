@@ -210,4 +210,9 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   gcc's scheduler model, camera-zone template); tools/jtbl.py orders retail candidates by table address. Round 17
   (back on Opus, the user's choice; ~68 KB): AGENTS.md "Round 17 forms"; drop narrow prototypes from scratches.
 - `python3 -I tools/vermatch.py`: how much USA code is found in the EU / ES builds.
+- Native port (docs/PORT.md; stage 1 2026-11-27: title screen + attract demo): `cmake -S port -B build/port -G Ninja
+  && cmake --build build/port` (needs `gcc-multilib`, the matching build's build/main.elf + asm/main), then
+  `build/port/tomba2 --frames 1400 --dump-frames DIR [--dump-every 50] [--trace-cd] [-v]` from the repo root (reads
+  game/usa/MAIN.EXE + the extracted files). Fixed-address i386 model of T1's `port/`: MAIN's C native
+  (port/tools/gen_t2.py), asm-only functions and all overlays in the MIPS interpreter, Psy-Q through port/shims.
 - `python3 -I tools/gen_configs.py game/usa [--force] [--out config/eu]`: regenerates the first configs (keeps hand-made ones without --force).

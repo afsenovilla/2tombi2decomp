@@ -3,6 +3,28 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-27 (4): port stage 1 (milestone P0: boots to the title screen and the attract demo)
+
+The user asked to focus on the native PC port. `port/` (CMake, i386 Linux, freestanding like Tombi-Decomp's
+`port/`) builds from `src/main/main.c` + `build/main.elf` + `asm/main/` and runs the USA `MAIN.EXE` headless from
+`game/usa/`: **the title screen is drawn from frame ~200** (OPN.BIN, interpreted) and, with no input, **the attract
+demo plays in the Tomba village area from frame ~1300** (DEMO.BIN + area data, 968 CD sectors); it crashes at frame
+1403 in native collision code (first port bug, docs/PORT.md §5). docs/PORT.md has the design and the numbers.
+
+- Model: T1's fixed-address prototype (`port/`), not its native-pointer `port2/`: T2 is 60 % C, so native C and the
+  MIPS interpreter (for asm-only functions and all overlay code) share one address space (PS1 RAM mapped at
+  0x80000000). 896 MAIN functions native, 50 left to the interpreter (inline GTE asm, host compile errors), 13
+  definitions renamed (conflicting earlier declarations). Psy-Q: 160 shims, 35 pure functions interpreted, the rest
+  logged stubs (sound silent, memory card stubbed).
+- New: `port/tools/gen_t2.py` (host-cpp + top-level item split + compile-error fix-up loop; link step: retail data
+  -> address, call thunks, funcmap / libmap / Psy-Q policy), the virtual disc over the extracted files
+  (`shims/cd_virtual.inc`: CdSearchFile ranges, the data-ready path with real 2340-byte sector headers), busy-wait
+  loops in interpreted code = vblanks (main()'s frame pacing), GTE DPCS / DPCT / INTPL / DCPL / GPF / GPL / SQR / OP.
+- Installed in the container: `gcc-multilib` (apt; only `-m32` compiles are needed, the binary is freestanding).
+- Next (stage 2): the frame-1403 crash (register-carried arguments / narrow returns: T1 `arity_check.py`, `--interp`
+  bisection), `--pad-script` to start a game (SOP -> A00), GTE asm -> C, overlay C with per-overlay dispatch, then
+  sound / card / movies / SDL window from T1 `port2/`.
+
 ## 2026-11-27 (3): seventeenth round (agents back on Opus)
 
 All code in C: **5302 / 7011 functions (75.6 %, 60.0 % of the bytes)**, from 5233 (57.7 %): ~68 KB (round 16 on Fable
