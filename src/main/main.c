@@ -16372,7 +16372,53 @@ void func_8005B20C(u8 *a, s32 b)
     *(u16 *)(t + 0x58) = D_800A46AC[*(s16 *)(a + 0x40)];
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005B370);
+void func_8005B370(u8 *t, s32 mode)
+{
+    u8 *o;
+    s16 r;
+    s32 k;
+    s32 z;
+
+    f_UpdateTombaMovementOrientation(t);
+    o = *(u8 **)(t + 0x10);
+    switch (mode) {
+    case 0:
+        r = U(o, 0x84) + H_f12c(t, 0x62) / 2;
+        k = (rsin(H_f12c(o, 0x58) + 0x400) * r) >> 12;
+        r = -(rcos(H_f12c(o, 0x58) + 0x400) * r) >> 12;
+        U(t, 0x32) = U(o, 0x32) - k;
+        k = (rcos(H_f12c(o, 0x56)) * r) >> 12;
+        z = (rsin(H_f12c(o, 0x56)) * r) >> 12;
+        U(t, 0x2E) = U(o, 0x2E) + k;
+        U(t, 0x36) = U(o, 0x36) - z;
+        U(t, 0x142) = U(o, 0x58);
+        t[0x29] = 1;
+        break;
+    case 1:
+        W_d1fb(t, 0x2C) = W_d1fb(o, 0x2C);
+        W_d1fb(t, 0x34) = W_d1fb(o, 0x34);
+        if (H_f12c(t, 0x17E) >= 0) {
+            U(o, 0x32) = U(t, 0x32) + U(o, 0x84) + 0x50;
+        } else {
+            U(o, 0x32) = U(t, 0x32) + U(o, 0x84) + 0x28;
+        }
+        U(o, 0x58) = U(t, 0x58);
+        break;
+    case 2:
+        r = U(o, 0x84) + H_f12c(t, 0x62) / 2;
+        k = (rsin(H_f12c(o, 0x58) + 0x400) * r) >> 12;
+        r = -(rcos(H_f12c(o, 0x58) + 0x400) * r) >> 12;
+        U(t, 0x32) = U(o, 0x32) - k;
+        k = (rcos(H_f12c(o, 0x56)) * r) >> 12;
+        z = (rsin(H_f12c(o, 0x56)) * r) >> 12;
+        U(t, 0x2E) = U(o, 0x2E) + k;
+        U(t, 0x36) = U(o, 0x36) - z;
+        U(o, 0x56) = U(t, 0x56);
+        U(t, 0x142) = U(o, 0x58);
+        t[0x29] = 1;
+        break;
+    }
+}
 
 s32 func_8005B5E4(u8 *a)
 {
