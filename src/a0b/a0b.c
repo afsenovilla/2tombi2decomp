@@ -91,7 +91,98 @@ INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_8010A550);
 
 INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_8010A6E0);
 
-INCLUDE_ASM("asm/a0b/nonmatchings/a0b", func_8010A93C);
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+extern s8 D_800BF808[];
+extern u8 D_1F800259;
+extern s32 D_1F800090;
+extern s32 D_1F800094;
+extern u8 D_800BF848;
+extern u8 D_800BFAD5;
+extern u8 D_1F800137;
+
+void func_8010A93C(u8 *a, u8 *b)
+{
+    s8 *g = D_800BF808;
+    s32 d;
+    u16 w;
+    u16 h;
+    s32 v;
+    u8 c;
+    u16 x;
+    s32 f;
+
+    if (g[5] != 0 || D_1F800259 != 0 || ((u8 *)g)[1] != 0 || ((u8 *)g)[2] != 0 || (a[0] & 0xC)) {
+        return;
+    }
+    w = U(b, 0x84);
+    h = U(b, 0x86);
+    if (U(a, 0x17E) & 0x40) {
+        H(b, 0x84) = w + 0x190;
+        H(b, 0x86) += 0x190;
+    } else {
+        H(b, 0x84) = w + 0xC8;
+        H(b, 0x86) += 0xC8;
+    }
+    if (func_80022F04(a, b) != 0) {
+        u8 *g2 = (u8 *)D_800BF808;
+        g2[0x16] = 0;
+        { s32 q = U(a, 0x84) + U(b, 0x84) + 0x12C; s32 r = U(b, 0x32) - U(a, 0x32); d = q - r; }
+        if (D_1F800090 != 0) {
+            g2[0x40] = *(u8 *)&D_1F800090;
+        } else {
+            g2[0x40] = 1;
+            if (a[0x78] == 0) {
+                func_80074590(0x25, 0, 0);
+            }
+        }
+        { s32 t = H(a, 0x44) >> 2; f = D_1F800094; H(a, 0x44) -= t; }
+        if (f != 0) {
+            H(a, 0x50) = 0;
+            H(a, 0x4A) = 0;
+            W(a, 0x30) -= (s16)d << 12;
+        } else {
+            H(a, 0x4A) -= d * 2;
+            v = H(a, 0x4A);
+            if (v > 0x280) {
+                H(a, 0x4A) = 0x280;
+            } else if ((s16)d < 0x1F4) {
+                if (v < -0x3E00) {
+                    H(a, 0x4A) = -0x3E00;
+                }
+            } else if (v < -0x2800) {
+                H(a, 0x4A) = -0x2800;
+            }
+            c = a[0x46];
+            if ((u8)(c - 0x13) < 3 || c == 0xCA || c == 0xE5 || c == 0xE6) {
+                if (D_1F800090 == 0 || a[0x145] != 1) {
+                    func_80054D14(a, 0x12, 4);
+                } else {
+                    D_800BF848 = 4;
+                }
+            }
+        }
+        H(b, 0x64)++;
+        if (H(b, 0x64) >= 0x3D && H(a, 0x16E) != 0 && D_1F800137 == 0 && !(a[0x177] & 2) && a[0x78] == 0
+            && !(U(a, 0x17E) & 0x400)) {
+            if (D_800BFAD5 == 0 && func_80022D08(a, 0, 1, 1) != 0) {
+                a[7] = 0;
+            } else {
+                a[7] = 1;
+            }
+            a[4] = 2;
+            a[5] = 6;
+            a[6] = 0;
+            a[0] |= 0xC;
+            b[0] = 2;
+            H(b, 0x40) = 0;
+        }
+        b[0x5E] = 1;
+        H(b, 0x84) = w;
+        H(b, 0x86) = h;
+    } else {
+        H(b, 0x64) = 0;
+    }
+}
 
 extern u8 **D_1F80013C;
 extern u8 D_1F800144;
@@ -228,8 +319,6 @@ void func_8010B010(void)
     }
 }
 
-extern s8 D_800BF808[];
-extern u8 D_1F800137;
 extern u8 D_800E7E80[];
 /* func_8010B680, inlined */
 static inline void inl_8010B680(u8 *a)
@@ -4540,7 +4629,6 @@ void func_801159FC(void *arg0) {
 }
 
 #define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
-extern u8 D_1F800259;
 extern u8 D_800BF84C;
 void func_80115B28(u8 *a)
 {
@@ -5579,7 +5667,6 @@ u8 *f_SpawnLastEvilPigBattleProjectile(u8 *a)
 }
 
 #define gte_ldv0m(p) __asm__ volatile("lwc2	$0, %0;" "lwc2	$1, %1" : : "m"(((s32 *)(p))[0]), "m"(((s32 *)(p))[1]))
-extern s32 D_1F800090;
 u8 func_801180E8(u8 *a)
 {
     s16 ang;
