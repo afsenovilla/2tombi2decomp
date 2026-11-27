@@ -141,6 +141,7 @@ int port_main(int argc, char **argv) {
         else if (streq(argv[i], "--kuseg-mirror")) { /* Windows: read in start() (sys_win32_i386.c); Linux: the default */ }
         else if (streq(argv[i], "--keys-off")) { extern int port_keys_off; port_keys_off = 1; }
         else if (streq(argv[i], "--dump-tv")) { extern int port_dump_tv; port_dump_tv = 1; }
+        else if (streq(argv[i], "--demo-takeover") && i + 1 < argc) { extern int port_demo_takeover; port_demo_takeover = atoi_(argv[++i]); }
         else if (streq(argv[i], "--poke") && i + 1 < argc) { extern void port_add_poke(const char *); port_add_poke(argv[++i]); }
         else if (streq(argv[i], "--trace-pos") && i + 1 < argc) { extern int port_trace_pos; port_trace_pos = atoi_(argv[++i]); }
         else if (streq(argv[i], "--no-ovl-native")) { extern int port_ovl_native; port_ovl_native = 0; }

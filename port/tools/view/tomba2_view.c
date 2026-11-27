@@ -55,49 +55,95 @@ static int read_all(pipe_t fd, void *buf, size_t n) {
 
 static pipe_t audio_fd = NO_PIPE;
 static SDL_AudioDeviceID dev;
-/* Audio: the game produces samples on its own 44.1 kHz clock (shims/sound.c).  The pipe is drained
-   unconditionally by a thread into a ring buffer; the SDL callback pulls from the ring.  The game is never blocked
-   on audio: a blocked write would stall a vblank, and with the absolute schedule a stall every frame makes the game
-   alternate pause and burst (the event banners "bounce" at the wrong speed).  The ring holds half a second; the
-   callback pads silence when it runs dry and the thread drops the oldest samples when it is full (a stall of the
-   player, not of the game).  The ring is kept between about two and four frames behind by letting the callback
-   skip ahead when more than RING_HIGH is queued: audio timing is then a fixed small latency. */
+/* Audio: the game produces samples on its own clock, 735 stereo frames per vblank (shims/audio.c), which is
+   44.1 kHz only if the game paces exactly 60 vblanks a second; the device plays on its own crystal.  The pipe is
+   drained unconditionally by a thread into a ring buffer (the game is never blocked on audio: a blocked write would
+   stall a vblank); the SDL callback pulls from the ring through a linear resampler whose rate follows the ring's
+   fill: the fill is held near AUDIO_TARGET by playing up to 2 % faster or slower (the user's Windows run paced
+   59.4 vblanks/s, 1 % less audio than the device consumed: with a fixed rate the ring ran dry every few seconds,
+   the music "stuttered").  An underrun (the game stalled) pads silence and re-primes to the target; more than
+   AUDIO_HIGH queued (a stall of the player) skips ahead.  Underruns and skips are logged to stderr (tomba2.log
+   under the launcher) with the time, so a player's log shows them. */
 #define FRAME_BYTES (44100 * 4 / 60)
-#define RING_BYTES (44100 * 4 / 2)
-#define RING_HIGH (6 * FRAME_BYTES)
+#define RING_BYTES (1 << 18)                 /* 1.5 s; a power of two, so the byte counters may wrap */
+#define AUDIO_TARGET (6 * 735)               /* stereo frames queued: 100 ms */
+#define AUDIO_HIGH (24 * 735)                /* 400 ms: skip back to the target */
 static unsigned char ring[RING_BYTES];
 static volatile unsigned ring_r, ring_w;      /* byte positions, modulo RING_BYTES; w - r = fill */
 static SDL_mutex *ring_lock;
 static unsigned audio_dropped, audio_padded;  /* bytes, for --stats */
-static int ring_started;                      /* playing: set once two frames are queued, cleared by an underrun */
+static unsigned audio_underruns, audio_skips;
+static unsigned long audio_in, audio_out;      /* bytes received, frames played (for --stats: the two clocks) */
+static unsigned audio_gap_max, audio_fill_min = ~0u;   /* --stats: longest wait for the game's audio (ms), lowest fill */
+static int ring_started;                      /* playing: set once AUDIO_TARGET is queued, cleared by an underrun */
+static double rs_frac;                        /* resampler position past ring_r, in source frames (0..1) */
+static double rs_fill = AUDIO_TARGET;         /* smoothed fill, in frames */
+static double rs_integ;                       /* the controller's integral term (rate offset) */
+static Uint32 audio_t0;
+static void audio_log(const char *what, unsigned n, unsigned fill) {
+    if (n <= 20 || n % 100 == 0)
+        fprintf(stderr, "tomba2-view: audio %s #%u at %.1f s (queued %u ms)\n", what, n,
+                (SDL_GetTicks() - audio_t0) / 1000.0, fill * 1000 / 44100);
+}
+static inline const Sint16 *ring_frame(unsigned i) { return (const Sint16 *)(ring + ((ring_r + i * 4) % RING_BYTES)); }
 static void audio_cb(void *ud, Uint8 *out, int len) {
     (void)ud;
+    Sint16 *o = (Sint16 *)out;
+    int m = len / 4;
     SDL_LockMutex(ring_lock);
-    unsigned fill = ring_w - ring_r;
-    if (!ring_started) {   /* (re)start: two frames of silence ahead of the data, so the game's 20 ms bursts and its
-                              jitter never drain the ring (the old queue-based viewer primed the same way) */
-        for (unsigned i = 0; i < 2 * FRAME_BYTES; i++) ring[(ring_r + i) % RING_BYTES] = 0;   /* room: the ring holds 25 frames */
-        ring_started = 1;
+    unsigned fill = (ring_w - ring_r) / 4;
+    if (ring_started && fill < audio_fill_min) audio_fill_min = fill;
+    if (!ring_started) {
+        if (fill < AUDIO_TARGET) { SDL_UnlockMutex(ring_lock); memset(out, 0, len); return; }   /* priming */
+        ring_started = 1; rs_frac = 0; rs_fill = fill;
     }
-    if (fill < (unsigned)len) ring_started = 0;   /* underrun (the game stalled, or the device's clock runs ahead): re-prime */
-    if (fill > RING_HIGH + (unsigned)len) { audio_dropped += fill - RING_HIGH; ring_r = ring_w - RING_HIGH; fill = RING_HIGH; }
-    unsigned n = fill < (unsigned)len ? fill : (unsigned)len;
-    for (unsigned i = 0; i < n; i++) out[i] = ring[(ring_r + i) % RING_BYTES];
-    ring_r += n;
+    if (fill > AUDIO_HIGH) {   /* the player stalled (or the game ran ahead): back to the target */
+        audio_skips++; audio_log("skip", audio_skips, fill);
+        audio_dropped += (fill - AUDIO_TARGET) * 4; ring_r = (ring_w & ~3u) - AUDIO_TARGET * 4; fill = AUDIO_TARGET; rs_fill = fill;
+    }
+    rs_fill += (fill - rs_fill) * 0.05;   /* smoothed over ~20 callbacks (~230 ms at 512-frame buffers) */
+    double e = (rs_fill - AUDIO_TARGET) / AUDIO_TARGET;
+    /* proportional (1 % at a quarter of the target off) + integral (the steady clock difference, e.g. 59.4 against
+       60 vblanks/s, without a standing offset of the fill); at most 2 % faster or slower */
+    rs_integ += e * 0.0005;
+    rs_integ = rs_integ > 0.02 ? 0.02 : rs_integ < -0.02 ? -0.02 : rs_integ;
+    double err = e * 0.04 + rs_integ;
+    double ratio = 1.0 + (err > 0.02 ? 0.02 : err < -0.02 ? -0.02 : err);   /* source frames per output frame */
+    int i = 0;
+    double pos = rs_frac;
+    for (; i < m; i++) {
+        unsigned k = (unsigned)pos;
+        if (k + 1 >= fill) break;
+        const Sint16 *a = ring_frame(k), *b = ring_frame(k + 1);
+        double t = pos - k;
+        o[2 * i] = (Sint16)(a[0] + (b[0] - a[0]) * t);
+        o[2 * i + 1] = (Sint16)(a[1] + (b[1] - a[1]) * t);
+        pos += ratio;
+    }
+    audio_out += (unsigned long)m;
+    unsigned adv = (unsigned)pos;
+    if (adv > fill) adv = fill;
+    ring_r += adv * 4; rs_frac = pos - adv;
+    if (i < m) {   /* underrun: the game did not deliver in time (a stalled vblank): silence, re-prime */
+        ring_started = 0;
+        audio_underruns++; audio_log("underrun", audio_underruns, fill);
+        memset(o + 2 * i, 0, (size_t)(m - i) * 4); audio_padded += (m - i) * 4;
+    }
     SDL_UnlockMutex(ring_lock);
-    if (n < (unsigned)len) { memset(out + n, 0, len - n); audio_padded += len - n; }
 }
 static int audio_thread(void *arg) {
     (void)arg;
     unsigned char buf[FRAME_BYTES];
     for (;;) {
+        Uint32 t = SDL_GetTicks();
         long r = rd(audio_fd, buf, pipe_chunk && pipe_chunk < sizeof buf ? pipe_chunk : sizeof buf);
         if (r <= 0) break;
+        if (SDL_GetTicks() - t > audio_gap_max) audio_gap_max = SDL_GetTicks() - t;
         SDL_LockMutex(ring_lock);
         unsigned fill = ring_w - ring_r;
-        if (fill + (unsigned)r > RING_BYTES) { audio_dropped += fill + (unsigned)r - RING_BYTES; ring_r = ring_w + (unsigned)r - RING_BYTES; }
+        if (fill + (unsigned)r > RING_BYTES) { audio_dropped += fill + (unsigned)r - RING_BYTES; ring_r = (ring_w + (unsigned)r - RING_BYTES + 3) & ~3u; }
         for (long i = 0; i < r; i++) ring[(ring_w + i) % RING_BYTES] = buf[i];
-        ring_w += (unsigned)r;
+        ring_w += (unsigned)r; audio_in += (unsigned long)r;
         SDL_UnlockMutex(ring_lock);
     }
     return 0;
@@ -303,6 +349,7 @@ int main(int argc, char **argv) {
         memset(&want, 0, sizeof want);
         want.freq = 44100; want.format = AUDIO_S16LSB; want.channels = 2; want.samples = 512; want.callback = audio_cb;
         ring_lock = SDL_CreateMutex();
+        audio_t0 = SDL_GetTicks();
         dev = SDL_OpenAudioDevice(NULL, 0, &want, &have, 0);
         if (dev) SDL_PauseAudioDevice(dev, 0); else fprintf(stderr, "tomba2-view: no audio device: %s\n", SDL_GetError());
         SDL_CreateThread(audio_thread, "audio", NULL);   /* drains the pipe even without a device */
@@ -387,12 +434,19 @@ int main(int argc, char **argv) {
         }
         if (stats && SDL_GetTicks() - stats_t0 >= 1000) {
             unsigned fill = ring_w - ring_r;
-            fprintf(stderr, "tomba2-view: %u frames in, %u shown, %u skipped; audio queued %u ms, dropped %u ms, padded %u ms\n",
+            fprintf(stderr, "tomba2-view: %u frames in, %u shown, %u skipped; audio queued %u ms, dropped %u ms, padded %u ms, "
+                    "%u underruns, %u skips; %lu frames in, %lu played; longest wait %u ms, lowest %u ms\n",
                     frames_in - stats_in, frames_shown - stats_shown, frames_skipped - stats_skipped,
-                    fill / (44100 * 4 / 1000), audio_dropped / (44100 * 4 / 1000), audio_padded / (44100 * 4 / 1000));
+                    fill / (44100 * 4 / 1000), audio_dropped / (44100 * 4 / 1000), audio_padded / (44100 * 4 / 1000),
+                    audio_underruns, audio_skips, audio_in / 4, audio_out, audio_gap_max,
+                    audio_fill_min == ~0u ? 0 : audio_fill_min * 1000 / 44100);
+            audio_gap_max = 0; audio_fill_min = ~0u;
             stats_t0 = SDL_GetTicks(); stats_in = frames_in; stats_shown = frames_shown; stats_skipped = frames_skipped;
         }
     }
+    if (audio_fd != NO_PIPE)
+        fprintf(stderr, "tomba2-view: audio: %u underruns, %u skips, %u ms padded, %u ms dropped\n", audio_underruns,
+                audio_skips, audio_padded / (44100 * 4 / 1000), audio_dropped / (44100 * 4 / 1000));
     SDL_Quit();
     return 0;
 }

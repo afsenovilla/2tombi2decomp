@@ -377,7 +377,16 @@ def emit(items, syms, funcs, rename, drop, native, arity=None, forwarded=None, f
                 body = retail_func_ptrs(body, fptrs)
                 body = kuseg_link_stores(body)
                 body = kuseg_field38(body)
-                if name in rename:
+                rk = ret_kind(head, name) if not re.search(r"\bstatic\b", head) else 0
+                if 1 <= rk <= 4:
+                    # a char / short result: the i386 ABI leaves eax's upper bits undefined, the R3000 code extends
+                    # it in $v0, and native callers may read it wider (an implicit int, a cast such as
+                    # `((s16 (*)(s32, u8 *))f_FormatIntegerText)(...)`, another program's prototype): the body is
+                    # NAME__def and NAME a wrapper that passes eight argument words on and extends the result
+                    h = re.sub(r"\b%s\b(?=\s*\()" % name, name + "__def", head, count=1)
+                    piece = h + body + "\n" + narrow_wrapper(name, rk, c_arity(head)) + \
+                        ("" if name in rename else prototype(head))   # renamed: its callers see an implicit int
+                elif name in rename:
                     h = re.sub(r"\b%s\b(?=\s*\()" % name, name + "__def", head, count=1)
                     piece = h + body + '\n__asm__(".globl %s\\n.set %s, %s__def");\n' % (name, name, name)
                 else:
@@ -426,6 +435,19 @@ def ret_kind(head, name):
     t = t.strip().split("\n")[-1].strip() if "*" not in t else "*"
     t = " ".join(t.split())
     return NARROW.get(t, 0)
+
+
+def narrow_wrapper(name, kind, nparams):
+    """NAME: copy max(8, nparams) argument words (forwarded PORT_ARG reads included), call NAME__def, extend al / ax
+    as the R3000 code had it in $v0 (kind: 1 u8, 2 s8, 3 u16, 4 s16; see NARROW).  A naked C function with the asm
+    name NAME (COFF's gas has no .pushsection, and a bare top-level asm would leave gcc in the wrong section)."""
+    n = max(8, nparams if nparams > 0 else 0)
+    ext = {1: "movzbl %al, %eax", 2: "movsbl %al, %eax", 3: "movzwl %ax, %eax", 4: "movswl %ax, %eax"}[kind]
+    lines = ["pushl %ebp", "movl %esp, %ebp"]
+    lines += ["pushl %d(%%ebp)" % (8 + 4 * i) for i in reversed(range(n))]
+    lines += ["call %s__def" % name, ext, "leave", "ret"]
+    return ('void %s__wrap(void) __asm__("%s");\n__attribute__((naked, used)) void %s__wrap(void) { __asm__("%s\\n"); }\n'
+            % (name, name, name, "\\n".join(lines)))
 
 
 def prototype(head):
@@ -615,6 +637,31 @@ def main_arity_by_addr():
     return _MAIN_BY_ADDR[0]
 
 
+_ALL_BY_ADDR = []
+
+
+def all_arity_by_addr():
+    """{address: max asm arity} over the functions of every program (an overlay function MAIN calls by its address
+    name while the overlay names it otherwise: func_80065374 dispatches to `func_8010AECC()`, A00's
+    f_UpdateA00TombaVerticalClimb(a), with the player still in $a0)."""
+    if not _ALL_BY_ADDR:
+        out = {}
+        for p in sorted(os.listdir(os.path.join(ROOT, "asm"))):
+            if not os.path.isdir(os.path.join(ROOT, "asm", p)) or not os.path.exists(os.path.join(ROOT, "build", p + ".elf")):
+                continue
+            ps = retail_syms(p)
+            for dp, _, fs in os.walk(os.path.join(ROOT, "asm", p)):
+                if os.sep + "data" in dp:
+                    continue
+                for f in fs:
+                    if f.endswith(".s") and f[:-2] in ps:
+                        a, k = ps[f[:-2]], asm_arity(os.path.join(dp, f))
+                        if k > out.get(a, -1):
+                            out[a] = k
+        _ALL_BY_ADDR.append(out)
+    return _ALL_BY_ADDR[0]
+
+
 def ovl_vram(prog):
     m = re.search(r"vram:\s*0x([0-9A-Fa-f]+)", open(os.path.join(ROOT, "config", prog + ".yaml")).read())
     return int(m.group(1), 16)
@@ -743,6 +790,15 @@ def sources(outdir, progs):
                 for nm, a in syms.items():
                     if a < OVL_BASE and nm not in arity and a in by_addr:
                         arity[nm] = by_addr[a]
+            # any other `func_XXXXXXXX` name: the arity of every program's function at that address (MAIN's
+            # func_80065374 calls func_8010AECC(), which A00 names f_UpdateA00TombaVerticalClimb and which reads
+            # $a0: the net climb in A00 stuck without it)
+            by_any = all_arity_by_addr()
+            for nm in set(re.findall(r"\bfunc_([0-9A-Fa-f]{8})\b", pre)):
+                if True:
+                    a = int(nm, 16)
+                    if "func_" + nm not in arity and a in by_any:
+                        arity["func_" + nm] = by_any[a]
             for it in items:
                 if it[0] == "func" and it[1] and not re.search(r"\bstatic\b", it[2]):
                     arity[it[1]] = c_arity(it[2])

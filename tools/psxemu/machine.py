@@ -170,6 +170,7 @@ class Machine:
         self.dispenv = bytes(0x14)
         self.pad_script = []
         self.pad_buttons = 0
+        self.demo_takeover = 0                 # --demo-takeover F (pad_vblank)
         self.pad_buf = [0, 0]
         self.pad_started = False
         self.cd_files = []              # [name, lba, nsec, size, img_lba]
@@ -654,9 +655,15 @@ class Machine:
                 if d >= 0 and d // period < count and d % period < ln:
                     m |= mask
             self.pad_buttons = m
+        c = self.cpu
+        if self.demo_takeover and self.frame >= self.demo_takeover and c.r8(0x1F80019A) == 1:
+            # --demo-takeover F (the port's shims/pad.c): the attract demo's input replay plays the pad script
+            p = c.r32(0x800BED88)
+            if (p & 0xFFE00000) == 0x80000000:
+                c.w16(p, self.pad_buttons); c.w16(p + 2, 1); c.w16(0x800BED8C, 1)
+            self.pad_buttons = 0
         if not self.pad_started:
             return
-        c = self.cpu
         if self.pad_buf[0]:
             b = ~self.pad_buttons & 0xFFFF
             c.write(self.pad_buf[0], bytes([0, 0x41, b & 0xFF, b >> 8]))

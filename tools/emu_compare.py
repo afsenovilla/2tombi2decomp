@@ -79,6 +79,7 @@ def run_emu(a, out, ram, pk):
         cmd += ["--dump-at", a.at]
     if a.port_math:
         cmd += ["--port-math", a.port_math]
+    cmd += a.emu_args.split()   # e.g. --demo-takeover F (with the same option in --port-args)
     with open(os.path.join(out, "emu_stdout.txt"), "w") as f:
         subprocess.run(cmd, cwd=ROOT, stdout=f, stderr=subprocess.STDOUT)
 
@@ -307,6 +308,7 @@ def main():
     ap.add_argument("--out")
     ap.add_argument("--port", default=os.path.join(ROOT, "build", "port", "tomba2"))
     ap.add_argument("--port-args", default="", help="extra port options, e.g. --keys-off (voices reported off as here)")
+    ap.add_argument("--emu-args", default="", help="extra emulator options, e.g. --demo-takeover 2550")
     ap.add_argument("--python", default=None)
     ap.add_argument("--port-math", default="", help="emulator: the port's ratan2 / SquareRoot0 (step past a known difference)")
     ap.add_argument("--skip-port", action="store_true")

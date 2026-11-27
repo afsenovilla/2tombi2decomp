@@ -11,7 +11,8 @@ static u8 *buf[2];
 static int started;
 u16 port_pad_buttons[2];       /* active high, PSX bit order: 0 Select,3 Start,4 Up,5 Right,6 Down,7 Left,
                                   8 L2,9 R2,10 L1,11 R1,12 Triangle,13 Circle,14 Cross,15 Square */
-int port_autostart;            /* headless test input: tap Start (and Cross) every autostart frames */
+int port_autostart;
+int port_demo_takeover;        /* --demo-takeover F (test hook, see port_pad_vblank) */            /* headless test input: tap Start (and Cross) every autostart frames */
 
 /* --pad-script "FRAME:BUTTONS[:LEN[xCOUNT/PERIOD]],...": hold BUTTONS (names joined by '+': start select up down
    left right cross circle square triangle l1 r1 l2 r2, or a hex mask) from vblank FRAME for LEN vblanks (default
@@ -79,6 +80,14 @@ void port_pad_vblank(void) {
         port_pad_buttons[0] = (port_frame / port_autostart) & 1 ? 0x4000 : 0x0008;
     else if (port_autostart)
         port_pad_buttons[0] = 0;
+    if (port_demo_takeover && port_frame >= port_demo_takeover && *(volatile u8 *)0x1F80019Au == 1) {
+        /* --demo-takeover F: from vblank F on the attract demo's input replay (func_800794C8: u16 pairs
+           buttons, game frames at D_800BED88, count D_800BED8C) plays the pad script instead: the demo's own
+           place and state (e.g. A00's net wall at frame 2550) with scripted input; the real pad reads idle */
+        u16 *p = *(u16 **)0x800BED88u;
+        if (((unsigned)p & 0xFFE00000u) == 0x80000000u) { p[0] = port_pad_buttons[0]; p[1] = 1; *(u16 *)0x800BED8Cu = 1; }
+        port_pad_buttons[0] = 0;
+    }
     if (!started) return;
     for (int i = 0; i < 2; i++) {
         if (!buf[i]) continue;

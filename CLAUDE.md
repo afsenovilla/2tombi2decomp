@@ -237,6 +237,14 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   `--renderer NAME`, `--linear`, F12 screenshots, its SDL / renderer info in tomba2.log; `--keys-off` (voices
   reported off) + `tools/emu_compare.py --port-args=--keys-off` compare past the emulator's missing SPU. Native code must never dereference KUSEG: `build/port/tomba2 --no-kuseg` tallies any site (0 expected);
   fixes go in gen_t2.py (`kuseg_link_stores`, `kuseg_field38`) or mips_interp.c `kcell`.
+  Stage 5 (docs/PORT.md §0.4): gameplay bugs are found by native vs `--interp-range all` on the same script (positions
+  `--trace-pos 5`, frames: identical expected) and a bisection of `--interp-range LO-80200000`; test hooks
+  `--demo-takeover F` (the attract demo hands Tomba to the pad script at vblank F: A00's net wall at 2550; also in
+  tools/emu_run.py, `emu_compare.py --emu-args`) and `--poke FRAME:1F8001xx=B` (scratchpad). Fixed: the A00 net
+  climb (an overlay function called by its address name got no forwarded `$a0`: arities by address over every
+  program) and char / short results read wider by native callers (asm wrappers that extend al / ax, gen_t2.py
+  `narrow_wrapper`). Audio: the XA queue starts 70 ms ahead, the viewer's rate follows its ring (within 2 %);
+  underruns are logged (`[port] audio: XA queue ran dry`, `tomba2-view: audio underrun #N`).
 - Reference emulator (docs/EMU.md; Tombi-Decomp's tools/psxemu adapted, HLE at the port's shim boundary with the
   port's timing and virtual disc): `python3 -I tools/emu_run.py --frames N --dump-frames DIR [--dump-every K]
   [--dump-vram] [--ram-at F,...] [--dump-packets all|F,...] [--pad-script ...] [--save-state F | --load-state F]

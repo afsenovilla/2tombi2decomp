@@ -858,6 +858,17 @@ struct-member form of a cast access, regswap `member` toggles every one)
   the emulator past the first sound-dependent frame with `--port-args=--keys-off` (its SPU reports every voice off).
   GPU shims must write every word of the retail primitive (SetDrawArea left E4 stale: clip windows open) and be
   bound under T2's names too (`f_EncodeGpu*`, `func_80082220` ...): an unbound pure helper becomes a stub returning 0.
+  Stage 5 (2026-11-28, docs/PORT.md §0.4): a gameplay bug is found fastest native against interpreted on the same
+  scripted input (`--interp-range all` = the retail code; positions with `--trace-pos 5`, frame dumps): they must
+  be identical, and a bisection of `--interp-range LO-80200000` (or `LO-80100000`) on LO names the native function
+  whose call tree is wrong. Generator rules learnt: (1) a MAIN dispatcher calling an overlay function by its
+  address name (`func_8010AECC()`) while the overlay names it otherwise (A00's `f_UpdateA00TombaVerticalClimb`)
+  takes its arity by address over every program (the A00 net climb hung: the player in `$a0` was not forwarded);
+  (2) every native function with a char / short result is `NAME__def` plus an asm wrapper `NAME` that extends
+  al / ax as `$v0` was (native callers read it wider through casts such as `((s16 (*)(s32, u8 *))f)()`, implicit
+  ints and other programs' prototypes: the score / AP popups lost their digits). Test hooks: `--demo-takeover F`
+  (the attract demo's own place, then the pad script; also in tools/emu_run.py) and `--poke` on the scratchpad.
+  The viewer's audio follows its ring's fill (a rate within 2 %) so a game pacing 59.4 vblanks/s no longer drains it.
 - Byte-matching only; tools/nonmatching.py is kept unused.
 - USA is the reference; EU in config/eu/.
 - The licensed-region module at the end of boot.c [0x80011A0C, 0x80012D2C) is library-style files in

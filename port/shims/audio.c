@@ -24,6 +24,16 @@ static int hist[2][2];                      /* ADPCM history per channel: [ch][0
 int port_xa_mute;                           /* CdlMute */
 static int cd_mix = 1, cd_vol_l = 0x7FFF, cd_vol_r = 0x7FFF;
 static unsigned long xa_sectors, xa_dropped;
+/* The jitter buffer: an audio sector of the streamed channel arrives every 8th sector (3.2 vblanks at 2.5 sectors per
+   vblank for 37.8 kHz stereo) with 2016 frames, while each vblank plays 630: played as it arrives, the queue ran dry
+   for part of every few vblanks (the sector due at vblank 3.2 is delivered at vblank 4), a click each time.  Output
+   starts once XA_PREFILL frames (a sector and a vblank, 70 ms) are queued, or the stream has paused (the tail of a clip);
+   a queue that runs dry while the stream goes on re-primes and is counted (logged: a starved stream). */
+#define XA_PREFILL 2646
+#define XA_IDLE 8                           /* vblanks without a sector: the stream has paused or ended */
+static int xa_playing;
+static unsigned xa_idle = XA_IDLE + 1;
+static unsigned long xa_underruns;
 
 static void q_put(int l, int r) {
     if (q_w - q_r >= QLEN) { q_r++; xa_dropped++; }
@@ -54,6 +64,7 @@ void port_xa_sector(const u8 *raw) {
     int coding = sh[3], stereo = (coding & 3) == 1, half = (coding >> 2) & 1, bits8 = (coding >> 4) & 1;
     int units = bits8 ? 4 : 8;
     xa_sectors++;
+    xa_idle = 0;
     for (int g = 0; g < 18; g++) {
         const u8 *grp = raw + 24 + g * 128;
         s16 buf[8][28];
@@ -111,9 +122,19 @@ void port_audio_vblank(void) {
     if (audio_fd < 0 && !port_dump_audio) { q_r = q_w > q_r + 4096 ? q_w - 4096 : q_r; return; }
     const unsigned step = (unsigned)(37800ull * 65536 / 44100);
     int vl = cd_mix && !port_xa_mute ? cd_vol_l : 0, vr = cd_mix && !port_xa_mute ? cd_vol_r : 0;
+    if (!xa_playing && (q_w - q_r >= XA_PREFILL || (q_w - q_r >= 2 && xa_idle > XA_IDLE))) xa_playing = 1;
+    if (xa_idle <= XA_IDLE) xa_idle++;
     for (int i = 0; i < n; i++) {
         int l = 0, r = 0;
-        if (q_w - q_r >= 2) {
+        if (xa_playing && q_w - q_r < 2) {
+            xa_playing = 0;
+            if (xa_idle <= XA_IDLE) {       /* dry while sectors still come: the stream is starved */
+                xa_underruns++;
+                if (xa_underruns <= 10 || xa_underruns % 100 == 0)
+                    port_printf("[port] audio: XA queue ran dry at frame %d (%lu so far)\n", port_frame, xa_underruns);
+            }
+        }
+        if (xa_playing) {
             const s16 *a = q[q_r % QLEN], *b = q[(q_r + 1) % QLEN];
             int t = (int)(frac >> 4);       /* 0..4095 */
             l = a[0] + (((b[0] - a[0]) * t) >> 12);
@@ -136,6 +157,8 @@ void port_audio_vblank(void) {
     }
 }
 void port_audio_quit(void) {
+    if (xa_sectors) port_printf("[port] audio: %lu XA sectors decoded, the XA queue ran dry %lu times while streaming\n",
+                                xa_sectors, xa_underruns);
     if (dump_fd >= 0) {
         u8 h[44]; wav_header(h, (u32)dump_bytes);
         port_pwrite(dump_fd, h, 44, 0);

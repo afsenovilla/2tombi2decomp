@@ -3,6 +3,40 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-28 (4): port stage 5
+
+The user's second real-Windows run (build 2): graphics right; "it got stuck trying to climb up the wall" (A00, the
+net by the tower) and the music stuttered at times. docs/PORT.md §0.4 has the details and the checks.
+
+- **The climb** (fixed): MAIN's `func_80065374(a)` dispatches to the area's climb code, `func_8010AECC()` in A00 (A00
+  calls it `f_UpdateA00TombaVerticalClimb`), which reads the player in `$a0`; gen_t2.py found no arity under the
+  name `func_8010AECC`, so the call was not forwarded and the climb read a stack word as the actor (Tomba hung on
+  the net; with overlays interpreted the port crashed at the same spot). Now every `func_XXXXXXXX` name takes the
+  highest arity of any program's function at that address (one new forwarded call in all 28 programs: this one).
+  Found with the new `--demo-takeover 2550` (the attract demo walks to the net, then the pad script drives Tomba),
+  native vs `--interp-range all`, a 4-way bisection of `--interp-range LO-80200000` (-> func_80058918, Tomba's
+  state machine) and the RAM of both runs (sub-state +6 differs at frame 2605, state 21). Checked against the
+  reference emulator (same takeover in tools/emu_run.py): the same climb, the player actor byte-equal at every dump
+  from 1300 to 2750.
+- **Narrow results** (fixed, found by the broader sweep): native callers read char / short results wider (a cast
+  `((s16 (*)(s32, u8 *))f_FormatIntegerText)(...)`, implicit ints of renamed definitions such as
+  `f_CalculateYawFromPositionToPoint`, other programs' prototypes); the AP popups ("2000") lost their digits.
+  gen_t2.py `narrow_wrapper`: 39 functions are `NAME__def` + an asm wrapper extending al / ax. Attract (3150 frames)
+  and a 9400-frame Load Game route are now pixel-identical to the interpreted runs (attract had 7 differing dumps).
+- **Sweep**: four Load Game routes from the user's card (random walks, a long walk right with jumps and dialogue, the
+  back lane) and attract mode, native vs interpreted: identical. A01+ not reached by play (story-gated).
+- **Music**: the viewer now resamples its ring at a rate that follows the fill (P + I, within 2 %, ~100 ms queued;
+  the user's game paced 59.43 vblank/s, so a fixed rate drained the old 2-frame ring every few seconds), logs each
+  underrun / skip with its time to tomba2.log (`tomba2-view: audio underrun #N ...`, summary at exit, more in
+  `--stats`); the game's XA queue starts 70 ms ahead and logs a starved stream (`[port] audio: XA queue ran dry`).
+  Checked by a simulation (no underrun at 59.0-60.6 vblanks/s) and SDL's dummy driver (8 ms padded in 60 s, was
+  1.8 s in 40 s); not on a real sound device.
+- Test hooks: `--demo-takeover F` (port and emulator), `--poke` on scratchpad addresses, up to 64 pokes;
+  `emu_compare.py --emu-args`.
+- Windows zip rebuilt (scratchpad port5/Tomba2-port-win32.zip, not committed).
+- Open: `void` definitions called through casts that read the result (15 sites); a real-Windows check of the
+  climb and of the audio log.
+
 ## 2026-11-28 (3): reference emulator
 
 Tombi-Decomp's `tools/psxemu` (MIT, same author) adapted to Tomba! 2 USA as the native port's reference (docs/EMU.md):

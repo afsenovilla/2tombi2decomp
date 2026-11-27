@@ -286,6 +286,76 @@ build/port/tomba2 --frames 1700 --save-dir S --dump-frames D2 --dump-every 10 --
   display mode to stderr, which is tomba2.log under the launcher. Checked with SDL's dummy video driver on Linux
   (the software renderer) and under Wine; not on a real Windows display.
 
+### 0.4 Stage 5 (2026-11-28): the net climb, narrow results, the music
+
+The user's second real-Windows run (build 2): the graphics right, but "it got stuck trying to climb up the wall"
+(their screenshot: A00, Tomba on the climbable net beside the tower near the burning house) and the music stuttered
+at times (their log: 9447 vblanks at 59.43 vblank/s, direct3d).
+
+- **Reaching the net headless**: the user's memory card (one save at the first save point, 00:00:18) loads to
+  x 4190 by the Load Game script of §0.3; the net is on the back lane by the tower (x ~9100-9300, z ~5370), which
+  attract demo 1 walks to by itself. `--demo-takeover F` (test hook, `shims/pad.c`): from vblank F the demo's input
+  replay (`func_800794C8`: u16 pairs of buttons and game frames at `D_800BED88`, count `D_800BED8C`, demo mode
+  `D_1F80019A == 1`) plays the pad script instead, so the demo's own place and state are driven by the script (the
+  real pad reads idle; pressing a button on the real pad would end the demo). Same option in `tools/emu_run.py`
+  (and `emu_compare.py --emu-args`). `--poke` takes scratchpad addresses too (`--poke 2550:1F80019A=0` ends the
+  replay, but the demo then quits to the title on the first press). The climb route:
+
+```
+build/port/tomba2 --frames 2760 --trace-pos 10 --demo-takeover 2550 \
+  --pad-script 2560:right:40,2600:right+cross:15,2615:right:30,2650:up:400      # walk to the net, jump on, climb
+```
+
+- **The bug**: Tomba grabbed the net (y -1346) and stayed there; with `--interp-range all` (the retail code) he
+  jumped onto it at x 9347 z 5427 and climbed (y -1839 at frame 2720). `--no-ovl-native` crashed at 2626 (SIGSEGV in
+  native code). A bisection of `--interp-range LO-80200000` (LO from 0x80010000 to 0x80100000, 4 runs at a time,
+  about 20 s each) ended at `func_80058918` (Tomba's state machine); its RAM against the interpreted run differed
+  first at frame 2605 in the player's sub-state (+6: 0 native, 1 retail) in state 21, `func_80065374(a)`: MAIN's
+  dispatcher to the area's climb code, `func_8010AECC()` in A00, which A00's symbols name
+  `f_UpdateA00TombaVerticalClimb` and which reads the player in `$a0`. gen_t2.py found no arity for the name
+  `func_8010AECC` (no program has a function by that name), so the call was not forwarded and A00's code read a
+  random stack word as the actor. **Fix** (`all_arity_by_addr`): every `func_XXXXXXXX` name the C uses without an
+  arity takes the highest arity of any program's function at that address. Across all 28 programs this added
+  exactly this one forwarded call (the generator's `forwarded_*.txt` before and after). **Check**: the port climbs
+  (y -1839 at 2720) native, with `--no-ovl-native` (no crash) and interpreted; against the reference emulator
+  (`emu_compare.py --frames 2760 --pad-script ... --port-args="--keys-off --demo-takeover 2550" --emu-args="--demo-takeover 2550"`)
+  the player actor (0x800E7E80, 0x200 bytes) is byte-equal at every RAM dump from 1300 to 2750, the climb frames
+  show the same pose and place, and every other differing byte is a known one (the OT link high bytes, 0x80 vs 0,
+  of `kcell`; 0x800A6300 / 0x800BE0D8; the emulator's zero DR_AREA words; the three-bomb HUD of its stubbed
+  SetDrawArea).
+- **Narrow results read wider by native callers** (found by the broader sweep below: native vs `--interp-range all`
+  on a Load Game route, frame 3500: the "2000" AP popup of the Tiny Mouse's House had no digits natively; bisected
+  to `func_80040AA4` -> `func_800727D4`, which stores `((s16 (*)(s32, u8 *))f_FormatIntegerText)(ap, buf)` as the
+  digit count: the native `u8` function leaves ah undefined, the cast reads ax). The stage-2 extension (`PortFunc.ret`)
+  covered MIPS callers only; native callers also read a narrow result wider through casts, through the implicit
+  `int` of a renamed (conflicting) definition (`f_CalculateYawFromPositionToPoint` returns s16) and through another
+  program's prototype. **Fix** (`narrow_wrapper`): every non-static native function with a char / short result is
+  compiled as `NAME__def`, and `NAME` is an asm wrapper that passes eight argument words on (PORT_ARG reads
+  included), calls it and extends al / ax as the R3000 code had `$v0` (movzbl / movsbl / movzwl / movswl): 39
+  functions. **Check**: the Load Game route (9400 frames) and 3150 attract frames are now pixel-identical to the
+  interpreted runs (the attract demo had 7 differing frames of 126 before: its popups), the A00 script of §0 is
+  unchanged (212 frames), the native function count is unchanged (4484).
+- **Broader sweep** (native vs `--interp-range all`, positions every 5 vblanks + frame dumps): four Load Game routes
+  from the user's card (two seeded random walks, a 8000-frame walk right to the Tiny Mouse's House with jumps and
+  dialogue, a walk left onto the back lane) and the attract route: identical after the two fixes. Not reached: A01
+  and later areas by play (the story gates them).
+- **Music** (`shims/audio.c`, `tools/view/tomba2_view.c`): the user's log paced 59.43 vblanks/s overall, i.e. the game
+  produced ~1 % less audio than the device played; the viewer kept 2-6 frames in its ring and re-primed 33 ms of
+  silence at each underrun, so the ring ran dry every few seconds (a test run with SDL's dummy audio driver: the old
+  viewer padded 1.8 s of silence in 40 s). Now: (1) the viewer resamples its ring (linear) at a rate that follows the
+  smoothed fill (proportional + integral, at most 2 % off), holding ~100 ms queued; an underrun re-primes to the
+  target, more than 400 ms queued skips back; every underrun and skip is logged to stderr with the time
+  (`tomba2-view: audio underrun #N at T s (queued M ms)`, the first 20 then every 100th; a summary at exit; `--stats`
+  adds frames received / played, the longest wait for the game and the lowest fill per second), which is tomba2.log
+  under the launcher; the ring is 1.5 s with power-of-two counters. (2) the XA queue of the game starts playing once
+  a sector and a vblank (2646 frames, 70 ms) are queued or the stream has paused, and counts a queue that runs dry
+  while sectors still arrive (`[port] audio: XA queue ran dry at frame N`, a total at exit): on the A00 script of §0
+  it ran dry once (the story-text clip's end; three times without the start-up margin). Checked: a simulated device
+  (44.1 kHz, 512-frame pulls) against a game at 59.0-60.6 vblanks/s with jitter: no underrun in 300 s; the dummy
+  driver (which plays 2 % fast because it sleeps whole milliseconds): 8 ms padded in 60 s against 1.8 s in 40 s
+  before. Not checked: a real sound device (none in the container); the Windows pipe write still blocks if the
+  viewer stops reading for more than its 1 MB (6 s of audio).
+
 ## 1. Status: stage 1, milestone P0 (2026-11-27)
 
 ```
@@ -443,7 +513,9 @@ natively, the SDL2 window and 60 Hz pacing, XA audio, sound effects, the memory 
    `--interp-range` and gdb (§0). MAIN's 21 functions the host compiler rejects and the overlays' 20 (generated
    `dropped_<prog>.txt`) stay interpreted; MAIN's own asm (main() = func_80050B08, 228 functions) too until matched.
    Still unhandled in general: a `void` C function whose asm callers read `$v0` (`func_8001CE90` passes
-   `func_8001CE04`'s result on; it works because the native epilogue keeps `eax`).
+   `func_8001CE04`'s result on; it works because the native epilogue keeps `eax`); native callers do the same
+   through casts (`((s32 (*)())func_800493E8)(...)` on a `void` definition: 15 sites in the generated sources).
+   Narrow (char / short) results are extended for every caller since stage 5 (§0.4).
 4. **Reverb** and the remaining libsnd calls (`SsSetReservedVoice`, `SsSetStereo`, ...) in `shims/sound.c`.
 5. **Native Windows** (§0.2): runs under Wine frame-identical to Linux; a first run on real Windows is next (the
    window, controller, sound, pacing; the log's `KUSEG blocks committed by Windows` line and the tally at exit say

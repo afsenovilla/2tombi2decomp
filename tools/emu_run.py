@@ -48,6 +48,7 @@ def main(argv=None):
     ap.add_argument("--ram-at", default="", help="RAM dumps at these frames only")
     ap.add_argument("--dump-packets", default="", help="'all' (every dumped frame) or a frame list")
     ap.add_argument("--pad-script", default="")
+    ap.add_argument("--demo-takeover", type=int, default=0, help="from this vblank the attract demo replays the pad script")
     ap.add_argument("--load-state", metavar="FILE", help="start from a state saved by --save-state (--frames stays absolute)")
     ap.add_argument("--save-state", metavar="FILE", help="save the state at the last frame")
     ap.add_argument("--port-math", default="", help="ratan2,SquareRoot0: the port's versions instead of retail libgte")
@@ -59,6 +60,7 @@ def main(argv=None):
     if a.load_state:
         m.load_state(a.load_state)
     m.pad_script = M.parse_pad_script(a.pad_script)
+    m.demo_takeover = a.demo_takeover
     out = a.dump_frames
     if out:
         os.makedirs(out, exist_ok=True)

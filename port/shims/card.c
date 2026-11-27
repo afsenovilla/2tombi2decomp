@@ -43,9 +43,10 @@ void UnDeliverEvent(u32 desc, u32 spec) {
 
 /* ================================================================== test hooks (scripted runs)
    --trace-pos N: the player actor's position every N vblanks.  --poke FRAME:ADDR=BYTE (repeatable): a byte of PS1
-   memory set at that vblank (e.g. the CRD menu's mode, 0x800BF4D4: 0 load from the pause menu, 1 save) */
+   memory set at that vblank (e.g. the CRD menu's mode, 0x800BF4D4: 0 load from the pause menu, 1 save; a scratchpad
+   address 0x1F8000xx too, e.g. 0x1F80019A = 0 ends the attract demo's input replay: the pad script drives Tomba) */
 int port_trace_pos;
-static struct { int frame; u32 addr; u8 val; } pokes[16];
+static struct { int frame; u32 addr; u8 val; } pokes[64];
 static int n_pokes;
 static u32 hexnum(const char **s) {
     u32 v = 0; const char *p = *s;
@@ -55,7 +56,7 @@ static u32 hexnum(const char **s) {
 }
 void port_add_poke(const char *spec) {
     int f = 0; while (*spec >= '0' && *spec <= '9') f = f * 10 + *spec++ - '0';
-    if (*spec++ != ':' || n_pokes >= 16) port_fatal("--poke FRAME:ADDR=BYTE");
+    if (*spec++ != ':' || n_pokes >= 64) port_fatal("--poke FRAME:ADDR=BYTE");
     u32 a = hexnum(&spec);
     if (*spec++ != '=') port_fatal("--poke FRAME:ADDR=BYTE");
     pokes[n_pokes].frame = f; pokes[n_pokes].addr = a; pokes[n_pokes].val = (u8)hexnum(&spec); n_pokes++;
@@ -67,7 +68,10 @@ void port_card_vblank(void) {
     }
     for (int i = 0; i < n_pokes; i++)
         if (pokes[i].frame == port_frame) {
-            *(u8 *)(0x80000000u | (pokes[i].addr & 0x1FFFFFu)) = pokes[i].val;
+            if ((pokes[i].addr & 0xFFFFFC00u) == 0x1F800000u)     /* the scratchpad (plain memory at its address) */
+                *(u8 *)pokes[i].addr = pokes[i].val;
+            else
+                *(u8 *)(0x80000000u | (pokes[i].addr & 0x1FFFFFu)) = pokes[i].val;
             port_printf("[port] --poke %08x = %02x (frame %d)\n", pokes[i].addr, pokes[i].val, port_frame);
         }
 }

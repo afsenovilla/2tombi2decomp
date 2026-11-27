@@ -18,6 +18,9 @@ python3 -I tools/emu_run.py --frames 3000 --dump-frames DIR --dump-every 100 [--
 python3 -I tools/emu_compare.py --route title|attract|a00 [--out DIR] [--ram-at F,...] [--packets-at F,...]
 python3 -I tools/emu_compare.py --frames N --every K [--pad-script S] [--at F,...] [--skip-port | --skip-emu]
     [--port-args=--keys-off]     # extra port options: --keys-off = SpuGetAllKeysStatus all off, as the emulator
+    [--emu-args="--demo-takeover 2550"]   # extra emulator options
+python3 -I tools/emu_run.py ... --demo-takeover F   # from vblank F the attract demo's input replay plays the pad
+                                                    # script (the port's --demo-takeover, docs/PORT.md §0.4)
 python3 -I tools/test_psxemu.py                      # unit tests (no game data)
 python3 -I tools/psxemu/t2syms.py                    # rebuild syms/main_usa.csv from build/main.elf + asm/main
 ```
@@ -120,3 +123,12 @@ function; its inputs name the shim.
 What the emulator does not show yet: whether the port's GPU rasterizer and the emulator's agree on 3D scenes (every
 3D frame so far already differs in its geometry because of 1 and 3); once the port takes the retail ratan2 /
 SquareRoot0 / RotMatrix, `emu_compare.py --route attract` and `--route a00` will show the next difference.
+
+## The A00 net climb (2026-11-28, docs/PORT.md §0.4)
+
+Attract demo 1 walks Tomba to the net beside the tower; `--demo-takeover 2550` on both sides hands him to the pad
+script there (`2560:right:40,2600:right+cross:15,2615:right:30,2650:up:400`: onto the net, then up). Run with
+`emu_compare.py --frames 2760 --every 50 --port-args="--keys-off --demo-takeover 2550" --emu-args="--demo-takeover 2550"
+--ram-at 1300,...,2750` (275 s for the emulator): with the port's stage-5 fix both climb the same way; the player actor
+is byte-equal at every dump, and the rest of the RAM differs only where it is known to (OT link high bytes, the
+libgpu statics, the emulator's zero DR_AREA words). Before the fix the port's Tomba stayed on the net.
