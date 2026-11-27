@@ -18720,7 +18720,137 @@ void func_80063ECC(u8 *a)
     *(u16 *)(a + 0x36) = *(u16 *)(p + 0x34) + z;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80063F9C);
+extern u8 D_800A47A4[];
+extern u8 D_800A47B4[];
+void func_80064358(u8 *t, u8 k, u8 *o);
+void func_80063ECC(u8 *a);
+
+void func_80063F9C(u8 *t)
+{
+    u8 *w = *(u8 **)(t + 0x158);
+    u8 k;
+    u8 x;
+
+    f_ReadTombaDirectionalInput(t, 0);
+    w[0x29] = 1;
+    f_UpdateTombaSupportSwingMotion(t, 0);
+    f_AdvanceActorSkeletalAnimation(t);
+    func_80063B94(t, 0);
+    if (t[0x168] < 3) {
+        D_800BF840 = 0x47;
+    } else {
+        D_800BF840 = 0x87;
+    }
+    if (t[0x15C] == 0) {
+        if (D_800E7E68 & *(u16 *)D_1F800172) {
+            x = t[0x14A];
+            t[0x15C] = 1;
+            t[0x15D] = x;
+            if (t[0x147] != 0) {
+                t[0x15D] &= 0xE;
+                t[0x15D] |= ~t[0x14A] & 1;
+            }
+        }
+        if (t[0x15C] == 0) {
+            goto tail;
+        }
+    }
+    switch (t[0x168]) {
+    case 0:
+    case 1:
+        k = D_800A47A4[t[0x15D]];
+        if (k == 4) {
+            if (((U(t, 0x58) + 0xA0) & 0xFFF) < 0x141) {
+                func_80064358(t, 4, w);
+                H_f12c(t, 0x58) = 0;
+            }
+        } else if (t[0x167] != 0 && (H_f12c(t, 0x58) & 0xFFF) >= 0xB01) {
+            func_80064358(t, k, w);
+            H_f12c(t, 0x58) = 0;
+        }
+        break;
+    case 2:
+        k = D_800A47B4[t[0x15D]];
+        switch (k) {
+        case 0:
+        case 1:
+            if (H_f12c(t, 0x44) == 0 && (H_f12c(t, 0x58) & 0xFFF) >= 0xA01) {
+                func_80064358(t, k, w);
+            }
+            break;
+        case 3:
+            if (t[0x167] != 0 && ((U(t, 0x58) - 0xD60) & 0xFFF) < 0x141) {
+                func_80064358(t, k, w);
+            }
+            break;
+        case 4:
+            if (((U(t, 0x58) + 0xA0) & 0xFFF) < 0x141) {
+                func_80064358(t, k, w);
+            }
+            break;
+        case 2:
+        case 5:
+            if (t[0x167] != 0 && ((U(t, 0x58) - 0xB60) & 0xFFF) < 0x141) {
+                func_80064358(t, k, w);
+            }
+            break;
+        }
+        break;
+    case 3:
+    case 4:
+        k = D_800A47B4[t[0x15D]];
+        switch (k) {
+        case 0:
+            if (((U(t, 0x58) - 0x600) & 0xFFF) < 0x141) {
+                H_f12c(t, 0x58) = 0x700;
+                func_80064358(t, k, w);
+            }
+            break;
+        case 1:
+            if (((U(t, 0x58) - 0x960) & 0xFFF) < 0x141) {
+                func_80064358(t, k, w);
+            }
+            break;
+        case 3:
+            if (((U(t, 0x58) - 0xD60) & 0xFFF) < 0x141) {
+                func_80064358(t, k, w);
+            }
+            break;
+        case 4:
+            if (((U(t, 0x58) + 0xA0) & 0xFFF) < 0x141) {
+                func_80064358(t, k, w);
+            }
+            break;
+        case 2:
+        case 5:
+            if (((U(t, 0x58) - 0xB60) & 0xFFF) < 0x141) {
+                func_80064358(t, k, w);
+            }
+            break;
+        }
+        break;
+    }
+tail:
+    if (w[0xC] == 4) {
+        switch (w[2]) {
+        case 2:
+        case 4:
+        case 7:
+            if (D_800BF870.unk0 == 0) {
+                func_8010AD68(t, w);
+            } else if (D_800BF870.unk0 == 6) {
+                func_80113ACC(t, w);
+            }
+            if (D_800BF870.unk0 == 0xF) {
+                func_8010B194(t, w);
+            }
+            break;
+        case 0x11:
+            ((void (*)(u8 *, u8 *))func_80063ECC)(t, w);
+            break;
+        }
+    }
+}
 
 extern u16 D_800A47C4[];
 void func_80064358(u8 *t, u8 k, u8 *o)
