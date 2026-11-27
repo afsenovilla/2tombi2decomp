@@ -1467,7 +1467,175 @@ void func_8010E1F4(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010E3D8);
+static inline s32 e3d8_probe(s32 *pos, u8 *a) {
+    s16 *v = D_1F8000C0_65b0;
+
+    v[0] = 0;
+    v[1] = H(a, 0x62);
+    v[2] = 0;
+    return func_80125C5C(pos, v, 0);
+}
+
+void func_8010E3D8(u8 *a) {
+    s16 *v;
+    s32 c;
+    s32 sn;
+    s16 dx;
+    s16 dz;
+
+    switch (a[6]) {
+    case 0:
+        {
+            if (a[7] == 0) {
+                dx = 0x2300 - U_d0c0(a, 0x2E);
+                dz = 0x2968 - U_d0c0(a, 0x36);
+            } else {
+                dx = 0x26E8 - U_d0c0(a, 0x2E);
+                dz = 0x2A40 - U_d0c0(a, 0x36);
+            }
+            H(a, 0x7C) = func_80085690(-dz, dx) & 0xFFF;
+            a[6]++;
+            H(a, 0x40) = 10;
+            H(a, 0x4E) = (dx << 8) / 10;
+            H(a, 0x52) = (dz << 8) / 10;
+            func_80054D14(a, 4, 6);
+        }
+        break;
+    case 1:
+        H(a, 0x56) = func_800776F8(H(a, 0x7C), H(a, 0x56), 0x100);
+        func_80076D68(a);
+        W(a, 0x2C) += H(a, 0x4E) << 8;
+        W(a, 0x34) += H(a, 0x52) << 8;
+        if (--H(a, 0x40) == 0) {
+            a[6]++;
+            func_80054D14(a, 2, 6);
+        }
+        break;
+    case 2:
+        func_80076D68(a);
+        H(a, 0x56) = func_800776F8(0xC00, H(a, 0x56), 0x100);
+        if (H(a, 0x56) == 0xC00) {
+            if (a[7] == 0) {
+                a[0x29] = 0;
+                D_1F80019E = 0;
+                H(a, 0x32) += 0x40;
+                H(a, 0x36) -= 0x6E;
+                func_80054D14(a, 0x42, 4);
+            } else {
+                func_80054D14(a, 0x41, 4);
+            }
+            a[6]++;
+        }
+        break;
+    case 3:
+        func_80076D68(a);
+        if (a[7] == 0) {
+            H(a, 0x32) += 0x14;
+            if (H(a, 0x32) > -0x848) {
+                H(a, 0x32) = -0x848;
+            }
+            if (H(a, 0x32) >= -0xADB) {
+                H(a, 0x6A) = 0x2009;
+            }
+        } else {
+            H(a, 0x32) -= 0x14;
+            if (H(a, 0x32) < -0xCE4) {
+                H(a, 0x32) = -0xCE4;
+            }
+            if (H(a, 0x32) < -0xA78) {
+                H(a, 0x6A) = 0x2009;
+            }
+        }
+        goto snd;
+    case 4:
+        func_80076D68(a);
+        if (a[7] == 0) {
+            H(a, 0x32) += 0x14;
+            a[0x29] = e3d8_probe((s32 *)(a + 0x2C), a);
+            if (a[0x29] != 0) {
+                a[6]++;
+                func_80054D14(a, 2, 2);
+                D_1F80019E = D_1F8001A4;
+                a[0x29] &= 1;
+                if (a[0x29] != 0) {
+                    a[0x29] |= 0x80;
+                }
+            }
+        } else {
+            H(a, 0x32) -= 0x14;
+            if (H(a, 0x32) < -0xC7C) {
+                H(a, 0x32) = -0xC7C;
+                a[6] = 6;
+                func_80054D14(a, 0x19, 2);
+            }
+        }
+    snd:
+        if (!(D_1F80017C & 3)) {
+            func_80074590(5, 3, -0x3C);
+        }
+        break;
+    case 5:
+        func_80076D68(a);
+        H(a, 0x56) = func_800776F8(0x400, H(a, 0x56), 0x100);
+        if (H(a, 0x56) == 0x400) {
+            a[4] = 4;
+            a[5] = 0x24;
+            a[6] = 0;
+        }
+        break;
+    case 6:
+        if (H(a, 0x17E) >= 0) {
+            H(a, 0x32) -= 0x30;
+        } else {
+            H(a, 0x32) -= 0x18;
+        }
+        func_80076D68(a);
+        if (U_d0c0(*(u8 **)(a + 0x38), 2) >= 2) {
+            H(a, 0x44) = 0x1800;
+            a[0x145] = 1;
+            H(a, 0x4A) = 0;
+            a[6]++;
+        }
+        break;
+    case 7:
+        c = (func_80083F50(H(a, 0x56)) * H(a, 0x44)) >> 4;
+        sn = (func_80083E80(H(a, 0x56)) * H(a, 0x44)) >> 4;
+        W(a, 0x2C) += c;
+        W(a, 0x34) -= sn;
+        H(a, 0x4A) += 0x580;
+        if (H(a, 0x4A) > 0) {
+            a[0x145] = 2;
+            a[6]++;
+        }
+        W(a, 0x30) += H(a, 0x4A) << 8;
+        func_80076D68(a);
+        break;
+    case 8:
+        c = (func_80083F50(H(a, 0x56)) * H(a, 0x44)) >> 4;
+        sn = (func_80083E80(H(a, 0x56)) * H(a, 0x44)) >> 4;
+        W(a, 0x2C) += c;
+        W(a, 0x34) -= sn;
+        H(a, 0x4A) += 0x360;
+        if (H(a, 0x4A) > 0x3000) {
+            H(a, 0x4A) = 0x3000;
+        }
+        W(a, 0x30) += H(a, 0x4A) << 8;
+        func_80076D68(a);
+        a[0x29] = e3d8_probe((s32 *)(a + 0x2C), a);
+        if (a[0x29] != 0) {
+            func_80074590(3, 0, 0);
+            a[4] = 4;
+            a[5] = 0x24;
+            a[6] = 0;
+            D_1F80019E = D_1F8001A4;
+            a[0x29] &= 1;
+            if (a[0x29] != 0) {
+                a[0x29] |= 0x80;
+            }
+        }
+        break;
+    }
+}
 
 void func_8010EA30(u8 *a)
 {
