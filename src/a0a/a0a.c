@@ -4230,7 +4230,64 @@ void func_801142EC(u8 *a)
     D_800BF544_e6cf = p;
 }
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80114630);
+#define F(p, o) (*(void (**)())((u8 *)(p) + (o)))
+u8 *func_8007A980();
+void func_80114B38(u8 *a);
+void func_80115DF0(u8 *a);
+
+void func_80114630(u8 *a)
+{
+    u8 *b;
+    u8 *c;
+    u8 *d;
+    u8 *e;
+
+    b = func_8007A980(2, 4, 0);
+    if (b == 0) {
+        return;
+    }
+    F(b, 0x1C) = func_80114B38;
+    b[2] = a[2];
+    b[3] = a[3];
+    b[0x47] = 1;
+    c = func_8007A980(1, 4, 0);
+    if (c == 0) {
+        return;
+    }
+    F(c, 0x1C) = func_80115DF0;
+    c[2] = 0x17;
+    c[3] = a[3];
+    c[0x47] = 0;
+    d = func_8007A980(1, 4, 0);
+    if (d == 0) {
+        return;
+    }
+    F(d, 0x1C) = func_80115DF0;
+    d[2] = 0x17;
+    d[3] = a[3];
+    d[0x47] = 1;
+    e = func_8007A980(1, 4, 0);
+    if (e == 0) {
+        return;
+    }
+    F(e, 0x1C) = func_80115DF0;
+    e[2] = 0x17;
+    e[3] = a[3];
+    e[0x47] = 2;
+    P(a, 0x10) = b;
+    P(b, 0x10) = a;
+    P(a, 0x14) = c;
+    P(b, 0x14) = d;
+    P(c, 0x10) = a;
+    P(d, 0x10) = b;
+    P(e, 0x10) = d;
+    P(e, 0x14) = c;
+    P(e, 0x3C) = b;
+    P(c, 0x14) = d;
+    P(c, 0x3C) = e;
+    P(d, 0x14) = c;
+    P(d, 0x3C) = e;
+}
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80114784);
 
