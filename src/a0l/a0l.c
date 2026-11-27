@@ -2766,7 +2766,42 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111094);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80111298);
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_801115A4);
+void func_801115A4(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+
+    switch (a[5]) {
+    case 0:
+        H(a, 0x4A) = -0x3000;
+        H(a, 0x50) = 0x280;
+        H(a, 0x40) = 0x20;
+        H(a, 0x60) = 0x40;
+        a[5] = 1;
+        H(a, 0x62) = -0x10;
+        H(a, 0x64) = 0;
+    case 1:
+        H(a, 0x36) -= 5;
+        W(a, 0x30) += H(a, 0x4A) << 8;
+        H(a, 0x4A) += H(a, 0x50);
+        if (--H(a, 0x40) == -1) {
+            a[5]++;
+            D_800BFA58_9b2e = 3;
+        }
+        break;
+    case 2:
+        if (D_800BFA58_9b2e >= 4) {
+            a[4] = 3;
+            func_8004B0D8(a);
+            break;
+        }
+        func_80084470(o + 0x98, a + 0x60, &D_1F8000A0);
+        H(a, 0x2E) = U(W(o, 0xDC), 0x2C) + D_1F8000A0.vx;
+        H(a, 0x32) = U(W(o, 0xDC), 0x30);
+        H(a, 0x36) = U(W(o, 0xDC), 0x34) + D_1F8000A0.vz;
+        break;
+    }
+    a[1] = 1;
+}
 
 extern void *D_800ECF80;
 extern u8 D_8011A6D4[];
