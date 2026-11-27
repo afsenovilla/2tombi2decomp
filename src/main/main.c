@@ -15153,7 +15153,106 @@ s32 func_800552EC(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80055390);
+extern u8 D_800BF84D;
+
+s32 func_80055390(u8 *a)
+{
+    s32 r;
+    u16 h;
+
+    r = 0;
+    if (a[0x174] & 3) {
+        if (a[0x181] == 0 && (D_800E7E68 & D_1F800174_de41)) {
+            a[6] = 0;
+            a[7] = 0;
+            if (a[0x174] & 1) {
+                a[5] = 0x38;
+            } else {
+                a[5] = 0x39;
+            }
+            return 2;
+        }
+        goto check;
+    }
+    h = U(a, 0x17E);
+    if (H_f12c(a, 0x17E) >= 0) {
+        if (D_800E7E68 & D_1F800174_de41) {
+            a[0x175] = 0;
+            if (func_800552EC(a)) {
+                goto set1b;
+            }
+            if (func_80053968(a, 1)) {
+                return 1;
+            }
+            if (D_800BF816 != 0) {
+                goto check;
+            }
+            if (!f_CanTombaStartAttack(a, 0)) {
+                goto check;
+            }
+            if (a[0x181] != 0) {
+                a[5] = 0x32;
+            } else {
+                a[5] = 5;
+                a[7] = 0;
+            }
+            a[6] = 0;
+            r = 2;
+        } else {
+            if (D_800BF816 != 0) {
+                goto check;
+            }
+            if (D_800ECF54 & D_1F800174_de41) {
+                if (!f_CanTombaStartAttack(a, 1)) {
+                    goto check;
+                }
+                if (a[0x181] != 0) {
+                    a[5] = 0x32;
+                } else {
+                    a[5] = 5;
+                    a[7] = 0;
+                }
+                r = 2;
+                a[0x175] = 1;
+                a[6] = 0;
+            } else {
+                a[0x175] = 0;
+            }
+        }
+    } else if (D_800E7E68 & D_1F800174_de41) {
+        if ((h & 0x2000) && func_800552EC(a)) {
+        set1b:
+            a[5] = 0x1B;
+            a[6] = 0;
+            a[7] = 0;
+            return 1;
+        }
+        if (func_80053968(a, 1)) {
+            return 1;
+        }
+    }
+check:
+    if (D_800BF816 != 0 && D_800BF84D != 0) {
+        goto ret;
+    }
+    if (a[0x148] != 0) {
+        goto ret;
+    }
+    if (!(D_800E7E68 & D_1F800172_5cdb)) {
+        goto ret;
+    }
+    if (r != 0) {
+        a[5] = 6;
+    } else {
+        a[5] = 2;
+        f_SetTombaAnimationIfChanged(a, 0x14, 2);
+    }
+    r |= 1;
+    a[6] = 0;
+    a[7] = 0;
+ret:
+    return r;
+}
 
 s32 f_TryStartTombaContactAction(u8 *t, s32 mode)
 {
