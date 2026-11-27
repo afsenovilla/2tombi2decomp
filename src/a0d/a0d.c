@@ -1985,7 +1985,87 @@ u8 *f_SpawnEarthEvilPigDetachedPartsActor(AreaPartsOwner *a)
     return p;
 }
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_8010E5EC);
+extern u8 D_1F800259;
+extern u8 D_800E807E;
+u8 *func_80117378(s32 a);
+static inline void fe5ec_spin(u8 *a)
+{
+    H(a, 0x50) += 0x20;
+    if (H(a, 0x50) > 0x200) {
+        H(a, 0x50) = 0x200;
+    }
+    H(a, 0x56) += H(a, 0x50);
+    H(a, 0x4A) += H(a, 0x50);
+    if (H(a, 0x4A) > 0x800) {
+        H(a, 0x4A) = 0;
+        func_80074590(0x8B, 0, 0);
+    }
+    H(a, 0x32) -= H(a, 0x50) >> 4;
+}
+
+void func_8010E5EC(u8 *a)
+{
+    s8 *g;
+    s32 s;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        H(a, 0x50) = 0;
+        H(a, 0x4A) = 0;
+        H(a, 0x40) = 0x14;
+    case 1:
+        if (func_80077ACC(a, H(a, 0x2E), (s16)(U(a, 0x32) - 0x12C), H(a, 0x36)) != 0) {
+            func_800518FC(a);
+        }
+        if (D_1F800259 != 0 || (g = D_800BF808, g[5] != 0)) {
+            a[0] = 2;
+            a[4] = 2;
+            D_800E807E = 0;
+            break;
+        }
+        s = a[5];
+        switch (s) {
+        case 0:
+            if (((u8 *)g)[1] != 0) {
+                break;
+            }
+            fe5ec_spin(a);
+            if (--H(a, 0x40) == 0) {
+                a[5]++;
+            }
+            break;
+        case 1:
+            if (((u8 *)g)[1] != 0) {
+                break;
+            }
+            fe5ec_spin(a);
+            if (a[1] == 0) {
+                a[5]++;
+                D_800E807E = s;
+                H(a, 0x40) = 0x1E;
+            }
+            break;
+        case 2:
+            a[1] = 0;
+            if (--H(a, 0x40) == 0) {
+                a[4] = s;
+                D_800E807E = 0;
+                func_80117378(0);
+                func_80117378(1);
+                func_80117378(2);
+                func_80117378(3);
+            }
+            break;
+        }
+        break;
+    case 2:
+    case 3:
+        D_1F80025B = 0;
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", f_UpdateEarthEvilPigSplitActor);
 
@@ -4143,7 +4223,6 @@ void func_801157D0(void *arg0) {
 
 #define P(p, o) (*(void **)((u8 *)(p) + (o)))
 #define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
-extern u8 D_1F800259;
 extern u8 D_800BF84C;
 void func_801158FC(u8 *a)
 {
