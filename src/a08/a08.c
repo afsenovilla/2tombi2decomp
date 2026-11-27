@@ -10337,7 +10337,27 @@ void func_8012E274(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012E61C);
+extern u8 *func_8007A980(s32, s32, s32);
+void func_8012E274(u8 *a);
+
+u8 *func_8012E61C(s16 kind, u8 *owner, u16 *pos)
+{
+    u8 *p = func_8007A980(1, 2, 0);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    *(void **)(p + 0x1C) = func_8012E274;
+    *(u8 **)(p + 0x10) = owner;
+    p[2] = 0x5B;
+    p[3] = kind;
+    p[0x2A] = owner[0x2A];
+    *(s16 *)(p + 0x2E) = pos[0];
+    *(s16 *)(p + 0x32) = pos[1];
+    *(s16 *)(p + 0x36) = pos[2];
+    *(s16 *)(p + 0x56) = *(s16 *)(owner + 0x56);
+    return p;
+}
 
 extern u16 D_1F80017C_u16;
 extern u16 D_1F8000F2_e6cc;
