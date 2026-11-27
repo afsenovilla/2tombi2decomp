@@ -27869,7 +27869,100 @@ void func_8007D14C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8007D208);
+extern u8 D_800BFE4E;
+
+void func_8007D208(u8 *a)
+{
+    s16 w;
+    s16 h;
+
+    if (!(a[0x46] & 1)) {
+        return;
+    }
+    if (!(a[0x46] & 0x80)) {
+        a[0x29]++;
+    } else {
+        a[0x46] &= 0x7F;
+    }
+    a[0x2A] = 1;
+    a[0x46] &= 0xFE;
+    if (H_f12c(a, 0x44) == 1 || D_800BFE4E == 0) {
+        if (H_f12c(a, 0x5C) != -1 && a[0xD] != 0xFF) {
+            func_8001D41C(H_f12c(a, 0x5C), a[0xD] + a[0x29]);
+        }
+    }
+    func_8007CEEC(a, &w, &h);
+    MEMBER_AT(s16, a, 0x54) = 0xA0 - w / 2;
+    switch (a[0x47]) {
+    case 0:
+        switch (a[3]) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+            switch (H_f12c(a, 0xE)) {
+            case -1:
+                if (a[0x18] == 0 || a[0x18] == 5 || H_f12c(a, 0x5C) == -1) {
+                    MEMBER_AT(s16, a, 0x56) = 0xB0 - h / 2;
+                } else {
+                    MEMBER_AT(s16, a, 0x56) = 0x40 - h / 2;
+                }
+                break;
+            case 0:
+                MEMBER_AT(s16, a, 0x56) = 0x40 - h / 2;
+                break;
+            case 1:
+                MEMBER_AT(s16, a, 0x56) = 0xB0 - h / 2;
+                break;
+            default:
+                goto end;
+            }
+            break;
+        case 4:
+            MEMBER_AT(s16, a, 0x54) = 0x10;
+            MEMBER_AT(s16, a, 0x56) = 0x40 - h / 2;
+            break;
+        case 5:
+            MEMBER_AT(s16, a, 0x54) = 0x130 - w;
+            MEMBER_AT(s16, a, 0x56) = 0x40 - h / 2;
+            break;
+        default:
+            goto end;
+        }
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            MEMBER_AT(s16, a, 0x56) = 0xD0 - h;
+            break;
+        case 1:
+            MEMBER_AT(s16, a, 0x54) = 0x11;
+            MEMBER_AT(s16, a, 0x56) = 0xBF;
+            break;
+        case 2:
+            MEMBER_AT(s16, a, 0x56) = 0x40 - h / 2;
+            break;
+        case 3:
+            MEMBER_AT(s16, a, 0x56) = 0x90;
+            break;
+        default:
+            goto end;
+        }
+        break;
+    case 2:
+        if (a[3] == 0) {
+            MEMBER_AT(s16, a, 0x56) = 0x70 - h / 2;
+        } else {
+            MEMBER_AT(s16, a, 0x56) = 0x18 - h / 2;
+        }
+        break;
+    default:
+        goto end;
+    }
+end:
+    MEMBER_AT(s16, a, 0x58) = w;
+    MEMBER_AT(s16, a, 0x5A) = h;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8007D594);
 
