@@ -2458,7 +2458,114 @@ void func_80113DDC(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80114118);
+typedef struct { s16 xl, x, yl, y, zl, z; } Pos4118;
+extern s16 D_1F8000D0_4118[];
+#define COPY4118() \
+    a[0x64] |= 0x80; \
+    H(a, 0xA) = U(b, 0x2E); \
+    H(a, 0xE) = U(b, 0x32); \
+    H(a, 0x12) = U(b, 0x36); \
+    func_8006E3F4(a, a + 8)
+#define AIM4118(X, Y, Z) \
+    pos.x = X; \
+    pos.y = Y; \
+    pos.z = Z; \
+    if (func_8006CEC4(D_1F8000D0_4118, &pos, 0xE0) != 0) { \
+        a[0x66] = 3; \
+    }
+
+void func_80114118(u8 *a, u8 *b)
+{
+    Pos4118 pos;
+
+    switch (a[3]) {
+    case 0:
+        a[3]++;
+        if (b[0x2A] < 6) {
+            s16 *c = D_1F8000D0_4118;
+
+            c[1] = 0x3860;
+            c[3] = U(b, 0x32) - 0x258;
+            c[5] = 0x9B5;
+        } else if (b[0x2A] == 0xF) {
+            s16 *c = D_1F8000D0_4118;
+
+            c[1] = 0x430F;
+            c[3] = -0x25DC;
+            c[5] = 0x965;
+        }
+    case 1:
+        a[0x72] = 0;
+        a[0x64] &= 0x7F;
+        switch (b[0x2A]) {
+        case 4:
+        case 5:
+            a[0x64] |= 0x80;
+            H(a, 0xA) = U(b, 0x2E);
+            if (H(a, 0xA) < 0x3542) {
+                H(a, 0xA) = 0x3542;
+            }
+            H(a, 0xE) = U(b, 0x32);
+            H(a, 0x12) = U(b, 0x36);
+            func_8006E3F4(a, a + 8);
+            AIM4118(0x3860, -0x11DC, 0x9B5)
+            break;
+        case 11:
+            a[0x72] = 0x40;
+            H(a, 0x8C) = 0x400;
+            break;
+        case 12:
+            a[0x72] = 0x40;
+            H(a, 0x8C) = 0x480;
+            break;
+        case 15:
+            a[0x72] = 0x40;
+            H(a, 0x8C) = 0x540;
+            break;
+        case 6:
+        case 32:
+        case 40:
+        case 41:
+            if (H(b, 0x32) < -0x206C) {
+                if (H(b, 0x2E) >= 0x4269) {
+                    a[0x64] |= 0x80;
+                    H(a, 0xA) = U(b, 0x2E);
+                    if (H(a, 0xA) >= 0x4593) {
+                        H(a, 0xA) = 0x4592;
+                    }
+                    H(a, 0xE) = U(b, 0x32);
+                    H(a, 0x12) = U(b, 0x36);
+                    func_8006E3F4(a, a + 8);
+                    AIM4118(0x430F, U(b, 0x32) - 0x2D0, 0x965)
+                }
+            } else if (H(b, 0x32) >= -0x1900) {
+                if (H(b, 0x32) < -0x11F8) {
+                    if (H(b, 0x2E) >= 0x434D) {
+                        COPY4118();
+                        AIM4118(0x41FF, -0x16DC, 0x93C)
+                    }
+                }
+            }
+            break;
+        case 18:
+        case 19:
+            if (H(b, 0x2E) < 0x3778) {
+                COPY4118();
+                AIM4118(0x36B2, -0x25DC, 0x975)
+            }
+            break;
+        case 20:
+            H(a, 0xA) = 0x3680;
+            H(a, 0xE) = -0x230C;
+            H(a, 0x12) = 0x1105;
+            a[0x64] |= 0x80;
+            func_8006E3F4(a, a + 8);
+            AIM4118(0x3310, -0x25A4, 0xEA1)
+            break;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801144D4);
 
