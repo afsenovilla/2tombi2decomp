@@ -13205,7 +13205,62 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80050A80);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80050B08);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateActorScaledPartTransforms);
+extern s32 D_1F800040[];
+
+void f_UpdateActorScaledPartTransforms(u8 *a)
+{
+    s32 i;
+    u8 *m;
+    s32 k;
+    s32 *sm;
+    s32 *rot;
+    s32 *res;
+    u8 *q;
+    u8 *r;
+    s16 y;
+    s16 z;
+    s32 x;
+
+    for (i = 0; i < a[9]; i++) {
+        sm = D_1F800000;
+        rot = D_1F800020_edd9;
+        res = D_1F800040;
+        if (i >= a[8]) {
+            return;
+        }
+        q = a;
+        q += i * 4;
+        m = *(u8 **)(q + 0xC0);
+        sm[1] = 0;
+        sm[3] = 0;
+        sm[5] = 0;
+        sm[6] = 0;
+        sm[7] = 0;
+        y = *(s16 *)(m + 0x3A);
+        sm[0] = *(s16 *)(m + 0x38);
+        z = *(s16 *)(m + 0x3C);
+        sm[2] = y;
+        sm[4] = z;
+        k = *(s16 *)(m + 6);
+        RotMatrix_gte(m + 8, rot);
+        MulMatrix0(rot, sm, res);
+        if (k == -1) {
+            MulMatrix0(a + 0x98, res, m + 0x18);
+            ApplyRotMatrix(m, m + 0x2C);
+            *(s32 *)(m + 0x2C) += *(s32 *)(a + 0xAC);
+            *(s32 *)(m + 0x30) += *(s32 *)(a + 0xB0);
+            *(s32 *)(m + 0x34) += *(s32 *)(a + 0xB4);
+        } else {
+            r = a;
+            r += k * 4;
+            MulMatrix0(*(u8 **)(r + 0xC0) + 0x18, res, m + 0x18);
+            ApplyRotMatrix(m, m + 0x2C);
+            *(s32 *)(m + 0x2C) += *(s32 *)(*(u8 **)(r + 0xC0) + 0x2C);
+            *(s32 *)(m + 0x30) += *(s32 *)(*(u8 **)(r + 0xC0) + 0x30);
+            *(s32 *)(m + 0x34) += *(s32 *)(*(u8 **)(r + 0xC0) + 0x34);
+        }
+    }
+}
 
 void f_UpdateActorUnscaledPartTransforms(u8 *a)
 {
