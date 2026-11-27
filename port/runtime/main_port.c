@@ -66,6 +66,7 @@ int port_main(int argc, char **argv) {
             for (int k = 0; k < 8; k++) if (!port_ovl_interp[k]) { port_ovl_interp[k] = argv[++i]; break; }
         }
         else if (streq(argv[i], "--no-ovl-native")) { extern int port_ovl_native; port_ovl_native = 0; }
+        else if (streq(argv[i], "--save-dir") && i + 1 < argc) { extern const char *port_save_dir; port_save_dir = argv[++i]; }
         else if (streq(argv[i], "--window")) { extern int port_window; port_window = 1; }
         else if (streq(argv[i], "--headless")) { extern int port_window; port_window = 0; }
         else if (streq(argv[i], "--viewer") && i + 1 < argc) { extern const char *port_window_viewer; port_window_viewer = argv[++i]; }

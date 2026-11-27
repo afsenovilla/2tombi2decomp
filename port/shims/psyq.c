@@ -108,15 +108,6 @@ int EnableEvent(int ev) { return 1; }
 int DisableEvent(int ev) { return 1; }
 int WaitEvent(int ev) { return 1; }
 int OpenTh(void *fn, u32 sp, u32 gp) { return port_thread_open(fn); }
-/* OpenEvent: the VBlank / root-counter events run their handler every vblank (EvSpINT 0xF2000003 = RCnt3) */
-int OpenEvent(u32 desc, int spec, int mode, void *fn) {
-    if (port_verbose) port_printf("[port] OpenEvent(%08x, %x, %x, %p)\n", desc, spec, mode, fn);
-    if ((desc == 0xF2000003u || desc == 0xF0000001u) && fn) port_vsync_event_fn = fn;
-    return 0xF1000000 | (desc & 0xFF);
-}
-int CloseEvent(int ev) { return 1; }
-int TestEvent(int ev) { return 0; }
-void DeliverEvent(u32 a, u32 b) {}
 int SetRCnt(u32 c, u16 t, int m) { return 1; }
 int StartRCnt(u32 c) { return 1; }
 int StopRCnt(u32 c) { return 1; }

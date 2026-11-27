@@ -16,7 +16,7 @@ build/port/tomba2 --window                                           # SDL2 wind
 #   keys (tomba2-view): arrows = d-pad, X = Cross, Z = Square, S = Triangle, D = Circle, Q / W = L1 / R1,
 #   A / E = L2 / R2, Return = Start, Backspace = Select, F = 2x / 3x, F11 = fullscreen, Escape = quit
 #   --viewer PATH, --viewer-arg ARG (repeatable: --scale N, --fullscreen, --keys up=Up,cross=X,..., --stats,
-#   --dump DIR[:N]); --headless (the default) keeps the stage-1 behaviour
+#   --dump DIR[:N]); --headless (the default) keeps the stage-1 behaviour; --save-dir DIR (memory cards)
 # free play in A00, headless (frame dumps of Tomba walking, jumping on a barrel, the "look inside" hint):
 build/port/tomba2 --frames 10600 --dump-frames DIR --dump-every 50 --pad-script \
   400:start,600:cross,800:cross,1000:cross,1200:cross,1400:start,6000:circle:10x50/60,9200:right:300,\
@@ -72,6 +72,17 @@ What stage 2 changed (each item with its headless check):
   file per function; empty `__asm__ volatile("")` barriers dropped): MAIN's 33 inline-asm functions and the
   overlays' 177 but 16 are native (4485 native functions). Frame dumps unchanged (both checks above).
   `port_prelude.h` declares the GTE entry points.
+
+- **Memory card** (`shims/card.c`, T1 `port/shims/card.c`): two 128 KB raw card images (`tomba2_mc0.mcd`,
+  `tomba2_mc1.mcd`, the common emulator layout) in `--save-dir DIR` (default: the `--data` directory, game/usa),
+  written through on every change; the low-level `_card_*` calls complete at once and raise the card events
+  (OpenEvent / TestEvent / DeliverEvent moved there from psyq.c), the BIOS file calls (`open` / `read` / `write`
+  / `lseek` / `close` / `erase` / `format` / `firstfile` / `nextfile` on `bu00:` / `bu10:`) work on the image.
+  Checked: Title -> Load Game loads CRD.BIN, formats new cards, and shows "No data for Tomba!2"; saving needs a
+  save point (not scripted yet).
+- **CD seeks**: Setloc only sets the target; SeekL / SeekP and the next ReadN / ReadS / CdRead go there. The XA
+  music player loops a track with `SeekL` + `ReadS` without parameters; the head stayed past the end and the
+  Load Game screen hung at frame 1240 (the worker retried GetlocL forever within one frame).
 
 - **Free play in A00**: after the opening and the journal tutorial Tomba walks, pushes and jumps onto a barrel,
   walks back, and the "Use up and Circle to look inside" hint appears (the script above; same frames with native

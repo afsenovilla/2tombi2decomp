@@ -13,6 +13,7 @@ typedef struct { char name[64]; int fd, lba, nsec; unsigned size; } CdFile;
 static CdFile cd_files[64];
 static int n_cd_files, cd_next_lba = CD_FIRST_LBA;
 static int cd_pos;                     /* next LBA */
+static int cd_target, cd_target_pending; /* the last Setloc, not yet reached by a seek or a read */
 static void *cd_ready_cb, *cd_sync_cb, *cd_read_cb, *cd_data_cb;
 static u8 cd_mode = 0x80, cd_last_com;
 static int cd_reading;                 /* ReadN / ReadS in progress: sectors are delivered on vblanks */
@@ -105,12 +106,16 @@ int CdSetDebug(int l) { return 0; }
 void CdFlush(void) {}
 int CdControl(u8 com, u8 *param, u8 *result) {
     cd_last_com = com;
+    /* Setloc only sets the target; SeekL / SeekP and the next ReadN / ReadS go there (the XA music player loops a
+       track with SeekL + ReadS without parameters: the head must go back to the Setloc target) */
     if ((com == 2 /* Setloc */ || com == 0x15 || com == 0x16) && param) {
-        cd_pos = loc_to_lba(param);
-        if (port_trace_cd) port_printf("[port] cd: Setloc lba %d (frame %d)\n", cd_pos, port_frame);
+        cd_target = loc_to_lba(param); cd_target_pending = 1;
+        if (port_trace_cd) port_printf("[port] cd: Setloc lba %d (frame %d)\n", cd_target, port_frame);
     }
+    if (com == 0x15 /* SeekL */ || com == 0x16 /* SeekP */) { cd_pos = cd_target; cd_target_pending = 0; cd_reading = 0; }
     if ((com == 6 /* ReadN */ || com == 0x1B /* ReadS */)) {
-        if (param) cd_pos = loc_to_lba(param);
+        if (param) { cd_target = loc_to_lba(param); cd_target_pending = 1; }
+        if (cd_target_pending) { cd_pos = cd_target; cd_target_pending = 0; }
         cd_reading = 1;
         if (port_trace_cd) port_printf("[port] cd: Read%s from lba %d (frame %d)\n", com == 6 ? "N" : "S", cd_pos, port_frame);
     }
@@ -150,6 +155,7 @@ int CdGetSector2(void *buf, int words) { return CdGetSector(buf, words); }
 int CdDataSync(int mode) { return 0; }
 int CdRead(int sectors, u32 *buf, int mode) {
     int bytes = (mode & 0x20) ? 2340 : 2048;
+    if (cd_target_pending) { cd_pos = cd_target; cd_target_pending = 0; }
     if (port_verbose || port_trace_cd) port_printf("[port] CdRead lba %d, %d sectors -> %p (frame %d)\n", cd_pos, sectors, buf, port_frame);
     if (port_cd_read_sectors(cd_pos, sectors, buf, bytes)) { port_printf("[port] CdRead failed at lba %d (frame %d)\n", cd_pos, port_frame); return 0; }
     cd_pos += sectors; cd_reads++; cd_sectors += sectors;
