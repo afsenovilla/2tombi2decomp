@@ -950,7 +950,79 @@ void func_8010CAEC(u8 *a)
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeA00InteriorState);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateA00InteriorCamera);
+typedef struct { s16 xl, x, yl, y, zl, z; } PosCC90;
+typedef struct { s16 x, y, z; } V3CC90;
+extern s16 D_1F8000D0_cc90[];
+extern u8 D_1F800207_cc90;
+extern u8 D_800BF808_cc90[];
+extern u8 D_800BF8BC;
+extern u8 D_800E7EAC[];
+extern V3CC90 D_80146ED8[];
+
+void f_UpdateA00InteriorCamera(u8 *a)
+{
+    u8 *g = D_800BF808_cc90;
+    PosCC90 pos;
+
+    switch (g[0xF]) {
+    case 0:
+    case 1:
+        func_8006E3F4(a, D_800E7EAC);
+        pos.x = D_80146ED8[g[0xF]].x;
+        pos.y = D_80146ED8[g[0xF]].y;
+        pos.z = D_80146ED8[g[0xF]].z;
+        func_8006CEC4(D_1F8000D0_cc90, &pos, 0);
+        a[0x66] = 3;
+        break;
+    case 2:
+        if (D_800BF8BC == 0xFF) {
+            u8 *p = D_800E7EAC;
+            s32 t;
+            u8 k;
+
+            func_8006E3B0(a, p);
+            k = D_1F800207_cc90;
+            if (k < 0x28) {
+                t = 0x190;
+                pos.x = 0x4D90;
+                pos.y = U(p, 6) - 0x64;
+                pos.z = 0x1800;
+            } else if (k >= 0x31) {
+                t = 0x190;
+                pos.x = 0x4B70;
+                pos.y = U(p, 6) - 0x64;
+                pos.z = 0x1770;
+            } else {
+                t = 0x2F8;
+                pos.x = 0x4F00;
+                pos.y = U(p, 6) - 0x12C;
+                pos.z = 0x1800;
+            }
+            func_8006CEC4(D_1F8000D0_cc90, &pos, 0);
+            if (H_f12c(a, 6) != t) {
+                if (H_f12c(a, 6) < t) {
+                    H_f12c(a, 6) += 0x14;
+                } else {
+                    H_f12c(a, 6) -= 0x14;
+                }
+            }
+            {
+                s16 *c = D_1F8000D0_cc90;
+
+                *(s32 *)(c + 0x22) += H_f12c(a, 6);
+            }
+            a[0x66] = 3;
+        } else {
+            func_8006E3F4(a, D_800E7EAC);
+            pos.x = D_80146ED8[2].x;
+            pos.y = D_80146ED8[2].y;
+            pos.z = D_80146ED8[2].z;
+            func_8006CEC4(D_1F8000D0_cc90, &pos, 0);
+            a[0x66] = 3;
+        }
+        break;
+    }
+}
 
 void func_8010CED0(u8 *a) {
     s16 x = D_1F800160_71b4;
@@ -4914,7 +4986,6 @@ void func_8011C090(u8 *a) {
     a[4] = 3;
 }
 
-extern u8 D_800BF8BC;
 extern u8 D_800E7EAA;
 typedef struct {
     s16 x, y, z;
