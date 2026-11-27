@@ -1047,9 +1047,339 @@ void func_8010CED0(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateFishermensTownCamera);
-
+typedef struct { s16 xl, x, yl, y, zl, z; } PosCFA0;
+#define W_d1fb(p, o) (*(s32 *)((u8 *)(p) + (o)))
 extern s16 D_1F8000D0[];
+extern s16 D_1F8000EE_cfa0;
+extern u8 D_800E7E80[];
+extern s16 D_800E7FFE;
+extern u8 D_800BF816;
+extern u8 D_800BF821;
+extern u8 D_800BF9DF;
+#define COPYCFA0() \
+    a[0x64] |= 0x80; \
+    H_f12c(a, 0xA) = U(b, 0x2E); \
+    H_f12c(a, 0xE) = U(b, 0x32); \
+    H_f12c(a, 0x12) = U(b, 0x36); \
+    func_8006E3F4(a, a + 8)
+/* func_8010DBE4, inlined */
+static inline void inl_8010DBE4(u8 *a)
+{
+    s32 d;
+
+    if (D_800E7FFE & 0x8000) {
+        H_f12c(a, 0x26) = 0;
+        return;
+    }
+    if (D_800BF821 != 0) {
+        H_f12c(a, 0x26) = -600;
+        return;
+    }
+    if (D_1F800160_71b4 < 0x364D) {
+        d = D_1F800160_71b4 - 0x2D50;
+        H_f12c(a, 0x26) = 0;
+        if (d > 0) {
+            H_f12c(a, 0x26) = ((d * 0x7800) / 2300) >> 8;
+        }
+    }
+}
+/* func_8010DC74, inlined */
+static inline void inl_8010DC74(u8 *a, s32 target, s32 step)
+{
+    s32 v = W_d1fb(a, 0x28);
+
+    if (v == target) {
+        return;
+    }
+    if (v < target) {
+        W_d1fb(a, 0x28) = v + step;
+        if (target < v + step) {
+            W_d1fb(a, 0x28) = target;
+        }
+    } else {
+        W_d1fb(a, 0x28) = v - step;
+        if (v - step < target) {
+            W_d1fb(a, 0x28) = target;
+        }
+    }
+}
+
+void f_UpdateFishermensTownCamera(u8 *a)
+{
+    u8 *b = D_800E7E80;
+    PosCFA0 pos;
+    u8 k;
+
+    if (D_800BF816 != 0) {
+        f_UpdateA00InteriorCamera(a);
+        return;
+    }
+    switch (a[3]) {
+    case 0:
+        H_f12c(a, 0x52) = 0x400;
+        a[0x72] = 0;
+        inl_8010DC74(a, 0, 4);
+        if (b[0x16B] != 0) {
+            H_f12c(a, 0x26) = 0;
+            a[3]++;
+            break;
+        }
+        k = b[0x2A];
+        if (k == 1) {
+            {
+                s16 *c = D_1F8000D0;
+
+                if (c[1] < 0xBB8) {
+                    a[0x66] |= 1;
+                    c[1] = 0xBB8;
+                } else if (c[1] >= 0x32C9) {
+                    a[0x72] = 0x40;
+                    a[0x66] |= 1;
+                    c[1] = 0x32C8;
+                }
+            }
+            inl_8010DBE4(a);
+            if (D_1F8000D0[1] >= 0x2EE1) {
+                inl_8010DC74(a, -0x80, 8);
+            }
+        } else if (k == 2) {
+            H_f12c(a, 0x52) = 0;
+            a[0x72] = 0x82;
+        } else if (k == 4) {
+            func_8006E8F8(a);
+            a[3] = 3;
+        } else if (k == 0x1F) {
+            a[3] = 0xE;
+        } else if (k >= 0xC) {
+            a[3] = 2;
+            W_d1fb(a, 0x28) = 0;
+        }
+        break;
+    case 1:
+        D_1F8000EE_cfa0 = -0x514;
+        H_f12c(a, 0x26) = -0x258;
+        H_f12c(a, 0x56) = 0;
+        k = b[0x2A];
+        if (k == 1) {
+            func_8006E8F8(a);
+            a[3]--;
+        } else if (k == 10) {
+            func_8006E8F8(a);
+            a[3] = 3;
+        }
+        break;
+    case 2:
+        W_d1fb(a, 0x28) = 0;
+        H_f12c(a, 0x26) = 0;
+        k = b[0x2A];
+        if (k == 0x25) {
+            a[3] = 9;
+        } else if (k == 1) {
+            a[3] = 0;
+        } else if (k == 0x14) {
+            a[3] = 10;
+        }
+        break;
+    case 3:
+        func_8010CED0(a);
+        k = b[0x2A];
+        if (k == 0xB) {
+            a[3] = 6;
+        } else if (k == 1 || b[0x16B] != 0) {
+            a[3] = 1;
+        } else if (H_f12c(b, 0x2E) < 0x1518) {
+            a[0x64] |= 0x80;
+            a[3]++;
+        }
+        break;
+    case 4:
+        if (H_f12c(b, 0x2E) >= 0x1518) {
+            a[3]--;
+            a[0x64] &= 0x3F;
+            break;
+        }
+        if (b[0x2A] == 3) {
+            a[3]++;
+            break;
+        }
+        COPYCFA0();
+        pos.x = 0x189C;
+        pos.y = -0xA19;
+        pos.z = 0x1054;
+        func_8006CEC4(D_1F8000D0, &pos, 0xE0);
+        break;
+    case 5:
+        if (b[0x2A] == 10) {
+            a[3]--;
+            break;
+        }
+        COPYCFA0();
+        pos.x = 0x1768;
+        pos.z = 0x15C6;
+        if (H_f12c(b, 0x32) < -0x8FC) {
+            pos.y = -0xE74;
+        } else if (H_f12c(b, 0x32) < -0x76C) {
+            pos.y = -0xA46;
+        } else {
+            pos.y = -0x691;
+        }
+        func_8006CEC4(D_1F8000D0, &pos, 0xE0);
+        break;
+    case 6:
+        D_1F8000EE_cfa0 = -0x3E8;
+        H_f12c(a, 0x26) = -0x44C;
+        if (b[0x2A] == 10) {
+            a[3] = 3;
+            func_8006E8F8(a);
+        }
+        break;
+    case 9:
+        a[0x64] &= 0x3F;
+        if (b[0x2A] != 0x25) {
+            a[3] = 2;
+            break;
+        }
+        COPYCFA0();
+        pos.x = 0x354F;
+        pos.y = -0xF8D;
+        pos.z = 0x1BFD;
+        func_8006CEC4(D_1F8000D0, &pos, 0xE0);
+        break;
+    case 10:
+        a[0x77] = 0;
+        D_1F8000EE_cfa0 = -0x7CE;
+        H_f12c(a, 0x26) = -0x3E0;
+        H_f12c(a, 0x56) = 0;
+        k = b[0x2A];
+        if (k < 0x14) {
+            a[3] = 2;
+            func_8006E8F8(a);
+        } else if (k >= 0x17) {
+            a[3]++;
+        }
+        break;
+    case 11:
+        k = b[0x2A];
+        if (k < 0x17) {
+            a[3]--;
+        } else if (k >= 0x1C) {
+            a[0x74] = 2;
+            H_f12c(a, 0x4A) = -0xBB8;
+            a[3]++;
+        } else {
+            a[0x77] = 1;
+            a[0x74] = 0;
+            H_f12c(a, 0x26) = 0;
+            D_1F8000EE_cfa0 = -0x6D6;
+        }
+        break;
+    case 12:
+        k = b[0x2A];
+        if (k < 0x1C) {
+            a[0x74] = 0;
+            a[3]--;
+        } else if (k >= 0x20) {
+            a[0x74] = 0;
+            a[3] = 0xF;
+        } else if (k >= 0x1E) {
+            a[3]++;
+        } else {
+            a[0x74] = 2;
+            H_f12c(a, 0x4A) = -0xBB8;
+            H_f12c(a, 0x56) = 0x80;
+            if (b[0x145] == 0) {
+                if (D_800BF9DF != 0 && b[0x2A] == 0x1D && H_f12c(b, 0x32) >= -0x8FB) {
+                    H_f12c(a, 0x26) = -0x578;
+                    D_1F8000EE_cfa0 = -0x258;
+                } else {
+                    D_1F8000EE_cfa0 = -0x6D6;
+                    H_f12c(a, 0x26) = 0;
+                }
+            }
+        }
+        break;
+    case 13:
+        k = b[0x2A];
+        if (k < 0x1E) {
+            a[3]--;
+        } else if (k >= 0x1F) {
+            a[3]++;
+        } else {
+            H_f12c(a, 0x26) = -0xE0;
+            D_1F8000EE_cfa0 = -0x816;
+            H_f12c(a, 0x56) = -0x100;
+        }
+        break;
+    case 14:
+        a[0x72] = 0;
+        k = b[0x2A];
+        if (k == 0x26) {
+            a[3] = 0x10;
+        } else if (k == 0x22) {
+            a[3]++;
+        } else if (k < 0x1F) {
+            a[3]--;
+        } else {
+            s16 *c = D_1F8000D0;
+
+            if (c[5] < 0x1C35) {
+                a[0x72] = 3;
+            }
+            H_f12c(a, 0x56) = 0;
+            if (b[0x145] == 0) {
+                if (D_800BF9DF != 0 && H_f12c(b, 0x32) >= -0x8FB) {
+                    H_f12c(a, 0x26) = -0x578;
+                    c[0xF] = -0x258;
+                } else {
+                    H_f12c(a, 0x26) = -0xE0;
+                    D_1F8000EE_cfa0 = -0x816;
+                }
+            }
+        }
+        break;
+    case 15:
+        k = b[0x2A];
+        if (k < 0x20) {
+            a[3] = 0xC;
+            break;
+        }
+        if (k == 0x23) {
+            a[3]--;
+            break;
+        }
+        {
+            s16 *c = D_1F8000D0;
+            s16 d;
+
+            c[0xF] = -0x708;
+            d = c[9] + 0x532;
+            if (d > 0) {
+                d *= 2;
+            } else {
+                d = 0;
+            }
+            {
+                s16 *c = D_1F8000D0;
+
+                c[0xF] += d;
+                if (c[0xF] > -0x320) {
+                    c[0xF] = -0x320;
+                }
+                H_f12c(a, 0x26) = -0x320;
+            }
+        }
+        H_f12c(a, 0x56) = 0x100;
+        break;
+    case 16:
+        D_1F8000EE_cfa0 = -0x6A4;
+        H_f12c(a, 0x56) = -0x100;
+        if (b[0x2A] < 0x26) {
+            a[3] = 0xE;
+        }
+        break;
+    }
+}
+
 extern u8 D_800BF9DD;
 void func_8010D89C(u8 *a) {
 
@@ -1112,7 +1442,6 @@ void func_8010DA70(void) {
     func_80051FB4();
 }
 
-extern u8 D_800E7E80[];
 extern u8 D_800BF808_1760[];
 extern u8 D_800E8008[];
 extern s32 D_1F800184;
@@ -1158,13 +1487,11 @@ void func_8010DB58(u8 *a) {
             v[5] = 0x1BFD;
         }
     case 1:
-        f_UpdateFishermensTownCamera();
+        ((void (*)())f_UpdateFishermensTownCamera)();
         break;
     }
 }
 
-extern s16 D_800E7FFE;
-extern u8 D_800BF821;
 void func_8010DBE4(u8 *a) {
     s32 d;
 
@@ -2677,7 +3004,6 @@ void func_80115598(u8 *a)
 typedef struct { s16 k, kind, arg; u16 x, y, z; } SpawnRow58e0;
 extern SpawnRow58e0 D_80146F0C[];
 extern u8 D_800BF9E0;
-extern u8 D_800BF816;
 u8 *func_800310F4();
 void func_801158E0(u8 *a)
 {
@@ -8471,7 +8797,6 @@ void func_8012D404(u8 *a) {
     }
 }
 
-extern u8 D_800BF9DF;
 extern s16 D_1F8000DE;
 void f_HandleGoldFishhookScenePropActor(u8 *a)
 {
