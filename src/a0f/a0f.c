@@ -4425,7 +4425,224 @@ INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80116ABC);
 
 INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80116C2C);
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80116E5C);
+typedef struct { s16 x0, x1, z0, z1; } Box6E5C;
+#define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
+extern s16 D_1F800160_6e5c;
+extern Box6E5C D_8012096C[];
+static inline void Decay6E5C(s16 *q)
+{
+    if (q[1] > 0) {
+        q[2] += 0x88;
+        if (--q[1] > 0) {
+            return;
+        }
+    }
+    q[1] = 0;
+}
+static inline void Wave6E5C(u8 *a)
+{
+    s16 *q = (s16 *)(a + 0x60);
+
+    H(a, 0x32) = H(a, 0x60) + ((func_80083E80(q[2]) * q[1]) >> 12);
+}
+static inline void Parts6E5C(u8 *a, s16 v)
+{
+    s16 t;
+
+    H(P(a, 0xC0), 0xC) = v;
+    H(P(a, 0xC4), 0xC) = v;
+    t = -(v * 3) >> 1;
+    H(P(a, 0xC8), 0xC) = t;
+    H(P(a, 0xCC), 0xC) = t;
+}
+
+void func_80116E5C(u8 *a)
+{
+    u8 *b;
+    s16 *p;
+    Box6E5C *r;
+
+    p = (s16 *)(a + 0x60);
+    b = D_800E7E80;
+    switch (a[5]) {
+    case 0:
+        if (a[0x29] != 0) {
+            goto c2;
+        }
+        {
+            s16 *q = (s16 *)(a + 0x60);
+
+            Decay6E5C(q);
+            Wave6E5C(a);
+            if (q[1] == 0) {
+                a[5] = 1;
+                a[6] = 0;
+                H(a, 0x42) = 0x400;
+            }
+        }
+        break;
+    case 1:
+        if (a[0x29] != 0) {
+            goto c2;
+        }
+        if (a[0x2B] != 0) {
+            if (D_1F800160_6e5c < H(a, 0x2E)) {
+                H(a, 0x44) = -0x200;
+            } else {
+                H(a, 0x44) = 0x200;
+            }
+            a[5] = 8;
+            a[0x29] = 0;
+        } else {
+            p[2] += 0x33;
+            p[1] = (u32)func_80083F50(H(a, 0x42)) >> 7;
+            H(a, 0x42) += 0x22 + (func_8009A450() >> 9);
+        }
+        Wave6E5C(a);
+        break;
+    case 2:
+    c2:
+        p[2] = 0x200;
+        H(a, 0x62) = 0x32;
+        H(a, 0x42) = 0;
+        a[5] = 3;
+    case 3:
+        Decay6E5C((s16 *)(a + 0x60));
+        Wave6E5C(a);
+        if (a[0x29] == 0) {
+            a[5] = 7;
+            break;
+        }
+        H(a, 0x44) = U(b, 0x44);
+        if (b[0x147] != 0) {
+            Parts6E5C(a, -H(b, 0x58));
+        } else {
+            u16 v = U(b, 0x58);
+            s16 t = -(H(b, 0x58) * 3) >> 1;
+
+            H(P(a, 0xC0), 0xC) = v;
+            H(P(a, 0xC4), 0xC) = v;
+            H(P(a, 0xC8), 0xC) = t;
+            H(P(a, 0xCC), 0xC) = t;
+        }
+        if (b[0x168] >= 3) {
+            a[5] = 4;
+        }
+        break;
+    case 4:
+        a[5] = 5;
+    case 5:
+        if (a[0x29] == 0) {
+            a[5] = 7;
+            break;
+        }
+        H(a, 0x44) = U(b, 0x44);
+        r = &D_8012096C[a[3]];
+        if (b[0x147] == 0) {
+            H(a, 0x2E) += (func_80083F50(H(a, 0x56)) * (b[0x168] - 2) * 6) >> 12;
+            H(a, 0x36) += (func_80083E80(H(a, 0x56)) * (b[0x168] - 2) * 6) >> 12;
+            p[2] = U(b, 0x58);
+        } else {
+            H(a, 0x2E) -= (func_80083F50(H(a, 0x56)) * (b[0x168] - 2) * 6) >> 12;
+            H(a, 0x36) -= (func_80083E80(H(a, 0x56)) * (b[0x168] - 2) * 6) >> 12;
+            p[2] = -U(b, 0x58);
+        }
+        if (H(a, 0x2E) < r->x0) {
+            H(a, 0x2E) = r->x0;
+        } else if (H(a, 0x2E) > r->x1) {
+            H(a, 0x2E) = r->x1;
+        }
+        if (H(a, 0x36) < r->z0) {
+            H(a, 0x36) = r->z0;
+        } else if (H(a, 0x36) > r->z1) {
+            H(a, 0x36) = r->z1;
+        }
+        if (b[0x168] < 3) {
+            a[5] = 3;
+        }
+        if (b[0x147] != 0) {
+            Parts6E5C(a, -H(b, 0x58));
+        } else {
+            u16 v = U(b, 0x58);
+            s16 t = -(H(b, 0x58) * 3) >> 1;
+
+            H(P(a, 0xC0), 0xC) = v;
+            H(P(a, 0xC4), 0xC) = v;
+            H(P(a, 0xC8), 0xC) = t;
+            H(P(a, 0xCC), 0xC) = t;
+        }
+        {
+            s16 *q = (s16 *)(a + 0x60);
+
+            q[1] = 0x32;
+        }
+        Wave6E5C(a);
+        break;
+    case 6:
+        break;
+    case 7:
+        a[5] = 8;
+        if (b[0x147] != 0) {
+            H(a, 0x44) = -H(a, 0x44);
+        }
+    case 8:
+        Decay6E5C((s16 *)(a + 0x60));
+        Wave6E5C(a);
+        if (a[0x29] != 0) {
+            a[5] = 2;
+            a[0x2B] = 0;
+            break;
+        }
+        {
+            s16 ang;
+            s16 spd;
+
+            ang = H(P(a, 0xC0), 0xC);
+            spd = H(a, 0x44);
+            ang &= 0xFFF;
+            if (spd > 0) {
+                spd -= 10;
+                if (spd < 0) {
+                    spd = 0;
+                }
+            } else {
+                spd += 10;
+                if (spd > 0) {
+                    spd = 0;
+                }
+            }
+            if (ang > 0x800) {
+                ang += spd;
+                if (ang < 0x1000) {
+                    if (spd < 0x96) {
+                        spd += 0x1E;
+                    }
+                    goto store;
+                }
+            } else {
+                ang += spd;
+                if (ang > 0) {
+                    goto dec;
+                }
+            }
+            if (__builtin_abs(spd) < 0x5A) {
+                ang = 0;
+                spd = 0;
+                a[5] = 0;
+                a[0x2B] = 0;
+            }
+            goto store;
+        dec:
+            if (spd > -0x96) {
+                spd -= 0x1E;
+            }
+        store:
+            H(a, 0x44) = spd;
+            Parts6E5C(a, ang);
+        }
+        break;
+    }
+}
 
 void func_801175B8(void) {
 }
