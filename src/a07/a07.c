@@ -3985,7 +3985,102 @@ void func_8011B650(PartsOwner *a)
     a->pad[4]++;
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusClothesLockerActor);
+extern u8 D_80133154[];
+extern u8 D_80133198[];
+extern u8 D_800A3E58[];
+extern u8 D_800BFAE7;
+extern u8 D_800BF822;
+extern void func_80041098(u8 *);
+
+void f_UpdateCircusClothesLockerActor(u8 *a)
+{
+    s32 t;
+
+    if (func_8007778C(a) != 0) {
+        func_800517F8(a);
+    }
+    switch (a[5]) {
+    case 0:
+        if (a[0x2B] != 0) {
+            a[0] = 2;
+            a[0x2B] = 0;
+            H(a, 0x40) = 0;
+            a[6] = 0;
+            if (D_800BFAE7 == 0) {
+                func_8004ED94(0x2B, 0x41);
+                a[5] = 1;
+            } else {
+                func_80040CDC(a, 0, D_80133154);
+                a[0x70] = 2;
+                a[5] = 2;
+            }
+        }
+        break;
+    case 1:
+        if (!(D_800BF822 & 1) || ++H(a, 0x40) >= 0x78) {
+            if (D_800BFAE7 != 0) {
+                H(a, 0x60) = 0;
+                a[5]++;
+            } else {
+                a[0] = 1;
+                a[5] = 0;
+                func_80042310();
+            }
+        }
+        break;
+    case 2:
+        switch (a[6]) {
+        case 0:
+            func_80041098(a);
+            if (a[0x70] == 0xFF) {
+                func_8004D604(0x33, 1);
+                func_80074590(0x1A, -5, 0);
+                (*(u8 **)(a + 0x14))[4] = 3;
+                a[6]++;
+            }
+            break;
+        case 1:
+            H(a, 0x60) += 0x10;
+            if (H(a, 0x60) >= 0x400) {
+                H(a, 0x60) = 0x400;
+                func_80040CDC(a, 0, D_80133198);
+                a[0x70] = 2;
+                a[6]++;
+            }
+            t = func_80083E80(H(a, 0x60)) >> 2;
+            H(*(u8 **)(a + 0xC4), 0xA) = t;
+            H(*(u8 **)(a + 0xC8), 0xA) = -t;
+            break;
+        case 2:
+            func_80041098(a);
+            if (a[0x70] == 0xFF) {
+                D_800BF9D5 = 3;
+                a[6]++;
+            }
+            break;
+        case 3:
+            H(a, 0x60) -= 0x10;
+            if (H(a, 0x60) <= 0) {
+                func_80074590(0x1A, -5, 0);
+                func_80040CDC(a, 0, D_800A3E58);
+                a[0x70] = 2;
+                H(a, 0x60) = 0;
+                a[6]++;
+            }
+            t = func_80083E80(H(a, 0x60)) >> 2;
+            H(*(u8 **)(a + 0xC4), 0xA) = t;
+            H(*(u8 **)(a + 0xC8), 0xA) = -t;
+            break;
+        case 4:
+            func_80041098(a);
+            if (a[0x70] == 0xFF) {
+                a[5] = 3;
+            }
+            break;
+        }
+        break;
+    }
+}
 
 void func_8011BAB4(void *arg0) {
     u8 temp_v1;
@@ -3996,7 +4091,7 @@ void func_8011BAB4(void *arg0) {
         ((void (*)())func_8011B650)();
         return;
     case 1:
-        f_UpdateCircusClothesLockerActor();
+        ((void (*)())f_UpdateCircusClothesLockerActor)();
         return;
     case 3:
         func_8007A624();
@@ -6433,7 +6528,6 @@ void func_80130D80(u8 a0);
 extern void func_80040D68(u8 *, u8 *);
 extern void func_80077E7C(u8 *);
 extern s32 func_80041438(u8 *, s32, s32);
-extern void func_80041098(u8 *);
 extern void func_8004190C(u8 *);
 
 void f_UpdateCircusCharlesHintDialogue(u8 *a)
@@ -7155,7 +7249,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80128E34);
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80129170);
 
-extern u8 D_800BF822;
 s32 func_80129360(u8 *a)
 {
     switch (a[0x78]) {
