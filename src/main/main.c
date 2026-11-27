@@ -16777,7 +16777,67 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80060A80);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80060C60);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80061A7C);
+void func_80061A7C(u8 *t)
+{
+    u8 *g;
+    u8 *p;
+
+    f_AdvanceActorSkeletalAnimation(t);
+    switch (t[6]) {
+    case 0:
+        D_800BF809 = 1;
+        t[0] = 7;
+        f_ResetTombaControlState(t);
+        f_SetTombaAnimationIfChanged(t, 0x72, 4);
+        *(s16 *)(t + 0x40) = 0x19;
+        t[6]++;
+        break;
+    case 1:
+        if (--*(s16 *)(t + 0x40) == 0) {
+            func_8002F514(6, 0);
+            f_PlaySoundEffect(0x37, 0, 0);
+            *(s16 *)(t + 0x40) = 10;
+            t[6]++;
+            p = D_800A4554;
+            *(s16 *)(t + 0x42) = p[(*(u16 *)(t + 0x17E) & 0xF) - 4];
+        }
+        break;
+    case 2:
+        if (--*(s16 *)(t + 0x40) == 0) {
+            if (func_800248D0(t) == 0) {
+                goto reset;
+            }
+            *(s16 *)(t + 0x40) = 0x46;
+            t[6]++;
+        }
+        break;
+    case 3:
+        if (*(u16 *)(t + 0x42) & 1) {
+            g = &D_800BF870_9d28;
+            if (g[0x7B] == 0) {
+                g[0xE]--;
+            }
+        }
+        if (*(s16 *)(t + 0x42) != 0) {
+            *(s16 *)(t + 0x42) -= 1;
+        }
+        if (*(s16 *)(t + 0x40) == 0) {
+            if (*(s16 *)(t + 0x42) == 0) {
+            reset:
+                t[0] = 3;
+                *(s16 *)(t + 0x172) = 0x14;
+                t[5] = 0;
+                t[6] = 0;
+                t[7] = 0;
+                f_SetTombaAnimationIfChanged(t, 2, 5);
+                D_800BF809 = 0;
+            }
+        } else {
+            *(s16 *)(t + 0x40) -= 1;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80061C64);
 
@@ -17456,7 +17516,79 @@ void func_800645CC(void *arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_800645E0);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8006483C);
+void func_8006483C(u8 *t, s32 mode)
+{
+    switch (t[7]) {
+    case 0:
+        *(s16 *)(t + 0x44) = 0;
+        t[0x29] = 0;
+        *(s16 *)(t + 0x58) = 0;
+        t[0x145] = 1;
+        *(s16 *)(t + 0x4A) = 0;
+        t[7]++;
+        if (t[0x46] == 0x1A) {
+            if (*(s16 *)(t + 0x17E) >= 0) {
+                *(u16 *)(t + 0x32) -= 0x40;
+                *(u16 *)(t + 0x2E) += (rcos(*(s16 *)(t + 0x56)) * -70) >> 12;
+                *(u16 *)(t + 0x36) -= (rsin(*(s16 *)(t + 0x56)) * -70) >> 12;
+            } else {
+                *(u16 *)(t + 0x32) -= 0x20;
+                *(u16 *)(t + 0x2E) += (rcos(*(s16 *)(t + 0x56)) * -35) >> 12;
+                *(u16 *)(t + 0x36) -= (rsin(*(s16 *)(t + 0x56)) * -35) >> 12;
+            }
+        }
+        f_SetTombaAnimationIfChanged(t, 0x19, 0);
+    case 1:
+        if (*(s16 *)(t + 0x17E) >= 0) {
+            *(u16 *)(t + 0x32) -= 0x40;
+            *(u16 *)(t + 0x2E) += (rcos(*(s16 *)(t + 0x56)) * 10) >> 12;
+            *(u16 *)(t + 0x36) -= (rsin(*(s16 *)(t + 0x56)) * 10) >> 12;
+        } else {
+            *(u16 *)(t + 0x32) -= 0x20;
+            *(u16 *)(t + 0x2E) += (rcos(*(s16 *)(t + 0x56)) * 5) >> 12;
+            *(u16 *)(t + 0x36) -= (rsin(*(s16 *)(t + 0x56)) * 5) >> 12;
+        }
+        f_AdvanceActorSkeletalAnimation(t);
+        if (*(u16 *)(*(u8 **)(t + 0x38) + 2) >= 2) {
+            t[7]++;
+            if (t[0x147] != 0) {
+                *(s16 *)(t + 0x44) = -0xC00;
+            } else {
+                __asm__ volatile("");
+                *(s16 *)(t + 0x44) = 0xC00;
+            }
+        }
+        f_ResolveTombaOverheadTerrainContact(t, 1);
+        break;
+    case 2:
+        f_AdvanceTombaAlongMovementVector(t, 1);
+        f_UpdateTombaMovementOrientation(t);
+        *(s16 *)(t + 0x4A) += 0x580;
+        if (*(s16 *)(t + 0x4A) > 0) {
+            t[0x145] = 2;
+            t[7]++;
+            if (mode == 0) {
+                t[0x144] = 1;
+            }
+            *(s32 *)(t + 0x158) = 0;
+        }
+        *(s32 *)(t + 0x30) += *(s16 *)(t + 0x4A) << 8;
+        f_AdvanceActorSkeletalAnimation(t);
+        f_ResolveTombaOverheadTerrainContact(t, 1);
+        break;
+    case 3:
+        f_AdvanceTombaAlongMovementVector(t, 1);
+        f_UpdateTombaMovementOrientation(t);
+        *(s16 *)(t + 0x4A) += 0x360;
+        if (*(s16 *)(t + 0x4A) > 0x3E00) {
+            *(s16 *)(t + 0x4A) = 0x3E00;
+        }
+        *(s32 *)(t + 0x30) += *(s16 *)(t + 0x4A) << 8;
+        f_AdvanceActorSkeletalAnimation(t);
+        f_ResolveTombaGroundTerrainContact(t);
+        break;
+    }
+}
 
 void func_80064BA0(u8 *a)
 {
