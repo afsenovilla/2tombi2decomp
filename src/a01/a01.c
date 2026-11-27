@@ -13106,7 +13106,24 @@ void func_80132F5C(void) {
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80132FD0);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80133574);
+void func_80132FD0();
+extern s16 D_80138AF0[][3];
+
+u8 *func_80133574(u8 *owner, s16 k) {
+    u8 *p = func_8007A980(1, 2, 0);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    *(void **)(p + 0x1C) = func_80132FD0;
+    p[2] = 0x12;
+    *(u8 **)(p + 0x10) = owner;
+    p[3] = k;
+    *(s16 *)(p + 0x2E) = D_80138AF0[k][0];
+    *(s16 *)(p + 0x32) = D_80138AF0[k][1];
+    *(s16 *)(p + 0x36) = D_80138AF0[k][2];
+    return p;
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8013362C);
 
