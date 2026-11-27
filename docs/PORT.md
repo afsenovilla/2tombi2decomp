@@ -16,7 +16,8 @@ build/port/tomba2 --window                                           # SDL2 wind
 #   keys (tomba2-view): arrows = d-pad, X = Cross, Z = Square, S = Triangle, D = Circle, Q / W = L1 / R1,
 #   A / E = L2 / R2, Return = Start, Backspace = Select, F = 2x / 3x, F11 = fullscreen, Escape = quit
 #   --viewer PATH, --viewer-arg ARG (repeatable: --scale N, --fullscreen, --keys up=Up,cross=X,..., --stats,
-#   --dump DIR[:N]); --headless (the default) keeps the stage-1 behaviour; --save-dir DIR (memory cards)
+#   --dump DIR[:N]); --headless (the default) keeps the stage-1 behaviour; --save-dir DIR (memory cards);
+#   --disc game/usa.img (XA music / voices from the raw image); --dump-audio FILE.wav
 # free play in A00, headless (frame dumps of Tomba walking, jumping on a barrel, the "look inside" hint):
 build/port/tomba2 --frames 10600 --dump-frames DIR --dump-every 50 --pad-script \
   400:start,600:cross,800:cross,1000:cross,1200:cross,1400:start,6000:circle:10x50/60,9200:right:300,\
@@ -83,6 +84,20 @@ What stage 2 changed (each item with its headless check):
 - **CD seeks**: Setloc only sets the target; SeekL / SeekP and the next ReadN / ReadS / CdRead go there. The XA
   music player loops a track with `SeekL` + `ReadS` without parameters; the head stayed past the end and the
   Load Game screen hung at frame 1240 (the worker retried GetlocL forever within one frame).
+
+- **XA audio: the music and the voices** (`shims/audio.c`): while the game streams XA (ReadS with CdlModeAP and
+  the Setfilter file / channel) the virtual disc reads each sector the head passes **from the disc image**
+  (`--disc PATH`, default `game/usa.img`, which `tools/disc_fetch.sh USA` keeps: the extracted XA files lost the
+  sector subheaders), finds the file there through the ISO 9660 directory, and hands the channel's audio sectors to
+  the XA ADPCM decoder (psx-spx; 37800 / 18900 Hz, mono / stereo, 4 / 8 bits), queued at 37800 Hz and resampled to
+  44100 Hz stereo, 735 frames per vblank: to the `--window` viewer's audio pipe and to `--dump-audio FILE.wav`. The
+  head moves 150 sectors/s at double speed (2.5 per vblank; stage 1 moved it 3 per vblank, so the voice clips end a
+  little later than in stage-1 runs and the frames after the first clip differ from those runs). CD mix / volume
+  from SpuSetCommonAttr, CdlMute / CdlDemute. Checked: the A00 play script gives 1321 XA sectors decoded and 150 s
+  of non-silent 44.1 kHz audio in 177 s (music: RMS 3000-9000, smooth waveform, 1-3.5k zero crossings/s); the
+  viewer receives it (`--viewer-arg --stats`: audio queued ~20 ms). **Not yet:** the libsnd / SPU sound effects
+  (T1 `port2/shims/sound.c` re-implements libsnd and the SPU: the next step), movie audio, the title music of
+  the skipped opening movie; no XA in the attract demos (as far as the port can tell, they stream none).
 
 - **Free play in A00**: after the opening and the journal tutorial Tomba walks, pushes and jumps onto a barrel,
   walks back, and the "Use up and Circle to look inside" hint appears (the script above; same frames with native

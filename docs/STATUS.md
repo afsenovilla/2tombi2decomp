@@ -20,6 +20,9 @@ The user wants a playable PC MVP (title + A00). docs/PORT.md §0 has the command
   unchanged.
 - Memory card shim (T1's card.c: `tomba2_mc0.mcd` / `mc1` in `--save-dir`, default game/usa); Load Game reads it
   ("No data for Tomba!2"). CD Setloc is a target reached by SeekL / reads (the XA music loop hung Load Game).
+- XA music and voices play (`shims/audio.c`: XA ADPCM from the raw sectors of `game/usa.img`, 44.1 kHz to the
+  viewer and `--dump-audio`); libsnd sound effects still silent. The bootstrap keeps game/usa.img (it had been
+  deleted in this container: re-fetched with tools/disc_fetch.sh's steps).
 - Installed in the container: `libsdl2-dev` (apt, 64-bit: the viewer is a host-native process).
 
 ## 2026-11-27 (4): port stage 1 (milestone P0: title screen, attract demos, New Game into A00)

@@ -9,13 +9,14 @@ const char *port_data_dir = "game/usa";
 int port_trace_cd;
 int port_cd_open(const char *path) { (void)path; return -1; }
 #define CD_FIRST_LBA 1000
-typedef struct { char name[64]; int fd, lba, nsec; unsigned size; } CdFile;
+typedef struct { char name[64]; int fd, lba, nsec; unsigned size; int img_lba; } CdFile;   /* img_lba: in --disc (-1: none) */
 static CdFile cd_files[64];
 static int n_cd_files, cd_next_lba = CD_FIRST_LBA;
 static int cd_pos;                     /* next LBA */
 static int cd_target, cd_target_pending; /* the last Setloc, not yet reached by a seek or a read */
 static void *cd_ready_cb, *cd_sync_cb, *cd_read_cb, *cd_data_cb;
 static u8 cd_mode = 0x80, cd_last_com;
+static u8 cd_filter_file, cd_filter_chan;   /* Setfilter: the XA file / channel played */
 static int cd_reading;                 /* ReadN / ReadS in progress: sectors are delivered on vblanks */
 static u8 cd_sector[2352];
 static u8 cd_result[8];
@@ -28,6 +29,49 @@ static void cd_call(void *fn, u32 a, u32 b) {
 }
 static int up(int c) { return c >= 'a' && c <= 'z' ? c - 32 : c; }
 static void lba_to_loc(int lba, u8 *p);
+/* The disc image (--disc, default game/usa.img: raw 2352-byte sectors), when there is one: XA audio needs the
+   sectors' subheaders, which the extracted files lost (tools/isoext.py keeps only the user data).  A file's place
+   on it comes from the ISO 9660 directory. */
+const char *port_disc_image = "game/usa.img";
+static int img_fd = -2;
+static int img_open(void) {
+    if (img_fd == -2) {
+        img_fd = port_disc_image ? port_open(port_disc_image) : -1;
+        if (img_fd >= 0) port_printf("[port] disc image %s (XA audio)\n", port_disc_image);
+        else port_printf("[port] no disc image %s: XA music and voices are silent (--disc PATH)\n", port_disc_image ? port_disc_image : "-");
+    }
+    return img_fd;
+}
+static int img_read(int lba, u8 *raw) { return img_open() >= 0 && port_pread(img_fd, raw, 2352, (long long)lba * 2352) == 2352; }
+static int iso_find(const char *rel, int *size) {      /* rel: "CD/BGM.XA" -> its first sector on the image, or -1 */
+    static u8 sec[2352];
+    if (!img_read(16, sec) || sec[25] != 'C' || sec[26] != 'D') return -1;
+    const u8 *root = sec + 24 + 156;
+    int lba = root[2] | root[3] << 8 | root[4] << 16 | root[5] << 24, len = root[10] | root[11] << 8 | root[12] << 16 | root[13] << 24;
+    const char *p = rel;
+    for (;;) {
+        char comp[32]; int n = 0;
+        while (*p && *p != '/' && n < 31) comp[n++] = *p++;
+        comp[n] = 0;
+        int found = 0;
+        for (int k = 0; k < (len + 2047) / 2048 && !found; k++) {
+            if (!img_read(lba + k, sec)) return -1;
+            const u8 *d = sec + 24;
+            for (int i = 0; i < 2048 && d[i];) {
+                const u8 *e = d + i; int nl = e[32], m = 0;
+                while (m < n && m < nl && e[33 + m] == comp[m]) m++;
+                if (m == n && (nl == n || (nl > n && e[33 + n] == ';'))) {
+                    lba = e[2] | e[3] << 8 | e[4] << 16 | e[5] << 24; len = e[10] | e[11] << 8 | e[12] << 16 | e[13] << 24;
+                    found = 1; break;
+                }
+                i += e[0];
+            }
+        }
+        if (!found) return -1;
+        if (!*p) { *size = len; return lba; }
+        p++;
+    }
+}
 static CdFile *cd_find_lba(int lba) {
     for (int i = 0; i < n_cd_files; i++)
         if (lba >= cd_files[i].lba && lba < cd_files[i].lba + cd_files[i].nsec) return &cd_files[i];
@@ -89,6 +133,14 @@ CdlFILE *CdSearchFile(CdlFILE *fp, char *name) {
         f->nsec = (int)((f->size + 2047) / 2048);
         f->lba = cd_next_lba;
         cd_next_lba += f->nsec + 16;
+        f->img_lba = -1;
+        {   /* an XA file: its sectors on the image (the head position the game sees stays the virtual one) */
+            int nm = 0; while (f->name[nm]) nm++;
+            if (nm > 3 && f->name[nm - 3] == '.' && f->name[nm - 2] == 'X' && f->name[nm - 1] == 'A') {
+                int isz = 0; f->img_lba = iso_find(f->name, &isz);
+                if (f->img_lba >= 0) { f->nsec = (isz + 2047) / 2048; cd_next_lba = f->lba + f->nsec + 16; }
+            }
+        }
         port_printf("[port] CdSearchFile(\"%s\"): %s, %u bytes, virtual lba %d (frame %d)\n", name, path, f->size, f->lba, port_frame);
     }
     lba_to_loc(f->lba, fp->pos);
@@ -121,6 +173,8 @@ int CdControl(u8 com, u8 *param, u8 *result) {
     }
     if (com == 9 /* Pause */ || com == 8 /* Stop */ || com == 0x0A /* Init */) cd_reading = 0;
     if (com == 14 /* Setmode */ && param) cd_mode = param[0];
+    if (com == 0x0D /* Setfilter */ && param) { cd_filter_file = param[0]; cd_filter_chan = param[1]; }
+    { extern int port_xa_mute; if (com == 0x0B) port_xa_mute = 1; else if (com == 0x0C) port_xa_mute = 0; }
     for (int i = 0; i < 8; i++) cd_result[i] = 0;
     cd_result[0] = cd_reading ? 0x22 : 0x02;
     if (com == 0x10) {          /* GetlocL: the header of the sector under the head (the XA player checks it) */
@@ -170,7 +224,22 @@ int CdPosToInt(u8 *p) { return loc_to_lba(p); }
 int port_cd_stats(int *sectors) { *sectors = cd_sectors; return cd_reads; }
 /* the data-ready path: up to 4 sectors per vblank (double speed is 150 sectors/s, 3 per PAL vblank) */
 static void cd_vblank(void) {
-    if (cd_reading && !cd_ready_cb) cd_pos += 3;   /* XA audio streaming (not played yet): the head moves on */
+    if (cd_reading && !cd_ready_cb) {
+        /* XA audio streaming: the head moves 150 sectors/s at double speed (75 at single), 2.5 per NTSC vblank;
+           the audio sectors of the Setfilter channel are played (shims/audio.c) */
+        static int half;
+        half += (cd_mode & 0x80) ? 300 / (port_hz > 0 ? port_hz : 60) : 150 / (port_hz > 0 ? port_hz : 60);
+        int n = half / 2; half -= n * 2;
+        for (int k = 0; k < n; k++, cd_pos++) {
+            CdFile *f = cd_find_lba(cd_pos);
+            if (!(cd_mode & 0x40) || !f || f->img_lba < 0) continue;
+            static u8 raw[2352];
+            if (!img_read(f->img_lba + cd_pos - f->lba, raw)) continue;
+            if ((cd_mode & 0x08) && (raw[16] != cd_filter_file || raw[17] != cd_filter_chan)) continue;
+            extern void port_xa_sector(const u8 *raw);
+            port_xa_sector(raw);
+        }
+    }
     for (int k = 0; k < 4 && cd_reading && cd_ready_cb; k++) {
         int bytes = (cd_mode & 0x20) ? 2340 : 2048;
         if (port_cd_read_sectors(cd_pos, 1, cd_sector, bytes)) { cd_reading = 0; break; }

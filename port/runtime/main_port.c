@@ -66,6 +66,8 @@ int port_main(int argc, char **argv) {
             for (int k = 0; k < 8; k++) if (!port_ovl_interp[k]) { port_ovl_interp[k] = argv[++i]; break; }
         }
         else if (streq(argv[i], "--no-ovl-native")) { extern int port_ovl_native; port_ovl_native = 0; }
+        else if (streq(argv[i], "--dump-audio") && i + 1 < argc) { extern const char *port_dump_audio; port_dump_audio = argv[++i]; }
+        else if (streq(argv[i], "--disc") && i + 1 < argc) { extern const char *port_disc_image; port_disc_image = argv[++i]; }
         else if (streq(argv[i], "--save-dir") && i + 1 < argc) { extern const char *port_save_dir; port_save_dir = argv[++i]; }
         else if (streq(argv[i], "--window")) { extern int port_window; port_window = 1; }
         else if (streq(argv[i], "--headless")) { extern int port_window; port_window = 0; }
@@ -111,6 +113,7 @@ int port_main(int argc, char **argv) {
     static const u32p args[8];
     port_mips_call(entry, args);
     port_printf("[port] the entry point returned (frame %d)\n", port_frame);
+    { extern void port_audio_quit(void); port_audio_quit(); }
     { extern void port_stub_report(void); port_stub_report(); }
     return 0;
 }

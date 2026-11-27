@@ -58,6 +58,7 @@ void port_quit(int code) {
         if (port_show_fps >= 2) vb_hist_print("at exit");
     }
     port_low_report();
+    { extern void port_audio_quit(void); port_audio_quit(); }
     port_exit(code);
 }
 int port_realtime = 0;               /* 0 = run as fast as possible (headless), 1 = paced at port_hz */
@@ -84,6 +85,7 @@ void port_vblank(void) {
     port_frame++;
     { extern void port_pad_vblank(void); port_pad_vblank(); }
     cd_vblank();
+    { extern void port_audio_vblank(void); port_audio_vblank(); }
     for (int i = 0; i < 4; i++) if (vsync_cbs[i]) call_psx(vsync_cbs[i]);
     if (port_vsync_event_fn) call_psx(port_vsync_event_fn);
     if (vsync_cb) call_psx((void *)vsync_cb);
