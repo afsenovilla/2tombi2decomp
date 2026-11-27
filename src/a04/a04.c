@@ -9526,7 +9526,67 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013B118);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013B7A0);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013B94C);
+typedef struct { s16 x, y, z, w; } VB94C;
+
+void func_8013B94C(u8 *a)
+{
+    VB94C *v;
+    s16 i;
+    s16 x;
+    s16 y;
+    s16 z;
+    s16 x1;
+    s16 y1;
+    s16 z1;
+    u8 t;
+    s32 r;
+
+    v = (VB94C *)(a + 0x50);
+    switch (a[4]) {
+    case 0:
+        x = U(a, 0x2C);
+        y = U(a, 0x2E);
+        z = U(a, 0x30);
+        H(a, 0x4E) = 3;
+        for (i = 0; i < 3; i++, v++) {
+            v->x = x + (func_8009A450() & 0x3F) - 0x20;
+            v->y = y + (func_8009A450() & 0x3F) - 0x20;
+            v->z = z + (func_8009A450() & 0x3F) - 0x20;
+            v->w = (func_8009A450() & 0xFF) + 0x80;
+        }
+        v = (VB94C *)(a + 0x50);
+        W(a, 4) = 1;
+    case 1:
+        a[7] += func_8009A450() >> 10;
+        r = func_8002B278(a);
+        if ((s8)a[7] < 0) {
+            a[7] += 0x80;
+        } else {
+            if ((W(a, 0x34) = W(a, 0x38)) == 0) {
+                a[4] = 2;
+                break;
+            }
+            if ((s16)r == 0) {
+                func_80031780(a);
+            }
+        }
+        x1 = U(a, 0x2C);
+        y1 = U(a, 0x2E);
+        z1 = U(a, 0x30);
+        t = a[7]++;
+        for (i = 0; i < 3; i++) {
+            v->x += (v->x - x1) >> (t >> 1);
+            v->y = v->y + ((v->y - y1) >> (t >> 1)) - 3;
+            v->z += (v->z - z1) >> (t >> 1);
+            v++;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013BB98);
 
