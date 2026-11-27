@@ -14776,7 +14776,32 @@ void func_80054790(u8 *a, s32 idx)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005490C);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80054B34);
+extern u8 *D_800A4544_4b34[];
+extern u8 *D_800A4524_4b34[];
+
+void func_80054B34(u8 *t, s32 i, s32 j)
+{
+    s32 anim;
+    u8 *p;
+
+    if ((u32)(func_800535D4(t) - 7) < 3) {
+        p = D_800A4544_4b34[i];
+        anim = p[j];
+        if (i != 0) {
+            f_SetTombaAnimationIfChanged(t, anim, 5);
+        } else {
+            f_SetTombaAnimationIfChanged(t, anim, 5);
+        }
+    } else {
+        p = D_800A4524_4b34[i * 3 + j];
+        anim = (p + (t[0x14A] & 6))[t[0xBE]];
+        if (i != 0) {
+            f_SetTombaAnimationIfChanged(t, anim, 5);
+        } else {
+            f_SetTombaAnimationIfChanged(t, anim, 0);
+        }
+    }
+}
 
 extern u8 D_800A44F0[];
 extern u8 D_800A44E0[];
@@ -15040,7 +15065,34 @@ s32 func_800552EC(u8 *a)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80055390);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TryStartTombaContactAction);
+s32 f_TryStartTombaContactAction(u8 *t, s32 mode)
+{
+    if (D_800BF816 != 0) {
+        return 0;
+    }
+    if (D_1F800230_d8aa != 0) {
+        return 0;
+    }
+    if (t[0x174] & 7) {
+        return 0;
+    }
+    if (D_800E7E68 & D_1F800174_de41) {
+        t[0x175] = 0;
+        if (f_CanTombaStartAttack(t, 0) != 0) {
+            return 2;
+        }
+        return 0;
+    }
+    if (mode != 0) {
+        return 0;
+    }
+    if ((D_800ECF54 & D_1F800174_de41) && f_CanTombaStartAttack(t, 1) != 0) {
+        t[0x175] = 1;
+        return 2;
+    }
+    t[0x175] = 0;
+    return 0;
+}
 
 s32 func_80055704(u8 *t, s32 mode)
 {
