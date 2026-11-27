@@ -17783,7 +17783,129 @@ s32 func_800634A8(s32 arg0) {
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaSupportSwingMotion);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80063B94);
+extern u8 *D_800A4784[];
+extern u8 *D_800A4794[];
+
+void func_80063B94(u8 *t, s32 mode)
+{
+    u8 **tab;
+    u8 *p;
+    u8 idx;
+    s16 k;
+    s32 anim;
+    s32 blend;
+
+    if (mode != 0) {
+        tab = D_800A4794;
+        idx = t[0x168] >> 1;
+    } else {
+        tab = D_800A4784;
+        idx = t[0x168];
+    }
+    switch (idx) {
+    case 0:
+        t[0x144] = 0;
+        p = tab[0];
+        if (mode != 0) {
+            blend = 4;
+            anim = p[0];
+            break;
+        }
+        k = (U(t, 0x58) + 0x100) & 0xFFF;
+        if (k > 0x500) {
+            k = 0;
+        } else if (k > 0x200) {
+            k = 3;
+        } else {
+            k >>= 7;
+        }
+        anim = p[k];
+        blend = 4;
+        break;
+    case 1:
+        t[0x144] = 0;
+        p = tab[1];
+        if (mode != 0) {
+            k = U(t, 0x58) + 0x60;
+            if (k < 0) {
+                k = 0;
+            } else if (k >= 0xC0) {
+                k = 0xB0;
+            }
+            blend = 4;
+            k = k / 48;
+            anim = p[k];
+        } else {
+            blend = 3;
+            anim = p[(U(t, 0x58) & 0xFFF) >> 8];
+        }
+        break;
+    case 2:
+        t[0x144] = 2;
+        p = tab[2];
+        if (mode != 0) {
+            k = U(t, 0x58) + 0x140;
+            if (k < 0) {
+                k = 0;
+            } else if (k >= 0x230) {
+                k = 0x230;
+            }
+            blend = 3;
+            k = k / 80;
+            anim = p[k];
+        } else {
+            blend = 2;
+            anim = p[(U(t, 0x58) & 0xFFF) >> 8];
+        }
+        break;
+    case 3:
+    case 4:
+    default:
+        t[0x144] = 2;
+        if (mode != 0) {
+            if (idx < 5) {
+                p = tab[2];
+                k = U(t, 0x58) + 0x140;
+                if (k < 0) {
+                    k = 0;
+                } else if (k >= 0x230) {
+                    k = 0x230;
+                }
+                blend = 3;
+                k = k / 80;
+                anim = p[k];
+            } else {
+                p = tab[3];
+                k = U(t, 0x58) + 0x340;
+                if (k < 0) {
+                    k = 0;
+                } else if (k >= 0x680) {
+                    k = 0x670;
+                }
+                blend = 2;
+                k = k / 208;
+                anim = p[k];
+            }
+        } else {
+            blend = 2;
+            p = tab[3];
+            anim = p[(U(t, 0x58) & 0xFFF) >> 8];
+        }
+        break;
+    }
+    if (mode != 0) {
+        blend = 2;
+        t[0x144] = 0;
+        if (H_f12c(t, 0x14E) != 0) {
+            anim = 0xD7;
+            blend = 6;
+        }
+        if (mode == 2) {
+            blend = 0;
+        }
+    }
+    f_SetTombaAnimationIfChanged(t, anim, blend);
+}
 
 typedef struct Pool108_a810 { u8 pad0[0x24]; struct Pool108_a810 *next; u8 type; u8 pad29[0xDF]; } Pool108_a810;
 extern Pool108_a810 D_80100690[4];
