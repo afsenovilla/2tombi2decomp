@@ -3,27 +3,32 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
-## 2026-11-27 (4): port stage 1 (milestone P0: boots to the title screen and the attract demo)
+## 2026-11-27 (4): port stage 1 (milestone P0: title screen, attract demos, New Game into A00)
 
 The user asked to focus on the native PC port. `port/` (CMake, i386 Linux, freestanding like Tombi-Decomp's
 `port/`) builds from `src/main/main.c` + `build/main.elf` + `asm/main/` and runs the USA `MAIN.EXE` headless from
-`game/usa/`: **the title screen is drawn from frame ~200** (OPN.BIN, interpreted) and, with no input, **the attract
-demo plays in the Tomba village area from frame ~1300** (DEMO.BIN + area data, 968 CD sectors); it crashes at frame
-1403 in native collision code (first port bug, docs/PORT.md §5). docs/PORT.md has the design and the numbers.
+`game/usa/`: **the title screen from frame ~200**; with no input **both attract demos** (village from ~1300, a mine
+area from ~4200; crash at 5637); with `--pad-script` **New Game -> story text -> A00 + OPN.BIN loaded (frame 1473 /
+1621) -> the A00 opening cutscene with its dialogue boxes -> the Adventure Journal tutorial** (Circle advances the
+dialogue; 9600 frames without a crash). docs/PORT.md has the design, the numbers and the commands.
 
 - Model: T1's fixed-address prototype (`port/`), not its native-pointer `port2/`: T2 is 60 % C, so native C and the
-  MIPS interpreter (for asm-only functions and all overlay code) share one address space (PS1 RAM mapped at
-  0x80000000). 896 MAIN functions native, 50 left to the interpreter (inline GTE asm, host compile errors), 13
-  definitions renamed (conflicting earlier declarations). Psy-Q: 160 shims, 35 pure functions interpreted, the rest
-  logged stubs (sound silent, memory card stubbed).
-- New: `port/tools/gen_t2.py` (host-cpp + top-level item split + compile-error fix-up loop; link step: retail data
-  -> address, call thunks, funcmap / libmap / Psy-Q policy), the virtual disc over the extracted files
-  (`shims/cd_virtual.inc`: CdSearchFile ranges, the data-ready path with real 2340-byte sector headers), busy-wait
-  loops in interpreted code = vblanks (main()'s frame pacing), GTE DPCS / DPCT / INTPL / DCPL / GPF / GPL / SQR / OP.
+  MIPS interpreter (asm-only functions and all overlay code) share one address space (PS1 RAM mapped at
+  0x80000000). 892 MAIN functions native, 54 left to the interpreter (33 inline GTE asm, 21 host compile errors), 13
+  definitions renamed (conflicting earlier declarations), 28 register-carried calls forwarded (PORT_ARG). Psy-Q:
+  182 shims, 35 pure functions interpreted, the rest logged stubs (sound silent, memory card stubbed).
+- New: `port/tools/gen_t2.py` (host cpp + top-level item split + compile-error fix-up loop + arity-based argument
+  forwarding; link step: retail data -> address, call thunks, funcmap / libmap / Psy-Q policy), the virtual disc over
+  the extracted files (`shims/cd_virtual.inc`: CdSearchFile ranges, the data-ready path with real 2340-byte sector
+  headers, GetlocL / GetlocP through CdSync, XA head movement, movie skip), busy-wait loops in interpreted code =
+  vblanks (main()'s frame pacing), GTE DPCS / DPCT / INTPL / DCPL / GPF / GPL / SQR / OP, a SIGALRM watchdog.
+- Pitfalls found (AGENTS.md "Decisions"): register-carried arguments also hide in install_c.py's
+  `((s32 (*)())f)()` casts and in Psy-Q calls (`ApplyMatrixSV(p)`); every native -> interpreter transition takes 16
+  KB of the coroutine stack (T1's 256 KB stacks overflowed into each other: 4 MB now); `void` C functions whose asm
+  callers read `$v0` (`func_8001CE90`) rely on `eax` surviving.
 - Installed in the container: `gcc-multilib` (apt; only `-m32` compiles are needed, the binary is freestanding).
-- Next (stage 2): the frame-1403 crash (register-carried arguments / narrow returns: T1 `arity_check.py`, `--interp`
-  bisection), `--pad-script` to start a game (SOP -> A00), GTE asm -> C, overlay C with per-overlay dispatch, then
-  sound / card / movies / SDL window from T1 `port2/`.
+- Next (stage 2, docs/PORT.md §5): the frame-5637 crash, input to free gameplay in A00, GTE asm -> C, overlay C with
+  per-overlay dispatch, then sound / card / movies / SDL window from T1 `port2/`.
 
 ## 2026-11-27 (3): seventeenth round (agents back on Opus)
 

@@ -45,6 +45,8 @@ int port_cd_read_sectors(int lba, int count, void *dst, int bytes) {
         int got = port_pread(f->fd, d + skip, 2048, off);
         (void)got;
         if (port_trace_cd) port_printf("[port] cd: lba %d = %s sector %d\n", lba + i, f->name, lba + i - f->lba);
+        if (lba + i == f->lba && f->name[0] == 'B' && f->name[1] == 'I' && f->name[2] == 'N' && f->name[3] == '/')
+            port_printf("[port] frame %d: loading %s\n", port_frame, f->name);   /* an overlay (or START.BIN) */
     }
     return 0;
 }
