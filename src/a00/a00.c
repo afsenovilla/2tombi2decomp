@@ -9995,7 +9995,33 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80133184);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SyncAquaticPlantLinkedState);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SpawnAquaticPlantActors);
+void func_8013259C();
+
+void f_SpawnAquaticPlantActors(u8 *a) {
+    s32 k;
+    s16 n;
+    u8 *p;
+    u16 f = *(u16 *)(a + 0x62);
+
+    if ((f & 0xFF) == 0xFF) {
+        return;
+    }
+    k = f & 0x7F;
+    n = k;
+    p = func_80072DDC(a, 1, 4, 3);
+    if (p != NULL) {
+        p[3] = n;
+        *(void **)(p + 0x1C) = func_8013259C;
+    }
+    if ((*(s32 *)(a + 0x60) & 0x800002) == 2) {
+        n = k + 1;
+        p = func_80072DDC(a, 1, 4, 3);
+        if (p != NULL) {
+            *(void **)(p + 0x1C) = func_8013259C;
+            p[3] = n;
+        }
+    }
+}
 
 void func_80133500(u8 *a)
 {
