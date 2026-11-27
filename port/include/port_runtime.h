@@ -101,7 +101,9 @@ extern int port_verbose;
 extern int port_kuseg_strict;    /* --kuseg-strict: Windows, stop when the KUSEG mirror is partly mapped */
 
 /* CD image */
-int port_cd_open(const char *path);
+int port_disc_init(void);                          /* shims/cd_virtual.inc: image mode (1) or extracted files (0) */
+int port_disc_read_file(const char *rel, void *buf, int max);
+const char *port_disc_path(void);
 int port_cd_read_sectors(int lba, int count, void *dst, int sector_bytes);
 extern int port_trace_cd;        /* --trace-cd: log every Setloc and sector read */
 int port_last_error(void);       /* errno / GetLastError of the last port_pread */

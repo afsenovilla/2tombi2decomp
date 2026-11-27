@@ -7,7 +7,6 @@
  * (CdControl ReadN / ReadS + CdReadyCallback + CdGetSector) delivers a few sectors per vblank. */
 const char *port_data_dir = "game/usa";
 int port_trace_cd;
-int port_cd_open(const char *path) { (void)path; return -1; }
 #define CD_FIRST_LBA 1000
 typedef struct { char name[64]; int fd, lba, nsec; unsigned size; int img_lba; } CdFile;   /* img_lba: in --disc (-1: none) */
 static CdFile cd_files[64];
@@ -29,34 +28,96 @@ static void cd_call(void *fn, u32 a, u32 b) {
 }
 static int up(int c) { return c >= 'a' && c <= 'z' ? c - 32 : c; }
 static void lba_to_loc(int lba, u8 *p);
-/* The disc image (--disc, default game/usa.img: raw 2352-byte sectors), when there is one: XA audio needs the
-   sectors' subheaders, which the extracted files lost (tools/isoext.py keeps only the user data).  A file's place
-   on it comes from the ISO 9660 directory. */
-const char *port_disc_image = "game/usa.img";
-static int img_fd = -2;
-static int img_open(void) {
-    if (img_fd == -2) {
-        img_fd = port_disc_image ? port_open(port_disc_image) : -1;
-        if (img_fd >= 0) port_printf("[port] disc image %s (XA audio)\n", port_disc_image);
-        else port_printf("[port] no disc image %s: XA music and voices are silent (--disc PATH)\n", port_disc_image ? port_disc_image : "-");
+/* The disc image (stage 3: the player's own dump is all the port needs).  --disc PATH names a raw image (.bin /
+   .img, 2352-byte sectors, mode 2 or mode 1), a .cue sheet (its first FILE, relative to the .cue) or a cooked .iso
+   (2048-byte sectors: no XA audio, the subheaders are not in it).  Without --disc the port tries game/usa.img and
+   falls back to the extracted files of --data (game/usa).  In image mode every file the game looks up is found
+   through the ISO 9660 directory and read from the image, MAIN.EXE included (port_disc_read_file, main_port.c
+   checks its SHA-1); the virtual disc's sector layout (CD_FIRST_LBA, lookup order) is the same in both modes, so
+   the game sees the same head positions and the frames are the same. */
+const char *port_disc_image;           /* --disc */
+int port_disc_mode;                    /* 1: files come from the image (set by port_disc_init) */
+static int img_fd = -2, img_ssize = 2352, img_doff = 24;   /* sector size, user data offset (24 mode 2, 16 mode 1, 0 cooked) */
+static char img_path[1024];
+static int lower(int c) { return c >= 'A' && c <= 'Z' ? c + 32 : c; }
+static int ends_with(const char *s, const char *suf) {
+    int n = 0, m = 0; while (s[n]) n++; while (suf[m]) m++;
+    if (m > n) return 0;
+    for (int i = 0; i < m; i++) if (lower(s[n - m + i]) != lower(suf[i])) return 0;
+    return 1;
+}
+/* a .cue sheet: the first FILE "name" BINARY line, resolved against the .cue's own directory (either separator) */
+static const char *cue_track(const char *cue) {
+    static char text[8192]; static char out[1024];
+    int fd = port_open(cue);
+    if (fd < 0) return cue;
+    int n = port_read(fd, text, sizeof text - 1); port_close(fd);
+    if (n <= 0) return cue;
+    text[n] = 0;
+    for (int i = 0; i + 4 < n; i++) {
+        if ((i == 0 || text[i - 1] == '\n' || text[i - 1] == ' ' || text[i - 1] == '\t') && up(text[i]) == 'F' && up(text[i + 1]) == 'I' && up(text[i + 2]) == 'L' && up(text[i + 3]) == 'E' && text[i + 4] == ' ') {
+            int j = i + 5; while (text[j] == ' ') j++;
+            char name[512]; int k = 0;
+            if (text[j] == '"') { j++; while (text[j] && text[j] != '"' && k < 511) name[k++] = text[j++]; }
+            else while (text[j] && text[j] != ' ' && text[j] != '\r' && text[j] != '\n' && k < 511) name[k++] = text[j++];
+            name[k] = 0;
+            int o = 0, dir = 0;
+            for (int q = 0; cue[q]; q++) if (cue[q] == '/' || cue[q] == '\\') dir = q + 1;
+            if (name[0] == '/' || name[0] == '\\' || (name[0] && name[1] == ':')) dir = 0;
+            for (int q = 0; q < dir && o < 1000; q++) out[o++] = cue[q];
+            for (int q = 0; name[q] && o < 1022; q++) out[o++] = name[q];
+            out[o] = 0;
+            port_printf("[port] %s: track file %s\n", cue, out);
+            return out;
+        }
     }
+    port_printf("[port] %s: no FILE line\n", cue);
+    return cue;
+}
+static int img_open(void) {
+    if (img_fd != -2) return img_fd;
+    const char *p = port_disc_image ? port_disc_image : "game/usa.img";
+    if (ends_with(p, ".cue")) p = cue_track(p);
+    int k = 0; while (p[k] && k < 1023) { img_path[k] = p[k]; k++; } img_path[k] = 0;
+    img_fd = port_open(img_path);
+    if (img_fd < 0) {
+        if (port_disc_image) port_fatal("cannot open the disc image %s", img_path);
+        return img_fd;
+    }
+    static u8 sec[2352];
+    long long size = port_filesize(img_fd);
+    if (port_pread(img_fd, sec, 16, 0) == 16 && sec[0] == 0 && sec[1] == 0xFF && sec[11] == 0) {   /* raw: the sync pattern */
+        img_ssize = 2352;
+        if (port_pread(img_fd, sec, 2352, 16LL * 2352) == 2352) img_doff = sec[15] == 1 ? 16 : 24;
+    } else img_ssize = 2048, img_doff = 0;
+    if (port_pread(img_fd, sec, 6, 16LL * img_ssize + img_doff) != 6 || sec[1] != 'C' || sec[2] != 'D' || sec[3] != '0' || sec[4] != '0' || sec[5] != '1')
+        port_fatal("%s is not a CD image the port can read (no ISO 9660 volume descriptor at sector 16 of a raw 2352-byte "
+                   ".bin/.img or a 2048-byte .iso)", img_path);
+    port_printf("[port] disc image %s: %s, %lld sectors\n", img_path,
+                img_ssize == 2048 ? "2048-byte sectors (.iso: no XA music or voices)" : img_doff == 24 ? "raw 2352-byte sectors, mode 2" : "raw 2352-byte sectors, mode 1",
+                size / img_ssize);
     return img_fd;
 }
-static int img_read(int lba, u8 *raw) { return img_open() >= 0 && port_pread(img_fd, raw, 2352, (long long)lba * 2352) == 2352; }
+static int img_read(int lba, u8 *raw) {      /* a whole raw sector (XA audio needs the subheader) */
+    return img_open() >= 0 && img_ssize == 2352 && port_pread(img_fd, raw, 2352, (long long)lba * 2352) == 2352;
+}
+static int img_read_data(int lba, u8 *d) {   /* the 2048 bytes of user data */
+    return img_open() >= 0 && port_pread(img_fd, d, 2048, (long long)lba * img_ssize + img_doff) == 2048;
+}
 static int iso_find(const char *rel, int *size) {      /* rel: "CD/BGM.XA" -> its first sector on the image, or -1 */
-    static u8 sec[2352];
-    if (!img_read(16, sec) || sec[25] != 'C' || sec[26] != 'D') return -1;
-    const u8 *root = sec + 24 + 156;
+    static u8 sec[2048];
+    if (!img_read_data(16, sec) || sec[1] != 'C' || sec[2] != 'D') return -1;
+    const u8 *root = sec + 156;
     int lba = root[2] | root[3] << 8 | root[4] << 16 | root[5] << 24, len = root[10] | root[11] << 8 | root[12] << 16 | root[13] << 24;
     const char *p = rel;
     for (;;) {
         char comp[32]; int n = 0;
-        while (*p && *p != '/' && n < 31) comp[n++] = *p++;
+        while (*p && *p != '/' && n < 31) comp[n++] = (char)up(*p++);
         comp[n] = 0;
         int found = 0;
         for (int k = 0; k < (len + 2047) / 2048 && !found; k++) {
-            if (!img_read(lba + k, sec)) return -1;
-            const u8 *d = sec + 24;
+            if (!img_read_data(lba + k, sec)) return -1;
+            const u8 *d = sec;
             for (int i = 0; i < 2048 && d[i];) {
                 const u8 *e = d + i; int nl = e[32], m = 0;
                 while (m < n && m < nl && e[33 + m] == comp[m]) m++;
@@ -71,6 +132,26 @@ static int iso_find(const char *rel, int *size) {      /* rel: "CD/BGM.XA" -> it
         if (!*p) { *size = len; return lba; }
         p++;
     }
+}
+/* image mode or files mode (main_port.c, before the exe is loaded): --disc given, or game/usa.img present */
+int port_disc_init(void) {
+    port_disc_mode = img_open() >= 0;
+    if (!port_disc_mode) port_printf("[port] no disc image (--disc PATH): reading the extracted files in %s; XA music and voices are silent\n", port_data_dir);
+    return port_disc_mode;
+}
+const char *port_disc_path(void) { return img_path; }
+/* a whole file of the image into buf (at most max bytes): its size, or -1 when it is not on the disc */
+int port_disc_read_file(const char *rel, void *buf, int max) {
+    int size = 0, lba = iso_find(rel, &size);
+    if (lba < 0) return -1;
+    if (size > max) return -2;
+    static u8 sec[2048];
+    u8 *d = buf;
+    for (int off = 0; off < size; off += 2048, lba++) {
+        if (!img_read_data(lba, sec)) return -1;
+        for (int i = 0; i < 2048 && off + i < size; i++) d[off + i] = sec[i];
+    }
+    return size;
 }
 static CdFile *cd_find_lba(int lba) {
     for (int i = 0; i < n_cd_files; i++)
@@ -87,8 +168,8 @@ int port_cd_read_sectors(int lba, int count, void *dst, int bytes) {
                                                 subheader (data, form 1), then the data (the game checks the position) */
         for (int k = 0; k < bytes; k++) d[k] = 0;
         if (skip) { lba_to_loc(lba + i, d); d[3] = 2; d[6] = d[10] = 0x08; }
-        int got = port_pread(f->fd, d + skip, 2048, off);
-        (void)got;
+        if (f->fd >= 0) port_pread(f->fd, d + skip, 2048, off);
+        else img_read_data(f->img_lba + lba + i - f->lba, d + skip);
         if (port_trace_cd) port_printf("[port] cd: lba %d = %s sector %d\n", lba + i, f->name, lba + i - f->lba);
         if (lba + i == f->lba && f->name[0] == 'B' && f->name[1] == 'I' && f->name[2] == 'N' && f->name[3] == '/')
         {
@@ -117,27 +198,29 @@ CdlFILE *CdSearchFile(CdlFILE *fp, char *name) {
     }
     if (!f) {
         char path[512]; int o = 0;
-        for (const char *d = port_data_dir; *d && o < 400; d++) path[o++] = *d;
-        path[o++] = '/';
+        for (const char *d = port_disc_mode ? port_disc_path() : port_data_dir; *d && o < 400; d++) path[o++] = *d;
+        path[o++] = port_disc_mode ? ':' : '/';
         for (int k = 0; rel[k] && o < 510; k++) path[o++] = rel[k];
         path[o] = 0;
-        int fd = port_open(path);
-        if (fd < 0 || n_cd_files == 64) {
+        int fd = -1, isz = 0, ilba = -1;
+        if (port_disc_mode) ilba = iso_find(rel, &isz);
+        else fd = port_open(path);
+        if ((port_disc_mode ? ilba < 0 : fd < 0) || n_cd_files == 64) {
             port_printf("[port] CdSearchFile(\"%s\"): %s not found (frame %d)\n", name, path, port_frame);
             return 0;
         }
         f = &cd_files[n_cd_files++];
         for (int k = 0; k <= n; k++) f->name[k] = rel[k];
         f->fd = fd;
-        f->size = (unsigned)port_filesize(fd);
+        f->size = port_disc_mode ? (unsigned)isz : (unsigned)port_filesize(fd);
         f->nsec = (int)((f->size + 2047) / 2048);
         f->lba = cd_next_lba;
         cd_next_lba += f->nsec + 16;
-        f->img_lba = -1;
+        f->img_lba = ilba;
         {   /* an XA file: its sectors on the image (the head position the game sees stays the virtual one) */
             int nm = 0; while (f->name[nm]) nm++;
             if (nm > 3 && f->name[nm - 3] == '.' && f->name[nm - 2] == 'X' && f->name[nm - 1] == 'A') {
-                int isz = 0; f->img_lba = iso_find(f->name, &isz);
+                if (!port_disc_mode) { isz = 0; f->img_lba = iso_find(f->name, &isz); }
                 if (f->img_lba >= 0) { f->nsec = (isz + 2047) / 2048; cd_next_lba = f->lba + f->nsec + 16; }
             }
         }

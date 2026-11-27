@@ -476,7 +476,7 @@ __attribute__((used, noreturn)) void start(void) {
         if (!a[k] && !b[k]) port_kuseg_mirror = 1;
     }
     { char b[4]; kuseg_child = GetEnvironmentVariableA("PORT_KUSEG_CHILD", b, sizeof b) > 0; }
-    if (port_kuseg_mirror && !kuseg_child && !kuseg_free()) relaunch_reserved();
+    if (!kuseg_child && !kuseg_free()) relaunch_reserved();   /* also without the mirror: reserved blocks are guarded */
     timeBeginPeriod(1);
     sleep_calibrate();
     image_delta = (unsigned long)__ImageBase - PORT_LINK_BASE;
