@@ -2849,7 +2849,49 @@ void func_80111418(void)
     }
 }
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80111574);
+#define UW(p, o) (*(u32 *)((u8 *)(p) + (o)))
+
+void func_80111574(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        a[5] = 0;
+        a[6] = 0;
+        W(a, 0x54) = func_8009A450() >> 9;
+        W(a, 0x58) = func_8009A450() >> 9;
+        W(a, 0x5C) = func_8009A450() >> 9;
+        W(a, 0x60) = -0xA;
+    case 1:
+    case 2:
+        if (a[4] == 1) {
+            if ((s8)a[6] >= 0) {
+                a[6] += 0x10;
+            }
+            a[5] += (0x60 - a[5]) >> 4;
+            if (a[5] >= 0x40) {
+                a[4] = 2;
+            }
+        } else {
+            a[5] += (0x60 - a[5]) >> 4;
+            a[6] -= 5;
+            if (a[6] < 0xA) {
+                a[4] = 3;
+                break;
+            }
+        }
+        a[1] = 1;
+        H(a, 0x48) += UW(a, 0x54) >> 3;
+        H(a, 0x4A) += UW(a, 0x58) >> 3;
+        H(a, 0x4C) += UW(a, 0x5C) >> 3;
+        H(a, 0x2E) += U(a, 0x60);
+        W(a, 0x60) += 3;
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 typedef struct { s16 m[3][3]; s32 t[3]; } Mat;
 typedef struct { u8 pad[0x3C]; s32 x, y, z; } CamT;
