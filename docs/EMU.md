@@ -17,6 +17,7 @@ python3 -I tools/emu_run.py --frames 3000 --dump-frames DIR --dump-every 100 [--
     [--save-state FILE] [--load-state FILE] [--port-math ratan2,SquareRoot0] [-v]
 python3 -I tools/emu_compare.py --route title|attract|a00 [--out DIR] [--ram-at F,...] [--packets-at F,...]
 python3 -I tools/emu_compare.py --frames N --every K [--pad-script S] [--at F,...] [--skip-port | --skip-emu]
+    [--port-args=--keys-off]     # extra port options: --keys-off = SpuGetAllKeysStatus all off, as the emulator
 python3 -I tools/test_psxemu.py                      # unit tests (no game data)
 python3 -I tools/psxemu/t2syms.py                    # rebuild syms/main_usa.csv from build/main.elf + asm/main
 ```

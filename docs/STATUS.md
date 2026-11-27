@@ -64,7 +64,11 @@ docs/PORT.md §0.3 has the details and the checks.
   the port against an emulator store hook from a saved state). With them gone the attract route's RAM equals the
   emulator's at 1219; the next difference (1221) is the sound engine's voice table at 0x800BE31D (the port's SPU
   keys voices on, the emulator reports every voice off: an emulator limitation, docs/EMU.md), after which actor
-  timers in A00 (0x80148084, ...) and the pictures part (frame 1240).
+  timers in A00 (0x80148084, ...) and the pictures part (frame 1240). `build/port/tomba2 --keys-off` reports every
+  voice off as the emulator does (`tools/emu_compare.py --port-args=--keys-off`): then RAM is equal to frame 1250
+  and the first difference is in the picture only (frame 1250, the fade-out: the same 844 GP0 packets, ±1-5 in a
+  5-bit channel on the textured gouraud polygons: texel coordinates rounded to nearest in the port, truncated in the
+  emulator's gpu.py; which one the hardware does is not settled).
 - **GTE** (`runtime/gte.c`): the hardware UNR divide replaces the exact rounded quotient (RotTransPers: 0 of 300
   differ, was 1); NCS / NCT / NCDS / NCDT / CC / CDP added. New `tools/gte_diff.py`: gte.c against
   tools/psxemu/gte.py on random register states: all 22 commands equal on 6000 realistic states (`--raw` states

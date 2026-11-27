@@ -447,7 +447,9 @@ void SpuSetKey(int on, u32 bits) {
     for (int k = 0; k < NVOICES; k++)
         if (bits & (1u << k)) { if (on) voices[k].env_phase = voices[k].env_phase; else voice_key_off(&voices[k]); }
 }
+int port_keys_off;   /* --keys-off (comparisons with tools/psxemu, which does not model the SPU): every voice off */
 int SpuGetAllKeysStatus(u8 *st) {
+    if (port_keys_off) { for (int k = 0; k < NVOICES; k++) st[k] = 0; return 0; }
     for (int k = 0; k < NVOICES; k++)
         st[k] = voices[k].env_phase == ENV_OFF ? 0 : voices[k].env_phase == ENV_RELEASE ? 2 : 1;
     return 0;

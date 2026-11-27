@@ -250,6 +250,10 @@ build/port/tomba2 --frames 1700 --save-dir S --dump-frames D2 --dump-every 10 --
   1218. After the fix the attract route's RAM equals the emulator's up to frame 1220; at 1221 the sound engine's voice
   table (0x800BE31D, one byte per voice) differs because the port's SPU keys voices on where the emulator reports
   every voice off (docs/EMU.md), and the game's state follows that from there (pictures differ from frame 1240).
+  `--keys-off` (a test option: SpuGetAllKeysStatus reports every voice off, as the emulator) removes that: with it
+  the attract route's RAM equals the emulator's up to frame 1250 at least, and the first difference is the
+  rasteriser's (frame 1250, the A00 demo's fade-out: identical GP0 packets, a few texels on textured gouraud
+  polygons; the port rounds texel coordinates to nearest, tools/psxemu/gpu.py truncates).
 - **GTE** (`runtime/gte.c`): RTPS / RTPT divide with the hardware's UNR table and two Newton steps (psx-spx; as
   tools/psxemu/gte.py) instead of the exact quotient; NCS / NCT / NCDS / NCDT / CC / CDP added (none was logged as
   missing on the routes checked). `python3 -I tools/gte_diff.py [--n N] [--ops RTPS,...] [--raw]` compiles gte.c

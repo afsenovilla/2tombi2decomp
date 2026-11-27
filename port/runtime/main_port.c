@@ -139,6 +139,7 @@ int port_main(int argc, char **argv) {
         else if (streq(argv[i], "--fake-kuseg")) { extern int port_kuseg_strict; port_kuseg_strict = 3; }
         else if (streq(argv[i], "--kuseg-strict")) { extern int port_kuseg_strict; port_kuseg_strict = 1; }
         else if (streq(argv[i], "--kuseg-mirror")) { /* Windows: read in start() (sys_win32_i386.c); Linux: the default */ }
+        else if (streq(argv[i], "--keys-off")) { extern int port_keys_off; port_keys_off = 1; }
         else if (streq(argv[i], "--dump-tv")) { extern int port_dump_tv; port_dump_tv = 1; }
         else if (streq(argv[i], "--poke") && i + 1 < argc) { extern void port_add_poke(const char *); port_add_poke(argv[++i]); }
         else if (streq(argv[i], "--trace-pos") && i + 1 < argc) { extern int port_trace_pos; port_trace_pos = atoi_(argv[++i]); }

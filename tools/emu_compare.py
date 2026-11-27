@@ -53,6 +53,7 @@ def run_port(a, out, extra_frames):
             "--save-dir", saves]
     if a.pad_script:
         args += ["--pad-script", a.pad_script]
+    args += a.port_args.split()   # e.g. --keys-off: the port's SPU key status as the emulator's (every voice off)
     log = os.path.join(out, "port_log.txt")
     if extra_frames:
         env = dict(os.environ, EMU_DUMP_FRAMES=",".join(map(str, sorted(extra_frames))), EMU_DUMP_DIR=out, EMU_PORT_LOG=log,
@@ -305,6 +306,7 @@ def main():
     ap.add_argument("--ram-lines", type=int, default=40)
     ap.add_argument("--out")
     ap.add_argument("--port", default=os.path.join(ROOT, "build", "port", "tomba2"))
+    ap.add_argument("--port-args", default="", help="extra port options, e.g. --keys-off (voices reported off as here)")
     ap.add_argument("--python", default=None)
     ap.add_argument("--port-math", default="", help="emulator: the port's ratan2 / SquareRoot0 (step past a known difference)")
     ap.add_argument("--skip-port", action="store_true")
