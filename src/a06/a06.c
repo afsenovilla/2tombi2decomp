@@ -10768,7 +10768,56 @@ void func_8013CBA0(RECT16 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013CD34);
+typedef struct { s16 m[3][3]; s32 t[3]; } Mat;
+extern u32 *D_800ED8C8_065b;
+extern Mat D_1F8000F8;
+
+void func_8013CD34(u8 *a)
+{
+    u16 *i;
+    u16 *end;
+    u32 *tbl;
+    u32 *ot;
+    u32 *m;
+    u32 w;
+    u32 *ot_f;
+    u32 *m_f;
+    u32 w_f;
+
+    if (a[6] == 0) {
+        return;
+    }
+    if (D_800BF918 >= 2) {
+        D_1F80009C = 1;
+    } else {
+        D_1F80009C = 0;
+    }
+    gte_SetRotMatrix(&D_1F8000F8);
+    gte_SetTransMatrix(&D_1F8000F8);
+    i = (u16 *)(a + 0x10);
+    if (D_800BF873) {
+        end = (u16 *)(a + 0x10 + a[6] * 2);
+        tbl = *(u32 **)(a + 0xC);
+        ot = D_800ED8C8_065b;
+        gte_ldfcdir(0, 0, 0);
+        for (; i < end; i++) {
+            m = tbl + *i;
+            w = *m;
+            func_8013C5B4(func_8013C0D8(m + 1, ot, w & 0xFFFF, 0), ot, w >> 16, 0);
+        }
+    } else {
+        end = (u16 *)(a + 0x10 + a[6] * 2);
+        tbl = *(u32 **)(a + 0xC);
+        ot_f = D_800ED8C8_065b;
+        for (; i < end; i++) {
+            m_f = tbl + *i;
+            w_f = *m_f;
+            m_f = func_8013BA44(m_f + 1, ot_f, w_f & 0xFF);
+            w_f >>= 16;
+            func_8013BD40(m_f, ot_f, w_f & 0xFF);
+        }
+    }
+}
 
 extern s32 D_1F800080_e4a3;
 extern u16 D_8014A450;
@@ -11130,14 +11179,11 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013E30C);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013E5D8);
 
-typedef struct { s16 m[3][3]; s32 t[3]; } Mat;
 typedef struct { u8 pad[0x3C]; s32 x, y, z; } CamT;
 extern Mat D_1F800000_8be2;
-extern Mat D_1F8000F8;
 extern s32 D_1F800014[];
 extern CamT D_1F8000D0_b4b6;
 extern RingVec D_8014CE70[];
-extern u32 *D_800ED8C8_065b;
 #define T2_rtpt4() __asm__ volatile("nop;nop;nop;nop;.word 0x4A280030;nop;nop;nop;nop")
 #define T2_stsxy3_f3(r0) __asm__ volatile("addu $12,%0,$0;" "swc2 $12,8($12);" "swc2 $13,12($12);" "swc2 $14,16($12)" : : "r"(r0) : "$12", "$13", "$14", "$15", "memory")
 void func_8013E738(u8 *a)
