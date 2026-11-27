@@ -15298,7 +15298,94 @@ s32 func_800558B4(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800559F4);
+extern u16 D_1F800196;
+
+s32 func_800559F4(u8 *a)
+{
+    u16 f;
+    u8 k;
+    u16 m;
+
+    if (H_f12c(a, 0x16E) == 0) {
+        goto ret0;
+    }
+    if (D_1F800137_104c != 0) {
+        return 0;
+    }
+    if ((H_f12c(a, 0x16C) & 0xC000) == 0xC000) {
+        f_ResolveActorAreaPlanePosition(a);
+        if ((W_d1fb(a, 0x148) & 0xA0000) == 0xA0000) {
+            func_80047B5C(a, 1);
+            if (D_1F8001A8 & 2) {
+                a[0x61] = 0x20;
+                D_1F80018E = 0x1100;
+                D_1F800194 = D_1F8001A2 & 0xFFF;
+                D_1F800196 = D_1F8001A0_6940 & 0xFFF;
+                if (a[5] != 10) {
+                    a[5] = 10;
+                    a[6] = 0;
+                    a[7] = 0;
+                }
+                return 3;
+            }
+        }
+        func_80047B5C(a, 0);
+        f = D_1F8001A8;
+        if (f & 8) {
+            D_1F80018E = 0x2000;
+            D_1F800194 = D_1F8001A2 & 0xFFF;
+            D_1F800196 = D_1F8001A0_6940 & 0xFFF;
+            if (a[5] != 11) {
+                a[5] = 11;
+                a[6] = 0;
+                a[7] = 0;
+            }
+            return 2;
+        }
+        if ((W_d1fb(a, 0x148) & 0x60000) != 0x60000) {
+            goto ret0;
+        }
+        if (!(f & 4)) {
+            goto ret0;
+        }
+        a[0x61] = 0x10;
+        D_1F80018E = 0x1000;
+        D_1F800194 = D_1F8001A2 & 0xFFF;
+        D_1F800196 = D_1F8001A0_6940 & 0xFFF;
+    } else {
+        k = a[0x14A];
+        if (!(k & 2)) {
+            goto ret0;
+        }
+        m = D_1F80018E;
+        if (!(m & 0x4000)) {
+            goto ret0;
+        }
+        if (k & 4) {
+            if (!(m & 0x100)) {
+                if (!(m & 0xC00)) {
+                    goto ret0;
+                }
+            }
+        } else {
+            if (!(k & 8)) {
+                goto ret0;
+            }
+            if (!(m & 0x200)) {
+                goto ret0;
+            }
+        }
+        D_1F800194 = D_1F80018C_c065;
+    }
+    if (a[5] != 10) {
+        a[5] = 10;
+        a[6] = 0;
+        a[7] = 0;
+    }
+    return 1;
+ret0:
+    return 0;
+}
 
 s32 func_80055C30(u8 *p)
 {
