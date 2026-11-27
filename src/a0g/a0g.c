@@ -566,7 +566,251 @@ INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010ADC4);
 
 INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010B08C);
 
-INCLUDE_ASM("asm/a0g/nonmatchings/a0g", f_UpdateCourageTowerInteriorEntranceActor);
+typedef struct { u16 x, y, z; u8 b6, b7; u16 w, h; } Ent0G;
+typedef struct { u8 m, k; } Pair0G;
+extern Pair0G D_8010D2AC[];
+extern Ent0G D_8010D2D4[];
+extern u8 D_800E7FF4;
+/* func_8010B91C, inlined */
+static inline void inl_8010B91C(u8 *a, s16 id)
+{
+    u8 *o;
+
+    switch (a[7]) {
+    case 0:
+        break;
+    case 1:
+        if ((*(u8 **)(a + 0x14) = (u8 *)func_8007E038(id, 2)) != NULL) {
+            *(s16 *)(a + 0xE) = 0x5A;
+            a[7]++;
+        }
+        break;
+    case 2:
+        if (--*(s16 *)(a + 0xE) == -1) {
+            o = *(u8 **)(a + 0x14);
+            if (o[4] < 2) {
+                o[4] = 2;
+                *(u8 **)(a + 0x14) = NULL;
+            }
+            a[7] = 0;
+        }
+        break;
+    }
+}
+
+void f_UpdateCourageTowerInteriorEntranceActor(u8 *a)
+{
+    u8 k;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, D_8010D2AC[a[3]].m) != 0) {
+            break;
+        }
+        a[0xBF] = 1;
+        H(a, 0x50) = 0;
+        a[4]++;
+        a[0x28] |= 0x80;
+        H(a, 0x5A) = U(a, 0x56);
+        k = D_8010D2AC[a[3]].k;
+        if (k != 0) {
+            a[0x2A] = k;
+            H(a, 0x60) = D_8010D2D4[a[3]].x - U(a, 0x2E);
+            H(a, 0x62) = D_8010D2D4[a[3]].y;
+            H(a, 0x64) = D_8010D2D4[a[3]].z - U(a, 0x36);
+            a[0x5F] = D_8010D2D4[a[3]].b6;
+            H(a, 0x82) = D_8010D2D4[a[3]].w;
+            H(a, 0x80) = H(a, 0x82) / 2;
+            H(a, 0x86) = D_8010D2D4[a[3]].h;
+            H(a, 0x84) = H(a, 0x86) / 2;
+            a[0] = 1;
+        }
+        a[0x46] = 1;
+        a[0x29] = 0;
+        a[0x5E] = 0;
+        switch (a[3]) {
+        case 0:
+            a[0] = 2;
+            H(a, 0x50) = 0x400;
+            func_80072EFC(a);
+            break;
+        case 1:
+            H(a, 0x66) = 1;
+            H(a, 0x68) = 0;
+            H(a, 0x6A) = 1;
+            break;
+        case 2:
+            H(a, 0x68) = 1;
+            H(a, 0x66) = 0;
+            H(a, 0x6A) = 3;
+            break;
+        case 3:
+            H(a, 0x66) = 3;
+            H(a, 0x6A) = 2;
+            break;
+        case 5:
+            H(a, 0x66) = 1;
+            H(a, 0x68) = 1;
+            H(a, 0x6A) = 9;
+            break;
+        case 7:
+            H(a, 0x66) = 1;
+            H(a, 0x68) = 0;
+            H(a, 0x6A) = 1;
+            break;
+        case 9:
+            H(a, 0x66) = 3;
+            H(a, 0x6A) = 5;
+            break;
+        case 10:
+            H(a, 0x66) = 1;
+            H(a, 0x68) = 0;
+            H(a, 0x6A) = 1;
+            break;
+        case 11:
+            H(a, 0x68) = 1;
+            H(a, 0x66) = 0;
+            H(a, 0x6A) = 0xD;
+            break;
+        case 12:
+            H(a, 0x66) = 1;
+            H(a, 0x68) = 0;
+            H(a, 0x6A) = 1;
+            break;
+        case 13:
+            H(a, 0x66) = 3;
+            H(a, 0x6A) = 0xB;
+            break;
+        case 14:
+            H(a, 0x66) = 2;
+            H(a, 0x6A) = 0x10;
+            break;
+        case 15:
+            H(a, 0x66) = 4;
+            H(a, 0x6A) = 1;
+            break;
+        case 16:
+            H(a, 0x66) = 3;
+            H(a, 0x6A) = 0xE;
+            break;
+        case 17:
+            H(a, 0x66) = 1;
+            H(a, 0x68) = 1;
+            H(a, 0x6A) = 0x13;
+            break;
+        case 4:
+        case 6:
+        case 8:
+        case 18:
+            H(a, 0x66) = 0;
+            H(a, 0x68) = 0;
+            H(a, 0x6A) = 1;
+            break;
+        case 19:
+            H(a, 0x66) = 4;
+            H(a, 0x6A) = 0x11;
+            a[8] = 0;
+            a[0xBF] = 0;
+            break;
+        }
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            f_UpdateCourageTowerExitDoorSequence(a);
+            inl_8010B91C(a, 0x86);
+            break;
+        case 1:
+            f_UpdateCourageTowerLaughingCryingDoorSequence(a);
+            inl_8010B91C(a, 0x86);
+            break;
+        case 2:
+            f_UpdateCourageTowerLaughingCryingDoorSequence(a);
+            inl_8010B91C(a, 0x86);
+            break;
+        case 3:
+            func_8010AC00(a);
+            inl_8010B91C(a, 0x87);
+            break;
+        case 4:
+            f_UpdateCourageTowerLaughingCryingDoorSequence(a);
+            inl_8010B91C(a, 0x87);
+            break;
+        case 5:
+            f_UpdateCourageTowerLaughingCryingDoorSequence(a);
+            inl_8010B91C(a, 0x87);
+            break;
+        case 6:
+            f_UpdateCourageTowerLaughingCryingDoorSequence(a);
+            inl_8010B91C(a, 0x87);
+            break;
+        case 7:
+            f_UpdateCourageTowerLaughingCryingDoorSequence(a);
+            inl_8010B91C(a, 0x87);
+            break;
+        case 8:
+            f_UpdateCourageTowerLaughingCryingDoorSequence(a);
+            inl_8010B91C(a, 0x87);
+            break;
+        case 9:
+            func_8010AC00(a);
+            inl_8010B91C(a, 0x88);
+            break;
+        case 10:
+            f_UpdateCourageTowerLaughingCryingDoorSequence(a);
+            inl_8010B91C(a, 0x88);
+            break;
+        case 11:
+            f_UpdateCourageTowerLaughingCryingDoorSequence(a);
+            inl_8010B91C(a, 0x88);
+            break;
+        case 12:
+            f_UpdateCourageTowerLaughingCryingDoorSequence(a);
+            inl_8010B91C(a, 0x88);
+            break;
+        case 13:
+            func_8010AC00(a);
+            inl_8010B91C(a, 0x89);
+            break;
+        case 14:
+            func_8010ADC4(a);
+            inl_8010B91C(a, 0x89);
+            break;
+        case 15:
+            func_8010B08C(a);
+            inl_8010B91C(a, 0x89);
+            break;
+        case 16:
+            if (D_800E7FF4 & 4) {
+                func_8010AC00(a);
+                inl_8010B91C(a, 0x8A);
+            }
+            break;
+        case 17:
+            f_UpdateCourageTowerLaughingCryingDoorSequence(a);
+            inl_8010B91C(a, 0x8A);
+            break;
+        case 18:
+            f_UpdateCourageTowerLaughingCryingDoorSequence(a);
+            inl_8010B91C(a, 0x8A);
+            break;
+        case 19:
+            func_8010B08C(a);
+            inl_8010B91C(a, 0x8B);
+            break;
+        }
+        if (func_8007778C(a) != 0) {
+            func_800517F8(a);
+        }
+        a[0x29] = 0;
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 s32 func_8010B91C(u8 *a, s16 id)
 {
