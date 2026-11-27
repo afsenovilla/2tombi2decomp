@@ -28,7 +28,9 @@ net by the tower) and the music stuttered at times. docs/PORT.md §0.4 has the d
   `$v0` is right by construction). Frames unchanged, same speed.
 - **Sweep**: four Load Game routes from the user's card (random walks, a long walk right with jumps and dialogue, the
   back lane), 20000 attract frames, random play handed over in the A01 and A03 demos, native vs interpreted:
-  identical. A01+ outside the demos not reached by play (story-gated). `emu_compare.py --route net` added.
+  identical; the A01 takeover against the reference emulator: the player actor equal at every dump (4000-5850),
+  only known differences elsewhere. A01+ outside the demos not reached by play (story-gated). `emu_compare.py
+  --route net` added.
 - **Music**: the viewer now resamples its ring at a rate that follows the fill (P + I, within 2 %, ~100 ms queued;
   the user's game paced 59.43 vblank/s, so a fixed rate drained the old 2-frame ring every few seconds), logs each
   underrun / skip with its time to tomba2.log (`tomba2-view: audio underrun #N ...`, summary at exit, more in

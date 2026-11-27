@@ -349,7 +349,10 @@ build/port/tomba2 --frames 2760 --trace-pos 10 --demo-takeover 2550 \
   and seeded random play handed over by `--demo-takeover` in the A01 demo (from 4200 to its end at 5880) and the A03
   demo (7100-8690): identical after the fixes. Not reached by play: A01 and later areas outside the demos (the
   story gates them). Windows (Wine 9.0, the new zip): the climb route and 60 attract dumps byte-identical to Linux;
-  `--no-kuseg` on Linux: 0 native low accesses on the climb route.
+  `--no-kuseg` on Linux: 0 native low accesses on the climb route. Against the reference emulator, the A01 takeover
+  (`emu_compare.py --frames 5880 --every 100 --pad-script <seed 11> --port-args="--keys-off --demo-takeover 4200"
+  --emu-args="--demo-takeover 4200"`, 466 s): the player actor byte-equal at all 8 RAM dumps (4000-5850), the rest
+  only the known differences (OT link high bytes, DR_AREA words, libgpu statics), every BIN/ load at the same frame.
 - **Music** (`shims/audio.c`, `tools/view/tomba2_view.c`): the user's log paced 59.43 vblanks/s overall, i.e. the game
   produced ~1 % less audio than the device played; the viewer kept 2-6 frames in its ring and re-primed 33 ms of
   silence at each underrun, so the ring ran dry every few seconds (a test run with SDL's dummy audio driver: the old
