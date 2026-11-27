@@ -7441,7 +7441,61 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801296E0);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeTableDrivenInteriorEffect);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeLinkedWindmillInteriorEffect);
+#define PT(p, i) (((AreaPartsOwner *)(p))->parts[i])
+extern s16 D_800ED098;
+
+void f_InitializeLinkedWindmillInteriorEffect(u8 *a)
+{
+    u8 *o;
+    u8 *q;
+    s32 i;
+    s32 n;
+
+    n = 4;
+    a[8] = n;
+    o = P(a, 0x10);
+    if (D_800ED098 < 4) {
+        a[4] = 3;
+        return;
+    }
+    a[9] = 4;
+    a[0xB] = 5;
+    a[0xD] = 0;
+    a[4]++;
+    for (i = 0; i < a[8]; i++) {
+        q = func_8007AAE8();
+        PT(a, i) = q;
+        H_f12c(q, 6) = -1;
+        H_f12c(PT(a, i), 0x3A) = 0x2D3;
+        H_f12c(PT(a, i), 0) = U(PT(o, i), 0);
+        H_f12c(PT(a, i), 2) = U(PT(o, i), 2);
+        H_f12c(PT(a, i), 4) = U(PT(o, i), 4);
+        H_f12c(PT(a, i), 8) = -U(PT(o, i), 8);
+        H_f12c(PT(a, i), 0xA) = U(PT(o, i), 0xA);
+        H_f12c(PT(a, i), 0xC) = U(PT(o, i), 0xC);
+        W_d1fb(PT(a, i), 0x40) = 0;
+        func_80051794(D_1F800000);
+        func_80084D10(H_f12c(PT(o, i), 8), D_1F800000);
+        func_80084EB0(H_f12c(PT(o, i), 0xA), D_1F800000);
+        func_80085050(H_f12c(PT(o, i), 0xC), D_1F800000);
+        D_1F8000C0[0] = 0;
+        D_1F8000C0[1] = 0x369;
+        D_1F8000C0[2] = 0;
+        func_800844C0(D_1F800000, D_1F8000C0, D_1F8000C8);
+        H_f12c(PT(a, i), 0) = U(PT(a, i), 0) + D_1F8000C8[0];
+        H_f12c(PT(a, i), 2) = U(PT(a, i), 2) + D_1F8000C8[1];
+        H_f12c(PT(a, i), 4) = U(PT(a, i), 4) + D_1F8000C8[2];
+    }
+    H_f12c(a, 0x60) = 0xD;
+    H_f12c(a, 0x62) = 0x3CF7;
+    H_f12c(a, 0x64) = -0x7728;
+    H_f12c(a, 0x66) = -0x7721;
+    H_f12c(a, 0x68) = -0x6828;
+    H_f12c(a, 0x6A) = -0x6821;
+    H_f12c(a, 0x6C) = 0x28;
+    H_f12c(a, 0x6E) = 0x50;
+    H_f12c(a, 0x70) = -8;
+}
 
 void f_HandleInteriorEffectActor(u8 *a)
 {
@@ -10629,7 +10683,6 @@ void f_UpdateRopeSwingInteraction(u8 *a)
 typedef struct { s16 a, b, c, d; } RopeRow;
 extern RopeRow D_8014A780[];
 extern s16 D_8014A7A0[][4];
-extern s16 D_800ED098;
 extern s16 D_1F8000DA;
 extern u16 D_800E7E84;
 static inline void RopeInitParts(u8 *a)
