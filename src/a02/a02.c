@@ -1413,7 +1413,169 @@ void func_8010DA78(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_8010DBE4);
+#define UH(p, o) (*(u16 *)((u8 *)(p) + (o)))
+extern u8 D_800E8008[];
+/* func_8010F84C, inlined */
+static inline void inl_8010F84C(u8 *a)
+{
+    u16 x = UH(a, 0x2E);
+
+    if ((u16)(x - 0x1BF0) < 0x1A8) {
+        if (H(a, 0x36) < 0x28E1) {
+            H(a, 0x36) = 0x28E1;
+        }
+    } else if ((u16)(x - 0x1D98) < 0xD80) {
+        if (H(a, 0x36) < 0x29E0) {
+            H(a, 0x36) = 0x29E0;
+        }
+    } else if ((s16)x >= 0x2B18 && H(a, 0x36) < 0x297B) {
+        H(a, 0x36) = 0x297B;
+    }
+}
+
+void func_8010DBE4(u8 *a)
+{
+    u8 *t = *(u8 **)(a + 0x10);
+    s32 x, z;
+    s32 n;
+
+    switch (a[6]) {
+    case 0:
+        func_8010B2D0(a);
+        func_8010ACB8(a);
+        if (H(a, 0x44) != 0) {
+            func_80076D68(a);
+            if (!(D_1F80017C & 0x1F)) {
+                func_80074590(0x17, 0xA, 0);
+            }
+            if (!(D_1F80017C & 7)) {
+                if (D_1F80017C & 8) {
+                    func_80074590(0, -3, 0);
+                } else {
+                    func_80074590(0, 5, 0);
+                }
+            }
+        }
+        H(t, 0x56) = H(a, 0x56) - 0xC00;
+        x = (func_80083F50(H(a, 0x56)) * H(a, 0x44)) >> 4;
+        z = (func_80083E80(H(a, 0x56)) * H(a, 0x44)) >> 4;
+        W(t, 0x2C) += x;
+        W(t, 0x34) -= z;
+        inl_8010F84C(t);
+        D_1F8000C0.x = 0;
+        D_1F8000C0.y = H(t, 0x86) - H(t, 0x84);
+        D_1F8000C0.z = 0;
+        func_801258A4(t + 0x2C, &D_1F8000C0);
+        x = (func_80083F50(H(t, 0x56) + 0x400) * (H(a, 0x80) + H(t, 0x80) + 0x1E)) >> 12;
+        z = (func_80083E80(H(t, 0x56) + 0x400) * (H(a, 0x80) + H(t, 0x80) + 0x1E)) >> 12;
+        H(a, 0x2E) = H(t, 0x2E) + x;
+        H(a, 0x36) = H(t, 0x36) - z;
+        D_1F8000C0.x = 0;
+        D_1F8000C0.y = H(a, 0x62);
+        D_1F8000C0.z = 0;
+        func_801258A4(a + 0x2C, &D_1F8000C0);
+        {
+            u32 m, n;
+            s16 h = H(a, 0x2E);
+
+            m = D_800E7E68;
+            n = D_1F800174;
+            H(t, 0x2E) = h - x;
+            H(t, 0x36) = H(a, 0x36) + z;
+            if (m & n) {
+            t[0xBF] = 0;
+            t[0] = 1;
+            a[5] = 0;
+            a[6] = 0;
+            a[7] = 0;
+            func_80054D14(a, 2, 6);
+        }
+        }
+        break;
+    case 1:
+        x = H(a, 0x7A) - H(t, 0x2E);
+        z = H(a, 0x7E) - H(t, 0x36);
+        do {
+            x = (x << 8) / 16;
+            z = (z << 8) / 16;
+        } while (0);
+        /* an opaque 1: it is loaded first and both the state increment and the call use it */
+        __asm__("" : "=r"(n) : "0"(1));
+        H(a, 0x4E) = x;
+        H(a, 0x52) = z;
+        H(a, 0x40) = 0x10;
+        a[6] += n;
+        {
+            u8 *cam = D_800E8008;
+
+            *(s16 *)(cam + 0x6C) = 0x44C;
+            *(s16 *)(cam + 0x6E) = 0x280;
+        }
+        func_8006E1C0(n);
+        break;
+    case 2:
+        func_80076D68(a);
+        if (!(D_1F80017C & 0x1F)) {
+            func_80074590(0x17, 0xA, 0);
+        }
+        if (!(D_1F80017C & 7)) {
+            if (D_1F80017C & 8) {
+                func_80074590(0, -3, 0);
+            } else {
+                func_80074590(0, 5, 0);
+            }
+        }
+        W(t, 0x2C) += H(a, 0x4E) << 8;
+        W(t, 0x34) += H(a, 0x52) << 8;
+        x = (func_80083F50(H(t, 0x56) + 0x400) * (H(a, 0x80) + H(t, 0x80) + 0x1E)) >> 12;
+        z = (func_80083E80(H(t, 0x56) + 0x400) * (H(a, 0x80) + H(t, 0x80) + 0x1E)) >> 12;
+        H(a, 0x2E) = H(t, 0x2E) + x;
+        H(a, 0x36) = H(t, 0x36) - z;
+        if (--H(a, 0x40) == 0) {
+            a[6]++;
+        }
+        break;
+    case 3:
+        func_80076D68(a);
+        {
+            s16 r = func_800776F8(0x400, H(a, 0x56), 0x80);
+            s16 d = r - 0xC00;
+
+            H(a, 0x56) = r;
+            H(t, 0x56) = d;
+            x = (func_80083F50(d + 0x400) * (H(a, 0x80) + H(t, 0x80) + 0x1E)) >> 12;
+        }
+        z = (func_80083E80(H(t, 0x56) + 0x400) * (H(a, 0x80) + H(t, 0x80) + 0x1E)) >> 12;
+        H(a, 0x2E) = H(t, 0x2E) + x;
+        H(a, 0x36) = H(t, 0x36) - z;
+        if (H(a, 0x56) == 0x400) {
+            a[6]++;
+            t[0xBF] = 0;
+            func_80054D14(a, 2, 6);
+            H(a, 0x40) = 0x5A;
+        }
+        break;
+    case 4:
+        func_80076D68(a);
+        if (--H(a, 0x40) == 0) {
+            a[6]++;
+            func_80054D14(a, 0xCD, 6);
+            t[0xBF] = 1;
+            H(a, 0x40) = 0x1E;
+        }
+        break;
+    case 5:
+        func_80076D68(a);
+        if (--H(a, 0x40) == 0) {
+            func_80054D14(a, 0xCE, 3);
+            a[6] = 0;
+            D_1F800137 = 0;
+            func_801167A8();
+            func_8006E1E4();
+        }
+        break;
+    }
+}
 
 #define H16(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define U16_5dc5(p, o) (*(u16 *)((u8 *)(p) + (o)))
@@ -6096,7 +6258,6 @@ void func_8011903C(u8 *a) {
 }
 
 typedef struct { s16 pad0; s16 x; s16 pad4; s16 y; s16 pad8; s16 z; } V91B0;
-extern u8 D_800E8008[];
 extern u8 D_80129DE8[];
 extern u8 D_80129DF4[];
 extern u8 D_800BF901;
