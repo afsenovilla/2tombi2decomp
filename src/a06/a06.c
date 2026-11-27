@@ -5500,7 +5500,77 @@ void func_8011F71C(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011F9E4);
+#define P_7be1(p, o) (*(u8 **)((u8 *)(p) + (o)))
+extern u8 D_800BF871;
+#define P_7be1(p, o) (*(u8 **)((u8 *)(p) + (o)))
+#define P_7be1(p, o) (*(u8 **)((u8 *)(p) + (o)))
+extern void func_80083DE0(void *, s32, s32, s32, s32);
+
+void func_8011F9E4(u8 *a)
+{
+    u8 *g = D_800E7E80;
+    s32 done;
+    u16 t;
+
+    switch (a[5]) {
+    case 0:
+        if (D_800BF871 == 20) {
+            a[0] = 2;
+            a[5] = 1;
+            H(a, 0x50) = 0x400;
+            func_80072EFC(a);
+        } else {
+            a[5] = 2;
+        }
+        break;
+    case 1:
+        if (func_80072F14(a) != 0) {
+            a[0] = 1;
+            a[5]++;
+            D_800BF871 = 17;
+        }
+        break;
+    case 2:
+        if (a[0x29] != 0 && g[0x29] != 0 && g[0x17B] == 0) {
+            a[5] = 3;
+            D_1F800137 = 2;
+        }
+        break;
+    case 3:
+        done = 0;
+        switch (a[0x46]) {
+        case 0:
+            H(a, 0x50) -= 0x10;
+            if (H(a, 0x50) < -0x300) {
+                H(a, 0x50) = -0x300;
+                done = 1;
+            }
+            break;
+        case 1:
+            H(a, 0x50) += 0x10;
+            if (H(a, 0x50) > 0x300) {
+                H(a, 0x50) = 0x300;
+                done = 1;
+            }
+            break;
+        }
+        t = D_1F80017C_0fe7;
+        H(a, 0x56) = U(a, 0x5A) + U(a, 0x50);
+        if (!(t & 0xF)) {
+            func_80074590(0xD, -0x1D, 0);
+        }
+        if (done) {
+            u8 *s;
+            a[5]++;
+            D_1F800236 = 1;
+            s = D_800BF808_1760;
+            s[0x31] = 1;
+            s[7] = 2;
+            H(s, 0x32) = 0x1200;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011FBE8);
 
@@ -5560,7 +5630,6 @@ void func_8012078C(s32 arg0) {
     func_800735F4(arg0, 0x5F);
 }
 
-extern u8 D_800BF871;
 extern u8 D_800E7FF4;
 void func_801207BC(u8 *a)
 {
