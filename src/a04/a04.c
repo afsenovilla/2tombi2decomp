@@ -2691,7 +2691,233 @@ void func_801162E8(u8 *a)
     func_80074590(7, 0, 0);
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", f_SpawnKujaraRanchSceneActorsFromPlacementTable);
+extern u8 D_800BF808_s04[];
+extern u8 D_800BF871_s04;
+extern u8 D_80140550[];
+extern u8 D_80140380[];
+extern u8 *D_80140760[];
+u8 *func_80072DDC();
+static inline u8 *GS04(void)
+{
+    return (u8 *)&D_800BF870;
+}
+static inline u8 *GB04(void)
+{
+    return D_800BF808_s04;
+}
+
+void f_SpawnKujaraRanchSceneActorsFromPlacementTable(u8 *a, s32 mode)
+{
+    u8 *e;
+    u8 *p;
+
+    if (mode == 0) {
+        if (D_800BF871_s04 == 7) {
+            e = D_80140550;
+        } else {
+            e = D_80140380;
+        }
+    } else {
+        e = D_80140760[mode];
+    }
+    H(a, 8) = 0;
+    if (e[0] == 0xFF) {
+        return;
+    }
+    do {
+        if (e[0xB] == 1 && ((U(GS04(), 0x5E6) >> D_800BF870.unk0) & 1)) {
+            goto next;
+        }
+        if (e[0xB] == 2 && GS04()[3] != 0) {
+            goto next;
+        }
+        if (mode != 0 && H(a, 8) >= 0xF) {
+            goto next;
+        }
+        switch (e[0xA]) {
+        case 0:
+            break;
+        case 1:
+            if (mode == 3) {
+                GB04()[0x45] = 1;
+            } else {
+                GB04()[0x45] = 0;
+            }
+            U(GB04(), 8) = U(e, 4);
+            U(GB04(), 0xA) = U(e, 6);
+            U(GB04(), 0xC) = U(e, 8);
+            break;
+        case 2:
+        case 3:
+        case 4:
+            if (GS04()[0x5A] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 12:
+            if (!(U(GS04(), 0x5E6) & 0x10)) {
+                goto next;
+            }
+            if (GS04()[0xC9] & 0x10) {
+                goto next;
+            }
+        case 5:
+            if (GS04()[0x3C] == 0) {
+                goto next;
+            }
+            break;
+        case 7:
+            if (GS04()[0x158] == 0) {
+                break;
+            }
+            goto next;
+        case 8:
+            if (GS04()[0x5D] == 0) {
+                break;
+            }
+            goto next;
+        case 9:
+            switch (e[3]) {
+            case 0:
+                if (GS04()[0x5C] != 0xFF) {
+                    break;
+                }
+                goto next;
+            case 1:
+                if (GS04()[0x5D] == 0) {
+                    goto next;
+                }
+                break;
+            }
+            break;
+        case 6:
+        case 10:
+        case 11:
+            if (GS04()[0x58] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 13:
+            if (GS04()[0x144] & 2) {
+                goto next;
+            }
+            if (GS04()[0xB9] != 1) {
+                break;
+            }
+            goto next;
+        case 17:
+            if (!(GS04()[0x197] & 0x80)) {
+                break;
+            }
+            goto next;
+        case 19:
+            switch (e[3]) {
+            case 0:
+                if ((GS04()[0x19A] & 0xF) >= 2) {
+                    goto next;
+                }
+                if (GS04()[0x197] & 0x80) {
+                    break;
+                }
+                goto next;
+            case 1:
+                if ((GS04()[0x19A] & 0xF0) < 0x11) {
+                    goto spawn;
+                }
+                goto next;
+            }
+            break;
+        case 20:
+            if (!(GS04()[0x19C] & 0x80)) {
+                break;
+            }
+            goto next;
+        case 21:
+            if (((GS04()[0x17C] >> (e[3] << 1)) & 3) < 2) {
+                break;
+            }
+            goto next;
+        case 22:
+            if (((GS04()[0x17C] >> (e[3] << 1)) & 3) == 2) {
+                break;
+            }
+            goto next;
+        case 23:
+            if ((s8)GS04()[0xB9] <= 0) {
+                goto next;
+            }
+            if (!(GS04()[0xB9] & 4)) {
+                break;
+            }
+            goto next;
+        case 24:
+            if ((s8)GS04()[0xB9] <= 0) {
+                goto next;
+            }
+            if (!(GS04()[0xB9] & 0x10)) {
+                break;
+            }
+            goto next;
+        case 25:
+            if ((s8)GS04()[0xB9] <= 0) {
+                goto next;
+            }
+            if (!(GS04()[0xB9] & 0x40)) {
+                break;
+            }
+            goto next;
+        case 26:
+            if (!((GS04()[0x1B3] >> e[3]) & 1)) {
+                break;
+            }
+            goto next;
+        case 27:
+            if (GS04()[0x158] == 1) {
+                break;
+            }
+            goto next;
+        case 28:
+            if (!(U(GS04(), 0x5E6) & 0x10)) {
+                goto next;
+            }
+            break;
+        case 29:
+            if (GS04()[0x296] != 0) {
+                goto next;
+            }
+            if (GS04()[0xA5] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 30:
+            if (GS04()[0x1DE] < 3) {
+                break;
+            }
+            if (GS04()[0x1D8] == 0) {
+                goto next;
+            }
+            break;
+        }
+    spawn:
+        p = func_80072DDC(a, e[0], e[1], e[2]);
+        if (p != NULL) {
+            *(s32 *)(p + 0x2C) = H(e, 4) << 16;
+            *(s32 *)(p + 0x30) = H(e, 6) << 16;
+            *(s32 *)(p + 0x34) = H(e, 8) << 16;
+            p[3] = e[3];
+            H(p, 0x54) = 0;
+            H(p, 0x56) = 0;
+            H(p, 0x58) = 0;
+            *(s32 *)(p + 0x1C) = *(s32 *)(e + 0xC);
+            if (mode != 0) {
+                *(u8 **)(a + (H(a, 8) << 2) + 0xC) = p;
+                H(a, 8)++;
+            }
+        }
+    next:
+        e += 0x10;
+    } while (e[0] != 0xFF);
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80116884);
 
