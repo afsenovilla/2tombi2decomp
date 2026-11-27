@@ -10309,7 +10309,38 @@ void func_80135ED8(RECT16 *a) {
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8013606C);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801362CC);
+extern s16 *D_1F80028C;
+#define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
+u32 *func_8007FDB0();
+u32 *func_8008007C();
+u32 *func_8013AC90();
+u32 *f_UpdateThreeSistersCutsceneActorC();
+
+void func_801362CC(u32 *a0, void *a1)
+{
+    u32 *s1;
+    s32 s0;
+    u32 w;
+    s16 *o;
+
+    s1 = a0;
+    a0 += 4;
+
+    if (D_800BF873) {
+        o = (s16 *)D_1F80028C;
+        { s32 x = o[0x17]; s32 y = o[0x19]; s32 z = o[0x1B]; s0 = func_80078240(x - D_1F800160_71b4, y - D_1F800162, z - D_1F800164_d75f) << 1; }
+        gte_ldfcdir(0, 0, 0);
+        w = *s1;
+        func_8013590C(func_8013544C(a0, a1, w & 0xFFFF, s0), a1, w >> 16, s0);
+    } else if (D_800E7EAA >= 12 || D_800BF816 != 0) {
+        w = *s1;
+        func_8008007C(func_8007FDB0(a0, a1, w & 0xFFFF), a1, w >> 16);
+    } else {
+        gte_ldfcdir(0x800, 0x800, 0x800);
+        w = *s1;
+        f_UpdateThreeSistersCutsceneActorC(func_8013AC90(a0, a1, w & 0xFFFF), a1, w >> 16);
+    }
+}
 
 void func_80136434(void)
 {
