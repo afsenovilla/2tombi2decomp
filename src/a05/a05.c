@@ -10432,7 +10432,74 @@ void func_80135ED8(RECT16 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_8013606C);
+typedef struct { s16 m[3][3]; s32 t[3]; } Mat;
+extern u8 D_800BF918;
+extern Mat D_1F8000F8;
+u32 *func_80134B74();
+#define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
+
+void func_8013606C(u8 *a)
+{
+    u8 *g;
+    u16 *i;
+    u16 *end;
+    u32 *tbl;
+    u32 *ot;
+    u32 *m;
+    u32 w;
+    u32 *ot_f;
+    u32 *m_f;
+    u32 w_f;
+    u32 *ot_g;
+    u32 *m_g;
+    u32 w_g;
+
+    if (a[6] == 0) {
+        return;
+    }
+    gte_SetRotMatrix(&D_1F8000F8);
+    gte_SetTransMatrix(&D_1F8000F8);
+    g = (u8 *)&D_800BF870;
+    if (g[3]) {
+        i = (u16 *)(a + 0x10);
+        end = (u16 *)(a + 0x10 + a[6] * 2);
+        tbl = *(u32 **)(a + 0xC);
+        ot = D_800ED8C8_065b;
+        gte_ldfcdir(0, 0, 0);
+        for (; i < end; i++) {
+            m = tbl + *i;
+            w = *m;
+            func_8013590C(func_8013544C(m + 1, ot, w & 0xFFFF, 0), ot, w >> 16, 0);
+        }
+    } else {
+        gte_ldfcdir(0x800, 0x800, 0x800);
+        i = (u16 *)(a + 0x10);
+        if ((*(u16 *)(g + 0x5E6) & 0x20) || D_800E7EAA >= 12) {
+            end = (u16 *)(a + 0x10 + a[6] * 2);
+            tbl = *(u32 **)(a + 0xC);
+            ot_f = D_800ED8C8_065b;
+            for (; i < end; i++) {
+                m_f = tbl + *i;
+                w_f = *m_f;
+                m_f = func_8013484C(m_f + 1, ot_f, w_f & 0xFF);
+                w_f >>= 16;
+                func_80134B74(m_f, ot_f, w_f & 0xFF);
+            }
+        } else {
+            end = (u16 *)(a + 0x10 + a[6] * 2);
+            tbl = *(u32 **)(a + 0xC);
+            ot_g = D_800ED8C8_065b;
+            for (; i < end; i++) {
+                m_g = tbl + *i;
+                w_g = *m_g;
+                m_g = func_8013AC90(m_g + 1, ot_g, w_g & 0xFF);
+                w_g >>= 16;
+                f_UpdateThreeSistersCutsceneActorC(m_g, ot_g, w_g & 0xFF);
+            }
+            func_801351DC();
+        }
+    }
+}
 
 extern s16 *D_1F80028C;
 #define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
