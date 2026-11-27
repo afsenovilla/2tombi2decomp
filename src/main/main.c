@@ -17308,7 +17308,129 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8005C8A0);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005CDF8);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005D16C);
+extern u8 D_1F800252;
+
+void func_8005D16C(u8 *a)
+{
+    s32 m;
+    s32 r;
+
+    f_ReadTombaDirectionalInput(a, 0);
+    if ((u8)(a[0x6C] - 1) < 2 && a[6] != 2) {
+        if (a[0x16B] == 0 && a[0x61] == 0) {
+            f_UpdateTombaForwardTerrainContact(a, 0);
+        } else {
+            a[0x5F] &= 0xFB;
+        }
+    } else {
+        f_UpdateTombaHorizontalMovementSpeed(a, a[0x14A]);
+        f_AdvanceTombaAlongMovementVector(a, 1);
+    }
+    f_UpdateTombaMovementOrientation(a);
+    switch (a[6]) {
+    case 0:
+        a[0x181] = 0;
+        D_1F800252 = 0;
+        H_f12c(a, 0x58) = 0;
+        a[0xBF] = 0;
+        a[0xBE] = 0;
+        a[0x147] = a[0x14A] & 1;
+        f_UpdateTombaModelOrientationFromFacing(a);
+        if (a[0x175] != 0) {
+            a[0x146] = 2;
+            func_80053670(a, 1, 0);
+            func_8005490C(a, 1, 1);
+            a[6] = 2;
+        } else {
+            a[0x146] = 1;
+            func_80053670(a, 0, 0);
+            func_8005490C(a, 0, 0);
+            a[6]++;
+        }
+        if ((u8)(a[0x6C] - 1) >= 2) {
+            f_UpdateTombaAirborneMotion(a, 0);
+        }
+        break;
+    case 1:
+        m = 0;
+        if (a[0x79] != 2) {
+            m = f_AdvanceActorSkeletalAnimation(a);
+        }
+        if ((u8)(a[0x6C] - 1) < 2) {
+            if (D_1F800252 == 0) {
+                goto skip;
+            }
+            if (U(a, 0x17E) & 0x40) {
+                a[0x178] = 0xC;
+            }
+        }
+        f_UpdateTombaAirborneMotion(a, 0);
+    skip:
+        if (a[0x29] != 0) {
+            if (func_800532A0(a)) {
+                a[0x146] = 0;
+                break;
+            }
+            a[5] = 5;
+            a[0x149] = (a[0x149] & 1) | 2;
+            a[7] = 0;
+            a[0x14A] &= 0xE;
+            a[0x14A] |= a[0x147];
+            break;
+        }
+        if (m == 0) {
+            break;
+        }
+        if (func_8005376C(a)) {
+            break;
+        }
+        if (func_80055704(a, 0) == 2) {
+            a[0x146] = 2;
+            func_80053670(a, 1, 0);
+            a[6]++;
+            break;
+        }
+        a[5] = 2;
+        a[6] = 1;
+        a[0x146] = 0;
+        f_SetTombaAnimationIfChanged(a, 0x14, 2);
+        break;
+    case 2:
+        a[0x181] = 0;
+        f_AdvanceActorSkeletalAnimation(a);
+        f_UpdateTombaAirborneMotion(a, 0);
+        a[0x147] = a[0x14A] & 1;
+        func_8005490C(a, 1, 1);
+        f_UpdateTombaModelOrientationFromFacing(a);
+        if (a[0x29] != 0) {
+            if (func_800532A0(a)) {
+                a[0x146] = 0;
+                break;
+            }
+            a[5] = 5;
+            a[7] = 0;
+            a[0x149] = (a[0x149] & 1) | 2;
+            break;
+        }
+        r = func_80055704(a, 1);
+        if (r != -1) {
+            if (r == 0) {
+                D_1F800252 = 0;
+                a[0x146] = 3;
+                func_80053670(a, 0, 8);
+                func_8005490C(a, 0, 0);
+                a[0xBE] = 0;
+                a[6] = 1;
+            }
+        } else {
+            a[5] = 2;
+            a[6] = 1;
+            a[0x146] = 0;
+            f_SetTombaAnimationIfChanged(a, 0x14, 2);
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_8005D530);
 
@@ -22158,7 +22280,6 @@ void func_8006A240(u8 *a)
     }
 }
 
-extern u8 D_1F800252;
 void func_8006A384(u8 *a)
 {
     u8 *m = a + 0x60;
