@@ -15679,7 +15679,48 @@ void func_80056EC8(u8 *p)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80056F3C);
+void func_80056F3C(u8 *t)
+{
+    u8 *p = *(u8 **)(t + 0x104);
+    u8 *q = *(u8 **)(t + 0x108);
+    s32 d = 0x1B - t[0x178];
+
+    if (d < 0) {
+        H_f12c(q, 0xA) = 0;
+        H_f12c(p, 0xA) = 0;
+        H_f12c(q, 0x38) -= 0x200;
+        if (H_f12c(q, 0x38) <= 0) {
+            H_f12c(q, 0x38) = 0;
+            t[0x179] = 0;
+        } else {
+            t[0x179] = 2;
+        }
+        H_f12c(q, 0x3C) = U(q, 0x38);
+        H_f12c(q, 0x3A) = U(q, 0x38);
+        H_f12c(p, 0x38) = U(q, 0x38);
+        H_f12c(p, 0x3A) = U(q, 0x38);
+        H_f12c(p, 0x3C) = U(q, 0x38);
+        return;
+    }
+    if (d >= 7) {
+        H_f12c(q, 0xA) = 0xD80;
+        H_f12c(p, 0xA) = 0x280;
+        U(q, 0x38) += 0x200;
+        if (U(q, 0x38) > 0xFFF) {
+            U(q, 0x38) = 0x1000;
+        }
+        H_f12c(q, 0x3C) = U(q, 0x38);
+        H_f12c(q, 0x3A) = U(q, 0x38);
+        H_f12c(p, 0x38) = U(q, 0x38);
+        H_f12c(p, 0x3A) = U(q, 0x38);
+        H_f12c(p, 0x3C) = U(q, 0x38);
+        t[0x179] = 1;
+        return;
+    }
+    H_f12c(p, 0xA) = d * 106;
+    H_f12c(q, 0xA) = -(d * 106) & 0xFFF;
+    t[0x179] = 2;
+}
 
 s32 f_StepWrappedAngleToward(s32 a, s32 b, s32 step);
 void func_8005706C(u8 *a, s32 b)
