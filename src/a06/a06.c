@@ -2970,11 +2970,175 @@ void func_80116310(u8 *a, u8 *b) {
     }
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", f_UpdateDonglinInteriorEnvironmentActor);
+typedef struct { u8 pad[0xC0]; u8 *parts[16]; } A64CC;
+#define PT_98fa(a, i) (((A64CC *)(a))->parts[i])
+extern u8 D_80144230[][2];
+extern s16 *D_80144204[];
+extern s16 D_800ED098;
+extern u8 D_800BF8D5;
+extern u8 D_800BFA22;
+extern u8 D_800BF871_s64;
+u8 *func_8007AAE8();
+static inline void Done64CC(u8 *a)
+{
+    a[1] = 1;
+    func_800517F8(a);
+}
+
+void f_UpdateDonglinInteriorEnvironmentActor(u8 *a)
+{
+    s16 *d;
+    s32 i;
+
+    switch (a[4]) {
+    case 0:
+        a[8] = D_80144230[a[3]][0];
+        if (D_800ED098 < a[8]) {
+            a[4] = 3;
+            break;
+        }
+        a[9] = a[8];
+        a[0xD] = 4;
+        a[0xB] = 0;
+        H(a, 0x54) = 0;
+        H(a, 0x58) = 0;
+        a[4]++;
+        d = D_80144204[a[3]];
+        for (i = 0; i < a[8]; i++) {
+            PT_98fa(a, i) = func_8007AAE8();
+            H(PT_98fa(a, i), 6) = *d++;
+            H(PT_98fa(a, i), 0) = *d++;
+            H(PT_98fa(a, i), 2) = *d++;
+            H(PT_98fa(a, i), 4) = *d++;
+            H(PT_98fa(a, i), 8) = *d++;
+            H(PT_98fa(a, i), 0xA) = *d++;
+            H(PT_98fa(a, i), 0xC) = *d++;
+            func_80051B04(PT_98fa(a, i), 0xC, *d++);
+            PT_98fa(a, i)[0x3F] = 0;
+        }
+        switch (a[3]) {
+        case 0:
+            a[0x46] = 1;
+            a[0xBF] = 1;
+            H(a, 0x56) = 0;
+            break;
+        case 1:
+            a[0x46] = 0;
+            a[0xBF] = 0;
+            H(a, 0x56) = -0x244;
+            break;
+        case 2:
+            a[0x46] = 1;
+            a[0xBF] = 1;
+            H(a, 0x56) = 0;
+            break;
+        case 3:
+            a[0x46] = 1;
+            a[0xBF] = 1;
+            H(a, 0x56) = 0;
+            break;
+        case 4:
+            a[0x46] = 0;
+            a[0xBF] = 0;
+            H(a, 0x56) = 0x800;
+            break;
+        case 5:
+            a[0x46] = 0;
+            a[0xBF] = 0;
+            H(a, 0x56) = 0x800;
+            break;
+        case 6:
+            a[0x46] = 1;
+            a[0xBF] = 1;
+            H(a, 0x56) = -0x271;
+            break;
+        case 7:
+            a[0xBF] = 0;
+            break;
+        case 8:
+            a[0xBF] = 0;
+            H(a, 0x56) = 0x800;
+            break;
+        case 9:
+            a[0xBF] = 0;
+            H(a, 0x56) = -0x200;
+            break;
+        case 10:
+            a[0x46] = 0;
+            a[0xBF] = 1;
+            H(a, 0x56) = 0;
+            break;
+        }
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            a[0x46] = 1;
+            H(a, 0x60) = a[5];
+            func_80116310(a, PT_98fa(a, 1));
+            H(PT_98fa(a, 2), 0xA) = H(PT_98fa(a, 1), 0xA);
+            a[0x46] = 0;
+            a[5] = H(a, 0x60);
+            func_80116310(a, PT_98fa(a, 3));
+            H(PT_98fa(a, 4), 0xA) = H(PT_98fa(a, 3), 0xA);
+            Done64CC(a);
+            break;
+        case 4:
+            switch (a[5]) {
+            case 0:
+                if (D_800BF8D5 == 0xFF) {
+                    func_80051B04(PT_98fa(a, 1), 0xC, 0x34);
+                    a[5] = 2;
+                } else {
+                    a[5] = 1;
+                }
+                break;
+            case 1:
+                if (D_800BFA22 >= 0x2B) {
+                    func_80051B04(PT_98fa(a, 1), 0xC, 0x34);
+                    a[5]++;
+                }
+                break;
+            case 2:
+                break;
+            }
+            a[1] = 1;
+            func_800517F8(a);
+            break;
+        case 7:
+            if (D_800BF871_s64 != 0x13) {
+                break;
+            }
+        case 1:
+        case 5:
+        case 8:
+        case 9:
+            a[1] = 1;
+            func_800517F8(a);
+            break;
+        case 2:
+        case 3:
+        case 6:
+            func_80116310(a, PT_98fa(a, 1));
+            H(PT_98fa(a, 2), 0xA) = H(PT_98fa(a, 1), 0xA);
+            Done64CC(a);
+            break;
+        case 10:
+            func_80116310(a, PT_98fa(a, 1));
+            Done64CC(a);
+            break;
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801168E4);
 
-extern u8 D_800BFA22;
 void func_80116AF8(u8 *a)
 {
     switch (a[5]) {
@@ -3022,7 +3186,6 @@ void func_80116AF8(u8 *a)
 
 typedef struct { u8 pad[0xC0]; u8 *parts[1]; } PartsOwner;
 typedef struct { s16 v[4]; } PartInit;
-extern s16 D_800ED098;
 typedef struct { s16 v[5]; } PartInit5;
 extern PartInit5 D_80144CF4[];
 void func_80116D00(PartsOwner *a)
@@ -3159,7 +3322,6 @@ extern s32 D_800ECF80;
 extern void *D_800ECF80_1c35;
 extern u8 D_80017334[];
 extern s8 *D_800ECF58[];
-extern u8 D_800BF8D5;
 extern u16 D_1F8000E2;
 extern u8 D_800BF8D2;
 extern u8 D_8014D014[];
