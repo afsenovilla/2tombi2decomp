@@ -1454,7 +1454,64 @@ void func_80111A04(u8 *a, u8 *b) {
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80111A74);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80111C08);
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+extern u8 D_800BF808_1c08[];
+extern u8 D_800E8008_1c08[];
+extern u8 D_800E7E80_1c08[];
+extern s32 D_1F800184_1c08;
+extern s16 D_1F8000DA_1c08;
+extern u8 D_1F8000D0_1c08[];
+
+void func_80111C08(void)
+{
+    u8 *g = D_800BF808_1c08;
+    u8 *cam = D_800E8008_1c08;
+    u8 *t;
+
+    g[0xE] = 0;
+    cam[0x64] = 0;
+    D_1F800184_1c08 = 0;
+    t = D_800E7E80_1c08;
+    t[5] = 0x24;
+    t[0x16B] = 0;
+    if (g[0xF] == 0) {
+        u8 *c;
+
+        g[0x39] = 0;
+        t[6] = 3;
+        t[7] = 1;
+        func_80053D90(t);
+        t[0x2A] = 0xA;
+        H(t, 0x2E) = 0x1280;
+        H(t, 0x32) = -0x20D8;
+        H(t, 0x36) = 0x277E;
+        H(t, 0x6A) = 0;
+        t[0x164] = 4;
+        t[0x147] = 1;
+        func_80055284(t);
+        func_80054D14(t, 0x1A, 0);
+        H(cam, 0xE) = U(t, 0x32);
+        c = D_1F8000D0_1c08;
+        W(cam, 0x18) = 0;
+        W(c, 0x10) = W(cam, 0xC);
+        func_8006D950(cam, cam + 8);
+        func_8006E0F0(cam);
+        func_8006E918(cam);
+        H(c, 6) = -0x2648;
+    } else if (g[0xF] == 1) {
+        D_1F8000DA_1c08 = 0x2B18;
+        H(t, 0x32) = -0x2C0C;
+        t[6] = 0;
+        t[7] = 0;
+    } else if (g[0xF] == 2) {
+        t[6] = 5;
+    } else {
+        t[6] = 0;
+        t[7] = 0;
+    }
+    func_80054198(t);
+    t[0x16B] = 0;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80111D60);
 
