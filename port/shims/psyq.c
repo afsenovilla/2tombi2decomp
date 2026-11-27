@@ -198,11 +198,14 @@ int rsin(int a) {
     return -sintab[4096 - a];
 }
 int rcos(int a) { return rsin(a + 1024); }
-/* ratan2, SquareRoot0, csqrt, RotMatrix, ApplyMatrixLV, ApplyRotMatrix and RotTransPers are not shimmed: the
-   retail libgte code runs in the interpreter (pure).  The shims were exact where Sony's code rounds (ratan2 off by
-   one on 44 % of inputs, SquareRoot0 an exact isqrt against the table approximation, RotMatrix elements off by
-   1-2): the reference emulator found the camera angle and the vertex positions leaving the retail ones
-   (tools/emu_shimcheck.py, docs/EMU.md).  The shims kept here are equal to the retail code on every input checked. */
+/* ratan2, SquareRoot0, csqrt, RotMatrix, ApplyMatrixLV, ApplyRotMatrix, RotTransPers, MulMatrix0, ApplyMatrix and
+   ApplyMatrixSV are not shimmed: the retail libgte code runs in the interpreter (pure).  The shims were exact where
+   Sony's code rounds (ratan2 off by one on 44 % of inputs, SquareRoot0 an exact isqrt against the table
+   approximation, RotMatrix elements off by 1-2), and MulMatrix0 / ApplyMatrix / ApplyMatrixSV computed in C where
+   the retail code loads its matrix into the GTE's rotation registers and leaves it there (with V0, IR, MAC): game
+   code that runs RTPS / RTPT afterwards uses that matrix (func_8007FDB0's model vertices, attract demo frame 1219).
+   Found with the reference emulator (tools/emu_shimcheck.py, tools/emu_compare.py, docs/EMU.md).  Kept: rsin, rcos,
+   RotMatrixX / Y / Z (plain C in Sony's library too, equal on every input checked) and the register loads. */
 MATRIX *RotMatrixX(int r, MATRIX *m) {
     int s = rsin(r), c = rcos(r);
     for (int i = 0; i < 3; i++) {
@@ -226,23 +229,6 @@ MATRIX *RotMatrixZ(int r, MATRIX *m) {
         m->m[0][i] = (c * a - s * b) >> 12; m->m[1][i] = (s * a + c * b) >> 12;
     }
     return m;
-}
-MATRIX *MulMatrix0(MATRIX *a, MATRIX *b, MATRIX *c) {
-    MATRIX t;
-    for (int i = 0; i < 3; i++) for (int j = 0; j < 3; j++)
-        t.m[i][j] = (a->m[i][0] * b->m[0][j] + a->m[i][1] * b->m[1][j] + a->m[i][2] * b->m[2][j]) >> 12;
-    for (int i = 0; i < 3; i++) for (int j = 0; j < 3; j++) c->m[i][j] = t.m[i][j];
-    return c;
-}
-VECTOR *ApplyMatrix(MATRIX *m, SVECTOR *v, VECTOR *r) {
-    s32 x = v->vx, y = v->vy, z = v->vz;
-    r->vx = (m->m[0][0] * x + m->m[0][1] * y + m->m[0][2] * z) >> 12;
-    r->vy = (m->m[1][0] * x + m->m[1][1] * y + m->m[1][2] * z) >> 12;
-    r->vz = (m->m[2][0] * x + m->m[2][1] * y + m->m[2][2] * z) >> 12;
-    return r;
-}
-SVECTOR *ApplyMatrixSV(MATRIX *m, SVECTOR *v, SVECTOR *r) {
-    VECTOR t; ApplyMatrix(m, v, &t); r->vx = t.vx; r->vy = t.vy; r->vz = t.vz; return r;
 }
 
 #include "cd_virtual.inc"

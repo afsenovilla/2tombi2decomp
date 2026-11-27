@@ -242,6 +242,14 @@ build/port/tomba2 --frames 1700 --save-dir S --dump-frames D2 --dump-every 10 --
   vertex positions left the retail ones; they are removed and the retail libgte code is interpreted (pure). The
   kept shims (rsin, rcos, RotMatrixX / Y / Z, MulMatrix0, ApplyMatrix, ApplyMatrixSV, the Set* register loads) are
   equal on every input `tools/emu_shimcheck.py` tries. The A00 script still runs the same route (47 s headless).
+  MulMatrix0, ApplyMatrix and ApplyMatrixSV are interpreted too: their results were equal, but the retail code loads
+  its matrix into the GTE rotation registers and leaves it there, and game code runs RTPT on it afterwards
+  (func_8007FDB0, the area models: attract demo 1 frame 1219). Found by `emu_compare.py --ram-at`, then the first
+  differing store to the scratchpad word 0x1F800080 (NCLIP results): a gdb `watch` in the port (`port_frame`,
+  `port_mips_cur_pc`, `info symbol $pc`) against `cpu.set_store_hook` in the emulator loaded from `--save-state` at
+  1218. After the fix the attract route's RAM equals the emulator's up to frame 1220; at 1221 the sound engine's voice
+  table (0x800BE31D, one byte per voice) differs because the port's SPU keys voices on where the emulator reports
+  every voice off (docs/EMU.md), and the game's state follows that from there (pictures differ from frame 1240).
 - **GTE** (`runtime/gte.c`): RTPS / RTPT divide with the hardware's UNR table and two Newton steps (psx-spx; as
   tools/psxemu/gte.py) instead of the exact quotient; NCS / NCT / NCDS / NCDT / CC / CDP added (none was logged as
   missing on the routes checked). `python3 -I tools/gte_diff.py [--n N] [--ops RTPS,...] [--raw]` compiles gte.c

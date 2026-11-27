@@ -58,6 +58,13 @@ docs/PORT.md §0.3 has the details and the checks.
   code runs in the interpreter (ratan2 was off by one on 44 % of inputs, SquareRoot0 exact where Sony's is a table
   approximation, RotMatrix elements off by 1-2: the camera angle and the vertex positions left the retail ones).
   `tools/emu_shimcheck.py` now reports them as not shimmed and checks RotTransPers through the port's GTE.
+  Then MulMatrix0, ApplyMatrix and ApplyMatrixSV too: equal results, but the retail code leaves its matrix in the
+  GTE's rotation registers (and V0 / IR / MAC) and game code relies on it: attract demo 1, frame 1219, the model
+  vertices of func_8007FDB0 (native, RTPT) differed (first differing scratchpad store found by a gdb watchpoint in
+  the port against an emulator store hook from a saved state). With them gone the attract route's RAM equals the
+  emulator's at 1219; the next difference (1221) is the sound engine's voice table at 0x800BE31D (the port's SPU
+  keys voices on, the emulator reports every voice off: an emulator limitation, docs/EMU.md), after which actor
+  timers in A00 (0x80148084, ...) and the pictures part (frame 1240).
 - **GTE** (`runtime/gte.c`): the hardware UNR divide replaces the exact rounded quotient (RotTransPers: 0 of 300
   differ, was 1); NCS / NCT / NCDS / NCDT / CC / CDP added. New `tools/gte_diff.py`: gte.c against
   tools/psxemu/gte.py on random register states: all 22 commands equal on 6000 realistic states (`--raw` states

@@ -77,10 +77,14 @@ def pk(a, b):
     return (a & 0xFFFF) | (b & 0xFFFF) << 16
 
 
+WIDE = [False]
+
+
 def state(rng, raw):
     if raw:
         return [rng.getrandbits(32) for _ in range(32)], [rng.getrandbits(32) for _ in range(31)]
-    s16 = lambda lim: rng.randint(-lim, lim)  # noqa: E731
+    w = WIDE[0]
+    s16 = lambda lim: rng.randint(-0x8000, 0x7FFF) if w and rng.random() < 0.5 else rng.randint(-lim, lim)  # noqa: E731
     d = [0] * 32
     for n in range(3):
         d[n * 2] = pk(s16(3000), s16(3000))
@@ -108,6 +112,9 @@ def state(rng, raw):
     for i in (5, 6, 7):
         c[i] = s16(20000) & 0xFFFFFFFF
     c[7] = rng.randint(-2000, 30000) & 0xFFFFFFFF
+    if w:
+        for i in (5, 6, 7):
+            c[i] = rng.randint(-0x800000, 0x800000) & 0xFFFFFFFF if rng.random() < 0.5 else c[i]
     for i in (13, 14, 15, 21, 22, 23):
         c[i] = rng.randint(0, 0xFF0) & 0xFFFFFFFF
     c[24] = (rng.randint(100, 220) << 16) & 0xFFFFFFFF
@@ -126,7 +133,9 @@ def main():
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--ops", default="")
     ap.add_argument("--raw", action="store_true")
+    ap.add_argument("--wide", action="store_true", help="realistic layout, full 16-bit vectors / matrices, large translations")
     a = ap.parse_args()
+    WIDE[0] = a.wide
     out_dir = os.path.join(ROOT, "build", "gte_diff")
     os.makedirs(out_dir, exist_ok=True)
     drv_c, drv = os.path.join(out_dir, "drv.c"), os.path.join(out_dir, "drv")

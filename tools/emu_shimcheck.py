@@ -47,7 +47,8 @@ def has(n):
         getattr(lib, n); return True
     except AttributeError:
         return False
-# (2026-11-28 (2): the port dropped the ratan2 / SquareRoot0 / RotMatrix / RotTransPers shims: the retail code runs.
+# (2026-11-28 (2): the port dropped the ratan2 / SquareRoot0 / RotMatrix / RotTransPers / MulMatrix0 / ApplyMatrix(SV)
+#  shims: the retail code runs (the last three also leave their matrix in the GTE, which game code relies on).
 #  RotTransPers is still checked, as the port's GTE commands it would run: port/runtime/gte.c's RTPS)
 if not has("RotTransPers"):
     for n in ("port_gte_mfc2", "port_gte_cfc2"): getattr(lib, n).restype = ctypes.c_uint32
@@ -58,7 +59,7 @@ if not has("RotTransPers"):
         struct.pack_into("<I", sxy, 0, lib.port_gte_mfc2(14))
         return C.s32(lib.port_gte_mfc2(19)) >> 2, lib.port_gte_mfc2(14), C.s32(lib.port_gte_mfc2(8))
     lib_rtp = _rtp
-skipped = [n for n in ("RotMatrix", "ratan2", "SquareRoot0") if not has(n)]
+skipped = [n for n in ("RotMatrix", "ratan2", "SquareRoot0", "MulMatrix0", "ApplyMatrix", "ApplyMatrixSV") if not has(n)]
 m = M.Machine(); c = m.cpu; c.R[29] = 0x801FFF00
 A, B, D = 0x80100000, 0x80100100, 0x80100200          # scratch RAM for the retail calls
 def call(n, *a): return C.s32(c.call(m.names[n], *[x & 0xFFFFFFFF for x in a], max_instr=200000))
@@ -82,14 +83,18 @@ for _ in range(args.n):
         pm = ctypes.create_string_buffer(pack_m(m0)); getattr(lib, nm)(a, pm); chk(nm, r, unpack_m(pm.raw)[:9], (a, m0))
     m0, m1 = mat(), mat()
     c.write(A, pack_m(m0)); c.write(B, pack_m(m1)); call("MulMatrix0", A, B, D); r = unpack_m(c.read(D, 32))[:9]
-    pa, pb, pd = (ctypes.create_string_buffer(pack_m(x)) for x in (m0, m1, [0] * 12)); lib.MulMatrix0(pa, pb, pd)
-    chk("MulMatrix0", r, unpack_m(pd.raw)[:9], (m0, m1))
+    if "MulMatrix0" not in skipped:
+        pa, pb, pd = (ctypes.create_string_buffer(pack_m(x)) for x in (m0, m1, [0] * 12)); lib.MulMatrix0(pa, pb, pd)
+        chk("MulMatrix0", r, unpack_m(pd.raw)[:9], (m0, m1))
     v = sv()
     c.write(A, pack_m(m0)); c.write(B, struct.pack("<4h", *v)); call("ApplyMatrix", A, B, D); r = list(struct.unpack("<3i", c.read(D, 12)))
     pa, pb, pd = ctypes.create_string_buffer(pack_m(m0)), ctypes.create_string_buffer(struct.pack("<4h", *v)), ctypes.create_string_buffer(16)
-    lib.ApplyMatrix(pa, pb, pd); chk("ApplyMatrix", r, list(struct.unpack("<3i", pd.raw[:12])), (m0, v))
+    if "ApplyMatrix" not in skipped:
+        lib.ApplyMatrix(pa, pb, pd); chk("ApplyMatrix", r, list(struct.unpack("<3i", pd.raw[:12])), (m0, v))
     call("ApplyMatrixSV", A, B, D); r = list(struct.unpack("<3h", c.read(D, 6)))
-    pd = ctypes.create_string_buffer(8); lib.ApplyMatrixSV(pa, pb, pd); chk("ApplyMatrixSV", r, list(struct.unpack("<3h", pd.raw[:6])), (m0, v))
+    pd = ctypes.create_string_buffer(8)
+    if "ApplyMatrixSV" not in skipped:
+        lib.ApplyMatrixSV(pa, pb, pd); chk("ApplyMatrixSV", r, list(struct.unpack("<3h", pd.raw[:6])), (m0, v))
     # RotTransPers with the same GTE set-up on both sides
     t = [random.randint(-2000, 2000), random.randint(-2000, 2000), random.randint(500, 8000)]
     m0 = m0[:9] + t; h = random.choice([256, 512, 1000])
