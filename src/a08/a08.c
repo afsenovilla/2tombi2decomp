@@ -9029,7 +9029,63 @@ void func_8012A638(RECT16 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012A7CC);
+extern u8 D_800BF918;
+extern u8 D_80145A6C;
+extern u8 D_80145A6D;
+extern u16 D_80145A6E;
+extern Mat D_1F8000F8;
+u32 *func_80140FBC();
+
+void func_8012A7CC(u8 *a)
+{
+    u16 *i;
+    u16 *end;
+    u32 *tbl;
+    u32 *ot;
+    u32 *m;
+    u32 w;
+    u32 *ot_f;
+    u32 *m_f;
+    u32 w_f;
+
+    if (a[6] == 0) {
+        return;
+    }
+    gte_SetRotMatrix(&D_1F8000F8);
+    gte_SetTransMatrix(&D_1F8000F8);
+    i = (u16 *)(a + 0x10);
+    if (D_800BF873) {
+        end = (u16 *)(a + 0x10 + a[6] * 2);
+        tbl = *(u32 **)(a + 0xC);
+        ot = D_800ED8C8;
+        gte_ldfcdir(0, 0, 0);
+        for (; i < end; i++) {
+            m = tbl + *i;
+            w = *m;
+            func_8012A06C(func_80129BAC(m + 1, ot, w & 0xFFFF, 0), ot, w >> 16, 0);
+        }
+    } else {
+        end = (u16 *)(a + 0x10 + a[6] * 2);
+        tbl = *(u32 **)(a + 0xC);
+        ot_f = D_800ED8C8;
+        for (; i < end; i++) {
+            m_f = tbl + *i;
+            w_f = *m_f;
+            m_f = func_80140FBC(m_f + 1, ot_f, w_f & 0xFF);
+            w_f >>= 16;
+            f_UpdateWaterTempleRaftNpcActor(m_f, ot_f, w_f & 0xFF);
+        }
+    }
+    D_80145A6C += 0x40;
+    if (D_80145A6C >= 0xC0) {
+        D_80145A6C = 0;
+        D_80145A6D += 0x40;
+        if (D_80145A6D >= 0xC0) {
+            D_80145A6D = 0;
+        }
+    }
+    D_80145A6E = D_80145A6C | (D_80145A6D << 8);
+}
 
 extern s16 D_1F800160_d288_1b66;
 extern s16 *D_1F80028C;
