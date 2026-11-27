@@ -15227,7 +15227,45 @@ s32 func_80055C30(u8 *p)
     return 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80055C9C);
+typedef struct { u8 pad0[0x52]; u16 f52; u8 pad54[0x10]; u8 u64; } Cam_5C9C;
+extern Cam_5C9C D_800E8008_5c9c;
+extern u16 D_1F8000F2_5c9c;
+
+void func_80055C9C(u8 *t, s32 ang)
+{
+    Cam_5C9C *c = &D_800E8008_5c9c;
+    s32 d;
+    s32 e;
+    s32 r;
+
+    if (c->u64 != 5) {
+        d = ((0xC00 - ang) & 0xFFF) - (D_1F8000F2_5c9c & 0xFFF);
+        e = d;
+        if ((s16)d >= 0) {
+            e = d - 0x200;
+        }
+        d = e & 0xFFF;
+        if (c->f52 & 0x800) {
+            if (d < 0xA00) {
+                goto b;
+            }
+        a:
+            D_1F80016C_4910 = 0x20;
+            D_1F80016E_cd4b = 0x80;
+            return;
+        }
+        r = d < 0x600;
+    } else {
+        r = 0xC00 - D_1F8000F2_5c9c;
+        r = ((r - ang) & 0xFFF) < 0x800;
+    }
+    if (!r) {
+        goto a;
+    }
+b:
+    D_1F80016C_4910 = 0x80;
+    D_1F80016E_cd4b = 0x20;
+}
 
 extern s8 D_1F800137[];
 extern s8 D_1F80018C[];
