@@ -7219,7 +7219,40 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801281B8);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeRareFishOrBucketController);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801284AC);
+void func_801284AC(u8 *a)
+{
+    s16 *q = (s16 *)(a + 0x60);
+    u8 *o = P(a, 0x10);
+    u8 *p = P(a, 0xF0);
+    u8 *r = P(a, 0xC0);
+
+    s16 dx = (W_d1fb(p, 0x2C) - W_d1fb(r, 0x2C)) >> 1;
+    s16 dy = (W_d1fb(p, 0x30) - W_d1fb(r, 0x30)) >> 1;
+    s16 dz = (W_d1fb(p, 0x34) - W_d1fb(r, 0x34)) >> 1;
+
+    if (func_800779D0(a, dx, dy, dz) == 0) {
+        if (o == NULL) {
+            return;
+        }
+        if (o[1] == 0) {
+            return;
+        }
+    }
+    a[1] = 1;
+    a[8]++;
+    func_800517F8(a);
+    if (o != NULL) {
+        H_f12c(o, 0x36) = U(P(a, 0xF0), 0x34);
+        H_f12c(a, 0x4E) = U(a, 0x60);
+        H_f12c(a, 0x50) = q[1];
+        H_f12c(a, 0x52) = U(o, 0x36);
+        P(a, 0x14) = a + 0x66;
+        q[3] = U(P(a, 0xF0), 0x2C);
+        q[4] = U(P(a, 0xF0), 0x30);
+        q[5] = U(P(a, 0xF0), 0x34);
+    }
+    a[8]--;
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateBlueBucketPendulumMotion);
 
