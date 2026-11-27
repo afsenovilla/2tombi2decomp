@@ -12435,7 +12435,38 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80132690);
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801329C4);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80132DC0);
+extern s16 *D_1F80028C;
+u32 *func_80132690();
+u32 *func_801329C4();
+
+void func_80132DC0(u32 *a0, void *a1)
+{
+    u32 *s1;
+    s32 s0;
+    u32 w;
+    s16 *o;
+
+    s1 = a0;
+    if (D_800BF873) {
+        o = (s16 *)D_1F80028C;
+        { s32 x = o[0x17]; s32 y = o[0x19]; s32 z = o[0x1B]; s0 = func_80078240(x - D_1F800160_3621_dd1a, y - D_1F800162_a8d4, z - D_1F800164_7d8c_d1dc) << 1; }
+        a0 += 4;
+        gte_ldfcdir(0, 0, 0);
+        w = *s1;
+        func_80131BB0(func_801316A8(a0, a1, w & 0xFFFF, s0), a1, w >> 16, s0);
+    } else {
+        gte_ldfcdir(0x500, 0, 0);
+        if (D_800BF816 != 0) {
+            func_800803DC(a0, a1);
+        } else {
+            a0 += 4;
+            do {
+                w = *s1;
+            } while (0);
+            func_801329C4(func_80132690(a0, a1, w & 0xFFFF), a1, w >> 16);
+        }
+    }
+}
 
 #define AREA_gte_lddp(r0) __asm__ volatile("mtc2	%0, $8" : : "r"(r0))
 #define AREA_gte_ldrgb_r(r0) __asm__ volatile("mtc2	%0, $6" : : "r"(r0))
