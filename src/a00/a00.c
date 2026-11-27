@@ -2565,7 +2565,86 @@ void func_80115598(u8 *a)
     D_800BF544_e6cf = p;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801158E0);
+typedef struct { s16 k, kind, arg; u16 x, y, z; } SpawnRow58e0;
+extern SpawnRow58e0 D_80146F0C[];
+extern u8 D_800BF9E0;
+extern u8 D_800BF816;
+u8 *func_800310F4();
+
+void func_801158E0(u8 *a)
+{
+    s32 vec[4];
+    s32 i;
+    u8 *p;
+
+    switch (a[4]) {
+    case 0:
+        if (D_800BF9E0 >= 0x1C) {
+            a[4] = 3;
+            break;
+        }
+        for (i = 0; D_80146F0C[i].k >= 0; i++) {
+            if (D_80146F0C[i].k == a[5]) {
+                ((s16 *)vec)[1] = D_80146F0C[i].x;
+                ((s16 *)vec)[3] = D_80146F0C[i].y;
+                ((s16 *)vec)[5] = D_80146F0C[i].z;
+                p = func_8003116C(D_80146F0C[i].kind, vec, D_80146F0C[i].arg);
+                if (p != NULL) {
+                    if (D_80146F0C[i].kind == 0x100) {
+                        p[3] = i;
+                    } else if (D_80146F0C[i].arg & 1) {
+                        p[3] = 1;
+                    } else {
+                        p[3] = 0;
+                    }
+                }
+            }
+        }
+        if (a[5] >= 0x1E) {
+            p = func_800310F4(0x106, -0xB);
+            p[3] = 1;
+            p = func_800310F4(0x106, -0xA);
+            p[3] = 2;
+            p = func_800310F4(0x106, -0x1F);
+            p[3] = 3;
+            p = func_800310F4(0x106, -0x1E);
+            p[3] = 4;
+            p = func_800310F4(0x106, -0x1E);
+            p[3] = 5;
+            p = func_800310F4(0x106, -0x1E);
+            p[3] = 6;
+            a[4] = 1;
+            H_f12c(a, 0xA) = 5;
+        }
+        a[5]++;
+        break;
+    case 1:
+        if (D_800BF9E0 >= 0x10) {
+            a[4] = 3;
+            break;
+        }
+        if (D_800BF816 != 0) {
+            break;
+        }
+        if (D_800E7FEB == 1) {
+            break;
+        }
+        H_f12c(a, 0xA)--;
+        if (H_f12c(a, 0xA) != 0) {
+            break;
+        }
+        ((s16 *)vec)[1] = (func_8009A450() & 0x7F) + 0x2731;
+        ((s16 *)vec)[3] = -0x831 - (func_8009A450() & 0x7F);
+        ((s16 *)vec)[5] = 0x17C3 - (func_8009A450() & 0x7F);
+        func_8003116C(0x101, vec, -0x14);
+        H_f12c(a, 0xA) = (func_8009A450() & 7) + 2;
+        break;
+    case 2:
+    case 3:
+        func_8007ADD0(a);
+        break;
+    }
+}
 
 typedef struct { s16 x, y, w, h; } ClutRect;
 typedef struct {
@@ -4536,7 +4615,6 @@ void func_8011BDB8(u8 *a) {
 
 #define KSH(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define KSW(p, o) (*(s32 *)((u8 *)(p) + (o)))
-extern u8 D_800BF9E0;
 void f_UpdateKainenHouseSceneActor(u8 *a) {
     s32 r;
 
@@ -7365,7 +7443,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeTableDrivenInteriorEffect);
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeLinkedWindmillInteriorEffect);
 
-extern u8 D_800BF816;
 void f_HandleInteriorEffectActor(u8 *a)
 {
     u8 *g;
