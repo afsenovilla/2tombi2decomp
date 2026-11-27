@@ -19,7 +19,11 @@ unsigned long port_interp_kuseg;
 /* (and RAM is mirrored four times in the first 8 MB of KUSEG / KSEG0 / KSEG1, as on the console: an access at
    0x80200000 reads 0x80000000) */
 static inline u32 ma(u32 a) {
-    if (a - 0x10000u < 0x1F0000u) { port_interp_kuseg++; return a | 0x80000000u; }
+    if (a < 0x200000u) {   /* KUSEG RAM, page 0 too (the kernel area: a store through a null pointer + 0xA in attract
+                              mode, frame 5771, went to the host's page 0, emulated on Windows) */
+        port_interp_kuseg++;
+        return a | 0x80000000u;
+    }
     if ((a & 0x1FFFFFFFu) - 0x200000u < 0x600000u && (a >> 29 == 0 || a >> 29 == 4 || a >> 29 == 5))
         return 0x80000000u | (a & 0x1FFFFFu);
     return a;

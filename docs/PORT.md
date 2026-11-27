@@ -259,6 +259,9 @@ build/port/tomba2 --frames 1700 --save-dir S --dump-frames D2 --dump-every 10 --
   missing on the routes checked). `python3 -I tools/gte_diff.py [--n N] [--ops RTPS,...] [--raw]` compiles gte.c
   with a driver (build/gte_diff/drv, gcc -m32) and compares every register after each command with gte.py on random
   states: 0 differences in all 22 commands (6000 states).
+- **Interpreter page 0**: `mips_interp.c ma` maps every KUSEG address below 0x200000 to KSEG0, page 0 included (an
+  interpreted store through a null pointer + 0xA at attract frame 5771 reached the host's page 0: on Windows an
+  emulated access, 24 in 6000 frames under Wine). Linux and Wine frames equal (60 attract dumps).
 - **The TV window** (`shims/gpu.c tv_frame`): DISPENV.screen is 0,8 256x224 (logged: `[gpu] display 320x240,
   screen 0,8 256x224`): a television shows the display's first 224 lines 8 lines down and never the last 16, where
   the cutscene letterbox leaves the previous picture. The window gets that picture (240 lines, black borders);

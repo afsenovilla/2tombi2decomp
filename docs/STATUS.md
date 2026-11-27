@@ -73,6 +73,9 @@ docs/PORT.md §0.3 has the details and the checks.
   differ, was 1); NCS / NCT / NCDS / NCDT / CC / CDP added. New `tools/gte_diff.py`: gte.c against
   tools/psxemu/gte.py on random register states: all 22 commands equal on 6000 realistic states (`--raw` states
   differ only where gte.py keeps unmasked 32-bit control registers).
+- **Interpreter page 0** (`runtime/mips_interp.c ma`): KUSEG 0x0-0xFFFF is RAM too (the kernel area); an interpreted
+  store through a null pointer + 0xA (attract mode, frame 5771) went to the host's page 0 (emulated and counted on
+  Windows: 24 accesses under Wine). Now served from KSEG0; Wine's tally is back to func_80051E00's 4 page-0 reads.
 - **The TV window** (`shims/gpu.c`): the game sets DISPENV.screen 0,8 256x224 on a 320x240 display, so a TV shows
   only the display's first 224 lines (8 lines down, black borders); the window showed all 240, i.e. 16 stale lines
   under the cutscene letterbox. The viewer now gets the TV picture; `--dump-tv` dumps it (plain `--dump-frames`
