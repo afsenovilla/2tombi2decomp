@@ -18941,7 +18941,69 @@ void func_800645CC(void *arg0) {
     M2C_FIELD(arg0, s8 *, 7) = 0;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_800645E0);
+s32 func_800633B0(u8 *a);
+
+void func_800645E0(u8 *a)
+{
+    u8 v;
+
+    switch (a[6]) {
+    case 0:
+        a[7] = 2;
+        a[6]++;
+        H_f12c(a, 0x154) = 0;
+        a[0x5E] = 0;
+        H_f12c(a, 0x58) = 0;
+        H_f12c(a, 0x4A) = 0;
+        a[0x14A] = a[0x147] + 2;
+        a[0x149] = a[0x147] + 2;
+    case 1:
+        if (((s32 (*)(u8 *, s32))func_800633B0)(a, 0) == 0 && a[7] >= 2) {
+            if (D_800E7E68 & *(u16 *)D_1F800172) {
+                func_80064524(a);
+            } else if ((*(u8 **)(a + 0x158))[0xC] != 5 && f_TryStartTombaContactAction(a, 0) && a[5] == 4) {
+                func_800645CC(a);
+            }
+        }
+        break;
+    case 2:
+        f_AdvanceActorSkeletalAnimation(a);
+        f_ReadTombaDirectionalInput(a, 1);
+        f_UpdateTombaHorizontalMovementSpeed(a, a[0x14A]);
+        f_AdvanceTombaAlongMovementVector(a, 1);
+        f_UpdateTombaMovementOrientation(a);
+        f_UpdateTombaAirborneMotion(a, 0);
+        if (--H_f12c(a, 0x40) == 0) {
+            a[5] = 2;
+            a[6] = 1;
+        } else if (f_TryStartTombaContactAction(a, 0)) {
+            a[0x144] = 0;
+            a[6] = 0;
+            if (a[0x29] != 0) {
+                a[5] = 5;
+                a[7] = 0;
+            } else {
+                a[5] = 6;
+            }
+        } else if (a[0x29] != 0) {
+            a[7] = 0;
+            if (a[0x149] & 2) {
+                a[5] = 2;
+                a[6] = 2;
+                f_SetTombaAnimationIfChanged(a, 0x17, 1);
+            } else {
+                a[5] = 1;
+                a[6] = 0;
+                f_UpdateTombaGroundMovementAnimation(a, 1);
+            }
+        }
+        f_UpdateTombaModelOrientationFromFacing(a);
+        break;
+    case 3:
+        func_8010AA20(a);
+        break;
+    }
+}
 
 void func_8006483C(u8 *t, s32 mode)
 {
