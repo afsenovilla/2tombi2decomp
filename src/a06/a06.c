@@ -4188,7 +4188,62 @@ void func_8011B90C(void *arg0) {
     }
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011B958);
+typedef struct { u8 pad[0xC0]; u8 *parts[16]; } AB958;
+#define PT(a, i) (((AB958 *)(a))->parts[i])
+extern u8 D_1F800000_88c4[];
+extern u8 D_1F800020_79d7[];
+extern s16 D_80144E94[];
+
+void func_8011B958(u8 *a)
+{
+    s32 i;
+    s16 k;
+    u8 *a_p = a;
+
+    func_80085480(a_p + 0x54, a_p + 0x98);
+    for (i = 0; i < a_p[8]; i++) {
+        k = H(PT(a_p, i), 6);
+        if (k == -1) {
+            func_80085480(PT(a_p, i) + 8, D_1F800000_88c4);
+            func_80084110(a_p + 0x98, D_1F800000_88c4, PT(a_p, i) + 0x18);
+            func_80084220(PT(a_p, i), PT(a_p, i) + 0x2C);
+            W_d1fb(PT(a_p, i), 0x2C) += H(a_p, 0x2E);
+            W_d1fb(PT(a_p, i), 0x30) += H(a_p, 0x32);
+            W_d1fb(PT(a_p, i), 0x34) += H(a_p, 0x36);
+        } else {
+            if ((u32)(i - 2) < 2) {
+                func_80085480(PT(a_p, i) + 8, D_1F800000_88c4);
+                func_80051794(D_1F800020_79d7);
+                func_80085050(H(*(u8 **)(a_p + 0xC4), 0xC), D_1F800020_79d7);
+                func_80084EB0(H(a_p, 0x56), D_1F800020_79d7);
+                func_80084110(D_1F800020_79d7, D_1F800000_88c4, PT(a_p, i) + 0x18);
+                func_80084470(PT(a_p, k) + 0x18, PT(a_p, i), PT(a_p, i) + 0x2C);
+            } else {
+                func_80051794(D_1F800000_88c4);
+                func_80084A80(PT(a_p, i) + 8, D_1F800000_88c4);
+                func_80084110(PT(a_p, k) + 0x18, D_1F800000_88c4, PT(a_p, i) + 0x18);
+                func_80084220(PT(a_p, i), PT(a_p, i) + 0x2C);
+            }
+            W_d1fb(PT(a_p, i), 0x2C) += W_d1fb(PT(a_p, k), 0x2C);
+            W_d1fb(PT(a_p, i), 0x30) += W_d1fb(PT(a_p, k), 0x30);
+            W_d1fb(PT(a_p, i), 0x34) += W_d1fb(PT(a_p, k), 0x34);
+        }
+    }
+    switch (a_p[3]) {
+    case 0:
+    case 1:
+        i = 0;
+        break;
+    case 2:
+        i = 1;
+        break;
+    case 3:
+        i = 2;
+        break;
+    }
+    W_d1fb(*(u8 **)(a_p + 0xC8), 0x2C) = D_80144E94[i];
+    W_d1fb(*(u8 **)(a_p + 0xCC), 0x2C) = D_80144E94[i + 1];
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8011BC18);
 
