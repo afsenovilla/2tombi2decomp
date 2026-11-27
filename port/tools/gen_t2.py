@@ -797,6 +797,13 @@ def sources(outdir, progs):
 
 
 # ------------------------------------------------------------------------------------------------ link
+def code_hash(b, seed):
+    h = seed
+    for c in b:
+        h = ((h ^ c) * 0x01000193) & 0xFFFFFFFF
+    return h
+
+
 def host_nm(nm, objs):
     defined, undef = {}, set()
     for o in objs:
@@ -897,7 +904,7 @@ def link(outdir, nm, objlist):
         f.write(".section .rodata\n")
         for k, (name, addr) in enumerate(thunks):
             f.write('.Ln%d: .asciz "%s"\n' % (k, name))
-    # funcmap: native functions by retail address (an overlay's with its program and its first two code words, to
+    # funcmap: native functions by retail address (an overlay's with its program and its first two code words' hashes, to
     # tell which overlay is resident); libmap: shims by retail address; libaddrs: policy
     bins = {}
     for p in ovls:
@@ -914,8 +921,9 @@ def link(outdir, nm, objlist):
                 off = a - vram[prog]
                 b = bins[prog]
                 if 0 <= off and off + 8 <= len(b):
-                    w0 = int.from_bytes(b[off:off + 4], "little")
-                    w1 = int.from_bytes(b[off + 4:off + 8], "little")
+                    # two FNV-1a hashes of the first 8 code bytes, not the words themselves: no game bytes in the
+                    # exe (runtime/sys_lookup.c code_hash computes the same from RAM)
+                    w0, w1 = code_hash(b[off:off + 8], 0x811C9DC5), code_hash(b[off:off + 8], 0x01000193 ^ 0x5BD1E995)
             native.append((a, ovl, name, int(rk), w0, w1))
     native.sort()
     lib = []

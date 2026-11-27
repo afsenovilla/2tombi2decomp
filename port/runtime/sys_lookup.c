@@ -29,16 +29,21 @@ void port_ovl_loaded(const char *file) {
         if (!*a && !*b) { ovl_resident[ovl_slot(port_ovls[i].vram)] = i; return; }
     }
 }
+/* gen_t2.py code_hash: FNV-1a of a function's first 8 code bytes (the funcmap holds hashes, not the game's words) */
+static u32p code_hash(const unsigned char *b, u32p h) { for (int i = 0; i < 8; i++) h = (h ^ b[i]) * 0x01000193u; return h; }
 static const PortFunc *find_ovl(u32p a) {
     /* the entries for this address (one per overlay with C for it): the resident overlay's, if its code is in RAM;
        else none: the interpreter.  (Never another overlay's whose first words match: a common prologue made A01's
        native code run for an asm-only A03 function at the same address.) */
     int lo = 0, hi = port_funcmap_count;
     while (lo < hi) { int m = (lo + hi) / 2; if (port_funcmap[m].addr < a) lo = m + 1; else hi = m; }
-    const u32p *ram = (const u32p *)a;
+    const unsigned char *ram = (const unsigned char *)a;
+    u32p h0 = 0, h1 = 0;
     for (int i = lo; i < port_funcmap_count && port_funcmap[i].addr == a; i++) {
         const PortFunc *f = &port_funcmap[i];
-        if (!f->ovl || ram[0] != f->w0 || ram[1] != f->w1) continue;
+        if (!f->ovl) continue;
+        if (!h0 && !h1) { h0 = code_hash(ram, 0x811C9DC5u); h1 = code_hash(ram, 0x01000193u ^ 0x5BD1E995u); }
+        if (h0 != f->w0 || h1 != f->w1) continue;
         if (ovl_resident[ovl_slot(port_ovls[f->ovl].vram)] == f->ovl) return ovl_disabled(f->ovl) ? 0 : f;
     }
     return 0;

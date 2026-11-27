@@ -104,3 +104,12 @@ if(SDL2_FOUND)
 else()
   message(STATUS "SDL2 not found: no tomba2-view; the game still builds (headless)")
 endif()
+
+# 5. Windows: the double-click launcher (asks once for the disc image, runs tomba2.exe --window without a console,
+#    docs/PORT.md §0.2); a normal mingw program, not freestanding.
+if(WIN32)
+  add_executable(tomba2-launcher WIN32 tools/launcher/tomba2_launcher.c)
+  target_compile_options(tomba2-launcher PRIVATE -O2 -Wall)
+  target_link_libraries(tomba2-launcher PRIVATE comdlg32 shell32 user32)
+  target_link_options(tomba2-launcher PRIVATE -static -static-libgcc)
+endif()
