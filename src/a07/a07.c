@@ -4136,7 +4136,168 @@ void func_8011C4D0(void *arg0) {
     M2C_FIELD(temp_a2, s16 *, 0x10) = (s16) (M2C_FIELD(temp_a0_4, u16 *, 0x34) + ((s32) -(M2C_FIELD(temp_a0_4, s16 *, 0x24) * 0xA0) >> 0xC));
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusWellLidActor);
+#define P(p, o) (*(u8 **)((u8 *)(p) + (o)))
+extern u8 D_800BF8DB;
+static inline s32 StepC5FC(u8 *a, u8 *v)
+{
+    H(a, 0x40)--;
+    if (H(a, 0x40) == 0) {
+        return 1;
+    }
+    H(v, 0xC) += H(a, 0x4E);
+    H(v, 0xE) += H(a, 0x50);
+    H(v, 0x10) += H(a, 0x52);
+    return 0;
+}
+
+void f_UpdateCircusWellLidActor(u8 *a)
+{
+    u8 *b;
+
+    switch (a[4]) {
+    case 0:
+        if (func_80051B70(a, 0xC, 0x36) != 0) {
+            break;
+        }
+        if (D_800BF8DB != 0) {
+            if (D_800BF8DB != 0xFF) {
+                a[6] = 0;
+                a[5] = 0xA;
+            } else {
+                a[4] = 3;
+                break;
+            }
+        } else {
+            H(a, 0x80) = 0xF0;
+            H(a, 0x82) = 0x1E0;
+            H(a, 0x84) = 0x64;
+            a[0] = 1;
+            H(a, 0x86) = 0xC8;
+            a[0x2B] = 0;
+        }
+        a[4]++;
+        break;
+    case 1:
+        func_8007778C(a);
+        switch (a[5]) {
+        case 0:
+            if (a[0x2B] != 0) {
+                a[0x2B] = 0;
+                a[0] = 2;
+                func_800440E4(D_800E7E80, 0xC1, 4);
+                H(a, 0x40) = 0;
+                func_80040B48(0x27);
+                a[5]++;
+            } else if (D_800BF8DB != 0) {
+                a[0] = 2;
+                a[6] = 0;
+                a[5] = 0xA;
+            }
+            break;
+        case 1:
+            if (func_80042728() == 0) {
+                H(a, 0x40)++;
+                if (H(a, 0x40) < 0xC8) {
+                    break;
+                }
+            }
+            func_80042310();
+            a[6] = 0;
+            a[5] = 0xA;
+            break;
+        case 10:
+            switch (a[6]) {
+            case 0:
+                if (D_800BFA2C == 0xF) {
+                    P(a, 0x10) = D_800BF860_c64f;
+                    b = func_80118294(a);
+                    P(a, 0x14) = b;
+                    if (P(a, 0x10) != NULL && b != NULL) {
+                        H(b, 0x60) = 1;
+                        ((void (*)())func_8011C340)(a, b);
+                        a[6]++;
+                    }
+                }
+                break;
+            case 1:
+                if (StepC5FC(a, P(a, 0x14) + 0x60)) {
+                    D_800BFA2C = 0x10;
+                    a[6]++;
+                }
+                break;
+            case 2:
+                func_8011C4D0(a);
+                if (D_800BFA2C == 0x12) {
+                    func_80074590(0x8C, 3, 0);
+                    func_80074590(0x84, 8, 0);
+                    H(a, 0x56) = 0xC00;
+                    H(a, 0x58) = 0x1000;
+                    H(a, 0x4A) = -0x2800;
+                    H(a, 0x50) = 0x280;
+                    a[6]++;
+                }
+                break;
+            case 3:
+                func_8011C4D0(a);
+                H(a, 0x36) -= 0x10;
+                if (H(a, 0x36) < 0x37DC) {
+                    H(a, 0x36) = 0x37DC;
+                }
+                H(a, 0x58) -= 0x20;
+                if (H(a, 0x58) < 0xC00) {
+                    H(a, 0x58) = 0xC00;
+                }
+                H(a, 0x4A) += H(a, 0x50);
+                if (H(a, 0x4A) >= 0x3800) {
+                    H(a, 0x4A) = 0x3800;
+                }
+                W_d1fb(a, 0x30) += H(a, 0x4A) << 8;
+                if (H(a, 0x32) >= -0xAEF && H(a, 0x4A) > 0) {
+                    H(a, 0x40) = 0;
+                    func_80074590(0x84, 8, 0);
+                    H(a, 0x4A) = -0x1800;
+                    H(a, 0x58) = 0xC00;
+                    H(a, 0x32) = -0xAF0;
+                    H(a, 0x36) = 0x37DC;
+                    a[6]++;
+                }
+                break;
+            case 4:
+                func_8011C4D0(a);
+                H(a, 0x56) += 8;
+                H(P(a, 0xC0), 0xA) += 0x40;
+                H(a, 0x2E) += 0x10;
+                H(a, 0x4A) += H(a, 0x50);
+                if (H(a, 0x4A) >= 0x3800) {
+                    H(a, 0x4A) = 0x3800;
+                }
+                W_d1fb(a, 0x30) += H(a, 0x4A) << 8;
+                if (H(a, 0x40) < 0xF) {
+                    H(a, 0x40)++;
+                    if (H(a, 0x40) == 0xF) {
+                        func_80074590(0x84, 8, 0);
+                    }
+                }
+                if (H(a, 0x32) >= -0x7CF) {
+                    b = P(a, 0x14);
+                    b[4] = 3;
+                    a[4] = 3;
+                }
+                break;
+            }
+            break;
+        }
+        if (a[1] != 0) {
+            func_800517F8(a);
+        }
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusSeesawActor);
 
@@ -5507,7 +5668,6 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012168C);
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_801218B0);
 
 extern u8 D_800BF9D7;
-extern u8 D_800BF8DB;
 void func_80121AB4(u8 *a)
 {
     switch (a[4]) {
