@@ -10820,7 +10820,118 @@ u32 *func_8013CF00(u32 *f, u32 *ot, s32 n)
     return f;
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013D1E4);
+extern s32 D_80143D2C;
+
+u32 *func_8013D1E4(u32 *f, u32 *ot, s32 n)
+{
+    s32 sz[4];
+    T2PolyGT4 *p = D_800BF544_ff0c;
+    u32 m = 0xFFF0F0F0;
+    s32 *flg = &D_1F800080_e4a3;
+    s32 *otz = &D_1F800084_8c7c;
+    u32 c, c0;
+    u32 mode;
+    s32 b, a, v, e;
+    u32 *o;
+
+    while (n-- != 0) {
+        T2_ldv1p(f);
+        c = f[1];
+        p->rgb2 = c & m;
+        T2_rtps();
+        p->uv1 = f[3];
+        p->rgb3 = (c << 4) & m;
+        T2_stflg(flg);
+        if (*flg >= 0) {
+            T2_stsxy(&p->x3);
+            T2_ldv3p(f);
+            c0 = f[0];
+            p->rgb0 = c0 & m;
+            T2_rtpt();
+            p->rgb1 = (c0 << 4) & m;
+            T2_stflg(flg);
+            if (*flg >= 0) {
+                T2_nclip();
+                p->uv0 = f[2];
+                T2_stopz(flg);
+                if (*flg > 0) {
+                    T2_stsxy3_gt4(p);
+                    if ((p->x0 < 320 || p->x1 < 320 || p->x2 < 320 || p->x3 < 320) &&
+                        (p->y0 < 240 || p->y1 < 240 || p->y2 < 240 || p->y3 < 240)) {
+                        c >>= 24;
+                        mode = c & 3;
+                        if (mode != 0) {
+                            T2_stsz0(&sz[0]);
+                            T2_stsz1(&sz[1]);
+                            T2_stsz2(&sz[2]);
+                            T2_stsz3(&sz[3]);
+                            if (mode == 1) {
+                                a = sz[1];
+                                if (a < sz[0]) {
+                                    a = sz[0];
+                                }
+                                b = sz[3];
+                                if (b < sz[2]) {
+                                    do {
+                                        b = sz[2];
+                                    } while (0);
+                                }
+                                if (b < a) {
+                                    b = a;
+                                }
+                                *otz = b >> 2;
+                            } else {
+                                a = sz[1];
+                                if (sz[0] < a) {
+                                    a = sz[0];
+                                }
+                                b = sz[3];
+                                if (sz[2] < b) {
+                                    b = sz[2];
+                                }
+                                if (a < b) {
+                                    b = a;
+                                }
+                                *otz = b >> 2;
+                            }
+                        } else {
+                            T2_avsz4();
+                            T2_stotz(otz);
+                        }
+                        do {
+                        e = *otz >> 10;
+                        *otz = (*otz >> e) + (e << 9);
+                        } while (0);
+                        if ((u32)(*otz - 4) >= 0x7FC) {
+                            *otz = -1;
+                        }
+                        if (*otz >= 0) {
+                            v = f[4];
+                            p->uv2 = v;
+                            p->uv3 = (u32)v >> 16;
+                            if (c & 8) {
+                                u32 u = D_8014A450 >> 4;
+                                *(u8 *)&p->uv0 += u;
+                                *(u8 *)&p->uv1 += u;
+                                *(u8 *)&p->uv2 += u;
+                                *(u8 *)&p->uv3 += u;
+                            }
+                            do {
+                                o = ot + *otz;
+                                p->tag = *o | 0x0C000000;
+                                *o = (u32)p;
+                            } while (0);
+                            p++;
+                        }
+                    }
+                }
+            }
+        }
+        f += 11;
+    }
+    D_800BF544_ff0c = p;
+    return f;
+}
 
 extern s16 *D_1F80028C;
 void func_8013D568(u32 *a0, void *a1)
