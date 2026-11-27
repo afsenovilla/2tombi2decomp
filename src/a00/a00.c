@@ -2057,7 +2057,46 @@ void func_801143A4(u8 *a, u8 *b) {
     }
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80114408);
+extern u8 D_800BF9E5_1228;
+
+void func_80114408(u8 *a, u8 *b)
+{
+    s32 r = func_8001F40C(a, b, 1);
+    s32 v;
+
+    if (r < 0) {
+        return;
+    }
+    D_1F800182_5650 = 0;
+    if (D_800BF9E5_1228 == 6 && a[0x144] == 1) {
+        if (r < 2) {
+            func_8001FDB4(b, -0x7FFF, 0x10, 0x20);
+            return;
+        }
+    }
+    if (D_1F800137 != 0) {
+        return;
+    }
+    if (a[0] & 6) {
+        return;
+    }
+    if (a[0x144] >= 2) {
+        return;
+    }
+    if (a[0x164] != 0) {
+        return;
+    }
+    if (D_800BF9E5_1228 != 6) {
+        func_8004ED94(0x2A, 0x41);
+    }
+    v = D_1F80009C;
+    a[4] = 2;
+    a[5] = 2;
+    a[0] = 3;
+    a[6] = 0;
+    *(s16 *)(a + 0x172) = 0x78;
+    a[0x2B] = v >> 4;
+}
 
 s32 func_80114528(s32 arg0, s32 arg1) {
     return func_8010EC58(arg0, arg1, M2C_FIELD(arg1, s32 *, 0xC0));
@@ -2842,7 +2881,6 @@ void f_UpdateCrabBasketRewardDrop(u8 *a) {
 
 typedef struct { s16 x, y, z; } SVec3T;
 extern SVec3T D_1F8000C0_4e9b;
-extern u8 D_800BF9E5_1228;
 void func_80116E3C(u8 *a) {
     s32 n;
     u8 *g;
