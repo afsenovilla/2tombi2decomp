@@ -319,6 +319,20 @@ def retail_func_ptrs(text, addrs):
     return "".join(out)
 
 
+# Ordering-table link stores (T1 gen_port.py port_kuseg_mask, "24-bit link"): the game links a primitive with
+# `*o = (u32)p;`, `p` a KUSEG pointer on the console (its primitive buffer pointer D_800BF544 is kept masked with
+# 0xFFFFFF).  The port hands native code the KSEG0 view of that pointer (runtime/mips_interp.c kcell), so it never
+# touches 0x10000-0x1FFFFF (Windows has its own memory there); stored whole it would put 0x80 into the next tag's
+# length byte, so the store keeps the 24-bit link the console stored.
+KUSEG_LINK_STORE_RE = re.compile(r"^(\s*\*\s*(o|ot|ot\d|o\d)\s*=\s*)\(\s*(u32|s32|int|u_long|unsigned long|unsigned int)\s*\)\s*(\w+)\s*;", re.M)
+KUSEG_LINK_STORES = [0]
+def kuseg_link_stores(body):
+    def sub(m):
+        KUSEG_LINK_STORES[0] += 1
+        return "%s((%s)%s & 0xFFFFFF); /* PORT: 24-bit link */" % (m.group(1), m.group(3), m.group(4))
+    return KUSEG_LINK_STORE_RE.sub(sub, body)
+
+
 def emit(items, syms, funcs, rename, drop, native, arity=None, forwarded=None, fptrs=None):
     out, spans, n_func, n_asm, n_ext = [], [], 0, 0, 0
     line = 2
@@ -343,6 +357,7 @@ def emit(items, syms, funcs, rename, drop, native, arity=None, forwarded=None, f
                     body = forward_short_calls(body, arity, forwarded if forwarded is not None else [])
                     body = forward_indirect_calls(body, c_arity(head), forwarded if forwarded is not None else [])
                 body = retail_func_ptrs(body, fptrs)
+                body = kuseg_link_stores(body)
                 if name in rename:
                     h = re.sub(r"\b%s\b(?=\s*\()" % name, name + "__def", head, count=1)
                     piece = h + body + '\n__asm__(".globl %s\\n.set %s, %s__def");\n' % (name, name, name)

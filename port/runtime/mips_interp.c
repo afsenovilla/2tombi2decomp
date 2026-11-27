@@ -25,6 +25,12 @@ static inline u32 ma(u32 a) {
     return a;
 }
 #define MA(a) ma(a)
+/* KUSEG pointer cells: the game keeps its primitive buffer pointer masked with 0xFFFFFF (main() = func_80050B08,
+   still assembly: `D_800BF544 = (D_800BFE68 + i * 0x14000) & 0xFFFFFF` every frame) and the native C draws through
+   it.  The port stores the KSEG0 view of the same byte instead, so native code never touches 0x10000-0x1FFFFF (on
+   Windows the host has its own memory there); the 24-bit OT links the native C stores are masked by gen_t2.py
+   (kuseg_link_stores) and DrawOTag ignores the 0x80 an interpreted link store can leave in a tag's length byte. */
+static inline u32 kcell(u32 a, u32 v) { return (v - 0x10000u < 0x1F0000u && a == 0x800BF544u) ? v | 0x80000000u : v; }
 
 void port_gte_op(unsigned long op);
 void port_gte_mtc2(int reg, unsigned long v);
@@ -191,7 +197,7 @@ u32 port_mips_call(u32 entry, const u32 *args) {
         case 0x28: *(u8 *)MA(r[rs] + imm) = (u8)r[rt]; break;
         case 0x29: *(u16 *)MA(r[rs] + imm) = (u16)r[rt]; break;
         case 0x2A: swl(r[rs] + imm, r[rt]); break;
-        case 0x2B: *(u32 *)MA(r[rs] + imm) = r[rt]; break;
+        case 0x2B: { u32 a = MA(r[rs] + imm); *(u32 *)a = kcell(a, r[rt]); } break;
         case 0x2E: swr(r[rs] + imm, r[rt]); break;
         case 0x32: port_gte_mtc2(rt, *(u32 *)MA(r[rs] + imm)); break;   /* lwc2 */
         case 0x3A: *(u32 *)MA(r[rs] + imm) = port_gte_mfc2(rt); break;  /* swc2 */
@@ -260,7 +266,7 @@ u32 port_mips_call(u32 entry, const u32 *args) {
                         case 0x25: r[t2] = *(u16 *)MA(r[s2] + i2); break;
                         case 0x28: *(u8 *)MA(r[s2] + i2) = (u8)r[t2]; break;
                         case 0x29: *(u16 *)MA(r[s2] + i2) = (u16)r[t2]; break;
-                        case 0x2B: *(u32 *)MA(r[s2] + i2) = r[t2]; break;
+                        case 0x2B: { u32 a = MA(r[s2] + i2); *(u32 *)a = kcell(a, r[t2]); } break;
                         default: port_fatal("[mips] delay slot %08x at %08x", dins, save_pc);
                         }
                         r[0] = 0;

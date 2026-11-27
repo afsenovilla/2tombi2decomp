@@ -229,6 +229,7 @@ static unsigned char *scratch;        /* PAGE_EXECUTE_READWRITE */
 #define PAGE_READWRITE 4
 #define FILE_MAP_ALL_ACCESS 0xF001F
 int port_low_mem = -1;
+int port_kuseg_mirror;    /* --kuseg-mirror: map the RAM object at 0x10000 too (the stage-2 behaviour) */
 static int kuseg_child;   /* this process was started by relaunch_reserved below */
 void port_setup_memory(void) {
     HANDLE m = CreateFileMappingA(INVALID_HANDLE, 0, PAGE_READWRITE, 0, PSX_RAM_SIZE, 0);
@@ -248,7 +249,9 @@ void port_setup_memory(void) {
        (listed below, the only ones that would still read the host's memory) are named in the log.
        --kuseg-mirror maps the RAM object there where the range is free (the old behaviour; --kuseg-strict needs
        it whole), --fake-kuseg gives the game private memory instead (reproduces the Windows failure). */
-    int mirror = port_kuseg_strict != 2 && port_kuseg_strict != 3;   /* T2: the mirror unless --no-kuseg / --fake-kuseg */
+    /* T2 (stage 3): no mirror by default, as in T1 (the game's masked primitive pointer is handed to native code as
+       KSEG0: mips_interp.c kcell, gen_t2.py kuseg_link_stores); --kuseg-mirror maps it where the range is free */
+    int mirror = port_kuseg_mirror && port_kuseg_strict != 2 && port_kuseg_strict != 3;
     if (kuseg_child && mirror) {   /* the parent reserved the blocks in this process before its heap existed (see start) */
         unsigned n = 0;
         for (unsigned a = 0x10000; a < PSX_RAM_SIZE; a += 0x10000) {
@@ -466,9 +469,14 @@ __attribute__((used, noreturn)) void start(void) {
     const char *c = GetCommandLineA();
     int n = 0; while (c[n] && n < (int)sizeof cmd_copy - 1) { cmd_copy[n] = c[n]; n++; } cmd_copy[n] = 0;
     int argc = split_args(cmd_copy, argv_buf, 64);
-    for (int i = 1; i < argc; i++) if (argv_buf[i][0] == '-' && argv_buf[i][1] == 'v' && !argv_buf[i][2]) port_verbose++;
+    for (int i = 1; i < argc; i++) {
+        if (argv_buf[i][0] == '-' && argv_buf[i][1] == 'v' && !argv_buf[i][2]) port_verbose++;
+        const char *a = argv_buf[i], *b = "--kuseg-mirror"; int k = 0;
+        while (a[k] && a[k] == b[k]) k++;
+        if (!a[k] && !b[k]) port_kuseg_mirror = 1;
+    }
     { char b[4]; kuseg_child = GetEnvironmentVariableA("PORT_KUSEG_CHILD", b, sizeof b) > 0; }
-    if (!kuseg_child && !kuseg_free()) relaunch_reserved();
+    if (port_kuseg_mirror && !kuseg_child && !kuseg_free()) relaunch_reserved();
     timeBeginPeriod(1);
     sleep_calibrate();
     image_delta = (unsigned long)__ImageBase - PORT_LINK_BASE;

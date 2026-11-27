@@ -371,14 +371,16 @@ static void tex_patch_apply(int x, int y, int w, int h) {
         for (int j = 0; j < ph; j++) for (int k = 0; k < pw; k++) vram[(py + j) & 511][(px + k) & 1023] = *d++;
     }
 }
+/* the game passes some buffers as KUSEG addresses (masked with 0xFFFFFF): read them through KSEG0, always mapped */
+#define KSEG0(p) ((void *)((u32)(p) - 0x10000u < 0x1F0000u ? (u32)(p) | 0x80000000u : (u32)(p)))
 int LoadImage(RECT *r, u32 *p) {
-    u16 *s = (u16 *)p;
+    u16 *s = (u16 *)KSEG0(p);
     for (int j = 0; j < r->h; j++) for (int i = 0; i < r->w; i++) vram[(r->y + j) & 511][(r->x + i) & 1023] = *s++;
     tex_patch_apply(r->x, r->y, r->w, r->h);
     return 0;
 }
 int StoreImage(RECT *r, u32 *p) {
-    u16 *d = (u16 *)p;
+    u16 *d = (u16 *)KSEG0(p);
     for (int j = 0; j < r->h; j++) for (int i = 0; i < r->w; i++) *d++ = vram[(r->y + j) & 511][(r->x + i) & 1023];
     return 0;
 }
@@ -405,11 +407,13 @@ int ClearImage(RECT *r, u8 R, u8 G, u8 B) {
 }
 int ClearImage2(RECT *r, u8 R, u8 G, u8 B) { return ClearImage(r, R, G, B); }
 u32 *ClearOTagR(u32 *ot, int n) {
+    ot = KSEG0(ot);
     for (int i = n - 1; i > 0; i--) ot[i] = (u32)&ot[i - 1] & 0xFFFFFF;
     ot[0] = 0xFFFFFF;
     return ot;
 }
 u32 *ClearOTag(u32 *ot, int n) {
+    ot = KSEG0(ot);
     for (int i = 0; i < n - 1; i++) ot[i] = (u32)&ot[i + 1] & 0xFFFFFF;
     ot[n - 1] = 0xFFFFFF;
     return ot;
@@ -417,10 +421,10 @@ u32 *ClearOTag(u32 *ot, int n) {
 int port_dump_packets;   /* --dump-packets FRAME: print every GP0 packet drawn in that vblank */
 /* GPU DMA linked-list walk: every node is (len << 24 | next), followed by len GP0 words */
 void DrawOTag(u32 *ot) {
-    u32 *p = ot; int n = 0;
+    u32 *p = KSEG0(ot); int n = 0;
     gpu_lists++;
     while (n < 200000) {
-        u32 tag = *p, next = tag & 0xFFFFFF, len = tag >> 24;
+        u32 tag = *p, next = tag & 0xFFFFFF, len = tag >> 24 & 0x7F;   /* 0x80: a KSEG0 link (mips_interp.c kcell) */
         n++;
         if (len) {
             if (port_dump_packets && port_frame == port_dump_packets) {
@@ -437,7 +441,7 @@ void DrawOTag(u32 *ot) {
     if (port_verbose > 1) port_printf("[port] DrawOTag %p: %d packets\n", ot, n);
 }
 void DrawOTagEnv(u32 *ot, void *env) { PutDrawEnv(env); DrawOTag(ot); }
-void DrawPrim(void *p) { u32 *w = p; if (w[0] >> 24) packet(w + 1, w[0] >> 24); }
+void DrawPrim(void *p) { u32 *w = KSEG0(p); if (w[0] >> 24) packet(w + 1, w[0] >> 24); }
 
 /* libgpu helpers that are not in LIB_KEEP (their Psy-Q C ports clash with the shared headers) */
 u32 get_mode(int dfe, int dtd, u16 tpage) {
@@ -453,14 +457,15 @@ u32 get_tw(RECT *r) {
 }
 typedef struct { u32 tag; u32 code[2]; } DR_MODE;
 void SetDrawMode(DR_MODE *p, int dfe, int dtd, int tpage, RECT *tw) {
+    p = KSEG0(p);
     p->tag = (p->tag & 0xFFFFFF) | (2u << 24);
     p->code[0] = get_mode(dfe, dtd, tpage);
     p->code[1] = get_tw(tw);
 }
 typedef struct { u32 tag; u32 code[1]; } DR_AREA;
-void SetDrawArea(DR_AREA *p, RECT *r) { p->tag = (p->tag & 0xFFFFFF) | (2u << 24); p->code[0] = get_cs(r->x, r->y); }
-void SetDrawOffset(DR_AREA *p, u16 *ofs) { p->tag = (p->tag & 0xFFFFFF) | (1u << 24); p->code[0] = get_ofs(ofs[0], ofs[1]); }
-void SetTexWindow(DR_AREA *p, RECT *tw) { p->tag = (p->tag & 0xFFFFFF) | (1u << 24); p->code[0] = get_tw(tw); }
+void SetDrawArea(DR_AREA *p, RECT *r) { p = KSEG0(p); p->tag = (p->tag & 0xFFFFFF) | (2u << 24); p->code[0] = get_cs(r->x, r->y); }
+void SetDrawOffset(DR_AREA *p, u16 *ofs) { p = KSEG0(p); p->tag = (p->tag & 0xFFFFFF) | (1u << 24); p->code[0] = get_ofs(ofs[0], ofs[1]); }
+void SetTexWindow(DR_AREA *p, RECT *tw) { p = KSEG0(p); p->tag = (p->tag & 0xFFFFFF) | (1u << 24); p->code[0] = get_tw(tw); }
 
 /* ------------------------------------------------------------------ display + PNG frame dumps */
 const char *port_dump_dir;

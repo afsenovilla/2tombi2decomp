@@ -193,7 +193,20 @@ int port_low_emulate(unsigned long eip, unsigned long fault, unsigned char *scra
         low_tally(eip, fault, op[0], i);
         return PORT_LOW_REGS;
     }
-    if (nop == 1 && (op[0] >= 0xA0 && op[0] <= 0xA3)) return 0;         /* mov moffs: an absolute address, never low */
+    if (nop == 1 && (op[0] >= 0xA0 && op[0] <= 0xA3)) {
+        /* mov moffs (al/eax <-> [disp32]): an absolute address, low only when the C names one (`*(u8 **)0x110`, the
+           BIOS TCB pointer func_80051E00 reads: page 0 is unmapped on Windows) */
+        unsigned long target = 0x80000000ul + fault, next = eip + i + 4;
+        unsigned char *o = scratch; int k = 0;
+        for (int j = 0; j < npre; j++) o[k++] = pre[j];
+        o[k++] = op[0];
+        o[k++] = target; o[k++] = target >> 8; o[k++] = target >> 16; o[k++] = target >> 24;
+        unsigned long rel = next - ((unsigned long)o + k + 5);
+        o[k++] = 0xE9; o[k++] = rel; o[k++] = rel >> 8; o[k++] = rel >> 16; o[k++] = rel >> 24;
+        low_tally(eip, fault, op[0], i + 4);
+        *neweip = (unsigned long)o;
+        return PORT_LOW_JUMP;
+    }
     unsigned char modrm = p[i++];
     int mod = modrm >> 6, reg = (modrm >> 3) & 7, rm = modrm & 7;
     if (mod == 3) return 0;
