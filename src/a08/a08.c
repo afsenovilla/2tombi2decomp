@@ -2244,7 +2244,116 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80113780);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011399C);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80113AD8);
+typedef struct { s16 xl, x, yl, y, zl, z; } Pos3AD8;
+typedef struct { s16 x, y, z; } Ent3AD8;
+extern u8 D_800BF817;
+extern s16 D_80141914[];
+extern Ent3AD8 D_801418D8[];
+extern u8 D_1F8000D0_3ad8[];
+#define TAIL3AD8() \
+    { \
+        s16 *v = (s16 *)&D_801418D8[D_800BF817]; \
+        s16 *c = (s16 *)D_1F8000D0_3ad8; \
+        c[1] = v[0]; \
+        c[3] = v[1]; \
+        c[5] = v[2]; \
+    }
+
+s32 func_80113AD8(u8 *a, u8 *b)
+{
+    Pos3AD8 pos;
+    s32 i;
+    s16 *w;
+
+    switch (D_800BF817) {
+    case 2:
+        a[0x64] |= 0x80;
+        pos.x = U(b, 0x2E);
+        pos.z = U(b, 0x36);
+        if (H(b, 0x32) >= -0xE73) {
+            pos.y = -0xE74;
+        } else {
+            pos.y = H(b, 0x32);
+        }
+        func_8006E3F4(a, &pos);
+        if (b[0x2A] == 8) {
+            i = 0;
+        } else if (b[0x2A] == 9) {
+            i = 3;
+        } else {
+            i = 6;
+        }
+        w = &D_80141914[i];
+        pos.x = w[0];
+        pos.y = w[1];
+        pos.z = w[2];
+        func_8006CEC4(D_1F8000D0_3ad8, &pos, 0);
+        a[0x66] = 3;
+        return 1;
+    case 6:
+        a[0x64] |= 0x80;
+        pos.x = U(b, 0x2E);
+        pos.z = U(b, 0x36);
+        if (H(b, 0x32) >= -0xECD) {
+            pos.y = -0xECE;
+        } else {
+            pos.y = H(b, 0x32);
+        }
+        func_8006E3F4(a, &pos);
+        TAIL3AD8()
+        a[0x66] = 3;
+        return 1;
+    case 7:
+        a[0x64] |= 0x80;
+        pos.x = U(b, 0x2E);
+        pos.z = U(b, 0x36);
+        if (H(b, 0x32) >= -0x232D) {
+            pos.y = -0x232E;
+        } else {
+            pos.y = H(b, 0x32);
+        }
+        func_8006E3F4(a, &pos);
+        {
+            Ent3AD8 *v = &D_801418D8[D_800BF817];
+            pos.x = v->x;
+            pos.y = v->y;
+            pos.z = v->z;
+        }
+        func_8006CEC4(D_1F8000D0_3ad8, &pos, 0);
+        a[0x66] = 3;
+        return 1;
+    case 5:
+        a[0x64] |= 0x80;
+        if (H(b, 0x2E) >= 0x4723) {
+            H(b, 0x2E) = 0x4722;
+        }
+        pos.x = U(b, 0x2E);
+        pos.y = U(b, 0x32);
+        pos.z = U(b, 0x36);
+        func_8006E3F4(a, &pos);
+        TAIL3AD8()
+        a[0x66] = 3;
+        return 1;
+    case 1:
+        if (H(b, 0x2E) < 0x17AB) {
+            H(b, 0x2E) = 0x17AB;
+            H(b, 0x36) = 0x2EB3;
+        }
+    case 0:
+    case 3:
+    case 4:
+    case 8:
+        a[0x64] |= 0x80;
+        func_8006E3F4(a, b + 0x2C);
+        TAIL3AD8()
+        a[0x66] = 3;
+        return 1;
+    case 9:
+    default:
+        a[0x64] &= 0x7F;
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80113DDC);
 
