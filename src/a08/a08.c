@@ -5909,7 +5909,98 @@ s32 func_8012217C(u8 *p)
     return 0;
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", f_InsertPigNosePanelIntoTempleTower);
+extern u8 D_800BFAE9;
+extern void func_80042354(s32, s32);
+extern void func_80054D14(u8 *, s32, s32);
+extern void func_80040B48(s32);
+void func_801294B4(s16 a0);
+extern void func_8004D604(s32, s32);
+extern void func_8004ED94(s32, s32);
+extern void func_80051B04(void *, s32, s32);
+extern void func_80042310();
+
+s32 f_InsertPigNosePanelIntoTempleTower(u8 *a)
+{
+    u8 *e = D_800E7E80;
+    u8 *g;
+
+    switch (a[6]) {
+    case 99:
+        a[6] = 0;
+        a[0] = 1;
+    case 0:
+        if (a[0x2B] != 3) {
+            return 0;
+        }
+        if (D_800BFAE9 != 0) {
+            H(a, 0x40) = 0x2D;
+            a[6]++;
+            func_80042354(1, 2);
+            e[4] = 4;
+            e[5] = 0x21;
+            e[6] = 0;
+            e[0x61] = 0;
+            func_80054D14(e, 0x72, 0);
+            func_80040B48(0x3B);
+            func_801294B4(a[3]);
+            func_8004D604(0x35, 1);
+            return 0;
+        }
+        H(a, 0x40) = 0x1E;
+        func_8004ED94(0x72, 0x41);
+        a[6] = 4;
+        break;
+    case 1:
+        if (--H(a, 0x40) == -1) {
+            H(a, 0x40) = 0x1E;
+            a[6]++;
+            func_80054D14(e, 0x73, 0);
+        }
+        break;
+    case 2:
+        if (--H(a, 0x40) == -1) {
+            a[6]++;
+            if (a[3] == 2) {
+                func_80051B04(*(void **)(a + 0xC0), 0xC, 0x40);
+            } else {
+                func_80051B04(*(void **)(a + 0xC0), 0xC, 0x3F);
+            }
+            D_800BF870.pad1[0x1C1] |= 1 << a[3];
+            func_80074590(0x1A, 0xA, 0, &D_800BF870);
+        }
+        break;
+    case 3:
+        {
+            u32 v = D_800BF870.pad1[0x1C1];
+            if ((v & 0x1F) == 0x1F) {
+                D_800BF870.pad1[0x1C1] = v | 0x80;
+                a[6] = 0;
+                return 1;
+            }
+            a[6] = 0;
+            a[0] = 2;
+            func_80042310(v, &D_800BF870);
+        }
+        return 1;
+    case 4:
+        if (--H(a, 0x40) == 0) {
+            if (a[3] != 2) {
+                a[0] = 2;
+                a[6] = 99;
+            } else {
+                a[6]++;
+            }
+        }
+        break;
+    case 5:
+        if (a[0x2B] == 0) {
+            a[0] = 2;
+            a[6] = 99;
+        }
+        break;
+    }
+    return 0;
+}
 
 extern u16 D_800BF89E;
 void func_80122544(u8 *a)
