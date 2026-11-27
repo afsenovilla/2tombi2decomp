@@ -2567,7 +2567,155 @@ void func_80114118(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_801144D4);
+typedef struct { s16 xl, x, yl, y, zl, z; } Pos44D4;
+extern s16 D_1F8000D0_44d4[];
+extern u8 D_800BF816;
+extern u8 D_800BF8E3;
+#define COPY44D4() \
+    a[0x64] |= 0x80; \
+    H(a, 0xA) = U(b, 0x2E); \
+    H(a, 0xE) = U(b, 0x32); \
+    H(a, 0x12) = U(b, 0x36); \
+    func_8006E3F4(a, a + 8)
+#define AIM44D4(X, Y, Z) \
+    pos.x = X; \
+    pos.y = Y; \
+    pos.z = Z; \
+    if (func_8006CEC4(D_1F8000D0_44d4, &pos, 0xE0) != 0) { \
+        a[0x66] = 3; \
+    }
+#define SET44D4(X, Y, Z) \
+    { \
+        s16 *c = D_1F8000D0_44d4; \
+        c[1] = X; \
+        c[3] = Y; \
+        c[5] = Z; \
+    }
+
+void func_801144D4(u8 *a, u8 *b)
+{
+    Pos44D4 pos;
+
+    switch (a[3]) {
+    case 0:
+        a[3]++;
+        if (b[0x2A] == 1) {
+            SET44D4(0x12DC, -0x17C3, 0x2A2A)
+        } else if (b[0x2A] == 0x25) {
+            SET44D4(0x15D3, -0x1951, 0x29FA)
+        } else if (b[0x2A] == 0x26) {
+            SET44D4(0x1C70, -0x1A98, 0x25DA)
+        } else if (b[0x2A] == 0x27) {
+            SET44D4(0x16F3, -0x2375, 0x2986)
+        }
+    case 1:
+        a[0x72] = 0;
+        a[0x64] &= 0x7F;
+        switch (b[0x2A]) {
+        case 1:
+            a[0x64] |= 0x80;
+            if (H(b, 0x2E) >= 0x1952) {
+                H(a, 0xA) = 0x1951;
+                H(a, 0xE) = -0x15C4;
+                H(a, 0x12) = 0x2BC2;
+            } else {
+                if (H(b, 0x2E) < 0x170C) {
+                    H(a, 0xA) = 0x170C;
+                    H(a, 0x12) = 0x2FE7;
+                } else {
+                    H(a, 0xA) = U(b, 0x2E);
+                    H(a, 0x12) = U(b, 0x36);
+                }
+                if (H(b, 0x32) >= -0x15C3) {
+                    H(a, 0xE) = -0x15C4;
+                } else {
+                    H(a, 0xE) = U(b, 0x32);
+                }
+            }
+            func_8006E3F4(a, a + 8);
+            AIM44D4(0x12DC, -0x17C3, 0x2A2A)
+            break;
+        case 21:
+            if (D_800BF816 == 0) {
+                COPY44D4();
+                AIM44D4(0x2945, -0x2447, 0x145F)
+                if (D_800BF873 != 0 && H(b, 0x2E) >= 0x30E7) {
+                    H(b, 0x2E) = 0x30E6;
+                    H(b, 0x36) = 0x184C;
+                }
+            }
+            break;
+        case 26:
+        case 27:
+            a[0x72] = 0x40;
+            H(a, 0x8C) = 0x52E;
+            break;
+        case 30:
+            a[0x72] = 0x40;
+            H(a, 0x8C) = 0x380;
+            break;
+        case 31:
+            a[0x72] = 0x40;
+            H(a, 0x8C) = 0x840;
+            H(a, 0x26) = 0;
+            break;
+        case 33:
+            if (H(b, 0x2E) >= 0x35AA) {
+                COPY44D4();
+                AIM44D4(0x34A5, -0x1AB8, 0x916)
+            }
+            break;
+        case 37:
+            COPY44D4();
+            AIM44D4(0x15D3, -0x1951, 0x29FA)
+            break;
+        case 38:
+            a[0x64] |= 0x80;
+            if (H(b, 0x36) < 0x2BF0) {
+                H(a, 0xA) = 0x1B5F;
+                H(a, 0xE) = -0x154C;
+                H(a, 0x12) = 0x2BF0;
+            } else {
+                H(a, 0xA) = U(b, 0x2E);
+                H(a, 0xE) = U(b, 0x32);
+                H(a, 0x12) = U(b, 0x36);
+            }
+            func_8006E3F4(a, a + 8);
+            AIM44D4(0x1C70, -0x1A98, 0x25DA)
+            break;
+        case 39:
+            a[0x64] |= 0x80;
+            if (H(b, 0x36) < 0x3167) {
+                H(a, 0xA) = 0x17DE;
+                H(a, 0xE) = U(b, 0x32);
+                H(a, 0x12) = 0x3167;
+            } else {
+                H(a, 0xA) = U(b, 0x2E);
+                H(a, 0xE) = U(b, 0x32);
+                H(a, 0x12) = U(b, 0x36);
+            }
+            func_8006E3F4(a, a + 8);
+            pos.x = 0x16F3;
+            pos.z = 0x2986;
+            if (H(a, 0xE) >= -0x1A8F) {
+                pos.y = U(b, 0x32) - 0x12C;
+            } else {
+                pos.y = -0x2375;
+            }
+            if (func_8006CEC4(D_1F8000D0_44d4, &pos, 0xE0) != 0) {
+                a[0x66] = 3;
+            }
+            break;
+        case 44:
+            if (D_800BF8E3 != 0xFF) {
+                COPY44D4();
+                AIM44D4(0x3594, -0x25DC, 0x1B52)
+            }
+            break;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_80114A70);
 
@@ -4539,7 +4687,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011D3A0);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011D458);
 
-extern u8 D_800BF816;
 s32 func_8011D798(u8 *a)
 {
     u8 *p = D_800E7E80;
@@ -7132,7 +7279,6 @@ extern M2C_UNK func_8011973C;
 extern u16 D_1F8000E2;
 extern u8 D_800BFA3A;
 extern u8 D_800BFA30;
-extern u8 D_800BF8E3;
 static inline void func_80128C78_inl(u8 *p)
 {
     u8 v = D_800BFA31;
