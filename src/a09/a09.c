@@ -390,7 +390,58 @@ void func_8010A188(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010A228);
+typedef struct {
+    u8 pad[0xC0];
+    u8 *part[8];
+} A9A228;
+#define H(p, o) (*(s16 *)((u8 *)(p) + (o)))
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+extern u8 D_8010E15C[][2];
+extern u16 *D_8010E158[];
+extern s16 D_800ED098;
+u8 *func_8007AAE8();
+
+void func_8010A228(A9A228 *a)
+{
+    u16 *d;
+    s32 i;
+
+    switch (((u8 *)a)[4]) {
+    case 0:
+        ((u8 *)a)[8] = D_8010E15C[((u8 *)a)[3]][0];
+        if (D_800ED098 < ((u8 *)a)[8]) {
+            ((u8 *)a)[4] = 3;
+            break;
+        }
+        ((u8 *)a)[9] = ((u8 *)a)[8];
+        ((u8 *)a)[0xD] = 0;
+        ((u8 *)a)[0xB] = 0;
+        ((u8 *)a)[4]++;
+        d = D_8010E158[((u8 *)a)[3]];
+        for (i = 0; i < ((u8 *)a)[8]; i++) {
+            a->part[i] = func_8007AAE8();
+            H(a->part[i], 6) = *d++;
+            H(a->part[i], 0) = *d++;
+            H(a->part[i], 2) = *d++;
+            H(a->part[i], 4) = *d++;
+            H(a->part[i], 8) = *d++;
+            H(a->part[i], 0xA) = *d++;
+            H(a->part[i], 0xC) = *d++;
+            func_80051B04(a->part[i], 0xC, (s16)*d++);
+        }
+        break;
+    case 1:
+        ((u8 *)a)[1] = 1;
+        func_800517F8(a);
+        break;
+    case 2:
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", f_UpdateEvilPigInteriorEntranceDoorSequence);
 
@@ -457,7 +508,6 @@ typedef union {
     u8 b[0xC0];
     s16 h[0x60];
 } ActorH;
-extern s16 D_800ED098;
 extern s16 D_1F8001A0;
 extern s16 D_1F8001A2;
 typedef struct {
