@@ -6987,7 +6987,51 @@ s32 func_801274BC(u8 *a) {
     return 0;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_DeliverChickItemToNest);
+s32 f_DeliverChickItemToNest(u8 *a, s32 item)
+{
+    u8 m = 1;
+    s32 t;
+    u8 *p = func_80072DDC(a, 0, 2, 0x14);
+
+    if (p == NULL) {
+        goto fail;
+    }
+    func_8004D650(item, 1);
+    func_8004ED0C(item, 5);
+    *(void **)(p + 0x1C) = func_80126264;
+    p[3] = 2;
+    if (item == 0x39) {
+        u8 *g = (u8 *)&D_800BF870;
+
+        *(s16 *)(p + 0x5C) = 0x347F;
+        p[0x5E] = 0;
+        g[0x1D8]++;
+    } else {
+        *(s16 *)(p + 0x5C) = 0x343F;
+        p[0x5E] = 4;
+    }
+    m |= p[0x5E];
+    if (D_800BF9F3 == 0) {
+        t = 0x1E;
+        *(s16 *)(p + 0x68) = 0;
+    } else {
+        func_80040C00(0x3D);
+        m <<= 4;
+        *(s16 *)(p + 0x68) = 1;
+        t = 0x78;
+    }
+    do {
+        *(s32 *)(a + 0x24) = t;
+    } while (0);
+    {
+        u8 *g2 = (u8 *)&D_800BF870;
+
+        g2[0x183] |= m;
+    }
+    return 1;
+fail:
+    return 0;
+}
 
 s32 f_FeedChicksAtNest(u8 *a) {
     u8 *e;
