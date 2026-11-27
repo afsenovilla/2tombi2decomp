@@ -1196,7 +1196,105 @@ void func_8010D108(u8 *a, u8 *b)
     }
 }
 
-INCLUDE_ASM("asm/a0c/nonmatchings/a0c", func_8010D2D8);
+typedef struct { s16 xl, x, yl, y, zl, z; } PosD2D8;
+extern u8 D_800BF821;
+extern s16 D_1F8000EE_d2d8;
+extern u8 D_1F800246_d2d8;
+extern u8 *D_1F800248_d2d8;
+extern u8 *D_1F80024C_d2d8;
+extern u8 D_800BF808_d2d8[];
+extern u8 D_1F8000D0_d2d8[];
+void func_8010D108(u8 *a, u8 *b);
+
+void func_8010D2D8(u8 *a)
+{
+    u8 *b;
+    u8 *g;
+    PosD2D8 pos;
+
+    b = D_800E7E80;
+    switch (a[3]) {
+    case 0:
+        H(a, 0x26) = 0xC8;
+        D_800BF821 = 2;
+        H(a, 0x56) = 0;
+        D_1F8000EE_d2d8 = -0x8CA;
+        a[3]++;
+    case 1:
+        {
+            u8 *m = D_1F8000D0_d2d8;
+
+            H(m, 2) = 0x1600;
+            H(m, 0xA) = 0x12C0;
+        }
+        a[0x64] |= 0x80;
+        if (D_1F800246_d2d8 != 0) {
+            a[3]++;
+        }
+        if (func_8006D960(a, b + 0x2C) != 0) {
+            a[0x66] |= 1;
+        }
+        func_8006D654(a);
+        func_8006DA54(a, a + 8);
+        func_8006C80C(a);
+        if (a[0x76] == 0 && b[0x17A] == 0) {
+            func_8006DCF4(a);
+        }
+        func_8006D02C(a);
+        if (a[0x77] == 0) {
+            func_8006E010(a);
+        }
+        {
+            u8 *m = D_1F8000D0_d2d8;
+
+            W(m, 0x44) -= W(a, 0x28) + W(a, 0x34);
+        }
+        break;
+    case 2:
+        if (D_1F800246_d2d8 == 0) {
+            H(a, 0x68) = 0xC;
+            a[0x64] &= 0x7F;
+            a[3]++;
+        } else if (D_1F800246_d2d8 == 1) {
+            ((void (*)())func_8010D108)(a, D_1F800248_d2d8, 0);
+            func_8006E3F4(a, D_1F80024C_d2d8 + 0x2C);
+        } else if (D_1F800246_d2d8 == 2) {
+            func_8006E3F4(a, D_1F80024C_d2d8 + 0x2C);
+            pos.x = 0x15C8;
+            pos.y = U(D_1F800248_d2d8, 0x7C) - 0x64;
+            pos.z = 0x1701;
+            func_8006CEC4(D_1F8000D0_d2d8, &pos, 0);
+        } else {
+            func_8006E3F4(a, D_1F800248_d2d8 + 0x2C);
+            pos.x = 0x15C8;
+            pos.y = U(D_1F800248_d2d8, 0x7C) - 0x64;
+            pos.z = 0x1701;
+            func_8006CEC4(D_1F8000D0_d2d8, &pos, 0);
+        }
+        break;
+    case 3:
+        if (--H(a, 0x68) == 0) {
+            g = D_800BF808_d2d8;
+            if (g[0x39] != 0) {
+                g[1] = 0;
+                g[0x39] = 0;
+            }
+            a[3] = 1;
+        }
+        break;
+    }
+    if (D_1F800246_d2d8 == 0) {
+        u8 *m = D_1F8000D0_d2d8;
+
+        if (H(m, 6) < -0x1370) {
+            a[0x74] = 2;
+            H(m, 6) = -0x1370;
+            H(a, 0x4A) = -0x1370;
+        } else {
+            a[0x74] = 0;
+        }
+    }
+}
 
 void func_8010D5E4(void) {
 }
