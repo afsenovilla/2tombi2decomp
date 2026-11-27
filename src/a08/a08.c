@@ -9545,7 +9545,87 @@ u8 *func_8012B89C(u8 *a, s32 i)
     return NULL;
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", f_UpdateLastEvilPigAccessActor);
+extern u8 D_800BFAD1;
+static inline void EvilTalk(u8 *a)
+{
+    u8 *g = D_800BF808;
+
+    if (g[0xE] != 0 && g[0xF] == H(a, 0x6A)) {
+        if (a[0x28] & 0x80) {
+            a[1] = 1;
+            func_80077E7C(a);
+            func_800517F8(a);
+        }
+    } else if (!(a[0x28] & 0x80) && func_8007778C(a) != 0) {
+        func_800517F8(a);
+    }
+}
+
+void f_UpdateLastEvilPigAccessActor(u8 *a)
+{
+    switch (a[4]) {
+    case 0:
+        if (func_80040410(a, a[3]) != 0) {
+            H(a, 0x80) = 0x40;
+            H(a, 0x82) = 0x80;
+            a[4] = 1;
+            a[0] = 1;
+            H(a, 0x84) = 0x96;
+            H(a, 0x86) = 0x96;
+            a[0x46] = 0;
+            a[0x29] = 0;
+            a[0x2B] = 0;
+            a[0x5F] = 0;
+            a[0x5E] = 1;
+        }
+        break;
+    case 1:
+        switch (a[5]) {
+        case 0:
+            func_8003FD10(a);
+            break;
+        case 1:
+            func_8003FED8(a);
+            break;
+        case 2:
+            func_8003FFCC(a);
+            break;
+        case 3:
+            func_8004022C(a);
+            break;
+        case 4:
+            func_80040390(a);
+            break;
+        }
+        EvilTalk(a);
+        a[0x29] = 0;
+        a[0x5F] = 0;
+        break;
+    case 2:
+        switch (a[5]) {
+        case 0:
+            break;
+        case 1:
+            if (a[3] == 0 && D_800BFAD1 == 0) {
+                func_80040B48(0x38);
+            }
+            break;
+        case 2:
+            func_8003FE00(a);
+            break;
+        case 3:
+            func_8003FED8(a);
+            break;
+        case 4:
+            break;
+        }
+        EvilTalk(a);
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 extern u8 D_80145AAC[];
 extern u8 D_8001B4DC[];
