@@ -12350,7 +12350,38 @@ u8 *func_8013AC34(s32 a, u8 b) {
     return p;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_8013AC98);
+void func_8013AC98(u8 *a)
+{
+    switch (a[5]) {
+    case 0:
+        if (a[0x29] != 0) {
+            D_1F8000C0[0] = U(a, 0x2E);
+            D_1F8000C0[1] = U(a, 0x32);
+            D_1F8000C0[2] = U(a, 0x36);
+            if (func_8012E53C(a, H_f12c(a, 0x40), D_1F8000C0) != 0) {
+                a[0x5E] = 1;
+                a[5] = 1;
+            }
+        }
+        break;
+    case 1:
+        if (a[0x5E] == 0) {
+            H_f12c(a, 0x60) = D_1F800162;
+            H_f12c(a, 0x40) = 0;
+            a[5]++;
+        }
+        break;
+    case 2:
+        if (H_f12c(a, 0x40) < 0x2F) {
+            H_f12c(a, 0x40) = U(a, 0x40) + 1;
+        }
+        if (H_f12c(a, 0x60) != D_1F800162) {
+            a[5] = 0;
+        }
+        H_f12c(a, 0x60) = D_1F800162;
+        break;
+    }
+}
 
 void func_8013ADBC(void *arg0) {
     u8 temp_v1;
