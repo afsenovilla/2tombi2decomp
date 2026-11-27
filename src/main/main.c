@@ -16578,7 +16578,90 @@ void func_8005EC70(u8 *t)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005EF48);
+void func_8005EF48(u8 *t)
+{
+    s32 x;
+
+    switch (t[6]) {
+    case 0:
+        f_ClearTombaInteractionState(t);
+        t[0x145] = 0;
+        t[0x146] = 0;
+        f_SelectTombaContactAnimation6AOr6C(t, 0, 0);
+        *(s16 *)(t + 0x4A) = 0;
+        t[6]++;
+        if (t[0x16A] & 1) {
+            *(s16 *)(t + 0x44) = -0x800;
+        } else {
+            *(s16 *)(t + 0x44) = 0x800;
+        }
+        break;
+    case 1:
+        x = *(s16 *)(t + 0x44);
+        if (x < 0) {
+            x = -x;
+        }
+        if (x < 0x800) {
+            if (t[0x16A] & 1) {
+                *(s16 *)(t + 0x44) = -0x800;
+            } else {
+                *(s16 *)(t + 0x44) = 0x800;
+            }
+        }
+        f_AdvanceTombaAlongMovementVector(t, 1);
+        f_UpdateTombaMovementOrientation(t);
+        f_AdvanceActorSkeletalAnimation(t);
+        if ((t[0x29] & 0x80) && func_80055824() != 0) {
+            t[5] = 2;
+            t[6] = 0;
+            t[7] = 0;
+        } else {
+            *(u16 *)(t + 0x32) += 8;
+            f_ResolveTombaGroundTerrainContact(t);
+            if (t[0x29] != 0) {
+                if (t[0x16A] == 0) {
+                    *(s16 *)(t + 0x44) = 0;
+                    t[5] = 0;
+                    t[6] = 0;
+                    t[7] = 0;
+                }
+            } else {
+                *(s16 *)(t + 0x44) = 0;
+                *(u16 *)(t + 0x32) += 0x40;
+                f_DetachTombaFromSupport(t, 0);
+                if (t[5] == 2) {
+                    *(s16 *)(t + 0x40) = 0xA;
+                    t[5] = 0xF;
+                    t[6] = 2;
+                }
+            }
+        }
+        break;
+    case 2:
+        f_AdvanceActorSkeletalAnimation(t);
+        if (t[0x16A] & 2) {
+            if (t[0x16A] & 1) {
+                *(s16 *)(t + 0x44) = -0x800;
+            } else {
+                *(s16 *)(t + 0x44) = 0x800;
+            }
+        }
+        f_ReadTombaDirectionalInput(t, 1);
+        f_AdvanceTombaAlongMovementVector(t, 1);
+        f_UpdateTombaAirborneMotion(t, 0);
+        f_UpdateTombaMovementOrientation(t);
+        func_80057C08(t, 2);
+        if (*(s32 *)(t + 0x158) == 0) {
+            if (--*(s16 *)(t + 0x40) == 0) {
+                f_SetTombaAnimationIfChanged(t, 0x14, 0);
+                t[5] = 2;
+                t[6] = 1;
+            }
+        }
+        break;
+    }
+    t[0x16A] = 0;
+}
 
 void func_8005F1B0(void *arg0) {
     u8 temp_v1;
