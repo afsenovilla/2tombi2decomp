@@ -2647,7 +2647,161 @@ void func_801155C4(u8 *p, u8 *a1)
     }
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", f_SpawnDonglinForestSceneActorsFromPlacementTable);
+extern u8 D_800BF808_s06[];
+extern u8 D_800BF871_s06;
+extern u8 D_80142300[];
+extern u8 D_80142380[];
+extern u8 D_801423A0[];
+extern u8 *D_80142810[];
+u8 *func_80128028(u8 *a, s32 i);
+u8 *func_80072DDC();
+static inline u8 *GS06(void)
+{
+    return (u8 *)&D_800BF870;
+}
+static inline u8 *GB06(void)
+{
+    return D_800BF808_s06;
+}
+
+void f_SpawnDonglinForestSceneActorsFromPlacementTable(u8 *a, s32 mode)
+{
+    u8 *e;
+    u8 *p;
+
+    if (mode == 0) {
+        if (D_800BF871_s06 < 6) {
+            e = D_80142300;
+        } else if (D_800BF871_s06 < 9) {
+            e = D_80142380;
+        } else {
+            e = D_801423A0;
+        }
+    } else {
+        e = D_80142810[mode];
+    }
+    H(a, 8) = 0;
+    if (e[0] == 0xFF) {
+        return;
+    }
+    do {
+        if (e[0xB] == 1 && ((U(GS06(), 0x5E6) >> D_800BF870.unk0) & 1)) {
+            goto next;
+        }
+        if (e[0xB] == 2 && GS06()[3] != 0) {
+            goto next;
+        }
+        if (mode != 0 && H(a, 8) >= 0xF) {
+            goto next;
+        }
+        switch (e[0xA]) {
+
+        case 0:
+            break;
+        case 1:
+            if (mode == 0xB) {
+                GB06()[0x45] = 1;
+            } else {
+                GB06()[0x45] = 0;
+            }
+            U(GB06(), 8) = U(e, 4);
+            U(GB06(), 0xA) = U(e, 6);
+            U(GB06(), 0xC) = U(e, 8);
+            if (mode == 1 || mode == 4) {
+                func_80040C00(0x57);
+            } else if (mode == 3 || mode == 7) {
+                func_80040C00(0x56);
+            }
+            break;
+        case 2:
+            if ((GS06()[0x1A4] & 7) == 7) {
+                goto next;
+            }
+            if (!((GS06()[0x1A4] >> e[3]) & 1)) {
+                break;
+            }
+            func_8011AE04(0, e[3]);
+            goto next;
+        case 3:
+            if (GS06()[0x61] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 8:
+            if (GS06()[0xAD] != 0xFF) {
+                goto next;
+            }
+            if (GS06()[0xAE] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 9:
+            if (!((GS06()[0x1B3] >> e[3]) & 1)) {
+                break;
+            }
+            goto next;
+        case 10:
+            if (!(GS06()[0x15D] & 1)) {
+                break;
+            }
+            goto next;
+        case 11:
+            if (GS06()[3] == 0) {
+                goto next;
+            }
+            if (!((GS06()[0x1CD] >> e[3]) & 1)) {
+                break;
+            }
+            goto next;
+        case 12:
+            if (GS06()[0x275] != 0) {
+                goto next;
+            }
+            if (GS06()[0x65] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 6:
+            if (GS06()[0x65] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 13:
+            if (!((GS06()[0x15B] >> H(e, 4)) & 1)) {
+                break;
+            }
+            goto next;
+        case 14:
+            if (GS06()[0x1DE] < 3) {
+                break;
+            }
+            if (GS06()[0x1D8] != 1) {
+                break;
+            }
+            goto next;
+        case 15:
+            func_80128028(0, 0);
+            goto next;
+        }
+        p = func_80072DDC(a, e[0], e[1], e[2]);
+        if (p != NULL) {
+            *(s32 *)(p + 0x2C) = H(e, 4) << 16;
+            *(s32 *)(p + 0x30) = H(e, 6) << 16;
+            *(s32 *)(p + 0x34) = H(e, 8) << 16;
+            p[3] = e[3];
+            H(p, 0x54) = 0;
+            H(p, 0x56) = 0;
+            H(p, 0x58) = 0;
+            *(s32 *)(p + 0x1C) = *(s32 *)(e + 0xC);
+            if (mode != 0) {
+                *(u8 **)(a + (H(a, 8) << 2) + 0xC) = p;
+                H(a, 8)++;
+            }
+        }
+    next:
+        e += 0x10;
+    } while (e[0] != 0xFF);
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80115A04);
 
