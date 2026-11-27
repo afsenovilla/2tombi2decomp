@@ -13063,7 +13063,92 @@ void func_8004FFB4(s16 *r, u32 kind, u8 flags, s32 ot)
     *o = (u32)p;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8005019C);
+typedef struct { u8 b[0xC]; } DrMode12;
+static inline void corner_inl(s16 *r, s32 u, u8 flags, s32 ot)
+{
+    u8 *p = D_800BF544;
+    u32 *o;
+
+    D_800BF544 = p + 0x10;
+    p[7] = 0x74;
+    if (flags & 0x80) {
+        p[7] = 0x76;
+    }
+    if (flags & 0x40) {
+        *(u16 *)(p + 0xE) = (((flags & 0x1F) + 0x1F0) << 6) | 0x3F;
+    } else {
+        *(u16 *)(p + 0xE) = (((flags & 0x1F) + 0x1F0) << 6) | 0x3E;
+    }
+    if (flags & 0x20) {
+        p[6] = 0x40;
+        p[5] = 0x40;
+        p[4] = 0x40;
+    } else {
+        p[7] |= 1;
+    }
+    *(s16 *)(p + 0x8) = r[0];
+    *(s16 *)(p + 0xA) = r[1];
+    p[0xC] = u;
+    p[0xD] = 0x88;
+    do {
+        o = D_800ED8C8 + ot;
+        *(u32 *)p = *o | 0x03000000;
+        *o = (u32)p;
+    } while (0);
+}
+
+void func_8005019C(s16 *q, s32 f, u8 b, s32 ot)
+{
+    s16 r[4];
+    u8 flags;
+    u8 *n;
+    u8 *p;
+    u32 *o;
+
+    if (f & 0x40) {
+        flags = f + 0xD;
+    } else {
+        f += 6;
+        flags = f;
+        if (b) {
+            flags = f | 0x80;
+        }
+    }
+    r[3] = 8;
+    r[2] = 8;
+    r[0] = q[0] - 8;
+    r[1] = q[1] - 8;
+    corner_inl(r, 0xB8, flags, ot);
+    r[0] = q[0] + q[2];
+    corner_inl(r, 0xC8, flags, ot);
+    r[0] = q[0] - 8;
+    r[1] = q[1] + q[3];
+    corner_inl(r, 0xE8, flags, ot);
+    r[0] = q[0] + q[2];
+    corner_inl(r, 0xF8, flags, ot);
+    p = (u8 *)(*(DrMode12 **)&D_800BF544_37fb)++;
+    SetDrawMode(p, 0, 0, 0x5F, 0);
+    do {
+        o = D_800ED8C8 + ot;
+        *(u32 *)p = *o | 0x02000000;
+        *o = (u32)p;
+    } while (0);
+    r[2] = q[2];
+    r[3] = 8;
+    r[0] = q[0];
+    r[1] = q[1] - 8;
+    func_8004FFB4(r, 0, flags, ot);
+    r[1] = q[1] + q[3];
+    func_8004FFB4(r, 1, flags, ot);
+    r[2] = 8;
+    r[3] = q[3];
+    r[1] = q[1];
+    r[0] = q[0] - 8;
+    func_8004FFB4(r, 2, flags, ot);
+    r[0] = q[0] + q[2];
+    func_8004FFB4(r, 3, flags, ot);
+    func_8004FFB4(q, 4, flags, ot);
+}
 
 extern volatile u16 D_800E809C_da0a;
 void func_800506B4(void) {
