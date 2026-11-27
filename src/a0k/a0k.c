@@ -2167,7 +2167,61 @@ void f_IncrementBerryNutsScore(void *a)
     f_SpawnBerryNutsScorePopup(a, D_800BFA26);
 }
 
-INCLUDE_ASM("asm/a0k/nonmatchings/a0k", f_SpawnTinyMouseVillageActorsFromPlacementTable);
+extern u8 *D_8011C9B4[];
+u8 *func_80072DDC();
+static inline u8 *GS(void)
+{
+    return (u8 *)&D_800BF870;
+}
+static inline u8 *GB(void)
+{
+    return D_800BF808;
+}
+
+void f_SpawnTinyMouseVillageActorsFromPlacementTable(u8 *a, s32 mode)
+{
+    u8 *e;
+    u8 *p;
+
+    e = D_8011C9B4[mode];
+    if (e[0] == 0xFF) {
+        return;
+    }
+    do {
+        switch (e[0xA]) {
+        case 0:
+            break;
+        case 1:
+            U(GB(), 8) = U(e, 4);
+            U(GB(), 0xA) = U(e, 6);
+            U(GB(), 0xC) = U(e, 8);
+            break;
+        case 2:
+            if ((GS()[0x1B3] >> e[3]) & 1) {
+                goto next;
+            }
+            break;
+        case 3:
+            if (GS()[0x8B] == 0xFF) {
+                goto next;
+            }
+            break;
+        }
+        p = func_80072DDC(a, e[0], e[1], e[2]);
+        if (p != NULL) {
+            *(s32 *)(p + 0x2C) = H(e, 4) << 16;
+            *(s32 *)(p + 0x30) = H(e, 6) << 16;
+            *(s32 *)(p + 0x34) = H(e, 8) << 16;
+            p[3] = e[3];
+            H(p, 0x54) = 0;
+            H(p, 0x56) = 0;
+            H(p, 0x58) = 0;
+            *(s32 *)(p + 0x1C) = *(s32 *)(e + 0xC);
+        }
+    next:
+        e += 0x10;
+    } while (e[0] != 0xFF);
+}
 
 extern u8 D_800BF8F9;
 void func_80110C80(u8 *a)
