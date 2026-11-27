@@ -11440,7 +11440,50 @@ void func_8012E014(u8 *a)
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E1B4);
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E370);
+#define W_211f(p, o) (*(u32 *)((u8 *)(p) + (o)))
+extern u8 D_80138184[];
+extern u8 D_801382C8[];
+
+void func_8012E370(u8 *a)
+{
+    u32 c;
+
+    switch (a[4]) {
+    case 0:
+        W_211f(a, 0x50) = (u32)D_801382C8;
+        W_211f(a, 0x58) = 0xC0000;
+        W_211f(a, 0x5C) = 0x7F;
+        W_211f(a, 0x3C) = (u32)(a + 0x54);
+        H(a, 0x32) = -0x8C;
+        H(a, 0x2C) = 0x1ABF;
+        H(a, 0x2E) = -0x1A47;
+        W_211f(a, 0x54) = 0x22020;
+        H(a, 0x48) = 0;
+        H(a, 0x4A) = 0;
+        H(a, 0x4C) = 0;
+        a[0x29] = 0;
+        H(a, 0x30) = 0x24A4;
+        a[4] = 1;
+    case 1:
+        c = W_211f(a, 0x54);
+        if ((c & 0xFFFFFF) > 0x1FFFFF) {
+            a[4] = 2;
+            break;
+        }
+        a[1] = 1;
+        W_211f(a, 0x54) = (c + W_211f(a, 0x58)) & 0xFFFFFF;
+        W_211f(a, 0x54) |= W_211f(a, 0x5C) << 24;
+        W_211f(a, 0x5C) -= 0x12;
+        if (W_211f(a, 0x58) > 0x6FFFF) {
+            W_211f(a, 0x58) += 0xFFFD0000;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E4B4);
 
@@ -11495,7 +11538,41 @@ void func_8012E6A0(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E74C);
+void func_8012E74C(u8 *a)
+{
+    u32 c;
+
+    switch (a[4]) {
+    case 0:
+        W_211f(a, 0x50) = (u32)D_80138184;
+        W_211f(a, 0x5C) = 0x7F;
+        W_211f(a, 0x3C) = (u32)(a + 0x54);
+        W_211f(a, 0x54) = 0;
+        W_211f(a, 0x58) = 0x101010;
+        H(a, 0x48) = 0;
+        H(a, 0x4A) = 0;
+        H(a, 0x4C) = 0;
+        a[0x29] = 0;
+        H(a, 0x32) = -0x8C;
+        a[4] = 1;
+    case 1:
+        c = W_211f(a, 0x54);
+        if ((c & 0xFFFFFF) > 0x80807F) {
+            a[4] = 2;
+            break;
+        }
+        a[1] = 1;
+        W_211f(a, 0x54) = (c + W_211f(a, 0x58)) & 0xFFFFFF;
+        W_211f(a, 0x54) |= W_211f(a, 0x5C) << 24;
+        W_211f(a, 0x58) += 0xFFFEFEFF;
+        W_211f(a, 0x5C) -= 5;
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 void func_8012E868(u8 *a) {
     s32 *p84 = &D_1F800084;
