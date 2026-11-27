@@ -8597,7 +8597,52 @@ void func_8012D880(RECT16 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8012DA14);
+typedef struct { s16 m[3][3]; s32 t[3]; } Mat;
+extern u8 D_800BF918;
+extern u32 *D_800ED8C8;
+extern Mat D_1F8000F8;
+
+void func_8012DA14(u8 *a)
+{
+    u16 *i;
+    u16 *end;
+    u32 *tbl;
+    u32 *ot;
+    u32 *m;
+    u32 w;
+    u32 *ot_f;
+    u32 *m_f;
+    u32 w_f;
+
+    if (a[6] == 0) {
+        return;
+    }
+    gte_SetRotMatrix(&D_1F8000F8);
+    gte_SetTransMatrix(&D_1F8000F8);
+    i = (u16 *)(a + 0x10);
+    if (D_800BF873) {
+        end = (u16 *)(a + 0x10 + a[6] * 2);
+        tbl = *(u32 **)(a + 0xC);
+        ot = D_800ED8C8;
+        gte_ldfcdir(0, 0, 0);
+        for (; i < end; i++) {
+            m = tbl + *i;
+            w = *m;
+            func_8012D2B4(func_8012CDF4(m + 1, ot, w & 0xFFFF, 0), ot, w >> 16, 0);
+        }
+    } else {
+        end = (u16 *)(a + 0x10 + a[6] * 2);
+        tbl = *(u32 **)(a + 0xC);
+        ot_f = D_800ED8C8;
+        for (; i < end; i++) {
+            m_f = tbl + *i;
+            w_f = *m_f;
+            m_f = func_8012C7E0(m_f + 1, ot_f, w_f & 0xFF);
+            w_f >>= 16;
+            func_8012CAA8(m_f, ot_f, w_f & 0xFF);
+        }
+    }
+}
 
 extern s32 D_1F800080;
 
