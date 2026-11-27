@@ -2605,7 +2605,6 @@ void func_801406A4(s32 i);
     a[0x77] = 0; \
     D_1F8000EE_4c1c = -0x7CE; \
     H(a, 0x26) = -0x3E0
-
 void func_80114C1C(u8 *a, u8 *b)
 {
     a[0x72] = 0;
@@ -2877,7 +2876,6 @@ static inline s32 Inl51D8(u8 *a, u8 *b)
         return 0;
     }
 }
-
 void func_801151D8(u8 *a)
 {
     u8 *b = D_800E7E80_51d8;
@@ -2951,7 +2949,6 @@ extern u8 D_800E7EAC_54d4[];
 extern u8 D_800E8008_54d4[];
 extern Ent54D4 D_801422BC[];
 extern s16 D_1F8000D0_54d4[];
-
 s32 func_801154D4(u8 *a, u8 *b)
 {
     Pos54D4 pos;
@@ -3029,7 +3026,6 @@ static inline u8 *GB06(void)
 {
     return D_800BF808_s06;
 }
-
 void f_SpawnDonglinForestSceneActorsFromPlacementTable(u8 *a, s32 mode)
 {
     u8 *e;
@@ -3350,7 +3346,6 @@ static inline void Done64CC(u8 *a)
     a[1] = 1;
     func_800517F8(a);
 }
-
 void f_UpdateDonglinInteriorEnvironmentActor(u8 *a)
 {
     s16 *d;
@@ -4721,7 +4716,6 @@ typedef struct { u8 pad[0xC0]; u8 *parts[16]; } AB958;
 extern u8 D_1F800000_88c4[];
 extern u8 D_1F800020_79d7[];
 extern s16 D_80144E94[];
-
 void func_8011B958(u8 *a)
 {
     s32 i;
@@ -6268,7 +6262,6 @@ void func_80123018(u8 *a)
         v = 0xFF; \
     } \
     (d) = v
-
 void func_80123318(u8 *a, u8 *p, u8 *end)
 {
     u8 v;

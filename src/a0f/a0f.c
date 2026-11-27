@@ -2814,7 +2814,6 @@ void func_80110D4C(u8 *a)
 }
 
 extern u8 *D_1F800254;
-
 s32 func_80111044(u8 *a)
 {
     u8 *p;
@@ -3269,7 +3268,6 @@ void func_80113330(void)
 }
 
 #define UW(p, o) (*(u32 *)((u8 *)(p) + (o)))
-
 void func_8011348C(u8 *a)
 {
     switch (a[4]) {
@@ -4195,7 +4193,6 @@ void func_80116534(u8 *a)
 extern u8 *D_800ECF84;
 extern s16 D_1F8000F2_a096;
 extern s16 D_1F8000F0_7cc6;
-
 void func_80116560(u8 *a)
 {
     s32 pad;
@@ -5449,7 +5446,6 @@ static inline void f9cc0_circle(u8 *a)
     H(a, 0x76) = (U(a, 0x76) + 0x10) & 0xFFF;
     H(a, 0x62) = (U(a, 0x62) + 8) & 0xFFF;
 }
-
 void func_80119CC0(u8 *a)
 {
     switch (a[4]) {

@@ -1635,7 +1635,6 @@ void func_8010C6A0(void)
 extern s32 D_8010D394;
 extern s32 D_8010D398;
 extern s32 D_8010D320[];
-
 s32 func_8010C79C(void)
 {
     u8 *p = D_1F800138_5432;

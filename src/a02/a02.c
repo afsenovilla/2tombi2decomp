@@ -773,7 +773,6 @@ extern s16 D_1F800276;
 static inline s32 bebc_yaw(u8 *a, s32 x, s32 z) {
     return func_80085690(H(a, 0x36) - z, x - H(a, 0x2E));
 }
-
 void func_8010BEBC(u8 *a) {
     u8 *b = *(u8 **)(a + 0x10);
     s32 dx;
@@ -1169,7 +1168,6 @@ static inline s32 d288_grab(u8 *a) {
     }
     return 0;
 }
-
 void func_8010D288(u8 *a) {
     s16 *v;
     s32 c;
@@ -1432,7 +1430,6 @@ static inline void inl_8010F84C(u8 *a)
         H(a, 0x36) = 0x297B;
     }
 }
-
 void func_8010DBE4(u8 *a)
 {
     u8 *t = *(u8 **)(a + 0x10);
@@ -1637,7 +1634,6 @@ static inline s32 e3d8_probe(s32 *pos, u8 *a) {
     v[2] = 0;
     return func_80125C5C(pos, v, 0);
 }
-
 void func_8010E3D8(u8 *a) {
     s16 *v;
     s32 c;
@@ -1997,7 +1993,6 @@ void func_8010ED88(u8 *a) {
 extern u8 D_1F800236;
 extern u8 D_800BF809;
 extern s16 D_800E7EFE;
-
 void func_8010F01C(u8 *a) {
     s32 k;
 

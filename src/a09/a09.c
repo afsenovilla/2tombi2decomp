@@ -401,7 +401,6 @@ extern u8 D_8010E15C[][2];
 extern u16 *D_8010E158[];
 extern s16 D_800ED098;
 u8 *func_8007AAE8();
-
 void func_8010A228(A9A228 *a)
 {
     u16 *d;
@@ -1576,7 +1575,6 @@ INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010D30C);
 
 extern s8 D_80109070[];
 extern u8 D_8010E548[];
-
 void func_8010D5D8(u8 *a)
 {
     switch (a[4]) {

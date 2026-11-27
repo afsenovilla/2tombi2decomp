@@ -2638,7 +2638,6 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_80110A44);
 
 #define M(p, o) MEMBER_AT(s16, p, o)
 extern u16 D_1F80017C;
-
 void func_80110BA0(u8 *a)
 {
     u8 *t = D_800E7E80_f78d;

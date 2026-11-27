@@ -2058,7 +2058,6 @@ void func_801143A4(u8 *a, u8 *b) {
 }
 
 extern u8 D_800BF9E5_1228;
-
 void func_80114408(u8 *a, u8 *b)
 {
     s32 r = func_8001F40C(a, b, 1);
@@ -2195,7 +2194,6 @@ void func_80114888(u8 *a, u8 *b)
 }
 
 extern s32 D_1F800080_e4a3;
-
 s32 func_801148D8(u8 *a, u8 *b) {
     s32 i;
 
@@ -2609,7 +2607,6 @@ extern SpawnRow58e0 D_80146F0C[];
 extern u8 D_800BF9E0;
 extern u8 D_800BF816;
 u8 *func_800310F4();
-
 void func_801158E0(u8 *a)
 {
     s32 vec[4];
@@ -4286,7 +4283,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", f_HandleWinConversationState);
 
 extern u8 D_800BF8CD;
 extern u8 D_80148884[];
-
 void func_8011A804(u8 *a)
 {
     u8 *g;
@@ -6595,7 +6591,6 @@ extern u8 D_800BF9E7;
 extern u8 D_800BF9E8;
 extern u8 D_800BF9CC;
 void f_HandleSmallFishActor();
-
 u8 *f_SpawnSmallFishActor(u8 *a, u8 kind, u8 bit)
 {
     u8 *p;
@@ -7634,7 +7629,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801296E0);
 
 #define PT(p, i) (((AreaPartsOwner *)(p))->parts[i])
 extern s16 D_800ED098;
-
 void f_InitializeTableDrivenInteriorEffect(u8 *a)
 {
     u8 *q;
@@ -7676,7 +7670,6 @@ void f_InitializeTableDrivenInteriorEffect(u8 *a)
 }
 
 #define PT(p, i) (((AreaPartsOwner *)(p))->parts[i])
-
 void f_InitializeLinkedWindmillInteriorEffect(u8 *a)
 {
     u8 *o;
@@ -8990,7 +8983,6 @@ extern SeesawRow D_8014A274[];
 extern SeesawRow D_8014A2EC[];
 extern u8 *D_800ECFAC;
 u8 *func_8007AAE8();
-
 void f_InitializeTownBarrelSeesawController(u8 *a)
 {
     s32 i;
@@ -10360,7 +10352,6 @@ INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80133184);
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SyncAquaticPlantLinkedState);
 
 void func_8013259C();
-
 void f_SpawnAquaticPlantActors(u8 *a) {
     s32 k;
     s16 n;
@@ -10746,7 +10737,6 @@ static inline void RopeFollow(u8 *a, u8 *g)
         break;
     }
 }
-
 void f_UpdateRopeSwingInteraction(u8 *a)
 {
     u8 *g = D_800E7E80;
@@ -10949,7 +10939,6 @@ static inline void RopeInitParts(u8 *a)
         break;
     }
 }
-
 void func_80135D64(u8 *a)
 {
     s32 k;
@@ -13304,7 +13293,6 @@ extern u16 D_8014BCE4[][2];
 extern u8 D_8014BCDC[];
 extern u8 D_8014BCCC[];
 extern u8 D_8014BCD4[];
-
 void func_8013DBE4(u8 *a)
 {
     u8 *q = a + 0x50;

@@ -1461,7 +1461,6 @@ extern u8 D_800E7E80_1c08[];
 extern s32 D_1F800184_1c08;
 extern s16 D_1F8000DA_1c08;
 extern u8 D_1F8000D0_1c08[];
-
 void func_80111C08(void)
 {
     u8 *g = D_800BF808_1c08;
@@ -1529,7 +1528,6 @@ extern u8 D_800BF816_2068;
     H(a, 0xE) = U(b, 0x32); \
     H(a, 0x12) = U(b, 0x36); \
     func_8006E3F4(a, a + 8)
-
 void func_80112068(u8 *a)
 {
     Pos2068 pos;
@@ -3033,7 +3031,6 @@ static inline u8 *GB04(void)
 {
     return D_800BF808_s04;
 }
-
 void f_SpawnKujaraRanchSceneActorsFromPlacementTable(u8 *a, s32 mode)
 {
     u8 *e;
@@ -3353,7 +3350,6 @@ extern u32 *D_800ED8C8;
 #define setaddr_(p, _addr) (((PTag7F68 *)(p))->addr = (u32)(_addr))
 #define getaddr_(p) (u32)(((PTag7F68 *)(p))->addr)
 #define ADDPRIM(ot, p) setaddr_(p, getaddr_(ot)), setaddr_(ot, p)
-
 void func_80117F68(void)
 {
     Rect7F68 r;
@@ -7883,7 +7879,6 @@ s32 func_80130290(u8 *p)
 
 typedef struct { s32 x; s16 ylo; s16 y; s32 z; } Pos0344;
 extern u16 D_800E7EC4;
-
 void f_UpdateFirstReadyOrNotKujaraFoundSequence(u8 *a)
 {
     Pos0344 pos;
@@ -9962,7 +9957,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013B118);
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013B7A0);
 
 typedef struct { s16 x, y, z, w; } VB94C;
-
 void func_8013B94C(u8 *a)
 {
     VB94C *v;

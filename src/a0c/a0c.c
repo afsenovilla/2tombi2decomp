@@ -5039,7 +5039,6 @@ static inline void f6a38_circle(u8 *a)
     H(a, 0x2E) = ((func_80083F50(H(a, 0x76)) * 1200) >> 12) + 0x1600;
     H(a, 0x36) = 0x12C0 - ((func_80083E80(H(a, 0x76)) * 1200) >> 12);
 }
-
 void func_80116A38(u8 *a)
 {
     switch (a[4]) {

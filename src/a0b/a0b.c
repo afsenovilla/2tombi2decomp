@@ -99,7 +99,6 @@ extern s32 D_1F800094;
 extern u8 D_800BF848;
 extern u8 D_800BFAD5;
 extern u8 D_1F800137;
-
 void func_8010A93C(u8 *a, u8 *b)
 {
     s8 *g = D_800BF808;
@@ -2489,7 +2488,6 @@ typedef struct {
     u8 a, b, c;
     s8 d;
 } E0540;
-
 void func_80110540(u8 *a)
 {
     s32 alive = 0;
@@ -3881,7 +3879,6 @@ void func_80113F68(u8 *a)
 extern u8 *D_800ECF84;
 extern s16 D_1F8000F2_a096;
 extern s16 D_1F8000F0;
-
 void func_80113F94(u8 *a)
 {
     s32 pad;
@@ -4076,7 +4073,6 @@ static inline u8 *f4608_part(u8 *a, s32 k)
 {
     return ((A4608 *)a)->part[k];
 }
-
 void func_80114608(u8 *a)
 {
     u8 *t = D_800E7E80;
@@ -4972,7 +4968,6 @@ static inline void f6520_circle(u8 *a)
     H(a, 0x76) = (U(a, 0x76) + 0x10) & 0xFFF;
     H(a, 0x62) = (U(a, 0x62) + 8) & 0xFFF;
 }
-
 void func_80116520(u8 *a)
 {
     switch (a[4]) {

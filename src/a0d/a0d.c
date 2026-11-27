@@ -595,7 +595,6 @@ extern u8 D_800BF821;
 extern s16 D_1F8000EE_5d06;
 extern u8 D_800BF808_1760[];
 extern u8 D_1F8000D0_b839[];
-
 void func_8010AF40(u8 *a)
 {
     u8 *g;
@@ -2061,7 +2060,6 @@ static inline void fe5ec_spin(u8 *a)
     }
     H(a, 0x32) -= H(a, 0x50) >> 4;
 }
-
 void func_8010E5EC(u8 *a)
 {
     s8 *g;
@@ -2700,7 +2698,6 @@ typedef struct {
     s8 c;
     u8 d;
 } E0A98;
-
 void func_80110A98(u8 *a)
 {
     E0A98 *q = (E0A98 *)(a + 0x34);
@@ -2889,7 +2886,6 @@ void func_80111418(void)
 }
 
 #define UW(p, o) (*(u32 *)((u8 *)(p) + (o)))
-
 void func_80111574(u8 *a)
 {
     switch (a[4]) {
@@ -3988,7 +3984,6 @@ typedef struct {
     u8 pad[0xC0];
     u8 *part[8];
 } A4760;
-
 void func_80114760(A4760 *a)
 {
     s16 v[6];
@@ -4713,7 +4708,6 @@ static inline void f62f4_circle(u8 *a)
     H(a, 0x76) = (U(a, 0x76) + 0x10) & 0xFFF;
     H(a, 0x62) = (U(a, 0x62) + 8) & 0xFFF;
 }
-
 void func_801162F4(u8 *a)
 {
     switch (a[4]) {
@@ -4892,7 +4886,6 @@ s32 func_8011694C(void *arg0) {
 extern u8 *D_800ECF84;
 extern s16 D_1F8000F2_a096;
 extern s16 D_1F8000F0;
-
 void func_80116980(u8 *a)
 {
     s32 pad;

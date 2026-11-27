@@ -3,6 +3,40 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-27 (2): sixteenth round (agents on Fable)
+
+All code in C: **5233 / 7011 functions (74.6 %, 57.7 % of the bytes)**, from 5104 (54.1 %): ~100 KB, the best round
+(round 15 ~60 KB). The user asked for this round's agents on Fable. a04-a08 +33 (~29.5 KB: the shared-lui spawner
+pattern solved, five spawners, 11 camera-zone functions), a09 scope +31 (~21 KB: the 0x500 skeleton, all six
+members, and the 140D0 family open since round 2), a00-a01 +30 (~20 KB: a01's GT3 / GT4 list builders), main +26
+(~17.8 KB), a02-a03 +7 (~10.4 KB, all large). The coordinator fixed tools/jtbl.py (candidates in table address
+order) and installed a08 f_UpdateWaterTempleInteriorEnvironmentActor; nearcopy put a02 func_8010BEBC into a07
+func_8010E864. integrate.py: clean build 29 / 29; ff90a4d and 2930435 do not link alone. Agents' commits carry the
+Fable co-author trailer their sessions gave; a few messages name the wrong function (main c578cba, a06 49f1c62,
+7817236, a05 06ceceb: see the agents' notes; no amend). Recipes in AGENTS.md "Round 16 forms".
+
+Near misses (scratch in r16b/<scope>/): a02 func_80122AC4 1 short, a0a func_80118038 1, a02 func_8010B068 2 (3
+copies), a06 func_80136D84 3, func_801176D4 3 extra, a0b func_80116B50 4-5, a01 func_80119D84 5, a0k func_801147D0
+6, a0d func_801108F0 11, a01 func_80132358 15 lines (list-builder dispatcher), a07 func_80112770 16, a0a
+func_80115418 35, a01 func_8012F8D8 41 (GT3 far builder; GT4 twin func_8013000C not started), main func_8004C930
+(structure right). Next: the three spawners left (a00, a01, a0k), the eight camera-zone functions left (AGENTS.md),
+a06 func_8013CF00 / func_8013D1E4 / func_8013CD34 (likely a06 versions of a01 func_80132690 / func_801329C4 /
+func_80132358), a0d f_UpdateEarthEvilPigSplitActor, a0g f_UpdateCourageTowerInteriorEntranceActor, a0f
+func_80116E5C, a0k func_8010E7EC; a0k func_8010CF30 and a02 func_8010CF30 are split-off tails (config merges).
+Possibly ASM by design: a08 func_8011731C, a0k func_801160A4.
+
+Tool work left: a schedtrace tool (the `-dR` ready-list trace of one block and the luid constraints retail's order
+implies: closed three old near misses by hand); prio.py: keep / print the .lreg / .greg dumps, a per-block
+local-alloc table, fix the shifted variable column; regswap kinds loopwrap (`do { } while (0)` around every
+statement range), opaquecopy, inlinearg, store / call per arm, constant through an int local, variable per case,
+ternary min / max, typed post-increment, narrow copy; permlines / variants slide mode (one marked statement to every
+position of a store block) and auto permlines on order-only diffs; ccheck: compile with the target's prototypes,
+hint `lhu; sll; sra` vs `lh; sra`, near-threshold loop movables; loophoist: gcc's insn_count, per-constant retail
+hoist mode; sbs realign after long inserts; a spawner / skeleton generator and a camera-zone listing; nearcopy mode
+keyed on the first 40 words; sibling.py `--no-edit`; regswap per-run temp names; install_c: keep a later target
+declaration, initialised local arrays with existing rodata, macros whose body starts with `if`; census of
+prologue-less fragments.
+
 ## 2026-11-27: fifteenth round
 
 All code in C: **5104 / 7011 functions (72.8 %, 54.1 % of the bytes)**, from 5015 (52.0 %). main +29 (~11.7 KB, Tomba

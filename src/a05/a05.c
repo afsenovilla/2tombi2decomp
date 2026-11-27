@@ -1729,7 +1729,6 @@ extern s16 D_1F8000D0_12b4[];
     func_8006D950(cam, cam + 8); \
     func_8006E0F0(cam); \
     func_8006E918(cam)
-
 void func_801112B4(void)
 {
     u8 *g = D_800BF808_12b4;
@@ -1798,7 +1797,6 @@ extern u8 D_800BF871_1480;
     H(a, 0xE) = U(b, 0x32); \
     H(a, 0x12) = U(b, 0x36); \
     func_8006E3F4(a, a + 8)
-
 void func_80111480(u8 *a)
 {
     Pos1480 pos;
@@ -2027,7 +2025,6 @@ extern u8 D_8013BF18[];
 extern u8 *D_8013BEF4[];
 u8 *func_80072DDC();
 u8 *func_80127168(void *a0, s32 a1);
-
 void f_SpawnKujaraSummitSceneActorsFromPlacementTable(u8 *a, s32 mode)
 {
     u8 *e;
@@ -6330,7 +6327,6 @@ extern u16 D_1F8000EE_5a20;
 extern u8 D_800E806C_5a20;
 extern u8 D_800BF841_5a20;
 extern u8 D_1F800137_5a20;
-
 void func_80125A20(u8 *a)
 {
     u8 *cam;
@@ -8003,7 +7999,6 @@ extern V8012F548 D_8013F38C[];
 extern s16 D_8013F384[];
 u8 *func_8007AAE8();
 #define PT(a, i) (((A8012F548 *)(a))->parts[i])
-
 void func_8012F548(u8 *a)
 {
     s32 i;
@@ -9436,7 +9431,6 @@ extern Ent4000 D_800A29CC[];
         H(a, 0x56) = 0; \
         H(a, 0x54) = 0; \
     }
-
 void func_80134000(u8 *a, u8 *b)
 {
     u8 k;
@@ -9791,7 +9785,6 @@ extern u32 *D_800ED8C8_065b;
 #define setaddr_(p, _addr) (((PTag51DC *)(p))->addr = (u32)(_addr))
 #define getaddr_(p) (u32)(((PTag51DC *)(p))->addr)
 #define ADDPRIM(ot, p) setaddr_(p, getaddr_(ot)), setaddr_(ot, p)
-
 void func_801351DC(void)
 {
     Rect51DC r;
@@ -10601,7 +10594,6 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80138E88);
 
 typedef struct { u8 b0, b1, b2, b3; s16 x, y; } P90B8;
 extern s16 D_1F8000D0_90b8[];
-
 void func_801390B8(u8 *a)
 {
     P90B8 *v;

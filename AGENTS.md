@@ -535,6 +535,51 @@ struct-member form of a cast access, regswap `member` toggles every one)
   type:jtbl` in config/symbol_addrs_<prog>.txt and re-split; a pending "function" with no prologue that uses saved
   registers is a split-off tail (a02 func_8010CF30 of func_8010C8E4: merge in the config).
 
+**Round 16 forms** (agents on Fable; ~100 KB, the best round)
+- Shared-lui spawners (the open pattern of round 15, solved): either assign both base pointers as the first
+  statements inside the loop body (`do { h = (u8 *)&D_800BF870; g = D_800BF808; ...`: both are needed, h alone is
+  one insn short of loop.c's threshold), or use no h / g variable at all and reach the globals through
+  `static inline u8 *GS(void) { return (u8 *)&D_800BF870; }` / `GB()` accessors: each use is a fresh block-local
+  pseudo loop.c may move, combine_movables merges them, CSE shares the lui with the direct `D_800BF870.unk0` read.
+  A generator from the a04 agent's template is in the session scratchpad r16b/a04/gen.py. Left: a00
+  f_SpawnFishermensTownActorsFromPlacementTable, a01 f_SpawnPipeAreaSceneActorsFromPlacementTable, a0k
+  f_SpawnTinyMouseVillageActorsFromPlacementTable.
+- gcc 2.8.1's scheduler (cc1 `-dS -dR`, x.i.sched2): in a call-free block every insn has priority 1, the ready list
+  is taken last-luid-first, a store jumps ahead of a non-memory insn, a load waits one cycle after a store. Floating
+  stores (zero, a saved register, a long-lived constant) sink below the `li v0; sh v0` chain in source order; a
+  floating `li` lands where its luid falls, so retail's position gives the source position of that constant's
+  first use. Local-alloc ties go to the first-born; move floating stores to flip them.
+- The 0x500 skeleton fix: the second store of a constant after another constant store (not chained). Two `li` of
+  one constant plus a real `mult`: `s32 h = 0x8E8; h = (a[0x11] * h) / 144;`.
+- `do { } while (0)` doubles the ref counts inside it (refs weighted by loop depth): wrap only the computation that
+  must rank higher; loop notes are scheduling barriers (the first insn after a LOOP_BEG note stays first; a
+  division by 16 right after `do {` gets the duplicated `bgez; sra` shape). regswap's wraps work through this.
+- Local-alloc gives v0 to the highest refs x log2(refs) / lifetime in the order sched1 left (ties: first born): load
+  order through an inline helper with s32 parameters.
+- Cross-jumping keeps the last copy: when retail keeps the first and later cases jump back into it, write the code
+  once with labels and `goto` from the later cases; an inner switch's last `if (c) break; goto next;` gets inverted:
+  write that `break` as a goto.
+- Opaque copies (hacks, rank last): `__asm__("" : "=r"(p2) : "0"(a));` for stores through the call's a0 across a
+  loop end, `__asm__("" : "=r"(n) : "0"(1));` for a constant barrier; `__asm__ volatile("");` first in an else arm
+  keeps an if / else constant from being hoisted (`beqz; j; li v0,A; L: li v0,B`).
+- `lh; sra K` of an s16 field: gcc 2.8.1 narrows `H >> K` to `lhu; sll 16; sra 16+K`; retail's `lh; sra 6` is
+  `(H * 0x40) >> 12`. `v = (F * 4) >> 3` keeps a reload where `F >> 1` forwards the stored register.
+- Byte constant through an s32 local (`n = 4; a[0xD] = n; tbl = base + n;`) for post-reload CSE in SImode.
+- A store or call in every arm instead of a join variable (raises the base's refs; gcc cross-jumps them back).
+- Camera-zone functions (callers of func_8006E3F4 / func_8006CEC4 with D_1F8000D0, 11 matched): a block-scoped
+  `s16 *c = D_1F8000D0;` per arm, `pos` as `struct { s16 xl, x, yl, y, zl, z; }` in x, y, z order, each Pos
+  block-scoped per sp slot. Left: a00 f_UpdateA00InteriorCamera, f_UpdateFishermensTownCamera, a01 func_8010AE30,
+  func_8010AF6C, a02 func_80115F58, a09 func_80109D04, a0c func_8010D2D8, a0f func_8010BE48.
+- Typed post-increment keeps a copy: `p = (u8 *)(*(DrMode12 **)&D_800BF544)++;`.
+- GTE depth cue: a macro `{ u32 *q = &p->rgb0; lddp(..); ldrgb(p->rgb0); dpcs(); strgb(q); }` (an inline function
+  makes loop.c hoist the pointers); a01's GT3 / GT4 list builders are C (func_80132690 was an ASM-by-design
+  candidate).
+- `if (!(flag & 0x80000000))` instead of `flag >= 0` lengthens the constant's life (hoisted, re-loaded at uses).
+- Shared tails read from a label-stripped listing are often wrong: write the obvious form, then follow ccheck's
+  one-word `beq +0xNN` diff to the real target.
+- Byte-aligned struct copy from an extern (`typedef struct { u8 v[0x30]; } T; T tbl = D_X;`): the lwl / lwr loop.
+- Target prototypes still apply at install: copy the callee's real narrow-parameter prototypes into the scratch.
+
 **Switch and jump-table shapes (more)**
 - Duplicate the cases with identical code to get a jump table whose entries share a target (gcc builds the table,
   then cross-jumps the blocks); `case 1: d = X; break; case 2: d = X; break; default: d = X;` gives separate tree
@@ -717,6 +762,13 @@ struct-member form of a cast access, regswap `member` toggles every one)
   definition whose caller does `return f(x);` needs a cast at the caller; a full scratch prototype breaks m2c's
   zero-argument callers (K&R); regswap `fork` can produce a variant whose uses are not dominated by the fork (check
   it); install_c needs one-line macros. Never `rm -rf build/permute` or other shared build dirs wholesale.
+
+- Round 16: tools/jtbl.py paired same-shape tables that tie on their lowest label wrongly (now in table address
+  order); install_c drops a static inline helper reached only through a `#define` (call it directly) and reads a
+  macro whose body starts with `if (...) {` as a function; ccheck reports DIFF for a scratch calling a static inline
+  defined only in the target file (install_c is fine); `ccheck | tail && install_c` installs even on failure;
+  `git add X; git commit -- ... $(git ls-files -m ...)` leaves a staged alias file behind (name it explicitly);
+  never `rm -rf build/tmp_regswap_*` while other agents run.
 
 ## Decisions (with dates in STATUS)
 

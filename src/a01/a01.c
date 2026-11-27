@@ -11443,7 +11443,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8012E1B4);
 #define W_211f(p, o) (*(u32 *)((u8 *)(p) + (o)))
 extern u8 D_80138184[];
 extern u8 D_801382C8[];
-
 void func_8012E370(u8 *a)
 {
     u32 c;
@@ -11486,7 +11485,6 @@ void func_8012E370(u8 *a)
 }
 
 extern s32 D_1F800088;
-
 void func_8012E4B4(u8 *a)
 {
     s16 v[4];
@@ -12112,7 +12110,6 @@ extern s32 D_1F800084_8c7c;
 #define T2_strgb(r0) __asm__ volatile("swc2 $22, 0( %0 )" : : "r"(r0) : "memory")
 extern u8 D_801388EC_a723;
 extern u8 D_801388EE_86ce;
-
 u32 *func_80130838(u32 *f, u32 *ot, s32 n)
 {
     s32 *otz = (s32 *)0x1F800004;
@@ -12334,7 +12331,6 @@ typedef struct {
 #define T2_stsxy3_gt4(r0)                                                                                              \
     __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz0(r0) __asm__ volatile("swc2 $16, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_80130D9C(u32 *f, u32 *ot, s32 n)
 {
     s32 *otz = (s32 *)0x1F800004;
@@ -12520,7 +12516,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801311FC);
 #define T2_ldrgb(r0) __asm__ volatile("mtc2 %0, $6" : : "r"(r0))
 #define T2_dpcs() __asm__ volatile("nop; nop; .word 0x4A780010")
 #define T2_strgb(r0) __asm__ volatile("swc2 $22, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_801316A8(u32 *f, u32 *ot, s32 n, s32 dp)
 {
     s32 rgb;
@@ -12734,7 +12729,6 @@ u32 *func_801316A8(u32 *f, u32 *ot, s32 n, s32 dp)
 #define T2_stsxy3_gt4(r0)                                                                                              \
     __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz0(r0) __asm__ volatile("swc2 $16, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_80131BB0(u32 *f, u32 *ot, s32 n, s32 dp)
 {
     s32 rgb;
@@ -12935,7 +12929,6 @@ static inline void K_depth2(s32 z, u32 *c)
     K_dpcs();
     K_strgb2(c);
 }
-
 u32 *func_80132690(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[3];
@@ -13147,7 +13140,6 @@ u32 *func_801329C4(u32 *f, u32 *ot, s32 n)
 extern s16 *D_1F80028C;
 u32 *func_80132690();
 u32 *func_801329C4();
-
 void func_80132DC0(u32 *a0, void *a1)
 {
     u32 *s1;
@@ -13211,7 +13203,6 @@ INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80132FD0);
 
 void func_80132FD0();
 extern s16 D_80138AF0[][3];
-
 u8 *func_80133574(u8 *owner, s16 k) {
     u8 *p = func_8007A980(1, 2, 0);
 
@@ -13243,7 +13234,6 @@ static inline u8 *SpawnNext_362c(u8 *owner)
     p[3] = 0;
     return p;
 }
-
 void func_8013362C(u8 *a)
 {
     s32 vec[4];
@@ -13336,7 +13326,6 @@ static inline void ApplyVelocity_3958(u8 *a)
     W(a, 0x34) += H(a, 0x52) << 8;
     func_8007778C(a);
 }
-
 void func_80133958(u8 *a)
 {
     s32 *q = (s32 *)(a + 0x60);
@@ -13442,7 +13431,6 @@ void func_80133958(u8 *a)
 }
 
 void func_80133958();
-
 u8 *func_80133CAC(s16 kind, u8 *owner, u16 *pos, u16 *vel) {
     u8 *p = func_8007A980(3, 2, 0);
 
@@ -13464,7 +13452,6 @@ u8 *func_80133CAC(s16 kind, u8 *owner, u16 *pos, u16 *vel) {
 
 extern u8 D_80138BB4[];
 extern u8 D_80138B94[];
-
 void func_80133D74(u8 *a)
 {
     u8 *o = P(a, 0x10);

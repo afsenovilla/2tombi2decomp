@@ -7200,7 +7200,6 @@ static inline s32 Talk6090(u8 *a)
     }
     return 0;
 }
-
 void f_UpdateWaterTempleInteriorEnvironmentActor(u8 *a)
 {
     s16 *d;

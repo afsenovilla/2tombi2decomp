@@ -795,7 +795,6 @@ extern u8 D_800BF821;
 extern s16 D_1F8000EE_5d06;
 extern u8 D_800BF808_1760[];
 extern u8 D_1F8000D0_b839[];
-
 void func_8010B698(u8 *a)
 {
     u8 *g;
@@ -3020,7 +3019,6 @@ void func_80111238(u8 *a)
 }
 
 extern u8 D_8011BF30[];
-
 void func_80111264(u8 *a)
 {
     u8 *o = *(u8 **)(a + 0x10);
@@ -3058,7 +3056,6 @@ typedef struct {
     u8 v[0x30];
 } T113A0;
 extern T113A0 D_80109198;
-
 void func_801113A0(u8 *a)
 {
     T113A0 tbl = D_80109198;
@@ -4078,7 +4075,6 @@ void func_80114020(u8 *a)
 extern u8 *D_800ECF84;
 extern s16 D_1F8000F2_a096;
 extern s16 D_1F8000F0_7cc6;
-
 void func_801140D0(u8 *a)
 {
     s32 pad;
@@ -4234,7 +4230,6 @@ void func_801142EC(u8 *a)
 u8 *func_8007A980();
 void func_80114B38(u8 *a);
 void func_80115DF0(u8 *a);
-
 void func_80114630(u8 *a)
 {
     u8 *b;
@@ -5277,7 +5272,6 @@ static inline void epc_circle(u8 *a)
     H(a, 0x2E) = ((func_80083F50(H(a, 0x62)) * 1200) >> 12) + 0x12C0;
     H(a, 0x36) = 0x1162 - ((func_80083E80(H(a, 0x62)) * 1200) >> 12);
 }
-
 void func_801179C0(u8 *a)
 {
     switch (a[4]) {

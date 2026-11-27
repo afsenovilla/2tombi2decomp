@@ -5106,7 +5106,6 @@ static inline void epc_circle(u8 *a)
     H(a, 0x2E) = ((func_80083F50(H(a, 0x62)) * 600) >> 12) + 0x2880;
     H(a, 0x36) = 0x2600 - ((func_80083E80(H(a, 0x62)) * 600) >> 12);
 }
-
 void func_80116D48(u8 *a)
 {
     switch (a[4]) {

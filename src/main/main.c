@@ -7409,7 +7409,6 @@ extern char D_80014A6C[];
 #define PART_ed31(i) (((Parts_AD48 *)a)->parts[i])
 #define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void func_8003AD48(u8 *a)
 {
     s32 i;
@@ -13192,7 +13191,6 @@ static inline void corner_inl(s16 *r, s32 u, u8 flags, s32 ot)
         *o = (u32)p;
     } while (0);
 }
-
 void func_8005019C(s16 *q, s32 f, u8 b, s32 ot)
 {
     s16 r[4];
@@ -13387,7 +13385,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_80050A80);
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80050B08);
 
 extern s32 D_1F800040[];
-
 void f_UpdateActorScaledPartTransforms(u8 *a)
 {
     s32 i;
@@ -13530,7 +13527,6 @@ void func_80051464(u8 *a)
 extern u8 D_800E7E80_c930[];
 extern s32 D_1F800040_97ac[];
 #define W_d1fb(p, o) (*(s32 *)((u8 *)(p) + (o)))
-
 void func_80051614(void *arg0, void *v, s32 idx, s32 scaled)
 {
     u8 *a;
@@ -14784,7 +14780,6 @@ end:
 }
 
 extern u8 D_1F800258_ftc;
-
 s32 f_UpdateTombaForwardTerrainContact(u8 *t, s32 mode)
 {
     s16 k;
@@ -14875,7 +14870,6 @@ INCLUDE_ASM("asm/main/nonmatchings/main", func_8005490C);
 
 extern u8 *D_800A4544_4b34[];
 extern u8 *D_800A4524_4b34[];
-
 void func_80054B34(u8 *t, s32 i, s32 j)
 {
     s32 anim;
@@ -14990,7 +14984,6 @@ void f_SelectTombaContactAnimation6AOr6C(u8 *a, s32 mode, s32 base)
 extern u8 D_800A454C[];
 #define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
-
 void f_UpdateTombaGroundMovementAnimation(u8 *t, s32 blend)
 {
     s32 anim;
@@ -15327,7 +15320,6 @@ s32 func_80055C30(u8 *p)
 typedef struct { u8 pad0[0x52]; u16 f52; u8 pad54[0x10]; u8 u64; } Cam_5C9C;
 extern Cam_5C9C D_800E8008_5c9c;
 extern u16 D_1F8000F2_5c9c;
-
 void func_80055C9C(u8 *t, s32 ang)
 {
     Cam_5C9C *c = &D_800E8008_5c9c;
@@ -16471,7 +16463,6 @@ extern s32 D_1F800060_97ac[];
 #define PART(i) (((Parts_97AC *)a)->parts[i])
 #define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
 #define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
-
 void func_800597AC(u8 *a)
 {
     u8 save;
@@ -17468,7 +17459,6 @@ extern u8 D_1F800137_fa84;
 extern u8 D_800BFA47_fa84;
 extern u8 D_800BF80A_fa84;
 extern u8 D_800BF80B_fa84;
-
 void func_8005FA84(u8 *t)
 {
     D_1F800137_fa84 = 2;
@@ -17724,7 +17714,6 @@ extern u16 D_1F800202_a80;
 extern u16 D_1F800204_a80;
 extern s16 D_1F800178_a80;
 extern u8 D_1F800237_a80;
-
 void func_80060A80(u8 *t, s32 mode)
 {
     s16 ang;
@@ -18402,7 +18391,6 @@ s32 func_800634A8(s32 arg0) {
 
 extern s16 D_800A4710[];
 extern s16 D_800A4738[];
-
 void f_UpdateTombaSupportSwingMotion(u8 *t, s32 flags)
 {
     s16 *rec;
@@ -18593,7 +18581,6 @@ void f_UpdateTombaSupportSwingMotion(u8 *t, s32 flags)
 
 extern u8 *D_800A4784[];
 extern u8 *D_800A4794[];
-
 void func_80063B94(u8 *t, s32 mode)
 {
     u8 **tab;
@@ -19715,7 +19702,6 @@ void func_8006670C(void *arg0) {
 typedef struct { u8 pad0[0x3A]; u16 x; u8 pad3C[2]; u16 y; u8 pad40[2]; u16 z; u8 pad44[0x20]; u8 u64; } Cam_762C;
 extern u8 D_800BF80D_78e8;
 extern Cam_762C D_800E8008_a455;
-
 void func_80066878(u8 *t)
 {
     u8 *g;
@@ -19941,7 +19927,6 @@ void func_80066DE8(u8 *t)
 }
 
 extern u8 D_800BFAD7;
-
 void func_80066FA8(u8 *t)
 {
     s16 v[6];
@@ -27870,7 +27855,6 @@ void func_8007D14C(u8 *a)
 }
 
 extern u8 D_800BFE4E;
-
 void func_8007D208(u8 *a)
 {
     s16 w;
@@ -28225,7 +28209,6 @@ extern u8 D_800FB166;
 extern char D_800172F0[];
 extern char D_800172FC[];
 extern char D_80017300[];
-
 void func_8007F8F8(void)
 {
     char *txt[4];
