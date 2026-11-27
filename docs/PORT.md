@@ -8,6 +8,46 @@ credits it. Nothing of the game is in the repo: the port reads `game/usa/` (the 
 The matching build stays authoritative: the port only **reads** `src/`, `build/<prog>.elf` and `asm/<prog>/`, and
 `python3 tools/build.py` gives 29 / 29 OK with or without it.
 
+## 0. Stage 2 (2026-11-27): playable A00 in a window
+
+```
+cmake -S port -B build/port -G Ninja && cmake --build build/port     # also builds tomba2-view when SDL2 is found
+build/port/tomba2 --window                                           # SDL2 window, keyboard / controller, 60 Hz
+#   keys (tomba2-view): arrows = d-pad, X = Cross, Z = Square, S = Triangle, D = Circle, Q / W = L1 / R1,
+#   A / E = L2 / R2, Return = Start, Backspace = Select, F = 2x / 3x, F11 = fullscreen, Escape = quit
+#   --viewer PATH, --viewer-arg ARG (repeatable: --scale N, --fullscreen, --keys up=Up,cross=X,..., --stats,
+#   --dump DIR[:N]); --headless (the default) keeps the stage-1 behaviour
+# free play in A00, headless (frame dumps of Tomba walking, jumping on a barrel, the "look inside" hint):
+build/port/tomba2 --frames 10600 --dump-frames DIR --dump-every 50 --pad-script \
+  400:start,600:cross,800:cross,1000:cross,1200:cross,1400:start,6000:circle:10x50/60,9200:right:300,\
+9550:cross:10,9600:right+cross:20,9700:left:300,10050:cross:10,10100:square:10,10200:up:100,10350:down:100
+```
+
+What stage 2 changed (each item with its headless check):
+
+- **The attract-demo-2 crash (frame 5637) is fixed**: MAIN's C `func_800633B0(a)` dispatches to the resident area
+  overlay (`func_8010ACB8(a)` in A01, ...) and those read `$a1`, the second argument func_800633B0's own callers
+  passed (`((s32 (*)(u8 *, s32))func_800633B0)(a, 0)`). gen_t2.py took arities only from MAIN's asm, so the call
+  was not forwarded and A01 read garbage, spawned an actor on a non-model bank and crashed 1600 frames later.
+  Arities now also come from every other program's asm (the highest of all copies of a name): 46 calls forwarded
+  (was 28). Attract mode runs 20000 frames without a crash.
+- **Narrow results** (`u8` / `s8` / `u16` / `s16`) of native functions are extended for MIPS callers
+  (`PortFunc.ret`, gen_t2.py `ret_kind`): the i386 ABI leaves eax's upper bits undefined, R3000 code expects the
+  extended value in `$v0`.
+- **How the crash was found** (the method for the next ones): `--interp-range all` runs every MAIN function in the
+  interpreter (the retail code is the reference run): no crash; then bisect `--interp-range LO-HI` on the upper
+  bound with a fixed low bound (a range only takes effect for calls from interpreted code or thunks, so a native
+  caller hides a buggy native callee: bisect `[LO, hi)` for the smallest hi that runs clean, which names the
+  caller), then gdb watchpoints on the bad datum (`watch *(int*)ADDR if *(int*)ADDR == VALUE`; `port_mips_cur_pc`
+  says which interpreted instruction wrote it) and `--watch-pc ADDR` (the interpreter's registers each time it
+  reaches ADDR).
+- **SDL2 window** (`--window`): T1's viewer process (`port/tools/view/tomba2_view.c`, a 64-bit SDL2 program fed
+  through pipes by `runtime/window.c`; the game binary stays i386 and freestanding), 320x240 frames, 60 Hz pacing
+  (`port_hz` defaults to 60: USA/NTSC). Checked with `SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy` and the
+  viewer's own `--dump DIR:N` (the title screen arrives at 58-60 frames/s, none skipped).
+- **Free play in A00** works with the stage-1 interpreter set-up: after the opening and the journal tutorial Tomba
+  walks, jumps onto a barrel, walks back, and the "Use up and Circle to look inside" hint appears (the script above).
+
 ## 1. Status: stage 1, milestone P0 (2026-11-27)
 
 ```

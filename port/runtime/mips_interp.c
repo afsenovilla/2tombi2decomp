@@ -86,6 +86,7 @@ static int is_spin(u32 top, u32 br) {
 unsigned long port_spin_vblanks;
 
 u32 port_mips_cur_pc, port_mips_cur_entry;   /* for the fault report */
+u32 port_watch_pc;                         /* --watch-pc ADDR: print the registers each time the interpreter reaches ADDR */
 u32 port_mips_call(u32 entry, const u32 *args) {
     u32 saved_pc = port_mips_cur_pc, saved_entry = port_mips_cur_entry;
     u32 stack[MIPS_STACK_WORDS];
@@ -102,6 +103,9 @@ u32 port_mips_call(u32 entry, const u32 *args) {
         u32 ins = *(u32 *)pc;
         u32 cur = pc;
         port_mips_cur_pc = cur; port_mips_cur_entry = entry;
+        if (cur == port_watch_pc && port_watch_pc)
+            port_printf("[watch] %08x frame %d: v0 %08x v1 %08x a0 %08x a1 %08x a2 %08x a3 %08x t0 %08x s0 %08x s1 %08x s2 %08x sp %08x ra %08x\n",
+                        cur, port_frame, r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[16], r[17], r[18], r[29], r[31]);
         pc = npc; npc += 4;
         u32 op = ins >> 26, rs = (ins >> 21) & 31, rt = (ins >> 16) & 31, rd = (ins >> 11) & 31;
         u32 sh = (ins >> 6) & 31, fn = ins & 63;
@@ -269,6 +273,14 @@ u32 port_mips_call(u32 entry, const u32 *args) {
                             if (r[29] < 0x80000000u || r[29] + 16 + 4 * k < 0x80200000u) st[k] = sp[4 + k];
                         u64 v = ((NativeFn)f)(r[4], r[5], r[6], r[7], st[0], st[1], st[2], st[3]);
                         r[2] = (u32)v; r[3] = (u32)(v >> 32);
+                        /* a char / short result: the i386 callee leaves eax's upper bits undefined, the R3000
+                           code extended it (gen_t2.py ret_kind) */
+                        switch (tgt >= 0x80000000u && tgt < 0x80200000u ? port_lookup_ret(tgt) : 0) {
+                        case 1: r[2] = (u8)r[2]; break;
+                        case 2: r[2] = (u32)(s32)(s8)r[2]; break;
+                        case 3: r[2] = (u16)r[2]; break;
+                        case 4: r[2] = (u32)(s32)(s16)r[2]; break;
+                        }
                     } else {
                         { const PortLibAddr *l = port_lib_info(tgt); port_stub(l ? l->name : "<library call from interpreted code>", tgt); }
                         r[2] = 0;

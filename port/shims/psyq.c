@@ -61,7 +61,7 @@ void port_quit(int code) {
     port_exit(code);
 }
 int port_realtime = 0;               /* 0 = run as fast as possible (headless), 1 = paced at port_hz */
-int port_hz = 50;                    /* vblanks per second when paced: 50 (PAL, default) or 60 (--hz 60) */
+int port_hz = 60;                    /* vblanks per second when paced: 60 (NTSC: the USA reference version, default) or 50 (--hz 50) */
 
 static void call_psx(void *fn) {
     void (*f)(void) = (void (*)(void))fn;

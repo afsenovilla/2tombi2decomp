@@ -3,6 +3,18 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-27 (5): port stage 2 (playable A00 in a window)
+
+The user wants a playable PC MVP (title + A00). docs/PORT.md §0 has the commands and the details.
+
+- The frame-5637 attract-demo crash is fixed: MAIN C calling an overlay function by name with fewer arguments than
+  the overlay's asm reads (`func_800633B0(a)` -> A01 `func_8010ACB8(a)` reading `$a1`). gen_t2.py now takes arities
+  from every program's asm (46 forwarded calls, was 28); narrow native results are extended for MIPS callers.
+- New debugging switches: `--interp-range LO-HI|all` (bisection against the retail code), `--watch-pc ADDR`.
+- `--window`: T1's SDL2 viewer process (`port/tools/view/tomba2_view.c` -> `build/port/tomba2-view`), 60 Hz.
+- Free play in A00 checked headless (walking, jumping on a barrel, the "look inside" hint).
+- Installed in the container: `libsdl2-dev` (apt, 64-bit: the viewer is a host-native process).
+
 ## 2026-11-27 (4): port stage 1 (milestone P0: title screen, attract demos, New Game into A00)
 
 The user asked to focus on the native PC port. `port/` (CMake, i386 Linux, freestanding like Tombi-Decomp's

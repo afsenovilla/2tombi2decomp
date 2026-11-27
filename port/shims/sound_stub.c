@@ -30,3 +30,6 @@ int SpuSetReverb(int on) { return on; }
 int SpuReserveReverbWorkArea(int on) { return on; }
 int SpuClearReverbWorkArea(int mode) { return 1; }
 void SpuGetAllKeysStatus(char *s) { for (int i = 0; i < 24; i++) s[i] = 0; }
+/* --window hands over the viewer's audio pipe (runtime/window.c); nothing is written to it until the SPU is in */
+static int audio_fd = -1;
+void port_pipe_audio_fd(int fd) { audio_fd = fd; (void)audio_fd; }

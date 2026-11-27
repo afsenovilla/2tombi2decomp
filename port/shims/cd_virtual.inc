@@ -46,7 +46,10 @@ int port_cd_read_sectors(int lba, int count, void *dst, int bytes) {
         (void)got;
         if (port_trace_cd) port_printf("[port] cd: lba %d = %s sector %d\n", lba + i, f->name, lba + i - f->lba);
         if (lba + i == f->lba && f->name[0] == 'B' && f->name[1] == 'I' && f->name[2] == 'N' && f->name[3] == '/')
+        {
             port_printf("[port] frame %d: loading %s\n", port_frame, f->name);   /* an overlay (or START.BIN) */
+            port_ovl_loaded(f->name);   /* the native copy of its C is used from now on (sys_linux_i386.c) */
+        }
     }
     return 0;
 }

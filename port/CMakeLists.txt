@@ -57,3 +57,26 @@ target_compile_options(tomba2 PRIVATE ${PORT_ARCH_FLAGS} -O1)
 set_target_properties(tomba2 PROPERTIES LINKER_LANGUAGE C LINK_DEPENDS ${GEN}/syms.ld)
 target_link_options(tomba2 PRIVATE -m32 -nostdlib -static -no-pie -Wl,--build-id=none -Wl,-z,noexecstack
                     -Wl,--allow-multiple-definition ${GEN}/syms.ld)
+
+# 4. the window: a separate host-native SDL2 process (tomba2 --window forks it); the headless game needs no SDL.
+#    From Tombi-Decomp's port/ (MIT, same author).  Windows: -DPORT_SDL2_MINGW=DIR names the i686-w64-mingw32 folder
+#    of SDL2-devel-2.x-mingw.tar.gz; tomba2-view.exe needs its bin/SDL2.dll next to it.
+if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  set(PORT_SDL2_MINGW "" CACHE PATH "SDL2 mingw development folder (.../i686-w64-mingw32)")
+  if(PORT_SDL2_MINGW AND EXISTS ${PORT_SDL2_MINGW}/include/SDL2/SDL.h)
+    set(SDL2_FOUND 1)
+    set(SDL2_INCLUDE_DIRS ${PORT_SDL2_MINGW}/include/SDL2)
+    set(SDL2_LIBRARIES -L${PORT_SDL2_MINGW}/lib -lmingw32 -lSDL2main -lSDL2 -mwindows)
+  endif()
+else()
+  find_package(SDL2 QUIET)
+endif()
+if(SDL2_FOUND)
+  add_executable(tomba2-view tools/view/tomba2_view.c)
+  target_include_directories(tomba2-view PRIVATE ${SDL2_INCLUDE_DIRS})
+  target_link_libraries(tomba2-view PRIVATE ${SDL2_LIBRARIES})
+  target_compile_options(tomba2-view PRIVATE -O2 -Wall)
+  message(STATUS "SDL2 found: building tomba2-view (tomba2 --window)")
+else()
+  message(STATUS "SDL2 not found: no tomba2-view; the game still builds (headless)")
+endif()

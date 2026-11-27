@@ -203,7 +203,7 @@ def emit(items, syms, funcs, rename, drop, native, arity=None, forwarded=None):
             else:
                 n_func += 1
                 if name in funcs and not re.search(r"\bstatic\b", head):
-                    native.append((name, syms.get(name)))
+                    native.append((name, syms.get(name), ret_kind(head, name)))
                 if arity:
                     body = forward_short_calls(body, arity, forwarded if forwarded is not None else [])
                 if name in rename:
@@ -232,6 +232,26 @@ def emit(items, syms, funcs, rename, drop, native, arity=None, forwarded=None):
         line += piece.count("\n")
         spans.append((start, line))
     return out, spans, n_func, n_asm, n_ext, 0
+
+
+# How a native function's result reaches a MIPS caller (runtime/mips_interp.c): the i386 ABI leaves the upper bits of
+# eax undefined for a char / short result, the R3000 code the game was compiled to extends it in $v0.  0 = 32 bits,
+# 1 = u8, 2 = s8, 3 = u16, 4 = s16, 5 = void.
+NARROW = {"u8": 1, "unsigned char": 1, "char": 1, "s8": 2, "signed char": 2, "M2C_UNK8": 2, "u16": 3,
+          "unsigned short": 3, "unsigned short int": 3, "s16": 4, "short": 4, "signed short": 4, "short int": 4,
+          "M2C_UNK16": 4, "void": 5}
+
+
+def ret_kind(head, name):
+    m = re.search(r"\b%s\s*\(" % re.escape(name), head)
+    if not m:
+        return 0
+    t = head[:m.start()]
+    t = re.sub(r"/\*.*?\*/", " ", t, flags=re.S)
+    t = re.sub(r"\b(static|inline|extern|__inline__|__inline|const|volatile|register)\b", " ", t)
+    t = t.strip().split("\n")[-1].strip() if "*" not in t else "*"
+    t = " ".join(t.split())
+    return NARROW.get(t, 0)
 
 
 def prototype(head):
@@ -371,6 +391,42 @@ def forward_short_calls(body, arity, fixed):
         i = j
     return "".join(out)
 
+_OTHER = {}
+OVL_BASE = 0x80106228          # lowest overlay load address (GAME / DEMO); areas + SOP 0x80108F9C, OPN / CRD 0x8018A000
+OVL_END = 0x80200000
+
+
+def ovl_vram(prog):
+    m = re.search(r"vram:\s*0x([0-9A-Fa-f]+)", open(os.path.join(ROOT, "config", prog + ".yaml")).read())
+    return int(m.group(1), 16)
+
+
+def ovl_prefixes(prog, syms):
+    """{name: <prog>_name} for every symbol of build/<prog>.elf in the overlay region."""
+    return {n: "%s_%s" % (prog, n) for n, a in syms.items()
+            if OVL_BASE <= a < OVL_END and re.match(r"[A-Za-z_]\w*$", n) and not n.startswith("__")}
+
+
+
+def other_arities(prog):
+    """{name: max asm arity} over every program but PROG (overlay functions called from it by name)."""
+    if prog not in _OTHER:
+        out = {}
+        for p in sorted(os.listdir(os.path.join(ROOT, "asm"))):
+            if p == prog or not os.path.isdir(os.path.join(ROOT, "asm", p)):
+                continue
+            for dp, _, fs in os.walk(os.path.join(ROOT, "asm", p)):
+                if os.sep + "data" in dp:
+                    continue
+                for f in fs:
+                    if f.endswith(".s"):
+                        k = asm_arity(os.path.join(dp, f))
+                        if k > out.get(f[:-2], -1):
+                            out[f[:-2]] = k
+        _OTHER[prog] = out
+    return _OTHER[prog]
+
+
 # ------------------------------------------------------------------------------------------------ sources
 HOST_CPP = ["gcc", "-m32", "-E", "-P", "-w", "-undef", "-D__GNUC__=2", "-DMIPSEL", "-D_LANGUAGE_C", "-DPORT", "-DSKIP_ASM",
             "-DINCLUDE_ASM(F,N)=", "-DINCLUDE_RODATA(F,N)=", "-D__i386__=0"]
@@ -383,11 +439,26 @@ def sources(outdir, progs):
     for prog in progs:
         syms = retail_syms(prog)
         funcs = func_names(prog)
+        extra_cpp, prefix = [], {}
+        if prog != "main":
+            # an overlay: every name it defines in the overlay region gets a `<prog>_` prefix (the overlays share
+            # their load addresses, and their names: func_80120308 is a different function in each area), through
+            # a header of #defines included before the source; resolution stays by address (link step)
+            prefix = ovl_prefixes(prog, syms)
+            hdr = os.path.join(outdir, "ovl_%s.h" % prog)
+            text = "".join("#define %s %s\n" % (k, v) for k, v in sorted(prefix.items()))
+            if not os.path.exists(hdr) or open(hdr).read() != text:
+                open(hdr, "w").write(text)
+            extra_cpp = ["-include", hdr]
+            syms = dict(syms)
+            syms.update({v: syms[k] for k, v in prefix.items()})
+            funcs = dict(funcs)
+            funcs.update({prefix[k]: v for k, v in list(funcs.items()) if k in prefix})
         cfiles = sorted(f for f in os.listdir(os.path.join(ROOT, "src", prog)) if f.endswith(".c"))
         for cf in cfiles:
             path = os.path.join(ROOT, "src", prog, cf)
-            pre = run(HOST_CPP + ["-I" + os.path.join(ROOT, "include"), "-I" + os.path.join(ROOT, "include", "psyq"),
-                                  path])
+            pre = run(HOST_CPP + extra_cpp + ["-I" + os.path.join(ROOT, "include"),
+                                              "-I" + os.path.join(ROOT, "include", "psyq"), path])
             items = split_items(pre)
             rename, drop = set(), set()
             arity = {}
@@ -397,6 +468,14 @@ def sources(outdir, progs):
                 for f in fs:
                     if f.endswith(".s"):
                         arity[f[:-2]] = asm_arity(os.path.join(dp, f))
+            for k, v in prefix.items():
+                if k in arity:
+                    arity[v] = arity[k]
+            # functions of other programs (the overlays MAIN dispatches to: func_800633B0 calls A01's
+            # func_8010ACB8(a) with its own second argument still in $a1): the highest arity of any copy
+            for nm, k in other_arities(prog).items():
+                if nm not in arity:
+                    arity[nm] = k
             for it in items:
                 if it[0] == "func" and it[1] and not re.search(r"\bstatic\b", it[2]):
                     arity[it[1]] = c_arity(it[2])
@@ -433,7 +512,7 @@ def sources(outdir, progs):
                         print("[gen_t2] %s:%d: %s" % (cf, line, msg))
             else:
                 print("[gen_t2] %s: errors left after the fix-up passes" % cf)
-            native.extend((prog, n, a) for n, a in native_tmp)
+            native.extend((prog, n, a, r) for n, a, r in native_tmp)
             dst = os.path.join(srcdir, prog + "_" + cf)
             if not os.path.exists(dst) or open(dst).read() != text:
                 open(dst, "w").write(text)
@@ -446,11 +525,13 @@ def sources(outdir, progs):
                                                  " ".join(sorted(rename))))
             open(os.path.join(outdir, "dropped_%s.txt" % prog), "w").write(
                 "\n".join(items[k][1] or "?" for k in sorted(drop)) + "\n")
+    with open(os.path.join(outdir, "progs.txt"), "w") as f:
+        f.write("\n".join(progs) + "\n")
     with open(os.path.join(outdir, "sources.cmake"), "w") as f:
         f.write("set(PORT_GAME_SOURCES\n%s)\n" % "".join("  %s\n" % p for p in files))
     with open(os.path.join(outdir, "native.txt"), "w") as f:
-        for prog, name, addr in native:
-            f.write("%s %s %s\n" % (prog, name, "%08X" % addr if addr is not None else "-"))
+        for prog, name, addr, rk in native:
+            f.write("%s %s %s %d\n" % (prog, name, "%08X" % addr if addr is not None else "-", rk))
     with open(os.path.join(outdir, "sources_report.txt"), "w") as f:
         f.write("\n".join(report) + "\n")
     print("\n".join(report))
@@ -474,11 +555,25 @@ ADDR_NAME = re.compile(r"^(?:func|D|jtbl|FUN|DAT|PTR)_([0-9A-Fa-f]{8})(?:_\w+)?$
 
 
 def link(outdir, nm, objlist):
-    progs = ["main"]
+    progs = [l.strip() for l in open(os.path.join(outdir, "progs.txt")) if l.strip()] \
+        if os.path.exists(os.path.join(outdir, "progs.txt")) else ["main"]
+    ovls = [p for p in progs if p != "main"]
     objs = [l.strip() for l in open(objlist) if l.strip()]
     defined, undef = host_nm(nm, objs)
     syms = retail_syms("main")
     funcs = func_names("main")
+    # overlays: their prefixed names, by program (`a01_func_80120308` -> a01's func_80120308)
+    psyms, pfuncs, vram = {}, {}, {}
+    for p in ovls:
+        psyms[p] = retail_syms(p)
+        pfuncs[p] = func_names(p)
+        vram[p] = ovl_vram(p)
+    # names the overlays give to MAIN addresses (their symbol files may name a MAIN datum differently)
+    other = {}
+    for p in ovls:
+        for n, a in psyms[p].items():
+            if a < OVL_BASE and n not in syms:
+                other.setdefault(n, a)
     by_addr_func = {}
     for name, (lib, pending) in funcs.items():
         if name in syms:
@@ -486,19 +581,32 @@ def link(outdir, nm, objlist):
     func_addrs = set(by_addr_func)
     shim_objs = {n for n, (t, o) in defined.items() if "/shims/" in o or "/runtime/" in o}
 
+    def split_prefix(name):
+        for p in ovls:
+            if name.startswith(p + "_") and name[len(p) + 1:] in psyms[p]:
+                return p, name[len(p) + 1:]
+        return None, name
+
     ld, thunks, stubs, data_alias = [], [], [], 0
     for name in sorted(undef - set(defined)):
         if name.startswith("port_") or name in ("etext", "edata", "end") or name.startswith("__") and name not in syms:
             continue                       # runtime tables (funcmap.c), compiler helpers
-        addr = syms.get(name)
-        m = ADDR_NAME.match(name)
-        if addr is None and m:
-            addr = int(m.group(1), 16)
-        if addr is None:
-            stubs.append(name)
-            thunks.append((name, 0))
-            continue
-        is_code = addr in func_addrs or (name.startswith("func_") and addr >= 0x80106228) or name in funcs
+        p, base = split_prefix(name)
+        if p:
+            addr = psyms[p][base]
+            is_code = base in pfuncs[p] or base.startswith("func_") or \
+                any(base in pfuncs[q] and psyms[q].get(base) == addr for q in ovls)
+        else:
+            addr = syms.get(name, other.get(name))
+            m = ADDR_NAME.match(name)
+            if addr is None and m:
+                addr = int(m.group(1), 16)
+            if addr is None:
+                stubs.append(name)
+                thunks.append((name, 0))
+                continue
+            is_code = addr in func_addrs or (name.startswith("func_") and addr >= OVL_BASE) or name in funcs or \
+                any(name in pfuncs[q] and psyms[q].get(name) == addr for q in ovls)
         if is_code:
             thunks.append((name, addr))
         else:
@@ -507,7 +615,13 @@ def link(outdir, nm, objlist):
     # data the native C defines that is retail data: the retail image's copy wins
     overridden = 0
     for name, (t, o) in sorted(defined.items()):
-        if t in "DBRC" and name in syms and "/shims/" not in o and "/runtime/" not in o and name not in funcs:
+        if t not in "DBRC" or "/shims/" in o or "/runtime/" in o:
+            continue
+        p, base = split_prefix(name)
+        if p and base not in pfuncs[p]:
+            ld.append("%s = 0x%08X;" % (name, psyms[p][base]))
+            overridden += 1
+        elif not p and name in syms and name not in funcs:
             ld.append("%s = 0x%08X;" % (name, syms[name]))
             overridden += 1
     with open(os.path.join(outdir, "syms.ld"), "w") as f:
@@ -522,12 +636,26 @@ def link(outdir, nm, objlist):
         f.write(".section .rodata\n")
         for k, (name, addr) in enumerate(thunks):
             f.write('.Ln%d: .asciz "%s"\n' % (k, name))
-    # funcmap: native functions by retail address; libmap: shims by retail address; libaddrs: policy
+    # funcmap: native functions by retail address (an overlay's with its program and its first two code words, to
+    # tell which overlay is resident); libmap: shims by retail address; libaddrs: policy
+    bins = {}
+    for p in ovls:
+        path = os.path.join(ROOT, "build", p + ".bin")
+        bins[p] = open(path, "rb").read() if os.path.exists(path) else b""
     native = []
     for line in open(os.path.join(outdir, "native.txt")):
-        prog, name, a = line.split()
+        prog, name, a, rk = line.split()
         if a != "-" and name in defined:
-            native.append((int(a, 16), name))
+            a = int(a, 16)
+            ovl, w0, w1 = 0, 0, 0
+            if prog != "main":
+                ovl = ovls.index(prog) + 1
+                off = a - vram[prog]
+                b = bins[prog]
+                if 0 <= off and off + 8 <= len(b):
+                    w0 = int.from_bytes(b[off:off + 4], "little")
+                    w1 = int.from_bytes(b[off + 4:off + 8], "little")
+            native.append((a, ovl, name, int(rk), w0, w1))
     native.sort()
     lib = []
     for name, (l, pending) in funcs.items():
@@ -539,15 +667,19 @@ def link(outdir, nm, objlist):
     lib.sort()
     with open(os.path.join(outdir, "funcmap.c"), "w") as f:
         f.write('/* generated by port/tools/gen_t2.py link */\n#include "port_runtime.h"\n')
-        for a, n in native:
+        for a, o, n, rk, w0, w1 in native:
             f.write("extern char %s[];\n" % n)
         for a, n, l, s, p in lib:
             if s:
                 f.write("extern char %s[];\n" % s)
+        f.write("const PortOvl port_ovls[] = {\n  {\"main\", \"\", 0x80010000u},\n")
+        for p in ovls:
+            f.write('  {"%s", "BIN/%s.BIN", 0x%08Xu},\n' % (p, p.upper(), vram[p]))
+        f.write("};\nconst int port_ovls_count = %d;\n" % (len(ovls) + 1))
         f.write("const PortFunc port_funcmap[] = {\n")
-        for a, n in native:
-            f.write('  {0x%08X, %s, "%s"},\n' % (a, n, n))
-        f.write("  {0, 0, 0}\n};\nconst int port_funcmap_count = %d;\n" % len(native))
+        for a, o, n, rk, w0, w1 in native:
+            f.write('  {0x%08X, %s, "%s", %d, %d, 0x%08Xu, 0x%08Xu},\n' % (a, n, n, rk, o, w0, w1))
+        f.write("  {0, 0, 0, 0, 0, 0, 0}\n};\nconst int port_funcmap_count = %d;\n" % len(native))
         shims = [(a, n, s) for a, n, l, s, p in lib if s]
         f.write("const PortLib port_libmap[] = {\n")
         for a, n, s in shims:
@@ -557,7 +689,11 @@ def link(outdir, nm, objlist):
         for a, n, l, s, p in lib:
             f.write('  {0x%08X, %d, "%s", "%s"},\n' % (a, p, n, l))
         f.write("  {0, 0, 0, 0}\n};\nconst int port_libaddrs_count = %d;\n" % len(lib))
-    rep = ["native functions with a retail address: %d" % len(native),
+    per = {}
+    for a, o, n, rk, w0, w1 in native:
+        per[o] = per.get(o, 0) + 1
+    rep = ["native functions with a retail address: %d (%s)" % (len(native), ", ".join(
+               "%s %d" % ((["main"] + ovls)[o], c) for o, c in sorted(per.items()))),
            "retail data names aliased: %d (+ %d native definitions overridden by the retail copy)" % (data_alias, overridden),
            "call thunks (code without native C): %d, of which %d unknown names (stubs)" % (len(thunks), len(stubs)),
            "Psy-Q functions: %d, shimmed %d, interpretable %d" % (len(lib), len(shims), sum(1 for x in lib if x[4] and not x[3])),

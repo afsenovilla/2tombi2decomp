@@ -819,6 +819,12 @@ struct-member form of a cast access, regswap `member` toggles every one)
   arguments than the callee reads (`f()` relying on `$a0`, `((s32 (*)())f)()`, `ApplyMatrixSV(p)`) get the caller's
   own arguments forwarded (PORT_ARG) by arity from the asm; a `void` C function whose asm callers read `$v0` relies
   on `eax` surviving.
+- Native port, stage 2 (2026-11-27): arities for forwarding come from every program's asm, not only the caller's
+  (MAIN C calls overlay functions by name: `func_800633B0(a)` -> A01 `func_8010ACB8` reads `$a1`); narrow native
+  results are extended for MIPS callers. A port crash is bisected against the retail code: `--interp-range all`
+  first (all MAIN functions interpreted), then `--interp-range LO-HI` on the upper bound with a fixed low bound
+  (a native caller hides a native callee from the range), then gdb watchpoints and `--watch-pc`. `--window` runs
+  T1's SDL2 viewer process (`build/port/tomba2-view`, needs `libsdl2-dev`).
 - Byte-matching only; tools/nonmatching.py is kept unused.
 - USA is the reference; EU in config/eu/.
 - The licensed-region module at the end of boot.c [0x80011A0C, 0x80012D2C) is library-style files in

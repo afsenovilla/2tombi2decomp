@@ -218,4 +218,7 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   (port/tools/gen_t2.py: host cpp + item split, compile-error fix-ups, register-carried arguments forwarded), asm-only
   functions and all overlays in the MIPS interpreter, Psy-Q through port/shims, a virtual disc over game/usa.
   Debug: gdb on build/port/tomba2 with `handle SIGSEGV nostop noprint pass` (SIGSEGV is the call trampoline).
+  Stage 2 (2026-11-27, docs/PORT.md §0): `build/port/tomba2 --window` (SDL2 viewer process `build/port/tomba2-view`,
+  needs `libsdl2-dev`; keyboard / controller; 60 Hz), free play in A00; crash hunts with `--interp-range LO-HI|all`
+  (bisection against the retail code) and `--watch-pc ADDR`.
 - `python3 -I tools/gen_configs.py game/usa [--force] [--out config/eu]`: regenerates the first configs (keeps hand-made ones without --force).

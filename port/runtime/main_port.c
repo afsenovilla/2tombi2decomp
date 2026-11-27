@@ -61,11 +61,27 @@ int port_main(int argc, char **argv) {
         else if (streq(argv[i], "--realtime")) port_realtime = 1;
         else if (streq(argv[i], "--hz") && i + 1 < argc) port_hz = atoi_(argv[++i]);
         else if (streq(argv[i], "--trace-cd")) port_trace_cd = 1;
+        else if (streq(argv[i], "--no-ovl-native")) { extern int port_ovl_native; port_ovl_native = 0; }
+        else if (streq(argv[i], "--window")) { extern int port_window; port_window = 1; }
+        else if (streq(argv[i], "--headless")) { extern int port_window; port_window = 0; }
+        else if (streq(argv[i], "--viewer") && i + 1 < argc) { extern const char *port_window_viewer; port_window_viewer = argv[++i]; }
+        else if (streq(argv[i], "--viewer-arg") && i + 1 < argc) {
+            extern const char *port_viewer_args[16]; extern int port_viewer_args_count;
+            if (port_viewer_args_count < 16) port_viewer_args[port_viewer_args_count++] = argv[++i]; else i++;
+        }
         else if (streq(argv[i], "--no-interp")) port_interp = 0;
         else if (streq(argv[i], "--interp") && i + 1 < argc) {
             extern u32p port_force_interp[8]; u32 v = hex_(argv[++i]);
             for (int k = 0; k < 8; k++) if (!port_force_interp[k]) { port_force_interp[k] = v; break; }
         }
+        else if (streq(argv[i], "--interp-range") && i + 1 < argc) {
+            /* LO-HI (hex): game functions in [LO, HI) run in the interpreter when called from interpreted code or a
+               thunk; `--interp-range all` = every one (the retail code as the reference run) */
+            extern u32p port_interp_lo, port_interp_hi; const char *v = argv[++i];
+            if (streq(v, "all")) { port_interp_lo = 0x80000000u; port_interp_hi = 0x80200000u; }
+            else { port_interp_lo = hex_(v); while (*v && *v != '-') v++; port_interp_hi = *v ? hex_(v + 1) : port_interp_lo + 4; }
+        }
+        else if (streq(argv[i], "--watch-pc") && i + 1 < argc) { extern u32p port_watch_pc; port_watch_pc = hex_(argv[++i]); }
         else if (streq(argv[i], "--trace-interp")) { extern int port_mips_trace; port_mips_trace = 1; }
         else if (streq(argv[i], "--entry") && i + 1 < argc) entry_override = hex_(argv[++i]);
         else if (streq(argv[i], "--pad-script") && i + 1 < argc) { extern void port_pad_script(const char *); port_pad_script(argv[++i]); }
@@ -73,12 +89,14 @@ int port_main(int argc, char **argv) {
         else if (streq(argv[i], "-v")) port_verbose++;
         else {
             port_printf("usage: %s [--exe MAIN.EXE] [--data DIR] [--frames N] [--dump-frames DIR] [--dump-every N] [--dump-vram]\n"
+                        "       [--window [--viewer PATH] [--viewer-arg ARG]...] (SDL2 window: the tomba2-view process; paced)\n"
                         "       [--realtime] [--hz 50|60] [--trace-cd] [--no-interp] [--interp ADDR] [--trace-interp]\n"
                         "       [--entry ADDR] [--pad-script FRAME:BUTTONS[:LEN[xCOUNT/PERIOD]],...] [--autostart N] [-v]\n", argv[0]);
             return 2;
         }
     }
     port_setup_memory();
+    { extern int port_window; extern void port_window_start(const char *); if (port_window) port_window_start(argv[0]); }
     u32 sp = 0;
     u32 entry = load_exe(exe, &sp);
     if (entry_override) entry = entry_override;
@@ -92,6 +110,3 @@ int port_main(int argc, char **argv) {
     return 0;
 }
 
-/* no window yet (stage 1 is headless): the hooks gpu.c / pad.c call */
-void port_window_frame(const u8 *rgb, int w, int h) { (void)rgb; (void)w; (void)h; }
-int port_window_poll_pad(u16 *out) { (void)out; return 0; }
