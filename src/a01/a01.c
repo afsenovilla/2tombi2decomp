@@ -376,7 +376,179 @@ s32 func_8010AE30(u8 *a)
     return 0;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010AF6C);
+typedef struct { s16 xl, x, yl, y, zl, z; } PosAF6C;
+extern s16 D_1F8000D0_af6c[];
+extern u8 D_800BF80F;
+extern s16 D_1F8000EE_af6c;
+#define COPYAF6C() \
+    a[0x64] |= 0x80; \
+    H(a, 0xA) = U(b, 0x2E); \
+    H(a, 0xE) = U(b, 0x32); \
+    H(a, 0x12) = U(b, 0x36); \
+    func_8006E3F4(a, a + 8)
+#define SETCAF6C(X, Y, Z) \
+    if (D_800BF80F != 0) { \
+        s16 *c = D_1F8000D0_af6c; \
+        c[1] = X; \
+        c[3] = Y; \
+        c[5] = Z; \
+    }
+#define POSAF6C(X, Y, Z) \
+    { \
+        PosAF6C pos; \
+        pos.x = X; \
+        pos.y = Y; \
+        pos.z = Z; \
+        func_8006CEC4(D_1F8000D0_af6c, &pos, 0xE0); \
+    }
+
+void func_8010AF6C(u8 *a, u8 *b)
+{
+    a[0x72] = 0;
+    a[0x64] &= 0x7F;
+    switch (a[3]) {
+    case 0:
+        D_1F8000EE_af6c = -0x802;
+        a[3]++;
+    case 1:
+        switch (b[0x2A]) {
+        case 27:
+            if (H(b, 0x2E) < 0x21E8) {
+                a[0x72] = 2;
+            }
+            break;
+        case 36:
+            if (H(b, 0x2E) >= 0x2EB4) {
+                a[0x72] = 3;
+            }
+            break;
+        case 37:
+            SETCAF6C(0x1FAF, -0x9FE, 0x40E6);
+            COPYAF6C();
+            POSAF6C(0x1FAF, -0x9FE, 0x40E6);
+            a[0x66] = 3;
+            break;
+        case 38:
+            SETCAF6C(0x25A1, -0x99C, 0x40E6);
+            COPYAF6C();
+            POSAF6C(0x25A1, -0x99C, 0x40E6);
+            a[0x66] = 3;
+            break;
+        case 41:
+        case 43:
+            {
+                s16 *c = D_1F8000D0_af6c;
+
+                if (c[5] >= 0x2F47) {
+                    a[0x66] |= 1;
+                    c[5] = 0x2F46;
+                }
+            }
+            break;
+        case 44:
+            {
+                s16 *c = D_1F8000D0_af6c;
+
+                if (c[5] < 0x2829) {
+                    a[0x66] |= 1;
+                    c[5] = 0x2829;
+                }
+            }
+            break;
+        case 46:
+            SETCAF6C(0x189A, -0x99C, 0x2904);
+            COPYAF6C();
+            POSAF6C(0x189A, -0x99C, 0x2904);
+            a[0x66] = 3;
+            break;
+        case 47:
+        case 48:
+            a[0x64] |= 0x80;
+            {
+                s16 *c = D_1F8000D0_af6c;
+
+                c[1] = 0x40E7;
+                c[3] = -0x963;
+                c[5] = 0x31DC;
+            }
+            H(a, 0xA) = 0x3B54;
+            H(a, 0xE) = -0x80C;
+            H(a, 0x12) = 0x2C8F;
+            func_8006E3B0(a, a + 8);
+            break;
+        case 49:
+            if (H(b, 0x2E) < 0x259E) {
+                a[0x72] = 3;
+            }
+            break;
+        case 50:
+            SETCAF6C(0x2910, -0x9FE, 0x1A1B);
+            COPYAF6C();
+            POSAF6C(0x2910, -0x9FE, 0x1A1B);
+            a[0x66] = 3;
+            break;
+        case 55:
+        case 56:
+        case 57:
+            COPYAF6C();
+            POSAF6C(0x36AE, U(b, 0x32) - 0x15A, 0x1C8B);
+            a[0x66] = 3;
+            break;
+        case 58:
+            SETCAF6C(0x36D5, -0x87B, 0x1EDB);
+        case 59:
+        case 60:
+        case 61:
+        case 62:
+        case 63:
+            COPYAF6C();
+            POSAF6C(0x36D5, -0x87B, 0x1EDB);
+            a[0x66] = 3;
+            break;
+        case 67:
+            SETCAF6C(0x3977, -0xA88, 0x1DB7);
+        case 64:
+        case 65:
+        case 66:
+            COPYAF6C();
+            POSAF6C(0x3977, U(b, 0x32) - 0x21C, 0x1DB7);
+            a[0x66] = 3;
+            break;
+        case 69:
+            if (H(b, 0x2E) < 0x4480) {
+                a[0x72] = 3;
+            }
+            func_800782F0(1, 0x1F);
+            break;
+        case 73:
+            if (H(b, 0x2E) >= 0x4971) {
+                a[0x72] = 2;
+            }
+            break;
+        case 74:
+            a[0x64] |= 0x80;
+            {
+                s16 *c = D_1F8000D0_af6c;
+
+                c[1] = 0x3768;
+                c[3] = -0x96A;
+                c[5] = 0x1F5E;
+            }
+            H(a, 0xA) = U(b, 0x2E);
+            H(a, 0xE) = U(b, 0x32);
+            H(a, 0x12) = U(b, 0x36);
+            func_8006E3F4(a, a + 8);
+            a[0x66] = 3;
+            break;
+        }
+        break;
+    case 2:
+        break;
+    }
+    if (b[0x61] != 0) {
+        a[0x72] = 0x40;
+    }
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8010B604);
 
@@ -5573,7 +5745,6 @@ void func_8011C998(u8 *a) {
     }
 }
 
-extern u8 D_800BF80F;
 s16 func_8011D540();
 void func_8011DFEC(u8 *a);
 void f_UpdateAnemoneCaptureSequence(u8 *a) {
