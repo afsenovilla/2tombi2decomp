@@ -137,11 +137,22 @@ S = Triangle, D = Circle, Q / W = L1 / R1, A / E = L2 / R2, Return = Start, Back
 F = window size, Escape = quit; a game controller works too. Checked here: the same binaries under
 `SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy` (no display in the container); not yet checked on a real WSL2.
 
-**A native Windows build** (no WSL) is not done. T1 had one for its fixed-address prototype
-(`port/runtime/sys_win32_i386.c`, mingw-w64 i686, the viewer as a second exe) and dropped it for its native-pointer
-`port2/`: Windows keeps its own memory in the KUSEG mirror range the game's masked pointers use, and COFF needed
-generator changes (thunks, data definitions). The plan for T2 is the same as T1's: the native-pointer port once
-the decomp is complete; until then WSL2.
+**A native Windows build** (no WSL) is experimental: it cross-compiles and links, but has **not been run** (Wine
+crashes on any program in this container, even a hello world). T1's `sys_win32_i386.c` (Win32 API, a vectored
+exception handler instead of SIGSEGV, the PS1 RAM as a section mapped at 0x80000000 / 0xA0000000, the exe based at
+0x10000000 and large-address-aware) is taken over with the lookup / stub / interpreter code moved to
+`runtime/sys_lookup.c`, shared by both hosts; `gen_t2.py link` skips the stdcall-decorated Win32 imports. T2 maps
+the KUSEG mirror by default on Windows too (relaunching itself with the range reserved when Windows has blocks
+there, T1's trick): the native code draws through masked KUSEG pointers so much that `--no-kuseg` (every access
+emulated in the fault handler) runs about ten times slower (Linux, 6600 frames). That is the open risk T1 hit on
+real Windows 10 (blocks of the range in use by the host).
+
+```
+sudo apt-get install -y gcc-mingw-w64-i686
+cmake -S port -B build/port-win -G Ninja -DCMAKE_TOOLCHAIN_FILE=$PWD/port/cmake/mingw-i686.cmake \
+      [-DPORT_SDL2_MINGW=$PWD/SDL2-2.30.11/i686-w64-mingw32]     # SDL2-devel-2.30.11-mingw.tar.gz, for tomba2-view.exe
+cmake --build build/port-win                                     # -> build/port-win/tomba2.exe (+ tomba2-view.exe)
+```
 
 ## 1. Status: stage 1, milestone P0 (2026-11-27)
 
@@ -300,7 +311,8 @@ natively, the SDL2 window and 60 Hz pacing, XA audio, sound effects, the memory 
    Still unhandled in general: a `void` C function whose asm callers read `$v0` (`func_8001CE90` passes
    `func_8001CE04`'s result on; it works because the native epilogue keeps `eax`).
 4. **Reverb** and the remaining libsnd calls (`SsSetReservedVoice`, `SsSetStereo`, ...) in `shims/sound.c`.
-5. **Native Windows**: WSL2 for now (§0.1); a native exe means T1's `sys_win32_i386.c` plus its COFF generator
-   changes and the KUSEG question, or (better) the native-pointer port once the decomp is complete.
+5. **Native Windows**: WSL2 for now (§0.1). The experimental exe (§0.1) needs a first run on real Windows (or a
+   working Wine): the KUSEG mirror, the viewer pipes, the pacing; the long-term answer is the native-pointer port
+   once the decomp is complete.
 6. The boot exe (`SCUS_944.54`: legal screen, then it loads MAIN.EXE) is skipped; running it first would need its
    own symbol table in the port.

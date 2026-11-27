@@ -32,6 +32,15 @@ endforeach()
 #    host libc)
 set(PORT_ARCH_FLAGS -m32 -march=i686 -fno-pic -fno-pie -fno-stack-protector -fcf-protection=none
     -fno-asynchronous-unwind-tables -ffreestanding -fno-builtin)
+# Windows (experimental: cmake -DCMAKE_TOOLCHAIN_FILE=port/cmake/mingw-i686.cmake, docs/PORT.md §0.1): the same
+# freestanding i386 binary on the Win32 API (runtime/sys_win32_i386.c, T1's).  -fno-leading-underscore keeps the
+# symbol names the generated tables use; -mno-ms-bitfields keeps gcc's bitfield layout.
+if(WIN32)
+  list(APPEND PORT_ARCH_FLAGS -fno-leading-underscore -mno-ms-bitfields)
+  set(PORT_SYS_EXCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/runtime/sys_linux_i386.c)
+else()
+  set(PORT_SYS_EXCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/runtime/sys_win32_i386.c)
+endif()
 # semantics of the original compiler: unsigned char, wrapping signed arithmetic, no type-based alias analysis
 set(PORT_GAME_FLAGS -O1 -w -std=gnu89 -funsigned-char -fwrapv -fno-strict-aliasing -fno-delete-null-pointer-checks
     -fno-omit-frame-pointer)
@@ -41,6 +50,7 @@ target_include_directories(game PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_options(game PRIVATE ${PORT_ARCH_FLAGS} ${PORT_GAME_FLAGS})
 
 file(GLOB PORT_RUNTIME_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/runtime/*.c ${CMAKE_CURRENT_SOURCE_DIR}/shims/*.c)
+list(REMOVE_ITEM PORT_RUNTIME_SOURCES ${PORT_SYS_EXCLUDE})
 add_library(portrt OBJECT ${PORT_RUNTIME_SOURCES})
 target_include_directories(portrt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_options(portrt PRIVATE ${PORT_ARCH_FLAGS} -O2 -Wall -Wno-unused-function -Wno-builtin-declaration-mismatch)
@@ -59,8 +69,18 @@ add_executable(tomba2 ${GEN}/thunks.S ${GEN}/funcmap.c $<TARGET_OBJECTS:game> $<
 target_include_directories(tomba2 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_options(tomba2 PRIVATE ${PORT_ARCH_FLAGS} -O1)
 set_target_properties(tomba2 PROPERTIES LINKER_LANGUAGE C LINK_DEPENDS ${GEN}/syms.ld)
-target_link_options(tomba2 PRIVATE -m32 -nostdlib -static -no-pie -Wl,--build-id=none -Wl,-z,noexecstack
-                    -Wl,--allow-multiple-definition ${GEN}/syms.ld)
+if(WIN32)
+  # large-address-aware: the PS1 RAM is mapped at 0x80000000 / 0xA0000000; nxcompat: a call into it faults (the
+  # vectored handler redirects it); based at 0x10000000 so the low 256 MB can hold the KUSEG mirror; no ASLR (the
+  # rel32 calls to syms.ld addresses must not move).  From T1's port/CMakeLists.txt.
+  target_link_options(tomba2 PRIVATE -m32 -nostdlib -static -Wl,-e,start -Wl,--large-address-aware -Wl,--nxcompat
+                      -Wl,--disable-dynamicbase -Wl,--image-base,0x10000000 -Wl,--stack,16777216
+                      -Wl,--allow-multiple-definition ${GEN}/syms.ld)
+  target_link_libraries(tomba2 PRIVATE kernel32 winmm)
+else()
+  target_link_options(tomba2 PRIVATE -m32 -nostdlib -static -no-pie -Wl,--build-id=none -Wl,-z,noexecstack
+                      -Wl,--allow-multiple-definition ${GEN}/syms.ld)
+endif()
 
 # 4. the window: a separate host-native SDL2 process (tomba2 --window forks it); the headless game needs no SDL.
 #    From Tombi-Decomp's port/ (MIT, same author).  Windows: -DPORT_SDL2_MINGW=DIR names the i686-w64-mingw32 folder

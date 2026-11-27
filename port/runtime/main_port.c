@@ -65,6 +65,7 @@ int port_main(int argc, char **argv) {
             extern const char *port_ovl_interp[8];
             for (int k = 0; k < 8; k++) if (!port_ovl_interp[k]) { port_ovl_interp[k] = argv[++i]; break; }
         }
+        else if (streq(argv[i], "--no-kuseg")) { extern int port_kuseg_strict; port_kuseg_strict = 2; }
         else if (streq(argv[i], "--no-ovl-native")) { extern int port_ovl_native; port_ovl_native = 0; }
         else if (streq(argv[i], "--dump-audio") && i + 1 < argc) { extern const char *port_dump_audio; port_dump_audio = argv[++i]; }
         else if (streq(argv[i], "--disc") && i + 1 < argc) { extern const char *port_disc_image; port_disc_image = argv[++i]; }

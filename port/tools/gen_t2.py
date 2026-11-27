@@ -835,6 +835,8 @@ def link(outdir, nm, objlist):
     for name in sorted(undef - set(defined)):
         if name.startswith("port_") or name in ("etext", "edata", "end") or name.startswith("__") and name not in syms:
             continue                       # runtime tables (funcmap.c), compiler helpers
+        if re.match(r"_?\w+@\d+$", name) or name.startswith("_imp__") or name.startswith("__imp_"):
+            continue                       # Win32 imports of sys_win32_i386.c (stdcall-decorated names)
         p, base = split_prefix(name)
         if p:
             addr = psyms[p][base]

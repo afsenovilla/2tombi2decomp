@@ -83,6 +83,10 @@ void *port_lookup(u32p addr);
 int port_lookup_ret(u32p addr);   /* the PortFunc ret kind of the native game function at addr (0 when none) */
 void *port_resolve_call(u32p addr, const char *name);
 void port_stub(const char *name, u32p addr);
+/* sys_lookup.c, for the hosts' fault handlers */
+int port_interpretable(u32p addr);
+int port_stub_ret0(void);
+const char *port_lib_name(u32p addr, const char *name);
 
 /* cooperative threads (Psy-Q OpenTh/ChangeTh) */
 int port_thread_open(void *fn);

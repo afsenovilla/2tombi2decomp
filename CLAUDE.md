@@ -224,5 +224,6 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   the resident overlay); `--no-ovl-native` / `--ovl-interp NAME` give the interpreted reference for frame diffs.
   GTE inline asm is translated to C; XA music / voices come from the raw image `game/usa.img` (`--disc`), sound
   effects from a software SPU (`--dump-audio F.wav`); memory cards `tomba2_mc0.mcd` in `--save-dir` (default
-  game/usa). Players: `bash port/play.sh` (Linux, or WSL2 on Windows: docs/PORT.md §0.1).
+  game/usa). Players: `bash port/play.sh` (Linux, or WSL2 on Windows: docs/PORT.md §0.1). Experimental Windows exe:
+  `cmake -S port -B build/port-win -G Ninja -DCMAKE_TOOLCHAIN_FILE=$PWD/port/cmake/mingw-i686.cmake` (untested).
 - `python3 -I tools/gen_configs.py game/usa [--force] [--out config/eu]`: regenerates the first configs (keeps hand-made ones without --force).

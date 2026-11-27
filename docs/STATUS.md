@@ -25,7 +25,11 @@ movies, other areas, reverb, native Windows).
 - XA music and voices play (`shims/audio.c`: XA ADPCM from the raw sectors of `game/usa.img`, 44.1 kHz to the
   viewer and `--dump-audio`); sound effects and sequences on a software SPU (T1's port/shims/sound.c), no reverb. The bootstrap keeps game/usa.img (it had been
   deleted in this container: re-fetched with tools/disc_fetch.sh's steps).
-- Installed in the container: `libsdl2-dev` (apt, 64-bit: the viewer is a host-native process).
+- Windows: WSL2 steps documented (docs/PORT.md §0.1, `bash port/play.sh`); an experimental native exe
+  (T1's `sys_win32_i386.c`, `port/cmake/mingw-i686.cmake`) cross-compiles and links but was not run (Wine crashes
+  in this container).
+- Installed in the container: `libsdl2-dev` (apt, 64-bit: the viewer is a host-native process),
+  `gcc-mingw-w64-i686`, `wine` / `wine32:i386` (broken here: aborts on a hello world).
 
 ## 2026-11-27 (4): port stage 1 (milestone P0: title screen, attract demos, New Game into A00)
 
