@@ -3,7 +3,8 @@
 The port compiles the matched C of `src/` for the host and runs it against the player's own game files. It is built
 the way the first game's project built its port (Tombi-Decomp, same author, MIT: `port/` and `port2/`, documented in
 its `docs/PORT.md`); the code that is copied from there says so at the top of each file, and THIRD_PARTY_NOTICES.md
-credits it. Nothing of the game is in the repo: the port reads `game/usa/` (the extracted USA disc) at run time.
+credits it. Nothing of the game is in the repo: the port reads the player's disc image (`--disc`, default
+`game/usa.img`; or the extracted `game/usa/`) at run time.
 
 The matching build stays authoritative: the port only **reads** `src/`, `build/<prog>.elf` and `asm/<prog>/`, and
 `python3 tools/build.py` gives 29 / 29 OK with or without it.
@@ -137,26 +138,76 @@ S = Triangle, D = Circle, Q / W = L1 / R1, A / E = L2 / R2, Return = Start, Back
 F = window size, Escape = quit; a game controller works too. Checked here: the same binaries under
 `SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy` (no display in the container); not yet checked on a real WSL2.
 
-**A native Windows build** (no WSL) is experimental: it cross-compiles and links, but has **not been run** (Wine
-crashes on any program in this container, even a hello world). T1's `sys_win32_i386.c` (Win32 API, a vectored
-exception handler instead of SIGSEGV, the PS1 RAM as a section mapped at 0x80000000 / 0xA0000000, the exe based at
-0x10000000 and large-address-aware) is taken over with the lookup / stub / interpreter code moved to
-`runtime/sys_lookup.c`, shared by both hosts; `gen_t2.py link` skips the stdcall-decorated Win32 imports. T2 maps
-the KUSEG mirror by default on Windows too (relaunching itself with the range reserved when Windows has blocks
-there, T1's trick): the native code draws through masked KUSEG pointers so much that `--no-kuseg` (every access
-emulated in the fault handler) runs about ten times slower (Linux, the A00 script to frame 9700: 49.6 million emulated accesses). The sites are the
-primitive builders (`func_8005019C`, `func_8004FFB4`, `func_8007FDB0`, `func_8007FCC8`, SOP's `func_80109C80` /
-`func_801099B4` / `func_8010C26C`, A00's `f_DrawTownCreatureGt4Batch` / `Gt3Batch` / `func_80115598`, the
-`SetDrawMode` / `LoadImage` shims): T1's generator rewrite of the masked-pointer idioms (`& 0xFFFFFF` ->
-`| 0x80000000`, its `port_kuseg_mask`) would remove them. That is the open risk T1 hit on real Windows 10
-(blocks of the range in use by the host).
+**Windows without WSL**: the native build of §0.2 (a zip with `tomba2-launcher.exe`).
+
+### 0.2 Stage 3 (2026-11-28): the Windows build
+
+The player's zip, `Tomba2-port-win32.zip` (built by `bash tools/port_win_package.sh OUT.zip [SDL2_MINGW_DIR]`;
+never committed): `tomba2.exe` (the game, i386, freestanding on the Win32 API: T1's `sys_win32_i386.c`),
+`tomba2-view.exe` (the SDL2 window, keyboard / XInput controller, sound), `SDL2.dll` (2.30.11), `tomba2-launcher.exe`,
+`README.txt` (port/README-windows.txt: the player's steps and the controls), `LICENSE-SDL2.txt`. The player unzips
+it, double-clicks `tomba2-launcher.exe`, picks the disc image once (remembered in `tomba2-launcher.ini`; Shift at
+start picks another), and plays; memory cards in `saves\`, the log in `tomba2.log` (beside the launcher, or in
+`%APPDATA%\Tomba2-port` when that folder is not writable). 64-bit Windows 10 / 11 (the 32-bit exe needs the 4 GB
+address space WOW64 gives a large-address-aware program). Nothing of the game is in the zip.
 
 ```
-sudo apt-get install -y gcc-mingw-w64-i686
-cmake -S port -B build/port-win -G Ninja -DCMAKE_TOOLCHAIN_FILE=$PWD/port/cmake/mingw-i686.cmake \
-      [-DPORT_SDL2_MINGW=$PWD/SDL2-2.30.11/i686-w64-mingw32]     # SDL2-devel-2.30.11-mingw.tar.gz, for tomba2-view.exe
-cmake --build build/port-win                                     # -> build/port-win/tomba2.exe (+ tomba2-view.exe)
+sudo apt-get install -y gcc-mingw-w64-i686 zip            # + wine wine32:i386 to test (below)
+python3 tools/build.py                                     # the generator reads build/*.elf, build/*.bin, asm/ at build time only
+bash tools/port_win_package.sh build/Tomba2-port-win32.zip  # downloads SDL2-devel-2.30.11-mingw (sha256 checked) when no dir is given
+# test bed: Wine 9.0 (Ubuntu wine32) aborts with "free(): invalid pointer" unless the XDG runtime dir exists
+mkdir -p /run/user/0 && chmod 700 /run/user/0
+WINEPREFIX=$PWD/build/wp WINEARCH=win32 WINEDEBUG=-all wine build/port-win/tomba2.exe --frames 3000 --dump-frames D --dump-every 100
+SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy WINEPREFIX=... wine build/port-win/tomba2-launcher.exe   # with a prepared .ini
 ```
+
+What stage 3 changed (each with its check):
+
+- **The disc image is the only input** (`shims/cd_virtual.inc`): `--disc PATH` takes a raw `.bin` / `.img` (2352-byte
+  sectors, mode 2 or 1, told by the sync pattern), a `.cue` (its first `FILE`, relative to the .cue, quotes and
+  either separator) or a cooked `.iso` (2048-byte sectors: no XA audio). `CdSearchFile` finds every file in the ISO
+  9660 directory and reads it from the image; `MAIN.EXE` too, checked by SHA-1 (`f41c4065...`, USA SCUS-94454; the
+  EU `6bcee82b...` and ES `410bd51f...` ones are named in the error, `--no-verify` runs another anyway); a file that
+  is no CD image is refused with its reason. Without `--disc` the port tries `game/usa.img`, then the extracted
+  files of `--data` (stages 1-2). The virtual sector layout is unchanged, so the frames are the same as from the
+  extracted files (attract mode 3000 frames, the .cue and a converted .iso checked too). Saves go beside an image
+  named with `--disc` unless `--save-dir`.
+- **No KUSEG mirror needed** (the open risk of stage 2, T1's lesson). Windows keeps its own memory in 0x10000-0x1FFFFF
+  (Wine: 0x110000-0x1FFFFF committed; T1's Windows 10 user: 0x10000-0x60000, 0xB0000, 0xC0000) and an access to a
+  committed block reads the host's data silently. The masked pointers native code dereferenced: (1) the primitive
+  buffer pointer `D_800BF544`, set every frame by main() (asm) to `(D_800BFE68 + i * 0x14000) & 0xFFFFFF`: the
+  interpreter stores its KSEG0 view (`mips_interp.c kcell`), gen_t2.py `kuseg_link_stores` keeps the 24-bit OT links
+  native code stores (`*o = (u32)p;` -> `& 0xFFFFFF`, 96 sites, T1's rule) and `DrawOTag` ignores a 0x80 an
+  interpreted link store leaves in a tag's length byte; the GPU shims (`LoadImage`, `SetDrawMode`, `SetDrawArea`,
+  `DrawPrim`, `ClearOTag(R)`, ...) take KUSEG buffers through KSEG0; (2) the actor animation pointer at +0x38, whose
+  bit 31 is a flag ("blend in progress", cleared by func_80075FF8 with `& 0x7FFFFFFF`, tested `>= 0` by
+  f_AdvanceActorSkeletalAnimation), so it holds the KUSEG view of the animation data (0x00018456 for MAIN's tables,
+  0x0014D3F0 for A00's): gen_t2.py `kuseg_field38` reads it through `port_kptr` (port_prelude.h) wherever it is
+  dereferenced (89 sites + A01's `->p38`; stores, comparisons, address-of left alone). Check: Linux with
+  `--no-kuseg` (no mirror, every low access emulated and tallied): 10.6 million accesses in 3000 attract frames
+  before, **0** after over 20000 attract frames and the 10600-frame A00 script, same frames, full speed. Under Wine
+  before (2): 8 of 80 attract frames differed (an eye blink, smoke particles: A00 / A01 creatures reading their
+  animation through Wine's heap). Windows maps no mirror by default (`--kuseg-mirror` maps it where free); free
+  blocks are reserved and guarded (an access is served from KSEG0 and counted at exit), and the exe still relaunches
+  itself with the range reserved when Windows has blocks there.
+- `port_low_emulate` handles `mov moffs` (`a1` / `a3`): `func_80051E00` reads the BIOS TCB pointer at 0x110, page 0
+  is never mapped on Windows (first crash under Wine, frame 3).
+- **No game bytes in the exe**: the overlay funcmap held each function's first two retail code words (to tell the
+  resident overlay); it now holds two FNV-1a hashes of those 8 bytes (`sys_lookup.c code_hash`): same interpreted-call
+  counts and frames.
+- **tomba2-launcher.exe** (`port/tools/launcher/tomba2_launcher.c`, plain Win32 + comdlg32, statically linked
+  runtime): the role of T1's `tombi-port.exe` without Python: a file dialog for the image, the .ini, `tomba2.exe
+  --disc IMAGE --window --save-dir saves <options=>` without a console (stdout / stderr to `tomba2.log`), and on a
+  non-zero exit the FATAL line with "choose another disc image?". Checked under Wine: unzipped into a folder with a
+  space in its name, a prepared .ini, SDL dummy drivers: the game ran 900 frames paced at 59.2 vblank/s, the viewer
+  received them (its own `--dump`), the log and `saves\` were made; the dialog itself was not clicked (no display).
+
+**Checked under Wine 9.0 (wine32, WINEARCH=win32), the exe against the Linux build, frame dumps byte-identical**:
+attract mode 20000 frames (80 dumps: title, demos in A00, A01, A03), the A00 play script of §0 (10600 frames, 53
+dumps: New Game, story text, opening, journal tutorial, free play), the `.cue` path, the error paths (no CD image,
+the EU MAIN.EXE). The window under Wine with `SDL_VIDEODRIVER=dummy`: frames arrive, 58.4 vblank/s. **Not checked**:
+a real Windows 10 / 11 machine (the window, the controller, the sound device, SmartScreen, which KUSEG blocks it
+commits), the file dialog by hand, long play past A00.
 
 ## 1. Status: stage 1, milestone P0 (2026-11-27)
 
@@ -276,6 +327,8 @@ software SPU, its MDEC, its SDL window) are taken over one by one as they are ne
 | `shims/card.c` | `port/shims/card.c` | `tomba2_mc*.mcd` in `--save-dir` (default the data dir), T2's libcard names (stage 2) |
 | `shims/sound.c` | `port/shims/sound.c` | `SsVabOpenHead` + `SsVabTransBody`, `SsUtSetDetVVol`, `SpuWrite`, output through `audio.c` (stage 2) |
 | `shims/audio.c` | new | XA ADPCM from the disc image (psx-spx), the 44.1 kHz output, the CD mix (stage 2) |
+| `runtime/sys_win32_i386.c` | `port/runtime` | no KUSEG mirror by default (`--kuseg-mirror`), the relaunch kept for guarding (stage 3) |
+| `tools/launcher/tomba2_launcher.c` | new (the role of `tools/port_launcher.py` / `tombi-port.exe`) | plain Win32: disc dialog, .ini, log, error box (stage 3) |
 
 ## 4. Memory map and files
 
@@ -315,8 +368,10 @@ natively, the SDL2 window and 60 Hz pacing, XA audio, sound effects, the memory 
    Still unhandled in general: a `void` C function whose asm callers read `$v0` (`func_8001CE90` passes
    `func_8001CE04`'s result on; it works because the native epilogue keeps `eax`).
 4. **Reverb** and the remaining libsnd calls (`SsSetReservedVoice`, `SsSetStereo`, ...) in `shims/sound.c`.
-5. **Native Windows**: WSL2 for now (§0.1). The experimental exe (§0.1) needs a first run on real Windows (or a
-   working Wine): the KUSEG mirror, the viewer pipes, the pacing; the long-term answer is the native-pointer port
-   once the decomp is complete.
+5. **Native Windows** (§0.2): runs under Wine frame-identical to Linux; a first run on real Windows is next (the
+   window, controller, sound, pacing; the log's `KUSEG blocks committed by Windows` line and the tally at exit say
+   whether a masked pointer is still read through host memory). New mask idioms show as `--no-kuseg` sites on
+   Linux: add them to gen_t2.py (`kuseg_field38`) or to `kcell`. CHD images are not read yet (T1 reads them). The
+   long-term answer is the native-pointer port once the decomp is complete.
 6. The boot exe (`SCUS_944.54`: legal screen, then it loads MAIN.EXE) is skipped; running it first would need its
    own symbol table in the port.

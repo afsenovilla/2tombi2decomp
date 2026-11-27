@@ -3,6 +3,28 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-28: port stage 3 (Windows)
+
+The user's machine has Windows only: the goal was a zip to unzip and play with their own disc image (no toolchain,
+no WSL). docs/PORT.md §0.2 has the details and the checks.
+
+- `bash tools/port_win_package.sh OUT.zip [SDL2_DIR]` builds `Tomba2-port-win32.zip`: tomba2.exe, tomba2-view.exe,
+  tomba2-launcher.exe (asks once for the disc image, remembers it, runs the game without a console, shows errors),
+  SDL2.dll, README.txt (port/README-windows.txt), LICENSE-SDL2.txt. Never commit it.
+- The port reads the disc image itself (`--disc .bin/.img/.cue/.iso`, default game/usa.img; MAIN.EXE from the image,
+  SHA-1 checked, the EU / ES ones named); no build/ or asm/ at run time, no game bytes in the exe (overlay funcmap
+  hashes).
+- No KUSEG mirror needed: the primitive pointer main() masks is stored as KSEG0 by the interpreter (`kcell`), native
+  OT link stores keep 24 bits, the actor animation pointer at +0x38 (bit-31 flag cleared -> KUSEG) is read through
+  `port_kptr`; Linux `--no-kuseg`: 0 emulated accesses (was 10.6 M / 3000 frames), same frames, full speed.
+- Wine fixed in the container: it only needed `/run/user/0` (mode 700). Under Wine the exe gives frame dumps
+  byte-identical to Linux: 80 attract-mode dumps over 20000 frames, 53 dumps of the A00 play script; the launcher
+  ran the game from an unzipped folder with a prepared .ini.
+- Not checked: real Windows hardware (window, controller, audio device, which KUSEG blocks Windows commits), the
+  file dialog by hand. CHD images are not read. Next: the user's first run on Windows (tomba2.log), then movies.
+- Packages installed in the container this stage: none new (gcc-mingw-w64-i686, wine, wine32:i386, zip were there);
+  SDL2-devel-2.30.11-mingw.tar.gz downloaded to the scratchpad (sha256 0590db0a...).
+
 ## 2026-11-27 (5): port stage 2 (playable A00 in a window)
 
 The user wants a playable PC MVP (title + A00). docs/PORT.md §0 has the commands and the details; §0.1 the

@@ -833,8 +833,19 @@ struct-member form of a cast access, regswap `member` toggles every one)
   own names of MAIN functions; `p->fn()` with an empty argument list gets the caller's arguments; block-scope
   prototypes are not calls; a dropped static helper drops its callers; GTE inline asm is translated
   (`translate_asm`). Keep `game/usa.img`: the port reads XA audio from it (the extracted XA files have no
-  subheaders). Windows: WSL2 runs the Linux build (`bash port/play.sh`); the native exe (T1's Win32 runtime,
-  `port/cmake/mingw-i686.cmake`) builds but is untested (Wine aborts in the cloud container).
+  subheaders). Windows (stage 3, 2026-11-28): the native exe runs; `bash tools/port_win_package.sh OUT.zip`
+  builds the player's zip (tomba2.exe, tomba2-view.exe, tomba2-launcher.exe, SDL2.dll, README.txt). Test it under
+  Wine: `mkdir -p /run/user/0 && chmod 700 /run/user/0` first (without an XDG runtime dir Wine 9.0 aborts with
+  `free(): invalid pointer` before any program runs), `WINEPREFIX=<scratch>/wp WINEARCH=win32 WINEDEBUG=-all wine
+  build/port-win/tomba2.exe ...`, and compare its frame dumps with the Linux build's (identical expected). Rules
+  learnt: native code must never dereference KUSEG (0x10000-0x1FFFFF: Windows keeps its own memory there, a
+  committed block is read silently); the mask sources so far are main()'s primitive pointer D_800BF544
+  (mips_interp.c `kcell` stores its KSEG0 view, gen_t2.py `kuseg_link_stores` keeps the 24-bit OT links) and the
+  actor animation pointer at +0x38 with its bit-31 flag cleared by func_80075FF8 (gen_t2.py `kuseg_field38`,
+  `port_kptr`). A new one shows as a site in `build/port/tomba2 --no-kuseg` (the tally at exit) or as a Wine frame
+  differing from Linux; `port_low_emulate` also covers `mov moffs` (page-0 constants such as `*(u8 **)0x110`). The
+  exe reads the disc image itself (`--disc .bin/.img/.cue/.iso`, MAIN.EXE by SHA-1) and embeds no game bytes (the
+  overlay funcmap holds hashes of the first code bytes, not the words).
 - Byte-matching only; tools/nonmatching.py is kept unused.
 - USA is the reference; EU in config/eu/.
 - The licensed-region module at the end of boot.c [0x80011A0C, 0x80012D2C) is library-style files in

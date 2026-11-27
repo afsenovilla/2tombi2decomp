@@ -326,6 +326,24 @@ def retail_func_ptrs(text, addrs):
 # length byte, so the store keeps the 24-bit link the console stored.
 KUSEG_LINK_STORE_RE = re.compile(r"^(\s*\*\s*(o|ot|ot\d|o\d)\s*=\s*)\(\s*(u32|s32|int|u_long|unsigned long|unsigned int)\s*\)\s*(\w+)\s*;", re.M)
 KUSEG_LINK_STORES = [0]
+# The actor animation pointer at +0x38 is kept with bit 31 as a flag: func_80075FF8 (asm) clears it (`& 0x7FFFFFFF`,
+# "blend in progress", f_AdvanceActorSkeletalAnimation tests `>= 0`), which leaves the KUSEG view of the animation
+# data (0x0014D3F0 for A00's 0x8014D3F0, 0x00018456 for MAIN's) and the native C reads through it.  A read of a
+# pointer at +0x38 that is dereferenced goes through port_kptr (port_prelude.h: an address below 0x200000 is RAM, seen
+# through KSEG0, the same byte on the console); stores, comparisons and address-of are left alone.
+KUSEG_FIELD38_RE = re.compile(r"(?<![&\w])\*\s*\(\s*(?P<t>(?:const\s+|volatile\s+|unsigned\s+|signed\s+|struct\s+)*\w+\s*\*)\s*\*\s*\)\s*\(\s*(?P<x>\(?\s*\w+\s*\)?|\(\s*\w+\s*\*\s*\)\s*\(?\s*\w+\s*\)?)\s*\+\s*\(?\s*0x38\s*\)?\s*\)(?!\s*(?:=[^=]|\+\+|--|[-+*/|&^]=|==|!=))")
+KUSEG_FIELD38 = [0]
+def kuseg_field38(body):
+    def sub(m):
+        pre = body[max(0, m.start() - 3):m.start()]
+        if re.search(r"(==|!=)\s*$", pre): return m.group(0)
+        KUSEG_FIELD38[0] += 1
+        return "((%s)port_kptr(%s))" % (m.group("t"), m.group(0))
+    body = KUSEG_FIELD38_RE.sub(sub, body)
+    # the same field as a struct member (A01's `Obj` names it p38)
+    return re.sub(r"(?<![&\w])(\w+)->p38\b(?!\s*(?:=[^=]|\+\+|--|[-+*/|&^]=|==|!=))", r"((u8 *)port_kptr(\1->p38))", body)
+
+
 def kuseg_link_stores(body):
     def sub(m):
         KUSEG_LINK_STORES[0] += 1
@@ -358,6 +376,7 @@ def emit(items, syms, funcs, rename, drop, native, arity=None, forwarded=None, f
                     body = forward_indirect_calls(body, c_arity(head), forwarded if forwarded is not None else [])
                 body = retail_func_ptrs(body, fptrs)
                 body = kuseg_link_stores(body)
+                body = kuseg_field38(body)
                 if name in rename:
                     h = re.sub(r"\b%s\b(?=\s*\()" % name, name + "__def", head, count=1)
                     piece = h + body + '\n__asm__(".globl %s\\n.set %s, %s__def");\n' % (name, name, name)

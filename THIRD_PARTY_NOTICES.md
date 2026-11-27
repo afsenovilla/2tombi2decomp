@@ -12,6 +12,9 @@
   the runtime (i386 address space, MIPS interpreter, threads, GTE), the software GPU, the Psy-Q shims, the SDL2
   viewer (`port/tools/view/tomba2_view.c`, `port/runtime/window.c`), the memory card (`port/shims/card.c`), the Win32
   runtime (`port/runtime/sys_win32_i386.c`, `port/cmake/mingw-i686.cmake`), the software SPU and libsnd (`port/shims/sound.c`) and the generator design; each file says what it took (docs/PORT.md §3).
+- The Windows release zip (built by `tools/port_win_package.sh`, never committed) carries `SDL2.dll` from
+  [SDL 2.30.11](https://github.com/libsdl-org/SDL) (zlib licence, Sam Lantinga; its LICENSE.txt goes into the zip as
+  LICENSE-SDL2.txt). `port/tools/launcher/tomba2_launcher.c` plays the role of Tombi-Decomp's launcher (MIT).
 - Library C (files under `src/*/psyq/`) is adapted from these MIT-licensed decompilations of Sony's Psy-Q libraries;
   each file says where it came from (`// Source: ...`):
   [psx_tomba](https://github.com/hansbonini/psx_tomba) (MIT per its README; its base headers are fetched into

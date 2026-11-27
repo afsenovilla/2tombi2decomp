@@ -224,6 +224,12 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   the resident overlay); `--no-ovl-native` / `--ovl-interp NAME` give the interpreted reference for frame diffs.
   GTE inline asm is translated to C; XA music / voices come from the raw image `game/usa.img` (`--disc`), sound
   effects from a software SPU (`--dump-audio F.wav`); memory cards `tomba2_mc0.mcd` in `--save-dir` (default
-  game/usa). Players: `bash port/play.sh` (Linux, or WSL2 on Windows: docs/PORT.md §0.1). Experimental Windows exe:
-  `cmake -S port -B build/port-win -G Ninja -DCMAKE_TOOLCHAIN_FILE=$PWD/port/cmake/mingw-i686.cmake` (untested).
+  game/usa). Players: `bash port/play.sh` (Linux, or WSL2 on Windows: docs/PORT.md §0.1). Windows (stage 3,
+  docs/PORT.md §0.2): `bash tools/port_win_package.sh OUT.zip` -> tomba2.exe, tomba2-view.exe, tomba2-launcher.exe
+  (disc dialog, remembered), SDL2.dll, README.txt (never commit the zip / exes / DLLs). The port reads the disc image
+  itself: `--disc X.bin|.img|.cue|.iso` (default game/usa.img), MAIN.EXE checked by SHA-1 (`--no-verify`). Test bed:
+  `mkdir -p /run/user/0 && chmod 700 /run/user/0` (else Wine 9.0 aborts, `free(): invalid pointer`), then
+  `WINEPREFIX=<scratch>/wp WINEARCH=win32 WINEDEBUG=-all wine build/port-win/tomba2.exe ...`; frame dumps must equal
+  Linux's. Native code must never dereference KUSEG: `build/port/tomba2 --no-kuseg` tallies any site (0 expected);
+  fixes go in gen_t2.py (`kuseg_link_stores`, `kuseg_field38`) or mips_interp.c `kcell`.
 - `python3 -I tools/gen_configs.py game/usa [--force] [--out config/eu]`: regenerates the first configs (keeps hand-made ones without --force).

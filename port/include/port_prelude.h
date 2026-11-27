@@ -11,4 +11,10 @@ void port_gte_mtc2(int reg, unsigned long v);
 unsigned long port_gte_mfc2(int reg);
 void port_gte_ctc2(int reg, unsigned long v);
 unsigned long port_gte_cfc2(int reg);
+/* a RAM pointer the game keeps in its KUSEG view (below 0x200000: the actor animation pointer at +0x38 with its
+   bit-31 flag cleared, gen_t2.py kuseg_field38): the same byte through KSEG0, which is always mapped */
+static __inline__ __attribute__((always_inline)) void *port_kptr(const void *p) {
+    unsigned long v = (unsigned long)p;
+    return (void *)(v - 0x10000ul < 0x1F0000ul ? v | 0x80000000ul : v);
+}
 #endif
