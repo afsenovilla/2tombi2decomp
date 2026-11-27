@@ -1530,7 +1530,43 @@ s32 func_8010CCD8(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010CD68);
+void func_8010CD68(u8 *a)
+{
+    s16 *q = (s16 *)(a + 0x50);
+    s32 i;
+    s32 t;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        for (i = 0; i < 0x1C; i++) {
+            q[i] = (func_8009A450() & 0xFFF) + 0x320;
+        }
+        H(a, 0x4E) = 0x4000;
+        W(a, 0x50) = 0x3C;
+    case 1:
+        t = W(a, 0x50)--;
+        if (t == 0) {
+            a[4] = 2;
+        }
+    case 2:
+        a[1] = 1;
+        for (i = 0; i < 0x1C; i++) {
+            q[i] -= 0x66;
+            if (q[i] < 0) {
+                if (a[4] == 1) {
+                    q[i] = (func_8009A450() & 0xFFF) + 0x320;
+                } else {
+                    q[i] = 0;
+                }
+            }
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a09/nonmatchings/a09", func_8010CEC4);
 
