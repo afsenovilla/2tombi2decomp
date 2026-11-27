@@ -2,6 +2,7 @@
 #include "game.h"
 #include "m2c.h"
 #include "gte.h"
+#include "psyq/gtemac.h"
 
 extern s8 D_800BF808_c1f7[];
 extern u16 D_800E7E68;
@@ -6969,7 +6970,99 @@ void func_80128904(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", Door);
+extern u8 D_800BF80E;
+extern u8 D_800E7FC7;
+extern u8 D_800BF81E;
+extern int rcos(int a);
+extern int rsin(int a);
+extern void (*D_8009D1D4[])(void);
+extern void (*D_8009D22C[])(void);
+extern void (*D_8009D314[])(u8 *);
+extern void (*D_8009D52C[])(u8 *);
+extern void (*D_800A4AF8[])(void);
+extern void (*D_800A4B50[])(void);
+extern void (*D_800A4AA0[])(u8 *);
+extern s32 (*D_800A3B78[])(u8 *);
+extern int rand(void);
+extern u8 *(*D_800A2444[])(void);
+extern void func_80083DE0(void *, s32, s32, s32, s32);
+static inline s32 step_47c8(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        a[6]++;
+        func_8004ED94(0x51, 0x41);
+        func_80074590(0x19, 0, 0xF);
+        D_1F800137 = 0;
+        break;
+    case 1:
+        if (a[0x29] == 0 && (D_800E7FC7 & 1) == a[0x5F]) {
+            a[6] = 0;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
+
+void Door(u8 *a)
+{
+    u8 *e = D_800E7E80;
+    u8 *g = D_800BF808_1760;
+    u8 f;
+
+    if (g[0xE] != 0 && g[0xF] == a[3]) {
+        H(a, 0x36) = H(a, 0x8C) - 0x100;
+    } else {
+        H(a, 0x36) = H(a, 0x8C);
+    }
+    switch (a[5]) {
+    case 0:
+        if (a[0x29] != 0 && (e[0x29] & 0x80) && e[0x17B] == 0) {
+            func_80040B48(0x57);
+            D_1F800137 = 2;
+            f = e[0x174];
+            if (f & 2) {
+                a[5] = 1;
+                e[5] = 0x39;
+                e[6] = 2;
+            } else if (f & 1) {
+                a[5] = 4;
+                e[5] = 0x38;
+                e[6] = 2;
+            } else {
+                a[5] = 5;
+            }
+        }
+        break;
+    case 2:
+        a[0x29] = 1;
+        a[5]++;
+        func_80074590(0x94, 0, 0);
+        func_8004ED94(0x50, 0x41);
+    case 3:
+        if (func_80073328(a) != 0) {
+            a[5] = 0;
+        }
+        break;
+    case 1:
+    case 4:
+        if (D_800BF80E != 0) {
+            a[5]++;
+        }
+        break;
+    case 5:
+        if (step_47c8(a) != 0) {
+            a[5] = 0;
+        } else if ((e[0x174] & 2) && (e[0x29] & 0x80) && e[0x17B] == 0) {
+            D_800BF81E = 0;
+            D_1F800137 = 2;
+            a[5] = 2;
+            a[6] = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80128CF0);
 
