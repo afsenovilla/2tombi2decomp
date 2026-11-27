@@ -7439,10 +7439,50 @@ void func_801295B4(u8 *a)
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801296E0);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeTableDrivenInteriorEffect);
-
 #define PT(p, i) (((AreaPartsOwner *)(p))->parts[i])
 extern s16 D_800ED098;
+
+void f_InitializeTableDrivenInteriorEffect(u8 *a)
+{
+    u8 *q;
+    s32 i;
+    s32 n;
+
+    n = 4;
+    a[8] = n;
+    if (D_800ED098 < 4) {
+        a[4] = 3;
+        return;
+    }
+    a[9] = 4;
+    a[0xB] = 5;
+    a[0xD] = 0;
+    a[4]++;
+    for (i = 0; i < a[8]; i++) {
+        q = func_8007AAE8();
+        PT(a, i) = q;
+        H_f12c(q, 6) = -1;
+        H_f12c(PT(a, i), 0) = 0;
+        H_f12c(PT(a, i), 2) = 0x40;
+        H_f12c(PT(a, i), 4) = 0;
+        H_f12c(PT(a, i), 8) = 0x400;
+        H_f12c(PT(a, i), 0xA) = i << 10;
+        H_f12c(PT(a, i), 0xC) = 0;
+        W_d1fb(PT(a, i), 0x40) = 0;
+        H_f12c(PT(a, i), 0x3A) = 0x369;
+    }
+    H_f12c(a, 0x60) = 0xD;
+    H_f12c(a, 0x62) = 0x3CF7;
+    H_f12c(a, 0x64) = -0x7728;
+    H_f12c(a, 0x66) = -0x7721;
+    H_f12c(a, 0x68) = -0x6828;
+    H_f12c(a, 0x6A) = -0x6821;
+    H_f12c(a, 0x6C) = 0x28;
+    H_f12c(a, 0x6E) = 0x50;
+    H_f12c(a, 0x70) = -8;
+}
+
+#define PT(p, i) (((AreaPartsOwner *)(p))->parts[i])
 
 void f_InitializeLinkedWindmillInteriorEffect(u8 *a)
 {
