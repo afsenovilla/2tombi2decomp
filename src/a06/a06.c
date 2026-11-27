@@ -2589,7 +2589,102 @@ void func_80114A18(u8 *c, u8 *a)
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80114C1C);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801151D8);
+typedef struct { s16 xl, x, yl, y, zl, z; } Pos51D8;
+typedef struct { s16 x, y, z; } Ent51D8;
+extern u8 D_800BF808_51d8[];
+extern u8 D_800BF817_51d8;
+extern u8 D_800E7EAC_51d8[];
+extern u8 D_800E8008_51d8[];
+extern Ent51D8 D_801422BC_51d8[];
+extern s16 D_1F8000D0_51d8[];
+extern u8 D_800E7E80_51d8[];
+extern u8 D_800BF871_51d8;
+extern u8 D_800BF816_51d8;
+#define FLOOR51D8() \
+    if (D_800BF816_51d8 == 0) { \
+        s16 *c = D_1F8000D0_51d8; \
+        if (c[3] >= -0x7D0) { \
+            a[0x74] = 2; \
+            c[3] = -0x7D0; \
+            H(a, 0x4A) = -0x7D0; \
+        } else { \
+            a[0x74] = 0; \
+        } \
+    } else { \
+        a[0x74] = 0; \
+    }
+/* func_801154D4, inlined */
+static inline s32 Inl51D8(u8 *a, u8 *b)
+{
+    Pos51D8 pos;
+    u8 *g = D_800BF808_51d8;
+
+    switch (g[0xF]) {
+    case 8:
+        H(b, 0x2E) = 0x2380;
+        if (H(b, 0x36) < 0x34B8) {
+            H(b, 0x36) = 0x34B8;
+        }
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 5:
+    case 6:
+    case 10:
+        func_8006E3F4(a, D_800E7EAC_51d8);
+        {
+            Ent51D8 *v = &D_801422BC_51d8[D_800BF817_51d8];
+
+            pos.x = v->x;
+            pos.y = v->y;
+            pos.z = v->z;
+        }
+        func_8006CEC4(D_1F8000D0_51d8, &pos, 0);
+        a[0x66] = 3;
+        return 1;
+    case 4:
+    case 7:
+    case 9:
+    default:
+        {
+            u8 *t = D_800E8008_51d8;
+
+            t[0x64] &= 0x7F;
+        }
+        return 0;
+    }
+}
+
+void func_801151D8(u8 *a)
+{
+    u8 *b = D_800E7E80_51d8;
+    u8 *g = D_800BF808_51d8;
+
+    if (g[0xE] != 0 && Inl51D8(a, b)) {
+        return;
+    }
+    if (D_800BF871_51d8 < 6) {
+        func_80114A18(a, b);
+        FLOOR51D8()
+    } else if (D_800BF871_51d8 < 9) {
+        a[0x72] = 0;
+        switch (a[3]) {
+        case 0:
+            a[3] = 1;
+        case 1:
+            if (H(b, 0x2E) >= 0x45ED) {
+                a[0x72] = 2;
+            } else if (H(b, 0x2E) < 0x396C) {
+                a[0x72] = 3;
+            }
+            break;
+        }
+        FLOOR51D8()
+    } else {
+        func_80114C1C(a, b);
+    }
+}
 
 extern s8 D_1F800138[];
 extern s8 D_1F80019B[];
