@@ -1631,4 +1631,48 @@ void func_8010C6A0(void)
     }
 }
 
-INCLUDE_ASM("asm/sop/nonmatchings/sop", func_8010C79C);
+#define W(p, o) (*(s32 *)((u8 *)(p) + (o)))
+extern s32 D_8010D394;
+extern s32 D_8010D398;
+extern s32 D_8010D320[];
+
+s32 func_8010C79C(void)
+{
+    u8 *p = D_1F800138_5432;
+    s32 i;
+    s32 y;
+    s32 pad[2];
+
+    switch (U(p, 0x54)) {
+    case 0:
+        p[0x6E] = 0;
+        D_8010D394 = 0xE0;
+        U(p, 0x54) = 1;
+        D_8010D398 = 0;
+    case 1:
+        D_8010D394--;
+        if (D_8010D394 + 0x30C < -0x10) {
+            U(D_1F800138_5432, 0x54)++;
+            break;
+        }
+        y = D_8010D394 + D_8010D398 * 30;
+        if (y < -0x10) {
+            D_8010D398++;
+            y = D_8010D394 + D_8010D398 * 30;
+        }
+        for (i = 0; i < 0xD; i++) {
+            if (D_8010D320[D_8010D398 + i] == 0) {
+                break;
+            }
+            if (y + i * 30 >= 0xF0) {
+                break;
+            }
+            func_80079374((s16)(0xA0 - ((func_80079528(D_8010D320[D_8010D398 + i]) << 3) >> 1)), (s16)(y + i * 30), 0,
+                          D_8010D320[D_8010D398 + i], 1);
+        }
+        break;
+    case 2:
+        return 1;
+    }
+    return 0;
+}
