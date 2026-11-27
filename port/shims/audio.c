@@ -1,5 +1,5 @@
 /* Audio output of the port, first part: the CD's XA ADPCM audio (the music in CD/BGM.XA, the voices in VOICE.XA and
- * DEMO.XA), which is most of what Tomba! 2 plays.  The libsnd / SPU sound effects are still silent (sound_stub.c).
+ * DEMO.XA), which is most of what Tomba! 2 plays, mixed with the SPU voices of sound.c (sound effects, sequences).
  *
  * The virtual disc (cd_virtual.inc) hands every sector the head passes while the game streams XA (ReadS with the
  * CdlModeAP bit, the Setfilter file / channel) to port_xa_sector as the raw 2352-byte sector read from the disc
@@ -103,10 +103,12 @@ static void wav_header(u8 *h, u32 data) {
     h[4] = riff; h[5] = riff >> 8; h[6] = riff >> 16; h[7] = riff >> 24;
     h[40] = data; h[41] = data >> 8; h[42] = data >> 16; h[43] = data >> 24;
 }
+void port_sound_mix(s16 *out, int n);   /* sound.c: the SPU voices (sound effects, sequences) */
 void port_audio_vblank(void) {
-    if (audio_fd < 0 && !port_dump_audio) { q_r = q_w > q_r + 4096 ? q_w - 4096 : q_r; return; }
     int n = 44100 / (port_hz > 0 ? port_hz : 60);
-    static s16 out[44100 / 50 + 8][2];
+    static s16 out[44100 / 50 + 8][2], sfx[44100 / 50 + 8][2];
+    port_sound_mix(&sfx[0][0], n);        /* always: the game reads the voices' state (SpuGetAllKeysStatus, SsIsEos) */
+    if (audio_fd < 0 && !port_dump_audio) { q_r = q_w > q_r + 4096 ? q_w - 4096 : q_r; return; }
     const unsigned step = (unsigned)(37800ull * 65536 / 44100);
     int vl = cd_mix && !port_xa_mute ? cd_vol_l : 0, vr = cd_mix && !port_xa_mute ? cd_vol_r : 0;
     for (int i = 0; i < n; i++) {
@@ -119,8 +121,8 @@ void port_audio_vblank(void) {
             frac += step;
             q_r += frac >> 16; frac &= 0xFFFF;
         }
-        out[i][0] = (s16)clamp16((l * vl) >> 15);
-        out[i][1] = (s16)clamp16((r * vr) >> 15);
+        out[i][0] = (s16)clamp16(((l * vl) >> 15) + sfx[i][0]);
+        out[i][1] = (s16)clamp16(((r * vr) >> 15) + sfx[i][1]);
     }
     if (audio_fd >= 0 && port_write_all(audio_fd, out, n * 4) != n * 4) audio_fd = -1;
     if (port_dump_audio) {

@@ -95,9 +95,15 @@ What stage 2 changed (each item with its headless check):
   little later than in stage-1 runs and the frames after the first clip differ from those runs). CD mix / volume
   from SpuSetCommonAttr, CdlMute / CdlDemute. Checked: the A00 play script gives 1321 XA sectors decoded and 150 s
   of non-silent 44.1 kHz audio in 177 s (music: RMS 3000-9000, smooth waveform, 1-3.5k zero crossings/s); the
-  viewer receives it (`--viewer-arg --stats`: audio queued ~20 ms). **Not yet:** the libsnd / SPU sound effects
-  (T1 `port2/shims/sound.c` re-implements libsnd and the SPU: the next step), movie audio, the title music of
-  the skipped opening movie; no XA in the attract demos (as far as the port can tell, they stream none).
+  viewer receives it (`--viewer-arg --stats`: audio queued ~20 ms). Not yet: movie audio, the title music of the
+  skipped opening movie; no XA in the attract demos (as far as the port can tell, they stream none).
+- **Sound effects and sequences** (`shims/sound.c`, T1 `port/shims/sound.c`): a software SPU (24 voices, SPU
+  ADPCM, ADSR, pitch) and libsnd at its API: `SsVabOpenHead` + `SsVabTransBody` (the game's bank loading,
+  func_800753D4) place the banks in sound RAM, `SsUtKeyOnV` / `SsUtKeyOffV` / `SsUtSetDetVVol` play the effects
+  on the voices the game names, `SsSeqOpen` / `SsSeqPlay` the jingles. Mixed with the XA audio every vblank (and
+  always run, headless too: the game reads the voices' state). Checked: three banks load in the A00 play script
+  (4 / 18 / 2 programs), the effects add a smooth signal (RMS ~3300, a continuous ambience in A00), frames
+  unchanged. No reverb yet.
 
 - **Free play in A00**: after the opening and the journal tutorial Tomba walks, pushes and jumps onto a barrel,
   walks back, and the "Use up and Circle to look inside" hint appears (the script above; same frames with native
