@@ -1,8 +1,8 @@
 /* Software GTE (COP2): the register file and the commands the game uses (RTPS, RTPT, NCLIP, AVSZ3, AVSZ4, NCCS,
  * NCCT, MVMVA for the library helpers).  The gte_* macros of the game sources are translated by
  * port/tools/gen_port.py into port_gte_mtc2/mfc2/ctc2/cfc2/op calls on this file.
- * Precision follows the documented hardware behaviour (psx-spx "GTE"), with the UNR divider replaced by an
- * exact rounded division; good enough for gameplay, refine against an emulator for pixel-exact output. */
+ * Precision follows the documented hardware behaviour (psx-spx "GTE"), with the hardware UNR divide (since 2026-11-28;
+ * it was an exact rounded division); checked against tools/psxemu/gte.py by tools/gte_diff.py. */
 #include "port_runtime.h"
 /* From Tombi-Decomp's port2/runtime/gte.c (MIT, same author); the depth-cue, GPF / GPL, SQR and OP commands were
    added for Tomba! 2. */
@@ -12,6 +12,7 @@ typedef unsigned int u32;
 typedef short s16;
 typedef unsigned short u16;
 typedef long long s64;
+typedef unsigned long long u64;
 
 /* (not static: the 3DS build's game code reads and writes the registers in line, include/port_prelude.h) */
 s32 port_gte_D[32];   /* data registers */
@@ -110,20 +111,23 @@ static inline __attribute__((always_inline)) void rtp(int n, int last) {
     D[19] = clampf(m3, 0, 0xFFFF, 1u << 18);
     u32 h = (u16)C[26], sz = (u32)D[19];
     u32 q;
-    if (sz * 2 <= h) {
+    if (h < sz * 2) {
+        /* the hardware's UNR divide (psx-spx "GTE Division Inaccuracy"; tools/psxemu/gte.py _divide): a reciprocal
+           from a 257-entry table and two Newton steps; it differs from the exact rounded quotient by a unit now and
+           then (a screen y off by one in RotTransPers on 1 of 300 inputs before) */
+        static unsigned char unr[0x101];
+        if (!unr[0]) for (int i = 0; i < 0x101; i++) { int t = (0x40000 / (i + 0x100) + 1) / 2 - 0x101; unr[i] = t > 0 ? (unsigned char)t : 0; }
+        int z = 0;
+        while (z < 16 && !((sz << z) & 0x8000)) z++;
+        u32 n = h << z, d = sz << z;
+        u32 u = unr[(d - 0x7FC0) >> 7] + 0x101;
+        d = (0x2000080u - d * u) >> 8;
+        d = (0x0000080u + d * u) >> 8;
+        u64 nq = ((u64)n * d + 0x8000) >> 16;
+        q = nq > 0x1FFFF ? 0x1FFFF : (u32)nq;
+    } else {
         q = 0x1FFFF;
         FLAG |= 1u << 17;
-    } else {
-        /* (h << 17) / sz with 32-bit divisions (h < 2 sz, both 16 bits: the quotient has 18): a 64-bit division is a
-           long library call on the 3DS's ARM11, once a vertex */
-        u32 a = (h << 16) / sz,
-            rem = (h << 16) - a * sz,
-            d = 2 * a + (2 * rem >= sz);
-        q = (d + 1) >> 1;
-        if (q > 0x1FFFF) {
-            q = 0x1FFFF;
-            FLAG |= 1u << 17;
-        }
     }
     s64 sx = (((s64)C[24] + (s64)IR1 * q) >> 16) + port_gte_dx;
     s64 sy = ((s64)C[25] + (s64)IR2 * q) >> 16;
@@ -194,6 +198,39 @@ static void dcue(int sf, int lm, s64 m1, s64 m2, s64 m3) {
     push_rgb();
 }
 /* Added for Tomba! 2 (from the psx-spx GTE description): DPCS / DPCT / INTPL / DCPL, GPF / GPL, SQR, OP */
+/* NCS / NCT / NCDS / NCDT / CC / CDP (tools/psxemu/gte.py _ncd / _color_mul, 64-bit sums): unused on the routes
+   checked so far (gte_more logged none), added so that no area meets a missing command */
+static void set_mac3(s64 a, s64 b, s64 c, int sh, int lm) {
+    MAC1 = (s32)(a >> sh); MAC2 = (s32)(b >> sh); MAC3 = (s32)(c >> sh);
+    set_ir(lm);
+}
+static void back_light(int sh, int lm) {             /* BK << 12 + LCM x IR */
+    s64 i1 = (s16)IR1, i2 = (s16)IR2, i3 = (s16)IR3;
+    set_mac3(((s64)C[13] << 12) + M16LO(16) * i1 + M16HI(16) * i2 + M16LO(17) * i3,
+             ((s64)C[14] << 12) + M16HI(17) * i1 + M16LO(18) * i2 + M16HI(18) * i3,
+             ((s64)C[15] << 12) + M16LO(19) * i1 + M16HI(19) * i2 + M16LO(20) * i3, sh, lm);
+}
+static void color_mul(int sh, int lm, int depth) {   /* RGBC x IR << 4, optionally depth-cued towards FC by IR0 */
+    u32 c = (u32)D[6];
+    s64 p1 = ((s64)(c & 0xFF) * (s16)IR1) << 4, p2 = ((s64)((c >> 8) & 0xFF) * (s16)IR2) << 4,
+        p3 = ((s64)((c >> 16) & 0xFF) * (s16)IR3) << 4;
+    if (depth) {
+        s32 t1 = clampf((((s64)C[21] << 12) - p1) >> sh, -0x8000, 0x7FFF, 1u << 24);
+        s32 t2 = clampf((((s64)C[22] << 12) - p2) >> sh, -0x8000, 0x7FFF, 1u << 23);
+        s32 t3 = clampf((((s64)C[23] << 12) - p3) >> sh, -0x8000, 0x7FFF, 1u << 22);
+        s64 i0 = (s16)IR0;
+        p1 += i0 * t1; p2 += i0 * t2; p3 += i0 * t3;
+    }
+    set_mac3(p1, p2, p3, sh, lm);
+}
+static void ncd(int n, int sh, int lm, int mode) {    /* mode 0 NCS, 1 NCC, 2 NCD */
+    s64 x = VX(n), y = VY(n), z = VZ(n);
+    set_mac3(M16LO(8) * x + M16HI(8) * y + M16LO(9) * z, M16HI(9) * x + M16LO(10) * y + M16HI(10) * z,
+             M16LO(11) * x + M16HI(11) * y + M16LO(12) * z, sh, lm);
+    back_light(sh, lm);
+    if (mode) color_mul(sh, lm, mode == 2);
+    push_rgb();
+}
 static void gte_more(u32 op) {
     int sf = (op >> 19) & 1, lm = (op >> 10) & 1, sh = sf ? 12 : 0;
     switch (op & 0x3F) {
@@ -236,6 +273,15 @@ static void gte_more(u32 op) {
         MAC2 = (s32)(((s64)(s16)IR2 * (s16)IR2) >> sh);
         MAC3 = (s32)(((s64)(s16)IR3 * (s16)IR3) >> sh);
         set_ir(lm);
+        break;
+    case 0x1E: ncd(0, sh, lm, 0); break;                             /* NCS */
+    case 0x20: for (int i = 0; i < 3; i++) ncd(i, sh, lm, 0); break; /* NCT */
+    case 0x13: ncd(0, sh, lm, 2); break;                             /* NCDS */
+    case 0x16: for (int i = 0; i < 3; i++) ncd(i, sh, lm, 2); break; /* NCDT */
+    case 0x1C: case 0x14:                                            /* CC / CDP */
+        back_light(sh, lm);
+        color_mul(sh, lm, (op & 0x3F) == 0x14);
+        push_rgb();
         break;
     case 0x0C: {                                                     /* OP: cross product with the matrix diagonal */
         s32 d1 = M16LO(0), d2 = M16LO(2), d3 = M16LO(4);

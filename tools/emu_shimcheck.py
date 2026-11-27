@@ -42,6 +42,23 @@ ap.add_argument("--n", type=int, default=300)
 ap.add_argument("--seed", type=int, default=2)
 args = ap.parse_args()
 lib = ctypes.CDLL(build())
+def has(n):
+    try:
+        getattr(lib, n); return True
+    except AttributeError:
+        return False
+# (2026-11-28 (2): the port dropped the ratan2 / SquareRoot0 / RotMatrix / RotTransPers shims: the retail code runs.
+#  RotTransPers is still checked, as the port's GTE commands it would run: port/runtime/gte.c's RTPS)
+if not has("RotTransPers"):
+    for n in ("port_gte_mfc2", "port_gte_cfc2"): getattr(lib, n).restype = ctypes.c_uint32
+    def _rtp(v, sxy, p, flag):
+        b = v.raw; vx, vy, vz = struct.unpack_from("<3h", b)
+        lib.port_gte_mtc2(0, (vx & 0xFFFF) | (vy & 0xFFFF) << 16); lib.port_gte_mtc2(1, vz & 0xFFFF)
+        lib.port_gte_op(0x00180001)
+        struct.pack_into("<I", sxy, 0, lib.port_gte_mfc2(14))
+        return C.s32(lib.port_gte_mfc2(19)) >> 2, lib.port_gte_mfc2(14), C.s32(lib.port_gte_mfc2(8))
+    lib_rtp = _rtp
+skipped = [n for n in ("RotMatrix", "ratan2", "SquareRoot0") if not has(n)]
 m = M.Machine(); c = m.cpu; c.R[29] = 0x801FFF00
 A, B, D = 0x80100000, 0x80100100, 0x80100200          # scratch RAM for the retail calls
 def call(n, *a): return C.s32(c.call(m.names[n], *[x & 0xFFFFFFFF for x in a], max_instr=200000))
@@ -57,7 +74,8 @@ for _ in range(args.n):
     # RotMatrix
     c.write(A, struct.pack("<4h", *ang)); call("RotMatrix", A, B); r = unpack_m(c.read(B, 32))[:9]
     pb = ctypes.create_string_buffer(struct.pack("<4h", *ang)); pm = ctypes.create_string_buffer(32)
-    lib.RotMatrix(pb, pm); chk("RotMatrix", r, unpack_m(pm.raw)[:9], ang)
+    if "RotMatrix" not in skipped:
+        lib.RotMatrix(pb, pm); chk("RotMatrix", r, unpack_m(pm.raw)[:9], ang)
     for nm in ("RotMatrixX", "RotMatrixY", "RotMatrixZ"):
         m0 = mat(); a = random.randint(-4096, 4096)
         c.write(B, pack_m(m0)); call(nm, a, B); r = unpack_m(c.read(B, 32))[:9]
@@ -78,17 +96,25 @@ for _ in range(args.n):
     c.write(A, pack_m(m0)); call("SetRotMatrix", A); call("SetTransMatrix", A); call("SetGeomScreen", h); call("SetGeomOffset", 160, 120)
     pa = ctypes.create_string_buffer(pack_m(m0)); lib.SetRotMatrix(pa); lib.SetTransMatrix(pa); lib.SetGeomScreen(h); lib.SetGeomOffset(160, 120)
     c.write(B, struct.pack("<4h", *v)); z = call("RotTransPers", B, D, D + 4, D + 8); r = (z, c.r32(D), C.s32(c.r32(D + 4)))
-    o = ctypes.create_string_buffer(12); z2 = lib.RotTransPers(ctypes.create_string_buffer(struct.pack("<4h", *v)), o, ctypes.byref(o, 4), ctypes.byref(o, 8))
-    p = (z2, struct.unpack_from("<I", o.raw, 0)[0], struct.unpack_from("<i", o.raw, 4)[0]); chk("RotTransPers", r, p, (m0, v, h))
+    o = ctypes.create_string_buffer(12)
+    if has("RotTransPers"):
+        z2 = lib.RotTransPers(ctypes.create_string_buffer(struct.pack("<4h", *v)), o, ctypes.byref(o, 4), ctypes.byref(o, 8))
+        p = (z2, struct.unpack_from("<I", o.raw, 0)[0], struct.unpack_from("<i", o.raw, 4)[0])
+    else:
+        p = lib_rtp(ctypes.create_string_buffer(struct.pack("<4h", *v)), o, None, None)
+    chk("RotTransPers", r, p, (m0, v, h))
 for a in range(4096):
     for nm in ("rsin", "rcos"):
         chk(nm, call(nm, a), lib[nm](a), a)
-lib.ratan2.restype = lib.SquareRoot0.restype = ctypes.c_int
 for _ in range(args.n * 10):
     y, x = random.randint(-20000, 20000), random.randint(-20000, 20000)
-    chk("ratan2", call("ratan2", y, x), lib.ratan2(y, x), (y, x))
+    if "ratan2" not in skipped:
+        lib.ratan2.restype = ctypes.c_int; chk("ratan2", call("ratan2", y, x), lib.ratan2(y, x), (y, x))
     v = random.randint(0, 1 << 28)
-    chk("SquareRoot0", call("SquareRoot0", v), lib.SquareRoot0(v), v)
+    if "SquareRoot0" not in skipped:
+        lib.SquareRoot0.restype = ctypes.c_int; chk("SquareRoot0", call("SquareRoot0", v), lib.SquareRoot0(v), v)
+if skipped:
+    print("not shimmed (the retail code runs in the port): " + " ".join(skipped))
 for k, v in sorted(bad.items()):
     print("%-14s %4d inputs differ, e.g. %s: retail %s, port %s" % (k, len(v), v[0][0], v[0][1], v[0][2]))
 

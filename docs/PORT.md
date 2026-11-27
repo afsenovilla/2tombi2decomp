@@ -236,6 +236,30 @@ build/port/tomba2 --frames 1700 --save-dir S --dump-frames D2 --dump-every 10 --
 
   Test hooks for scripted runs: `--poke FRAME:ADDR=BYTE` (repeatable, 16), `--trace-pos N` (the player actor's
   position, 16.16, every N vblanks). The save point actor is MAIN's func_800739AC (A00 has two, at x 4200 / 14870).
+- **Psy-Q math** (found with the reference emulator, docs/EMU.md "Port vs emulator: findings"): the shims of
+  ratan2, SquareRoot0, csqrt, RotMatrix, ApplyMatrixLV, ApplyRotMatrix and RotTransPers were exact or rounded
+  differently from Sony's code, so the camera angle (f_RebuildCameraViewTransform, attract demo 1 frame 1216) and the
+  vertex positions left the retail ones; they are removed and the retail libgte code is interpreted (pure). The
+  kept shims (rsin, rcos, RotMatrixX / Y / Z, MulMatrix0, ApplyMatrix, ApplyMatrixSV, the Set* register loads) are
+  equal on every input `tools/emu_shimcheck.py` tries. The A00 script still runs the same route (47 s headless).
+- **GTE** (`runtime/gte.c`): RTPS / RTPT divide with the hardware's UNR table and two Newton steps (psx-spx; as
+  tools/psxemu/gte.py) instead of the exact quotient; NCS / NCT / NCDS / NCDT / CC / CDP added (none was logged as
+  missing on the routes checked). `python3 -I tools/gte_diff.py [--n N] [--ops RTPS,...] [--raw]` compiles gte.c
+  with a driver (build/gte_diff/drv, gcc -m32) and compares every register after each command with gte.py on random
+  states: 0 differences in all 22 commands (6000 states).
+- **The TV window** (`shims/gpu.c tv_frame`): DISPENV.screen is 0,8 256x224 (logged: `[gpu] display 320x240,
+  screen 0,8 256x224`): a television shows the display's first 224 lines 8 lines down and never the last 16, where
+  the cutscene letterbox leaves the previous picture. The window gets that picture (240 lines, black borders);
+  `--dump-tv` dumps it too; `--dump-frames` alone keeps the whole DISPENV area (the emulator's dumps).
+- **Viewer** (`tools/view/tomba2_view.c`): every window title is "Tomba! 2 (PC port)" (the launcher's file dialog and
+  message boxes too, as T1's "Tombi! (PC port)"); `--renderer NAME` (SDL_HINT_RENDER_DRIVER: direct3d, direct3d11,
+  direct3d12, opengl, opengles2, software; SDL's default if it fails), `--linear`, `--fullscreen` (also tomba2
+  options, so the launcher's `options=` line takes them); an XRGB8888 streaming texture filled by the viewer (RGB24
+  was converted by each render driver); `SDL_RenderSetLogicalSize(320, 240)` keeps 4:3 in any window size; F12
+  saves `tomba2_shot_NNN.bmp` in the working directory (the launcher's folder); at start it prints `tomba2-view: SDL
+  2.30.11, video driver windows, renderer direct3d (accelerated, vsync; max texture ...; available: ...)` and the
+  display mode to stderr, which is tomba2.log under the launcher. Checked with SDL's dummy video driver on Linux
+  (the software renderer) and under Wine; not on a real Windows display.
 
 ## 1. Status: stage 1, milestone P0 (2026-11-27)
 

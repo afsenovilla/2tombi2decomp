@@ -43,8 +43,9 @@ static void load_ini(void) {
 static void save_ini(void) {
     FILE *f = fopen(ini, "w");
     if (!f) return;
-    fprintf(f, "; Tomba! 2 port launcher settings (docs/PORT.md).  disc = your own disc image (.bin/.img/.cue/.iso).\n"
-               "; options = extra tomba2.exe options, e.g. --viewer-arg --fullscreen  or  --viewer-arg --scale --viewer-arg 2\n");
+    fprintf(f, "; Tomba! 2 (PC port) launcher settings (docs/PORT.md).  disc = your own disc image (.bin/.img/.cue/.iso).\n"
+               "; options = extra tomba2.exe options, e.g. --fullscreen  or  --renderer software  (also direct3d, direct3d11,\n"
+               ";           opengl)  or  --linear  or  --viewer-arg --scale --viewer-arg 3\n");
     fprintf(f, "disc=%s\noptions=%s\n", disc, options);
     fclose(f);
 }
@@ -58,7 +59,7 @@ static int choose_disc(void) {
     o.lpstrFilter = "PlayStation disc images (*.bin;*.img;*.cue;*.iso)\0*.bin;*.img;*.cue;*.iso\0All files (*.*)\0*.*\0";
     o.lpstrFile = f;
     o.nMaxFile = sizeof f;
-    o.lpstrTitle = "Tomba! 2 (USA) - choose your disc image";
+    o.lpstrTitle = "Tomba! 2 (PC port) - choose your Tomba! 2 (USA) disc image";
     o.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
     if (!GetOpenFileNameA(&o)) return 0;
     snprintf(disc, sizeof disc, "%s", f);
@@ -84,7 +85,7 @@ static DWORD run_game(void) {
     char cmd[4096], game[MAX_PATH];
     snprintf(game, sizeof game, "%s\\tomba2.exe", exe_dir);
     if (!exists(game)) {
-        MessageBoxA(0, "tomba2.exe is missing: unzip the whole archive into one folder.", "Tomba! 2 port", MB_ICONERROR);
+        MessageBoxA(0, "tomba2.exe is missing: unzip the whole archive into one folder.", "Tomba! 2 (PC port)", MB_ICONERROR);
         return 1;
     }
     snprintf(cmd, sizeof cmd, "\"%s\" --disc \"%s\" --window --save-dir \"%s\" %s", game, disc, saves, options);
@@ -100,7 +101,7 @@ static DWORD run_game(void) {
     if (!CreateProcessA(0, cmd, 0, 0, TRUE, CREATE_NO_WINDOW, 0, exe_dir, &si, &pi)) {
         char m[512];
         snprintf(m, sizeof m, "Cannot start %s (error %lu).", game, GetLastError());
-        MessageBoxA(0, m, "Tomba! 2 port", MB_ICONERROR);
+        MessageBoxA(0, m, "Tomba! 2 (PC port)", MB_ICONERROR);
         if (lg != INVALID_HANDLE_VALUE) CloseHandle(lg);
         return 1;
     }
@@ -136,7 +137,7 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR args, int show) {
             if (!choose && disc[0]) {
                 char m[MAX_PATH + 128];
                 snprintf(m, sizeof m, "The disc image\n%s\nis not there any more. Choose it again.", disc);
-                MessageBoxA(0, m, "Tomba! 2 port", MB_ICONINFORMATION);
+                MessageBoxA(0, m, "Tomba! 2 (PC port)", MB_ICONINFORMATION);
             }
             if (!choose_disc()) return 0;
         }
@@ -148,7 +149,7 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR args, int show) {
         snprintf(m, sizeof m, "The game stopped (exit code %lu):\n\n%s\n\nThe full log is %s.\n\n"
                  "Choose another disc image? (the port needs your own Tomba! 2 USA disc, SCUS-94454, as a raw .bin/.cue or .iso)",
                  code, err[0] ? err : "(no message)", logp);
-        if (MessageBoxA(0, m, "Tomba! 2 port", MB_YESNO | MB_ICONWARNING) != IDYES) return (int)code;
+        if (MessageBoxA(0, m, "Tomba! 2 (PC port)", MB_YESNO | MB_ICONWARNING) != IDYES) return (int)code;
         choose = 1;
     }
 }

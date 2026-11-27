@@ -5,10 +5,15 @@
  *   fd 3  : audio, s16le stereo 44100 Hz
  *   fd 4  : we write one u16 per frame: pad 1 buttons in PSX bit order, active high
  * Keyboard: arrows = d-pad, X = Cross, Z = Square, S = Triangle, D = Circle, Q/W = L1/R1, A/E = L2/R2,
- * Return = Start, Backspace or Right Shift = Select, F = toggle 2x/3x window scale, F11 = fullscreen, Escape = quit.
+ * Return = Start, Backspace or Right Shift = Select, F = toggle 2x/3x window scale, F11 = fullscreen, F12 = screenshot
+ * (tomba2_shot_NNN.bmp in the working directory: the launcher's folder), Escape = quit.
  * A game controller (SDL_GameController) maps to the same buttons.  Can also be used alone on a recording:
  *   build/port/tomba2 --frames 1200 --pad-script 1000:start | build/port/tomba2-view   (no audio / pad pipes).
- * Options (tombi --viewer-arg X passes them through): --scale 1|2|3  --fullscreen  --stats (pipe / audio counters per second)
+ * Options (tomba2 --viewer-arg X passes them through): --scale 1|2|3  --fullscreen  --stats (pipe / audio counters per second)
+ *   --renderer direct3d|direct3d11|direct3d12|opengl|opengles2|software  (SDL's render driver; default: SDL's own
+ *          choice, direct3d on Windows; `tomba2 --renderer X` passes it too)  --linear (smooth scaling; default nearest)
+ * At start the viewer prints its SDL version, video driver, render driver (and the others available), the display
+ * mode and the texture format to stderr (the game's log, tomba2.log on Windows), so a report shows them.
  *   --dump DIR[:N]  (test) every Nth received frame as DIR/view_NNNNNN.ppm, to compare with the game's --dump-frames
  *   --keys up=Up,down=Down,left=Left,right=Right,cross=X,square=Z,triangle=S,circle=D,l1=Q,r1=W,l2=A,r2=E,
  *          start=Return,select=Backspace   (SDL key names, SDL_GetScancodeFromName; unnamed buttons keep the default)
@@ -203,8 +208,25 @@ static Uint16 ctrl_mask(SDL_GameControllerButton b) {
     }
 }
 
+static void shot(const unsigned char *rgb, int w, int h) {   /* F12: tomba2_shot_NNN.bmp */
+    static int n;
+    char path[64];
+    for (; n < 1000; n++) {
+        snprintf(path, sizeof path, "tomba2_shot_%03d.bmp", n);
+        FILE *f = fopen(path, "rb");
+        if (!f) break;
+        fclose(f);
+    }
+    SDL_Surface *sf = SDL_CreateRGBSurfaceWithFormatFrom((void *)rgb, w, h, 24, w * 3, SDL_PIXELFORMAT_RGB24);
+    if (sf && SDL_SaveBMP(sf, path) == 0) fprintf(stderr, "tomba2-view: screenshot %s\n", path);
+    else fprintf(stderr, "tomba2-view: screenshot failed: %s\n", SDL_GetError());
+    if (sf) SDL_FreeSurface(sf);
+    n++;
+}
+
 int main(int argc, char **argv) {
-    int scale = 2, fullscreen = 0, stats = 0;
+    int scale = 2, fullscreen = 0, stats = 0, linear = 0;
+    const char *renderer = NULL;
     pipe_t pad_fd = NO_PIPE;
 #ifdef _WIN32
     video_fd = GetStdHandle(STD_INPUT_HANDLE);
@@ -216,7 +238,9 @@ int main(int argc, char **argv) {
     for (int i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "--scale") && i + 1 < argc) { scale = atoi(argv[++i]); if (scale < 1) scale = 1; if (scale > 6) scale = 6; }
         else if (!strcmp(argv[i], "--fullscreen")) fullscreen = 1;
-        else if (!strcmp(argv[i], "--stats")) stats = 1;   /* every second: frames received / shown / skipped, audio fill, drops, pads */
+        else if (!strcmp(argv[i], "--stats")) stats = 1;
+        else if (!strcmp(argv[i], "--renderer") && i + 1 < argc) renderer = argv[++i];
+        else if (!strcmp(argv[i], "--linear")) linear = 1;   /* every second: frames received / shown / skipped, audio fill, drops, pads */
         else if (!strcmp(argv[i], "--keys") && i + 1 < argc) parse_keys(argv[++i]);
         else if (!strcmp(argv[i], "--dump") && i + 1 < argc) {   /* DIR[:N]: every Nth received frame as DIR/view_NNNNNN.ppm (test: compare with --dump-frames) */
             static char d[1024]; strncpy(d, argv[++i], sizeof d - 1);
@@ -231,17 +255,47 @@ int main(int argc, char **argv) {
         else fprintf(stderr, "tomba2-view: unknown option %s\n", argv[i]);
     }
     { const char *e = getenv("PORT_PIPE_CHUNK"); if (e) pipe_chunk = (size_t)atol(e); }
+    if (renderer && *renderer) SDL_SetHint(SDL_HINT_RENDER_DRIVER, renderer);
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, linear ? "1" : "0");
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER) < 0) {
         fprintf(stderr, "tomba2-view: SDL_Init: %s\n", SDL_GetError());
         return 1;
     }
-    SDL_Window *win = SDL_CreateWindow("Tomba! 2 (port)", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+    SDL_Window *win = SDL_CreateWindow("Tomba! 2 (PC port)", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                        320 * scale, 240 * scale, SDL_WINDOW_RESIZABLE | (fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
     if (!win) { fprintf(stderr, "tomba2-view: SDL_CreateWindow: %s\n", SDL_GetError()); return 1; }
     SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!ren) ren = SDL_CreateRenderer(win, -1, 0);
     if (!ren) ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_SOFTWARE);
+    if (!ren && renderer) {   /* the asked driver failed: SDL's own choice */
+        fprintf(stderr, "tomba2-view: render driver %s failed (%s); trying the default\n", renderer, SDL_GetError());
+        SDL_SetHint(SDL_HINT_RENDER_DRIVER, "");
+        ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+        if (!ren) ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_SOFTWARE);
+    }
     if (!ren) { fprintf(stderr, "tomba2-view: SDL_CreateRenderer: %s\n", SDL_GetError()); return 1; }
+    /* the 4:3 picture keeps its shape in any window size (bars instead of stretching) */
+    SDL_RenderSetLogicalSize(ren, 320, 240);
+    {   /* what this machine gave us, for tomba2.log */
+        SDL_version v; SDL_GetVersion(&v);
+        SDL_RendererInfo ri; SDL_GetRendererInfo(ren, &ri);
+        char avail[256] = "";
+        for (int i = 0; i < SDL_GetNumRenderDrivers(); i++) {
+            SDL_RendererInfo di;
+            if (SDL_GetRenderDriverInfo(i, &di) == 0 && strlen(avail) + strlen(di.name) + 2 < sizeof avail) {
+                if (avail[0]) strcat(avail, " ");
+                strcat(avail, di.name);
+            }
+        }
+        SDL_DisplayMode dm; int have_dm = SDL_GetCurrentDisplayMode(SDL_GetWindowDisplayIndex(win), &dm) == 0;
+        fprintf(stderr, "tomba2-view: SDL %d.%d.%d, video driver %s, renderer %s (%s%s; max texture %dx%d; available: %s)\n",
+                v.major, v.minor, v.patch, SDL_GetCurrentVideoDriver(), ri.name,
+                ri.flags & SDL_RENDERER_ACCELERATED ? "accelerated" : "software",
+                ri.flags & SDL_RENDERER_PRESENTVSYNC ? ", vsync" : "", ri.max_texture_width, ri.max_texture_height, avail);
+        if (have_dm) fprintf(stderr, "tomba2-view: display %dx%d at %d Hz, %s; window %dx%d%s, scaling %s\n", dm.w, dm.h,
+                             dm.refresh_rate, SDL_GetPixelFormatName(dm.format), 320 * scale, 240 * scale,
+                             fullscreen ? " (fullscreen)" : "", linear ? "linear" : "nearest");
+    }
     SDL_Texture *tex = NULL; int tw = 0, th = 0;
 
     if (audio_fd != NO_PIPE) {
@@ -271,7 +325,9 @@ int main(int argc, char **argv) {
                 if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) running = 0;
                 else if (e.key.keysym.scancode == SDL_SCANCODE_F && !e.key.repeat) {
                     scale = scale == 2 ? 3 : 2;
-                    SDL_SetWindowSize(win, (tw ? tw : 320) * scale, (th ? th : 240) * scale);
+                    SDL_SetWindowSize(win, 320 * scale, 240 * scale);
+                } else if (e.key.keysym.scancode == SDL_SCANCODE_F12 && !e.key.repeat) {
+                    if (rgb && tw) shot(rgb, tw, th);
                 } else if (e.key.keysym.scancode == SDL_SCANCODE_F11 && !e.key.repeat) {
                     fullscreen = !fullscreen;
                     SDL_SetWindowFullscreen(win, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
@@ -307,12 +363,20 @@ int main(int argc, char **argv) {
         frames_shown++;
         if (!tex || tw != w || th != h) {
             if (tex) SDL_DestroyTexture(tex);
-            tex = SDL_CreateTexture(ren, SDL_PIXELFORMAT_RGB24, SDL_TEXTUREACCESS_STREAMING, w, h);
+            /* XRGB8888: the native format of the Direct3D / OpenGL / software renderers (RGB24 is converted by SDL on
+               every upload, a path that differs between drivers); the frame is converted here */
+            tex = SDL_CreateTexture(ren, SDL_PIXELFORMAT_RGB888, SDL_TEXTUREACCESS_STREAMING, w, h);
+            if (!tex) fprintf(stderr, "tomba2-view: SDL_CreateTexture %dx%d: %s\n", w, h, SDL_GetError());
             tw = w; th = h;
             /* keep the 4:3 look: 320x240 and 512x240 both fill the same window */
             if (!fullscreen) SDL_SetWindowSize(win, 320 * scale, 240 * scale);
         }
-        SDL_UpdateTexture(tex, NULL, rgb, w * 3);
+        {
+            static Uint32 *x; static size_t xcap;
+            if ((size_t)w * h > xcap) { x = realloc(x, (size_t)w * h * 4); xcap = (size_t)w * h; }
+            for (int i = 0; i < w * h; i++) x[i] = (Uint32)rgb[i * 3] << 16 | (Uint32)rgb[i * 3 + 1] << 8 | rgb[i * 3 + 2];
+            if (tex) SDL_UpdateTexture(tex, NULL, x, w * 4);
+        }
         SDL_RenderClear(ren);
         SDL_RenderCopy(ren, tex, NULL, NULL);
         SDL_RenderPresent(ren);

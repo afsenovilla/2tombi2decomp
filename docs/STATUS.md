@@ -53,7 +53,25 @@ docs/PORT.md §0.3 has the details and the checks.
   "Saving game... / Save OK", the file `BASCUSP94454T2-00` (01, 000:02:18, Town of the Fishermen) in
   tomba2_mc0.mcd; a fresh run: Title -> Load Game -> slot 1 -> the file -> "Load Completed" -> A00 at the saved
   place. Test hooks: `--poke FRAME:ADDR=BYTE`, `--trace-pos N` (the player's position).
-- The display's TV window is logged (`[gpu] display 320x240, screen 0,8 256x224`).
+- **Psy-Q math as retail** (the reference emulator's finding, docs/EMU.md): the ratan2, SquareRoot0, csqrt,
+  RotMatrix, ApplyMatrixLV, ApplyRotMatrix and RotTransPers shims are gone (port/shims/psyq.c): the retail libgte
+  code runs in the interpreter (ratan2 was off by one on 44 % of inputs, SquareRoot0 exact where Sony's is a table
+  approximation, RotMatrix elements off by 1-2: the camera angle and the vertex positions left the retail ones).
+  `tools/emu_shimcheck.py` now reports them as not shimmed and checks RotTransPers through the port's GTE.
+- **GTE** (`runtime/gte.c`): the hardware UNR divide replaces the exact rounded quotient (RotTransPers: 0 of 300
+  differ, was 1); NCS / NCT / NCDS / NCDT / CC / CDP added. New `tools/gte_diff.py`: gte.c against
+  tools/psxemu/gte.py on random register states: all 22 commands equal on 6000 realistic states (`--raw` states
+  differ only where gte.py keeps unmasked 32-bit control registers).
+- **The TV window** (`shims/gpu.c`): the game sets DISPENV.screen 0,8 256x224 on a 320x240 display, so a TV shows
+  only the display's first 224 lines (8 lines down, black borders); the window showed all 240, i.e. 16 stale lines
+  under the cutscene letterbox. The viewer now gets the TV picture; `--dump-tv` dumps it (plain `--dump-frames`
+  stay the DISPENV area, as the emulator compares). The display mode is logged once (`[gpu] display ...`).
+- **Viewer** (`tools/view/tomba2_view.c`): title "Tomba! 2 (PC port)" (the launcher's dialogs and boxes too);
+  `--renderer direct3d|direct3d11|direct3d12|opengl|opengles2|software` (also as a tomba2 option; falls back to
+  SDL's default if the driver fails), `--linear`, `--fullscreen` as tomba2 options; XRGB8888 texture (converted in
+  the viewer; RGB24 went through each driver's own conversion); the 4:3 picture keeps its shape in any window size
+  (SDL_RenderSetLogicalSize); F12 saves tomba2_shot_NNN.bmp; at start it logs SDL's version, video and render
+  driver (and the available ones), the display mode (into tomba2.log on Windows). README.txt: "Report a problem".
 
 ## 2026-11-28: port stage 3 (Windows)
 

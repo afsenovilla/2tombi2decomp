@@ -849,6 +849,10 @@ struct-member form of a cast access, regswap `member` toggles every one)
   Stage 4 (2026-11-28): BIOS card file calls opened with O_NOWAIT (0x8000) end with the SwCARD I/O-end event and
   CRD.BIN waits for it (the save hung on "Saving game..." without it); script card tests with `--poke
   FRAME:ADDR=BYTE` (CRD's mode byte 0x800BF4D4: 1 = save) and `--trace-pos N` (docs/PORT.md §0.3).
+  Never shim a pure Psy-Q math function with "exact" C: the game's results depend on Sony's rounding (ratan2,
+  SquareRoot0, RotMatrix, RotTransPers' UNR divide); leave it to the interpreter, or check a shim with
+  `tools/emu_shimcheck.py` and the GTE with `tools/gte_diff.py` (gte.c vs tools/psxemu/gte.py). The game shows a
+  224-line TV window (DISPENV.screen 0,8 256x224): the viewer crops to it, `--dump-frames` does not.
 - Byte-matching only; tools/nonmatching.py is kept unused.
 - USA is the reference; EU in config/eu/.
 - The licensed-region module at the end of boot.c [0x80011A0C, 0x80012D2C) is library-style files in

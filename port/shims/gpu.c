@@ -587,6 +587,26 @@ static void pipe_frame(void) {
         port_printf("[gpu] frame pipe closed\n"); port_pipe_path = 0;
     }
 }
+/* The TV window (DISPENV.screen): Tomba! 2 sets screen 0,8 256x224 on a 320x240 display, so a television shows
+   the display's first 224 lines 8 lines down, between black borders, and never its last 16 lines (the cutscene
+   letterbox has the old picture under it there).  The window and --dump-tv frames are made that way: 240 lines,
+   rows [screen.y, screen.y + screen.h) = the display's lines from 0, black outside (screen.h 0 = 240).  The plain
+   --dump-frames dumps stay the whole DISPENV area (what tools/emu_compare.py compares). */
+int port_dump_tv;
+static u8 tv_rgb[1024 * 512 * 3];
+static const u8 *tv_frame(const u8 *rgb, int w, int h) {
+    s16 *d = (s16 *)cur_dispenv;
+    int sy = d[5], sh = d[7] ? d[7] : 240;
+    if (sy < 0) sy = 0;
+    if (sy == 0 && sh >= h) return rgb;
+    for (int y = 0; y < h; y++) {
+        u8 *o = tv_rgb + y * w * 3;
+        int src = y - sy;
+        if (src >= 0 && src < sh && src < h) memcpy(o, rgb + src * w * 3, w * 3);
+        else for (int i = 0; i < w * 3; i++) o[i] = 0;
+    }
+    return tv_rgb;
+}
 static int window_fd = -1;
 void port_pipe_video_fd(int fd) { window_fd = fd; }
 void port_gpu_fds_get(int *win, int *pipe) { *win = window_fd; *pipe = pipe_fd; }   /* save states keep this run's fds */
@@ -597,14 +617,14 @@ void port_gpu_vblank(void) {
         extern void port_window_frame(const u8 *rgb, int w, int h);
         int w, h;
         port_gpu_frame(frame_rgb, &w, &h);
-        port_window_frame(frame_rgb, w, h);
+        port_window_frame(tv_frame(frame_rgb, w, h), w, h);
     }
     if (!port_dump_dir || port_dump_every <= 0 || port_frame % port_dump_every) return;
     port_mkdir(port_dump_dir);       /* every time (cheap): a "made" flag would be restored by --load */
     char path[512]; int w, h;
     port_gpu_frame(frame_rgb, &w, &h);
     path_for(path, "frame_");
-    if (write_png(path, frame_rgb, w, h)) port_printf("[gpu] cannot write %s\n", path);
+    if (write_png(path, port_dump_tv ? tv_frame(frame_rgb, w, h) : frame_rgb, w, h)) port_printf("[gpu] cannot write %s\n", path);
     if (port_dump_vram) {
         for (int y = 0; y < 512; y++) for (int x = 0; x < 1024; x++) {
             u16 c = vram[y][x]; u8 *o = frame_rgb + (y * 1024 + x) * 3;

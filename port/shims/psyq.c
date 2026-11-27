@@ -198,28 +198,11 @@ int rsin(int a) {
     return -sintab[4096 - a];
 }
 int rcos(int a) { return rsin(a + 1024); }
-int ratan2(int y, int x) {
-    /* binary search on the angle: monotone in the first octant */
-    int neg_y = y < 0, neg_x = x < 0, swap;
-    unsigned ay = neg_y ? -y : y, ax = neg_x ? -x : x;
-    if (!ax && !ay) return 0;
-    swap = ay > ax;
-    unsigned num = swap ? ax : ay, den = swap ? ay : ax;        /* ratio <= 1 */
-    int lo = 0, hi = 512;                                        /* 0..45 degrees */
-    while (lo < hi) {
-        int m = (lo + hi + 1) / 2;
-        if ((long long)rsin(m) * den <= (long long)rcos(m) * num) lo = m; else hi = m - 1;
-    }
-    int a = swap ? 1024 - lo : lo;
-    if (neg_x) a = 2048 - a;
-    if (neg_y) a = -a;
-    return a;
-}
-static u32 isqrt(u32 v) { u32 r = 0, b = 1u << 30; while (b > v) b >>= 2;
-    while (b) { if (v >= r + b) { v -= r + b; r = (r >> 1) + b; } else r >>= 1; b >>= 2; } return r; }
-int SquareRoot0(int v) { return isqrt((u32)v); }
-int csqrt(int v) { return (int)isqrt((u32)v << 12 >> 0) ; }  /* fixed 20.12 */
-
+/* ratan2, SquareRoot0, csqrt, RotMatrix, ApplyMatrixLV, ApplyRotMatrix and RotTransPers are not shimmed: the
+   retail libgte code runs in the interpreter (pure).  The shims were exact where Sony's code rounds (ratan2 off by
+   one on 44 % of inputs, SquareRoot0 an exact isqrt against the table approximation, RotMatrix elements off by
+   1-2): the reference emulator found the camera angle and the vertex positions leaving the retail ones
+   (tools/emu_shimcheck.py, docs/EMU.md).  The shims kept here are equal to the retail code on every input checked. */
 MATRIX *RotMatrixX(int r, MATRIX *m) {
     int s = rsin(r), c = rcos(r);
     for (int i = 0; i < 3; i++) {
@@ -244,20 +227,6 @@ MATRIX *RotMatrixZ(int r, MATRIX *m) {
     }
     return m;
 }
-MATRIX *RotMatrix(SVECTOR *r, MATRIX *m) {
-    /* Psy-Q RotMatrix: M = Rx * Ry * Rz applied as rotate Z, then Y, then X */
-    int sx = rsin(r->vx), cx = rcos(r->vx), sy = rsin(r->vy), cy = rcos(r->vy), sz = rsin(r->vz), cz = rcos(r->vz);
-    m->m[0][0] = (cy * cz) >> 12;
-    m->m[0][1] = -(cy * sz) >> 12;
-    m->m[0][2] = sy;
-    m->m[1][0] = ((cx * sz) >> 12) + (((sx * sy) >> 12) * cz >> 12);
-    m->m[1][1] = ((cx * cz) >> 12) - (((sx * sy) >> 12) * sz >> 12);
-    m->m[1][2] = -(sx * cy) >> 12;
-    m->m[2][0] = ((sx * sz) >> 12) - (((cx * sy) >> 12) * cz >> 12);
-    m->m[2][1] = ((sx * cz) >> 12) + (((cx * sy) >> 12) * sz >> 12);
-    m->m[2][2] = (cx * cy) >> 12;
-    return m;
-}
 MATRIX *MulMatrix0(MATRIX *a, MATRIX *b, MATRIX *c) {
     MATRIX t;
     for (int i = 0; i < 3; i++) for (int j = 0; j < 3; j++)
@@ -274,25 +243,6 @@ VECTOR *ApplyMatrix(MATRIX *m, SVECTOR *v, VECTOR *r) {
 }
 SVECTOR *ApplyMatrixSV(MATRIX *m, SVECTOR *v, SVECTOR *r) {
     VECTOR t; ApplyMatrix(m, v, &t); r->vx = t.vx; r->vy = t.vy; r->vz = t.vz; return r;
-}
-VECTOR *ApplyMatrixLV(MATRIX *m, VECTOR *v, VECTOR *r) {
-    long long x = v->vx, y = v->vy, z = v->vz;
-    r->vx = (s32)((m->m[0][0] * x + m->m[0][1] * y + m->m[0][2] * z) >> 12);
-    r->vy = (s32)((m->m[1][0] * x + m->m[1][1] * y + m->m[1][2] * z) >> 12);
-    r->vz = (s32)((m->m[2][0] * x + m->m[2][1] * y + m->m[2][2] * z) >> 12);
-    return r;
-}
-VECTOR *ApplyRotMatrix(SVECTOR *v, VECTOR *r) {
-    port_gte_mtc2(0, PK(v->vx, v->vy)); port_gte_mtc2(1, (u16)v->vz);
-    port_gte_op(0x00486012);   /* MVMVA sf=1 mx=RT v=V0 cv=none */
-    r->vx = (s32)port_gte_mfc2(25); r->vy = (s32)port_gte_mfc2(26); r->vz = (s32)port_gte_mfc2(27);
-    return r;
-}
-int RotTransPers(SVECTOR *v, s32 *sxy, s32 *p, s32 *flag) {
-    port_gte_mtc2(0, PK(v->vx, v->vy)); port_gte_mtc2(1, (u16)v->vz);
-    port_gte_op(0x00180001);
-    *sxy = (s32)port_gte_mfc2(14); *p = (s32)port_gte_mfc2(8); *flag = (s32)port_gte_cfc2(31);
-    return (s32)port_gte_mfc2(19) >> 2;
 }
 
 #include "cd_virtual.inc"

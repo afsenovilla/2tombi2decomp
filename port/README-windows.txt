@@ -44,6 +44,7 @@ Keyboard              PlayStation
   Backspace           Select
   F                   window size (2x / 3x)
   F11                 fullscreen on / off
+  F12                 screenshot (tomba2_shot_000.bmp, ... next to the launcher)
   Escape              quit
 
 A game controller (Xbox / XInput and most others) works too: d-pad or left stick, A = Cross, B = Circle,
@@ -52,7 +53,9 @@ X = Square, Y = Triangle, LB / RB = L1 / R1, LT / RT = L2 / R2, Start, Back = Se
 Options (advanced)
 ------------------
 Edit the options= line of tomba2-launcher.ini, for example:
-  options=--viewer-arg --fullscreen
+  options=--fullscreen
+  options=--renderer software      (if the picture looks wrong: also direct3d, direct3d11, opengl)
+  options=--linear                 (smooth scaling instead of sharp pixels)
   options=--viewer-arg --scale --viewer-arg 3
   options=--viewer-arg --keys --viewer-arg cross=Space,circle=LShift
 (--keys takes SDL key names for up, down, left, right, cross, square, triangle, circle, l1, r1, l2, r2,
@@ -62,9 +65,18 @@ start, select.) tomba2.exe can also be run from a command prompt: tomba2.exe --d
 What works, what does not (yet)
 -------------------------------
 Works: the title screen, the attract demos, New Game into the first area (A00) and free play there, music,
-voices and sound effects, memory cards. Most of the game's code is native, the rest runs in a built-in
-interpreter of the original code. The intro and ending movies are skipped. Later areas are not tested much
+voices and sound effects, saving and loading on the memory cards. Most of the game's code is native, the
+rest runs in a built-in interpreter of the original code. The intro and ending movies are skipped. Later areas are not tested much
 yet: if the game stops, the launcher shows the error; please report it with tomba2.log.
+
+Report a problem
+----------------
+Please send:
+- tomba2.log (next to the launcher, or in %APPDATA%\Tomba2-port): it names your Windows graphics driver
+  (the "tomba2-view:" lines), the disc image and where the game was;
+- screenshots of what looks wrong: F12 in the game window (tomba2_shot_NNN.bmp next to the launcher),
+  or Print Screen / Win+Shift+S;
+- what you did just before (area, menu, how long you played), and your saves folder if it is about saving.
 
 Credits and licences
 --------------------

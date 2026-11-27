@@ -139,6 +139,7 @@ int port_main(int argc, char **argv) {
         else if (streq(argv[i], "--fake-kuseg")) { extern int port_kuseg_strict; port_kuseg_strict = 3; }
         else if (streq(argv[i], "--kuseg-strict")) { extern int port_kuseg_strict; port_kuseg_strict = 1; }
         else if (streq(argv[i], "--kuseg-mirror")) { /* Windows: read in start() (sys_win32_i386.c); Linux: the default */ }
+        else if (streq(argv[i], "--dump-tv")) { extern int port_dump_tv; port_dump_tv = 1; }
         else if (streq(argv[i], "--poke") && i + 1 < argc) { extern void port_add_poke(const char *); port_add_poke(argv[++i]); }
         else if (streq(argv[i], "--trace-pos") && i + 1 < argc) { extern int port_trace_pos; port_trace_pos = atoi_(argv[++i]); }
         else if (streq(argv[i], "--no-ovl-native")) { extern int port_ovl_native; port_ovl_native = 0; }
@@ -152,6 +153,15 @@ int port_main(int argc, char **argv) {
         else if (streq(argv[i], "--viewer-arg") && i + 1 < argc) {
             extern const char *port_viewer_args[16]; extern int port_viewer_args_count;
             if (port_viewer_args_count < 16) port_viewer_args[port_viewer_args_count++] = argv[++i]; else i++;
+        }
+        else if ((streq(argv[i], "--renderer") || streq(argv[i], "--fullscreen") || streq(argv[i], "--linear")) &&
+                 (argv[i][2] != 'r' || i + 1 < argc)) {   /* viewer options, also without --viewer-arg */
+            extern const char *port_viewer_args[16]; extern int port_viewer_args_count;
+            if (port_viewer_args_count < 15) {
+                port_viewer_args[port_viewer_args_count++] = argv[i];
+                if (argv[i][2] == 'r') port_viewer_args[port_viewer_args_count++] = argv[i + 1];
+            }
+            if (argv[i][2] == 'r') i++;
         }
         else if (streq(argv[i], "--no-interp")) port_interp = 0;
         else if (streq(argv[i], "--interp") && i + 1 < argc) {
@@ -173,7 +183,8 @@ int port_main(int argc, char **argv) {
         else if (streq(argv[i], "-v")) port_verbose++;
         else {
             port_printf("usage: %s [--disc IMAGE.bin|.cue|.iso] [--exe MAIN.EXE] [--data DIR] [--no-verify] [--save-dir DIR] [--frames N] [--dump-frames DIR] [--dump-every N] [--dump-vram]\n"
-                        "       [--window [--viewer PATH] [--viewer-arg ARG]...] (SDL2 window: the tomba2-view process; paced)\n"
+                        "       [--window [--viewer PATH] [--viewer-arg ARG]... [--renderer direct3d|direct3d11|opengl|software] [--fullscreen] [--linear]]\n"
+                        "         (SDL2 window: the tomba2-view process; paced)\n"
                         "       [--realtime] [--hz 50|60] [--trace-cd] [--no-interp] [--interp ADDR] [--trace-interp]\n"
                         "       [--entry ADDR] [--pad-script FRAME:BUTTONS[:LEN[xCOUNT/PERIOD]],...] [--autostart N] [-v]\n", argv[0]);
             return 2;
