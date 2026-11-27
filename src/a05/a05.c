@@ -9314,7 +9314,62 @@ INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80134F1C);
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801350B4);
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_801351DC);
+typedef struct {
+    s16 x, y, w, h;
+} Rect51DC;
+typedef struct { unsigned addr : 24; unsigned len : 8; } PTag51DC;
+typedef struct {
+    PTag51DC tag;
+    u32 code[5];
+} Move51DC;
+extern Move51DC *D_800BF544_263a;
+extern u32 *D_800ED8C8_065b;
+#define setaddr_(p, _addr) (((PTag51DC *)(p))->addr = (u32)(_addr))
+#define getaddr_(p) (u32)(((PTag51DC *)(p))->addr)
+#define ADDPRIM(ot, p) setaddr_(p, getaddr_(ot)), setaddr_(ot, p)
+
+void func_801351DC(void)
+{
+    Rect51DC r;
+    Move51DC *p;
+    Move51DC *q;
+    s32 i;
+    s32 j;
+
+    for (i = 0; i < 0x10; i++) {
+        r.x = (((i * 3) / 4) & 0xF) * 16 + 0x280;
+        p = D_800BF544_263a;
+        r.y = 0x100;
+        r.w = 0x10;
+        r.h = 0x4E;
+        func_80083CE0(p, &r, 0x2F0, 0xB2);
+        D_800BF544_263a = p + 1;
+        j = i * 0x30 + 0x100;
+        ADDPRIM(&D_800ED8C8_065b[j], p);
+        r.x = (((i * 3) / 4) & 0xF) * 16 + 0x280;
+        r.y = 0x180;
+        r.w = 0x10;
+        r.h = 0x4C;
+        func_80083CE0(p + 1, &r, 0x230, 0x1B4);
+        D_800BF544_263a = p + 2;
+        ADDPRIM(&D_800ED8C8_065b[j], p + 1);
+    }
+    q = D_800BF544_263a;
+    r.x = 0x370;
+    r.y = 0x100;
+    r.w = 0x10;
+    r.h = 0x4E;
+    func_80083CE0(q, &r, 0x2F0, 0xB2);
+    D_800BF544_263a = q + 1;
+    ADDPRIM(&D_800ED8C8_065b[0x7FF], q);
+    r.x = 0x370;
+    r.y = 0x180;
+    r.w = 0x10;
+    r.h = 0x4C;
+    func_80083CE0(q + 1, &r, 0x230, 0x1B4);
+    D_800BF544_263a = q + 2;
+    ADDPRIM(&D_800ED8C8_065b[0x7FF], q + 1);
+}
 
 extern s16 D_1F800160_71b4;
 extern s16 D_1F800162;
