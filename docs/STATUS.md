@@ -85,6 +85,11 @@ docs/PORT.md §0.3 has the details and the checks.
   through the port's gpu.c, packet by packet (a 32-bit driver around shims/gpu.c, scratchpad gpudrv/): 320 of 841
   packets give other texels, all textured gouraud polygons, one 5-bit step: gpu.py truncates the interpolated
   colour and UV, the port rounds to nearest (as Mednafen-style renderers do with their half-unit bias). Left as is.
+- **Comparisons with the reference emulator** (final port binary, `--port-args=--keys-off`): title equal; attract
+  demo 1 equal in RAM through frame 1300 at least (pictures differ from 1226 by the rounding above and from 1282 by
+  the emulator's zero DR_AREA packets); A00 route: RAM and the 607 packets of frame 798 equal, the pictures differ
+  from frame 800 (story scene) only by that rounding (145 of 612 packets, all textured gouraud). Every BIN/ load at
+  the same frame on both routes.
 - **Interpreter page 0** (`runtime/mips_interp.c ma`): KUSEG 0x0-0xFFFF is RAM too (the kernel area); an interpreted
   store through a null pointer + 0xA (attract mode, frame 5771) went to the host's page 0 (emulated and counted on
   Windows: 24 accesses under Wine). Now served from KSEG0; Wine's tally is back to func_80051E00's 4 page-0 reads.
@@ -92,6 +97,13 @@ docs/PORT.md §0.3 has the details and the checks.
   only the display's first 224 lines (8 lines down, black borders); the window showed all 240, i.e. 16 stale lines
   under the cutscene letterbox. The viewer now gets the TV picture; `--dump-tv` dumps it (plain `--dump-frames`
   stay the DISPENV area, as the emulator compares). The display mode is logged once (`[gpu] display ...`).
+- **Windows zip** (stage 4, never committed): `bash tools/port_win_package.sh OUT.zip` as before; built as
+  scratchpad port4/Tomba2-port-win32.zip. Under Wine 9.0: 60 attract dumps over 6000 frames byte-identical to Linux,
+  the save route (cards byte-identical to Linux's) and Load Game from those cards, the launcher from an unzipped
+  folder with `options=--renderer software` (the viewer's info lines in tomba2.log, 58.7 vblank/s); `--no-kuseg`
+  on Linux: 0 native low accesses on the save and load routes.
+- Not checked: a real Windows display (renderer choice, the D3D default, scaling, F12), a save point reached by
+  walking (the save screen was reached through CRD's mode byte), long play past A00, movies.
 - **Viewer** (`tools/view/tomba2_view.c`): title "Tomba! 2 (PC port)" (the launcher's dialogs and boxes too);
   `--renderer direct3d|direct3d11|direct3d12|opengl|opengles2|software` (also as a tomba2 option; falls back to
   SDL's default if the driver fails), `--linear`, `--fullscreen` as tomba2 options; XRGB8888 texture (converted in
