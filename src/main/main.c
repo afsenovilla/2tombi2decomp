@@ -7398,7 +7398,103 @@ void func_8003ABE4(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8003AD48);
+typedef struct { s32 f0; u8 *f4; s32 f8; } Rec_AD48;
+typedef struct { u8 pad[0xC0]; u8 *parts[1]; } Parts_AD48;
+extern Rec_AD48 D_800A33C8_ad48[];
+extern u16 D_801003F8_ad48;
+extern u8 *D_800ECF58_ad48;
+extern u8 D_800ED058_ad48[];
+extern char D_80014A54[];
+extern char D_80014A6C[];
+#define PART_ed31(i) (((Parts_AD48 *)a)->parts[i])
+#define U(p, o) (*(u16 *)((u8 *)(p) + (o)))
+#define H_f12c(p, o) (*(s16 *)((u8 *)(p) + (o)))
+
+void func_8003AD48(u8 *a)
+{
+    s32 i;
+    s32 model;
+    s32 d;
+
+    switch (a[4]) {
+    case 0:
+        if (a[3] != 2) {
+            model = 0xF;
+            a[8] = func_80073750(D_800A33C8_ad48[H_f12c(a, 0x60)].f4);
+            if (a[8] > 0x20) {
+                printf(D_80014A54);
+                printf(D_80014A6C, D_800A33C8_ad48[H_f12c(a, 0x60)].f4);
+                a[4] = 2;
+                break;
+            }
+        } else {
+            model = 0x16;
+            a[8] = func_80073750(D_800A3A8C) + 1;
+        }
+        if (D_800ED098 < a[8]) {
+            a[4] = 2;
+            break;
+        }
+        a[9] = a[8];
+        a[0xD] = 0;
+        a[0xB] = 4;
+        a[4]++;
+        *(u8 **)(a + 0x3C) = D_800ECF58_ad48;
+        for (i = 0; i < a[8]; i++) {
+            PART_ed31(i) = (u8 *)f_AllocateActorModelPart();
+            H_f12c(PART_ed31(i), 6) = -1;
+            H_f12c(PART_ed31(i), 0) = 0;
+            H_f12c(PART_ed31(i), 2) = 0;
+            H_f12c(PART_ed31(i), 4) = 0;
+            H_f12c(PART_ed31(i), 8) = 0;
+            H_f12c(PART_ed31(i), 0xA) = 0;
+            H_f12c(PART_ed31(i), 0xC) = 0;
+            f_SetActorPartModel(PART_ed31(i), 1, model);
+            PART_ed31(i)[0x3E] = 0;
+            PART_ed31(i)[0x3F] = i;
+        }
+        d = D_801003F8_ad48;
+        H_f12c(a, 0x2E) = 0;
+        H_f12c(a, 0x32) = -0x40;
+        H_f12c(a, 0x54) = 0;
+        H_f12c(a, 0x56) = 0;
+        H_f12c(a, 0x58) = 0;
+        U(a, 0x36) = d + 8;
+        if (a[3] != 2) {
+            a[0x5E] = 0;
+            {
+                s32 k = U(a, 0x36) + 8;
+                U(a, 0x36) = d + k;
+            }
+        } else {
+            a[0x5E] = 1;
+        }
+        break;
+    case 1:
+        switch (a[3]) {
+        case 0:
+            func_8003A790(a);
+            break;
+        case 1:
+            func_8003A9A0(a);
+            break;
+        case 2:
+            func_8003ABE4(a);
+            break;
+        }
+        a[1] = 1;
+        f_UpdateActorUnscaledModelTransforms(a);
+        break;
+    case 2:
+        a[4]++;
+        D_800BF808[0x41]--;
+        D_800ED058_ad48[0x14]--;
+        break;
+    case 3:
+        f_ResolveEffectEightByteStreamPayload(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ApplyActorSpriteUvOrientation);
 
@@ -8709,7 +8805,7 @@ s32 f_GetEventAPReward(s32 event, s32 low)
     return D_800A3B38[v];
 }
 
-void func_8003AD48(void);
+void func_8003AD48(u8 *a);
 u8 *func_800727D4(void *owner, s32 ev, s32 kind);
 extern u8 D_800E8008_f2dc[];
 u8 *func_80040AA4(s32 x, s32 kind)
