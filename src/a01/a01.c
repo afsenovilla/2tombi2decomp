@@ -13202,7 +13202,88 @@ u8 *func_80133574(u8 *owner, s16 k) {
     return p;
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_8013362C);
+extern s16 D_80137C2C[];
+void func_8012E5F8();
+static inline u8 *SpawnNext_362c(u8 *owner)
+{
+    u8 *p = func_8007A980(1, 2, 0);
+
+    if (p == NULL) {
+        return NULL;
+    }
+    *(void **)(p + 0x1C) = func_8013362C;
+    P(p, 0x10) = owner;
+    p[2] = 0x1A;
+    p[3] = 0;
+    return p;
+}
+
+void func_8013362C(u8 *a)
+{
+    s32 vec[4];
+    s16 *t;
+    u8 *q;
+    s32 v;
+    u16 x;
+
+    switch (a[4]) {
+    case 0:
+        a[0xB] = 0x20;
+        *(void **)(a + 0x18) = func_8012E5F8;
+        H(a, 0x80) = 0x64;
+        H(a, 0x82) = 0xC8;
+        H(a, 0x84) = 0xC8;
+        a[4] = 1;
+        a[0] = 1;
+        t = D_80137C2C;
+        x = t[0];
+        H(a, 0x86) = 0x190;
+        H(a, 0x40) = 0;
+        H(a, 0x70) = x;
+        H(a, 0x72) = t[1];
+        W(a, 0x60) = (s32)(t + 2);
+        W(a, 0x64) = (s32)(t + 2);
+        H(a, 0x2E) = 0x5238;
+        H(a, 0x32) = -0x1C8B;
+        H(a, 0x36) = 0x2340;
+        H(a, 0x68) = U(a, 0x2E) + 0x40 - (func_8009A450() & 0x7F);
+        v = (func_8009A450() & 0x7F) + 0x100;
+        H(a, 0x6A) = U(a, 0x32) + v;
+        H(a, 0x6C) = U(a, 0x36) + 0x10 - (func_8009A450() & 0x1F);
+        H(a, 0x6E) = 0;
+    case 1:
+        H(a, 0x40)++;
+        if (H(a, 0x40) == 7 && a[3] < 0xC) {
+            q = SpawnNext_362c(P(a, 0x10));
+            q[3] = a[3] + 1;
+        }
+        if (H(a, 0x40) >= 0x10 || (W(a, 0x60) = W(a, 0x64)) == 0 || H(a, 0x32) >= -0x1770) {
+            a[4] = 2;
+        } else if (func_8007778C(a) != 0) {
+            func_8010EEA8(a);
+            if (((D_1F80017C + a[3]) & 7) == 0) {
+                ((s16 *)vec)[1] = U(a, 0x68);
+                ((s16 *)vec)[3] = U(a, 0x6A);
+                ((s16 *)vec)[5] = U(a, 0x6C);
+                H(a, 0x68) = U(a, 0x68) + 0x80 - (func_8009A450() & 0xFF);
+                H(a, 0x6A) = U(a, 0x6A) - 0x64;
+                H(a, 0x6C) = U(a, 0x6C) + 0x40 - (func_8009A450() & 0x7F);
+                func_8003116C(0xD, vec, -0x1E);
+            }
+            H(a, 0x6E)--;
+            if (H(a, 0x6E) <= 0) {
+                func_80074590(2, -0xE, 0);
+                H(a, 0x6E) = 9;
+            }
+        }
+        H(a, 0x32) = U(a, 0x32) + 0x10;
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 u8 *func_80133900(s32 a) {
     u8 *p = func_8007A980(1, 2, 0);
