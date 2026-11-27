@@ -1744,7 +1744,234 @@ void func_80111AB4(u8 *a)
     func_8006D02C(a);
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", f_SpawnKujaraSummitSceneActorsFromPlacementTable);
+extern u8 D_800BF808_s05[];
+extern u8 D_800BF871_s05;
+extern u8 D_8013BF18[];
+extern u8 *D_8013BEF4[];
+u8 *func_80072DDC();
+u8 *func_80127168(void *a0, s32 a1);
+
+void f_SpawnKujaraSummitSceneActorsFromPlacementTable(u8 *a, s32 mode)
+{
+    u8 *e;
+    u8 *g;
+    u8 *h;
+    u8 *p;
+
+    if (D_800BF871_s05 >= 1 && D_800BF871_s05 <= 3) {
+        e = D_8013BF18;
+    } else {
+        e = D_8013BEF4[mode];
+    }
+    H(a, 8) = 0;
+    if (e[0] == 0xFF) {
+        return;
+    }
+    do {
+        h = (u8 *)&D_800BF870;
+        g = D_800BF808_s05;
+        if (e[0xB] == 1 && ((U(h, 0x5E6) >> D_800BF870.unk0) & 1)) {
+            goto next;
+        }
+        if (e[0xB] == 2 && h[3] != 0) {
+            goto next;
+        }
+        if (mode != 0 && H(a, 8) >= 0xF) {
+            goto next;
+        }
+        switch (e[0xA]) {
+        case 0:
+            break;
+        case 1:
+            U(g, 8) = U(e, 4);
+            U(g, 0xA) = U(e, 6);
+            U(g, 0xC) = U(e, 8);
+            break;
+        case 2:
+            if (e[3] == 0) {
+                if (h[0x5D] != 0xFF) {
+                    break;
+                }
+                goto next;
+            }
+            if (e[3] != 1) {
+                break;
+            }
+            if (h[0x5D] == 0xFF) {
+                break;
+            }
+            goto next;
+        case 3:
+            if (h[0xB9] == 0xFF) {
+                break;
+            }
+            goto next;
+        case 4:
+            if (h[0xB4] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 7:
+            switch (e[3]) {
+            case 0:
+            case 1:
+            case 2:
+                if (!((h[0x154] >> e[3]) & 1)) {
+                    break;
+                }
+                goto next;
+            case 6:
+            case 7:
+            case 8:
+                if ((h[0x154] >> 4) <= e[3] - 6) {
+                    goto next;
+                }
+            case 4:
+            case 5:
+                if (!(U(h, 0x5E6) & 0x20)) {
+                    break;
+                }
+                goto next;
+            case 10:
+            case 11:
+            case 12:
+                if (h[0xBB] == 0) {
+                    goto next;
+                }
+                if (!((h[0x1DD] >> (e[3] - 10)) & 1)) {
+                    break;
+                }
+                goto next;
+            case 50:
+            case 51:
+                if (!(U(h, 0x5E6) & 0x20)) {
+                    goto next;
+                }
+                break;
+            case 52:
+            case 53:
+            case 54:
+                if (!((h[0x1DD] >> (e[3] - 0x34)) & 1)) {
+                    goto next;
+                }
+                if (h[0xBB] == 0) {
+                    goto next;
+                }
+                break;
+            }
+            break;
+        case 8:
+            if (h[0x5D] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 11:
+            if (!(h[0x150] & 1)) {
+                goto next;
+            }
+            break;
+        case 12:
+            if (!(h[0x150] & 2)) {
+                goto next;
+            }
+            break;
+        case 13:
+            if (!(h[0x150] & 4)) {
+                goto next;
+            }
+            break;
+        case 14:
+            if (!(h[0x150] & 8)) {
+                goto next;
+            }
+            break;
+        case 15:
+            if (h[0x155] == 0) {
+                break;
+            }
+            goto next;
+        case 16:
+            if (h[0x155] == 0) {
+                goto next;
+            }
+            if (h[0x155] < 6) {
+                break;
+            }
+            goto next;
+        case 17:
+            if (!(h[0x15C] & 0x80)) {
+                break;
+            }
+            func_80127168(0, 1);
+            goto next;
+        case 18:
+            func_800310F4(0x600, 0);
+            goto next;
+        case 19:
+            if (h[0xAC] != 0xFF) {
+                goto next;
+            }
+            if (h[0xAD] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 21:
+            if (h[0x1A1] == 0) {
+                break;
+            }
+            goto next;
+        case 22:
+            if (h[0xB9] == 0xFF) {
+                goto next;
+            }
+            if (h[0xB9] == 0) {
+                break;
+            }
+            if (h[0xB9] & (4 << e[3])) {
+                break;
+            }
+            goto next;
+        case 23:
+            if (h[0xA7] != 0xFF) {
+                break;
+            }
+            if (h[0xA1] != 0xFF) {
+                break;
+            }
+            goto next;
+        case 24:
+            if (h[3] == 0) {
+                goto next;
+            }
+            if (!((h[0x1CD] >> e[3]) & 1)) {
+                break;
+            }
+            goto next;
+        case 25:
+            if (h[3] == 0) {
+                goto next;
+            }
+            break;
+        }
+        p = func_80072DDC(a, e[0], e[1], e[2]);
+        if (p != NULL) {
+            *(s32 *)(p + 0x2C) = H(e, 4) << 16;
+            *(s32 *)(p + 0x30) = H(e, 6) << 16;
+            *(s32 *)(p + 0x34) = H(e, 8) << 16;
+            p[3] = e[3];
+            H(p, 0x54) = 0;
+            H(p, 0x56) = 0;
+            H(p, 0x58) = 0;
+            *(s32 *)(p + 0x1C) = *(s32 *)(e + 0xC);
+            if (mode != 0) {
+                *(u8 **)(a + (H(a, 8) << 2) + 0xC) = p;
+                H(a, 8)++;
+            }
+        }
+    next:
+        e += 0x10;
+    } while (e[0] != 0xFF);
+}
 
 INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80112020);
 
