@@ -2966,7 +2966,44 @@ void func_80111238(u8 *a)
 
 INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_80111264);
 
-INCLUDE_ASM("asm/a0a/nonmatchings/a0a", func_801113A0);
+typedef struct {
+    u8 v[0x30];
+} T113A0;
+extern T113A0 D_80109198;
+
+void func_801113A0(u8 *a)
+{
+    T113A0 tbl = D_80109198;
+    s32 s;
+    s32 c;
+
+    switch (a[4]) {
+    case 0:
+        a[4] = 1;
+        a[7] = 0;
+        H(a, 0x4C) = -0x200;
+        s = func_80083F50(H(a, 0x4A));
+        c = func_80083E80(H(a, 0x4A));
+        s = (s * 200) >> 12;
+        c = (c * 200) >> 12;
+        H(a, 0x2C) += s;
+        H(a, 0x30) += c;
+        H(a, 0x2E) -= 0x50;
+    case 1:
+        W(a, 0x50) = *(s32 *)&tbl.v[a[7] * 4];
+        a[7]++;
+        if (a[7] >= 0xC) {
+            a[4] = 2;
+        } else {
+            a[1] = 1;
+        }
+        break;
+    case 2:
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 #define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
 typedef struct {
