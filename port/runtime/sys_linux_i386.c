@@ -284,6 +284,22 @@ static void on_fpe(int sig, void *info, void *uc) {
     (void)sig; (void)info;
 }
 
+/* SIGALRM every 2 s (wall clock): a run whose frame counter stopped (a busy loop the vblank heuristics do not
+   catch, e.g. polling a shim) reports where it is: native EIP, the interpreter's pc, the last call thunk; after
+   20 s without a frame it stops. */
+static int alarm_last_frame = -1, alarm_stalls;
+static void on_alarm(int sig, void *info, void *uc) {
+    (void)sig; (void)info;
+    if (port_frame != alarm_last_frame) { alarm_last_frame = port_frame; alarm_stalls = 0; return; }
+    alarm_stalls++;
+    unsigned long off; const char *nm = port_sym_near(UC_EIP(uc), &off);
+    extern u32p port_mips_cur_pc, port_mips_cur_entry;
+    port_printf("[port] watchdog: no vblank for %d s (frame %d): eip %08lx (%s+0x%lx), interpreter pc %08x (function %08x), "
+                "last call thunk %s (%08x)\n", alarm_stalls * 2, port_frame, UC_EIP(uc), nm ? nm : "?", nm ? off : 0,
+                port_mips_cur_pc, port_mips_cur_entry, port_last_resolve_name ? port_last_resolve_name : "-", port_last_resolve_addr);
+    if (alarm_stalls >= 10) { extern void port_stub_report(void); port_stub_report(); port_fatal("watchdog: the game stopped advancing"); }
+}
+
 static void install(int sig, void *h) {
     struct ksigaction sa = { h, 4 /* SA_SIGINFO */ | 0x04000000 /* SA_RESTORER */ | 0x40000000 /* SA_NODEFER */,
                              (void *)port_sigreturn, { 0, 0 } };
@@ -327,6 +343,11 @@ void port_setup_memory(void) {
     install(11, (void *)on_segv);   /* SIGSEGV */
     install(8, (void *)on_fpe);     /* SIGFPE */
     install(7, (void *)on_segv);    /* SIGBUS */
+    install(14, (void *)on_alarm);  /* SIGALRM: the watchdog */
+    {   /* setitimer(ITIMER_REAL, 2 s) */
+        long it[4] = { 2, 0, 2, 0 };
+        sys3(104 /* SYS_setitimer */, 0, (long)it, 0);
+    }
     {   /* SIGPIPE ignored: a video/audio pipe whose player quit reports EPIPE instead of killing the game */
         struct ksigaction sa = { (void *)1 /* SIG_IGN */, 0x04000000, (void *)port_sigreturn, { 0, 0 } };
         sys5(SYS_rt_sigaction, 13, (long)&sa, 0, 8, 0);

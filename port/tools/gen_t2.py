@@ -188,7 +188,7 @@ def to_extern(text):
 
 
 
-def emit(items, syms, funcs, rename, drop, native):
+def emit(items, syms, funcs, rename, drop, native, arity=None, forwarded=None):
     out, spans, n_func, n_asm, n_ext = [], [], 0, 0, 0
     line = 2
     for k, it in enumerate(items):
@@ -204,6 +204,8 @@ def emit(items, syms, funcs, rename, drop, native):
                 n_func += 1
                 if name in funcs and not re.search(r"\bstatic\b", head):
                     native.append((name, syms.get(name)))
+                if arity:
+                    body = forward_short_calls(body, arity, forwarded if forwarded is not None else [])
                 if name in rename:
                     h = re.sub(r"\b%s\b(?=\s*\()" % name, name + "__def", head, count=1)
                     piece = h + body + '\n__asm__(".globl %s\\n.set %s, %s__def");\n' % (name, name, name)
@@ -260,6 +262,115 @@ def host_errors(text, outdir):
             errs.append((int(m.group(1)), m.group(2)))
     return errs
 
+
+# ------------------------------------------------------------------------------------------------ register-carried args
+# A call with fewer arguments than the callee reads relied on $a0-$a3 still holding a value (T1 docs/PORT.md §2.1):
+# on the host the missing ones are forwarded from the caller's own incoming arguments (PORT_ARG, port_prelude.h).
+ASM_INS = re.compile(r"^\s*/\*\s*[0-9A-F]+ [0-9A-F]+ [0-9A-F]+ \*/\s+([a-z0-9.]+)\s*(.*)$")
+ALL_READ = {"sw", "sh", "sb", "swl", "swr", "swc2", "beq", "bne", "beqz", "bnez", "bgez", "bltz", "blez", "bgtz",
+            "jr", "jalr", "mult", "multu", "div", "divu", "mtc2", "ctc2", "mthi", "mtlo", "bgezal", "bltzal"}
+
+
+def asm_arity(path):
+    """1 + the highest $a register the function reads before writing it (linear scan; a call clobbers all)."""
+    written, used = set(), set()
+    for line in open(path):
+        m = ASM_INS.match(line)
+        if not m:
+            continue
+        op, args = m.group(1), m.group(2).split("/*")[0]
+        regs = re.findall(r"\$(a[0-3]|[a-z0-9]+)", args)
+        if op in ("jal",):
+            written |= {"a0", "a1", "a2", "a3"}
+            continue
+        if op in ALL_READ:
+            reads, dst = regs, None
+        else:
+            dst, reads = (regs[0], regs[1:]) if regs else (None, [])
+            if op in ("lw", "lh", "lhu", "lb", "lbu", "lwl", "lwr", "mfc2", "cfc2", "lwc2"):
+                reads = regs[1:] if op not in ("lwl", "lwr") else regs
+        for r in reads:
+            if r in ("a0", "a1", "a2", "a3") and r not in written:
+                used.add(r)
+        if dst in ("a0", "a1", "a2", "a3") and op not in ("mtc2", "ctc2", "lwc2"):
+            written.add(dst)
+    return 1 + max((int(r[1]) for r in used), default=-1)
+
+
+def c_arity(head):
+    m = KNR_HEAD.search(head.rstrip())
+    if m and m.group(1).strip() != "void" and m.group(2).strip():
+        return len(m.group(1).split(","))
+    i = head.rfind(")")
+    j, d = i, 0
+    while j >= 0:
+        if head[j] == ")":
+            d += 1
+        elif head[j] == "(":
+            d -= 1
+            if d == 0:
+                break
+        j -= 1
+    params = head[j + 1:i].strip()
+    if not params or params == "void":
+        return 0
+    return len(top_split(params))
+
+
+def top_split(s):
+    out, d, cur = [], 0, ""
+    for ch in s:
+        if ch in "([{":
+            d += 1
+        elif ch in ")]}":
+            d -= 1
+        if ch == "," and d == 0:
+            out.append(cur)
+            cur = ""
+        else:
+            cur += ch
+    if cur.strip():
+        out.append(cur)
+    return out
+
+
+# a direct call, or one through a cast of the function (install_c.py writes `((s32 (*)())f)()` for callers whose
+# argument count differs from the definition)
+CALL_RE = re.compile(r"(?:\(\s*\([^;{}()]*\(\s*\*\s*\)\s*\([^()]*\)\s*\)\s*([A-Za-z_]\w*)\s*\)|\b([A-Za-z_]\w*))\s*\(")
+
+
+def forward_short_calls(body, arity, fixed):
+    """Append PORT_ARG(i) to the calls in body that pass fewer arguments than the callee reads."""
+    out, i, n = [], 0, 0
+    while True:
+        m = CALL_RE.search(body, i)
+        if not m:
+            out.append(body[i:])
+            break
+        name = m.group(1) or m.group(2)
+        if name not in arity or (m.start() > 0 and body[m.start() - 1] in ".>"):
+            out.append(body[i:m.end()])
+            i = m.end()
+            continue
+        j, d = m.end(), 1
+        while j < len(body) and d:
+            if body[j] == "(":
+                d += 1
+            elif body[j] == ")":
+                d -= 1
+            j += 1
+        inner = body[m.end():j - 1]
+        args = top_split(inner)
+        need = arity[name]
+        if len(args) < need:
+            extra = ["PORT_ARG(%d)" % k for k in range(len(args), need)]
+            inner = ", ".join([a.strip() for a in args] + extra)
+            fixed.append(name)
+            n += 1
+        out.append(body[i:m.end()] + forward_short_calls(inner, arity, []) + ")")
+        i = j
+    return "".join(out)
+
 # ------------------------------------------------------------------------------------------------ sources
 HOST_CPP = ["gcc", "-m32", "-E", "-P", "-w", "-undef", "-D__GNUC__=2", "-DMIPSEL", "-D_LANGUAGE_C", "-DPORT", "-DSKIP_ASM",
             "-DINCLUDE_ASM(F,N)=", "-DINCLUDE_RODATA(F,N)=", "-D__i386__=0"]
@@ -279,6 +390,16 @@ def sources(outdir, progs):
                                   path])
             items = split_items(pre)
             rename, drop = set(), set()
+            arity = {}
+            for dp, _, fs in os.walk(os.path.join(ROOT, "asm", prog)):   # every function, Psy-Q included
+                if os.sep + "data" in dp:
+                    continue
+                for f in fs:
+                    if f.endswith(".s"):
+                        arity[f[:-2]] = asm_arity(os.path.join(dp, f))
+            for it in items:
+                if it[0] == "func" and it[1] and not re.search(r"\bstatic\b", it[2]):
+                    arity[it[1]] = c_arity(it[2])
             # static helpers with inline asm cannot be compiled; neither can their callers (transitively)
             dead = {it[1] for it in items if it[0] == "func" and it[1] and ASM_RE.search(it[2] + it[3])
                     and re.search(r"\bstatic\b", it[2])}
@@ -291,13 +412,17 @@ def sources(outdir, progs):
                 dead |= {items[k][1] for k in more if re.search(r"\bstatic\b", items[k][2])}
             n_static_dead = len(drop)
             for attempt in range(12):
-                out, spans, n_func, n_asm, n_ext, n_err = emit(items, syms, funcs, rename, drop, native_tmp := [])
+                forwarded = []
+                out, spans, n_func, n_asm, n_ext, n_err = emit(items, syms, funcs, rename, drop, native_tmp := [],
+                                                               arity, forwarded)
                 text = '#include "port_prelude.h"\n' + "".join(out)
                 errs = host_errors(text, outdir)
                 if not errs:
                     break
                 for line, msg in errs:
-                    m = re.search(r"conflicting types for '(\w+)'", msg)
+                    m = re.search(r"conflicting types for '(\w+)'|too many arguments to function '(\w+)'", msg)
+                    if m:
+                        m = re.match(r"(\w+)", m.group(1) or m.group(2))
                     if m and m.group(1) not in rename:
                         rename.add(m.group(1))
                         continue
@@ -313,6 +438,8 @@ def sources(outdir, progs):
             if not os.path.exists(dst) or open(dst).read() != text:
                 open(dst, "w").write(text)
             files.append(dst)
+            report.append("%s/%s: %d calls with register-carried arguments forwarded (PORT_ARG)" % (prog, cf, len(forwarded)))
+            open(os.path.join(outdir, "forwarded_%s.txt" % prog), "w").write("\n".join(sorted(set(forwarded))) + "\n")
             report.append("%s/%s: %d native functions, %d left to the interpreter (inline asm), %d (host compile "
                           "errors), %d data definitions made extern, %d definitions renamed (conflicting earlier "
                           "declarations): %s" % (prog, cf, n_func, n_asm, len(drop), n_ext, len(rename),

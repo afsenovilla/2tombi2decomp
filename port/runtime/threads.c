@@ -4,7 +4,7 @@
 #include "port_runtime.h"
 
 #define MAX_TH 16
-#define STACK_WORDS (256 * 1024 / 4)
+#define STACK_WORDS (4 * 1024 * 1024 / 4)   /* 4 MB: every native -> interpreter transition takes 16 KB of it (T1: 256 KB) */
 
 typedef struct { int used; unsigned long *sp; void (*fn)(void); u32p retail; } Th;
 static Th th[MAX_TH + 1];                 /* [0] = main thread (handle 0xFF000000) */

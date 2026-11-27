@@ -68,11 +68,13 @@ int port_main(int argc, char **argv) {
         }
         else if (streq(argv[i], "--trace-interp")) { extern int port_mips_trace; port_mips_trace = 1; }
         else if (streq(argv[i], "--entry") && i + 1 < argc) entry_override = hex_(argv[++i]);
+        else if (streq(argv[i], "--pad-script") && i + 1 < argc) { extern void port_pad_script(const char *); port_pad_script(argv[++i]); }
+        else if (streq(argv[i], "--autostart") && i + 1 < argc) { extern int port_autostart; port_autostart = atoi_(argv[++i]); }
         else if (streq(argv[i], "-v")) port_verbose++;
         else {
             port_printf("usage: %s [--exe MAIN.EXE] [--data DIR] [--frames N] [--dump-frames DIR] [--dump-every N] [--dump-vram]\n"
                         "       [--realtime] [--hz 50|60] [--trace-cd] [--no-interp] [--interp ADDR] [--trace-interp]\n"
-                        "       [--entry ADDR] [-v]\n", argv[0]);
+                        "       [--entry ADDR] [--pad-script FRAME:BUTTONS[:LEN[xCOUNT/PERIOD]],...] [--autostart N] [-v]\n", argv[0]);
             return 2;
         }
     }

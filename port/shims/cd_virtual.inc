@@ -17,6 +17,7 @@ static void *cd_ready_cb, *cd_sync_cb, *cd_read_cb, *cd_data_cb;
 static u8 cd_mode = 0x80, cd_last_com;
 static int cd_reading;                 /* ReadN / ReadS in progress: sectors are delivered on vblanks */
 static u8 cd_sector[2352];
+static u8 cd_result[8];
 static int cd_sector_off;              /* CdGetSector read offset into cd_sector (bytes) */
 
 static void cd_call(void *fn, u32 a, u32 b) {
@@ -110,13 +111,25 @@ int CdControl(u8 com, u8 *param, u8 *result) {
     }
     if (com == 9 /* Pause */ || com == 8 /* Stop */ || com == 0x0A /* Init */) cd_reading = 0;
     if (com == 14 /* Setmode */ && param) cd_mode = param[0];
-    if (result) { result[0] = 0x02; for (int i = 1; i < 8; i++) result[i] = 0; }
+    for (int i = 0; i < 8; i++) cd_result[i] = 0;
+    cd_result[0] = cd_reading ? 0x22 : 0x02;
+    if (com == 0x10) {          /* GetlocL: the header of the sector under the head (the XA player checks it) */
+        lba_to_loc(cd_pos, cd_result); cd_result[3] = 2;
+    } else if (com == 0x11) {   /* GetlocP: track 1, index 1, relative and absolute position */
+        u8 loc[4];
+        lba_to_loc(cd_pos, loc);
+        cd_result[0] = 1; cd_result[1] = 1;
+        lba_to_loc(cd_pos - 150 >= 0 ? cd_pos - 150 : 0, cd_result + 2);
+        cd_result[5] = loc[0]; cd_result[6] = loc[1]; cd_result[7] = loc[2];
+    }
+    if (result) for (int i = 0; i < 8; i++) result[i] = cd_result[i];
     if (cd_sync_cb && com != 2) cd_call(cd_sync_cb, 2 /* CdlComplete */, (u32)result);
     return 1;
 }
 int CdControlF(u8 com, u8 *param) { return CdControl(com, param, 0); }
 int CdControlB(u8 com, u8 *param, u8 *result) { return CdControl(com, param, result); }
-int CdSync(int mode, u8 *result) { if (result) result[0] = 0x02; return 2; /* CdlComplete */ }
+/* CdSync hands back the last command's result bytes (GetlocL / GetlocP callers read them from here) */
+int CdSync(int mode, u8 *result) { if (result) for (int i = 0; i < 8; i++) result[i] = cd_result[i]; return 2; /* CdlComplete */ }
 int CdReady(int mode, u8 *result) { return cd_reading ? 1 : 2; }
 void *CdSyncCallback(void *f) { void *o = cd_sync_cb; cd_sync_cb = f; return o; }
 void *CdReadyCallback(void *f) { void *o = cd_ready_cb; cd_ready_cb = f; return o; }
@@ -146,6 +159,7 @@ int CdPosToInt(u8 *p) { return loc_to_lba(p); }
 int port_cd_stats(int *sectors) { *sectors = cd_sectors; return cd_reads; }
 /* the data-ready path: up to 4 sectors per vblank (double speed is 150 sectors/s, 3 per PAL vblank) */
 static void cd_vblank(void) {
+    if (cd_reading && !cd_ready_cb) cd_pos += 3;   /* XA audio streaming (not played yet): the head moves on */
     for (int k = 0; k < 4 && cd_reading && cd_ready_cb; k++) {
         int bytes = (cd_mode & 0x20) ? 2340 : 2048;
         if (port_cd_read_sectors(cd_pos, 1, cd_sector, bytes)) { cd_reading = 0; break; }
@@ -161,7 +175,18 @@ void StSetRing(void *a, int b) {}
 void StClearRing(void) {}
 void StUnSetRing(void) {}
 int StFreeRing(void *a) { return 0; }
-int StGetNext(void **a, void **b) { return 1; }
+/* Movies are skipped (no MDEC yet; T1's trick): StGetNext hands the player a sector header whose frame number is past
+   the end of every movie, so DEMO.BIN's player (func_801075F8: `frameCount >= limit` -> state 7) and the boot exe's
+   take their own "movie finished" path at once. */
+static struct { u16 id, type, secCount, nSectors; u32 frameCount, bsHeadSize; u16 width, height; } fake_st_header;
+static u32 fake_st_frame[16];
+int StGetNext(void **a, void **b) {
+    fake_st_header.frameCount = 0x7FFFFFFF;
+    fake_st_header.width = 320; fake_st_header.height = 240;
+    *a = fake_st_frame; *b = &fake_st_header;
+    if (port_verbose) port_printf("[port] movie skipped (StGetNext reports the last frame, frame %d)\n", port_frame);
+    return 0;
+}
 void StSetStream(int a, int b, int c, void *d, void *e) {}
 void StSetMask(int a, int b, int c) {}
 /* MDEC (movies) */
