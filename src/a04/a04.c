@@ -3398,7 +3398,83 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801181E8);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80118448);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801185F0);
+typedef struct { s16 m[3][3]; s32 t[3]; } Mat;
+extern u8 D_800BF917;
+extern u8 D_800E7EAA;
+extern s16 D_1F800162_a8d4;
+extern s16 D_1F800164_d75f;
+u32 *func_8013F418();
+u32 *f_UpdateThirdReadyOrNotKujaraDialogue();
+extern u8 D_800BF873;
+extern Mat D_1F8000F8_c2ec;
+u32 *func_801175FC();
+u32 *func_801178A0();
+#define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
+
+void func_801185F0(u8 *a)
+{
+    u16 *i;
+    u16 *end;
+    u32 *tbl;
+    u32 *ot;
+    u32 *m;
+    u32 w;
+    u32 *ot_f;
+    u16 *end_f;
+    u32 *m_f;
+    u32 w_f;
+
+    if (D_800BF917 >= 2) {
+        D_1F80009C_baed = 1;
+    } else {
+        D_1F80009C_baed = 0;
+    }
+    gte_SetRotMatrix(&D_1F8000F8_c2ec);
+    gte_SetTransMatrix(&D_1F8000F8_c2ec);
+    if (D_800BFE56 & 0x10) {
+        i = (u16 *)(a + 0x10);
+        end = (u16 *)(a + 0x10 + a[6] * 2);
+        tbl = *(u32 **)(a + 0xC);
+        ot = D_800ED8C8;
+        for (; i < end; i++) {
+            m = tbl + *i;
+            w = *m;
+            m = func_801175FC(m + 1, ot, w & 0xFF);
+            w >>= 16;
+            func_801178A0(m, ot, w & 0xFF);
+        }
+        if (D_800BF816 == 0) {
+            if (D_800E7EAA >= 0x2C) {
+                func_80118448();
+            } else if (D_1F800164_d75f >= 0x27D9 && D_1F800162_a8d4 >= -0x1C83) {
+                func_801181E8();
+            }
+        }
+    } else {
+        gte_ldfcdir(0x800, 0x800, 0x800);
+        i = (u16 *)(a + 0x10);
+        end_f = (u16 *)(a + 0x10 + a[6] * 2);
+        tbl = *(u32 **)(a + 0xC);
+        ot_f = D_800ED8C8;
+        for (; i < end_f; i++) {
+            m_f = tbl + *i;
+            w_f = *m_f;
+            m_f = func_8013F418(m_f + 1, ot_f, w_f & 0xFF);
+            w_f >>= 16;
+            f_UpdateThirdReadyOrNotKujaraDialogue(m_f, ot_f, w_f & 0xFF);
+        }
+        if (D_800BF816 == 0) {
+            if (D_800E7EAA >= 0x2C) {
+                func_80118448();
+            } else {
+                func_80117F68();
+                if (D_1F800164_d75f >= 0x2857 && D_1F800162_a8d4 >= -0x1C83) {
+                    func_801181E8();
+                }
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80118858);
 
@@ -5167,7 +5243,6 @@ void func_8011D568(void *arg0) {
 extern u8 D_800ECF58[];
 extern u8 D_8014005C[];
 extern u8 D_1F800207_9c67;
-extern s16 D_1F800162_a8d4;
 extern u8 D_1F80027A;
 void func_8011D5BC(u8 *a)
 {
@@ -5426,7 +5501,6 @@ void func_8011E558(s32 arg0) {
     func_800735F4(arg0, 0x67);
 }
 
-extern u8 D_800BF917;
 void func_8011E59C(u8 *a) {
     switch (a[0x5E]) {
     case 0:
@@ -6442,7 +6516,6 @@ extern u8 D_800E7E80_d97c;
 extern u8 D_80141590[];
 extern u8 D_801415B0[];
 extern s16 D_1F800160_71b4;
-extern s16 D_1F800164_d75f;
 void func_80123CB0(u8 *a)
 {
     switch (a[4]) {
@@ -10321,10 +10394,8 @@ void func_8013C18C(u8 *a)
     }
 }
 
-typedef struct { s16 m[3][3]; s32 t[3]; } Mat;
 typedef struct { u8 pad[0x3C]; s32 x, y, z; } CamT;
 extern Mat D_1F800000_c2ec;
-extern Mat D_1F8000F8_c2ec;
 extern s32 D_1F800014_c2ec[];
 extern CamT D_1F8000D0_c2ec;
 extern RingVec D_801442E0[];
@@ -11272,7 +11343,6 @@ void func_8013E910(u8 *a)
     }
 }
 
-extern u8 D_800E7EAA;
 void func_8013E910();
 u8 *func_8013EBE4(u8 *a, s32 b, s32 c)
 {
