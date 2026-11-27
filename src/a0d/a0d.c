@@ -3845,7 +3845,59 @@ void func_8011458C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80114760);
+typedef struct {
+    u8 pad[0xC0];
+    u8 *part[8];
+} A4760;
+
+void func_80114760(A4760 *a)
+{
+    s16 v[6];
+    u8 *t = D_800E7E80;
+    s32 i;
+    u8 *p;
+
+    for (i = 0; i < ((u8 *)a)[8]; i++) {
+        p = a->part[i];
+        switch (p[0x3E]) {
+        case 0:
+            if (((u8 *)a)[0x29] != 0 && H(a, 0x60) == i) {
+                p[0x3E] = 1;
+                H(a->part[H(a, 0x60)], 0x3A) = ((u8 *)a)[0x29] * 4;
+            }
+            break;
+        case 1:
+            if (((u8 *)a)[0x29] != 0 && H(a, 0x60) == i && !(t[0x145] & 1)) {
+                H(t, 0x32) += U(p, 0x3A);
+            }
+            p = a->part[i];
+            H(p, 2) += U(p, 0x3A);
+            H(a->part[i], 0x3A)++;
+            if (H(a->part[i], 2) > 0x21C) {
+                a->part[i][0x3E]++;
+                W(a->part[i], 0x40) = 0;
+                v[1] = U(a->part[i], 0x2C);
+                v[3] = U(a->part[i], 0x30);
+                v[5] = U(a->part[i], 0x34);
+                func_8003116C(8, v, -0x20);
+                func_80074590(7, 0, 0);
+            }
+            if (i & 1) {
+                H(a->part[i], 8) += 8;
+            } else {
+                H(a->part[i], 8) -= 8;
+            }
+            break;
+        case 2:
+            H(p, 2) += U(p, 0x3A) + 0xA;
+            if (H(a->part[i], 2) > 0x28A) {
+                a->part[i][0x3E]++;
+                a->part[i][0x3F] = 1;
+            }
+            break;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_801149F0);
 
