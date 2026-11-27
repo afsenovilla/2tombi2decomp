@@ -14732,7 +14732,53 @@ end:
     return a[0x29];
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_UpdateTombaForwardTerrainContact);
+extern u8 D_1F800258_ftc;
+
+s32 f_UpdateTombaForwardTerrainContact(u8 *t, s32 mode)
+{
+    s16 k;
+    s32 q;
+    s32 w;
+    s32 h;
+    s32 f;
+    u8 *o;
+
+    D_1F800258_ftc = 0;
+    t[0x5F] &= 0xFB;
+    if (t[0x16B] != 0) {
+        return 0;
+    }
+    q = 0;
+    if (mode == 0) {
+        if (H_f12c(t, 0x17E) >= 0) {
+            q = 0x3C;
+        } else {
+            q = 0x1E;
+        }
+    }
+    if (t[0x78] != 0) {
+        o = *(u8 **)(t + 0x10);
+        w = (H_f12c(o, 0x86) - H_f12c(o, 0x84)) - (H_f12c(t, 0x32) - H_f12c(o, 0x32));
+    } else {
+        w = H_f12c(t, 0x62);
+    }
+    k = q;
+    h = w / 2;
+    if (f_ResolveActorFacingTerrainContact(t, k, (s16)h) == 0 && f_ResolveActorFacingTerrainContact(t, k, (s16)-h) == 0) {
+        if (D_1F800258_ftc != 0) {
+            t[0x5F] = 5 - t[0x147];
+        }
+        return 0;
+    }
+    if (t[0x149] & 4) {
+        f = t[0x149] & 1;
+    } else {
+        f = t[0x147];
+    }
+    t[0x60] = 1;
+    t[0x5F] = f + 4;
+    return 1;
+}
 
 extern u8 D_800A42F8[];
 extern u8 D_800A44AC[][3];
