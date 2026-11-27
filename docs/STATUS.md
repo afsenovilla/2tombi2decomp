@@ -23,6 +23,9 @@ net by the tower) and the music stuttered at times. docs/PORT.md §0.4 has the d
   `f_CalculateYawFromPositionToPoint`, other programs' prototypes); the AP popups ("2000") lost their digits.
   gen_t2.py `narrow_wrapper`: 39 functions are `NAME__def` + an asm wrapper extending al / ax. Attract (3150 frames)
   and a 9400-frame Load Game route are now pixel-identical to the interpreted runs (attract had 7 differing dumps).
+- **`void` results** (gen_t2.py `void_results_used`): 21 `void` C definitions whose result a caller reads (asm after
+  the jal, a cast, a non-void prototype elsewhere: `func_8006032C`, `func_800493E8`, ...) stay retail code (their
+  `$v0` is right by construction). Frames unchanged, same speed.
 - **Sweep**: four Load Game routes from the user's card (random walks, a long walk right with jumps and dialogue, the
   back lane) and attract mode, native vs interpreted: identical. A01+ not reached by play (story-gated).
 - **Music**: the viewer now resamples its ring at a rate that follows the fill (P + I, within 2 %, ~100 ms queued;
@@ -34,8 +37,7 @@ net by the tower) and the music stuttered at times. docs/PORT.md §0.4 has the d
 - Test hooks: `--demo-takeover F` (port and emulator), `--poke` on scratchpad addresses, up to 64 pokes;
   `emu_compare.py --emu-args`.
 - Windows zip rebuilt (scratchpad port5/Tomba2-port-win32.zip, not committed).
-- Open: `void` definitions called through casts that read the result (15 sites); a real-Windows check of the
-  climb and of the audio log.
+- Open: a real-Windows check of the climb and of the audio log; areas past A00 by play.
 
 ## 2026-11-28 (3): reference emulator
 

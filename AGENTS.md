@@ -866,7 +866,9 @@ struct-member form of a cast access, regswap `member` toggles every one)
   takes its arity by address over every program (the A00 net climb hung: the player in `$a0` was not forwarded);
   (2) every native function with a char / short result is `NAME__def` plus an asm wrapper `NAME` that extends
   al / ax as `$v0` was (native callers read it wider through casts such as `((s16 (*)(s32, u8 *))f)()`, implicit
-  ints and other programs' prototypes: the score / AP popups lost their digits). Test hooks: `--demo-takeover F`
+  ints and other programs' prototypes: the score / AP popups lost their digits); (3) a `void` definition whose
+  result some caller reads (asm after the jal, a cast, another prototype) stays retail code (`void_results_used`:
+  a byte-matching `void` C may leave the value the callers use in `$v0`). Test hooks: `--demo-takeover F`
   (the attract demo's own place, then the pad script; also in tools/emu_run.py) and `--poke` on the scratchpad.
   The viewer's audio follows its ring's fill (a rate within 2 %) so a game pacing 59.4 vblanks/s no longer drains it.
 - Byte-matching only; tools/nonmatching.py is kept unused.

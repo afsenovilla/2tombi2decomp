@@ -335,6 +335,14 @@ build/port/tomba2 --frames 2760 --trace-pos 10 --demo-takeover 2550 \
   functions. **Check**: the Load Game route (9400 frames) and 3150 attract frames are now pixel-identical to the
   interpreted runs (the attract demo had 7 differing frames of 126 before: its popups), the A00 script of §0 is
   unchanged (212 frames), the native function count is unchanged (4484).
+- **`void` definitions whose result is read** (the open point of stage 2): a C definition that matched the retail
+  bytes as `void` may still leave a value in `$v0` that its callers use (`func_8006032C` leaves the byte it stored
+  last, tested through `((s16)((s32 (*)(u8 *, s32))func_8006032C)(a, k)) == 0`; `func_800493E8` its callee's
+  result, read by asm callers in A01 / A04 / A05 / A06 / A08 / A0C). gen_t2.py `void_results_used` finds every
+  function whose result some caller reads (an asm caller that reads `$v0` after the `jal` before writing it, a C
+  cast with a non-void result, a non-void prototype in any program), and those of them that are `void` in C stay
+  retail code: 21 (MAIN 16, A02 1, A05 2, A06 1, A07 1; the list in `sources_report.txt`). Frames of the three routes
+  unchanged, same speed (the A00 script in 48 s).
 - **Broader sweep** (native vs `--interp-range all`, positions every 5 vblanks + frame dumps): four Load Game routes
   from the user's card (two seeded random walks, a 8000-frame walk right to the Tiny Mouse's House with jumps and
   dialogue, a walk left onto the back lane) and the attract route: identical after the two fixes. Not reached: A01
@@ -512,10 +520,9 @@ natively, the SDL2 window and 60 Hz pacing, XA audio, sound effects, the memory 
    their boss / minigame overlays; each crash hunted with `--no-ovl-native` frame diffs, `--ovl-interp`,
    `--interp-range` and gdb (§0). MAIN's 21 functions the host compiler rejects and the overlays' 20 (generated
    `dropped_<prog>.txt`) stay interpreted; MAIN's own asm (main() = func_80050B08, 228 functions) too until matched.
-   Still unhandled in general: a `void` C function whose asm callers read `$v0` (`func_8001CE90` passes
-   `func_8001CE04`'s result on; it works because the native epilogue keeps `eax`); native callers do the same
-   through casts (`((s32 (*)())func_800493E8)(...)` on a `void` definition: 15 sites in the generated sources).
-   Narrow (char / short) results are extended for every caller since stage 5 (§0.4).
+   A `void` C function whose asm callers read `$v0` (`func_8001CE90` passes
+   `func_8001CE04`'s result on): since stage 5 such definitions stay retail code (§0.4, `void_results_used`), and
+   narrow (char / short) results are extended for every caller (`narrow_wrapper`).
 4. **Reverb** and the remaining libsnd calls (`SsSetReservedVoice`, `SsSetStereo`, ...) in `shims/sound.c`.
 5. **Native Windows** (§0.2): runs under Wine frame-identical to Linux; a first run on real Windows is next (the
    window, controller, sound, pacing; the log's `KUSEG blocks committed by Windows` line and the tally at exit say

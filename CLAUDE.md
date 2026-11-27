@@ -243,7 +243,7 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   tools/emu_run.py, `emu_compare.py --emu-args`) and `--poke FRAME:1F8001xx=B` (scratchpad). Fixed: the A00 net
   climb (an overlay function called by its address name got no forwarded `$a0`: arities by address over every
   program) and char / short results read wider by native callers (asm wrappers that extend al / ax, gen_t2.py
-  `narrow_wrapper`). Audio: the XA queue starts 70 ms ahead, the viewer's rate follows its ring (within 2 %);
+  `narrow_wrapper`); `void` definitions whose result a caller reads stay interpreted (`void_results_used`). Audio: the XA queue starts 70 ms ahead, the viewer's rate follows its ring (within 2 %);
   underruns are logged (`[port] audio: XA queue ran dry`, `tomba2-view: audio underrun #N`).
 - Reference emulator (docs/EMU.md; Tombi-Decomp's tools/psxemu adapted, HLE at the port's shim boundary with the
   port's timing and virtual disc): `python3 -I tools/emu_run.py --frames N --dump-frames DIR [--dump-every K]

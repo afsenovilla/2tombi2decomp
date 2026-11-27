@@ -662,6 +662,76 @@ def all_arity_by_addr():
     return _ALL_BY_ADDR[0]
 
 
+_VOID_USED = []
+_CALL_RE = re.compile(r"/\* \w+ \w+ \w+ \*/\s+(\w+)\s*(.*)")
+_REG_RE = re.compile(r"\$\w+")
+_CAST_CALL_RE = re.compile(r"\(\(\s*([\w\s\*]+?)\s*\(\*\)\s*\([^()]*\)\s*\)\s*(\w+)\s*\)\s*\(")
+_PROTO_RE = re.compile(r"^[ \t]*(?:extern\s+)?((?:const\s+|unsigned\s+|signed\s+)*[A-Za-z_]\w*)\s*(\**)\s*(\w+)\s*\([^;{}()]*\)\s*;",
+                       re.M)
+
+
+def void_results_used():
+    """{(scope, address)} (scope "main" or an overlay) of the functions some caller reads a result of: an asm caller
+    that reads $v0 after the jal (before writing it), a C cast with a non-void result type
+    (`((s32 (*)(u8 *, s16, s16))func_800493E8)(...)`) or a prototype with one, in any program.  A C definition that
+    is `void` but matched the retail bytes may still leave a value in $v0 its callers use (func_8006032C leaves the
+    byte it stored, func_800493E8 its callee's result): those definitions stay retail code (interpreted), whose
+    $v0 is right by construction."""
+    if _VOID_USED:
+        return _VOID_USED[0]
+    used = set()
+    progs = [p for p in sorted(os.listdir(os.path.join(ROOT, "asm")))
+             if os.path.isdir(os.path.join(ROOT, "asm", p)) and os.path.exists(os.path.join(ROOT, "build", p + ".elf"))]
+    allsyms = {p: retail_syms(p) for p in progs}
+
+    def scope_of(p, a):
+        return "main" if a < OVL_BASE else p
+
+    for p in progs:
+        ps = allsyms[p]
+        for dp, _, fs in os.walk(os.path.join(ROOT, "asm", p)):
+            if os.sep + "data" in dp:
+                continue
+            for f in fs:
+                if not f.endswith(".s"):
+                    continue
+                ins = [m.groups() for m in map(_CALL_RE.search, open(os.path.join(dp, f), errors="replace")) if m]
+                for i, (op, args) in enumerate(ins):
+                    if op != "jal":
+                        continue
+                    t = args.strip()
+                    a = ps.get(t)
+                    if a is None:
+                        continue
+                    for op2, a2 in ins[i + 2:i + 10]:
+                        regs = _REG_RE.findall(a2)
+                        if op2 in ("jal", "jalr", "j", "jr", "b"):
+                            if "$v0" in regs and op2 == "jr" and regs[0] == "$v0":
+                                used.add((scope_of(p, a), a))
+                            break
+                        stores = op2 in ("sw", "sh", "sb", "swl", "swr") or op2.startswith("b")
+                        if "$v0" in (regs if stores else regs[1:]):
+                            used.add((scope_of(p, a), a))
+                            break
+                        if regs and regs[0] == "$v0" and not stores:
+                            break
+        for dp, _, fs in os.walk(os.path.join(ROOT, "src", p)):
+            for f in fs:
+                if not f.endswith(".c"):
+                    continue
+                text = open(os.path.join(dp, f), errors="replace").read()
+                for m in _CAST_CALL_RE.finditer(text):
+                    if m.group(1).split() != ["void"] and m.group(2) in ps:
+                        a = ps[m.group(2)]
+                        used.add((scope_of(p, a), a))
+                for m in _PROTO_RE.finditer(text):
+                    if (m.group(1) != "void" or m.group(2)) and m.group(3) in ps and m.group(1) not in ("return", "typedef"):
+                        a = ps[m.group(3)]
+                        used.add((scope_of(p, a), a))
+    _VOID_USED.append(used)
+    return used
+
+
 def ovl_vram(prog):
     m = re.search(r"vram:\s*0x([0-9A-Fa-f]+)", open(os.path.join(ROOT, "config", prog + ".yaml")).read())
     return int(m.group(1), 16)
@@ -812,6 +882,15 @@ def sources(outdir, progs):
                     break
                 drop |= more
                 dead |= {items[k][1] for k in more if re.search(r"\bstatic\b", items[k][2])}
+            # void definitions whose result a caller reads (asm after the jal, a cast, another prototype): retail code
+            used = void_results_used()
+            void_used = []
+            for k, it in enumerate(items):
+                if it[0] == "func" and it[1] and k not in drop and not re.search(r"\bstatic\b", it[2]) and \
+                        ret_kind(it[2], it[1]) == 5 and it[1] in syms and \
+                        (("main" if syms[it[1]] < OVL_BASE else prog), syms[it[1]]) in used:
+                    drop.add(k)
+                    void_used.append(it[1])
             n_static_dead = len(drop)
             for attempt in range(12):
                 forwarded = []
@@ -857,6 +936,8 @@ def sources(outdir, progs):
                           "errors), %d data definitions made extern, %d definitions renamed (conflicting earlier "
                           "declarations): %s" % (prog, cf, n_func, n_asm, len(drop), n_ext, len(rename),
                                                  " ".join(sorted(rename))))
+            report.append("%s/%s: %d void definitions left to the interpreter (a caller reads their $v0): %s"
+                          % (prog, cf, len(void_used), " ".join(sorted(void_used))))
             open(os.path.join(outdir, "dropped_%s.txt" % prog), "w").write(
                 "\n".join(items[k][1] or "?" for k in sorted(drop)) + "\n")
     with open(os.path.join(outdir, "progs.txt"), "w") as f:
