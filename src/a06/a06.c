@@ -6719,7 +6719,34 @@ void func_80124AA0(u8 *a0)
     func_80124CEC_inl(a);
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80124BCC);
+typedef struct { s16 x, y, z; } D3;
+typedef struct { u8 pad[0xC0]; u8 *parts[4]; } PartsActor;
+extern s32 func_80077A4C();
+extern u8 D_1F800207;
+
+s32 func_80124BCC(u8 *a)
+{
+    D3 d;
+
+    if (a[3] >= 3) {
+        return 1;
+    }
+    if (*(s16 *)(a + 0x60) == 0x400) {
+        if ((u32)(D_1F800207 - 1) < 13) {
+            return 0;
+        }
+        if (D_800BF871 == 0x13) {
+            return 0;
+        }
+    }
+    d.x = *(u16 *)(((PartsActor *)a)->parts[a[9] - 1] + 0x2C) - *(u16 *)(a + 0x2E);
+    d.y = *(u16 *)(((PartsActor *)a)->parts[a[9] - 1] + 0x30) - *(u16 *)(a + 0x32);
+    d.z = *(u16 *)(((PartsActor *)a)->parts[a[9] - 1] + 0x34) - *(u16 *)(a + 0x36);
+    if (func_80077A4C(a, 0, 0, 0)) {
+        return 1;
+    }
+    return func_80077A4C(a, d.x, d.y, d.z) != 0;
+}
 
 void func_80124CEC(void *arg0) {
     u8 temp_v0;
@@ -6895,7 +6922,6 @@ s32 func_80126040(void) {
 extern s16 D_80147938[];
 extern u8 D_800BF8D4;
 extern u8 D_800BF9CE;
-extern u8 D_1F800207;
 extern s16 D_800E7FEE;
 void func_801265E4(u8 *p);
 void f_UpdateDeepForestSeesawActor(u8 *a)
