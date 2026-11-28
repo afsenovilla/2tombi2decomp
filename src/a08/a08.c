@@ -10768,7 +10768,35 @@ u8 *func_8012FCD8(u8 *a0, u8 a1)
     return r;
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012FD38);
+static inline s32 fd38_ok(u8 *a)
+{
+    if (a[3] == 0) {
+        if (D_1F800207 < 0x18) {
+            return 0;
+        }
+    } else if (D_1F800207 < 11 && D_1F800207 != 7) {
+        return 0;
+    }
+    return 1;
+}
+
+s32 func_8012FD38(u8 *a)
+{
+    s32 i;
+
+    if (!fd38_ok(a)) {
+        return -1;
+    }
+    if (a[3] != 0 && D_1F800160 >= 0x2C61) {
+        return -1;
+    }
+    for (i = 0; i < 5; i++) {
+        if (*(s32 *)(a + 0xC + i * 4) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 extern u8 D_80148E68[];
 extern u8 D_800A3D40[];
