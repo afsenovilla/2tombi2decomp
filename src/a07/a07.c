@@ -3385,7 +3385,91 @@ u8 *func_801178E4(s32 unused)
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011793C);
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80117AB8);
+typedef struct {
+    u32 tag;
+    u32 rgbc;
+    s16 x0, y0;
+    u8 u0, v0;
+    u16 clut;
+    s16 x1, y1;
+    u8 u1, v1;
+    u16 tpage;
+    s16 x2, y2;
+    u8 u2, v2;
+    u16 pad2;
+    s16 x3, y3;
+    u8 u3, v3;
+    u16 pad3;
+} FT4b;
+typedef struct { s16 x, y, w, h; } RectB;
+typedef struct { s16 x, y; } XY;
+extern void func_80083D40();
+extern u32 *D_800ED8C8;
+extern u32 *D_800BF544_5fe3;
+
+void func_80117AB8(s32 n, XY *pt, s32 *z, u8 *uv)
+{
+    RectB r;
+    RectB r2;
+    u32 *p;
+    FT4b *q;
+    s32 ot = z[8];
+    s32 i;
+    u32 *e1, *e2, *e3;
+
+    if (ot >= 0) {
+        p = D_800BF544_5fe3;
+        r.x = 0;
+        r.y = 0;
+        r.w = 0;
+        r.h = 0;
+        func_80083D40(p, &r);
+        e1 = D_800ED8C8 + ot;
+        do {
+            *p = *e1 | 0x02000000;
+        } while (0);
+        *e1 = (u32)p;
+        p += 3;
+        D_800BF544_5fe3 = p;
+        q = (FT4b *)p;
+        for (i = 0; i < n - 1; i++) {
+            if (z[i] >= 0 && z[i + 1] >= 0 && (pt[i].x < 0x140 || pt[i + 1].x < 0x140) &&
+                (pt[i].y < 0xF0 || pt[i + 1].y < 0xF0)) {
+                q->rgbc = 0x2D808080;
+                q->clut = 0x3B3F;
+                q->tpage = 0xE;
+                q->x0 = q->x2 = pt[i].x;
+                q->x1 = q->x3 = pt[i + 1].x;
+                q->y0 = pt[i].y;
+                q->y1 = pt[i + 1].y;
+                q->y2 = pt[i].y + 4;
+                q->y3 = pt[i + 1].y + 4;
+                q->u0 = q->u2 = uv[i];
+                q->u1 = q->u3 = uv[i + 1];
+                q->v0 = q->v1 = 0x40;
+                q->v2 = q->v3 = 0x48;
+                do {
+                    e2 = D_800ED8C8 + ot;
+                    q->tag = *e2 | 0x09000000;
+                } while (0);
+                *e2 = (u32)q;
+                q++;
+            }
+        }
+        D_800BF544_5fe3 = (u32 *)q;
+        r2.y = 0x40;
+        r2.w = 0x18;
+        r2.x = 0;
+        r2.h = 8;
+        func_80083D40(q, &r2);
+        e3 = D_800ED8C8 + ot;
+        do {
+            q->tag = *e3 | 0x02000000;
+        } while (0);
+        *e3 = (u32)q;
+        D_800BF544_5fe3 = (u32 *)q + 3;
+    }
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80117D4C);
 
@@ -8843,7 +8927,6 @@ void func_8012D880(RECT16 *a) {
 
 typedef struct { s16 m[3][3]; s32 t[3]; } Mat;
 extern u8 D_800BF918;
-extern u32 *D_800ED8C8;
 extern Mat D_1F8000F8;
 void func_8012DA14(u8 *a)
 {
