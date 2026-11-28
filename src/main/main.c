@@ -10596,11 +10596,45 @@ s32 f_ProbeActorTerrainAtOffset(u8 *arg0, s16 arg1, s32 arg2, s16 arg3)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_ResolveTerrainProbeVerticalContact);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_EvaluateTerrainVerticalSurface);
-
-extern s16 D_1F8001C2;
 extern u16 *D_1F8001E0;
 extern s16 *D_1F8001EC;
+extern u8 *D_1F8001E8;
+extern u16 D_1F8001A4;
+extern s16 D_1F8001C2;
+
+s32 f_EvaluateTerrainVerticalSurface(s16 k, s32 mode)
+{
+    u16 save = D_1F8001A4;
+    u16 ub, ua;
+
+    if (*D_1F8001E0 & 8) {
+        D_1F8001A4 = D_1F8001EC[1] + ((D_1F8001EC[2] * D_1F8001C2) >> 6);
+    } else {
+        D_1F8001A4 = D_1F8001EC[1] + (D_1F8001EC[2] * (D_1F8001C2 - k)) / (s16)(k ^ 0x3F);
+    }
+    ub = *(u16 *)D_1F8001BE;
+    ua = D_1F8001A4;
+    if (*(s16 *)D_1F8001BE > (s16)D_1F8001A4 + 0x80) {
+        if (mode != 0) {
+            *(s16 *)D_1F8001C4 = ua - ub;
+            *(u16 *)D_1F8001A6 = D_1F8001EC[0];
+            D_1F8001E8 = (u8 *)D_1F8001DC + (u16)D_1F8001EC[3] * 3;
+            return 1;
+        }
+        D_1F8001A4 = save;
+        *(u16 *)D_1F8001A6 = 0;
+        return 0;
+    }
+    if (!(*(s16 *)D_1F8001BE < (s16)D_1F8001A4)) {
+        *(s16 *)D_1F8001C4 = ua - ub;
+        *(u16 *)D_1F8001A6 = D_1F8001EC[0];
+        D_1F8001E8 = (u8 *)D_1F8001DC + (u16)D_1F8001EC[3] * 3;
+        return 1;
+    }
+    D_1F8001E8 = (u8 *)D_1F8001DC + (u16)D_1F8001EC[3] * 3;
+    return -1;
+}
+
 s32 func_800459D0(s16 k)
 {
     s32 hi, lo;
@@ -10909,7 +10943,6 @@ s32 func_8004960C(u8 *a, s32 b)
     return 1;
 }
 
-extern u8 *D_1F8001E8;
 void f_ApplyTerrainProfileOrientationToActor(u8 *a)
 {
     s8 *p = (s8 *)D_1F8001E8;
@@ -14842,7 +14875,6 @@ void func_800543C0(u8 *a)
 }
 
 extern u16 D_1F80019E;
-extern u16 D_1F8001A4;
 extern u16 D_1F8001A8;
 s32 f_ResolveTombaGroundTerrainContact(u8 *a)
 {
