@@ -931,7 +931,54 @@ void func_8010B1B8(u32 *p, void *b)
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010B200);
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010B4EC);
+void func_8010B4EC(u8 *a, s32 x, s32 y0, s32 y1)
+{
+    s16 *t;
+    s16 h;
+    s32 m;
+    u8 n;
+
+    if (x < 0 || x >= *(s16 *)(a + 0xA)) {
+        return;
+    }
+    h = *(u16 *)(a + 8);
+    if (y1 >= h) {
+        y1 = h - 1;
+    }
+    if (y0 < 0) {
+        y0 = 0;
+    }
+    if (D_800BF871 == 1) {
+        m = h / 2;
+        if (y1 < m) {
+            return;
+        }
+        if (y0 < m) {
+            y0 = m;
+        }
+    } else {
+        m = h / 2;
+        if (m < y0) {
+            return;
+        }
+        if (m < y1) {
+            y1 = m;
+        }
+    }
+    t = *(s16 **)(a + 0xC);
+    t = (s16 *)((u8 *)t + 4);
+    t += y0 * *(s16 *)(a + 0xA) + x;
+    for (; y0 <= y1; y0++) {
+        if (*t != -1) {
+            n = a[6];
+            if (n < 0xFE) {
+                a[6] = n + 1;
+                { u8 *q = a + n * 2; *(s16 *)(q + 0x10) = *t; }
+            }
+        }
+        t += *(s16 *)(a + 0xA);
+    }
+}
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010B61C);
 
