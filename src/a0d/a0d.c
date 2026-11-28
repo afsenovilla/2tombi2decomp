@@ -3424,8 +3424,6 @@ void func_80112D34(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80112DE4);
-
 typedef struct {
     u32 tag;
     u32 rgb0;
@@ -3436,12 +3434,9 @@ typedef struct {
     u32 uv1;
     u32 rgb2;
     u16 x2, y2;
-    u32 uv2;
-    u32 rgb3;
-    u16 x3, y3;
-    u32 uv3;
-} T2PolyGT4;
-extern s32 D_8011CC68;
+    u16 uv2;
+    u16 pad;
+} T2PolyGT3;
 #define T2_ldv3t(r0)                                                                                                   \
     __asm__ volatile("lwc2 $0, 0x10(%0);"                                                                              \
                      "lw $12, 0x14(%0);"                                                                               \
@@ -3466,6 +3461,149 @@ extern s32 D_8011CC68;
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
 extern void *D_800BF544;
+extern s32 D_8011CC68;
+
+u32 *func_80112DE4(u32 *f, u32 *ot, s32 n)
+{
+    s32 sa[6];
+    s32 *otz = (s32 *)0x1F800004;
+    T2PolyGT3 *p = D_800BF544;
+    s32 *flg = (s32 *)0x1F800000;
+    u32 c;
+    u32 mode;
+    s32 b, e;
+    u32 *o;
+
+    while (n-- != 0) {
+        T2_ldv3t(f);
+        p->rgb0 = f[0];
+        T2_rtpt();
+        p->uv0 = f[2];
+        p->uv1 = f[3];
+        c = f[1];
+        T2_stflg(flg);
+        if (*flg >= 0) {
+            T2_nclip();
+            p->rgb1 = c & 0xF0F0F0;
+            T2_stopz(flg);
+            if (*flg > 0) {
+                T2_stsxy3_gt3(p);
+                if ((p->x0 < 320 || p->x1 < 320 || p->x2 < 320) && (p->y0 < 240 || p->y1 < 240 || p->y2 < 240)) {
+                    __asm__ volatile("nop");
+                    p->rgb2 = (c << 4) & 0xF0F0F0;
+                    mode = c >> 24;
+                    switch (mode & 3) {
+                    case 1:
+                        T2_stsz1(&sa[0]);
+                        T2_stsz2(&sa[1]);
+                        T2_stsz3(&sa[2]);
+                        if (sa[0] > sa[1]) {
+                            b = sa[2];
+                            if (b < sa[0]) {
+                                b = sa[0];
+                            }
+                            *otz = b >> 2;
+                        } else {
+                            b = sa[2];
+                            if (b < sa[1]) {
+                                b = sa[1];
+                            }
+                            *otz = b >> 2;
+                        }
+                        break;
+                    case 2:
+                        T2_stsz1(&sa[3]);
+                        T2_stsz2(&sa[4]);
+                        T2_stsz3(&sa[5]);
+                        if (sa[3] < sa[4]) {
+                            b = sa[5];
+                            if (sa[3] < b) {
+                                b = sa[3];
+                            }
+                            *otz = b >> 2;
+                        } else {
+                            b = sa[5];
+                            if (sa[4] < b) {
+                                b = sa[4];
+                            }
+                            *otz = b >> 2;
+                        }
+                        break;
+                    default:
+                        T2_avsz3();
+                        T2_stotz(otz);
+                        break;
+                    }
+                    e = *otz >> 10;
+                    *otz = (*otz >> e) + (e << 9);
+                    if ((u32)(*otz - 4) >= 0x7FC) {
+                        *otz = -1;
+                    }
+                    if (*otz >= 0) {
+                        p->uv2 = ((u16 *)f)[17];
+                        if (mode & 4) {
+                            p->y0 += func_80083E80(D_8011CC68 + ((s16 *)f)[8] * 4) >> 10;
+                            p->y1 += func_80083E80(D_8011CC68 + ((s16 *)f)[12] * 4) >> 10;
+                            p->y2 += func_80083E80(D_8011CC68 + ((s16 *)f)[14] * 4) >> 10;
+                            *otz += 0x80;
+                            if (*otz >= 0x800) {
+                                *otz = 0x7FF;
+                            }
+                        }
+                        do {
+                            o = ot + *otz;
+                            p->tag = *o | 0x09000000;
+                            *o = (u32)p;
+                        } while (0);
+                        p++;
+                    }
+                }
+            }
+        }
+        f += 9;
+    }
+    D_800BF544 = p;
+    return f;
+}
+
+typedef struct {
+    u32 tag;
+    u32 rgb0;
+    u16 x0, y0;
+    u32 uv0;
+    u32 rgb1;
+    u16 x1, y1;
+    u32 uv1;
+    u32 rgb2;
+    u16 x2, y2;
+    u32 uv2;
+    u32 rgb3;
+    u16 x3, y3;
+    u32 uv3;
+} T2PolyGT4;
+#define T2_ldv3t(r0)                                                                                                   \
+    __asm__ volatile("lwc2 $0, 0x10(%0);"                                                                              \
+                     "lw $12, 0x14(%0);"                                                                               \
+                     "lwc2 $2, 0x18(%0);"                                                                              \
+                     "mtc2 $12, $1;"                                                                                   \
+                     "lwc2 $4, 0x1C(%0);"                                                                              \
+                     "srl $12, $12, 16;"                                                                               \
+                     "mtc2 $12, $3;"                                                                                   \
+                     "lwc2 $5, 0x20(%0)"                                                                               \
+                     :                                                                                                 \
+                     : "r"(r0)                                                                                         \
+                     : "$12")
+#define T2_rtpt() __asm__ volatile(".word 0x4A280030")
+#define T2_nclip() __asm__ volatile(".word 0x4B400006")
+#define T2_avsz3() __asm__ volatile(".word 0x4B58002D")
+#define T2_stflg(r0) __asm__ volatile("cfc2 $12, $31;" "nop;" "sw $12, 0( %0 )" : : "r"(r0) : "$12", "memory")
+#define T2_stopz(r0) __asm__ volatile("swc2 $24, 0( %0 )" : : "r"(r0) : "memory")
+#define T2_stotz(r0) __asm__ volatile("swc2 $7, 0( %0 )" : : "r"(r0) : "memory")
+#define T2_stsxy3_gt3(r0)                                                                                              \
+    __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
+#define T2_stsz1(r0) __asm__ volatile("swc2 $17, 0( %0 )" : : "r"(r0) : "memory")
+#define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
+#define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_ldv3p(r0)                                                                                                   \
     __asm__ volatile("lw $12, 0x18(%0);"                                                                               \
                      "lwc2 $0, 0x14(%0);"                                                                              \
@@ -3650,19 +3788,6 @@ void func_80113628(PartList *a)
     D_8011CC68 += 0x1F + (func_8009A450() >> 8);
 }
 
-typedef struct {
-    u32 tag;
-    u32 rgb0;
-    u16 x0, y0;
-    u32 uv0;
-    u32 rgb1;
-    u16 x1, y1;
-    u32 uv1;
-    u32 rgb2;
-    u16 x2, y2;
-    u16 uv2;
-    u16 pad;
-} T2PolyGT3;
 #define T2_ldv3t(r0)                                                                                                   \
     __asm__ volatile("lwc2 $0, 0x10(%0);"                                                                              \
                      "lw $12, 0x14(%0);"                                                                               \
