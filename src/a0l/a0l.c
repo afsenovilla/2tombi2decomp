@@ -1069,7 +1069,65 @@ INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010BE30);
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010C1D8);
 
-INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010C7F4);
+typedef struct { u32 w[4]; } T2Tab4;
+#define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
+extern T2Tab4 D_80109068;
+extern s32 D_1F800084[];
+extern s32 D_1F800088;
+extern s32 D_1F800090;
+extern u8 D_1F8000D0[];
+extern s16 D_1F800160;
+extern s16 D_1F800162_a8d4;
+extern s16 D_1F800164;
+extern u8 D_800E7E80_f78d[];
+extern s32 D_80115894;
+
+void func_8010C7F4(u8 *a)
+{
+    T2Tab4 tab;
+    s16 v[4];
+    s32 seed;
+    s32 *p;
+    u8 *cam;
+    s32 i, c, s, r, k;
+    s32 px, py, pz;
+    u8 *pl;
+    s32 *q90;
+    s32 *q88;
+
+    seed = 0x12D687;
+    tab = D_80109068;
+    p = D_1F800084;
+    q90 = &D_1F800090;
+    q88 = &D_1F800088;
+    func_800329E0(6);
+    gte_ldfcdir(0, 0, 0);
+    pl = D_800E7E80_f78d;
+    c = func_80083F50(*(s16 *)(pl + 0x56)) * 2;
+    s = func_80083E80(*(s16 *)(pl + 0x56)) * 2;
+    r = *(s32 *)(a + 0x50) * 10;
+    c = (c * r) >> 12;
+    s = (s * r) >> 12;
+    cam = D_1F8000D0;
+    px = D_1F800160;
+    py = D_1F800162_a8d4;
+    pz = D_1F800164;
+    for (i = 0; i < 0x40; i++) {
+        k = D_80115894;
+        v[0] = px + ((seed + c) & 0x3FFF) - 0x2000;
+        seed = seed * k + 1;
+        v[1] = py + (seed & 0x3FFF) - 0x2000;
+        seed = seed * k + 1;
+        v[2] = pz + ((seed + s) & 0x3FFF) - 0x2000;
+        seed = seed * k + 1;
+        *q90 = (u32)func_80078240(v[0] - *(s16 *)(cam + 2), v[1] - *(s16 *)(cam + 6), v[2] - *(s16 *)(cam + 0xA)) >> 3;
+        gte_ldv0(v);
+        if (func_800317CC(0) == 0) {
+            *q88 = *p = *p * 2;
+            func_8002847C(tab.w[i & 3], 0, 0);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/a0l/nonmatchings/a0l", func_8010CA30);
 
@@ -1370,8 +1428,6 @@ extern u8 D_800A4BC8[];
 extern u16 D_80115CB4[];
 extern u8 *D_80115C9C[];
 extern u8 D_8011B154[];
-extern s16 D_1F800160;
-extern s16 D_1F800164;
 void func_8010D8F0(u8 *a)
 {
     u8 *g;
@@ -2048,12 +2104,10 @@ void func_8010F34C(u8 *a)
 
 extern u8 D_800A43E8[];
 extern u8 D_8001B354[];
-extern u8 D_800E7E80_f78d[];
 extern s16 D_801164B0[];
 extern s16 D_80116D98[];
 extern s16 D_1F8000C0_65b0[];
 extern s32 D_1F8000A0_5306[];
-extern s16 D_1F800162_a8d4;
 static inline void follow(u8 *a, s16 *t, s32 lim)
 {
     if (H(a, 0x42) != -1) {
