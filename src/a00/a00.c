@@ -17040,7 +17040,57 @@ void f_UpdateCrabBasketCarrierSequence(u8 *a) {
     H_f12c(a, 0x32) += 0x14;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateLinkedTownCreatureActor);
+void f_UpdateLinkedTownCreatureActor(u8 *a)
+{
+    u8 *e = *(u8 **)(a + 0x10);
+    u8 *f = *(u8 **)(a + 0x14);
+    u8 *p = a + 0x60;
+    u8 k;
+
+    switch (a[7]) {
+    case 0:
+        f_UpdateTownCreatureTerrainContact(a);
+    case 1:
+        func_801402B8(a, 0x1C, 0);
+        a[7] = 2;
+        U(p, 2) |= 1;
+        H_f12c(a, 0x56) = 0x800;
+    case 2:
+        H_f12c(a, 0x2E) = U(f, 0x2C) + 0x28;
+        H_f12c(a, 0x32) = U(f, 0x30) - 0xCD;
+        H_f12c(a, 0x36) = U(f, 0x34);
+        H_f12c(a, 0x58) = 0;
+        if (H_f12c(e, 0x7A) == 2 || H_f12c(e, 0x7A) == 6) {
+            a[0x2B] = 0;
+            W_d1fb(a, 4) = 2;
+        if (!(a[0x1B] & 0x40)) {
+                func_800331D8(a, W_d1fb(a, 0xC4), -0x64, 0);
+                *(volatile u8 *)(a + 0x1B) |= 0x40;
+                *(volatile u8 *)a = 7;
+            }
+        } else {
+            if (H_f12c(e, 0x6C) != 2) {
+                break;
+            }
+            k = e[0x5E];
+            if ((u8)(k - 2) >= 2) {
+                break;
+            }
+            if (k == 2) {
+                a[0x2B] = 0x80;
+            } else {
+                a[0x2B] = 0;
+            }
+            W_d1fb(a, 4) = 2;
+        if (!(a[0x1B] & 0x40)) {
+                func_800331D8(a, W_d1fb(a, 0xC4), -0x64, 0);
+                *(volatile u8 *)(a + 0x1B) |= 0x40;
+                *(volatile u8 *)a = 7;
+            }
+        }
+        break;
+    }
+}
 
 s32 func_80145C78(s32 k, u8 *b) {
     if (k < 4) {
