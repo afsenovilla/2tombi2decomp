@@ -4,7 +4,60 @@
 
 INCLUDE_ASM("asm/demo/nonmatchings/demo", func_801062E4);
 
-INCLUDE_ASM("asm/demo/nonmatchings/demo", func_80106690);
+typedef struct { u32 tag; u8 r, g, b, code; s16 x, y; u8 u, v; u16 clut; s16 w, h; } DSprt;
+extern u8 *D_800BF544;
+extern u32 *D_800ED8C8;
+
+void func_80106690(void)
+{
+    DSprt *s;
+    u32 *m;
+
+    s = (DSprt *)D_800BF544;
+    D_800BF544 = (u8 *)(s + 1);
+    s->code = 0x65;
+    s->x = 0;
+    s->y = -8;
+    s->u = 0;
+    s->v = 0;
+    s->w = 0x100;
+    s->h = 0xF0;
+    s->clut = 0x7FE8;
+    do {
+        s->tag = D_800ED8C8[0x7FF] | 0x04000000;
+        D_800ED8C8[0x7FF] = (u32)s;
+    } while (0);
+    m = (u32 *)D_800BF544;
+    D_800BF544 = (u8 *)(m + 3);
+    func_80083DE0(m, 0, 0, 0x9A, 0);
+    do {
+        u32 *ot = D_800ED8C8;
+        *m = ot[0x7FF] | 0x02000000;
+        ot[0x7FF] = (u32)m;
+    } while (0);
+    s = (DSprt *)D_800BF544;
+    D_800BF544 = (u8 *)(s + 1);
+    s->code = 0x65;
+    s->x = 0x100;
+    s->y = -8;
+    s->u = 0;
+    s->v = 0;
+    s->w = 0x40;
+    s->h = 0xF0;
+    s->clut = 0x7FE8;
+    do {
+        s->tag = D_800ED8C8[0x7FF] | 0x04000000;
+        D_800ED8C8[0x7FF] = (u32)s;
+    } while (0);
+    m = (u32 *)D_800BF544;
+    D_800BF544 = (u8 *)(m + 3);
+    func_80083DE0(m, 0, 0, 0x9C, 0);
+    do {
+        u32 *ot = D_800ED8C8;
+        *m = ot[0x7FF] | 0x02000000;
+        ot[0x7FF] = (u32)m;
+    } while (0);
+}
 
 INCLUDE_ASM("asm/demo/nonmatchings/demo", func_80106824);
 
