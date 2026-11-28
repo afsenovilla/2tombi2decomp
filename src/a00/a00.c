@@ -7981,7 +7981,45 @@ void func_801284AC(u8 *a)
     a[8]--;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateBlueBucketPendulumMotion);
+s32 f_UpdateBlueBucketPendulumMotion(u8 *a)
+{
+    u8 *p = a + 0x60;
+    s16 c;
+
+    if (abs(H_f12c(p, 0xC)) >= 0x3D) {
+        if (H_f12c(p, 0xE) > 0) {
+            H_f12c(p, 0xE) -= 0x80;
+        } else {
+            H_f12c(p, 0xE) += 0x80;
+        }
+    }
+    if (H_f12c(p, 0xC) > 0) {
+        if (H_f12c(p, 0xC) >= 0x10F) {
+            H_f12c(p, 0xE) -= 0x400;
+        } else {
+            H_f12c(p, 0xE) -= 0x200;
+        }
+    } else if (H_f12c(p, 0xC) < -0x10E) {
+        H_f12c(p, 0xE) += 0x400;
+    } else {
+        H_f12c(p, 0xE) += 0x200;
+    }
+    if (H_f12c(p, 0xE) > 0x3200) {
+        H_f12c(p, 0xE) = 0x3200;
+    } else if (H_f12c(p, 0xE) < -0x3200) {
+        H_f12c(p, 0xE) = -0x3200;
+    }
+    c = H_f12c(p, 0xC) += H_f12c(p, 0xE) >> 8;
+    if (c != 0) {
+        if (c >= 0x12C) {
+            H_f12c(p, 0xC) = 0x12C;
+        } else if (c < -0x12B) {
+            H_f12c(p, 0xC) = -0x12C;
+        }
+    }
+    H_f12c(p, 0) = U(p, 6) + ((func_80083E80(H_f12c(p, 0xC)) * H_f12c(p, 0x1C)) >> 12);
+    H_f12c(p, 2) = U(p, 8) + ((func_80083F50(H_f12c(p, 0xC)) * H_f12c(p, 0x1C)) >> 12);
+}
 
 extern s8 D_1F800207[];
 /* func_8012894C, inlined */

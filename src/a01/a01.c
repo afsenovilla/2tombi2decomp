@@ -10472,7 +10472,50 @@ void func_80129114(u8 *a) {
     func_80128B08(a);
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_801291F4);
+extern u16 D_1F8000F2;
+extern u16 D_1F8000F0;
+
+void func_801291F4(u8 *a)
+{
+    u8 *e;
+
+    switch (a[0x47]) {
+    case 0:
+    case 1:
+        e = *(u8 **)(a + 0x10);
+        H(a, 0x56) = -U(e, 0x56) - D_1F8000F2;
+        func_80085480(a + 0x54, a + 0x98);
+        break;
+    case 2:
+        e = *(u8 **)(a + 0x3C);
+        if (a[3] == 2) {
+            H(a, 0x56) = U(e, 0x56) + D_1F8000F2;
+            func_80051794(a + 0x98);
+            func_80084D10(H(a, 0x54), a + 0x98);
+            func_80084EB0(H(a, 0x56), a + 0x98);
+            func_80085050(H(a, 0x58), a + 0x98);
+        } else if ((u8)(a[3] - 7) < 2) {
+            func_80085480(a + 0x54, a + 0x98);
+        } else {
+            H(a, 0x54) = -D_1F8000F0;
+            func_80085480(a + 0x54, a + 0x98);
+        }
+        break;
+    case 3:
+        H(a, 0x56) = -D_1F8000F2;
+        func_800517F8(a);
+        return;
+    }
+    func_80051D20(e, a + 0x88, a + 0x90);
+    H(a, 0x2E) = U(a, 0x90);
+    H(a, 0x32) = U(a, 0x92);
+    H(a, 0x36) = U(a, 0x94);
+    W(a, 0xAC) = H(a, 0x2E);
+    W(a, 0xB0) = H(a, 0x32);
+    W(a, 0xB4) = H(a, 0x36);
+    func_80084360(e + 0x98, a + 0x98);
+    func_80051300(a);
+}
 
 INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80129394);
 
