@@ -2733,7 +2733,51 @@ void func_80110A98(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80110C14);
+extern s32 D_1F800084[];
+extern s32 D_1F800088;
+extern s32 D_1F800090[];
+extern u8 D_8009D5FC[];
+extern void *D_8009D5F8;
+
+void func_80110C14(u8 *a0)
+{
+    u8 *a = a0;
+    s16 v[4];
+    u8 *e;
+    u8 *b;
+    s32 c;
+    s32 *p;
+    s32 *q;
+    s32 ang;
+    s16 i;
+    s32 r, d;
+    s16 t;
+    u8 *tbl;
+
+    b = a + 0x34;
+    p = D_1F800084;
+    q = &D_1F800088;
+    func_800329E0(6);
+    D_1F800090[0] = 0;
+    tbl = D_8009D5FC;
+    ang = 0x400;
+    for (i = 0; i < 0x15; i++) {
+        e = (u8 *)(i * 4 + (s32)b);
+        t = ang;
+        r = ((e[2] * e[0]) >> 5) + *(s16 *)(a + 0x32);
+        d = (func_80083E80(t) * r) >> 12;
+        c = (func_80083F50(t) * r) >> 12;
+        v[0] = *(u16 *)(a + 0x2C) + d;
+        v[2] = *(u16 *)(a + 0x30) + c;
+        v[1] = *(u16 *)(a + 0x2E) - ((func_80083E80(e[2] << 4) * e[1]) >> 12);
+        gte_ldv0(v);
+        if (func_800317CC(-0x32) == 0) {
+            *q = *p = (*p * e[3]) >> 7;
+            func_80027A4C(tbl + (e[2] & 0xF0), D_8009D5F8);
+        }
+        ang += 0x61;
+    }
+}
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80110DBC);
 
@@ -3067,9 +3111,6 @@ void func_80111A68(u8 *a)
 
 #define gte_ldfcdir(r0, r1, r2) __asm__ volatile("ctc2	%0, $21;" "ctc2	%1, $22;" "ctc2	%2, $23" : : "r"(r0), "r"(r1), "r"(r2))
 #define gte_ldv0m(p) __asm__ volatile("lwc2	$0, %0;" "lwc2	$1, %1" : : "m"(((s32 *)(p))[0]), "m"(((s32 *)(p))[1]))
-extern s32 D_1F800084[];
-extern s32 D_1F800088;
-extern s32 D_1F800090[];
 extern u8 D_8011CAB0[];
 extern u8 D_8011CA68[];
 extern u8 D_8011CB70[];
