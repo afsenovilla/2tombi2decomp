@@ -2982,7 +2982,49 @@ void func_80114838(s32 i)
     func_8004D7EC(D_8013C9D4[i].x2, 1);
 }
 
-INCLUDE_ASM("asm/a05/nonmatchings/a05", func_80114874);
+typedef struct {
+    s16 x0;
+    s16 x2;
+    s16 x4;
+    s16 x6;
+    s16 x8;
+} S10b;
+extern S10b D_8013C9D4_8ac7[];
+extern u8 D_80040558[];
+
+void func_80114874(u8 *a, s32 i)
+{
+    S10b *e;
+    S10b *t = D_8013C9D4_8ac7;
+    e = &t[i];
+
+    *(s16 *)(a + 0xE) = e->x2;
+    *(s16 *)(a + 0x68) = e->x6;
+    *(s16 *)(a + 0x60) = e->x8;
+    if (*(s16 *)(a + 0x68) == 0) {
+        *(s16 *)(a + 0x62) = 1;
+    } else {
+        __asm__ volatile("");
+        *(s16 *)(a + 0x62) = 4;
+    }
+    *(s16 *)(a + 0x64) = 2;
+    a[0xC] = 2;
+    a[2] = 8;
+    a[0x5E] = 7;
+    *(u8 **)(a + 0x1C) = D_80040558;
+    a[5] = 1;
+    a[0] = 1;
+    *(s16 *)(a + 0x80) = 0x40;
+    *(s16 *)(a + 0x82) = 0x80;
+    a[4] = 0;
+    a[6] = 0;
+    a[7] = 0;
+    a[0x29] = 0;
+    a[0x2B] = 0;
+    *(s16 *)(a + 0x84) = 0x96;
+    *(s16 *)(a + 0x86) = 0x96;
+    a[0x46] = 0;
+}
 
 void func_80114934(void *arg0) {
     u8 temp_v1;
