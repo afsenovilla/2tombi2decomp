@@ -10101,7 +10101,24 @@ s32 func_8013B844(u8 *a, u8 *b)
     return func_80085690(dy, (c * dx + func_80083E80(-*(s16 *)(a + 0x60)) * dz) >> 12) & 0xFFF;
 }
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013B8F4);
+extern s32 func_80083F50(s32);
+extern s32 func_80083E80(s32);
+
+void func_8013B8F4(u8 *a, s16 ang, s16 spd)
+{
+    s32 s = func_80083E80(ang);
+    s32 c = (s16)func_80083F50(ang) >> 4;
+    s32 x = c * *(s16 *)(a + 0x48);
+    s32 z = c * *(s16 *)(a + 0x4C);
+
+    s32 px = spd * x;
+    s32 py = spd * ((s >> 4) << 8);
+    s32 pz = spd * z;
+
+    *(s32 *)(a + 0x30) += py;
+    *(s32 *)(a + 0x2C) += px;
+    *(s32 *)(a + 0x34) += pz;
+}
 
 s32 func_8013B9C0(u8 *a, u8 *b)
 {
