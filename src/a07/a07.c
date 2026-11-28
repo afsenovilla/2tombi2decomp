@@ -3709,7 +3709,116 @@ void f_UpdateCircusGearMechanismActor(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a07/nonmatchings/a07", f_UpdateCircusInteriorEntranceTransition);
+extern s16 D_801330E0[];
+extern s16 D_1F8001C6;
+extern void func_80074590();
+extern s32 func_8007E038();
+extern s32 func_80072E60();
+extern void func_80072EFC();
+extern s32 func_80072F14();
+#define UH(p, o) (*(u16 *)((u8 *)(p) + (o)))
+
+s32 f_UpdateCircusInteriorEntranceTransition(u8 *a)
+{
+    u8 *g = D_800E7E80;
+    u8 *p;
+    s16 idx;
+
+    switch (a[6]) {
+    case 0:
+        if ((H(g, 0x6A) & 0xF000) != 0x2000) {
+            return 0;
+        }
+        if ((UH(g, 0x6A) & 0x1F) != a[3]) {
+            return 0;
+        }
+        if (g[0x17B] != 0) {
+            return 0;
+        }
+        a[6]++;
+        D_1F8001C6 = 1;
+        if (D_800BF808[0x10] != 5) {
+            g[0x145] = 0;
+            func_80054198(g);
+            g[5] = 0;
+            g[6] = 0;
+            g[7] = 0;
+        }
+        D_800BF808[0x10] = 1;
+        D_800BF808[0xF] = a[3];
+        if (a[0xBF] != 0) {
+            func_80074590(0x17, 0, 0xF);
+        }
+        idx = D_801330E0[a[3]];
+        if (idx != -1) {
+            *(s32 *)(a + 0x14) = func_8007E038(idx, 2);
+        } else {
+            *(s32 *)(a + 0x14) = 0;
+        }
+        break;
+    case 1:
+        if (func_80072E60(a) && D_800BF816) {
+            a[6]++;
+            func_80072EFC(a);
+            return 0;
+        }
+        break;
+    case 2:
+        if (D_800BF808[0x10] != 2) {
+            return 0;
+        }
+        if (D_800BF808[7] != 0) {
+            return 0;
+        }
+        a[6]++;
+        p = *(u8 **)(a + 0x14);
+        if (p != NULL) {
+            p[4] = 2;
+            *(u8 **)(a + 0x14) = NULL;
+        }
+        break;
+    case 3:
+        if ((H(g, 0x6A) & 0xF000) != 0x2000) {
+            return 0;
+        }
+        if ((UH(g, 0x6A) & 0x1F) != a[3]) {
+            return 0;
+        }
+        if (g[0x17B] != 0) {
+            return 0;
+        }
+        a[6]++;
+        if (D_800BF808[0x10] != 6) {
+            g[0x145] = 0;
+            func_80054198(g);
+            g[5] = 0;
+            g[6] = 0;
+            g[7] = 0;
+        }
+        D_800BF808[0x10] = 3;
+        if (a[0xBF] != 0) {
+            func_80074590(0x17, 0, 0xF);
+            return 0;
+        }
+        break;
+    case 4:
+        if (D_800BF808[0x10] != 4) {
+            return 0;
+        }
+        if (D_800BF808[7] != 0) {
+            return 0;
+        }
+        a[6]++;
+        break;
+    case 5:
+        if (func_80072F14(a)) {
+            a[6] = 0;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_80119C84);
 
@@ -3722,41 +3831,41 @@ INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011A174);
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011A398);
 
 void func_8011A83C(void) {
-    f_UpdateCircusInteriorEntranceTransition();
+    ((s32 (*)())f_UpdateCircusInteriorEntranceTransition)();
 }
 
 void func_8011A85C(void) {
-    f_UpdateCircusInteriorEntranceTransition();
+    ((s32 (*)())f_UpdateCircusInteriorEntranceTransition)();
 }
 
 void func_8011A87C(void) {
-    f_UpdateCircusInteriorEntranceTransition();
+    ((s32 (*)())f_UpdateCircusInteriorEntranceTransition)();
 }
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011A89C);
 
 void func_8011A980(void) {
-    f_UpdateCircusInteriorEntranceTransition();
+    ((s32 (*)())f_UpdateCircusInteriorEntranceTransition)();
 }
 
 void func_8011A9A0(void) {
     if ((D_800BF870.pad1[0x67] != 0) || (M2C_FIELD(&D_800BF870, u16 *, 0x2E) & 0x200)) {
-        f_UpdateCircusInteriorEntranceTransition();
+        ((s32 (*)())f_UpdateCircusInteriorEntranceTransition)();
     }
 }
 
 void func_8011A9EC(void) {
-    f_UpdateCircusInteriorEntranceTransition();
+    ((s32 (*)())f_UpdateCircusInteriorEntranceTransition)();
 }
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011AA0C);
 
 void func_8011AAFC(void) {
-    f_UpdateCircusInteriorEntranceTransition();
+    ((s32 (*)())f_UpdateCircusInteriorEntranceTransition)();
 }
 
 void func_8011AB1C(void) {
-    f_UpdateCircusInteriorEntranceTransition();
+    ((s32 (*)())f_UpdateCircusInteriorEntranceTransition)();
 }
 
 INCLUDE_ASM("asm/a07/nonmatchings/a07", func_8011AB3C);
@@ -5294,7 +5403,6 @@ void func_8011EB04(u8 *a)
     }
 }
 
-extern void func_80074590();
 extern s32 func_8003116C();
 s32 func_8011EDB8(u8 *a)
 {
@@ -10000,7 +10108,6 @@ s32 func_80130BA4(u8 *a) {
     return 0;
 }
 
-extern s16 D_1F8001C6;
 s32 func_80130C20(u8 *a) {
     u16 f;
     s16 g;
