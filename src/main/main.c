@@ -10377,7 +10377,33 @@ s32 f_StartCooperativeDiscRead(void *dst, s32 sector, s32 size)
     return 1;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80044D8C);
+typedef struct { s32 base; s32 mul; } LzTbl;
+extern LzTbl D_800153C8[];
+
+s32 func_80044D8C(s16 *a0, u8 *dst, u8 *src, s32 len) {
+    s32 offs[8];
+    u8 *out = dst;
+    u8 *end = src + len;
+    s32 i;
+    s32 *o;
+    LzTbl *t;
+    for (i = 0, o = offs, t = D_800153C8; i < 8; i++, t++) {
+        *o++ = t->base + t->mul * a0[2] * 2;
+    }
+    while (src < end) {
+        u8 c = *src++;
+        s32 n = c >> 3;
+        s32 k = c & 7;
+        if (k == 0) {
+            if (n == 0) break;
+            while (n-- > 0) *out++ = *src++;
+        } else {
+            u8 *p = out + offs[k];
+            while (n-- > 0) *out++ = *p++;
+        }
+    }
+    return out - dst;
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80044E84);
 
@@ -32144,7 +32170,163 @@ u32 *func_8007FDB0(u32 *f, u32 *ot, s32 n)
     return f;
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_8008007C);
+typedef struct {
+    u32 tag;
+    u32 rgb0;
+    u16 x0, y0;
+    u32 uv0;
+    u32 rgb1;
+    u16 x1, y1;
+    u32 uv1;
+    u32 rgb2;
+    u16 x2, y2;
+    u32 uv2;
+    u32 rgb3;
+    u16 x3, y3;
+    u32 uv3;
+} T2PolyGT4;
+#define T2_rtps() __asm__ volatile(".word 0x4A180001")
+#define T2_avsz4() __asm__ volatile(".word 0x4B68002E")
+#define T2_stsxy(r0) __asm__ volatile("swc2 $14, 0( %0 )" : : "r"(r0) : "memory")
+#define T2_stsxy3_gt4(r0)                                                                                              \
+    __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
+#define T2_stsz0(r0) __asm__ volatile("swc2 $16, 0( %0 )" : : "r"(r0) : "memory")
+#define T2_ldv3p(r0)                                                                                                   \
+    __asm__ volatile("lw $12, 0x18(%0);"                                                                               \
+                     "lwc2 $0, 0x14(%0);"                                                                              \
+                     "mtc2 $12, $1;"                                                                                   \
+                     "srl $12, $12, 16;"                                                                               \
+                     "mtc2 $12, $3;"                                                                                   \
+                     "lwc2 $2, 0x1C(%0);"                                                                              \
+                     "lw $12, 0x24(%0);"                                                                               \
+                     "lwc2 $4, 0x20(%0);"                                                                              \
+                     "mtc2 $12, $5"                                                                                    \
+                     :                                                                                                 \
+                     : "r"(r0)                                                                                         \
+                     : "$12")
+#define T2_ldv1p(r0)                                                                                                   \
+    __asm__ volatile("lw $12, 0x24(%0);"                                                                               \
+                     "lwc2 $0, 0x28(%0);"                                                                              \
+                     "srl $12, $12, 16;"                                                                               \
+                     "mtc2 $12, $1"                                                                                    \
+                     :                                                                                                 \
+                     : "r"(r0)                                                                                         \
+                     : "$12")
+
+u32 *func_8008007C(u32 *f, u32 *ot, s32 n)
+{
+    s32 sz[4];
+    s32 sz2[4];
+    T2PolyGT4 *p = D_800BF544;
+    s32 *flg = &D_1F800080;
+    s32 *otz = (s32 *)D_1F800084;
+    u32 c, v;
+    u32 mode;
+    s32 a, b, e;
+    u32 *o;
+    u32 rs_l1;
+
+    while (n-- != 0) {
+        T2_ldv1p(f);
+        c = f[1];
+        p->rgb2 = c & 0xFFF0F0F0;
+        T2_rtps();
+        rs_l1 = f[3];
+        p->rgb3 = (c << 4) & 0xFFF0F0F0;
+        p->uv1 = rs_l1;
+        T2_stflg(flg);
+        if (*flg >= 0) {
+            T2_stsxy(&p->x3);
+            T2_ldv3p(f);
+            v = f[0];
+            p->rgb0 = v & 0xFFF0F0F0;
+            T2_rtpt();
+            v <<= 4;
+            p->rgb1 = v & 0xFFF0F0F0;
+            T2_stflg(flg);
+            if (*flg >= 0) {
+                T2_nclip();
+                p->uv0 = f[2];
+                T2_stopz(flg);
+                if (*flg > 0) {
+                    T2_stsxy3_gt4(p);
+                    if ((p->x0 < 320 || p->x1 < 320 || p->x2 < 320 || p->x3 < 320) &&
+                        (p->y0 < 240 || p->y1 < 240 || p->y2 < 240 || p->y3 < 240)) {
+                        mode = (c >> 24) & 3;
+                        switch (mode) {
+                        case 1:
+                            T2_stsz0(&sz[0]);
+                            T2_stsz1(&sz[1]);
+                            T2_stsz2(&sz[2]);
+                            T2_stsz3(&sz[3]);
+                            a = sz[1];
+                            if (a < sz[0]) {
+                                a = sz[0];
+                            }
+                            b = sz[3];
+                            if (b < sz[2]) {
+                                do {
+                                    b = sz[2];
+                                } while (0);
+                            }
+                            if (b < a) {
+                                b = a;
+                            }
+                            do {
+                                *otz = b >> 2;
+                            } while (0);
+                            break;
+                        case 2:
+                            T2_stsz0(&sz2[0]);
+                            T2_stsz1(&sz2[1]);
+                            T2_stsz2(&sz2[2]);
+                            T2_stsz3(&sz2[3]);
+                            a = sz2[1];
+                            if (sz2[0] < a) {
+                                a = sz2[0];
+                            }
+                            b = sz2[3];
+                            if (sz2[2] < b) {
+                                b = sz2[2];
+                            }
+                            if (a < b) {
+                                b = a;
+                            }
+                            *otz = b >> 2;
+                            break;
+                        default:
+                            T2_avsz4();
+                            T2_stotz(otz);
+                            break;
+                        }
+                        do {
+                            e = *otz >> 10;
+                            *otz = (*otz >> e) + (e << 9);
+                        } while (0);
+                        if ((u32)(*otz - 4) >= 0x7FC) {
+                            *otz = -1;
+                        }
+                        if (*otz >= 0) {
+                            u32 w = f[4];
+                            p->uv2 = w;
+                            w >>= 16;
+                            p->uv3 = w;
+                            do {
+                                o = ot + *otz;
+                                p->tag = *o | 0x0C000000;
+                                *o = (u32)p;
+                            } while (0);
+                            p++;
+                        }
+                    }
+                }
+            }
+        }
+        f += 11;
+    }
+    D_800BF544 = p;
+    return f;
+}
 
 void func_800803DC(u32 *p, void *b)
 {
