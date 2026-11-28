@@ -4453,7 +4453,6 @@ void func_80115DA4(u32 *p, void *b)
 extern s32 D_800A3F90;
 extern s32 D_800A3F94;
 void func_80115FF4();
-
 void func_80115DEC(u8 *a)
 {
     s32 v[6];

@@ -6674,7 +6674,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80124198);
 
 extern void func_80074590();
 #define P_faf2(a, o) (*(u8 **)((a) + (o)))
-
 void func_8012462C(u8 *a)
 {
     s16 y = H(P_faf2(a, 0xC0), 8);
@@ -6747,7 +6746,6 @@ void func_8012462C(u8 *a)
 
 extern s32 func_8009A450();
 #define O(a) (*(u8 **)((a) + 0xC0))
-
 void func_801248B4(u8 *a)
 {
     if (a[0x2B] != 0) {
@@ -6848,7 +6846,6 @@ typedef struct { s16 x, y, z; } D3;
 typedef struct { u8 pad[0xC0]; u8 *parts[4]; } PartsActor;
 extern s32 func_80077A4C();
 extern u8 D_1F800207;
-
 s32 func_80124BCC(u8 *a)
 {
     D3 d;
@@ -11408,7 +11405,6 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013E180);
 typedef struct { s16 x, y, z, w; } Seg4;
 extern u8 D_8014C1B4[];
 #define UH(p, o) (*(u16 *)((u8 *)(p) + (o)))
-
 void func_8013E30C(u8 *a)
 {
     u8 *o = *(u8 **)(a + 0x10);

@@ -3301,7 +3301,6 @@ static inline s32 cls(s32 v)
     }
     return r;
 }
-
 s32 func_80116B48(u8 *a)
 {
     s32 c = cls(a[0x2A]);
@@ -4914,7 +4913,6 @@ extern u32 D_800ECF80_19c1;
 extern SV D_1F8000C0_d117;
 extern SV D_1F8000C8;
 #define UH(p, o) (*(u16 *)((u8 *)(p) + (o)))
-
 void func_8011BB48(u8 *a)
 {
     u8 *p;

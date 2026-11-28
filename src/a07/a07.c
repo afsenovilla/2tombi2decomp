@@ -3406,7 +3406,6 @@ typedef struct { s16 x, y; } XY;
 extern void func_80083D40();
 extern u32 *D_800ED8C8;
 extern u32 *D_800BF544_5fe3;
-
 void func_80117AB8(s32 n, XY *pt, s32 *z, u8 *uv)
 {
     RectB r;
@@ -3801,7 +3800,6 @@ extern s32 func_80072E60();
 extern void func_80072EFC();
 extern s32 func_80072F14();
 #define UH(p, o) (*(u16 *)((u8 *)(p) + (o)))
-
 s32 f_UpdateCircusInteriorEntranceTransition(u8 *a)
 {
     u8 *g = D_800E7E80;

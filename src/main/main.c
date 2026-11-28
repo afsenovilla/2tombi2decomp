@@ -10601,7 +10601,6 @@ extern s16 *D_1F8001EC;
 extern u8 *D_1F8001E8;
 extern u16 D_1F8001A4;
 extern s16 D_1F8001C2;
-
 s32 f_EvaluateTerrainVerticalSurface(s16 k, s32 mode)
 {
     u16 save = D_1F8001A4;

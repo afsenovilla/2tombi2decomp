@@ -592,7 +592,6 @@ static inline s32 Step(u8 *a)
     }
     return 0;
 }
-
 void func_8010AC00(u8 *a)
 {
     u8 *s;

@@ -3306,8 +3306,10 @@ void func_80112884(u8 *a)
     }
 }
 
-static inline s32 Sub620(s32 m) { return m - 0x620; }
-
+static inline s32 Sub620(s32 m)
+{
+    return m - 0x620;
+}
 void func_80112D80(u8 *a)
 {
     u8 *b = *(u8 **)(a + 0x10);

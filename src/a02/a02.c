@@ -2816,8 +2816,10 @@ s32 func_80110C7C(u8 *a, u8 *b, u8 *c)
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80110E20);
 
 extern s32 D_1F800094;
-static inline s32 Sub250(s32 m) { return m - 0xFA; }
-
+static inline s32 Sub250(s32 m)
+{
+    return m - 0xFA;
+}
 s32 func_80111184(u8 *a, u8 *b, u8 *c)
 {
     s16 r;
@@ -5029,7 +5031,10 @@ extern u8 D_800E7EAC[];
 extern V3u D_80129BA4[];
 extern V3u D_80129B8C[];
 extern V3u D_80129BD0[];
-static inline s32 Idx5(u8 *g) { return g[0xF] - 5; }
+static inline s32 Idx5(u8 *g)
+{
+    return g[0xF] - 5;
+}
 /* func_801167C4, inlined */
 static inline void inl_801167C4(u8 *a, s32 ang) {
     u8 *t = D_800E7E80;

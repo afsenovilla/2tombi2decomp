@@ -585,6 +585,19 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - Byte-aligned struct copy from an extern (`typedef struct { u8 v[0x30]; } T; T tbl = D_X;`): the lwl / lwr loop.
 - Target prototypes still apply at install: copy the callee's real narrow-parameter prototypes into the scratch.
 
+**Round 19 forms** (2026-11-28, port-hot targets again; 20 functions, ~13 KB)
+- Pitfall (cost a failed integration): a ONE-LINE `static inline T f(...) { return ...; }` right above a C definition makes tools/sync_src.py swallow that definition (its item regex runs from the inline's `{` to the next column-0 `}`), so the clean build re-adds the INCLUDE_ASM and the link fails with `symbol ... is already defined`. Write static inlines with the braces on their own lines. `build.py --no-split` (the agents' check) does not run sync_src, so only the clean full build shows it.
+- a01 GTE builders with hard-coded $t4 are C: the file's T2_ldv3t / T2_ldv3p / T2_stflg macros clobber $12; scratchpad pointers in $a3/$s7 are ordinary choices. Do not mark them asm by design (func_8013000C, func_8012F8D8 matched).
+- Depth-cue blocks: take the strgb target pointer first (`q = &p->rgb0;`), then the LCG step, lddp, ldrgb, dpcs, T2_strgb(q).
+- `lh; sll 11; sra 12` kept unfolded: `dx <<= 11; __asm__("" : "+r"(dx)); dx >>= 12;` (a0b). Base + K folded into each offset: one `__asm__("" : "+r"(y));` before the uses.
+- `(u16)(expr) > bound` with the two values in each other's registers: a u16 temporary assigned first, the same one reused for the next compare (a02 func_80111184).
+- Pointer array at a large offset: `((struct { u8 pad[0xC0]; u8 *parts[4]; } *)a)->parts[i - 1]`.
+- `sllv` by a register holding 1 = `n * 3` with the 1 CSE'd from `a[6]++` or a return 1. Cross-jump into another case's tail with a nop delay slot: that path stores the same value (`else ... = 0;`).
+- The base offset of a giv-combined loop pointer is the offset of the last store in the source; `for (i = 6; i > 0; i--, e--)` for counter-before-pointer decrements.
+- A second local initialised to the same symbol (`fl = &D_1F800080`) gives retail's `move` copy; `&T[i]` instead of a pointer giv lowers loop.c's hoisting of constants in loops with calls.
+- Terrain probe functions: `return` per branch, negated test so the full block comes first.
+- Open: f_DrawPackedUiSpriteFrame 23 words (r19/main/ui_b.c, register allocation only: still ~40 % of the port's pending interpreted work), tile-map drawers (~10-17), palette-fade pair a05 func_80134F1C / a04 func_80117C58 (2, `mflo t5`), a02 func_80110E20 (2), demo func_8010696C (1) / func_80106824 (2), a0b func_801110BC (15), a03 f_DrawTrolleyMeshQuads is marked hand-written in the asm.
+
 **Round 18 forms** (2026-11-28, targets ordered by the port's interpreter profile, `workqueue.py --hot`; 56 functions, ~22 KB)
 - Stack scratch that retail reloads after stores through a pointer argument: declare it as a union of arrays (`union { s32 w[]; s16 h[]; u8 b[]; } L;`), not a cast `s32 L[]` (a03 trolley quad).
 - In-place running sums (`a += b; a >>= 1;`) keep retail's same-register `addu`; `x = (a + b) >> 1` does not. A GTE argument through a local (`e = 0xDAC - z; gte_lddp(e);`) gives retail's register.

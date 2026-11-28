@@ -11264,7 +11264,10 @@ typedef struct { u8 pad[0xD0]; s32 *p0; u8 pad2[8]; s32 *p1; } MidOwner;
 #define FPV(p, o) (*(u8 * volatile *)((u8 *)(p) + (o)))
 #define F32(p, o) M2C_FIELD(p, s32 *, o)
 extern u8 D_1F800233;
-static inline void MID(u8 *a) { MidOwner *e = (MidOwner *)D_800E7E80; H(a, 0x2E) = (e->p0[0xB] + e->p1[0xB]) / 2; H(a, 0x32) = (e->p0[0xC] + e->p1[0xC]) / 2; H(a, 0x36) = (e->p0[0xD] + e->p1[0xD]) / 2; }
+static inline void MID(u8 *a)
+{
+    MidOwner *e = (MidOwner *)D_800E7E80; H(a, 0x2E) = (e->p0[0xB] + e->p1[0xB]) / 2; H(a, 0x32) = (e->p0[0xC] + e->p1[0xC]) / 2; H(a, 0x36) = (e->p0[0xD] + e->p1[0xD]) / 2;
+}
 /* func_8012C18C, inlined */
 static inline void func_8012C18C_inl(u8 *a)
 {
@@ -12774,7 +12777,6 @@ extern u8 D_801388EC_a723;
 extern u8 D_801388EE_86ce;
 extern s32 func_80083F50();
 extern s32 func_80083E80();
-
 u32 *func_8012F8D8(u32 *f, u32 *ot, s32 n)
 {
     s32 *otz = (s32 *)0x1F800004;
@@ -12983,7 +12985,6 @@ typedef struct {
 #define T2_stsxy3_gt4(r0)                                                                                              \
     __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz0(r0) __asm__ volatile("swc2 $16, 0( %0 )" : : "r"(r0) : "memory")
-
 u32 *func_8013000C(u32 *f, u32 *ot, s32 n)
 {
     s32 *otz = (s32 *)0x1F800004;
@@ -14683,7 +14684,6 @@ static inline s32 func_801341E8_ffa0(u8 *poly, u8 *v, s32 *flag) {
     gte_stotz(&otz);
     return otz;
 }
-
 s32 func_80133F38(u8 *poly, u8 *v, s32 dz)
 {
     s32 flag;

@@ -7,7 +7,6 @@ INCLUDE_ASM("asm/demo/nonmatchings/demo", func_801062E4);
 typedef struct { u32 tag; u8 r, g, b, code; s16 x, y; u8 u, v; u16 clut; s16 w, h; } DSprt;
 extern u8 *D_800BF544;
 extern u32 *D_800ED8C8;
-
 void func_80106690(void)
 {
     DSprt *s;

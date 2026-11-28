@@ -4010,7 +4010,6 @@ u32 *func_80113DE0(u32 *f, u32 *ot, s32 n)
 typedef struct { u32 tag; u32 c0; s16 x0, y0; u32 c1; s16 x1, y1; u32 c2; s16 x2, y2; u32 c3; s16 x3, y3; } E10G4;
 extern u8 *D_800BF544_37fb;
 extern s16 D_1F8000F0;
-
 void func_80114178(void)
 {
     E10G4 *p;

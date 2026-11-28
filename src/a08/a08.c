@@ -10438,7 +10438,6 @@ extern u8 *D_1F8001DC;
 extern u8 *D_1F8001E8;
 extern s16 D_1F8001BE;
 extern s16 D_1F8001C2;
-
 s32 func_8012DC6C(void)
 {
     s32 none = 1;
@@ -10732,7 +10731,6 @@ void func_8012E6CC(u8 *a)
 
 extern s32 func_80084080(s32);
 #define UH(p, o) (*(u16 *)((u8 *)(p) + (o)))
-
 void func_8012E82C(u8 *a)
 {
     u8 *s = a + 0x60;
