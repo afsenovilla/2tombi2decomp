@@ -7906,7 +7906,43 @@ s32 func_801280E8(u8 *a) {
     return 1;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", func_801281B8);
+#define SL(i) (*(u8 **)(a + 0xC0 + (i) * 4))
+void func_801284AC(u8 *a);
+
+s32 func_801281B8(u8 *a)
+{
+    u8 *p;
+    s32 k;
+    s32 i;
+
+    func_801284AC(a);
+    p = a + 0x60;
+    H_f12c(p, 0x14) += U(p, 0x1A);
+    if (H_f12c(p, 0x12) > H_f12c(p, 0x1C)) {
+        H_f12c(p, 0x14) -= (H_f12c(p, 0x12) - H_f12c(p, 0x1C)) * 6;
+    }
+    if (H_f12c(p, 0x14) < 0) {
+        if ((s16)(H_f12c(p, 0x14) += 0x64) > 0) {
+            H_f12c(p, 0x14) = 0;
+        }
+    } else {
+        if ((s16)(H_f12c(p, 0x14) -= 0x64) < 0) {
+            H_f12c(p, 0x14) = 0;
+        }
+    }
+    if (H_f12c(p, 0x14) < -0x3C00) {
+        H_f12c(p, 0x14) = -0x3C00;
+    } else if (H_f12c(p, 0x14) > 0x3C00) {
+        H_f12c(p, 0x14) = 0x3C00;
+    }
+    H_f12c(p, 0x12) += H_f12c(p, 0x14) >> 8;
+    U(p, 0) = U(p, 6);
+    U(p, 2) = U(p, 8) + U(p, 0x1C);
+    k = ((H_f12c(p, 0x12) * 5) >> 4) + 0x19;
+    for (i = 0; i < a[8]; i++) {
+        H_f12c(SL(i), 0xC) = ((k * (i + 2)) >> 4) - (k >> 5);
+    }
+}
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", f_InitializeRareFishOrBucketController);
 
@@ -9541,7 +9577,67 @@ s32 func_8012E87C(void *arg0) {
     return M2C_FIELD(arg0, s16 *, 0x60) >= (s16) temp_v1;
 }
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_UpdateTownBarrelChildTransforms);
+typedef struct { u8 pad[0xC0]; u8 *s[8]; } AB;
+#define SK(k) (((AB *)a)->s[k])
+extern s32 D_1F800000_aeae[];
+extern s32 D_1F800020[];
+
+void f_UpdateTownBarrelChildTransforms(u8 *a)
+{
+    s32 i;
+    s16 k;
+    u8 *o;
+    u8 *p;
+    s32 *m;
+    s32 *n;
+
+    func_80085480(a + 0x54, a + 0x98);
+    for (i = 0; i < a[8]; i++) {
+        o = SL(i);
+        k = U(o, 6);
+        do {
+            n = D_1F800000_aeae;
+        } while (0);
+        m = D_1F800020;
+        __asm__ volatile("");
+        if (H_f12c(o, 6) == -1) {
+            func_80085480(o + 8, n);
+            func_80084110(a + 0x98, n, SL(i) + 0x18);
+            func_80084220(SL(i), SL(i) + 0x2C);
+            W_d1fb(SL(i), 0x2C) += H_f12c(a, 0x2E);
+            W_d1fb(SL(i), 0x30) += H_f12c(a, 0x32);
+            W_d1fb(SL(i), 0x34) += H_f12c(a, 0x36);
+        } else {
+            if (i == 2 || (i == 3 && (U(a, 0x60) & 2))) {
+                func_80085480(o + 8, D_1F800000_aeae);
+                func_80051794(m);
+                if (U(a, 0x60) & 1) {
+                    p = SL(1);
+                } else {
+                    p = SL(0);
+                }
+                do {
+                    func_80085050(H_f12c(p, 0xC), m);
+                    func_80084EB0(H_f12c(a, 0x56), m);
+                    func_80084110(m, D_1F800000_aeae, SL(i) + 0x18);
+                } while (0);
+                func_80084470(SK(k) + 0x18, SL(i), SL(i) + 0x2C);
+            } else {
+                if (U(a, 0x60) & 1) {
+                    func_80051794(n);
+                    func_80084A80(SL(i) + 8, n);
+                } else {
+                    func_80085480(SL(i) + 8, D_1F800000_aeae);
+                }
+                func_80084110(SK(k) + 0x18, D_1F800000_aeae, SL(i) + 0x18);
+                func_80084220(SL(i), SL(i) + 0x2C);
+            }
+            W_d1fb(SL(i), 0x2C) += W_d1fb(SK(k), 0x2C);
+            W_d1fb(SL(i), 0x30) += W_d1fb(SK(k), 0x30);
+            W_d1fb(SL(i), 0x34) += W_d1fb(SK(k), 0x34);
+        }
+    }
+}
 
 extern u8 D_800BF9D2;
 u8 *func_80146348(u8 *a, void *b);
@@ -11000,7 +11096,58 @@ void f_UpdateAquaticPlantGrabMotion(u8 *a)
 
 INCLUDE_ASM("asm/a00/nonmatchings/a00", func_80133184);
 
-INCLUDE_ASM("asm/a00/nonmatchings/a00", f_SyncAquaticPlantLinkedState);
+s32 f_SyncAquaticPlantLinkedState(u8 *a)
+{
+    u8 *e;
+    s16 v;
+    s16 r;
+
+    if (a[3] & 0xC0) {
+        return 0;
+    }
+    e = *(u8 **)(a + 0x10);
+    if (H_f12c(e, 0x78) != 0) {
+        H_f12c(a, 0x68) = 1;
+    } else {
+        H_f12c(a, 0x68) = 0;
+    }
+    v = H_f12c(*(u8 **)(e + 0xC4), 8);
+    if (v > 0x800) {
+        v |= 0xF000;
+    }
+    r = v >= (s16)((H_f12c(e, 0x64) + H_f12c(e, 0x66)) / 2);
+    if (a[3] != (e[0x62] & 0x7F)) {
+        r = 1 - r;
+    }
+    if (a[3] == 5) {
+        r = 1 - r;
+    }
+    if (r != H_f12c(a, 0x62)) {
+    a[5] = 2;
+    if (r != 0) {
+        H_f12c(a, 0x64) = 0x1000;
+        H_f12c(a, 0x66) = 0x1000;
+        H_f12c(a, 0x4E) = 0x30;
+        a[6] = 0;
+        H_f12c(a, 0x50) = 0x48;
+        if (a[1] != 0) {
+            func_80074590(0x90, 0, 0);
+        }
+    } else {
+        a[6] = 1;
+        H_f12c(a, 0x64) = 0xC00;
+        H_f12c(a, 0x66) = 0x999;
+        H_f12c(a, 0x4E) = -0x30;
+        H_f12c(a, 0x50) = -0x48;
+        if (a[1] != 0) {
+            func_80074590(0x91, 0, 0);
+        }
+    }
+    H_f12c(a, 0x62) = r;
+    return 1;
+    }
+    return 0;
+}
 
 void func_8013259C();
 void f_SpawnAquaticPlantActors(u8 *a) {
