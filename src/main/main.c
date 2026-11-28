@@ -7500,7 +7500,75 @@ INCLUDE_ASM("asm/main/nonmatchings/main", f_ApplyActorSpriteUvOrientation);
 
 INCLUDE_ASM("asm/main/nonmatchings/main", f_BuildActorSpriteQuadVertices);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_ProjectAndQueueFourVertexPrimitive);
+static inline s32 PQ4_project(u8 *prim, u8 *v)
+{
+    s32 flg;
+    s32 otz;
+    s32 *fp = &flg;
+
+    gte_ldv3c(v);
+    gte_rtpt();
+    gte_stflg(fp);
+    if (*fp < 0) {
+        return -1;
+    }
+    gte_stsxy3_ft4(prim);
+    gte_nclip();
+    gte_stopz(fp);
+    gte_ldv0(v + 0x18);
+    gte_rtps();
+    gte_stflg(fp);
+    if (*fp < 0) {
+        return -1;
+    }
+    gte_stsxy(prim + 0x20);
+    gte_avsz4();
+    gte_stotz(&otz);
+    return otz;
+}
+
+void f_ProjectAndQueueFourVertexPrimitive(u8 *prim, u8 *v, s32 bias)
+{
+    s32 z;
+    s32 e;
+    s32 *zp;
+    u32 *p;
+    u32 *o;
+
+    z = PQ4_project(prim, v);
+    if (z < 0) return;
+    z += bias;
+    if (z < 0) return;
+    zp = &z;
+    e = *zp >> 10;
+    *zp = (*zp >> e) + (e << 9);
+    if ((u32)(*zp - 4) >= 0x7FC) {
+        *zp = -1;
+    }
+    if (z < 0) return;
+    if ((*(u16 *)(prim + 8) < 320 || *(u16 *)(prim + 0x10) < 320 || *(u16 *)(prim + 0x18) < 320 || *(u16 *)(prim + 0x20) < 320) &&
+        (*(u16 *)(prim + 0xA) < 240 || *(u16 *)(prim + 0x12) < 240 || *(u16 *)(prim + 0x1A) < 240 || *(u16 *)(prim + 0x22) < 240)) {
+        do {
+            p = D_800BF544;
+        } while (0);
+        o = D_800ED8C8 + z;
+        do {
+            *p = *o | 0x09000000;
+            *o = (u32)p;
+        } while (0);
+        p++;
+        *p++ = ((u32 *)prim)[1];
+        *p++ = ((u32 *)prim)[2];
+        *p++ = ((u32 *)prim)[3];
+        *p++ = ((u32 *)prim)[4];
+        *p++ = ((u32 *)prim)[5];
+        *p++ = ((u32 *)prim)[6];
+        *p++ = ((u32 *)prim)[7];
+        *p++ = ((u32 *)prim)[8];
+        *p++ = ((u32 *)prim)[9];
+        D_800BF544 = p;
+    }
+}
 
 extern u8 D_1F800247;
 void f_DrawActorModelByRenderMode(u8 *a);
