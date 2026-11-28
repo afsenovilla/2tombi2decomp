@@ -4768,7 +4768,30 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011CEA4);
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011D144);
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011D3A0);
+extern u8 D_800BFA46;
+extern void func_80051B04();
+
+s32 func_8011D3A0(u8 *a, s32 i)
+{
+    if ((D_800BFA46 >> i) & 1) {
+        switch (i) {
+        case 0:
+            func_80051B04(*(u8 **)(a + 0xD0), 0xC, 0x34);
+            break;
+        case 1:
+            func_80051B04(*(u8 **)(a + 0xCC), 0xC, 0x33);
+            break;
+        case 2:
+            func_80051B04(*(u8 **)(a + 0xC8), 0xC, 0x32);
+            break;
+        case 3:
+            func_80051B04(*(u8 **)(a + 0xC4), 0xC, 0x31);
+            break;
+        }
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011D458);
 
@@ -9627,7 +9650,6 @@ void f_UpdateLastEvilPigAccessActor(u8 *a)
 extern u8 D_80145AAC[];
 extern u8 D_8001B4DC[];
 extern u8 D_800A3D18[];
-extern u8 D_800BFA46;
 extern u8 D_80145B34[];
 extern u8 D_800A3CF0[];
 extern u8 D_80145B24[];

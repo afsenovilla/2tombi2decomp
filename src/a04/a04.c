@@ -5770,7 +5770,28 @@ void func_8011E59C(u8 *a) {
     }
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8011E6AC);
+extern void func_8005082C();
+
+void func_8011E6AC(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        if (a[0x29] != 0 && D_800BF808_c1f7[5] == 0) {
+            a[6]++;
+            D_1F800137_104c = 2;
+            D_800BF808_c1f7[0x39] = 1;
+            func_8005082C(0, 0, 0);
+        }
+        break;
+    case 1:
+            a[6]++;
+        D_1F800236 = 4;
+        D_800BF808_c1f7[7] = 2;
+        D_800BF808_c1f7[0x31] = 1;
+        *(s16 *)(D_800BF808_c1f7 + 0x32) = 0x817;
+        break;
+    }
+}
 
 extern s16 D_801413C0[];
 #define P (*(s16 **)(a + 0xC0))
