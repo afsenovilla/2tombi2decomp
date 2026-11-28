@@ -29262,7 +29262,110 @@ void func_8007703C(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_TestActorVisibilityAndQueueForRender);
+typedef struct { u8 pad[0x18]; s16 ax, ay, az; } CamAxes;
+s32 f_IntegerSquareRootRounded(u32 x);
+
+s32 f_TestActorVisibilityAndQueueForRender(u8 *a, s16 x, s16 y, s16 z)
+{
+    s32 d;
+    s32 ax, ay, az;
+    s32 k;
+    s32 r;
+    u16 n;
+    u8 **q;
+
+    d = (u16)f_IntegerSquareRootRounded(x * x + y * y + z * z);
+    ax = ((CamAxes *)&D_1F8000D0)->ax;
+    ay = ((CamAxes *)&D_1F8000D0)->ay;
+    az = ((CamAxes *)&D_1F8000D0)->az;
+    a[1] = 0;
+    k = 0x1000;
+    if (D_800BF870.unk0 == 4) {
+        *(s32 *)D_1F800084 = 2;
+    }
+    switch (*(u32 *)D_1F800084) {
+    case 0:
+        switch (a[0xC]) {
+        case 2:
+        case 9:
+            if (d < 512) return 0;
+            if (d >= 5121) return 0;
+            r = (ax * x + ay * y + az * z) / ((k * d) >> 10);
+            if (r < 880) return 0;
+            break;
+        case 4:
+            if (d < 512) return 0;
+            if (d >= 7169) return 0;
+            r = (ax * x + ay * y + az * z) / ((k * d) >> 10);
+            if (r < 856) return 0;
+            break;
+        case 5:
+            if (d < 512) return 0;
+            if (d >= 6657) return 0;
+            r = (ax * x + ay * y + az * z) / ((k * d) >> 10);
+            if (r < 872) return 0;
+            break;
+        default:
+            if (d < 512) return 0;
+            if (d >= 6145) return 0;
+            r = (ax * x + ay * y + az * z) / ((k * d) >> 10);
+            if (r < 872) return 0;
+            break;
+        }
+        break;
+    case 1:
+        if (d < 512) return 0;
+        if (d >= 7169) return 0;
+        r = (ax * x + ay * y + az * z) / ((k * d) >> 10);
+            if (r < 856) return 0;
+        break;
+    case 2:
+        if (d < 768) return 0;
+        if (d >= 4097) return 0;
+        r = (ax * x + ay * y + az * z) / ((k * d) >> 10);
+            if (r < 880) return 0;
+        break;
+    case 3:
+        if (d < 512) return 0;
+        if (d >= 4097) return 0;
+        r = (ax * x + ay * y + az * z) / ((k * d) >> 10);
+            if (r < 848) return 0;
+        break;
+    case 4:
+        if (d < 1024) return 0;
+        if (d >= 6657) return 0;
+        r = (ax * x + ay * y + az * z) / ((k * d) >> 10);
+            if (r < 872) return 0;
+        break;
+    }
+    a[1] = 1;
+    if (D_1F800080 != 0) return 1;
+    switch (a[0xC]) {
+    case 2:
+    case 9:
+        n = *(u16 *)D_1F800144;
+        if (*(s16 *)D_1F800144 < 0x18) {
+            *--*(u8 ***)D_1F80013C = a;
+            *(u16 *)D_1F800144 = n + 1;
+        }
+        break;
+    case 4:
+        n = *(u16 *)D_1F800150;
+        if (*(s16 *)D_1F800150 < 0x28) {
+            *--*(u8 ***)D_1F800148 = a;
+            *(u16 *)D_1F800150 = n + 1;
+        }
+        break;
+    case 5:
+        n = *(u16 *)D_1F80015C;
+        if (*(s16 *)D_1F80015C < 0x1C) {
+            *--*(u8 ***)D_1F800154 = a;
+            *(u16 *)D_1F80015C = n + 1;
+        }
+        break;
+    }
+    return 1;
+}
 
 s32 f_StepWrappedAngleToward(s32 a, s32 b, s32 step)
 {
