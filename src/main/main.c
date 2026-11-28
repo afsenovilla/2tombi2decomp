@@ -2,6 +2,7 @@
 #include "game.h"
 #include "m2c.h"
 #include "gte.h"
+#include "actor.h"
 
 extern volatile u8 D_800BE0E4;
 void f_CloseCooperativeWorkerThread(s32);
@@ -7896,7 +7897,51 @@ void f_DrawActorModelByRenderMode(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_BuildActorModelPartPrimitives);
+extern s16 D_1F8000C0[];
+void f_DrawModelPrimitiveStreamForCurrentArea(u32 *a, void *b, s32 c);
+
+void f_BuildActorModelPartPrimitives(u8 *a, s32 b)
+{
+    s32 i;
+    u8 *m;
+    u32 *ot;
+    u32 *q;
+
+    if (a[8] != 0) {
+        for (i = 0; i < a[9] && i < a[8]; i++) {
+            m = ((Actor *)a)->parts[i];
+            if (*(s32 *)(m + 0x40) != 0) {
+                D_1F8000C0[0] = *(s16 *)(m + 0x2C);
+                D_1F8000C0[1] = *(s16 *)(m + 0x30);
+                D_1F8000C0[2] = *(s16 *)(m + 0x34);
+                gte_SetRotMatrix(D_1F8000F8);
+                gte_ldclmv(m + 0x18);
+                gte_rtir();
+                gte_stclmv(D_1F800000);
+                gte_ldclmv(m + 0x1A);
+                gte_rtir();
+                gte_stclmv(D_1F800002);
+                gte_ldclmv(m + 0x1C);
+                gte_rtir();
+                gte_stclmv(D_1F800004);
+                gte_ldv0(D_1F8000C0);
+                gte_rtv0();
+                gte_stlvnl(D_1F800014);
+                D_1F800000[5] += D_1F8000D0_42d8[15];
+                D_1F800000[6] += D_1F8000D0_42d8[16];
+                D_1F800000[7] += D_1F8000D0_42d8[17];
+                gte_SetRotMatrix(D_1F800000);
+                gte_SetTransMatrix(D_1F800000);
+                q = *(u32 **)(m + 0x40);
+                if ((a[0xD] & 0xF) == 4) {
+                    f_DrawModelPrimitiveStreamForCurrentArea(q, (D_800ED8C8 + *(s8 *)(m + 0x3F)), b);
+                } else {
+                    f_DrawModelPrimitiveStreamForCurrentArea(q, (D_800ED8C8), b);
+                }
+            }
+        }
+    }
+}
 
 void f_DrawCurrentAreaEnvironment(void *a)
 {
@@ -9391,7 +9436,6 @@ u32 func_80042090(void *arg0) {
     return (u32) (temp_v0 << 0x10) >> 0x1F;
 }
 
-extern s16 D_1F8000C0[];
 extern u16 D_1F8000C8_208b[];
 extern u8 *D_800E7F50;
 extern u8 D_800BF80A_8fc3;
@@ -29075,7 +29119,27 @@ u32 f_QueueSoundEffectVoice(s32 id, s32 pri, s32 c2, s32 c3, s32 c4, s32 c5, s32
     }
 }
 
-INCLUDE_ASM("asm/main/nonmatchings/main", func_80075F0C);
+void func_80075F0C(u8 *a, s16 b)
+{
+    s32 i;
+    u8 *m;
+    u8 *n;
+
+    *(u16 *)(a + 0x88) += *(u16 *)(a + 0x90);
+    *(u16 *)(a + 0x8A) += *(u16 *)(a + 0x92);
+    *(u16 *)(a + 0x8C) += *(u16 *)(a + 0x94);
+    for (i = 0; i < a[9] && i < a[8]; i++) {
+        m = *(u8 **)(a + 0xC0 + i * 4);
+        *(u16 *)(m + 8) += *(u16 *)(m + 0x10);
+        m = *(u8 **)(a + 0xC0 + i * 4);
+        *(u16 *)(m + 0xA) += *(u16 *)(m + 0x12);
+        n = *(u8 **)(a + 0xC0 + i * 4);
+        *(u16 *)(n + 0xC) += *(u16 *)(n + 0x14);
+    }
+    if (b == 1) {
+        *(u32 *)(a + 0x38) |= 0x80000000;
+    }
+}
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80075FF8);
 
