@@ -3273,7 +3273,43 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80116884);
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801169E8);
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80116B48);
+extern s32 func_8007778C();
+extern u8 D_1F800207_9c67;
+static inline s32 cls(s32 v)
+{
+    s32 r;
+    u8 w = v;
+
+    if ((u32)(v - 1) < 7) {
+        r = 1;
+    } else if (v == 8) {
+        r = 5;
+    } else if (v == 9) {
+        r = 3;
+    } else if ((u32)(v - 10) < 3) {
+        r = 2;
+    } else if ((u32)(v - 13) < 2) {
+        r = 6;
+    } else if ((u32)(v - 15) < 7) {
+        r = 4;
+    } else if ((u32)(v - 0x16) < 4 || (u32)(v - 0x27) < 4) {
+        r = 8;
+    } else if ((u32)(v - 0x21) < 6) {
+        r = 1;
+    } else {
+        { u32 t = w - 0x1A; r = t < 7; }
+    }
+    return r;
+}
+
+s32 func_80116B48(u8 *a)
+{
+    s32 c = cls(a[0x2A]);
+    if (c & cls(D_1F800207_9c67)) {
+        return func_8007778C(a, c);
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80116CCC);
 
@@ -3394,7 +3430,6 @@ extern void *D_800BF544;
 extern s32 D_1F800080_e4a3;
 extern s32 D_1F800084;
 extern s32 D_1F800088;
-extern u8 D_1F800207_9c67;
 u32 *func_801175FC(u32 *f, u32 *ot, s32 n)
 {
     s32 *otz = (s32 *)0x1F800004;
