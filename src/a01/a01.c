@@ -14647,7 +14647,96 @@ void func_80133D74(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a01/nonmatchings/a01", func_80133F38);
+#define GTE_RTPT() __asm__ volatile("nop;" "nop;" ".word 0x4A280030")
+#define GTE_RTPS() __asm__ volatile("nop;" "nop;" ".word 0x4A180001")
+#define GTE_NCLIP() __asm__ volatile("nop;" "nop;" ".word 0x4B400006")
+#define GTE_AVSZ4() __asm__ volatile("nop;" "nop;" ".word 0x4B68002E")
+/* func_801341E8_ffa0, inlined */
+static inline s32 func_801341E8_ffa0(u8 *poly, u8 *v, s32 *flag) {
+    s32 otz;
+    s32 n;
+
+    gte_ldv3c(v);
+    GTE_RTPT();
+    gte_stflg(flag);
+    if (*flag < 0) {
+        return -1;
+    }
+    gte_stsxy3_gt3(poly);
+    GTE_NCLIP();
+    gte_stopz(flag);
+    n = *flag;
+    if (n < 0) {
+        n = -n;
+    }
+    if (n < 8) {
+        return -1;
+    }
+    gte_ldv0(v + 0x18);
+    GTE_RTPS();
+    gte_stflg(flag);
+    if (*flag < 0) {
+        return -1;
+    }
+    gte_stsxy(poly + 0x2C);
+    GTE_AVSZ4();
+    gte_stotz(&otz);
+    return otz;
+}
+
+s32 func_80133F38(u8 *poly, u8 *v, s32 dz)
+{
+    s32 flag;
+    s32 z;
+    s32 *zp;
+    u32 *ot;
+    u32 *p;
+
+    z = func_801341E8_ffa0(poly, v, &flag);
+    zp = &z;
+    if (*zp < 0) {
+        goto rs_ret;
+    }
+    *zp += dz;
+    if (*zp < 0) {
+        goto rs_ret;
+    }
+    *zp = (*zp >> (*zp >> 10)) + ((*zp >> 10) << 9);
+    if ((u32)(*zp - 4) >= 0x7FC) {
+        *zp = -1;
+    }
+    if (*zp < 0) {
+rs_ret:
+        return 1;
+    }
+    if ((*(u16 *)(poly + 0x8) < 0x140 || *(u16 *)(poly + 0x14) < 0x140 || *(u16 *)(poly + 0x20) < 0x140 ||
+         *(u16 *)(poly + 0x2C) < 0x140) &&
+        (*(u16 *)(poly + 0xA) < 0xF0 || *(u16 *)(poly + 0x16) < 0xF0 || *(u16 *)(poly + 0x22) < 0xF0 ||
+         *(u16 *)(poly + 0x2E) < 0xF0)) {
+        p = (u32 *)D_800BF544;
+        do {
+            ot = D_800ED8C8 + z;
+            *p = *ot | 0xC000000;
+        } while (0);
+        *ot = (u32)p;
+        p++;
+        *p = W(poly, 0x4); p++;
+        *p = W(poly, 0x8); p++;
+        *p = W(poly, 0xC); p++;
+        *p = W(poly, 0x10); p++;
+        *p = W(poly, 0x14); p++;
+        *p = W(poly, 0x18); p++;
+        *p = W(poly, 0x1C); p++;
+        *p = W(poly, 0x20); p++;
+        *p = W(poly, 0x24); p++;
+        *p = W(poly, 0x28); p++;
+        *p = W(poly, 0x2C); p++;
+        *p = W(poly, 0x30); p++;
+        D_800BF544 = (u8 *)p;
+        return 0;
+    }
+    goto rs_ret;
+}
 
 #define GTE_RTPT() __asm__ volatile("nop;" "nop;" ".word 0x4A280030")
 #define GTE_RTPS() __asm__ volatile("nop;" "nop;" ".word 0x4A180001")
