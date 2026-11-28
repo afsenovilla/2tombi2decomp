@@ -2815,7 +2815,99 @@ s32 func_80110C7C(u8 *a, u8 *b, u8 *c)
 
 INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80110E20);
 
-INCLUDE_ASM("asm/a02/nonmatchings/a02", func_80111184);
+extern s32 D_1F800094;
+static inline s32 Sub250(s32 m) { return m - 0xFA; }
+
+s32 func_80111184(u8 *a, u8 *b, u8 *c)
+{
+    s16 r;
+    s16 dz;
+    s16 dx;
+    s16 rx;
+    s16 ox;
+    s16 ax;
+    s16 az;
+    s16 oz;
+    s16 lz;
+    s16 lx;
+    s16 m;
+    s32 k;
+    u16 px;
+    u16 cx;
+    u16 w;
+
+    r = 0x32;
+    if (a[0xD] & 0x10) {
+        r = 0x5A;
+    }
+    if (S(a, 0x32) > S(c, 0x30) && D_1F800094 != 0) {
+        dz = U(a, 0x36) - U(c, 0x34);
+        if (abs(dz) < 0x141) {
+            rx = r + 0x8C;
+            ox = rx;
+            dx = U(a, 0x2E) - U(c, 0x2C);
+            ax = dx;
+            if ((u16)(dx + rx) <= r * 2 + 0x118) {
+                az = dz;
+                oz = 0x140;
+                if ((u16)(dz + 0x140) <= r * 2 + 0x140) {
+                    lx = rx;
+                    if (dx < 0) {
+                        ax = -dx;
+                        ox = -rx;
+                    } else {
+                        lx = ox;
+                    }
+                    lz = oz;
+                    if (az < 0) {
+                        az = -az;
+                        oz = -oz;
+                    } else {
+                        lz = r;
+                        oz = lz;
+                    }
+                    if (lx - ax < lz - az) {
+                        U(a, 0x2E) = U(c, 0x2C) + ox;
+                    } else {
+                        U(a, 0x36) = U(c, 0x34) + oz;
+                    }
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+    if ((u16)(U(a, 0x32) - U(c, 0x30) + 0x12C + (U(a, 0x84) + U(b, 0x84))) > S(a, 0x86) + S(b, 0x86) + 0x258) {
+        return 0;
+    }
+    px = U(a, 0x2E);
+    cx = U(c, 0x2C);
+    w = (u16)(r + (px - cx + 0x8C));
+    if (w > r * 2 + 0x118) {
+        return 0;
+    }
+    dz = U(a, 0x36) - U(c, 0x34);
+    w = (u16)(dz + (r + U(b, 0x80)));
+    if (w > r * 2 + S(b, 0x82)) {
+        return 0;
+    }
+    if (abs(dz) >= 0x141) {
+        return 0;
+    }
+    if ((s16)px > (s16)cx + 0x8C) {
+        U(a, 0x2E) = cx + 0x8C;
+    } else if ((s16)px < (s16)cx - 0x8C) {
+        U(a, 0x2E) = cx - 0x8C;
+    }
+    U(a, 0x36) -= 10;
+    U(a, 0x32) = ((func_80083E80(0x199) * 10) >> 12) + (u16)(U(a, 0x32) + 4);
+    m = U(a, 0x36) - (U(c, 0x34) - U(b, 0x80));
+    k = (func_80083E80(0x199) * m) >> 12;
+    if (S(a, 0x32) >= S(c, 0x30) - Sub250((s16)k) - S(a, 0x84)) {
+        func_80022C78(a);
+        U(a, 0x32) = U(c, 0x30) - Sub250(k) - U(a, 0x84);
+    }
+}
 
 void func_801114B0(u8 *a, u8 *b)
 {
