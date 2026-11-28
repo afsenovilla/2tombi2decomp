@@ -3426,13 +3426,196 @@ void func_80112D34(u8 *a)
 
 INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_80112DE4);
 
-INCLUDE_ASM("asm/a0d/nonmatchings/a0d", func_801131B0);
+typedef struct {
+    u32 tag;
+    u32 rgb0;
+    u16 x0, y0;
+    u32 uv0;
+    u32 rgb1;
+    u16 x1, y1;
+    u32 uv1;
+    u32 rgb2;
+    u16 x2, y2;
+    u32 uv2;
+    u32 rgb3;
+    u16 x3, y3;
+    u32 uv3;
+} T2PolyGT4;
+extern s32 D_8011CC68;
+#define T2_ldv3t(r0)                                                                                                   \
+    __asm__ volatile("lwc2 $0, 0x10(%0);"                                                                              \
+                     "lw $12, 0x14(%0);"                                                                               \
+                     "lwc2 $2, 0x18(%0);"                                                                              \
+                     "mtc2 $12, $1;"                                                                                   \
+                     "lwc2 $4, 0x1C(%0);"                                                                              \
+                     "srl $12, $12, 16;"                                                                               \
+                     "mtc2 $12, $3;"                                                                                   \
+                     "lwc2 $5, 0x20(%0)"                                                                               \
+                     :                                                                                                 \
+                     : "r"(r0)                                                                                         \
+                     : "$12")
+#define T2_rtpt() __asm__ volatile(".word 0x4A280030")
+#define T2_nclip() __asm__ volatile(".word 0x4B400006")
+#define T2_avsz3() __asm__ volatile(".word 0x4B58002D")
+#define T2_stflg(r0) __asm__ volatile("cfc2 $12, $31;" "nop;" "sw $12, 0( %0 )" : : "r"(r0) : "$12", "memory")
+#define T2_stopz(r0) __asm__ volatile("swc2 $24, 0( %0 )" : : "r"(r0) : "memory")
+#define T2_stotz(r0) __asm__ volatile("swc2 $7, 0( %0 )" : : "r"(r0) : "memory")
+#define T2_stsxy3_gt3(r0)                                                                                              \
+    __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
+#define T2_stsz1(r0) __asm__ volatile("swc2 $17, 0( %0 )" : : "r"(r0) : "memory")
+#define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
+#define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
+extern void *D_800BF544;
+#define T2_ldv3p(r0)                                                                                                   \
+    __asm__ volatile("lw $12, 0x18(%0);"                                                                               \
+                     "lwc2 $0, 0x14(%0);"                                                                              \
+                     "mtc2 $12, $1;"                                                                                   \
+                     "srl $12, $12, 16;"                                                                               \
+                     "mtc2 $12, $3;"                                                                                   \
+                     "lwc2 $2, 0x1C(%0);"                                                                              \
+                     "lw $12, 0x24(%0);"                                                                               \
+                     "lwc2 $4, 0x20(%0);"                                                                              \
+                     "mtc2 $12, $5"                                                                                    \
+                     :                                                                                                 \
+                     : "r"(r0)                                                                                         \
+                     : "$12")
+#define T2_ldv1p(r0)                                                                                                   \
+    __asm__ volatile("lw $12, 0x24(%0);"                                                                               \
+                     "lwc2 $0, 0x28(%0);"                                                                              \
+                     "srl $12, $12, 16;"                                                                               \
+                     "mtc2 $12, $1"                                                                                    \
+                     :                                                                                                 \
+                     : "r"(r0)                                                                                         \
+                     : "$12")
+#define T2_rtps() __asm__ volatile(".word 0x4A180001")
+#define T2_avsz4() __asm__ volatile(".word 0x4B68002E")
+#define T2_stsxy(r0) __asm__ volatile("swc2 $14, 0( %0 )" : : "r"(r0) : "memory")
+#define T2_stsxy3_gt4(r0)                                                                                              \
+    __asm__ volatile("swc2 $12, 8( %0 );" "swc2 $13, 20( %0 );" "swc2 $14, 32( %0 )" : : "r"(r0) : "memory")
+#define T2_stsz0(r0) __asm__ volatile("swc2 $16, 0( %0 )" : : "r"(r0) : "memory")
+
+u32 *func_801131B0(u32 *f, u32 *ot, s32 n)
+{
+    s32 sa[4];
+    s32 sb[4];
+    s32 *otz = (s32 *)0x1F800004;
+    T2PolyGT4 *p = D_800BF544;
+    s32 *flg = (s32 *)0x1F800000;
+    u32 c;
+    u32 mode;
+    s32 a, b, v, e;
+    u32 *o;
+    u32 c_f;
+
+    while (n-- != 0) {
+        T2_ldv3p(f);
+        c = f[0];
+        p->rgb0 = c & 0xFFF0F0F0;
+        T2_rtpt();
+        p->rgb1 = (c << 4) & 0xF0F0F0;
+        c_f = f[1];
+        T2_stflg(flg);
+        if (*flg >= 0) {
+            T2_nclip();
+            p->uv0 = f[2];
+            T2_stopz(flg);
+            if (*flg > 0) {
+                T2_stsxy3_gt4(p);
+                T2_ldv1p(f);
+                p->rgb2 = c_f & 0xF0F0F0;
+                T2_rtps();
+                p->rgb3 = (c_f << 4) & 0xF0F0F0;
+                p->uv1 = f[3];
+                T2_stflg(flg);
+                if (*flg >= 0) {
+                    T2_stsxy(&p->x3);
+                    if ((p->x0 < 320 || p->x1 < 320 || p->x2 < 320 || p->x3 < 320) &&
+                        (p->y0 < 240 || p->y1 < 240 || p->y2 < 240 || p->y3 < 240)) {
+                        mode = c_f >> 24;
+                        switch (mode & 3) {
+                        case 1:
+                            T2_stsz0(&sa[0]);
+                            T2_stsz1(&sa[1]);
+                            T2_stsz2(&sa[2]);
+                            T2_stsz3(&sa[3]);
+                            a = sa[1];
+                            if (a < sa[0]) {
+                                a = sa[0];
+                            }
+                            b = sa[3];
+                            if (b < sa[2]) {
+                                do {
+                                    b = sa[2];
+                                } while (0);
+                            }
+                            if (b < a) {
+                                b = a;
+                            }
+                            *otz = b >> 2;
+                            break;
+                        case 2:
+                            T2_stsz0(&sb[0]);
+                            T2_stsz1(&sb[1]);
+                            T2_stsz2(&sb[2]);
+                            T2_stsz3(&sb[3]);
+                            a = sb[1];
+                            if (sb[0] < a) {
+                                a = sb[0];
+                            }
+                            b = sb[3];
+                            if (sb[2] < b) {
+                                b = sb[2];
+                            }
+                            if (a < b) {
+                                b = a;
+                            }
+                            *otz = b >> 2;
+                            break;
+                        default:
+                            T2_avsz4();
+                            T2_stotz(otz);
+                            break;
+                        }
+                        e = *otz >> 10;
+                        *otz = (*otz >> e) + (e << 9);
+                        if ((u32)(*otz - 4) >= 0x7FC) {
+                            *otz = -1;
+                        }
+                        if (*otz >= 0) {
+                            v = f[4];
+                            p->uv2 = v;
+                            p->uv3 = (u32)v >> 16;
+                            if (mode & 4) {
+                                p->y0 += func_80083E80(D_8011CC68 + ((s16 *)f)[10] * 4) >> 10;
+                                p->y1 += func_80083E80(D_8011CC68 + ((s16 *)f)[14] * 4) >> 10;
+                                p->y2 += func_80083E80(D_8011CC68 + ((s16 *)f)[16] * 4) >> 10;
+                                p->y3 += func_80083E80(D_8011CC68 + ((s16 *)f)[20] * 4) >> 10;
+                                *otz += 0x80;
+                                if (*otz >= 0x800) {
+                                    *otz = 0x7FF;
+                                }
+                            }
+                            do {
+                                o = ot + *otz;
+                                p->tag = *o | 0x0C000000;
+                                *o = (u32)p;
+                            } while (0);
+                            p++;
+                        }
+                    }
+                }
+            }
+        }
+        f += 11;
+    }
+    D_800BF544 = p;
+    return f;
+}
 
 #define gte_SetRotMatrix(r0) __asm__ volatile("lw	$12, 0( %0 );" "lw	$13, 4( %0 );" "ctc2	$12, $0;" "ctc2	$13, $1;" "lw	$12, 8( %0 );" "lw	$13, 12( %0 );" "lw	$14, 16( %0 );" "ctc2	$12, $2;" "ctc2	$13, $3;" "ctc2	$14, $4" : : "r"(r0) : "$12", "$13", "$14")
 #define gte_SetTransMatrix(r0) __asm__ volatile("lw	$12, 20( %0 );" "lw	$13, 24( %0 );" "ctc2	$12, $5;" "lw	$14, 28( %0 );" "ctc2	$13, $6;" "ctc2	$14, $7" : : "r"(r0) : "$12", "$13", "$14")
 extern u8 D_1F8000F8[];
 extern void *D_800ED8C8_a098;
-extern s32 D_8011CC68;
 typedef struct {
     u8 pad0[6];
     u8 count;
@@ -3503,7 +3686,6 @@ typedef struct {
 #define T2_stsz1(r0) __asm__ volatile("swc2 $17, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz2(r0) __asm__ volatile("swc2 $18, 0( %0 )" : : "r"(r0) : "memory")
 #define T2_stsz3(r0) __asm__ volatile("swc2 $19, 0( %0 )" : : "r"(r0) : "memory")
-extern void *D_800BF544;
 u32 *func_80113748(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[3];
@@ -3593,21 +3775,6 @@ u32 *func_80113748(u32 *f, u32 *ot, s32 n)
     return f;
 }
 
-typedef struct {
-    u32 tag;
-    u32 rgb0;
-    u16 x0, y0;
-    u32 uv0;
-    u32 rgb1;
-    u16 x1, y1;
-    u32 uv1;
-    u32 rgb2;
-    u16 x2, y2;
-    u32 uv2;
-    u32 rgb3;
-    u16 x3, y3;
-    u32 uv3;
-} T2PolyGT4;
 #define T2_ldv3p(r0)                                                                                                   \
     __asm__ volatile("lw $12, 0x18(%0);"                                                                               \
                      "lwc2 $0, 0x14(%0);"                                                                              \
