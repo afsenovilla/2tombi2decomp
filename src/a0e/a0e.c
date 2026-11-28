@@ -4007,7 +4007,75 @@ u32 *func_80113DE0(u32 *f, u32 *ot, s32 n)
     return f;
 }
 
-INCLUDE_ASM("asm/a0e/nonmatchings/a0e", func_80114178);
+typedef struct { u32 tag; u32 c0; s16 x0, y0; u32 c1; s16 x1, y1; u32 c2; s16 x2, y2; u32 c3; s16 x3, y3; } E10G4;
+extern u8 *D_800BF544_37fb;
+extern s16 D_1F8000F0;
+
+void func_80114178(void)
+{
+    E10G4 *p;
+    E10G4 *q;
+    u32 *m;
+    s32 i;
+    s32 y;
+
+    p = (E10G4 *)D_800BF544_37fb;
+    y = ((D_1F8000F0 * -2280) >> 12) + 0x78;
+    __asm__("" : "+r"(y));
+    p[0].y0 = y - 0xF0;
+    p[0].y1 = y - 0xF0;
+    p[0].y2 = y - 0x3C;
+    p[0].y3 = y - 0x3C;
+    p[1].y0 = y - 0x3C;
+    p[1].y1 = y - 0x3C;
+    p[1].y2 = y;
+    p[1].y3 = y;
+    p[2].y0 = y;
+    p[2].y1 = y;
+    p[0].c1 = 0xAC0606;
+    p[0].c0 = 0xAC0606;
+    p[0].c3 = 0xAC0606;
+    p[0].c2 = 0xAC0606;
+    p[1].c1 = 0xAC0606;
+    p[1].c0 = 0xAC0606;
+    p[1].c3 = 0xEA9898;
+    p[1].c2 = 0xEA9898;
+    p[2].y2 = y + 0x3C;
+    p[2].y3 = y + 0x3C;
+    p[2].c1 = 0xEA9898;
+    p[2].c0 = 0xEA9898;
+    p[2].c3 = 0x390000;
+    p[2].c2 = 0x390000;
+    p[3].y0 = y + 0x3C;
+    p[3].y1 = y + 0x3C;
+    p[3].y2 = y + 0x1E0;
+    p[3].y3 = y + 0x1E0;
+    p[3].c1 = 0x390000;
+    p[3].c0 = 0x390000;
+    p[3].c3 = 0x390000;
+    p[3].c2 = 0x390000;
+    for (i = 0; i < 4; i++) {
+        q = &p[i];
+        ((u8 *)q)[7] = 0x38;
+        q->x0 = 0;
+        q->x1 = 0x140;
+        q->x2 = 0;
+        q->x3 = 0x140;
+        do {
+            q->tag = D_800ED8C8[0x7FF] | 0x08000000;
+            D_800ED8C8[0x7FF] = (u32)q;
+        } while (0);
+    }
+    p += 4;
+    D_800BF544_37fb = (u8 *)p;
+    func_80083DE0(p, 0, 1, 0, 0);
+    do {
+        p->tag = D_800ED8C8[0x7FF] | 0x02000000;
+        D_800ED8C8[0x7FF] = (u32)p;
+    } while (0);
+    D_800BF544_37fb = (u8 *)p + 0xC;
+    func_80111E14();
+}
 
 #define gte_SetRotMatrix(r0) __asm__ volatile("lw	$12, 0( %0 );" "lw	$13, 4( %0 );" "ctc2	$12, $0;" "ctc2	$13, $1;" "lw	$12, 8( %0 );" "lw	$13, 12( %0 );" "lw	$14, 16( %0 );" "ctc2	$12, $2;" "ctc2	$13, $3;" "ctc2	$14, $4" : : "r"(r0) : "$12", "$13", "$14")
 #define gte_SetTransMatrix(r0) __asm__ volatile("lw	$12, 20( %0 );" "lw	$13, 24( %0 );" "ctc2	$12, $5;" "lw	$14, 28( %0 );" "ctc2	$13, $6;" "ctc2	$14, $7" : : "r"(r0) : "$12", "$13", "$14")
