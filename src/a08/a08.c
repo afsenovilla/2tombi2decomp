@@ -10718,7 +10718,29 @@ s32 func_8012FB64(u8 a)
     return 1;
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8012FBB4);
+extern s32 func_8011B344();
+extern s32 func_80083E80(s32);
+
+s32 func_8012FBB4(u8 *a, s32 x, s32 y)
+{
+    u8 *q;
+    s16 t = *(u16 *)(a + 0x50) & 0xFFF;
+
+    if (a[1] != 0) {
+        if (t == 0 || t == 0x800) {
+            q = (u8 *)func_8011B344(a + 0x2C, -10, (s16)x, (s16)y);
+            if (q != NULL) {
+                *(u16 *)(q + 0x2E) = *(u16 *)(a + 0x7A);
+            }
+        }
+    }
+    *(u16 *)(a + 0x50) += 0x40;
+    *(u16 *)(a + 0x32) = *(u16 *)(a + 0x7A) + (func_80083E80(t) >> 7);
+    if (t == 0 || t == 0x800) {
+        return 1;
+    }
+    return 0;
+}
 
 void func_8012FC74(u8 *p, s32 a1)
 {
@@ -10938,7 +10960,32 @@ void f_UpdateClosedClamshellQuestActor(u8 *a)
     }
 }
 
-INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8013036C);
+extern u8 D_801463C4[];
+extern void func_80042354();
+extern void func_80040D68();
+
+void func_8013036C(u8 *a)
+{
+    switch (a[6]) {
+    case 0:
+        if (a[0x2B] == 3) {
+            func_80042354(1, 2);
+            func_80040D68(a, D_801463C4);
+            a[0x70] = 1;
+            a[5] = 1;
+        } else if (D_1F800207 != 1) {
+            a[0] = 2;
+            a[6]++;
+        }
+        break;
+    case 1:
+        if (D_1F800207 == 1) {
+            a[0] = 9;
+            a[6] = 0;
+        }
+        break;
+    }
+}
 
 extern void *D_801463B0[];
 void func_80130424(u8 *a)
@@ -11748,8 +11795,6 @@ void func_801354F4(void *arg0) {
     }
 }
 
-extern s32 func_8011B344();
-extern s32 func_80083E80(s32);
 
 s32 func_80135574(u8 *a, s32 x, s32 y)
 {
