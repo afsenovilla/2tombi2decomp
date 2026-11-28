@@ -560,7 +560,72 @@ void f_UpdateCourageTowerExitDoorSequence(u8 *a)
 
 INCLUDE_ASM("asm/a0g/nonmatchings/a0g", f_UpdateCourageTowerLaughingCryingDoorSequence);
 
-INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010AC00);
+extern u8 D_800BF80F;
+static inline s32 Step(u8 *a)
+{
+    u8 *s;
+
+    switch (a[5]) {
+    case 0:
+        a[5] = 1;
+        D_800BF80F = 2;
+        if (a[0xBF] != 0) {
+            func_80074590(0x17, 0, 0xF);
+        }
+        return 0;
+    case 1:
+        if (func_80072E60(a) != 0) {
+            a[5]++;
+        }
+        return 0;
+    case 2:
+        s = D_800BF808;
+        if (s[7] == 0) {
+            a[5] = 0;
+            *(s16 *)(a + 0x56) = *(s16 *)(a + 0x5A);
+            s[7] = 1;
+            *(s32 *)(s + 0x48) = 1;
+            *(s32 *)(s + 0x4C) = *(s16 *)(a + 0x6A);
+            return 1;
+        }
+        return 0;
+    }
+    return 0;
+}
+
+void func_8010AC00(u8 *a)
+{
+    u8 *s;
+    u8 *g;
+
+    switch (a[0x5E]) {
+    case 0:
+        s = D_800BF808;
+        if (*(s32 *)(s + 0x48) != 0) {
+            if (*(s32 *)(s + 0x4C) == a[3]) {
+                a[0x5E] = 1;
+                a[7] = 1;
+            }
+        } else if (a[0x29] != 0) {
+            g = D_800E7E80;
+            if (g[0x29] != 0 && g[0x17B] == 0) {
+                D_1F800137 = 2;
+                a[0x5E] = 2;
+            }
+        }
+        break;
+    case 1:
+        if (func_8010A4F4(a) != 0) {
+            a[0x5E] = 0;
+        }
+        break;
+    case 2:
+        if (Step(a) != 0) {
+            a[0x5E] = 0;
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a0g/nonmatchings/a0g", func_8010ADC4);
 
