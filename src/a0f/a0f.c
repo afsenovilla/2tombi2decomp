@@ -4450,7 +4450,37 @@ void func_80115DA4(u32 *p, void *b)
     func_80115A70(func_801157CC(p, b, lo), b, packed >> 16);
 }
 
-INCLUDE_ASM("asm/a0f/nonmatchings/a0f", func_80115DEC);
+extern s32 D_800A3F90;
+extern s32 D_800A3F94;
+void func_80115FF4();
+
+void func_80115DEC(u8 *a)
+{
+    s32 v[6];
+    u8 *c = D_1F8000D0_b839;
+    s32 ang;
+    u16 t;
+
+    D_800A3F90 = 0x7D00;
+    t = *(u16 *)(c + 0x22);
+    D_800A3F94 = 0x25E;
+    ang = (-(s16)t - D_800A3F94) & 0xFFF;
+    v[0] = *(s16 *)(c + 2);
+    v[1] = *(s16 *)(c + 0xA);
+    v[2] = v[0] + ((func_80083E80(ang) * D_800A3F90) >> 12);
+    v[3] = v[1] + ((func_80083F50(ang) * D_800A3F90) >> 12);
+    ang = (D_800A3F94 - *(s16 *)(c + 0x22)) & 0xFFF;
+    v[4] = v[0] + ((func_80083E80(ang) * D_800A3F90) >> 12);
+    v[5] = v[1] + ((func_80083F50(ang) * D_800A3F90) >> 12);
+    v[0] /= 640;
+    v[1] /= 640;
+    v[2] /= 640;
+    v[3] /= 640;
+    v[4] /= 640;
+    v[5] /= 640;
+    a[6] = 0;
+    func_80115FF4(a, &v[0], &v[2], &v[4]);
+}
 
 typedef struct {
     s32 vx, vy;
