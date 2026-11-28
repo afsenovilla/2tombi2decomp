@@ -95,6 +95,46 @@ static int is_spin(u32 top, u32 br) {
 }
 unsigned long port_spin_vblanks;
 
+
+/* --interp-profile FILE (docs/PORT.md 0.6): per interpreted pc, the instructions executed and the calls entered
+   there, keyed by the program resident at that address (0 = MAIN, else an index into port_ovls); written as CSV at
+   exit (port_interp_profile_write), mapped to functions offline by tools/port_hot.py.  Inert without the flag. */
+const char *port_interp_profile;
+#define PROF_BITS 19
+typedef struct { u32 pc; u32 prog; u32 calls; u32 pad; u64 insns; } ProfEnt;
+static ProfEnt prof[1u << PROF_BITS];
+static int prof_full;
+int port_ovl_index_at(u32 pc);   /* sys_lookup.c */
+static int port_snprintf(char *b, int n, const char *f, ...) {
+    __builtin_va_list ap; __builtin_va_start(ap, f); int r = port_vsnprintf(b, n, f, ap); __builtin_va_end(ap); return r;
+}
+static ProfEnt *prof_at(u32 pc) {
+    u32 prog = (u32)port_ovl_index_at(pc) + 1;   /* +1: 0 marks an empty slot */
+    u32 h = ((pc >> 2) * 0x9E3779B1u ^ prog * 0x85EBCA6Bu) >> (32 - PROF_BITS);
+    for (u32 n = 0; n < (1u << PROF_BITS); n++, h = (h + 1) & ((1u << PROF_BITS) - 1)) {
+        ProfEnt *e = &prof[h];
+        if (e->pc == pc && e->prog == prog) return e;
+        if (!e->prog) { e->pc = pc; e->prog = prog; return e; }
+    }
+    prof_full = 1; return &prof[0];
+}
+void port_interp_profile_write(void) {
+    if (!port_interp_profile) return;
+    int fd = port_create(port_interp_profile);
+    if (fd < 0) { port_printf("[port] --interp-profile: cannot create %s\n", port_interp_profile); return; }
+    static char buf[1 << 16]; int k = 0;
+    k += port_snprintf(buf + k, (int)sizeof buf - k, "pc,prog,calls,insns\n");
+    for (u32 i = 0; i < (1u << PROF_BITS); i++) {
+        ProfEnt *e = &prof[i];
+        if (!e->prog) continue;
+        const char *pn = e->prog - 1 < (u32)port_ovls_count ? port_ovls[e->prog - 1].name : "?";
+        k += port_snprintf(buf + k, (int)sizeof buf - k, "%08x,%s,%u,%llu\n", e->pc, pn, e->calls, e->insns);
+        if (k > (int)sizeof buf - 128) { port_write(fd, buf, k); k = 0; }
+    }
+    if (k) port_write(fd, buf, k);
+    port_close(fd);
+    port_printf("[port] interpreter profile written to %s%s\n", port_interp_profile, prof_full ? " (table full: incomplete)" : "");
+}
 u32 port_mips_cur_pc, port_mips_cur_entry;   /* for the fault report */
 u32 port_watch_pc;                         /* --watch-pc ADDR: print the registers each time the interpreter reaches ADDR */
 u32 port_mips_call(u32 entry, const u32 *args) {
@@ -107,12 +147,14 @@ u32 port_mips_call(u32 entry, const u32 *args) {
     for (int i = 4; i < 8; i++) ((u32 *)r[29])[i] = args[i];
     r[31] = RA_SENTINEL;
     calls_interp++;
+    if (port_interp_profile) prof_at(entry)->calls++;
     if (port_mips_trace) port_printf("[mips] enter %08x (%08x %08x %08x %08x)\n", entry, args[0], args[1], args[2], args[3]);
     for (;;) {
         if (pc == RA_SENTINEL) break;
         u32 ins = *(u32 *)pc;
         u32 cur = pc;
         port_mips_cur_pc = cur; port_mips_cur_entry = entry;
+        if (port_interp_profile) prof_at(cur)->insns++;
         if (cur == port_watch_pc && port_watch_pc)
             port_printf("[watch] %08x frame %d: v0 %08x v1 %08x a0 %08x a1 %08x a2 %08x a3 %08x t0 %08x s0 %08x s1 %08x s2 %08x sp %08x ra %08x\n",
                         cur, port_frame, r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[16], r[17], r[18], r[29], r[31]);
@@ -305,6 +347,7 @@ u32 port_mips_call(u32 entry, const u32 *args) {
                 port_fatal("[mips] jump from %08x (in %08x) to %08x: not RAM code (ra %08x sp %08x a0 %08x v0 %08x)",
                            cur, entry, tgt, r[31], r[29], r[4], r[2]);
             pc = save_pc; npc = tgt;
+            if (link && port_interp_profile) prof_at(tgt)->calls++;   /* an interpreted call */
         }
     }
     port_mips_cur_pc = saved_pc; port_mips_cur_entry = saved_entry;

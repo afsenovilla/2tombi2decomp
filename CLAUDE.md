@@ -249,6 +249,10 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   area / spawn, info overlay, speed; launcher `debug_menu=1`), `--noclip`, `--debug-warp FRAME:AREA:SPAWN` (AREA hex:
   every area A00..A0L is reachable headless for tests, e.g. after the Load Game route from the user's card); all
   inert without the option. Warp = 0x800BF83A area << 8 | arrival, 0x800BF839 = 1, 0x1F800236 = 7.
+- Port profile (docs/PORT.md §0.6): `build/port/tomba2 ... --interp-profile F.csv` (per interpreted pc: calls,
+  instructions; inert without it), `bash tools/port_profile.sh DIR CARD.mcd [JOBS]` (69 standard runs),
+  `python3 -I tools/port_hot.py DIR/*.csv` -> build/port_hot.csv + top per scope; `tools/workqueue.py PROGS --hot
+  build/port_hot.csv` puts what the port interprets most first (AGENTS.md "Parallel rounds").
 - Reference emulator (docs/EMU.md; Tombi-Decomp's tools/psxemu adapted, HLE at the port's shim boundary with the
   port's timing and virtual disc): `python3 -I tools/emu_run.py --frames N --dump-frames DIR [--dump-every K]
   [--dump-vram] [--ram-at F,...] [--dump-packets all|F,...] [--pad-script ...] [--save-state F | --load-state F]

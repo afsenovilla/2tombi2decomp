@@ -58,6 +58,7 @@ void port_quit(int code) {
         if (port_show_fps >= 2) vb_hist_print("at exit");
     }
     port_low_report();
+    { extern void port_interp_profile_write(void); port_interp_profile_write(); }
     { extern void port_audio_quit(void); port_audio_quit(); }
     port_exit(code);
 }

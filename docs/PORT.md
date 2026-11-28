@@ -426,6 +426,37 @@ MIT, same author: copied and adapted, the same keys, lines, 5x7 font and hook po
   the measured vblank rate in the overlay's first line; `--no-kuseg` with a warp to A04: 0 low accesses. Not done: the areas past their first minutes
   (bosses fought, story events), the debug menu on real Windows.
 
+### 0.6 Interpreter profile (2026-11-28): which asm functions the port runs most
+
+What still runs in the MIPS interpreter is the code without C (INCLUDE_ASM), the Psy-Q functions without a shim,
+asm by design, and matched C the generator dropped or keeps interpreted. To aim the next matching round at what
+helps the port most, the interpreter counts its work per address.
+
+- `build/port/tomba2 ... --interp-profile FILE.csv`: at exit (`--frames N`, port_quit, or the entry returning) a CSV
+  `pc,prog,calls,insns`: per interpreted pc, the program resident there (MAIN, or the overlay read last at the
+  highest load address at or below pc: `port_ovl_index_at`, sys_lookup.c), the calls entered there (from native code
+  through port_mips_call, or an interpreted jal / jalr whose target is interpreted) and the instructions executed
+  there. A fixed 512 K-entry hash table in runtime/mips_interp.c (a warning in the log if it ever fills). Inert
+  without the flag: attract 1500 frames, 15 dumps byte-identical to the build before, and identical with the flag on.
+  Cost with it on: about +30 % run time.
+- `bash tools/port_profile.sh OUTDIR CARD.mcd [JOBS]`: the standard set: attract 6000 frames, New Game 9600, the Load
+  Game route of §0.3 from a card (6000), and `--debug-warp 1500:AREA:SPAWN` into every area A00..A0L at spawns 0, 1,
+  2 with the walk / jump script of §0.5 (3400 frames): 69 runs, about 15 minutes on 4 CPUs.
+- `python3 -I tools/port_hot.py OUTDIR/*.csv [--top 30]`: maps every pc to its function (splat asm index, so after a
+  build), sums over the runs and writes build/port_hot.csv (prog, name, addr, size, state, scope, calls, insns,
+  share, runs: the run labels where it ran, `area<hex>-<spawn>` counted as a0x). States: pending / equiv (round
+  targets), lib, by-design, matched (still interpreted C). It prints the totals and the top N per agent scope.
+- `python3 -I tools/workqueue.py PROGS --hot build/port_hot.csv`: the hot functions first (column `hot`), the
+  bottom-up rank for the rest and as tie-break.
+
+First profile (2026-11-28, 69 runs, 8.71 G interpreted instructions): pending 66.9 %, library 18.7 %, asm by design
+12.3 %, matched-but-interpreted 2.1 %. 667 pending functions ran; the top 10 hold 69.4 % of their instructions, the
+top 50 92.0 % (0xD224 bytes), the top 200 99.1 %. By scope: main 74.3 %, a09-a0l+ 12.7 %, a00-a01 7.2 %, a04-a08
+3.3 %, a02-a03 2.5 %. Hottest: f_DrawPackedUiSpriteFrame (19.3 %), func_8008007C (14.2 %), func_80044D8C (11.1 %),
+f_BuildActorModelPartPrimitives (8.2 %), f_TestActorVisibilityAndQueueForRender (4.6 %), f_DrawMenuTextGlyphs
+(2.5 %); per area the bosses / set pieces (a0d func_801131B0, a0f func_80114E70, a01 func_8013000C, a03
+f_DrawTrolleyMeshQuads). The list follows the runs: story events past the first minutes of each area are not in it.
+
 ## 1. Status: stage 1, milestone P0 (2026-11-27)
 
 ```

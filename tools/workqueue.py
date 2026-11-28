@@ -2,6 +2,7 @@
 """Bottom-up work queue: the pending functions of the given programs, the ones whose callees are all matched first.
 
   python3 -I tools/workqueue.py [PROG ...] [--top 30] [--min-size 0x40] [--max-size 0x2000] [--csv FILE]
+                                [--hot build/port_hot.csv]
 
 For each pending game function (an INCLUDE_ASM line of src/<prog>/<prog>.c; library files too with --lib):
   - callees: the jal targets of its asm, resolved in its own program, then in MAIN.EXE (overlays call MAIN's
@@ -14,6 +15,9 @@ For each pending game function (an INCLUDE_ASM line of src/<prog>/<prog>.c; libr
     match), and `callers`: pending functions of the scope that call it (matching it frees them). The last line names
 the pending callees (any program) that block the most functions of the scope.
 Rank: no pending callee first, then by value = size x exact copies (bytes gained with the copies), larger first.
+With --hot (tools/port_hot.py's csv, docs/PORT.md 0.6): the functions the native port interprets most come first
+(column `hot`: interpreted instructions over the profiled runs), the bottom-up rank above orders the rest and breaks
+ties; `pend` / pending callees still say what to match first inside a hot function's call tree.
 Writes build/queue_<progs>.csv (every pending function) and prints the top of the list. The pending set is read from
 the INCLUDE_ASM lines of src/ at every run (functions installed while it runs are dropped before the csv is written;
 asm by design ones are never listed): rerun it rather than reading an old csv. The `inl` column comes from the last
@@ -97,6 +101,7 @@ def main():
     ap.add_argument("--max-size", default="0x100000")
     ap.add_argument("--lib", action="store_true", help="include pending library files")
     ap.add_argument("--csv")
+    ap.add_argument("--hot", help="tools/port_hot.py csv: functions the port interprets most first")
     a = ap.parse_args()
     allp = N.progs_list()
     progs = a.progs or allp
@@ -161,7 +166,13 @@ def main():
         print("dropped %d function(s) installed meanwhile: %s" % (len(gone), " ".join(
             "%s:%s" % (r["prog"], r["name"]) for r in gone[:10])))
         rows = [r for r in rows if r["name"] in now[r["prog"]]]
-    rows.sort(key=lambda r: (r["pend"] > 0, -r["value"], -r["size"]))
+    if a.hot:
+        hot = {(h["prog"], h["name"]): int(h["insns"]) for h in csv.DictReader(open(a.hot))}
+        for r in rows:
+            r["hot"] = hot.get((r["prog"], r["name"]), 0)
+        rows.sort(key=lambda r: (-r["hot"], r["pend"] > 0, -r["value"], -r["size"]))
+    else:
+        rows.sort(key=lambda r: (r["pend"] > 0, -r["value"], -r["size"]))
     tag = "all" if sorted(progs) == allp else "-".join(progs)
     out = a.csv or os.path.join(ROOT, "build", "queue_%s.csv" % tag)
     os.makedirs(os.path.dirname(out), exist_ok=True)
@@ -179,11 +190,12 @@ def main():
         print("inl from " + inl_src + ("" if os.path.getmtime(os.path.join(ROOT, inl_src)) >= newest else
                                        " (older than the last change of src/: bodies matched since are not in it; "
                                        "rerun tools/inlined.py for a fresh column)"))
-    print("%-4s %-46s %6s %3s %4s %3s %3s %4s %5s %4s  %s" % ("prog", "name", "size", "jt", "pend", "inl", "fam",
+    hc = "%11s " % "hot" if a.hot else ""
+    print(hc + "%-4s %-46s %6s %3s %4s %3s %3s %4s %5s %4s  %s" % ("prog", "name", "size", "jt", "pend", "inl", "fam",
                                                           "exact", "value", "clrs", "pending callees"))
     shown = [r for r in rows if lo <= r["size"] <= hi][:a.top]
     for r in shown:
-        print("%-4s %-46s %#6x %3d %4d %3s %3d %4d %#5x %4d  %s" % (
+        print(("%11d " % r["hot"] if a.hot else "") + "%-4s %-46s %#6x %3d %4d %3s %3d %4d %#5x %4d  %s" % (
             r["prog"], r["name"][:46], r["size"], r["jt"], r["pend"], r["inl"], r["fam"], r["exact"], r["value"],
             r["callers"], r["pending_callees"][:40]))
     need = collections.Counter(c for r in rows for c in r["pending_callees"].split())

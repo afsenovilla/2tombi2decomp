@@ -178,6 +178,7 @@ int port_main(int argc, char **argv) {
             else { port_interp_lo = hex_(v); while (*v && *v != '-') v++; port_interp_hi = *v ? hex_(v + 1) : port_interp_lo + 4; }
         }
         else if (streq(argv[i], "--watch-pc") && i + 1 < argc) { extern u32p port_watch_pc; port_watch_pc = hex_(argv[++i]); }
+        else if (streq(argv[i], "--interp-profile") && i + 1 < argc) { extern const char *port_interp_profile; port_interp_profile = argv[++i]; }
         else if (streq(argv[i], "--trace-interp")) { extern int port_mips_trace; port_mips_trace = 1; }
         else if (streq(argv[i], "--entry") && i + 1 < argc) entry_override = hex_(argv[++i]);
         else if (streq(argv[i], "--pad-script") && i + 1 < argc) { extern void port_pad_script(const char *); port_pad_script(argv[++i]); }
@@ -220,6 +221,7 @@ int port_main(int argc, char **argv) {
     port_printf("[port] the entry point returned (frame %d)\n", port_frame);
     { extern void port_audio_quit(void); port_audio_quit(); }
     { extern void port_stub_report(void); port_stub_report(); }
+    { extern void port_interp_profile_write(void); port_interp_profile_write(); }
     return 0;
 }
 

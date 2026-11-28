@@ -154,6 +154,11 @@ STATUS.md is the dated log; this file is the distilled, current knowledge.
   (build/tmp_integrate_wt; the programs each commit touched) with the commits that do not link (`first` = the commit
   that broke a program). About 1 minute per full build; `--only-since REF` for the link check alone. Then:
   commit what it changed, STATUS section + this file + CLAUDE.md, pull, push to master and the session branch.
+- Port-driven targets (since 2026-11-28 (6), docs/PORT.md §0.6): before a round the coordinator refreshes
+  build/port_hot.csv (`bash tools/port_profile.sh DIR CARD.mcd` then `tools/port_hot.py DIR/*.csv`; keep the csvs in
+  the scratchpad) and agents take their queue with `tools/workqueue.py <progs> --hot build/port_hot.csv`: the
+  functions the port interprets most first, bottom-up for the rest; a hot function with pending callees: match the
+  callees first (`pend` column). The main agent gets most of the gain (74 % of the pending interpreted work).
 
 ## Recipe catalogue (gcc 2.8.1 -O2; the dated details are in STATUS)
 

@@ -3,6 +3,18 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-28 (6): interpreter profile, port_hot.py, workqueue --hot
+
+The asm functions ranked by how much the native port interprets them, for the next round's targets (docs/PORT.md
+§0.6). `--interp-profile FILE` (runtime/mips_interp.c; inert without it: frame dumps byte-identical), the standard
+69 runs in `tools/port_profile.sh` (attract, New Game, Load Game, every area at spawns 0-2),
+`tools/port_hot.py` -> build/port_hot.csv + top N per scope, `tools/workqueue.py --hot build/port_hot.csv`.
+Result: pending code is 66.9 % of the interpreted instructions; top 50 pending functions = 92.0 % of that, top 200
+= 99.1 %; main holds 74.3 % (f_DrawPackedUiSpriteFrame, func_8008007C, func_80044D8C,
+f_BuildActorModelPartPrimitives, f_TestActorVisibilityAndQueueForRender: 57 %). Library 18.7 % and asm by design
+12.3 % are not targets (the library ones could get shims). Open: profile story events / bosses past the first
+minutes (more pad scripts or the user's cards).
+
 ## 2026-11-28 (5): port stage 6
 
 The user asked for a debug menu and noclip like the first game's port. docs/PORT.md §0.5 has the details.

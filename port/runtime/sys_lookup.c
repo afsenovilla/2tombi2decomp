@@ -34,6 +34,16 @@ const char *port_ovl_resident(u32p vram) {
     int i = ovl_resident[ovl_slot(vram)];
     return i > 0 && port_ovls[i].vram == vram ? port_ovls[i].file : 0;
 }
+/* the program whose code lies at pc (--interp-profile): the resident overlay with the highest load address at or
+   below pc, else MAIN (0) */
+int port_ovl_index_at(u32p pc) {
+    int best = 0; u32p bv = 0;
+    for (int s = 0; s < 8; s++) {
+        int i = ovl_resident[s];
+        if (i > 0 && port_ovls[i].vram <= pc && port_ovls[i].vram > bv) { best = i; bv = port_ovls[i].vram; }
+    }
+    return best;
+}
 /* gen_t2.py code_hash: FNV-1a of a function's first 8 code bytes (the funcmap holds hashes, not the game's words) */
 static u32p code_hash(const unsigned char *b, u32p h) { for (int i = 0; i < 8; i++) h = (h ^ b[i]) * 0x01000193u; return h; }
 static const PortFunc *find_ovl(u32p a) {
