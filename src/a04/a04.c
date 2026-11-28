@@ -11392,7 +11392,26 @@ u32 *func_8013D568(u32 *f, u32 *ot, s32 n)
     return f;
 }
 
-INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013DAFC);
+u32 *func_8007FDB0();
+u32 *func_8008007C();
+
+void func_8013DAFC(u32 *p, u32 *ot)
+{
+    u32 *m = p;
+    u32 w;
+    s32 c;
+
+    p += 4;
+    if ((D_800BFE56 & 0x10) || D_800BF816 != 0 || D_800E7EAA >= 0x2C) {
+        w = *m;
+        func_8008007C(func_8007FDB0(p, ot, w & 0xFFFF), ot, w >> 16);
+    } else {
+        c = 0x800;
+        gte_ldfcdir(c, c, c);
+        w = *m;
+        f_UpdateThirdReadyOrNotKujaraDialogue(func_8013F418(p, ot, w & 0xFFFF), ot, w >> 16);
+    }
+}
 
 INCLUDE_ASM("asm/a04/nonmatchings/a04", func_8013DBC0);
 
