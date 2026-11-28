@@ -6674,7 +6674,61 @@ INCLUDE_ASM("asm/a06/nonmatchings/a06", func_80124198);
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8012462C);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_801248B4);
+extern s32 func_8009A450();
+#define O(a) (*(u8 **)((a) + 0xC0))
+
+void func_801248B4(u8 *a)
+{
+    if (a[0x2B] != 0) {
+        H(a, 0x6A) = 1;
+        H(O(a), 0xA) = 0;
+        if (a[3] == 1) {
+            H(a, 0x58) = 0;
+        } else {
+            H(O(a), 0xC) = 0;
+        }
+    }
+    switch (H(a, 0x6A)) {
+    case 1:
+        if (a[3] == 0) {
+            H(a, 0x4A) = 4;
+            H(a, 0x6C) = 4;
+            H(a, 0x6E) = 0xF;
+        } else {
+            H(a, 0x4A) = 8;
+            H(a, 0x6C) = 8;
+            H(a, 0x6E) = 0x1E;
+        }
+        if (func_8009A450() & 1) {
+            H(a, 0x4A) = -H(a, 0x4A);
+        }
+        H(a, 0x6A)++;
+        break;
+    case 2:
+        H(O(a), 0xA) += H(a, 0x4A);
+        if ((u16)(H(O(a), 0xA) + H(a, 0x6C)) > H(a, 0x6C) * 2) {
+            if (H(a, 0x4A) > 0) {
+                H(O(a), 0xA) = H(a, 0x6C);
+            } else {
+                H(O(a), 0xA) = -H(a, 0x6C);
+            }
+            if (--H(a, 0x6C) < 3) {
+                H(a, 0x6C) = 2;
+            }
+            H(a, 0x4A) = -H(a, 0x4A);
+        }
+        if (--H(a, 0x6E) <= 0) {
+            H(O(a), 0xA) = 0;
+            H(a, 0x6A) = 0;
+        }
+        if (a[3] == 1) {
+            H(a, 0x58) = *(u16 *)(O(a) + 0xA) * 4;
+        } else {
+            H(O(a), 0xC) = *(u16 *)(O(a) + 0xA) * 4;
+        }
+        break;
+    }
+}
 
 void func_80124D70();
 /* func_80124CEC, inlined */
