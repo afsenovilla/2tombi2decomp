@@ -1081,7 +1081,6 @@ extern s16 D_1F800162_a8d4;
 extern s16 D_1F800164;
 extern u8 D_800E7E80_f78d[];
 extern s32 D_80115894;
-
 void func_8010C7F4(u8 *a)
 {
     T2Tab4 tab;

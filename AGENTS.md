@@ -585,6 +585,23 @@ struct-member form of a cast access, regswap `member` toggles every one)
 - Byte-aligned struct copy from an extern (`typedef struct { u8 v[0x30]; } T; T tbl = D_X;`): the lwl / lwr loop.
 - Target prototypes still apply at install: copy the callee's real narrow-parameter prototypes into the scratch.
 
+**Round 18 forms** (2026-11-28, targets ordered by the port's interpreter profile, `workqueue.py --hot`; 56 functions, ~22 KB)
+- Stack scratch that retail reloads after stores through a pointer argument: declare it as a union of arrays (`union { s32 w[]; s16 h[]; u8 b[]; } L;`), not a cast `s32 L[]` (a03 trolley quad).
+- In-place running sums (`a += b; a >>= 1;`) keep retail's same-register `addu`; `x = (a + b) >> 1` does not. A GTE argument through a local (`e = 0xDAC - z; gte_lddp(e);`) gives retail's register.
+- `do { } while (0)` around ordering-table link code reproduces unfilled delay slots; `__asm__ volatile("nop");` before the first statement after a bounds check gives a label starting with a nop (a0f).
+- Addressable locals get frame slots in the order their address is taken (inlined helpers' locals after the call's argument addresses); a volatile local always takes the lowest slot. Take `&z` after an inlined helper to get the last slot.
+- GT3 / GT4 builders on `mode & 3`: a `switch`, `*otz = b >> 2;` in every arm, one `s32 sa[6]` for both arms (sb = sa + 3).
+- Scratchpad pointers at function scope (`s32 *q = &D_1F800088;`) are rematerialised at the use like retail; inside the block they fold to `%lo`. Scratchpad SPRT at 0x1F800004: `(T *)0x1F800000` with a 4-byte pad.
+- `addu` operand order: `tbl = D_X;` before the loop then `tbl + idx`; `(u8 *)(i * 4 + (s32)b)`; `((Actor *)a)->parts[i]`.
+- Queue push `sw a,-4(p)`: `*--*(u8 ***)D_X = a;`. Masked value reused after a call: an `s16` local. Bool helpers as branches: `if (bad) return 0; ... return 1;`.
+- Loop with entry tests on a[8] then a[9]: `if (a[8] != 0) for (i = 0; i < a[9] && i < a[8]; i++)`.
+- `0x20 - n - g` (operand order = subu order); `-(f() * 120)` for retail's `v - 16v`; a ternary call argument kept as two branches: the call in each branch.
+- Inlined SetTexWindow: a macro on the stack RECT, not an inline taking a pointer.
+- Callers read the result of a void-looking function: declare it `s32` with no return.
+- Open families (near misses, scratch r18/): the tile-map drawers a07 func_8012F938 / a06 f_UpdatePotatoBugQuestNpcActor / a05 func_80136F28 (~10 words, one floating `sh y` store); f_DrawPackedUiSpriteFrame (30, registers); f_DrawProjectedSpriteDefinitionStream (45); a02 func_80125C5C (8, pseudo tie); a0f func_80115364 (order only); a08 func_80134904 / func_80139040 (1 word, `move a0,s0` in a call's delay slot).
+- Possibly hand-written GTE (hard-coded $t3/$t4/$s7 through mtc2/cfc2): a01 func_8013000C, func_8012F8D8, func_80132358, func_801311FC; a08 func_80116904. Check before marking `// ASM by design`.
+- Tool ideas: regswap must check liveness on "reuse X for Y" and refuse multi-statement lines; a floating-store mover; ccheck notes for param-reload delay slots and nop vs filled slots; a giv-reduction report in loophoist; workqueue --hot program share.
+
 **Round 17 forms**
 - GT3 / GT4 list builders with flg / otz at D_1F800080 / 84 (a04..a08 and a01 families, with their dispatchers
   `gte_SetRotMatrix(&D_1F8000F8)` + one loop per arm): `u32 m = 0xFFF0F0F0;` as a local; `c >>= 24; mode = c & 3;`;

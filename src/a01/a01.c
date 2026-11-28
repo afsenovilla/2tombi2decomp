@@ -10569,7 +10569,6 @@ void func_80129114(u8 *a) {
 
 extern u16 D_1F8000F2;
 extern u16 D_1F8000F0;
-
 void func_801291F4(u8 *a)
 {
     u8 *e;

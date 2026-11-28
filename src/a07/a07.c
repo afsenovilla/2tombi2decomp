@@ -49,7 +49,6 @@ extern u8 D_800BF808[];
 extern u8 D_800BF873;
 extern u8 D_1F800236;
 extern void func_80054198();
-
 void func_8010A7FC(u8 *a)
 {
     u8 *g = D_800BF808;
@@ -5297,7 +5296,6 @@ void func_8011EB04(u8 *a)
 
 extern void func_80074590();
 extern s32 func_8003116C();
-
 s32 func_8011EDB8(u8 *a)
 {
     s16 v[6];

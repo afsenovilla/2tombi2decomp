@@ -3,6 +3,10 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-28 (7): eighteenth round (port-hot targets)
+
+Five agents on Opus, targets from build/port_hot.csv (`workqueue.py --hot`). 56 functions installed: main 7 (func_8008007C 14 %, func_80044D8C 11 %, f_BuildActorModelPartPrimitives 8 %, f_TestActorVisibilityAndQueueForRender, f_DrawMenuTextGlyphs, f_ProjectAndQueueFourVertexPrimitive, func_80075F0C), a00-a01 9, a04-a08 22, a09+ 9 (a0d / a0f / a0a GT3 / GT4 builders), a02-a03 0. Together about 40 % of the interpreted pending instructions of the 2026-11-28 profile. Clean full build 29 / 29, all 26 commits link, nearcopy / dupsweep nothing. 5347 / 7011 functions, 60.7 % of the bytes. Recipes, near misses and tool ideas: AGENTS.md "Round 18 forms". Next: re-run tools/port_profile.sh (the ranking has changed), finish the near-miss families, check the suspected hand-written GTE functions.
+
 ## 2026-11-28 (6): interpreter profile, port_hot.py, workqueue --hot
 
 The asm functions ranked by how much the native port interprets them, for the next round's targets (docs/PORT.md

@@ -24,16 +24,16 @@ bytes of the disc; everything else is still built from the original assembly, so
 byte-identical at every step.
 
 <!-- progress:start -->
-**Whole game: 60.0 % of the code matches byte for byte** (1697320 of 2827992 bytes, 5302 of 7011 functions; 2026-11-27).
+**Whole game: 60.7 % of the code matches byte for byte** (1717744 of 2827992 bytes, 5347 of 7011 functions; 2026-11-28).
 
 | Part | Functions | Bytes | Matching (bytes) |
 |---|---:|---:|---|
 | 1. Psy-Q library (MAIN + boot) | 756 / 873 | 98136 / 174272 | 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ 56.3 % |
-| 2. MAIN.EXE engine | 941 / 1169 | 257120 / 409140 | 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ 62.8 % |
+| 2. MAIN.EXE engine | 948 / 1169 | 262184 / 409140 | 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ 64.1 % |
 | 3. boot + game/demo/opn/sop/crd | 126 / 153 | 48716 / 70648 | 🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 69.0 % |
 | 4a. small areas a0g-a0j | 150 / 158 | 57588 / 61632 | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 93.4 % |
-| 4b. medium areas + bosses | 853 / 1020 | 367056 / 502332 | 🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 73.1 % |
-| 4c. big areas a00-a08 | 2476 / 3638 | 868704 / 1609968 | 🟩🟩🟩🟩🟩⬜⬜⬜⬜⬜ 54.0 % |
+| 4b. medium areas + bosses | 862 / 1020 | 375040 / 502332 | 🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 74.7 % |
+| 4c. big areas a00-a08 | 2505 / 3638 | 876080 / 1609968 | 🟩🟩🟩🟩🟩⬜⬜⬜⬜⬜ 54.4 % |
 
 <details>
 <summary><b>Per program</b> (game code, without the Psy-Q library)</summary>
@@ -41,34 +41,34 @@ byte-identical at every step.
 | Program | Functions | Bytes | Matching (bytes) |
 |---|---:|---:|---|
 | SCUS_944.54: boot | 8 / 13 | 876 / 3300 | 🟩🟩🟩⬜⬜⬜⬜⬜⬜⬜ 26.5 % |
-| MAIN.EXE: engine | 941 / 1169 | 257120 / 409140 | 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ 62.8 % |
+| MAIN.EXE: engine | 948 / 1169 | 262184 / 409140 | 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ 64.1 % |
 | GAME.BIN | 28 / 33 | 6636 / 11236 | 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ 59.1 % |
 | DEMO.BIN | 9 / 15 | 2268 / 5152 | 🟩🟩🟩🟩⬜⬜⬜⬜⬜⬜ 44.0 % |
 | OPN.BIN: opening | 13 / 16 | 9568 / 12860 | 🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 74.4 % |
 | SOP.BIN | 39 / 41 | 13552 / 14328 | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 94.6 % |
 | CRD.BIN: credits | 29 / 35 | 15816 / 23772 | 🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 66.5 % |
-| A00.BIN: area overlay | 365 / 511 | 144944 / 247424 | 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ 58.6 % |
-| A01.BIN: area overlay | 310 / 406 | 114916 / 173892 | 🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 66.1 % |
+| A00.BIN: area overlay | 370 / 511 | 147112 / 247424 | 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ 59.5 % |
+| A01.BIN: area overlay | 313 / 406 | 116032 / 173892 | 🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 66.7 % |
 | A02.BIN: area overlay | 290 / 306 | 110200 / 122524 | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 89.9 % |
 | A03.BIN: area overlay | 37 / 43 | 21568 / 35128 | 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ 61.4 % |
-| A04.BIN: area overlay | 279 / 474 | 94836 / 218464 | 🟩🟩🟩🟩⬜⬜⬜⬜⬜⬜ 43.4 % |
-| A05.BIN: area overlay | 282 / 470 | 88580 / 200480 | 🟩🟩🟩🟩⬜⬜⬜⬜⬜⬜ 44.2 % |
-| A06.BIN: area overlay | 308 / 519 | 97816 / 227456 | 🟩🟩🟩🟩⬜⬜⬜⬜⬜⬜ 43.0 % |
-| A07.BIN: area overlay | 255 / 373 | 80732 / 159552 | 🟩🟩🟩🟩🟩⬜⬜⬜⬜⬜ 50.6 % |
-| A08.BIN: area overlay | 350 / 536 | 115112 / 225048 | 🟩🟩🟩🟩🟩⬜⬜⬜⬜⬜ 51.1 % |
+| A04.BIN: area overlay | 284 / 474 | 95732 / 218464 | 🟩🟩🟩🟩⬜⬜⬜⬜⬜⬜ 43.8 % |
+| A05.BIN: area overlay | 284 / 470 | 88960 / 200480 | 🟩🟩🟩🟩⬜⬜⬜⬜⬜⬜ 44.4 % |
+| A06.BIN: area overlay | 310 / 519 | 98212 / 227456 | 🟩🟩🟩🟩⬜⬜⬜⬜⬜⬜ 43.2 % |
+| A07.BIN: area overlay | 257 / 373 | 81160 / 159552 | 🟩🟩🟩🟩🟩⬜⬜⬜⬜⬜ 50.9 % |
+| A08.BIN: area overlay | 360 / 536 | 117104 / 225048 | 🟩🟩🟩🟩🟩⬜⬜⬜⬜⬜ 52.0 % |
 | A09.BIN: area overlay | 42 / 51 | 14044 / 20364 | 🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 69.0 % |
-| A0A.BIN: area overlay | 111 / 133 | 47896 / 64328 | 🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 74.5 % |
+| A0A.BIN: area overlay | 113 / 133 | 50152 / 64328 | 🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜ 78.0 % |
 | A0B.BIN: area overlay | 89 / 107 | 47204 / 61368 | 🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜ 76.9 % |
 | A0C.BIN: area overlay | 105 / 121 | 50792 / 63832 | 🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜ 79.6 % |
-| A0D.BIN: area overlay | 94 / 106 | 44612 / 57812 | 🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜ 77.2 % |
+| A0D.BIN: area overlay | 97 / 106 | 47152 / 57812 | 🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜ 81.6 % |
 | A0E.BIN: area overlay | 96 / 114 | 44644 / 60716 | 🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 73.5 % |
-| A0F.BIN: area overlay | 119 / 140 | 51360 / 71340 | 🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 72.0 % |
+| A0F.BIN: area overlay | 121 / 140 | 53672 / 71340 | 🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜ 75.2 % |
 | A0G.BIN: area overlay | 31 / 38 | 13012 / 16684 | 🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜ 78.0 % |
 | A0H.BIN: area overlay | 35 / 35 | 13488 / 13488 | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 100.0 % |
 | A0I.BIN: area overlay | 33 / 33 | 14624 / 14624 | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 100.0 % |
 | A0J.BIN: area overlay | 51 / 52 | 16464 / 16836 | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 97.8 % |
 | A0K.BIN: area overlay | 106 / 139 | 37968 / 61688 | 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ 61.5 % |
-| A0L.BIN: area overlay | 91 / 109 | 28536 / 40884 | 🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 69.8 % |
+| A0L.BIN: area overlay | 93 / 109 | 29412 / 40884 | 🟩🟩🟩🟩🟩🟩🟩⬜⬜⬜ 71.9 % |
 
 </details>
 <!-- progress:end -->

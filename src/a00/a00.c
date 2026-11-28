@@ -7908,7 +7908,6 @@ s32 func_801280E8(u8 *a) {
 
 #define SL(i) (*(u8 **)(a + 0xC0 + (i) * 4))
 void func_801284AC(u8 *a);
-
 s32 func_801281B8(u8 *a)
 {
     u8 *p;
@@ -9619,7 +9618,6 @@ typedef struct { u8 pad[0xC0]; u8 *s[8]; } AB;
 #define SK(k) (((AB *)a)->s[k])
 extern s32 D_1F800000_aeae[];
 extern s32 D_1F800020[];
-
 void f_UpdateTownBarrelChildTransforms(u8 *a)
 {
     s32 i;

@@ -2991,7 +2991,6 @@ typedef struct {
 } S10b;
 extern S10b D_8013C9D4_8ac7[];
 extern u8 D_80040558[];
-
 void func_80114874(u8 *a, s32 i)
 {
     S10b *e;

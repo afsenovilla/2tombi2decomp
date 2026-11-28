@@ -4111,7 +4111,6 @@ static inline void b398_clear(void)
         *p = 0x7FFF7FFF;
     }
 }
-
 void func_8011B398(u8 *a)
 {
     s32 i;
@@ -4812,7 +4811,6 @@ INCLUDE_ASM("asm/a08/nonmatchings/a08", func_8011D144);
 
 extern u8 D_800BFA46;
 extern void func_80051B04();
-
 s32 func_8011D3A0(u8 *a, s32 i)
 {
     if ((D_800BFA46 >> i) & 1) {
@@ -10762,7 +10760,6 @@ s32 func_8012FB64(u8 a)
 
 extern s32 func_8011B344();
 extern s32 func_80083E80(s32);
-
 s32 func_8012FBB4(u8 *a, s32 x, s32 y)
 {
     u8 *q;
@@ -10821,7 +10818,6 @@ static inline s32 fd38_ok(u8 *a)
     }
     return 1;
 }
-
 s32 func_8012FD38(u8 *a)
 {
     s32 i;
@@ -11033,7 +11029,6 @@ void f_UpdateClosedClamshellQuestActor(u8 *a)
 extern u8 D_801463C4[];
 extern void func_80042354();
 extern void func_80040D68();
-
 void func_8013036C(u8 *a)
 {
     switch (a[6]) {
@@ -11865,7 +11860,6 @@ void func_801354F4(void *arg0) {
     }
 }
 
-
 s32 func_80135574(u8 *a, s32 x, s32 y)
 {
     u8 *q;
@@ -11972,7 +11966,6 @@ s32 func_80137410(T4814 *a)
 extern u16 D_1F800160_3621;
 extern u16 D_1F800164_7d8c;
 extern s32 func_80084080(s32);
-
 s32 func_80137500(u8 *a)
 {
     s16 dx, dz;
@@ -12043,7 +12036,6 @@ s32 func_80137920(u8 *a)
 
 extern u8 *func_8003116C();
 extern s32 func_80083F50(s32);
-
 void func_801379BC(u8 *a)
 {
     u8 *q;
@@ -12800,7 +12792,6 @@ void func_8013A398(u8 *a)
 }
 
 extern void func_80041718();
-
 s32 func_8013A578(u8 *a)
 {
     switch (a[0x78]) {

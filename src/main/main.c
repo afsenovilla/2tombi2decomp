@@ -7526,7 +7526,6 @@ static inline s32 PQ4_project(u8 *prim, u8 *v)
     gte_stotz(&otz);
     return otz;
 }
-
 void f_ProjectAndQueueFourVertexPrimitive(u8 *prim, u8 *v, s32 bias)
 {
     s32 z;
@@ -7967,7 +7966,6 @@ void f_DrawActorModelByRenderMode(u8 *a)
 
 extern s16 D_1F8000C0[];
 void f_DrawModelPrimitiveStreamForCurrentArea(u32 *a, void *b, s32 c);
-
 void f_BuildActorModelPartPrimitives(u8 *a, s32 b)
 {
     s32 i;
@@ -10491,7 +10489,6 @@ s32 f_StartCooperativeDiscRead(void *dst, s32 sector, s32 size)
 
 typedef struct { s32 base; s32 mul; } LzTbl;
 extern LzTbl D_800153C8[];
-
 s32 func_80044D8C(s16 *a0, u8 *dst, u8 *src, s32 len) {
     s32 offs[8];
     u8 *out = dst;
@@ -29332,7 +29329,6 @@ void func_8007703C(u8 *a)
 
 typedef struct { u8 pad[0x18]; s16 ax, ay, az; } CamAxes;
 s32 f_IntegerSquareRootRounded(u32 x);
-
 s32 f_TestActorVisibilityAndQueueForRender(u8 *a, s16 x, s16 y, s16 z)
 {
     s32 d;
@@ -29953,7 +29949,6 @@ extern u8 D_80016DA0[];
 extern u8 D_80016DA4[];
 extern u8 D_80016DA8[];
 extern u8 D_80016DAC[];
-
 s32 f_DrawMenuTextGlyphs(s32 xy, s32 wh, s16 c, u8 *s, s32 ot)
 {
     ScrSprt *sp = (ScrSprt *)0x1F800000;
@@ -32529,7 +32524,6 @@ typedef struct {
                      :                                                                                                 \
                      : "r"(r0)                                                                                         \
                      : "$12")
-
 u32 *func_8008007C(u32 *f, u32 *ot, s32 n)
 {
     s32 sz[4];

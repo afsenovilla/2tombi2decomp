@@ -68,7 +68,7 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   The library compiler also hoists more loop invariants around loops with calls (a `loop_has_call` patch of cc1
   reproduces it per file: `// CC gcc-2.7.2-loop4`, `gcc-2.8.1-loop2`, `gcc-2.8.1-nocse-loop2`, made and sha1
   checked by tools/setup_native.sh; AGENTS.md "Compilers" item 5).
-- What is left (2026-11-27, 5302 / 7011 functions, 60.0 % of the bytes): mostly actor state machines (the NPC ones of
+- What is left (2026-11-28, 5347 / 7011 functions, 60.7 % of the bytes): mostly actor state machines (the NPC ones of
   one skeleton are nearly done: `tools/npcsm.py --list`; AGENTS.md "Round 10 / 11 forms") and dispatchers built from matched handlers (AGENTS.md
   "Order of work" item 3), the big areas a00-a08 above all.
 - Agents' commits do not always link on their own (alias lines committed later): verify with a clean full build
@@ -208,7 +208,9 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   as raw words is declared `type:jtbl` in config/symbol_addrs_<prog>.txt (AGENTS.md "Round 15 forms"). Round 16
   (the user's choice: agents on Fable, ~100 KB, the best round): AGENTS.md "Round 16 forms" (shared-lui spawners,
   gcc's scheduler model, camera-zone template); tools/jtbl.py orders retail candidates by table address. Round 17
-  (back on Opus, the user's choice; ~68 KB): AGENTS.md "Round 17 forms"; drop narrow prototypes from scratches.
+  (back on Opus, the user's choice; ~68 KB): AGENTS.md "Round 17 forms"; drop narrow prototypes from scratches. Round 18 (2026-11-28): targets from the port's
+  interpreter profile (`workqueue.py --hot build/port_hot.csv`), AGENTS.md "Round 18 forms"; re-run
+  tools/port_profile.sh before each round, the ranking moves as hot functions become native.
 - `python3 -I tools/vermatch.py`: how much USA code is found in the EU / ES builds.
 - Native port (docs/PORT.md; stage 1 2026-11-27: title, attract demos, New Game into the A00 opening): `cmake -S
   port -B build/port -G Ninja && cmake --build build/port` (needs `gcc-multilib`, the matching build's

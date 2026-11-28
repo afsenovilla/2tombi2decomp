@@ -1188,7 +1188,6 @@ void func_80110CD0(u8 *a, u8 *b)
 extern s16 D_1F80009C_c31a;
 extern s32 func_8010C8B4();
 extern s32 func_80077768();
-
 void func_80110D6C(u8 *a, u8 *b)
 {
     s32 r = func_8010C8B4(a, b);
@@ -5797,7 +5796,6 @@ void func_8011E59C(u8 *a) {
 }
 
 extern void func_8005082C();
-
 void func_8011E6AC(u8 *a)
 {
     switch (a[6]) {
@@ -8992,7 +8990,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_80134EBC);
 extern u8 D_80145770[];
 extern void func_80077C40();
 extern void func_80051B04();
-
 void func_801351B8(u8 *a, s32 b)
 {
     u16 t;
@@ -9056,7 +9053,6 @@ INCLUDE_ASM("asm/a04/nonmatchings/a04", func_801353C8);
 extern s32 func_8009A450(void);
 extern s32 func_8003116C();
 extern void func_80074590();
-
 void func_801354B8(u8 *a, s16 b)
 {
     s32 v[3];
@@ -11394,7 +11390,6 @@ u32 *func_8013D568(u32 *f, u32 *ot, s32 n)
 
 u32 *func_8007FDB0();
 u32 *func_8008007C();
-
 void func_8013DAFC(u32 *p, u32 *ot)
 {
     u32 *m = p;
