@@ -29947,7 +29947,89 @@ void func_800788AC(void)
 
 INCLUDE_ASM("asm/main/nonmatchings/main", func_80078988);
 
-INCLUDE_ASM("asm/main/nonmatchings/main", f_DrawMenuTextGlyphs);
+typedef struct { s32 pad; u8 r, g, b, code; s16 x, y; u8 u, v; u16 clut; s16 w, h; } ScrSprt;
+extern void SetDrawMode();
+extern u8 D_80016DA0[];
+extern u8 D_80016DA4[];
+extern u8 D_80016DA8[];
+extern u8 D_80016DAC[];
+
+s32 f_DrawMenuTextGlyphs(s32 xy, s32 wh, s16 c, u8 *s, s32 ot)
+{
+    ScrSprt *sp = (ScrSprt *)0x1F800000;
+    u32 *p;
+    u32 *o;
+    s32 n;
+    u32 *o_f;
+
+    *(s32 *)&sp->x = xy;
+    *(s32 *)&sp->w = wh;
+    if (c >= 16) {
+        sp->clut = ((c + 0x1E0) << 6) | 0x3E;
+    } else {
+        sp->clut = ((c + 0x1F0) << 6) | 0x3F;
+    }
+    sp->code = 0x65;
+    while (*s != 0) {
+        if (*s == ' ') {
+            s++;
+            sp->x += 8;
+        } else if (*s == '\n') {
+            s++;
+            sp->x = xy & 0xFFF;
+            sp->y += sp->h;
+            continue;
+        } else if (*s == 1) {
+            func_80078988(sp->x, sp->y, c, D_80016DA8, ot);
+            s++;
+            sp->x += 8;
+        } else if (*s == 2) {
+            func_80078988(sp->x, sp->y, c, D_80016DAC, ot);
+            s++;
+            sp->x += 8;
+        } else if (*s == 3) {
+            func_80078988(sp->x, sp->y, c, D_80016DA4, ot);
+            s++;
+            sp->x += 8;
+        } else if (*s == 4) {
+            func_80078988(sp->x, sp->y, c, D_80016DA0, ot);
+            s++;
+            sp->x += 8;
+        } else {
+            n = *s + D_1F800180;
+            sp->u = (n % 32) * sp->w;
+            sp->v = ((*s + D_1F800180) / 32) * sp->h;
+            if (sp->h == 16) {
+                sp->v += 8;
+            }
+            p = D_800BF544;
+            do {
+                o = D_800ED8C8 + ot;
+            } while (0);
+            *p = *o | 0x4000000;
+            *o = (u32)p;
+            p++;
+            s++;
+            *p++ = ((u32 *)sp)[1];
+            *p++ = ((u32 *)sp)[2];
+            *p++ = ((u32 *)sp)[3];
+            *p++ = ((u32 *)sp)[4];
+            D_800BF544 = p;
+            sp->x += 8;
+        }
+    }
+    {
+        u32 *q = D_800BF544;
+        SetDrawMode(q, 0, 0, 0x1F, 0);
+        o_f = D_800ED8C8 + ot;
+        *q = *o_f | 0x2000000;
+        do {
+            *o_f = (u32)q;
+        } while (0);
+    }
+    D_800BF544 = (u8 *)D_800BF544 + 0xC;
+    return sp->x - (xy & 0xFFFF);
+}
 
 void func_80079014(u32 *src, s32 idx)
 {
