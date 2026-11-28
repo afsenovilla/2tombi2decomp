@@ -11405,7 +11405,86 @@ void func_8013E144(u8 *a)
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013E180);
 
-INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013E30C);
+typedef struct { s16 x, y, z, w; } Seg4;
+extern u8 D_8014C1B4[];
+#define UH(p, o) (*(u16 *)((u8 *)(p) + (o)))
+
+void func_8013E30C(u8 *a)
+{
+    u8 *o = *(u8 **)(a + 0x10);
+    Seg4 *e;
+    s32 i;
+    s32 dx, dy, dz;
+
+    switch (a[4]) {
+    case 0:
+        e = (Seg4 *)(a + 0x50);
+        for (i = 0; i < 7; i++) {
+            e->x = UH(o, 0x2E);
+            e->y = UH(o, 0x32);
+            e->z = UH(o, 0x36);
+            e->w = (u32)(func_8009A450() * 3) >> 14;
+            e++;
+        }
+        *(u8 **)(a + 0x34) = D_8014C1B4;
+        a[4] = 1;
+        if (a[3] == 0x83) {
+            a[5] = 0;
+        } else {
+            a[5] = 1;
+        }
+    case 1:
+        a[1] = o[1];
+        e = (Seg4 *)(a + 0x80);
+        for (i = 6; i > 0; i--, e--) {
+            dx = (e[-1].x - e->x) >> 1;
+            dy = (e[-1].y - e->y) >> 1;
+            dz = (e[-1].z - e->z) >> 1;
+            e->x += dx;
+            e->y += dy;
+            e->z += dz;
+            if (func_8009A450() & 1) {
+                if (++e->w >= 7) {
+                    e->w -= 7;
+                }
+            }
+        }
+        e = (Seg4 *)(a + 0x50);
+        e->x = UH(o, 0x2E);
+        e->y = UH(o, 0x32);
+        e->z = UH(o, 0x36);
+        if (++e->w >= 7) {
+            e->w -= 7;
+        }
+        break;
+    case 2:
+        switch (a[5]) {
+        default:
+        case 0:
+            H(a, 0x4A) = -(func_8009A450() & 0xF) - 7;
+            a[5] = 1;
+            a[7] = 0;
+        case 1:
+            e = (Seg4 *)(a + 0x50);
+            for (i = 0; i < 7; i++) {
+                e->x += func_80083F50(i << 9) >> 8;
+                e->z += func_80083E80(i << 9) >> 8;
+                e->y += H(a, 0x4A);
+                e++;
+            }
+            H(a, 0x4A) += 2;
+            if (++a[7] >= 15) {
+                a[4] = 3;
+            }
+            a[1] = 1;
+            break;
+        }
+        break;
+    case 3:
+        func_8007A624(a);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/a06/nonmatchings/a06", func_8013E5D8);
 
