@@ -871,6 +871,14 @@ struct-member form of a cast access, regswap `member` toggles every one)
   a byte-matching `void` C may leave the value the callers use in `$v0`). Test hooks: `--demo-takeover F`
   (the attract demo's own place, then the pad script; also in tools/emu_run.py) and `--poke` on the scratchpad.
   The viewer's audio follows its ring's fill (a rate within 2 %) so a game pacing 59.4 vblanks/s no longer drains it.
+  Stage 6 (2026-11-28, docs/PORT.md §0.5): `--debug-menu` (runtime/debugmenu.c, T1's menu adapted; Select+L1+R1
+  or F1), `--noclip`, `--debug-warp FRAME:AREA:SPAWN` reach every area A00..A0L for tests (the story gates them
+  otherwise): sweep a change native vs `--interp-range all` after such a warp. Debug hooks must stay inert without
+  their option (byte-identical dumps) and write memory only from the vblank, never call game code there. A hook in
+  `port_lookup` sees only calls through `port_resolve_call` (asm / interpreted targets, function pointers), never a
+  native-to-native direct call (func_80059D28 -> func_8005950C): use a game flag instead (0x800BF841 skips the
+  player update). T2's walls: Tomba's speed is zeroed by the terrain probes and he is kept on the area's 2.5D
+  plane (f_ProjectActorOntoAreaPlane); the debug overlay draws into the RGB copy of the frame, never into VRAM.
 - Byte-matching only; tools/nonmatching.py is kept unused.
 - USA is the reference; EU in config/eu/.
 - The licensed-region module at the end of boot.c [0x80011A0C, 0x80012D2C) is library-style files in

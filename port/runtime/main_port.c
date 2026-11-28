@@ -182,13 +182,17 @@ int port_main(int argc, char **argv) {
         else if (streq(argv[i], "--entry") && i + 1 < argc) entry_override = hex_(argv[++i]);
         else if (streq(argv[i], "--pad-script") && i + 1 < argc) { extern void port_pad_script(const char *); port_pad_script(argv[++i]); }
         else if (streq(argv[i], "--autostart") && i + 1 < argc) { extern int port_autostart; port_autostart = atoi_(argv[++i]); }
+        else if (streq(argv[i], "--debug-menu")) { extern int port_debug_menu; port_debug_menu = 1; }
+        else if (streq(argv[i], "--noclip")) { extern void port_debug_noclip_on(void); port_debug_noclip_on(); }
+        else if (streq(argv[i], "--debug-warp") && i + 1 < argc) { extern void port_debug_warp_arg(const char *); port_debug_warp_arg(argv[++i]); }
         else if (streq(argv[i], "-v")) port_verbose++;
         else {
             port_printf("usage: %s [--disc IMAGE.bin|.cue|.iso] [--exe MAIN.EXE] [--data DIR] [--no-verify] [--save-dir DIR] [--frames N] [--dump-frames DIR] [--dump-every N] [--dump-vram]\n"
                         "       [--window [--viewer PATH] [--viewer-arg ARG]... [--renderer direct3d|direct3d11|opengl|software] [--fullscreen] [--linear]]\n"
                         "         (SDL2 window: the tomba2-view process; paced)\n"
                         "       [--realtime] [--hz 50|60] [--trace-cd] [--no-interp] [--interp ADDR] [--trace-interp]\n"
-                        "       [--entry ADDR] [--pad-script FRAME:BUTTONS[:LEN[xCOUNT/PERIOD]],...] [--autostart N] [-v]\n", argv[0]);
+                        "       [--entry ADDR] [--pad-script FRAME:BUTTONS[:LEN[xCOUNT/PERIOD]],...] [--autostart N] [-v]\n"
+                        "       [--debug-menu] [--noclip] [--debug-warp FRAME:AREA:SPAWN]   (docs/PORT.md 0.5)\n", argv[0]);
             return 2;
         }
     }

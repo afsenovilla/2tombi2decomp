@@ -627,18 +627,23 @@ static int window_fd = -1;
 void port_pipe_video_fd(int fd) { window_fd = fd; }
 void port_gpu_fds_get(int *win, int *pipe) { *win = window_fd; *pipe = pipe_fd; }   /* save states keep this run's fds */
 void port_gpu_fds_set(int win, int pipe) { window_fd = win; pipe_fd = pipe; }
+/* --debug-menu: the overlay drawn into the RGB copy of the displayed frame (runtime/debugmenu.c) */
+extern int port_debug_menu;
+extern void port_debug_draw(u8 *rgb, int w, int h);
 void port_gpu_vblank(void) {
     if (port_pipe_path) pipe_frame();
     if (window_fd >= 0) {
         extern void port_window_frame(const u8 *rgb, int w, int h);
         int w, h;
         port_gpu_frame(frame_rgb, &w, &h);
+        if (port_debug_menu) port_debug_draw(frame_rgb, w, h);
         port_window_frame(tv_frame(frame_rgb, w, h), w, h);
     }
     if (!port_dump_dir || port_dump_every <= 0 || port_frame % port_dump_every) return;
     port_mkdir(port_dump_dir);       /* every time (cheap): a "made" flag would be restored by --load */
     char path[512]; int w, h;
     port_gpu_frame(frame_rgb, &w, &h);
+    if (port_debug_menu && window_fd < 0) port_debug_draw(frame_rgb, w, h);
     path_for(path, "frame_");
     if (write_png(path, port_dump_tv ? tv_frame(frame_rgb, w, h) : frame_rgb, w, h)) port_printf("[gpu] cannot write %s\n", path);
     if (port_dump_vram) {

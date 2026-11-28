@@ -42,6 +42,7 @@ Keyboard              PlayStation
   A / E               L2 / R2
   Return              Start
   Backspace           Select
+  F1                  debug menu (only with debug_menu=1, below)
   F                   window size (2x / 3x)
   F11                 fullscreen on / off
   F12                 screenshot (tomba2_shot_000.bmp, ... next to the launcher)
@@ -61,6 +62,15 @@ Edit the options= line of tomba2-launcher.ini, for example:
 (--keys takes SDL key names for up, down, left, right, cross, square, triangle, circle, l1, r1, l2, r2,
 start, select.) tomba2.exe can also be run from a command prompt: tomba2.exe --disc "D:\Games\Tomba2.cue"
 --window (tomba2.exe --help lists the options).
+
+Debug menu (testing)
+--------------------
+Set debug_menu=1 in tomba2-launcher.ini (or run tomba2.exe with --debug-menu). In the game, Select+L1+R1
+(Backspace+Q+W) or F1 opens it: Up / Down pick a line, Left / Right change a value (L2 held: by 10), Cross
+applies, Triangle or Start closes. Lines: noclip (terrain walls), fly (d-pad moves Tomba, L1 / R1 up and down,
+Cross held = fast), infinite vitality, max AP, warp to any area (A00-A0L) and arrival point, an info overlay
+(frame, vblanks per second, area, Tomba's position), speed normal / slow / fast. A warp skips the story: the
+area's events may not be set up as in a real playthrough.
 
 What works, what does not (yet)
 -------------------------------

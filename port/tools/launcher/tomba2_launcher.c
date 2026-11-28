@@ -7,6 +7,7 @@
  *     hold Shift while starting it (or pass /choose) to pick another image;
  *   - runs tomba2.exe --disc IMAGE --window --save-dir SAVES [options= line of the .ini] without a console, the
  *     game's log in tomba2.log beside the .ini; memory cards in SAVES = saves\ beside the .ini;
+ *   - debug_menu=1 in the .ini adds --debug-menu (docs/PORT.md §0.5);
  *   - when the game stops with an error (not the USA disc, an unreadable image, a crash) shows the FATAL line and
  *     offers to pick another image.
  * Nothing of the game is in it: tomba2.exe reads the disc image itself and checks MAIN.EXE by SHA-1. */
@@ -19,6 +20,7 @@
 
 static char exe_dir[MAX_PATH], base[MAX_PATH], ini[MAX_PATH], logp[MAX_PATH], saves[MAX_PATH];
 static char disc[MAX_PATH], options[1024];
+static int debug_menu;   /* debug_menu=1 in the .ini: --debug-menu (Select+L1+R1 or F1 in the game; docs/PORT.md §0.5) */
 
 static int writable(const char *dir) {
     char t[MAX_PATH];
@@ -37,6 +39,7 @@ static void load_ini(void) {
         while (n && (line[n - 1] == '\n' || line[n - 1] == '\r')) line[--n] = 0;
         if (!strncmp(line, "disc=", 5)) snprintf(disc, sizeof disc, "%s", line + 5);
         else if (!strncmp(line, "options=", 8)) snprintf(options, sizeof options, "%s", line + 8);
+        else if (!strncmp(line, "debug_menu=", 11)) debug_menu = line[11] == '1';
     }
     fclose(f);
 }
@@ -45,8 +48,9 @@ static void save_ini(void) {
     if (!f) return;
     fprintf(f, "; Tomba! 2 (PC port) launcher settings (docs/PORT.md).  disc = your own disc image (.bin/.img/.cue/.iso).\n"
                "; options = extra tomba2.exe options, e.g. --fullscreen  or  --renderer software  (also direct3d, direct3d11,\n"
-               ";           opengl)  or  --linear  or  --viewer-arg --scale --viewer-arg 3\n");
-    fprintf(f, "disc=%s\noptions=%s\n", disc, options);
+               ";           opengl)  or  --linear  or  --viewer-arg --scale --viewer-arg 3\n"
+               "; debug_menu = 1: the debug menu (Select+L1+R1 or F1 in the game: noclip, fly, vitality, AP, warp, info)\n");
+    fprintf(f, "disc=%s\noptions=%s\ndebug_menu=%d\n", disc, options, debug_menu);
     fclose(f);
 }
 static int exists(const char *p) { DWORD a = GetFileAttributesA(p); return a != INVALID_FILE_ATTRIBUTES && !(a & FILE_ATTRIBUTE_DIRECTORY); }
@@ -88,7 +92,8 @@ static DWORD run_game(void) {
         MessageBoxA(0, "tomba2.exe is missing: unzip the whole archive into one folder.", "Tomba! 2 (PC port)", MB_ICONERROR);
         return 1;
     }
-    snprintf(cmd, sizeof cmd, "\"%s\" --disc \"%s\" --window --save-dir \"%s\" %s", game, disc, saves, options);
+    snprintf(cmd, sizeof cmd, "\"%s\" --disc \"%s\" --window --save-dir \"%s\"%s %s", game, disc, saves,
+             debug_menu ? " --debug-menu" : "", options);
     SECURITY_ATTRIBUTES sa = { sizeof sa, 0, TRUE };
     HANDLE lg = CreateFileA(logp, GENERIC_WRITE, FILE_SHARE_READ, &sa, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
     STARTUPINFOA si; PROCESS_INFORMATION pi;

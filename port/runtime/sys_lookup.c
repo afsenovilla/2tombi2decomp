@@ -29,6 +29,11 @@ void port_ovl_loaded(const char *file) {
         if (!*a && !*b) { ovl_resident[ovl_slot(port_ovls[i].vram)] = i; return; }
     }
 }
+/* the file of the overlay read last at a load address (0: none yet), for runtime/debugmenu.c */
+const char *port_ovl_resident(u32p vram) {
+    int i = ovl_resident[ovl_slot(vram)];
+    return i > 0 && port_ovls[i].vram == vram ? port_ovls[i].file : 0;
+}
 /* gen_t2.py code_hash: FNV-1a of a function's first 8 code bytes (the funcmap holds hashes, not the game's words) */
 static u32p code_hash(const unsigned char *b, u32p h) { for (int i = 0; i < 8; i++) h = (h ^ b[i]) * 0x01000193u; return h; }
 static const PortFunc *find_ovl(u32p a) {
@@ -60,7 +65,14 @@ const PortFunc *port_lookup_func(u32p a) {
     }
     return 0;
 }
+static void *port_lookup_1(u32p a);
 void *port_lookup(u32p a) {
+    extern int port_debug_hooks;                /* --debug-menu noclip / fly (runtime/debugmenu.c); 0 otherwise */
+    extern void *port_debug_hook(u32p a, void *f);
+    void *f = port_lookup_1(a);
+    return port_debug_hooks ? port_debug_hook(a, f) : f;
+}
+static void *port_lookup_1(u32p a) {
     const PortFunc *f = port_lookup_func(a);
     if (f) return f->fn;
     int lo = 0, hi = port_libmap_count - 1;        /* a Psy-Q function replaced by a shim */

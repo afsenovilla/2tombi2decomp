@@ -3,6 +3,28 @@
 Update this file whenever something lands or a task is decided. Newest first.
 The step-by-step plan is docs/ROADMAP.md (tick its boxes as steps land).
 
+## 2026-11-28 (5): port stage 6
+
+The user asked for a debug menu and noclip like the first game's port. docs/PORT.md §0.5 has the details.
+
+- **`--debug-menu`** (`port/runtime/debugmenu.c`, adapted from Tombi-Decomp's port2/runtime/debugmenu.c, MIT):
+  Select+L1+R1 or F1 (window) opens it; lines noclip (walls), fly, infinite vitality, max AP, warp area / spawn /
+  now, info overlay (frame, vblank rate, area-arrival, position, vitality, AP), speed normal / slow / fast. Hooks in
+  shims/pad.c (input, cheats, warp: memory writes only), shims/gpu.c (overlay into the RGB copy of the frame, not
+  VRAM), sys_lookup.c `port_lookup` (noclip), the viewer (F1). Off by default: frame dumps without it are
+  byte-identical to the previous build (attract 3000 frames, a Load Game route). Also `--noclip`, and the test hook
+  `--debug-warp FRAME:AREA:SPAWN`. Launcher: `debug_menu=1` in tomba2-launcher.ini (it has no option dialog).
+- **T2's data**: player 0x800E7E80 (vitality +0x16E / +0x170), game state 0x800BF870 (area, arrival, AP +4, max
+  vitality +0xD); the warp is the game's own exit transition (0x800BF83A = area << 8 | arrival, 0x800BF839 = 1,
+  0x1F800236 = 7); fly sets 0x800BF841 (func_80059D28 skips the player update); noclip makes the player's horizontal
+  terrain probes (0x80045CAC, 0x80046E2C) return no contact. Noclip does not cross the end of an area's walking
+  plane nor other actors (T2 keeps Tomba on 2.5D planes).
+- **Every area reached**: warps after the Load Game route into A00..A0L, spawns 0, 1, 2, 3, 5 (110 runs of 3400
+  frames with walking and jumps): no crash, native and `--interp-range all` identical in positions and frame dumps:
+  nothing to fix. Wine (new zip `Tomba2-port-win32.zip`): a run with every menu line equals Linux (except the
+  measured vblank rate shown in the overlay). Not checked: the areas past their first minute (bosses, events), the
+  menu on real Windows / a real display.
+
 ## 2026-11-28 (4): port stage 5
 
 The user's second real-Windows run (build 2): graphics right; "it got stuck trying to climb up the wall" (A00, the

@@ -5,7 +5,7 @@
  *   fd 3  : audio, s16le stereo 44100 Hz
  *   fd 4  : we write one u16 per frame: pad 1 buttons in PSX bit order, active high
  * Keyboard: arrows = d-pad, X = Cross, Z = Square, S = Triangle, D = Circle, Q/W = L1/R1, A/E = L2/R2,
- * Return = Start, Backspace or Right Shift = Select, F = toggle 2x/3x window scale, F11 = fullscreen, F12 = screenshot
+ * Return = Start, Backspace or Right Shift = Select, F = toggle 2x/3x window scale, F1 = debug menu (with --debug-menu), F11 = fullscreen, F12 = screenshot
  * (tomba2_shot_NNN.bmp in the working directory: the launcher's folder), Escape = quit.
  * A game controller (SDL_GameController) maps to the same buttons.  Can also be used alone on a recording:
  *   build/port/tomba2 --frames 1200 --pad-script 1000:start | build/port/tomba2-view   (no audio / pad pipes).
@@ -375,6 +375,8 @@ int main(int argc, char **argv) {
                     SDL_SetWindowSize(win, 320 * scale, 240 * scale);
                 } else if (e.key.keysym.scancode == SDL_SCANCODE_F12 && !e.key.repeat) {
                     if (rgb && tw) shot(rgb, tw, th);
+                } else if (e.key.keysym.scancode == SDL_SCANCODE_F1 && !e.key.repeat) {
+                    tapped |= 0x0C01;   /* Select+L1+R1 for one sample: the --debug-menu toggle (inert without it) */
                 } else if (e.key.keysym.scancode == SDL_SCANCODE_F11 && !e.key.repeat) {
                     fullscreen = !fullscreen;
                     SDL_SetWindowFullscreen(win, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);

@@ -88,6 +88,11 @@ void port_pad_vblank(void) {
         if (((unsigned)p & 0xFFE00000u) == 0x80000000u) { p[0] = port_pad_buttons[0]; p[1] = 1; *(u16 *)0x800BED8Cu = 1; }
         port_pad_buttons[0] = 0;
     }
+    {   /* --debug-menu (runtime/debugmenu.c): input, live cheats; inert without the option */
+        extern int port_debug_menu;
+        extern void port_debug_pad(u16 *);
+        if (port_debug_menu) port_debug_pad(&port_pad_buttons[0]);
+    }
     if (!started) return;
     for (int i = 0; i < 2; i++) {
         if (!buf[i]) continue;

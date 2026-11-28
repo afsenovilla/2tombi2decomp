@@ -245,6 +245,10 @@ Discs: docs/DISCS.md. Plan and numbers: docs/PLAN.md. **Step-by-step roadmap: do
   program) and char / short results read wider by native callers (asm wrappers that extend al / ax, gen_t2.py
   `narrow_wrapper`); `void` definitions whose result a caller reads stay interpreted (`void_results_used`). Audio: the XA queue starts 70 ms ahead, the viewer's rate follows its ring (within 2 %);
   underruns are logged (`[port] audio: XA queue ran dry`, `tomba2-view: audio underrun #N`).
+  Stage 6 (docs/PORT.md §0.5): `--debug-menu` (Select+L1+R1 or F1: noclip, fly, infinite vitality, max AP, warp
+  area / spawn, info overlay, speed; launcher `debug_menu=1`), `--noclip`, `--debug-warp FRAME:AREA:SPAWN` (AREA hex:
+  every area A00..A0L is reachable headless for tests, e.g. after the Load Game route from the user's card); all
+  inert without the option. Warp = 0x800BF83A area << 8 | arrival, 0x800BF839 = 1, 0x1F800236 = 7.
 - Reference emulator (docs/EMU.md; Tombi-Decomp's tools/psxemu adapted, HLE at the port's shim boundary with the
   port's timing and virtual disc): `python3 -I tools/emu_run.py --frames N --dump-frames DIR [--dump-every K]
   [--dump-vram] [--ram-at F,...] [--dump-packets all|F,...] [--pad-script ...] [--save-state F | --load-state F]

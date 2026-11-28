@@ -370,6 +370,62 @@ build/port/tomba2 --frames 2760 --trace-pos 10 --demo-takeover 2550 \
   before. Not checked: a real sound device (none in the container); the Windows pipe write still blocks if the
   viewer stops reading for more than its 1 MB (6 s of audio).
 
+### 0.5 Stage 6 (2026-11-28): the debug menu, noclip, warp; every area reached
+
+The user asked for a debug menu and noclip like the first game's port (Tombi-Decomp's port2/runtime/debugmenu.c,
+MIT, same author: copied and adapted, the same keys, lines, 5x7 font and hook points). `runtime/debugmenu.c`.
+
+- **Options** (all off by default; with none of them every hook is inert, and the frame dumps are byte-identical to
+  the build before: attract 3000 frames, 60 dumps, and a Load Game route, 52 dumps + positions every 5 vblanks,
+  against a build of the previous commit): `--debug-menu` (the menu), `--noclip` (noclip on from the start, without
+  the menu), `--debug-warp FRAME:AREA:SPAWN` (test hook: warp at the first vblank >= FRAME that is in gameplay; AREA
+  in hex, 1 = A01, 10 = A0G; implies `--debug-menu`). The launcher: `debug_menu=1` in tomba2-launcher.ini (it has
+  no dialog with options; the line is written on the next save of the .ini).
+- **Keys**: Select+L1+R1 (pad or keyboard) or F1 in the window (the viewer sends Select+L1+R1 for one sample) opens
+  and closes it; while it is open the game gets no buttons. Up / Down pick a line, Left / Right change the value
+  (L2 held: steps of 10), Cross applies, Triangle or Start closes; buttons held when it closes are kept from the
+  game until released.
+- **Lines**: NOCLIP (WALLS), FLY (d-pad moves Tomba in x / z, L1 / R1 up / down, Cross held = 4x), INFINITE
+  VITALITY, MAX AP (9999999), WARP AREA (A00-A0L), WARP SPAWN (the arrival index, 0-63), WARP NOW, INFO OVERLAY
+  (frame, measured vblanks per second, area-arrival, "(NO PLAY)" outside gameplay; Tomba's x / y / z, vitality / max,
+  AP; the cheats on), SPEED (normal; slow: one extra period of sleep per vblank; fast: pacing off). T1's lines that
+  T2 has no data for yet are left out (give item, equip weapon, event flags, lives).
+- **T2's data** (USA): the player actor 0x800E7E80 (position 16.16 at +0x2C / +0x30 / +0x34, speed +0x44, direction
+  +0x48..+0x4C, vitality s16 +0x16E and its HUD copy +0x170, state +4: 1 = running; f_GrantPickupHealth); the game
+  state 0x800BF870 (area +0, arrival +1, AP s32 +4 (func_8004B3F4 adds to it), max vitality +0xD (New Game: 4)).
+  "In gameplay" = an area overlay resident at 0x80108F9C (`port_ovl_resident`, sys_lookup.c), the player in state 1,
+  no transition requested, no attract demo (0x1F80019A != 1). The cheats write only then.
+- **Warp**: the transition the game's own exits make (A0A..A0E's boss ends, A0F, MAIN's warp items in
+  func_80035218): the destination u16 0x800BF83A = area << 8 | arrival (Tomba2Edit's `DESTINATION`), the request
+  0x800BF839 = 1, the scratchpad mode 0x1F800236 = 7 (the fade the exits use). The game then loads BIN/A0x.BIN
+  itself (9 vblanks later) and places Tomba from the area's arrival record. A warp to the area already resident
+  places him without a load. Memory writes only, from the vblank (as `--poke`): the game's code is never called.
+- **Noclip** (`port_lookup` -> `port_debug_hook`, only while noclip is on): `f_ResolveActorRadialTerrainContact`
+  (0x80045CAC) and `f_ResolveActorDirectionalTerrainContact` (0x80046E2C), the horizontal terrain probes, return
+  0 (no contact) for the player; every other actor and the floor probe (f_ResolveTerrainProbeVerticalContact) are
+  unchanged. Both are asm (interpreted) and every call reaches them through `port_resolve_call`, so the hook covers
+  native and interpreted callers. What it does: in A09 (spawn 0, walking right) Tomba walks into the rock face
+  (x 4677 -> 4800) where he stopped before. What still stops him: the end of the area's walking plane
+  (f_ProjectActorOntoAreaPlane: T2 keeps Tomba on 2.5D planes; dropping it would leave him off any plane) and other
+  actors' bodies (the barrel NPC in A00 at x 6000). Found with a store trace in the interpreter: when blocked the
+  speed (+0x44) is 0, the position is never pushed back.
+- **Fly**: while it is on and in gameplay the byte 0x800BF841 (D_800BF808 + 0x39) is set: `func_80059D28` then
+  skips the player update (func_8005950C or the area's own: A02, A03, A07, A0K), as the game itself does; the
+  vblank moves the position (4 units per vblank, 16 with Cross) and zeroes the speed. The camera follows, Tomba is
+  drawn in his last pose. Off (or a warp) clears the byte; Tomba then falls / lands from where he is. (A
+  `port_lookup` hook of func_8005950C does not work: func_80059D28 calls it directly, native to native.)
+- **Overlay**: drawn into the RGB copy of the displayed frame that the window or a frame dump gets (shims/gpu.c,
+  before the TV window shift), never into VRAM, so the game cannot read it back (T1 filled VRAM).
+- **Every area** (`--debug-warp 1500:AREA:SPAWN` after the Load Game route of §0.3 from the user's card, then
+  walking right 200 vblanks, three jumps, left 150, right + jump; 3400 frames, positions every 5 vblanks, 34 frame
+  dumps): A00..A0L spawn 0 all load and play (A03 the trolley race with its countdown, A0A..A0E the boss intros,
+  A0L the ending scene), native and `--interp-range all` identical in positions and in every dump. Spawns 1, 2, 3
+  and 5 of every area too (each places Tomba elsewhere): 110 warps, no crash, native = interpreted in all of them
+  (positions every 5 vblanks, 34 dumps each); nothing to fix. A run with every line used (menu, noclip, fly,
+  overlay, a warp to A03) under Wine 9.0 with the new zip: positions equal to Linux, the 120 dumps equal except
+  the measured vblank rate in the overlay's first line; `--no-kuseg` with a warp to A04: 0 low accesses. Not done: the areas past their first minutes
+  (bosses fought, story events), the debug menu on real Windows.
+
 ## 1. Status: stage 1, milestone P0 (2026-11-27)
 
 ```
